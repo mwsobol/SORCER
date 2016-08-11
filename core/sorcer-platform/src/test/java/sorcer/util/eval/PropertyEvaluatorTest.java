@@ -55,8 +55,8 @@ public class PropertyEvaluatorTest {
         data.put("envKey", "${env." + envKey + "}");
         data.put("sysKey", "${sys.user.home}");
         data.put("self", "${key}");
-        data.put("partial", "other value: <${key}>");
-        data.put("multi", "other value: <${key}> and <${self}>");
+        data.put("partial", "other eval: <${key}>");
+        data.put("multi", "other eval: <${key}> and <${self}>");
 
         //bad
         data.put("selfreferencing", "${selfreferencing}");
@@ -68,8 +68,8 @@ public class PropertyEvaluatorTest {
         assertEquals(envValue, data.get("envKey"));
         assertEquals(System.getProperty("user.home"), data.get("sysKey"));
         assertEquals("replacedValue", data.get("self"));
-        assertEquals("other value: <replacedValue>", data.get("partial"));
-        assertEquals("other value: <replacedValue> and <replacedValue>", data.get("multi"));
+        assertEquals("other eval: <replacedValue>", data.get("partial"));
+        assertEquals("other eval: <replacedValue> and <replacedValue>", data.get("multi"));
 
         assertEquals("${selfreferencing}", data.get("selfreferencing"));
         assertEquals("${nothere}", data.get("missing"));

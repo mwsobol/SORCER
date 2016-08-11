@@ -18,32 +18,40 @@
 package sorcer.core.invoker;
 
 import java.rmi.RemoteException;
+import java.util.concurrent.locks.*;
 
-import sorcer.service.Arg;
+import sorcer.service.*;
 import sorcer.service.Condition;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
-import sorcer.service.InvocationException;
 
 /**
  * The option Var. There is a single target invoker that executes if the condition is true (like if... then).
  * 
  * @author Mike Sobolewski
  */
-public class OptInvoker<T> extends ServiceInvoker<T> {
+public class OptInvoker<T> extends ServiceInvoker<T> implements ConditionalInvocation {
 	
 	protected Condition condition;
 	
 	protected ServiceInvoker<T> target;
+
+	protected T value;
 	
 	public OptInvoker(String name) {
 		super(name);
 	}
-		
+
+	public OptInvoker(T value) {
+		this(null, value);
+	}
+
+	public OptInvoker(String name, T value) {
+		this(name);
+		this.value = value;
+	}
+
 	public OptInvoker(String name, ServiceInvoker<T> invoker) {
 		super(name);
-		this.condition = new Condition(true);
+		this.condition = null;
 		this.target = invoker;
 	}
 	
@@ -64,18 +72,24 @@ public class OptInvoker<T> extends ServiceInvoker<T> {
 	@Override
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
 		try {
+			if (value != null) {
+				return value;
+			}
 			checkInvokeContext();
-			if (condition.isTrue())
+			if (condition == null || condition.isTrue())
 				return target.getValue(entries);
-			else 
+			else {
 				return null;
+			}
 		} catch (ContextException e) {
 			throw new InvocationException(e);
 		}
 	}
 	
-	public T invoke(Arg... entries) throws RemoteException,
-	InvocationException {
+	public T invoke(Arg... entries) throws RemoteException, InvocationException {
+		if (value != null) {
+			return value;
+		}
 		try {
 			checkInvokeContext();
 			if (condition.isTrue())
@@ -99,10 +113,23 @@ public class OptInvoker<T> extends ServiceInvoker<T> {
 			throw new InvocationException(e);
 		}
 	}
-	
+
+	public boolean isTrue() throws ContextException  {
+		if (condition == null) {
+			return true;
+		} else {
+			return condition.isTrue();
+		}
+	}
+
 	private void checkInvokeContext() throws RemoteException, ContextException {
 		if (target.getScope().size() == 0 && invokeContext.size() > 0) {
 			target.setScope(invokeContext);
 		}
+	}
+
+	@Override
+	public Condition getCondition() {
+		return condition;
 	}
 }

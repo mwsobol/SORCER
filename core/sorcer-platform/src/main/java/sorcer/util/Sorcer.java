@@ -88,7 +88,7 @@ public class Sorcer extends SorcerEnv implements SorcerConstants {
 	}
 	
 	/**
-	 * Loads data node (value) types from the SORCER data store or file. Data
+	 * Loads data node (eval) types from the SORCER data store or file. Data
 	 * 
 	 * node types specify application types of data nodes in service contexts.
 	 * It is analogous to MIME types in SORCER. Each type has a format
@@ -120,7 +120,7 @@ public class Sorcer extends SorcerEnv implements SorcerConstants {
 	}
 
 	/**
-	 * Load context node (value) types from default 'node.types'. SORCER node
+	 * Load context node (eval) types from default 'node.types'. SORCER node
 	 * types specify application types of data nodes in SORCER service contexts.
 	 * It is an analog of MIME types in SORCER. Each type has a format
 	 * 'cnt/application/format/modifiers'.

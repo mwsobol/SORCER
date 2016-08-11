@@ -10,6 +10,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Multiply;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Provision;
@@ -19,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
@@ -35,17 +35,17 @@ public class TaskTest {
 		//to test tracing of execution enable ServiceExertion.debug 		
 		Exertion task = task("add",
 				sig("add"),
-				context(inEnt("arg/x1"), inEnt("arg/x2"),
+				context(inVal("arg/x1"), inVal("arg/x2"),
 						result("result/y")));
 		
 		logger.info("get task: " + task);
 		logger.info("get context: " + context(task));
 		
-		Object val = value(task, inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+		Object val = operator.eval(task, inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 				strategy(sig("add", AdderImpl.class), Access.PUSH, Wait.YES));
 		
-		logger.info("get value: " + val);
-		assertEquals("Wrong value for 100", val, 100.0);
+		logger.info("get eval: " + val);
+		assertEquals("Wrong eval for 100", val, 100.0);
 	}
 	
 	@Test
@@ -55,13 +55,13 @@ public class TaskTest {
 		
 		Task task = task("add",
 				sig("add", AdderImpl.class),
-				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("result/y")));
 		
 		// EXERTING
 		task = exert(task);
 		logger.info("exerted: " + task);
-		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
+		assertTrue("Wrong eval for 100.0", (Double)returnValue(task) == 100.0);
 		print(exceptions(task));
 		assertTrue(exceptions(task).size() == 0);
 		print(trace(task));
@@ -70,9 +70,9 @@ public class TaskTest {
 		set(task, "result/y", Context.none);
 		print(task);
 		
-		double val = (Double)value(task);
-		//logger.info("get value: " + val);
-		assertTrue("Wrong value for 100.0", val == 100.0);
+		double val = (Double) operator.eval(task);
+		//logger.info("get eval: " + val);
+		assertTrue("Wrong eval for 100.0", val == 100.0);
 		//logger.info("exec trace: " + trace(task));
 		//logger.info("trace  size: " + trace(task).size());
 		//assertTrue(trace(task).size() == 1);
@@ -80,28 +80,28 @@ public class TaskTest {
 		//assertTrue(exceptions(task).size() == 0);
 
 //		val = (Double)get(task, "result/y");
-//		//logger.info("get value: " + val);
-//		assertTrue("Wrong value for 100.0", val == 100.0);
+//		//logger.info("get eval: " + val);
+//		assertTrue("Wrong eval for 100.0", val == 100.0);
 //		
 //		task = exert(task);
 //		val = (Double)get(context(task), "result/y");
-//		//logger.info("get value: " + val);
-//		assertTrue("Wrong value for 100.0", val == 100.0);
+//		//logger.info("get eval: " + val);
+//		assertTrue("Wrong eval for 100.0", val == 100.0);
 //		//assertTrue(trace(task).size() == 2);
 //		//           assertTrue(exceptions(task).size() == 0);
 //		
 //		put(task, entry("arg/x1", 1.0), entry("arg/x2", 5.0));
-//		val = (Double)value(task);
+//		val = (Double)eval(task);
 //		logger.info("evaluate: " + val);
-//		assertTrue("Wrong value for 6.0", val == 6.0);
+//		assertTrue("Wrong eval for 6.0", val == 6.0);
 //				
-//		val = (Double)value(task, entry("arg/x1", 2.0), entry("arg/x2", 10.0));
+//		val = (Double)eval(task, entry("arg/x1", 2.0), entry("arg/x2", 10.0));
 //		logger.info("evaluate: " + val);
-//		assertTrue("Wrong value for 12.0", val == 12.0);
+//		assertTrue("Wrong eval for 12.0", val == 12.0);
 //		
 //		logger.info("task context: " + context(task));
-//		logger.info("get value: " + get(task));
-//		assertTrue("Wrong value for 12.0", get(task).equals(12.0));
+//		logger.info("get eval: " + get(task));
+//		assertTrue("Wrong eval for 12.0", get(task).equals(12.0));
 	}
 
 	@Test
@@ -111,13 +111,13 @@ public class TaskTest {
 
 		Task task = task("add",
 				sig("add", AdderImpl.class),
-				context(CustomContext.class, inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				context(CustomContext.class, inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		// EXERTING
 		task = exert(task);
 		logger.info("exerted: " + task);
-		assertTrue("Wrong value for 100.0", (Double) get(task) == 100.0);
+		assertTrue("Wrong eval for 100.0", (Double) returnValue(task) == 100.0);
 		print(exceptions(task));
 		assertTrue(exceptions(task).size() == 0);
 		print(trace(task));
@@ -131,8 +131,8 @@ public class TaskTest {
 						args(new double[]{10.0, 50.0}),
 						result("result/y")));
 
-		//logger.info("t4: " + value(t4));
-		assertTrue(value(t4).equals(500.0));
+		//logger.info("t4: " + eval(t4));
+		assertTrue(operator.eval(t4).equals(500.0));
 	}
 
 	@Test
@@ -142,7 +142,7 @@ public class TaskTest {
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),
 				sFi("object", sig("add", AdderImpl.class)),
-				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		logger.info("task fi: " + fi(task));
@@ -153,7 +153,7 @@ public class TaskTest {
 		task = exert(task, fi("object"));
 		logger.info("exerted: " + context(task));
 		assertTrue(fiName(task).equals("object"));
-		assertTrue(get(task).equals(100.0));
+		assertTrue(returnValue(task).equals(100.0));
 	}
 
 	@Test
@@ -163,7 +163,7 @@ public class TaskTest {
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),
 				sFi("object", sig("add", AdderImpl.class)),
-				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		logger.info("task fi: " + fi(task));
@@ -174,7 +174,7 @@ public class TaskTest {
 		task = exert(task, fi("net"));
 		logger.info("exerted: " + context(task));
 		assertTrue(fiName(task).equals("net"));
-		assertTrue("Wrong value for 100.0", (Double)get(task) == 100.0);
+		assertTrue("Wrong eval for 100.0", (Double)returnValue(task) == 100.0);
 	}
 	
 	@Test
@@ -182,8 +182,8 @@ public class TaskTest {
 		Task t5 = task("f5",
 			sig("add", Adder.class,
 					deploy(configuration("bin/sorcer/test/arithmetic/configs/AdderProviderConfig.groovy"))),
-				context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
-							outEnt("result/y")),
+				context("add", inVal("arg/x3", 20.0d), inVal("arg/x4", 80.0d),
+							outVal("result/y")),
 				strategy(Provision.YES));
 		logger.info("t5 is provisionable: " + t5.isProvisionable());
 		assertTrue(t5.isProvisionable());

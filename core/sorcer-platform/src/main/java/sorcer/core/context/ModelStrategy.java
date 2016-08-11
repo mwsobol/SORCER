@@ -59,7 +59,7 @@ public class ModelStrategy implements MogramStrategy, Serializable {
     // select fidelities for this service context
     protected Map<String, ServiceFidelity<Arg>> selectFidelities;
 
-    // evaluated model response entries
+    // evaluated model response args
     protected Context outcome;
 
     protected Exec.State execState = Exec.State.INITIAL;

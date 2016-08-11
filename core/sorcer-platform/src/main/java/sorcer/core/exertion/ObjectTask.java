@@ -173,10 +173,11 @@ public class ObjectTask extends Task {
 				setStatus(ERROR);
 		}
 		setStatus(DONE);
-		if (evaluator != null)
+		if (evaluator != null) {
 			dataContext.appendTrace("task: " + getName() + " by: " + evaluator.getClass().getName());
-		else
-			dataContext.appendTrace("task: "  + getName() + " for: "  + os.toString());
+		} else {
+			dataContext.appendTrace("task: " + getName() + " for: " + os.toString());
+		}
 
 		return this;
 	}

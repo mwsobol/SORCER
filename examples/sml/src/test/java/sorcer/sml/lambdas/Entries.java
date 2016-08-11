@@ -18,8 +18,9 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
-import static sorcer.mo.operator.response;
+import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.*;
 import static sorcer.service.Arg.setArgValue;
 import static sorcer.util.exec.ExecUtils.CmdResult;
 
@@ -36,14 +37,14 @@ public class Entries {
         // no free variables
         Entry y1 = lambda("y1", () -> 20.0 * pow(0.5, 6) + 10.0);
 
-        assertEquals(10.3125, value(y1));
+        assertEquals(10.3125, eval(y1));
 
         // the model itself as a free variable of the lambda y2
         Model mo = model(ent("x1", 10.0), ent("x2", 20.0),
                 lambda("y2", (Context<Double> cxt) ->
                         value(cxt, "x1") + value(cxt, "x2")));
 
-        assertEquals(30.0, value(mo, "y2"));
+        assertEquals(30.0, eval(mo, "y2"));
 
     }
 
@@ -71,8 +72,8 @@ public class Entries {
         };
 
         Model m = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
@@ -93,11 +94,11 @@ public class Entries {
     public void entryAsLambdaInvoker() throws Exception {
 
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                ent(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
+                proc(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
                         + value(cxt, "y")
-                        + 30)));
-        logger.info("invoke value: " + value(mo, "lambda"));
-        assertEquals(value(mo, "lambda"), 60.0);
+                        + 30, args("x", "y"))));
+        logger.info("invoke eval: " + eval(mo, "lambda"));
+        assertEquals(eval(mo, "lambda"), 60.0);
     }
 
     @Test
@@ -110,21 +111,21 @@ public class Entries {
                     return exec(Arg.getEntry(args, "x")); },
                         args("x", "y")));
 
-        logger.info("s1 value: ", value(mo, "s1"));
-        assertEquals(value(mo, "s1"), 20.0);
+        logger.info("s1 eval: ", eval(mo, "s1"));
+        assertEquals(eval(mo, "s1"), 20.0);
     }
 
     @Test
     public void lambdaClient() throws Exception {
-        // entries as ValueCallable and  Requestor lambdas
+        // args as ValueCallable and  Requestor lambdas
         Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
                 lambda("multiply", (Context<Double> model) ->
-                        val(model, "multiply/x1") * val(model, "multiply/x2")),
+                        value(model, "multiply/x1") * value(model, "multiply/x2")),
                 lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
                     double out = (double)exec(entry, scope);
                     if (out > 400) {
-                        setValue(scope, "multiply/x1", 20.0);
-                        setValue(scope, "multiply/x2", 50.0);
+                        putValue(scope, "multiply/x1", 20.0);
+                        putValue(scope, "multiply/x2", 50.0);
                         out = (double)exec(entry, scope);
                     }
                     return context(ent("multiply2", out));

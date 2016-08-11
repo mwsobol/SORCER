@@ -26,7 +26,7 @@ import java.io.File;
 public interface RemoteFile {
     /**
      * Return local file represented by this object. The file may be first downloaded from remote location.
-     * Before returning, the checksum is verified against value stored in this object.
+     * Before returning, the checksum is verified against eval stored in this object.
      */
     File getValue() throws EvaluationException;
 }

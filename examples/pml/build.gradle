@@ -23,7 +23,7 @@ task beanDlJar(type: Jar) {
 
 task modelJar(type: Jar) {
 	manifest {
-		attributes("Implementation-Title": "SORCER Par-model", "Implementation-Version": version)
+		attributes("Implementation-Title": "SORCER Proc-model", "Implementation-Version": version)
 	}
     classifier = "model"
 	dependsOn classes

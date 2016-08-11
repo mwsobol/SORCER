@@ -74,7 +74,7 @@ public interface FileStorer {
 	 * The format is:
 	 * <ul>
 	 * <li># is the path separator</li>
-	 * <li>/ is the separator between entries</li>
+	 * <li>/ is the separator between args</li>
 	 * </ul>
 	 * <p>
 	 * Example: <tt>/test/test#bla

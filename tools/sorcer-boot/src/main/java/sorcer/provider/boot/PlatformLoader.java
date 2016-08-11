@@ -241,10 +241,10 @@ public class PlatformLoader {
 
 
     /**
-     * Get the text value for a node
+     * Get the text eval for a node
      *
-     * @param node The Node to get the text value for
-     * @return The text value for the Node, or a zero-length String if
+     * @param node The Node to get the text eval for
+     * @return The text eval for the Node, or a zero-length String if
      * the Node is not recognized
      */
     String getTextValue(Node node) {

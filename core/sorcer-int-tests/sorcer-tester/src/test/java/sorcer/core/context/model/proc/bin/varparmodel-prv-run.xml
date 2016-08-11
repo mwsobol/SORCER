@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- 
-Replace "provider.name" with your provider name and specify property value for "provider.class."
+Replace "provider.name" with your provider name and specify property eval for "provider.class."
 Also you might need to adjust the classpath (provider.classpath) for your provider 
 -->
 
@@ -14,7 +14,7 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 	<echo message="WEBSTER: ${provider.webster.url}" />
 
 	<!-- set property values here -->
-	<property name="provider.bean" value="parmodel" />
+	<property name="provider.bean" value="varparmodel" />
 	<property name="provider.class" value="sorcer.core.provider.ServiceTasker" />
 	<property name="webster" value="${provider.webster.url}" />
 
@@ -22,6 +22,7 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 	<path id="project.classpath">
 		<pathelement location="${sorcer.lib}/ju-invoker-beans.jar" />
 		<pathelement location="${sorcer.lib}/sorcer-platform.jar" />
+		<pathelement location="${sorcer.lib}/sorcer-modeling-lib.jar" />
 		<pathelement location="${sorcer.lib}/sorcer-parmodeling-lib.jar" />
 		<pathelement location="${jini.lib}/jsk-lib.jar" />
 		<pathelement location="${jini.lib}/jsk-platform.jar" />
@@ -41,7 +42,7 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 			<sysproperty key="java.security.manager" value="" />
 			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
 			<sysproperty key="java.security.policy" value="../policy/${provider.bean}-prv.policy" />
-			<sysproperty key="sorcer.provider.codebase" value="${j1} ${j2} ${j3} ${j4}" />
+			<sysproperty key="sorcer.provider.codebase" value="${j1} ${j2} ${j3} ${j4}}" />
 			<sysproperty key="sorcer.provider.classpath" value="${toString:project.classpath}" />
 			<sysproperty key="sorcer.provider.impl" value="${provider.class}" />
 			<sysproperty key="sorcer.provider.config" value="../configs/${provider.bean}-prv.config" />

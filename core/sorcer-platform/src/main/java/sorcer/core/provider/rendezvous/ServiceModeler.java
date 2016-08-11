@@ -21,10 +21,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.context.ContextSelection;
-import sorcer.core.context.ModelerNetTask;
-import sorcer.core.context.ModelerObjectTask;
-import sorcer.core.context.TaskModel;
+import sorcer.core.context.*;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.Modeler;
 import sorcer.core.signature.ObjectSignature;
@@ -78,7 +75,7 @@ public class ServiceModeler extends RendezvousBean implements Modeler {
             dataContext =  mogram.getDataContext();
 
             if (dataContext instanceof Model) {
-                result = (Mogram) dataContext.getResponse(args);
+                result = ((ServiceContext)dataContext).getResponse(args);
                 if (builder != null) {
                     model = (Model) ((ObjectSignature)builder).newInstance();
                 }

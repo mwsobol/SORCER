@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * A service <code>Signature</code> is an indirect behavioral feature of
@@ -383,9 +384,19 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 
 		public Strategy.Access accessType = Strategy.Access.PUSH;
 
+		public Strategy.Flow flowType = Strategy.Flow.SEQ;
+
+		public Strategy.Monitor toMonitor = Strategy.Monitor.NO;
+
+		public Strategy.Wait toWait = Strategy.Wait.YES;
+
+		public Strategy.FidelityMangement toManageFi = Strategy.FidelityMangement.NO;
+
+		public Strategy.Shell isShellRemote = Strategy.Shell.LOCAL;
+
 		public boolean isProvisionable = false;
 
-        @Override
+		@Override
         public String getName() {
             return selector;
         }
@@ -394,9 +405,22 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 	public static class ServiceType implements Serializable, Arg {
 		static final long serialVersionUID = 1L;
 		public String typeName;
+		// default prvType
 		public Class providerType;
         // service types implemented by the service provider
         public Class[] matchTypes;
+
+		public ServiceType() {
+			// do nothing
+		}
+
+		public ServiceType(String className) {
+			typeName = className;
+		}
+
+		public ServiceType(Class classType) {
+			providerType = classType;
+		}
 
 		@Override
 		public String getName() {

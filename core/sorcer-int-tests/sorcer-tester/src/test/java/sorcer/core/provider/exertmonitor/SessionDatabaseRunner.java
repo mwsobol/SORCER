@@ -179,7 +179,7 @@ public class SessionDatabaseRunner {
     }
 	
 	 /**
-     * Get the exertion names returned by an iterator of entity value objects.
+     * Get the exertion names returned by an iterator of entity eval objects.
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
      */
@@ -194,7 +194,7 @@ public class SessionDatabaseRunner {
 	}
 		
     /**
-     * Print the objects returned by an iterator of entity value objects.
+     * Print the objects returned by an iterator of entity eval objects.
      * @throws ClassNotFoundException 
      * @throws IOException 
      */

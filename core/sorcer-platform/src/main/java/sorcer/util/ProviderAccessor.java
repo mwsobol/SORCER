@@ -210,7 +210,7 @@ public class ProviderAccessor extends ServiceAccessor {
 	 * Returns a SORCER service provider matching a given attributes.
 	 *
 	 * @param attributes
-	 *            attribute set to match
+	 *            attribute setValue to match
 	 * @return a SORCER provider
 	 */
 	public Provider getProvider(Entry[] attributes) {
@@ -222,7 +222,7 @@ public class ProviderAccessor extends ServiceAccessor {
 	 * service types (interfaces).
 	 *
 	 * @param serviceTypes
-	 *            a set of service types to match
+	 *            a setValue of service types to match
 	 * @return a SORCER provider
 	 */
 	public Provider getProvider(Class[] serviceTypes) {

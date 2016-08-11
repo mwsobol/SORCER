@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.co.operator;
 import sorcer.service.*;
 import sorcer.util.SorcerEnv;
 
@@ -38,7 +39,7 @@ import java.util.Map;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 
 /**
@@ -184,7 +185,7 @@ public class OperationalStringFactoryTest {
                 sig("Foo",
                         Service.class,
                         deploy(configuration(JobUtil.getConfigDir() + "/TestConfig.groovy"))),
-                context("foo", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
+                context("foo", operator.inVal("arg/x3", 20.0d), operator.inVal("arg/x4", 80.0d),
                         result("result/y2")));
 
         /* totally bogus job definition */

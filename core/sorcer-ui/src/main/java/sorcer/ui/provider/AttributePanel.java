@@ -583,7 +583,7 @@ public class AttributePanel extends JPanel {
 			EntryTemplateHolder holder = new EntryTemplateHolder();
 
 			if (paths != null) {
-				// key=entryClass, value=entryInstance
+				// key=entryClass, eval=entryInstance
 				for (int i = 0; i < paths.length; i++) {
 					holder.addNode((AttributeNode) paths[i]
 							.getLastPathComponent());
@@ -597,10 +597,10 @@ public class AttributePanel extends JPanel {
 
 	private class EntryTemplateHolder {
 
-		// key=Class, value=Entry
+		// key=Class, eval=Entry
 		private HashMap singleMap = new HashMap();
 
-		// key=Class, value=HashMap
+		// key=Class, eval=HashMap
 		private HashMap multipleMap = new HashMap();
 
 		public EntryTemplateHolder() {
@@ -615,7 +615,7 @@ public class AttributePanel extends JPanel {
 						Entry entry = (Entry) clazz.newInstance();
 						singleMap.put(clazz, entry);
 					} else {
-						// do not overwrite any existing value.
+						// do not overwrite any existing eval.
 					}
 				} else if (node instanceof FieldNode) {
 					Class clazz = ((EntryNode) node.getParent())
@@ -625,7 +625,7 @@ public class AttributePanel extends JPanel {
 						Entry entry = (Entry) clazz.newInstance();
 						singleMap.put(clazz, entry);
 					} else {
-						// do not overwrite any existing value.
+						// do not overwrite any existing eval.
 					}
 				} else if (node instanceof ValueNode) {
 					ValueNode vnode = (ValueNode) node;
@@ -664,7 +664,7 @@ public class AttributePanel extends JPanel {
 									}
 								}
 
-								// append new value
+								// append new eval
 								ArrayList valueList = (ArrayList) fieldMap
 										.get(field);
 								valueList.add(value);

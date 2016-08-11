@@ -67,7 +67,7 @@ public class WorkerProvider extends ServiceTasker implements Worker {
                 + (getProviderName() == null ? getClass().getName() : getProviderName());
 		setMessage(context, reply);
 
-		// simulate longer execution time based on the value in
+		// simulate longer execution time based on the eval in
 		// configs/worker-prv.properties
 		String sleep = getProperty("prv.sleep.time");
 		logger.info("sleep=" + sleep);

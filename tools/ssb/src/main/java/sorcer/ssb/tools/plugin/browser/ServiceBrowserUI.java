@@ -667,7 +667,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 			model2.removeNodeFromParent((DefaultMutableTreeNode) _root2
 					.getChildAt(0));
 		}
-		// next set the filters properly
+		// next setValue the filters properly
 		String[] grps = _filtersView.getGroups();
 		grps = getAllGroups(grps);
 		
@@ -2275,7 +2275,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 					ServiceNode sNode = new ServiceNode(item);
 					DefaultMutableTreeNode service = new DefaultMutableTreeNode(
 							sNode);
-					// set the serviceName
+					// setValue the serviceName
 					eventData[2] = sNode.toString();
 					eventData[3] = "NOMATCH_MATCH";
 
@@ -2619,7 +2619,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 			DefaultMutableTreeNode lusNode = (DefaultMutableTreeNode) _root
 					.getChildAt(i);
 			ServiceNode lsn = (ServiceNode) lusNode.getUserObject();
-			// create a new ServiceNode and then mark it as NOT a LUS
+			// create a new ServiceNode and then tag it as NOT a LUS
 			ServiceNode newSn = new ServiceNode(lsn.getServiceItem());
 			newSn.markAsService();
 

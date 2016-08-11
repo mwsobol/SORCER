@@ -39,7 +39,7 @@ public class LoggerFrameUI extends JFrame {
 	 * invoked from the event-dispatching thread.
 	 */
 	private void createFrame(Object obj) {
-		// Create and set up the window.
+		// Create and setValue up the window.
 		setTitle("Log Viewer");
 		// closing is managed by a service browser
 		setDefaultCloseOperation(HIDE_ON_CLOSE);

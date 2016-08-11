@@ -154,7 +154,7 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 	 * </p>
 	 * 
 	 * @param isPersistent
-	 *            the isPersistent to set
+	 *            the isPersistent to setValue
 	 * @return nothing
 	 */
 	public void setPersistent(boolean isPersistent) {
@@ -165,4 +165,5 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 	public Object exec(Arg... entries) throws ServiceException, RemoteException, TransactionException {
 		return getValue(entries);
 	}
+
 }

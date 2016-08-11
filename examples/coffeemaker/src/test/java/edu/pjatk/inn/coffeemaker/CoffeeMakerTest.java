@@ -100,7 +100,7 @@ public class CoffeeMakerTest {
 						context(parameterTypes(Recipe.class), args(espresso),
 							result("recipe/added")));
 
-		logger.info("isAdded: " + value(cmt));
+		logger.info("isAdded: " + eval(cmt));
 		assertEquals(coffeeMaker.getRecipeForName("espresso").getName(), "espresso");
 	}
 

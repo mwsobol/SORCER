@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
  * Defining the main class is required unless setRequireMain(boolean) is
  * called with false, before reading the configuration.
  * You can use the wildcard "*" to filter the path, but only for files, not
- * directories. To match directories use "**". The ${propertyname} is replaced by the value of the system's
+ * directories. To match directories use "**". The ${propertyname} is replaced by the eval of the system's
  * property name. You can use user.home here for example. If the property does
  * not exist, an empty string will be used. If the path or file after the load
  * command does not exist, the path will be ignored.
@@ -119,7 +119,7 @@ public class LoaderConfiguration {
                 String params = line.substring(PROP_PREFIX.length()).trim();
                 int index = params.indexOf('=');
                 if (index == -1) {
-                    throw new IOException("unexpected property format - expecting name=value" + lineNumber + " : " + line);
+                    throw new IOException("unexpected property format - expecting name=eval" + lineNumber + " : " + line);
                 }
                 String propName = params.substring(0, index);
                 String propValue= LoaderConfigurationHelper.assignProperties(params.substring(index + 1));
@@ -293,7 +293,7 @@ public class LoaderConfiguration {
     /**
      * Determines if a main class is required when calling.
      *
-     * @param requireMain set to false if no main class is required
+     * @param requireMain setValue to false if no main class is required
      * @see #configure(InputStream)
      */
     public void setRequireMain(boolean requireMain) {

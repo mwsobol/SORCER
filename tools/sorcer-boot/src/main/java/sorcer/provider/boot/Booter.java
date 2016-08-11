@@ -216,7 +216,7 @@ public class Booter implements SorcerConstants {
 	}
 
 	/**
-	 * Return the local host address based on the value of a system property.
+	 * Return the local host address based on the eval of a system property.
 	 * using {@link java.net.InetAddress#getByName(String)}. If the system
 	 * property is not resolvable, return the default host address obtained from
 	 * {@link java.net.InetAddress#getLocalHost()}
@@ -428,12 +428,12 @@ public class Booter implements SorcerConstants {
 	/**
 	 * Assemble a String array suitable for use as Jini configuration options.
 	 * The String array whose first element is the configuration source and
-	 * remaining elements specify override values for entries
+	 * remaining elements specify override values for args
 	 * 
 	 * @param configFile
 	 *            The location of the configuration file, must not be null
 	 * @param overrides
-	 *            Array of elements specifying override values for entries, mat
+	 *            Array of elements specifying override values for args, mat
 	 *            be null
 	 * 
 	 * @return A String array suitable for use as a Jini configuration
@@ -504,10 +504,10 @@ public class Booter implements SorcerConstants {
 	}
 
 	/**
-	 * Gets the value of a certain property.
+	 * Gets the eval of a certain property.
 	 * 
 	 * @param property
-	 * @return the string value of that property
+	 * @return the string eval of that property
 	 */
 	public static String getProperty(String property) {
 		String p = props.getProperty(property);
@@ -518,12 +518,12 @@ public class Booter implements SorcerConstants {
 	}
 
 	/**
-	 * Gets the value for a certain property or the default value if property is
-	 * not set.
+	 * Gets the eval for a certain property or the default eval if property is
+	 * not setValue.
 	 * 
 	 * @param property
 	 * @param defaultValue
-	 * @return the string value of that property
+	 * @return the string eval of that property
 	 */
 	public static String getProperty(String property, String defaultValue) {
 		return props.getProperty(property, defaultValue);
@@ -538,26 +538,26 @@ public class Booter implements SorcerConstants {
 		String intf = System.getenv("WEBSTER_INTERFACE");
 
 		if (intf != null && intf.length() > 0) {
-			logger.debug("webster interface as the system environment value: "
+			logger.debug("webster interface as the system environment eval: "
 					+ intf);
 			return intf;
 		}
 
 		intf = System.getProperty(P_WEBSTER_INTERFACE);
 		if (intf != null && intf.length() > 0) {
-			logger.debug("webster interface as 'provider.webster.interface' property value: "
+			logger.debug("webster interface as 'provider.webster.interface' property eval: "
 					+ intf);
 			return intf;
 		}
 
 		intf = props.getProperty(P_WEBSTER_INTERFACE);
 		if (intf != null && intf.length() > 0) {
-			logger.debug("webster interface as 'provider.webster.interface' property value: "
+			logger.debug("webster interface as 'provider.webster.interface' property eval: "
 					+ intf);
 			return intf;
 		}
 		try {
-			logger.debug("webster interface  as the local host value: " + intf);
+			logger.debug("webster interface  as the local host eval: " + intf);
 			intf = Booter.getHostAddress();
 		} catch (UnknownHostException e) {
 			logger.error("Cannot determine the webster interface.");

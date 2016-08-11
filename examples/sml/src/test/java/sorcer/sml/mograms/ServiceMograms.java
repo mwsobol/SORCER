@@ -15,6 +15,7 @@ import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.Modeler;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceModeler;
+import sorcer.po.operator;
 import sorcer.service.Block;
 import sorcer.service.Context;
 import sorcer.service.Job;
@@ -49,38 +50,38 @@ public class ServiceMograms {
         Task t4 = task(
                 "t4",
                 sig("multiply", MultiplierImpl.class),
-                context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-                        outEnt("multiply/result/y")));
+                context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+                        outVal("multiply/result/y")));
 
         Task t5 = task(
                 "t5",
                 sig("add", AdderImpl.class),
-                context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-                        outEnt("add/result/y")));
+                context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+                        outVal("add/result/y")));
 
         // in connector from exertion to model
-        Context taskOutConnector = outConn(inEnt("add/x1", "j2/t4/multiply/result/y"),
-                inEnt("multiply/x1", "j2/t5/add/result/y"));
+        Context taskOutConnector = outConn(inVal("add/x1", "j2/t4/multiply/result/y"),
+                inVal("multiply/x1", "j2/t5/add/result/y"));
 
         Job j2 = job("j2", sig("exert", ServiceJobber.class),
                 t4, t5, strategy(Flow.PAR),
                 taskOutConnector);
 
         // out connector from model
-        Context modelOutConnector = outConn(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
+        Context modelOutConnector = outConn(inVal("y1", "add"), inVal("y2", "multiply"), inVal("y3", "subtract"));
 
         Model model = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
+                operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/out",
+                operator.ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                operator.ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
                         inPaths("multiply/out", "add/out")))));
 
         responseUp(model, "add", "multiply", "subtract");
-        //dependsOn(model, ent("subtract", paths("multiply", "add")));
+        //dependsOn(model, proc("subtract", paths("multiply", "add")));
         // specify how model connects to exertion
         outConn(model, modelOutConnector);
 
@@ -103,21 +104,21 @@ public class ServiceMograms {
         IncrementerImpl incrementer = new IncrementerImpl(100.0);
 
         Model model = model(
-                inEnt("by", 10.0),
-                ent(sig("increment", incrementer, result("out",
+                inVal("by", 10.0),
+                operator.ent(sig("increment", incrementer, result("out",
                         inPaths("by")))));
 
         responseUp(model, "increment", "out");
 
         Model exerted = exert(model);
         logger.info("out context: " + exerted);
-        assertTrue(value(exerted, "out").equals(110.0));
+        assertTrue(eval(exerted, "out").equals(110.0));
 
         ((SrvModel) exerted).clearOutputs();
 
         exerted = exert(model);
         logger.info("out context: " + exerted);
-        assertTrue(value(exerted, "out").equals(120.0));
+        assertTrue(eval(exerted, "out").equals(120.0));
     }
 
     @Test
@@ -126,21 +127,21 @@ public class ServiceMograms {
         IncrementerImpl incrementer = new IncrementerImpl(100.0);
 
         Model mdl = model(
-                inEnt("by", eFi(inEnt("by-10", 10.0), inEnt("by-20", 20.0))), inEnt("out", 0.0),
-                ent(sig("increment", incrementer, result("out", inPaths("by", "template")))),
-                ent("multiply", invoker("add * out", ents("add", "out"))));
+                inVal("by", eFi(inVal("by-10", 10.0), inVal("by-20", 20.0))), inVal("out", 0.0),
+                operator.ent(sig("increment", incrementer, result("out", inPaths("by", "template")))),
+                operator.ent("multiply", invoker("add * out", operator.ents("add", "out"))));
 
         responseUp(mdl, "increment", "out", "multiply", "by");
 //        Model exerted = exert(model);
 //        logger.info("out context: " + exerted);
-//        assertTrue(value(exerted, "out").equals(110.0));
+//        assertTrue(eval(exerted, "out").equals(110.0));
 
         logger.info("DEPS: " + printDeps(mdl));
 
         Block looping = block(
-                context(inEnt("template", "URL")),
+                context(inVal("template", "URL")),
                 task(sig("add", AdderImpl.class),
-                        context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("add"))),
+                        context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("add"))),
                 loop(condition(cxt -> (double) value(cxt, "out") < 1000.0),
                         mdl));
 
@@ -165,23 +166,23 @@ public class ServiceMograms {
         Task innerTask = task(
                 "task/multiply",
                 sig("multiply", MultiplierImpl.class),
-                context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+                context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
                         result("multiply/result")));
 
         Model m = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
+                operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/out",
+                operator.ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                operator.ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
                         inPaths("multiply/out", "add/out")))),
-                ent(sig("out", "average", AveragerImpl.class, result("model/response",
+                operator.ent(sig("out", "average", AveragerImpl.class, result("model/response",
                         inPaths("task/multiply", "subtract")))),
                 response("task/multiply", "subtract", "out"));
 
-        // dependsOn(m, ent("subtract", paths("multiply", "add")));
+        // dependsOn(m, proc("subtract", paths("multiply", "add")));
 
         add(m, innerTask);
 
@@ -197,26 +198,26 @@ public class ServiceMograms {
         // get responses from a service model with inner model
 
         Model innerModel = model("inner/multiply",
-                ent(sig("inner/multiply/out", "multiply", MultiplierImpl.class,
+                operator.ent(sig("inner/multiply/out", "multiply", MultiplierImpl.class,
                         result("multiply/out", inPaths("arg/x1", "arg/x2")))),
                 response("inner/multiply/out"));
 
         Model outerModel = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
+                operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/out",
+                operator.ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                operator.ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
                         inPaths("multiply/out", "add/out")))),
-                ent(sig("out", "average", AveragerImpl.class, result("model/response",
+                operator.ent(sig("out", "average", AveragerImpl.class, result("model/response",
                         inPaths("inner/multiply/out", "subtract")))),
                 response("inner/multiply", "subtract", "out"));
 
-        // dependsOn(outerModel, ent("subtract", paths("multiply", "add")));
+        // dependsOn(outerModel, proc("subtract", paths("multiply", "add")));
 
-        add(outerModel, innerModel, inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0));
+        add(outerModel, innerModel, inVal("arg/x1", 10.0), inVal("arg/x2", 50.0));
 
         Context out = response(outerModel);
         logger.info("response: " + out);
@@ -230,26 +231,26 @@ public class ServiceMograms {
         // get responses from a service model with inner model
 
         Model innerMdl = model("inner/multiply",
-                ent(sig("inner/multiply/out", "multiply", MultiplierImpl.class,
+                operator.ent(sig("inner/multiply/out", "multiply", MultiplierImpl.class,
                         result("multiply/out", inPaths("arg/x1", "arg/x2")))),
                 response("inner/multiply/out"));
 
         Model outerMdl = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
+                operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/out",
+                operator.ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                operator.ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
                         inPaths("multiply/out", "add/out")))),
-                ent(sig("out", "average", AveragerImpl.class, result("model/response",
+                operator.ent(sig("out", "average", AveragerImpl.class, result("model/response",
                         inPaths("inner/multiply/out", "subtract")))),
                 response("inner/multiply", "subtract", "out"));
 
-        // dependsOn(outerMdl, ent("subtract", paths("multiply", "add")));
+        // dependsOn(outerMdl, proc("subtract", paths("multiply", "add")));
 
-        add(outerMdl, innerMdl, inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0));
+        add(outerMdl, innerMdl, inVal("arg/x1", 10.0), inVal("arg/x2", 50.0));
 
         Task mt = task("modelTask", sig("exert", ServiceModeler.class,
                 outPaths("subtract", "out")), outerMdl);
@@ -266,26 +267,26 @@ public class ServiceMograms {
         // get responses from a service model with inner model
 
         Model innerMdl = model("inner/multiply",
-                ent(sig("inner/multiply/out", "multiply", Multiplier.class,
+                operator.ent(sig("inner/multiply/out", "multiply", Multiplier.class,
                         result("multiply/out", inPaths("arg/x1", "arg/x2")))),
                 response("inner/multiply/out"));
 
         Model outerMdl = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                ent(sig("multiply", Multiplier.class, result("multiply/out",
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
+                operator.ent(sig("multiply", Multiplier.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(space(sig("add", Adder.class, result("add/out",
+                operator.ent(space(sig("add", Adder.class, result("add/out",
                         inPaths("add/x1", "add/x2"))))),
-                ent(sig("subtract", Subtractor.class, result("subtract/out",
+                operator.ent(sig("subtract", Subtractor.class, result("subtract/out",
                         inPaths("multiply/out", "add/out")))),
-                ent(sig("out", "average", Averager.class, result("model/response",
+                operator.ent(sig("out", "average", Averager.class, result("model/response",
                         inPaths("inner/multiply/out", "subtract")))),
                 response("inner/multiply", "subtract", "out"));
 
          dependsOn(outerMdl, dep("subtract", paths("multiply", "add")));
 
-        add(outerMdl, innerMdl, inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0));
+        add(outerMdl, innerMdl, inVal("arg/x1", 10.0), inVal("arg/x2", 50.0));
 
         Task mt = task("modelTask", sig("exert", Modeler.class,
                 outPaths("subtract", "out")), outerMdl);

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- 
-Replace "provider.name" with your provider name and specify property value for "provider.class."
+Replace "provider.name" with your provider name and specify property eval for "provider.class."
 Also you might need to adjust the classpath (provider.classpath) for your provider 
 -->
 
@@ -59,9 +59,9 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
 			<arg value="${sorcer.home}/configs/startup-prv.config" />
 			
-			<!--<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader" />
-			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
-			<sysproperty key="org.rioproject.resolver.jar" value="${rio.lib}/resolver-aether-${rio.version}.jar" />-->
+			<!--<sysproperty key="java.rmi.server.RMIClassLoaderSpi" eval="org.rioproject.rmi.ResolvingLoader" />
+			<sysproperty key="java.protocol.handler.pkgs" eval="net.jini.url|sorcer.util.url|org.rioproject.url" />
+			<sysproperty key="org.rioproject.resolver.jar" eval="${rio.lib}/resolver-aether-${rio.version}.jar" />-->
 		</java>
 	</target>
 

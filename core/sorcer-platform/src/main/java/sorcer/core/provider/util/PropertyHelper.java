@@ -57,7 +57,7 @@ public class PropertyHelper {
      *
      * @throws IllegalArgumentException if any of the arguments are
      * <code>null</code> or if the delimeters argument does not
-     * contain at least 2 entries, or if a property value cannot be obtained
+     * contain at least 2 args, or if a property eval cannot be obtained
      */
     public static String expandProperties(String arg, String[] delimeters) {
         if(arg ==null)

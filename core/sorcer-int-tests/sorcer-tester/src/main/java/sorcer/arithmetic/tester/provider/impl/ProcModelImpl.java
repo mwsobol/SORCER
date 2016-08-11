@@ -1,6 +1,6 @@
 package sorcer.arithmetic.tester.provider.impl;
 
-import sorcer.core.context.model.par.ParModel;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
 
@@ -14,12 +14,12 @@ import static sorcer.po.operator.*;
  *
  */
 @SuppressWarnings("rawtypes")
-public class ParModelImpl {
+public class ProcModelImpl {
 
-	public static ParModel getParModel() throws EvaluationException,
+	public static ProcModel getProcModel() throws EvaluationException,
 			RemoteException, ContextException {
-        ParModel pm = parModel("par-model");
-        add(pm, par("x", 10.0), par("y", 20.0));
+        ProcModel pm = procModel("proc-model");
+        add(pm, proc("x", 10.0), proc("y", 20.0));
         add(pm, invoker("expr", "x + y + 30", args("x", "y")));
         return pm;
     }

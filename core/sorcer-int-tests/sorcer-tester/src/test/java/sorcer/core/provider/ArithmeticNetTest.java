@@ -22,6 +22,7 @@ import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.cataloger.CatalogerAccessor;
@@ -35,7 +36,6 @@ import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
@@ -78,10 +78,10 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	private Task getAddTask() throws Exception {
 		Context context = new PositionalContext("add");
-		context.putInValue("arg1/value", 20.0);
-		context.putInValue("arg2/value", 80.0);
+		context.putInValue("arg1/eval", 20.0);
+		context.putInValue("arg2/eval", 80.0);
 		// We know that the output is gonna be placed in this path
-		context.putOutValue("out/value", 0);
+		context.putOutValue("out/eval", 0);
 		Signature method = new NetSignature("add", Adder.class);
 		Task task = new NetTask("add", method);
 		task.setContext(context);
@@ -90,10 +90,10 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 	private Task getMultiplyTask() throws Exception {
 		Context context = new PositionalContext("multiply");
-		context.putInValue("arg1/value", 10.0);
-		context.putInValue("arg2/value", 50.0);
+		context.putInValue("arg1/eval", 10.0);
+		context.putInValue("arg2/eval", 50.0);
 		// We know that the output is gonna be placed in this path
-		context.putOutValue("out/value", 0);
+		context.putOutValue("out/eval", 0);
 		Signature method = new NetSignature("multiply", Multiplier.class);
 		Task task = new NetTask("multiply", method);
 		task.setContext(context);
@@ -103,9 +103,9 @@ public class ArithmeticNetTest implements SorcerConstants {
 	private Task getSubtractTask() throws Exception {
 		PositionalContext context = new PositionalContext("subtract");
 		// We want to stick in the result of multiply in here
-		context.putInValueAt("arg1/value", 0.0, 1);
+		context.putInValueAt("arg1/eval", 0.0, 1);
 		// We want to stick in the result of add in here
-		context.putInValueAt("arg2/value", 0.0, 2);
+		context.putInValueAt("arg2/eval", 0.0, 2);
 		Signature method = new NetSignature("subtract", Subtractor.class);
 		Task task = new NetTask("subtract",
 				"processing results from two previous tasks", method);
@@ -118,12 +118,12 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Task t5 = task(
 				"t5",
 				sig("add", Adder.class),
-				context("add", inEnt("arg, x1", 20.0),
-						inEnt("arg, x2", 80.0), result("result, y")));
+				context("add", inVal("arg, x1", 20.0),
+						inVal("arg, x2", 80.0), result("result, y")));
 		t5 = exert(t5);
 		//logger.info("t5 context: " + context(t5));
-		//logger.info("t5 value: " + get(t5));
-		assertTrue(value(t5).equals(100.0));
+		//logger.info("t5 eval: " + get(t5));
+		assertTrue(operator.eval(t5).equals(100.0));
 	}
 
 	@Test
@@ -133,7 +133,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Task task = task("add",
 				sFi("object", sig("add", Adder.class)),
 				sFi("net", sig("add", AdderImpl.class)),
-				context(inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		logger.info("task fi: " + fi(task));
@@ -144,7 +144,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		task = exert(task, fi("net"));
 		logger.info("exerted: " + context(task));
 		assertTrue(fiName(task).equals("net"));
-		assertTrue(get(task).equals(100.0));
+		assertTrue(returnValue(task).equals(100.0));
 	}
 
 	private Job getMultiFiJob() throws Exception {
@@ -152,20 +152,20 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Task t3 = task("t3",
 				sFi("object", sig("subtract", SubtractorImpl.class)),
 				sFi("net", sig("subtract", Subtractor.class)),
-				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-						outEnt("result/y")));
+				context("subtract", inVal("arg/x1"), inVal("arg/x2"),
+						outVal("result/y")));
 
 		Task t4 = task("t4",
 				sFi("object", sig("multiply", MultiplierImpl.class)),
 				sFi("net", sig("multiply", Multiplier.class)),
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+						outVal("result/y")));
 
 		Task t5 = task("t5",
 				sFi("object", sig("add", AdderImpl.class)),
 				sFi("net", sig("add", Adder.class)),
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y")));
+				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+						outVal("result/y")));
 
 		Job job = job("j1",
 				sFi("object", sig("exert", ServiceJobber.class)),
@@ -203,7 +203,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 //		// Jobbers and  all tasks are local
 //		Context out = upcontext(exert(job));
 //		logger.info("job context: " + out);
-//		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+//		assertTrue(eval(out, "j1/t3/result/y").equals(400.0));
 //
 //		//Local Jobbers with remote Multiplier nad Adder
 //		job = getMultiFiJob();
@@ -211,7 +211,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 //		out = upcontext(exert(job));
 //		logger.info("job context: " + out);
 //		logger.info("job trace: " + trace(job));
-//		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+//		assertTrue(eval(out, "j1/t3/result/y").equals(400.0));
 //
 //		// Local Jobbers, Adder, and Multiplier with remote Subtractor
 //		job = getMultiFiJob();
@@ -219,7 +219,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 //		out = upcontext(exert(job));
 //		logger.info("job context: " + out);
 //		logger.info("job trace: " + trace(job));
-//		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+//		assertTrue(eval(out, "j1/t3/result/y").equals(400.0));
 //
 //		// Composite fidelity for local execution with remote Adder
 //		job = getMultiFiJob();
@@ -227,7 +227,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 //		out = upcontext(exert(job));
 //		logger.info("job context: " + out);
 //		logger.info("job trace: " + trace(job));
-//		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+//		assertTrue(eval(out, "j1/t3/result/y").equals(400.0));
 //
 //		// Composite fidelity for j1 local, j2 remote with all
 //		// remote component services
@@ -236,7 +236,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 //		out = upcontext(exert(job));
 //		logger.info("job context: " + out);
 //		logger.info("job trace: " + trace(job));
-//		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+//		assertTrue(eval(out, "j1/t3/result/y").equals(400.0));
 //
 //		// Composite fidelity for all remote services
 //		job = getMultiFiJob();
@@ -244,7 +244,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 //		out = upcontext(exert(job));
 //		logger.info("job context: " + out);
 //		logger.info("job trace: " + trace(job));
-//		assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+//		assertTrue(eval(out, "j1/t3/result/y").equals(400.0));
 //	}
 
 	@Test
@@ -252,12 +252,12 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Task t5 = task(
 				"t5",
 				sig("average", Averager.class),
-				context("average", inEnt("arg, x1", 20.0),
-						inEnt("arg, x2", 80.0), result("result, y")));
+				context("average", inVal("arg, x1", 20.0),
+						inVal("arg, x2", 80.0), result("result, y")));
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
-		logger.info("t5 value: " + get(t5));
-		assertTrue(value(t5).equals(50.0));
+		logger.info("t5 eval: " + returnValue(t5));
+		assertTrue(operator.eval(t5).equals(50.0));
 	}
 	
 	@Test
@@ -265,13 +265,13 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Task t5 = task(
 				"t5",
 				sig("add", Adder.class),
-				context("add", inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0), outEnt("result/y")),
+				context("add", inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0), outVal("result/y")),
 				strategy(Access.PULL, Wait.YES));
 
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
-		logger.info("t5 value: " + get(t5, "result/y"));
+		logger.info("t5 eval: " + get(t5, "result/y"));
 		assertTrue(get(t5, "result/y").equals(100.0));
 	}
 
@@ -282,7 +282,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
 		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
+		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 	}
 	
@@ -294,7 +294,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
 		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
+		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 	}
 	
@@ -305,7 +305,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
 		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
+		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 	}
 	
@@ -316,7 +316,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
 		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 value @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
+		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 	}
 
@@ -324,8 +324,8 @@ public class ArithmeticNetTest implements SorcerConstants {
 	public void localServiceShellTest() throws Exception {
 		Mogram f5 = task("f5",
 				sig("add", AdderImpl.class),
-				context("add", inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
+				context("add", inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0), outVal("result/y", null)),
 				strategy(Monitor.NO, Wait.YES));
 
 		ServiceShell shell = (ServiceShell) provider(sig(ServiceShell.class));
@@ -339,8 +339,8 @@ public class ArithmeticNetTest implements SorcerConstants {
 	public void remoteServiceShellTest() throws Exception {
 		Mogram f5 = task("f5",
 				sig("add", Adder.class),
-				context("add", inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0), outEnt("result/y", null)),
+				context("add", inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0), outVal("result/y", null)),
 				strategy(Monitor.NO, Wait.YES));
 
 		Exerter shell = (Exerter) provider(sig(RemoteServiceShell.class));
@@ -351,50 +351,50 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 	@Test
 	public void arithmeticEolExerter() throws Exception {
-		// get the current value of the exertlet
+		// get the current eval of the exertlet
 		Task task = task("eval", sig("getValue", Evaluation.class, prvName("Arithmetic Exerter")));
-		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
-		assertEquals(value(task, "j1/t3/result/y"), 400.0);
+		logger.info("j1/t3/result/y: " + operator.eval(task, "j1/t3/result/y"));
+		assertEquals(operator.eval(task, "j1/t3/result/y"), 400.0);
 	
 		// change both the contexts completely
-		Context multiplyContext = context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 70.0));
-		Context addContext = context("add", inEnt("arg/x1", 90.0), inEnt("arg/x2", 110.0));
+		Context multiplyContext = context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 70.0));
+		Context addContext = context("add", inVal("arg/x1", 90.0), inVal("arg/x2", 110.0));
 		Context invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
 		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
-		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
-		assertEquals(value(task, "j1/t3/result/y"), 500.0);
+		logger.info("j1/t3/result/y: " + operator.eval(task, "j1/t3/result/y"));
+		assertEquals(operator.eval(task, "j1/t3/result/y"), 500.0);
 
 		// change partially the contexts
-		multiplyContext = context("multiply", inEnt("arg/x1", 20.0));
-		addContext = context("add", inEnt("arg/x1", 80.0));
+		multiplyContext = context("multiply", inVal("arg/x1", 20.0));
+		addContext = context("add", inVal("arg/x1", 80.0));
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
 		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
-//		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
-		assertEquals(value(task, "j1/t3/result/y"), 1210.0);
+//		logger.info("j1/t3/result/y: " + eval(task, "j1/t3/result/y"));
+		assertEquals(operator.eval(task, "j1/t3/result/y"), 1210.0);
 
 		// reverse the state of the exertleter
-		multiplyContext = context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0));
-		addContext = context("add", inEnt("arg/x1", 80.0), inEnt("arg/x2", 20.0));
+		multiplyContext = context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0));
+		addContext = context("add", inVal("arg/x1", 80.0), inVal("arg/x2", 20.0));
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
 		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
-//		logger.info("j1/t3/result/y: " + value(task, "j1/t3/result/y"));
-		assertEquals(value(task, "j1/t3/result/y"), 400.0);
+//		logger.info("j1/t3/result/y: " + eval(task, "j1/t3/result/y"));
+		assertEquals(operator.eval(task, "j1/t3/result/y"), 400.0);
 	}
 
 	@Test
 	public void arithmeticApiExerter() throws Exception {
-		// get the current value of the exertlet
+		// get the current eval of the exertlet
 		NetSignature signature = new NetSignature("getValue", Evaluation.class, 
 				Sorcer.getActualName("Arithmetic Exerter"));
 		Task task = new NetTask("eval", signature);
 		Task result = task.exert();
-		// no return path set so we get context (defualt behavior)
+		// no return path setValue so we get context (defualt behavior)
 		Context out = (Context) result.getReturnValue();
 		logger.info("result: " + out);
 		assertEquals(out.getValue("j1/t3/result/y"), 400.0);
@@ -471,16 +471,16 @@ public class ArithmeticNetTest implements SorcerConstants {
 	// two level job composition with PULL and PAR execution
 	private static Job createJob(Flow flow, Access access) throws Exception {
 		Task t3 = task("t3", sig("subtract", Subtractor.class),
-				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-						outEnt("result/y")));
+				context("subtract", inVal("arg/x1"), inVal("arg/x2"),
+						outVal("result/y")));
 
 		Task t4 = task("t4", sig("multiply", Multiplier.class),
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+						outVal("result/y")));
 
 		Task t5 = task("t5", sig("add", Adder.class),
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y")));
+				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+						outVal("result/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		//Job job = job("j1",
@@ -506,7 +506,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		assertTrue(get(result, "arg/x2").equals(80.0));
 	
 		cxtt = task("appendContext", sig("appendContext", Contexter.class, prvName("Add Contexter")),
-				context("add", inEnt("arg/x1", 200.0), inEnt("arg/x2", 800.0)));
+				context("add", inVal("arg/x1", 200.0), inVal("arg/x2", 800.0)));
 
 		result = context(exert(cxtt));
 //		logger.info("contexter context 2: " + result);
@@ -522,7 +522,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		
 		// reset the contexter
 		cxtt = task("appendContext", sig("appendContext", Contexter.class, prvName("Add Contexter")),
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
+				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		result = context(exert(cxtt));
 //		logger.info("contexter context 4: " + result);
@@ -533,7 +533,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	public void netContexterTaskTest() throws Exception {
 		Task t5 = task("t5", sig("add", Adder.class),
 					sig("getContext", Contexter.class, prvName("Add Contexter"), Signature.APD),
-					context("add", inEnt("arg/x1"), inEnt("arg/x2"),
+					context("add", inVal("arg/x1"), inVal("arg/x2"),
 						result("result/y")));
 
 		Context result =  context(exert(t5));
@@ -553,8 +553,8 @@ public class ArithmeticNetTest implements SorcerConstants {
 						configuration("bin/examples/ex6/configs/multiplier-prv.config"),
 						maintain(1),
 						idle("3h"))),
-				context("multiply", inEnt("arg/x1", 10.0d),
-						inEnt("arg/x2", 50.0d), outEnt("result/y1")));
+				context("multiply", inVal("arg/x1", 10.0d),
+						inVal("arg/x2", 50.0d), outVal("result/y1")));
 
 		Task f5 = task(
 				"f5",
@@ -563,8 +563,8 @@ public class ArithmeticNetTest implements SorcerConstants {
 						codebase("arithmetic-dl.jar"),
 						configuration("bin/examples/ex6/configs/adder-prv.config"),
 						idle(60*3))),
-				context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
-						outEnt("result/y2")));
+				context("add", inVal("arg/x3", 20.0d), inVal("arg/x4", 80.0d),
+						outVal("result/y2")));
 
 		Task f3 = task(
 				"f3",
@@ -572,8 +572,8 @@ public class ArithmeticNetTest implements SorcerConstants {
 					deploy(classpath("arithmetic-beans.jar"),
 						codebase("arithmetic-dl.jar"),
 						configuration("bin/examples/ex6/configs/subtractor-prv.config"))),
-				context("subtract", inEnt("arg/x5"),
-						inEnt("arg/x6"), outEnt("result/y3")));
+				context("subtract", inVal("arg/x5"),
+						inVal("arg/x6"), outVal("result/y3")));
 
 		// job("f1", job("f2", f4, f5), f3,
 		// job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
@@ -620,7 +620,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	}
 
 	public static Context createContext() throws Exception {
-		return context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0));
+		return context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0));
 	}
 
 	public static Exertion createJob() throws Exception {

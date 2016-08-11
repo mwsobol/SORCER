@@ -7,6 +7,7 @@ import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.DividerImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
+import sorcer.po.operator;
 import sorcer.service.Context;
 import sorcer.service.modeling.Model;
 
@@ -27,16 +28,16 @@ public class SrvModelAutoDepsTest {
     @Test
     public void sigLocalModel() throws Exception {
         Model m = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                inEnt("addfinal/x1", 1000.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
+                inVal("addfinal/x1", 1000.0),
+                operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/out",
+                operator.ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("model/response",
+                operator.ent(sig("subtract", SubtractorImpl.class, result("model/response",
                         inPaths("multiply/out", "add/out")))),
-                ent(sig("divide", DividerImpl.class, result("divider/out",
+                operator.ent(sig("divide", DividerImpl.class, result("divider/out",
                         inPaths("model/response", "multiply/x1")))),
                 response("divide"));
 
@@ -51,16 +52,16 @@ public class SrvModelAutoDepsTest {
     @Test
     public void sigLocalComplexModel() throws Exception {
         Model m = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-                inEnt("addfinal/x1", 1000.0), inEnt("divider/out"),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
+                inVal("addfinal/x1", 1000.0), inVal("divider/out"),
+                operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/out",
+                operator.ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("model/response",
+                operator.ent(sig("subtract", SubtractorImpl.class, result("model/response",
                         inPaths("multiply/out", "add/out")))),
-                ent(sig("divide", DividerImpl.class, result("divider/out",
+                operator.ent(sig("divide", DividerImpl.class, result("divider/out",
                         inPaths("model/response", "multiply/x1")))),
                 srv("addfinal", sig("add", AdderImpl.class, result("addfinal/out",
                         inPaths("addfinal/x1", "divider/out")))),

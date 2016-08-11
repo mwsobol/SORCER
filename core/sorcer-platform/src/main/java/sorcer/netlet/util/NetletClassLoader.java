@@ -50,8 +50,8 @@ public class NetletClassLoader extends URIClassLoader implements ClassAnnotation
 
     /**
      * Constructs a new ServiceClassLoader for the specified URLs having the
-     * given parent. The constructor takes two sets of URLs. The first set is
-     * where the class loader loads classes from, the second set is what it
+     * given parent. The constructor takes two sets of URLs. The first setValue is
+     * where the class loader loads classes from, the second setValue is what it
      * returns when getURLs() is called.
      *
      * @param searchPath Array of URIs to search for classes
@@ -256,7 +256,7 @@ public class NetletClassLoader extends URIClassLoader implements ClassAnnotation
         /**
          * Utility method that converts a <code>URL[]</code> into a corresponding,
          * space-separated string with the same array elements. Note that if the
-         * array has zero elements, the return value is the empty string.
+         * array has zero elements, the return eval is the empty string.
          *
          * @param urls An array of URLs that are to be converted
          * @return A space-separated string of each URL provided
@@ -282,7 +282,7 @@ public class NetletClassLoader extends URIClassLoader implements ClassAnnotation
     /**
      * Utility method that converts a <code>URI[]</code> into a corresponding,
      * space-separated string with the same array elements. Note that if the
-     * array has zero elements, the return value is the empty string.
+     * array has zero elements, the return eval is the empty string.
      *
      * @param uris An array of URIs that are to be converted
      * @return A space-separated string of each URI provided

@@ -117,7 +117,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	private String portalURL;
 
-	private ServiceDeployment deployment;
+	protected ServiceDeployment deployment;
 
 	public ServiceSignature() {
 		providerName = new ServiceName(ANY);
@@ -194,6 +194,10 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	public void setServiceType(Class<?> serviceType) {
 		this.serviceType.providerType = serviceType;
+	}
+
+	public void setServiceType(ServiceType serviceType) {
+		this.serviceType = serviceType;
 	}
 
 	public String getSelector() {
@@ -668,4 +672,5 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
 	    throw new MogramException("Signature service exec should be implementd in subclasses");
 	}
+
 }

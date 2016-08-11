@@ -43,7 +43,7 @@ import java.util.StringTokenizer;
  * main method of the class initializes system properties. Then it parses the 
  * arguments passed to method if no arguments are passed to the method it 
  * terminates the Java Virtual Machine with an exit code of 1. Else, the first 
- * argument is set as the runnerType. Then the code attempts to create a
+ * argument is setValue as the runnerType. Then the code attempts to create a
  * new instance of the requestor as service runner if it fails the Virtual 
  * Machine exits with a code of 2. Next the code determines if an internal 
  * Webster is running. If one is running it attempts to get the webster 
@@ -200,7 +200,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		String hn = System.getenv("IGRID_WEBSTER_INTERFACE");
 
 		if (hn != null && hn.length() > 0) {
-			logger.debug("webster hostname as the system environment value: "
+			logger.debug("webster hostname as the system environment eval: "
 					+ hn);
 			return hn;
 		}
@@ -208,7 +208,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		hn = System.getProperty(R_WEBSTER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
 			logger
-					.debug("webster hostname as '" + R_WEBSTER_INTERFACE + "' system property value: "
+					.debug("webster hostname as '" + R_WEBSTER_INTERFACE + "' system property eval: "
 							+ hn);
 			return hn;
 		}
@@ -216,14 +216,14 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		hn = props.getProperty(R_WEBSTER_INTERFACE);
 		if (hn != null && hn.length() > 0) {
 			logger
-					.debug("webster hostname as '" + R_WEBSTER_INTERFACE + "' provider property value: "
+					.debug("webster hostname as '" + R_WEBSTER_INTERFACE + "' provider property eval: "
 							+ hn);
 			return hn;
 		}
 
 		try {
 			hn = Sorcer.getHostName();
-			logger.debug("webster hostname as the local host value: " + hn);
+			logger.debug("webster hostname as the local host eval: " + hn);
 		} catch (UnknownHostException e) {
 			logger.error("Cannot determine the webster hostname.");
 		}

@@ -1,7 +1,6 @@
-package sorcer.core.context.model.par;
+package sorcer.core.context.model.proc;
 
 import groovy.lang.Closure;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -12,6 +11,9 @@ import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Agent;
+import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
@@ -33,65 +35,63 @@ import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.responseUp;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.map;
 import static sorcer.po.operator.put;
-import static sorcer.po.operator.set;
+import static sorcer.mo.operator.*;
 
 
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
-public class ParModelTest {
-	private final static Logger logger = LoggerFactory.getLogger(ParModelTest.class);
+public class ProcModelTest {
+	private final static Logger logger = LoggerFactory.getLogger(ProcModelTest.class);
 	public static String sorcerVersion = System.getProperty("sorcer.version");
 
 	@Test
-	public void adderParTest() throws EvaluationException, RemoteException,
+	public void adderProcTest() throws EvaluationException, RemoteException,
 			ContextException {
-		ParModel pm = parModel("par-model");
-		add(pm, par("x", 10.0), par("y", 20.0));
+		ProcModel pm = procModel("proc-model");
+		add(pm, ent("x", 10.0), ent("y", 20.0));
 		add(pm, invoker("add", "x + y", args("x", "y")));
 
-//		logger.info("adder value: " + value(pm, "add"));
+//		logger.info("adder eval: " + eval(pm, "add"));
 		assertEquals(value(pm, "add"), 30.0);
-		set(pm, "x", 20.0);
-//		assertEquals(value(pm, "add"), 40.0);
+		setValue(pm, "x", 20.0);
+//		assertEquals(eval(pm, "add"), 40.0);
 	}
 
 	@Test
 	public void contextInvoker() throws Exception {
-		ParModel pm = new ParModel("par-model");
+		ProcModel pm = new ProcModel("proc-model");
 		add(pm, ent("x", 10.0));
 		add(pm, ent("y", 20.0));
-		add(pm, ent("add", invoker("x + y", pars("x", "y"))));
+		add(pm, ent("add", invoker("x + y", args("x", "y"))));
 
 		assertEquals(pm.getValue("x"), 10.0);
 		assertEquals(pm.getValue("y"), 20.0);
 		assertEquals(pm.getValue("add"), 30.0);
 
 		responseUp(pm, "add");
-//		logger.info("pm context value: " + pm.getValue());
+//		logger.info("pm context eval: " + pm.getValue());
 		assertEquals(pm.getValue(), 30.0);
 
 		pm.putValue("x", 100.0);
 		pm.putValue("y", 200.0);
-//		logger.info("add value: " + pm.getValue("add"));
+//		logger.info("add eval: " + pm.getValue("add"));
 		assertEquals(pm.getValue("add"), 300.0);
 
-		assertEquals(pm.invoke(context(inEnt("x", 200.0), inEnt("y", 300.0))), 500.0);
+		assertEquals(pm.invoke(context(inVal("x", 200.0), inVal("y", 300.0))), 500.0);
 	}
 	
 
 	@Test
 	public void parModelTest() throws RemoteException, ContextException {
-		Par x = new Par("x", 10.0);
-		Par y = new Par("y", 20.0);
-		Par add = new Par("add", invoker("x + y", pars("x", "y")));
+		Proc x = new Proc("x", 10.0);
+		Proc y = new Proc("y", 20.0);
+		Proc add = new Proc("add", invoker("x + y", args("x", "y")));
 
-		ParModel pm = new ParModel("arithmetic-model");
+		ProcModel pm = new ProcModel("arithmetic-model");
 		pm.add(x, y, add);
 
 		assertEquals(x.getValue(), 10.0);
@@ -100,13 +100,13 @@ public class ParModelTest {
 		assertEquals(y.getValue(), 20.0);
 		assertEquals(pm.getValue("y"), 20.0);
 
-		logger.info("add context value: " + pm.getValue("add"));
-		logger.info("add par value: " + add.getValue());
+		logger.info("add context eval: " + pm.getValue("add"));
+		logger.info("add proc eval: " + add.getValue());
 		assertEquals(add.getValue(), 30.0);
 		assertEquals(pm.getValue("add"), 30.0);
 
 		responseUp(pm, "add");
-		logger.info("pm context value: " + pm.invoke(null));
+		logger.info("pm context eval: " + pm.invoke(null));
 		assertEquals(pm.invoke(null), 30.0);
 
 		x = pm.getPar("x");
@@ -120,8 +120,8 @@ public class ParModelTest {
 	@Test
 	public void dslParModelTest() throws RemoteException,
 			ContextException {
-		ParModel pm = parModel(par("x", 10.0), par("y", 20.0),
-				par("add", invoker("x + y", pars("x", "y"))));
+		ProcModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
+				proc("add", invoker("x + y", args("x", "y"))));
 
 		responseUp(pm, "add");
 
@@ -129,21 +129,21 @@ public class ParModelTest {
 		assertEquals(value(pm, "y"), 20.0);
 		assertEquals(value(pm, "add"), 30.0);
 
-		assertEquals(value(pm), 30.0);
+		assertEquals(eval(pm), 30.0);
 	}
 	
 	@Test
 	public void mutateParModeltTest() throws RemoteException,
 			ContextException { 
-		ParModel pm = parModel(par("x", 10.0), par("y", 20.0),
-				par("add", invoker("x + y", pars("x", "y"))));
+		ProcModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
+				proc("add", invoker("x + y", args("x", "y"))));
 
 		responseUp(pm, "add");
 
-		Par x = par(pm, "x");
-		logger.info("par x: " + x);
-		set(x, 20.0);
-		logger.info("val x: " + value(x));
+		Proc x = proc(pm, "x");
+		logger.info("proc x: " + x);
+		setValue(x, 20.0);
+		logger.info("val x: " + eval(x));
 		logger.info("val x: " + value(pm, "x"));
 
 		put(pm, "y", 40.0);
@@ -153,41 +153,41 @@ public class ParModelTest {
 		assertEquals(value(pm, "add"), 60.0);
 
 		// get modeling taget
-		assertEquals(value(pm), 60.0);
+		assertEquals(eval(pm), 60.0);
 
-		add(pm, par("x", 10.0), par("y", 20.0));
+		add(pm, proc("x", 10.0), proc("y", 20.0));
 		assertEquals(value(pm, "x"), 10.0);
 		assertEquals(value(pm, "y"), 20.0);
 
-		logger.info("par model2:" + pm);
+		logger.info("proc model2:" + pm);
 		assertEquals(value(pm, "add"), 30.0);
 
 		value(pm, "add");
-		assertEquals(value(pm), 30.0);
+		assertEquals(eval(pm), 30.0);
 
 		// with new arguments, closure
-		assertTrue(value(pm, par("x", 20.0), par("y", 30.0)).equals(50.0));
+		assertTrue(value(pm, proc("x", 20.0), proc("y", 30.0)).equals(50.0));
 
-		add(pm, par("z", invoker("(x * y) + add", pars("x", "y", "add"))));
-		logger.info("z value: " + value(pm, "z"));
+		add(pm, proc("z", invoker("(x * y) + add", args("x", "y", "add"))));
+		logger.info("z eval: " + value(pm, "z"));
 		assertEquals(value(pm, "z"), 650.0);
 	}
 		
 	@Test
 	public void contextParsTest() throws RemoteException,
 			ContextException {
-		Context cxt = context(ent("url", "myUrl"), ent("design/in", 25.0));
+		Context cxt = context(proc("url", "myUrl"), proc("design/in", 25.0));
 
-		// mapping parameters to cxt, m1 and m2 are par aliases 
-		Par p1 = map(par("p1", "design/in"), cxt);
-		assertTrue(value(p1).equals(25.0));
-		set(p1, 30.0);
-		assertTrue(value(p1).equals(30.0));
+		// mapping parameters to cxt, m1 and m2 are proc aliases
+		Proc p1 = as(proc("p1", "design/in"), cxt);
+		assertTrue(eval(p1).equals(25.0));
+		setValue(p1, 30.0);
+		assertTrue(eval(p1).equals(30.0));
 		
-		Par p2 = map(par("p2", "url"), cxt);
-		assertEquals(value(p2), "myUrl");
-		set(p2, "newUrl");
-		assertEquals(value(p2), "newUrl");
+		Proc p2 = as(proc("p2", "url"), cxt);
+		assertEquals(eval(p2), "myUrl");
+		setValue(p2, "newUrl");
+		assertEquals(eval(p2), "newUrl");
 	}
 	
 	@Test
@@ -200,7 +200,7 @@ public class ParModelTest {
 		assertEquals(value(c4, "arg/x1"), 10.0);
 		assertEquals(value(c4, "arg/x2"), 50.0);
 
-		assertTrue(asis(c4, "arg/x1") instanceof Par);
+		assertTrue(asis(c4, "arg/x1") instanceof Proc);
 		assertEquals(asis(c4, "arg/x2"), 50.0);
 
 		assertTrue(storeArg(c4, "arg/x1") instanceof URL);
@@ -212,23 +212,23 @@ public class ParModelTest {
 		assertEquals(value(c4, "arg/x1"), 110.0);
 		assertEquals(value(c4, "arg/x2"), 150.0);
 
-		assertTrue(asis(c4, "arg/x1") instanceof Par);
-		assertFalse(asis(c4, "arg/x2") instanceof Par);
+		assertTrue(asis(c4, "arg/x1") instanceof Proc);
+		assertFalse(asis(c4, "arg/x2") instanceof Proc);
 	}
 	
 	@Test
-	public void persistableEolParModel() throws ContextException, RemoteException {
+	public void dbBasedModel() throws ContextException, RemoteException {
 		Context c4 = context("multiply",
-				dbEnt("arg/x0", 1.0), dbInEnt("arg/x1", 10.0),
-				dbOutEnt("arg/x2", 50.0), outEnt("result/y"));
+				dbVal("arg/x0", 1.0), dbInVal("arg/x1", 10.0),
+				dbOutVal("arg/x2", 50.0), outVal("result/y"));
 		
 		assertEquals(value(c4, "arg/x0"), 1.0);
 		assertEquals(value(c4, "arg/x1"), 10.0);
 		assertEquals(value(c4, "arg/x2"), 50.0);
 		
-		assertTrue(asis(c4, "arg/x0") instanceof Par);
-		assertTrue(asis(c4, "arg/x1") instanceof Par);
-		assertTrue(asis(c4, "arg/x2") instanceof Par);
+		assertTrue(asis(c4, "arg/x0") instanceof Proc);
+		assertTrue(asis(c4, "arg/x1") instanceof Proc);
+		assertTrue(asis(c4, "arg/x2") instanceof Proc);
 		
 		logger.info("arg/x0 URL: " + storeArg(c4, "arg/x0"));
 		logger.info("arg/x1 URL: " + storeArg(c4, "arg/x1"));
@@ -245,79 +245,79 @@ public class ParModelTest {
 		assertEquals(value(c4, "arg/x1"), 110.0);
 		assertEquals(value(c4, "arg/x2"), 150.0);
 
-		assertTrue(asis(c4, "arg/x0") instanceof Par);
-		assertTrue(asis(c4, "arg/x1") instanceof Par);
-		assertTrue(asis(c4, "arg/x2") instanceof Par);
+		assertTrue(asis(c4, "arg/x0") instanceof Proc);
+		assertTrue(asis(c4, "arg/x1") instanceof Proc);
+		assertTrue(asis(c4, "arg/x2") instanceof Proc);
 	}
 	
 	@Test
-	public void persistableParsTest() throws SignatureException, ExertionException, ContextException, IOException {	
-		// persistable just indicates that parameter is set given value that can be persist,
-		// for example when value(par) is invoked
-		Par dbp1 = persistent(par("design/in", 25.0));
-		Par dbp2 = dbPar("url", "myUrl1");
+	public void persistableDbTest() throws SignatureException, ExertionException, ContextException, IOException {
+		// persistable just indicates that parameter is setValue given eval that can be persist,
+		// for example when eval(proc) is invoked
+		Proc dbp1 = persistent(proc("design/in", 25.0));
+		Proc dbp2 = dbPar("url", "myUrl1");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 		
-		assertTrue(value(dbp1).equals(25.0));
-		assertTrue(value(dbp2).equals("myUrl1"));
+		assertTrue(eval(dbp1).equals(25.0));
+		assertTrue(eval(dbp2).equals("myUrl1"));
 
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 
-		// store par args in the data store
-		URL url1 = storeArg(par("design/in", 30.0));
-		URL url2 = storeArg(par("url", "myUrl2"));
+		// store proc args in the data store
+		URL url1 = storeArg(proc("design/in", 30.0));
+		URL url2 = storeArg(proc("url", "myUrl2"));
 		
 		assertEquals(content(url1), 30.0);
 		assertEquals(content(url2), "myUrl2");
 	}
 
 	@Test
-	public void mappableParPersistence() throws Exception {
+	public void mappableDbPersistence() throws Exception {
 
-		Context cxt = context(ent("url", "htt://sorcersoft.org"), ent("design/in", 25.0));
+		Context cxt = context(val("url", "htt://sorcersoft.org"), val("design/in", 25.0));
 
-		// persistent par
-		Par dbIn = persistent(map(par("dbIn", "design/in"), cxt));
-		assertTrue(value(dbIn).equals(25.0));  	// is persisted
+		// persistent proc
+		Proc dbIn = persistent(as(proc("dbIn", "design/in"), cxt));
+		assertTrue(eval(dbIn).equals(25.0));  	// is persisted
 		assertTrue(dbIn.asis().equals("design/in"));
-		assertTrue(value((Evaluation) asis(cxt, "design/in")).equals(25.0));
+		assertTrue(eval((Evaluation) asis(cxt, "design/in")).equals(25.0));
 		assertTrue(value(cxt, "design/in").equals(25.0));
 
-		set(dbIn, 30.0); 	// is persisted
-		assertTrue(value(dbIn).equals(30.0));
+		setValue(dbIn, 30.0); 	// is persisted
+		assertTrue(eval(dbIn).equals(30.0));
 
 		// associated context is updated accordingly
 		assertTrue(value(cxt, "design/in").equals(30.0));
-		assertTrue(asis(cxt, "design/in") instanceof Par);
-		assertTrue(asis((Par)asis(cxt, "design/in")) instanceof URL);
+		assertTrue(asis(cxt, "design/in") instanceof Proc);
+		assertTrue(asis((Proc)asis(cxt, "design/in")) instanceof URL);
 
-		// not persistent par
-		Par sorcer = map(par("sorcer", "url"), cxt);
-		assertEquals(value(sorcer), "htt://sorcersoft.org");
+		// not persistent proc
+		Proc sorcer = as(proc("sorcer", "url"), cxt);
+		assertEquals(eval(sorcer), "htt://sorcersoft.org");
 
-		set(sorcer, "htt://sorcersoft.org/sobol");
-		assertTrue(value(sorcer).equals("htt://sorcersoft.org/sobol"));
+		setValue(sorcer, "htt://sorcersoft.org/sobol");
+		assertTrue(eval(sorcer).equals("htt://sorcersoft.org/sobol"));
 	}
 
 	@Test
-	public void aliasedParsTest() throws ContextException, RemoteException {
-		Context cxt = context(ent("design/in1", 25.0), ent("design/in2", 35.0));
+	public void aliasedProcTest() throws ContextException, RemoteException {
+		Context cxt = context(proc("design/in1", 25.0), proc("design/in2", 35.0));
 		
-		Par x1 = par(cxt, "x1", "design/in1");
-		Par x2 = map(par("x2", "design/in2"), cxt);
+		Proc x1 = proc(cxt, "x1", "design/in1");
+		Proc x2 = as(proc("x2", "design/in2"), cxt);
 
-		assertTrue(value(x1).equals(25.0));
-		set(x1, 45.0);
-		assertTrue(value(x1).equals(45.0));
+		assertTrue(eval(x1).equals(25.0));
+		setValue(x1, 45.0);
+		assertTrue(eval(x1).equals(45.0));
 
-		assertTrue(value(x2).equals(35.0));
-		set(x2, 55.0);
-		assertTrue(value(x2).equals(55.0));
+		assertTrue(eval(x2).equals(35.0));
+		setValue(x2, 55.0);
+		assertTrue(eval(x2).equals(55.0));
 		
-		ParModel pc = parModel(x1, x2);
+		ProcModel pc = procModel(x1, x2);
 		assertTrue(value(pc, "x1").equals(45.0));
 		assertTrue(value(pc, "x2").equals(55.0));
 	}
@@ -325,15 +325,15 @@ public class ParModelTest {
 	@Test
 	public void exertionParsTest() throws Exception {
 
-		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
-				outEnt("result/y"));
+		Context c4 = context("multiply", inVal("arg/x1"), inVal("arg/x2"),
+				outVal("result/y"));
 				
-		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-				outEnt("result/y"));
+		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+				outVal("result/y"));
 		
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2"),
-						outEnt("result/y")));
+				context("subtract", inVal("arg/x1", null), inVal("arg/x2"),
+						outVal("result/y")));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 
@@ -346,47 +346,47 @@ public class ParModelTest {
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 		
 		
-		// context and job parameters
-		Par x1p = map(par("x1p", "arg/x1"), c4);
-		Par x2p = map(par("x2p", "arg/x2"), c4);
-		Par j1p = map(par("j1p", "j1/t3/result/y"), j1);
+		// context and job procedures
+		Proc x1p = as(proc("x1p", "arg/x1"), c4);
+		Proc x2p = as(proc("x2p", "arg/x2"), c4);
+		Proc j1p = as(proc("j1p", "j1/t3/result/y"), j1);
 		
 		// setting context parameters in a job
-		set(x1p, 10.0);
-		set(x2p, 50.0);
+		setValue(x1p, 10.0);
+		setValue(x2p, 50.0);
 		
-		// update par references
+		// update proc references
 		j1 = exert(j1);
 		c4 = taskContext("j1/t4", j1);
-		logger.info("j1 value: " + upcontext(j1));
-		logger.info("j1p value: " + value(j1p));
+		logger.info("j1 eval: " + upcontext(j1));
+		logger.info("j1p eval: " + eval(j1p));
 		
-		// get job parameter value
-		assertTrue(value(j1p).equals(400.0));
+		// get job parameter eval
+		assertTrue(eval(j1p).equals(400.0));
 		
-		// set job parameter value
-		set(j1p, 1000.0);
-		assertTrue(value(j1p).equals(1000.0));
+		// setValue job parameter eval
+		setValue(j1p, 1000.0);
+		assertTrue(eval(j1p).equals(1000.0));
 
-		// par model with mograms
-		ParModel pc = parModel(x1p, x2p, j1p);
+		// proc model with mograms
+		ProcModel pc = procModel(x1p, x2p, j1p);
 		exert(j1);
-		// j1p is the alias to context value of j1 at j1/t3/result/y
+		// j1p is the alias to context eval of j1 at j1/t3/result/y
 		assertTrue(value(pc, "j1p").equals(400.0));
 	}
 	
 	@Test
 	public void associatingContextsTest() throws Exception {
 		
-		Context c4 = context("multiply", inEnt("arg/x1"), inEnt("arg/x2"),
-				outEnt("result/y"));
+		Context c4 = context("multiply", inVal("arg/x1"), inVal("arg/x2"),
+				outVal("result/y"));
 				
-		Context c5 = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-				outEnt("result/y"));
+		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+				outVal("result/y"));
 		
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				context("subtract", inEnt("arg/x1", null), inEnt("arg/x2", null),
-						outEnt("result/y", null)));
+				context("subtract", inVal("arg/x1", null), inVal("arg/x2", null),
+						outVal("result/y", null)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 
@@ -399,29 +399,29 @@ public class ParModelTest {
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 		
 		
-		Par c4x1p = map(par("c4x1p", "arg/x1"), c4);
-		Par c4x2p = map(par("c4x2p", "arg/x2"), c4);
+		Proc c4x1p = as(proc("c4x1p", "arg/x1"), c4);
+		Proc c4x2p = as(proc("c4x2p", "arg/x2"), c4);
 		// job j1 parameter j1/t3/result/y is used in the context of task t6
-		Par j1p = par("j1p", "j1/t3/result/y", j1);
-		Par t4x1p = par("t4x1p", "j1/j2/t4/arg/x1", j1);
+		Proc j1p = proc("j1p", "j1/t3/result/y", j1);
+		Proc t4x1p = proc("t4x1p", "j1/j2/t4/arg/x1", j1);
 		
 		// setting context parameters in a job
-		set(c4x1p, 10.0);
-		set(c4x2p, 50.0);
+		setValue(c4x1p, 10.0);
+		setValue(c4x2p, 50.0);
 				
-		// update par references
+		// update proc references
 		j1 = exert(j1);
 		c4 = taskContext("j1/t4", j1);
 		
-		// get job parameter value
-		assertTrue(value(j1p).equals(400.0));
+		// get job parameter eval
+		assertTrue(eval(j1p).equals(400.0));
 		
 		logger.info("j1 job context: " + upcontext(j1));
 		
 		
 		Task t6 = task("t6", sig("add", AdderImpl.class),
-				context("add", inEnt("arg/x1", t4x1p), inEnt("arg/x2", j1p),
-						outEnt("result/y")));
+				context("add", inVal("arg/x1", t4x1p), inVal("arg/x2", j1p),
+						outVal("result/y")));
 
 		Task task = exert(t6);
 //		logger.info("t6 context: " + context(task));
@@ -430,9 +430,9 @@ public class ParModelTest {
 
 	@Test
 	public void conditionalClosures() throws RemoteException, ContextException {
-		ParModel pm = new ParModel("par-model");
+		ProcModel pm = new ProcModel("proc-model");
 		pm.putValue(Condition._closure_, new ServiceInvoker(pm));
-		// free variables, no pars for the invoker
+		// free variables, no args for the invoker
 		((ServiceInvoker) pm.get(Condition._closure_))
 				.setEvaluator(invoker("{ double x, double y -> x > y }"));
 
@@ -468,62 +468,37 @@ public class ParModelTest {
 	}
 
 	@Test
-	public void conditionalParModel() throws RemoteException, ContextException {
-		final ParModel pm = new ParModel("par-model");
+	public void closingModelConditions() throws RemoteException, ContextException {
+		final ProcModel pm = new ProcModel("proc-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
-		pm.putValue("condition", new ServiceInvoker(pm));
-		((ServiceInvoker)pm.get("condition"))
-			.setPars(pars("x", "y"))
-			.setEvaluator(invoker("x > y", pars("x", "y")));
 		
-		Condition flag = new Condition(pm, "condition");
+		Condition flag = new Condition(pm, "{ x, y -> x > y }", "x", "y");
 		
 		assertEquals(pm.getValue("x"), 10.0);
 		assertEquals(pm.getValue("y"), 20.0);
-		logger.info("condition value: " + flag.isTrue());
+		logger.info("condition eval: " + flag.isTrue());
 		assertEquals(flag.isTrue(), false);
 		
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		logger.info("condition value: " + flag.isTrue());
+		logger.info("condition eval: " + flag.isTrue());
 		assertEquals(flag.isTrue(), true);
 	}
 
-	@Test
-	public void closingParModelConditions() throws RemoteException, ContextException {
-		final ParModel pm = new ParModel("par-model");
-		pm.putValue("x", 10.0);
-		pm.putValue("y", 20.0);
-		
-		Condition flag = new Condition(pm, 
-				"{ x, y -> x > y }", "x", "y");
-		
-		assertEquals(pm.getValue("x"), 10.0);
-		assertEquals(pm.getValue("y"), 20.0);
-		logger.info("condition value: " + flag.isTrue());
-		assertEquals(flag.isTrue(), false);
-		
-		pm.putValue("x", 300.0);
-		pm.putValue("y", 200.0);
-		logger.info("condition value: " + flag.isTrue());
-		assertEquals(flag.isTrue(), true);
-	}
-
-	
 	@Test
 		public void attachAgent() throws Exception {
 
 		String sorcerVersion = System.getProperty("sorcer.version");
 
-		ParModel pm = new ParModel();
-		Par<Double> x = par("x", 10.0);
-		Par<Double> y = par("y", 20.0);
-		Par z = par("z", invoker("x - y", x, y));
+		ProcModel pm = new ProcModel();
+		Proc<Double> x = proc("x", 10.0);
+		Proc<Double> y = proc("y", 20.0);
+		Proc z = proc("z", invoker("x - y", x, y));
 		
-		// set the sphere/radius in the model
+		// setValue the sphere/radius in the model
 		put(pm, "sphere/radius", 20.0);
-		// attach the agent to the par-model and invoke
+		// attach the agent to the proc-model and invoke
 		pm.add(new Agent("getSphereVolume",
 				"sorcer.arithmetic.tester.volume.Volume",
 				new URL(Sorcer.getWebsterUrl()
@@ -531,7 +506,7 @@ public class ParModelTest {
 
 		Object result =  value((Context)value(pm,"getSphereVolume"), "sphere/volume");
 
-//		logger.info("val: " + value(ent));
+//		logger.info("val: " + eval(proc));
 		assertTrue(result.equals(33510.32163829113));
 
 		// invoke the agent directly
@@ -542,7 +517,7 @@ public class ParModelTest {
 						new URL(Sorcer.getWebsterUrl()
 								+ "/sorcer-tester-"+sorcerVersion+".jar")));
 
-//		logger.info("val: " + value(pm, "sphere/volume"));
+//		logger.info("val: " + eval(pm, "sphere/volume"));
 		assertTrue(value(pm, "sphere/volume").equals(33510.32163829113));
 	}
 }

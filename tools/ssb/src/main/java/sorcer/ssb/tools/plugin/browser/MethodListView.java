@@ -73,7 +73,7 @@ class MethodListView extends JPanel {
 				return false;
 			}
 		};
-		model.setDataVector(data, new String[] { "Method", "Return value" });
+		model.setDataVector(data, new String[] { "Method", "Return eval" });
 
 		table = new JTable(model);
 		table.setDefaultRenderer(Object.class, new MethodCellRenderer());

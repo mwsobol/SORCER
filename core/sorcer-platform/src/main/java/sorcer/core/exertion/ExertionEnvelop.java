@@ -127,13 +127,13 @@ public class ExertionEnvelop implements Entry {
 	 *            This ID  will be the basis for creating the
 	 *            template for picking up task/job from the space
 	 * @return ExertionEnvelop Returns the template for picking up task/job from
-	 *         the space, state is set to DONE
+	 *         the space, state is setValue to DONE
 	 */
 	public static ExertionEnvelop getTakeTemplate(Uuid parentID, Uuid childID) {
 		ExertionEnvelop ee = ExertionEnvelop.getTemplate();
 		ee.parentID = parentID;
 		ee.exertionID = childID;
-		ee.state = new Integer(Exec.DONE); // must be set to DONE (completed)
+		ee.state = new Integer(Exec.DONE); // must be setValue to DONE (completed)
 
 		return ee;
 	}

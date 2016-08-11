@@ -397,10 +397,10 @@ public class ControlFlowManager {
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             String path = (String) entry.getKey();
-			Object value = entry.getValue();
+			Object eval = entry.getValue();
 
             try {
-                context.putValue(path, value);
+                context.putValue(path, eval);
             } catch (ContextException e) {
                 e.printStackTrace();
             }

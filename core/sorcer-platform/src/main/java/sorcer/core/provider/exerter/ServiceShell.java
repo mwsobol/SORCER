@@ -33,9 +33,9 @@ import sorcer.core.context.ControlContext;
 import sorcer.core.context.ModelTask;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
-import sorcer.core.context.model.ent.EntModel;
+import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.DispatcherException;
 import sorcer.core.dispatch.ExertionSorter;
@@ -626,8 +626,8 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 					List<Setter> ps = ((ServiceExertion) mogram).getPersisters();
 					if (ps != null) {
 						for (Setter p : ps) {
-							if (p != null && (p instanceof Par) && ((Par) p).isMappable()) {
-								String from = ((Par) p).getName();
+							if (p != null && (p instanceof Proc) && ((Proc) p).isMappable()) {
+								String from = ((Proc) p).getName();
 								Object obj;
 								if (mogram instanceof Job)
 									obj = ((Job) mogram).getJobContext().getValue(from);
@@ -732,7 +732,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 	}
 
 	private static Object finalize(Exertion xrt, Arg... args) throws ContextException, RemoteException {
-		// if the exertion failed return exceptions instead of requested value
+		// if the exertion failed return exceptions instead of requested eval
 		if (xrt.getExceptions().size() > 0) {
 			return xrt.getExceptions();
 		}
@@ -883,10 +883,10 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
                     && ((Signature) service).getServiceType() == RemoteServiceShell.class) {
                 Provider prv = (Provider) Accessor.get().getService((Signature) service);
                 return (T) prv.exert(mogram, txn).getContext();
-            } else if (service instanceof Par) {
-                ((Par)service).setScope(mogram);
-                Object val =((Par)service).getValue();
-                ((Context)mogram).putValue(((Par)service).getName(), val);
+            } else if (service instanceof Proc) {
+                ((Proc)service).setScope(mogram);
+                Object val =((Proc)service).getValue();
+                ((Context)mogram).putValue(((Proc)service).getName(), val);
                 return (T) mogram;
             }
 		} catch (SignatureException e) {
@@ -908,14 +908,14 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 				se.readFile(new File(((NetletSignature)service).getServiceSource()));
 				return evaluate((Mogram)se.parse());
 			} else if (service instanceof Exertion) {
-				return value((Evaluation) service, args);
-			} else if (service instanceof EntModel) {
+				return eval((Evaluation) service, args);
+			} else if (service instanceof ProcModel) {
 				((Model)service).getResponse(args);
 			} else if (service instanceof Context) {
 				ServiceContext cxt = (ServiceContext)service;
 				cxt.substitute(args);
 				ReturnPath returnPath = cxt.getReturnPath();
-				if (cxt instanceof EntModel) {
+				if (cxt instanceof ProcModel) {
 					return ((Model)service).getResponse(args);
 				} else if (returnPath != null){
 					return cxt.getValue(returnPath.path, args);

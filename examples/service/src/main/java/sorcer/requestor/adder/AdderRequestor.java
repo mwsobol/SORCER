@@ -44,7 +44,7 @@ public class AdderRequestor extends ServiceRequestor {
         Double v2 = new Double(getProperty("arg/x2"));
 
         return xrt("hello adder", sig("add", Adder.class),
-                context("adder", inEnt("arg/x1", v1), inEnt("arg/x2", v2),
+                context("adder", inVal("arg/x1", v1), inVal("arg/x2", v2),
                         result("out/y")));
     }
 
@@ -52,8 +52,8 @@ public class AdderRequestor extends ServiceRequestor {
         Double v1 = new Double(getProperty("arg/x1"));
         Double v2 = new Double(getProperty("arg/x2"));
 
-        // model three entries
-        return model(inEnt("arg/x1", v1), inEnt("arg/x2", v2),
+        // model three args
+        return model(inVal("arg/x1", v1), inVal("arg/x2", v2),
                 srv(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
     }

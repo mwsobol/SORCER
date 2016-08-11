@@ -116,7 +116,7 @@ public class MonitorLandlord implements Landlord, Runnable, ReferentUuid, Remote
         throw new UnknownLeaseException(cookie.toString());
     }
 
-    // Cancel a set of leases
+    // Cancel a setValue of leases
     public Map cancelAll(Uuid[] cookies) throws RemoteException {
         Map exceptionMap = null;
         for (int i = 0; i < cookies.length; i++) {
@@ -150,7 +150,7 @@ public class MonitorLandlord implements Landlord, Runnable, ReferentUuid, Remote
         throw new UnknownLeaseException(cookie.toString());
     }
 
-    // Renew a set of leases.
+    // Renew a setValue of leases.
     public Landlord.RenewResults renewAll(Uuid[] cookies, long[] extensions)
         throws RemoteException {
         long[] granted = new long[cookies.length];

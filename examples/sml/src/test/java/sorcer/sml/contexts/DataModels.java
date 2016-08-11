@@ -8,6 +8,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.po.operator;
 import sorcer.service.Context;
 
 import java.net.URL;
@@ -24,13 +25,15 @@ import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.inputs;
 import static sorcer.mo.operator.returnPath;
+import static sorcer.po.operator.ent;
+
 /**
  * @author Mike Sobolewski
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
 public class DataModels {
-    private final static Logger logger = LoggerFactory.getLogger(EntModels.class);
+    private final static Logger logger = LoggerFactory.getLogger(ContextModels.class);
 
     @Test
     public void contextOperator() throws Exception {
@@ -44,7 +47,7 @@ public class DataModels {
         assertTrue(get(cxt, "arg/x1").equals(1.1));
         assertTrue(asis(cxt, "arg/x1").equals(1.1));
 
-        // aliasing with an reactive value entry - rvEnt
+        // aliasing with an reactive eval entry - rvEnt
         put(cxt, rvEnt("arg/x1", value(cxt, "arg/x5")));
         assertTrue(value(cxt, "arg/x1").equals(1.5));
 
@@ -63,7 +66,7 @@ public class DataModels {
     @Test
     public void softValues() throws Exception {
 
-        Context cxt = context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0));
+        Context cxt = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0));
 
         // context soft values correspond to a subpath, e.g. "x1"
         // if no match for the exact path. e.g."arg1/x1"
@@ -82,17 +85,17 @@ public class DataModels {
         // a path is a String - usually a sequence of attributes
         assertEquals(path(e), "arg/x1");
 
-        Entry<Double> in = inEnt("arg/x2", 10.0);
+        Entry<Double> in = inVal("arg/x2", 10.0);
         assertTrue(path(in).equals("arg/x2"));
-        assertTrue(value(in).equals(10.0));
+        assertTrue(eval(in).equals(10.0));
 
-        Entry<Double> out = outEnt("arg/y", 20.0);
+        Entry<Double> out = outVal("arg/y", 20.0);
         assertTrue(path(out).equals("arg/y"));
-        assertTrue(value(out).equals(20.0));
+        assertTrue(eval(out).equals(20.0));
 
-        Entry<Double> inout = inoutEnt("arg/z", 30.0);
+        Entry<Double> inout = operator.inoutVal("arg/z", 30.0);
         assertTrue(path(inout).equals("arg/z"));
-        assertTrue(value(inout).equals(30.0));
+        assertTrue(eval(inout).equals(30.0));
 
     }
 
@@ -101,31 +104,32 @@ public class DataModels {
     public void inputsOutputs() throws Exception {
 
         // PositionalContext maintains both paths and indexes
-        Context<Double> cxt = context(ent("arg/x1", 1.1), inEnt("arg/x2", 1.2),
-                inEnt("arg/x3", 1.3), inEnt("arg/x4", 1.4), inEnt("arg/x5", 1.5));
+        Context<Double> cxt = context(val("arg/x1", 1.1), inVal("arg/x2", 1.2),
+                inVal("arg/x3", 1.3), inVal("arg/x4", 1.4), inVal("arg/x5", 1.5));
 
         add(cxt, ent("arg/x6", 1.6));
-        add(cxt, outEnt("out/y1", 1.7));
-        add(cxt, outEnt("out/y2", 1.8));
-        add(cxt, inoutEnt("par/z", 1.9));
+        add(cxt, outVal("out/y1", 1.7));
+        add(cxt, outVal("out/y2", 1.8));
+        add(cxt, operator.inoutVal("proc/z", 1.9));
 
         assertTrue(cxt instanceof Context);
 
-        // return the value at index 1 and 6 in cxt
+        // return the eval at index 1 and 6 in cxt
         assertTrue(get(cxt, 1).equals(1.1));
         assertTrue(get(cxt, 6).equals(1.6));
 
-        // return the value at position 1 and 6 in cxt
-        assertTrue(getAt(cxt, 1).equals(1.1));
-        assertTrue(getAt(cxt, 6).equals(1.6));
+        // return the eval at position 1 and 6 in cxt
+        assertTrue(valueAt(cxt, 1).equals(1.1));
+        assertTrue(valueAt(cxt, 6).equals(1.6));
 
         // return selected values at given positions in cxt
         assertEquals(select(cxt, 2, 4, 5), list(1.2, 1.4, 1.5));
 
         // get input and output contexts
-        List<String> allInputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5", "par/z");
+        List<String> allInputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5", "proc/z");
         List<String> inputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5");
-        List<String> outputs = list("out/y1", "out/y2", "par/z");
+        List<String> outputs = list("out/y1", "out/y2", "proc/z");
+
         assertTrue(allInputs.equals(paths(allInputs(cxt))));
         assertTrue(inputs.equals(paths(inputs(cxt))));
         assertTrue(outputs.equals(paths(outputs(cxt))));
@@ -140,7 +144,7 @@ public class DataModels {
         assertEquals(outContextValues(cxt), list(1.8, 1.7, 1.9));
 
         // return all paths of outEntries
-        assertEquals(outContextPaths(cxt), list("out/y2", "out/y1", "par/z"));
+        assertEquals(outContextPaths(cxt), list("out/y2", "out/y1", "proc/z"));
 
     }
 
@@ -169,48 +173,48 @@ public class DataModels {
     }
 
     @Test
-    public void markingContextPaths() throws Exception {
+    public void taggingContextPaths() throws Exception {
 
         Context<Double> cxt = context(ent("arg/x1", 1.1), ent("arg/x2", 1.2),
                 ent("arg/x3", 1.3), ent("arg/x4", 1.4), ent("arg/x5", 1.5));
 
         add(cxt, ent("arg/x6", 1.6));
-        add(cxt, inEnt("arg/x7", 1.7));
-        add(cxt, outEnt("arg/y", 1.8));
+        add(cxt, inVal("arg/x7", 1.7));
+        add(cxt, outVal("arg/y", 1.8));
 
-        // the default marker (attribute) 'tag'
-        mark(cxt, "arg/x1", "tag|set1");
-        mark(cxt, "arg/x2", "tag|set1");
+        // the default tagContext (attribute) 'tag'
+        tag(cxt, "arg/x1", "tag|set1");
+        tag(cxt, "arg/x2", "tag|set1");
         assertEquals(valuesAt(cxt, "tag|set1"), list(1.2, 1.1));
 
-        mark(cxt, "arg/x2", "tag|set2");
-        mark(cxt, "arg/x4", "tag|set2");
+        tag(cxt, "arg/x2", "tag|set2");
+        tag(cxt, "arg/x4", "tag|set2");
         assertEquals(valuesAt(cxt, "tag|set2"), list(1.4, 1.2));
 
         // now the path "arg/x2" is overwritten, so excluded
         assertEquals(valuesAt(cxt, "tag|set1"), list(1.1));
 
         // the default relation 'triplet', the association:  "triplet|_1|_2|_3"
-        mark(cxt, "arg/x1", "triplet|a|x|x");
-        mark(cxt, "arg/x2", "triplet|x|b|x");
-        mark(cxt, "arg/x3", "triplet|x|x|c");
-        assertTrue(getAt(cxt, "triplet|a|x|x").equals(1.1));
-        assertTrue(getAt(cxt, "triplet|x|b|x").equals(1.2));
-        assertTrue(getAt(cxt, "triplet|x|x|c").equals(1.3));
+        tag(cxt, "arg/x1", "triplet|a|x|x");
+        tag(cxt, "arg/x2", "triplet|x|b|x");
+        tag(cxt, "arg/x3", "triplet|x|x|c");
+        assertTrue(valueAt(cxt, "triplet|a|x|x").equals(1.1));
+        assertTrue(valueAt(cxt, "triplet|x|b|x").equals(1.2));
+        assertTrue(valueAt(cxt, "triplet|x|x|c").equals(1.3));
 
-        mark(cxt, "arg/y", "dnt|open|text|mesh");
-        assertTrue(getAt(cxt, "dnt|open|text|mesh").equals(1.8));
+        tag(cxt, "arg/y", "dnt|open|text|mesh");
+        assertTrue(valueAt(cxt, "dnt|open|text|mesh").equals(1.8));
 
-        // still the previous marker 'tag' holds with 'triplet'
+        // still the previous tagContext 'tag' holds with 'triplet'
         // for the same paths: arg/x1 and arg/x2
         assertEquals(valuesAt(cxt, "tag|set2"), list(1.4, 1.2));
 
         // custom annotation with the association: "person|first|last"
-        marker(cxt, "person|first|last");
+        tagContext(cxt, "person|first|last");
         add(cxt, ent("arg/Mike/height", 174.0, "person|Mike|Sobolewski"));
-        add(cxt, inEnt("arg/John/height", 178.0, "person|John|Doe"));
-        assertTrue(getAt(cxt, "person|Mike|Sobolewski").equals(174.0));
-        assertTrue(getAt(cxt, "person|John|Doe").equals(178.0));
+        add(cxt, inVal("arg/John/height", 178.0, "person|John|Doe"));
+        assertTrue(valueAt(cxt, "person|Mike|Sobolewski").equals(174.0));
+        assertTrue(valueAt(cxt, "person|John|Doe").equals(178.0));
 
     }
 
@@ -219,12 +223,12 @@ public class DataModels {
     public void linkedContext() throws Exception {
 
         Context ac = context("add",
-                inEnt("arg1/value", 90.0),
-                inEnt("arg2/value", 110.0));
+                inVal("arg1/eval", 90.0),
+                inVal("arg2/eval", 110.0));
 
         Context mc = context("multiply",
-                inEnt("arg1/value", 10.0),
-                inEnt("arg2/value", 70.0));
+                inVal("arg1/eval", 10.0),
+                inVal("arg2/eval", 70.0));
 
         Context lc = context("invoke");
 
@@ -234,11 +238,11 @@ public class DataModels {
         ac = context(getLink(lc, "add"));
         mc = context(getLink(lc, "multiply"));
 
-        assertEquals(value(ac, "arg1/value"), 90.0);
-        assertEquals(value(mc, "arg2/value"), 70.0);
+        assertEquals(value(ac, "arg1/eval"), 90.0);
+        assertEquals(value(mc, "arg2/eval"), 70.0);
 
-        assertEquals(value(lc, "add/arg1/value"), 90.0);
-        assertEquals(value(lc, "multiply/arg2/value"), 70.0);
+        assertEquals(value(lc, "add/arg1/eval"), 90.0);
+        assertEquals(value(lc, "multiply/arg2/eval"), 70.0);
 
     }
 
@@ -246,54 +250,54 @@ public class DataModels {
     @Test
     public void sharedContext() throws Exception {
 
-        // two contexts ac and mc sharing arg1/value
-        // and arg3/value values over the network
+        // two contexts ac and mc sharing arg1/eval
+        // and arg3/eval values over the network
         Context ac = context("add",
-                inEnt("arg1/value", 90.0),
-                inEnt("arg2/value", 110.0),
-                inEnt("arg3/value", 100.0));
+                inVal("arg1/eval", 90.0),
+                inVal("arg2/eval", 110.0),
+                inVal("arg3/eval", 100.0));
 
-        // make arg1/value persistent
-        URL a1vURL = storeArg(ac, "arg1/value");
+        // make arg1/eval persistent
+        URL a1vURL = storeArg(ac, "arg1/eval");
 
-        // make arg1/value in mc the same as in ac
+        // make arg1/eval in mc the same as in ac
         Context mc = context("multiply",
-                dbInEnt("arg1/value", a1vURL),
-                inEnt("arg2/value", 70.0),
-                inEnt("arg3/value", 200.0));
+                dbInVal("arg1/eval", a1vURL),
+                inVal("arg2/eval", 70.0),
+                inVal("arg3/eval", 200.0));
 
-        // sharing arg1/value from mc in ac
-        assertTrue(value(ac, "arg1/value").equals(90.0));
-        assertTrue(value(mc, "arg1/value").equals(90.0));
+        // sharing arg1/eval from mc in ac
+        assertTrue(value(ac, "arg1/eval").equals(90.0));
+        assertTrue(value(mc, "arg1/eval").equals(90.0));
 
-        put(mc, "arg1/value", 200.0);
+        put(mc, "arg1/eval", 200.0);
 
-        assertTrue(value(ac, "arg1/value").equals(200.0));
-        assertTrue(value(mc, "arg1/value").equals(200.0));
+        assertTrue(value(ac, "arg1/eval").equals(200.0));
+        assertTrue(value(mc, "arg1/eval").equals(200.0));
 
-        // sharing arg3/value from ac in mc
-        assertTrue(value(ac, "arg3/value").equals(100.0));
-        assertTrue(value(mc, "arg3/value").equals(200.0));
-        URL a3vURL = storeArg(mc, "arg3/value");
-        add(ac, ent("arg3/value", a3vURL));
+        // sharing arg3/eval from ac in mc
+        assertTrue(value(ac, "arg3/eval").equals(100.0));
+        assertTrue(value(mc, "arg3/eval").equals(200.0));
+        URL a3vURL = storeArg(mc, "arg3/eval");
+        add(ac, ent("arg3/eval", a3vURL));
 
-        put(ac, "arg1/value", 300.0);
-        assertTrue(value(ac, "arg1/value").equals(300.0));
-        assertTrue(value(mc, "arg1/value").equals(300.0));
+        put(ac, "arg1/eval", 300.0);
+        assertTrue(value(ac, "arg1/eval").equals(300.0));
+        assertTrue(value(mc, "arg1/eval").equals(300.0));
 
     }
 
     @Test
     public void exertContext() throws Exception {
-        Context cxt = context(inEnt("x1", 20.0d), inEnt("x2", 40.0d));
-        cxt = exert(cxt, inEnt("x1", 50.0d));
+        Context cxt = context(inVal("x1", 20.0d), inVal("x2", 40.0d));
+        cxt = exert(cxt, inVal("x1", 50.0d));
         assertTrue(value(cxt, "x1").equals(50.0));
     }
 
 
     @Test
     public void contextModelService() throws Exception {
-        Context cxt = context(inEnt("x1", 20.0d), inEnt("x2", 40.0d),
+        Context cxt = context(inVal("x1", 20.0d), inVal("x2", 40.0d),
                 returnPath("x2"));
 //        logger.info("service: " + exec(cxt));
         assertEquals(exec(cxt), 40.0);
@@ -302,7 +306,7 @@ public class DataModels {
 
     @Test
     public void contextModelResponse() throws Exception {
-        Context cxt = context(inEnt("x1", 20.0d), inEnt("x2", 40.0d));
+        Context cxt = context(inVal("x1", 20.0d), inVal("x2", 40.0d));
         responseUp(cxt, "x1");
         Context out = response(cxt);
 //        logger.info("response1: " + out);

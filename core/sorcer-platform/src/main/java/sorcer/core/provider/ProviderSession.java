@@ -36,7 +36,7 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
      * session, as the number of milliseconds since midnight January 1, 1970
      * GMT, and marked by the time the container received the request.
      * <p>
-     * Actions that your application takes, such as getting or setting a value
+     * Actions that your application takes, such as getting or setting a eval
      * associated with the session, do not affect the access time.
      *
      * @return a <code>long</code> representing the last time the client sent a
@@ -69,7 +69,7 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
      * Returns the maximum time interval, in seconds, that the service provider
      * will keep this session open between requestor accesses. After this interval,
      * the service provider will invalidate the session. The maximum time
-     * interval can be set with the <code>setMaxInactiveInterval</code> method.
+     * interval can be setValue with the <code>setMaxInactiveInterval</code> method.
      * A zero or negative time indicates that the session should never timeout.
      *
      * @return an integer specifying the number of seconds this session remains
@@ -126,8 +126,8 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
      * If an object was already bound to this session of this name that
      * implements <code>net.jini.core.event.RemoteEventListener</code>, its
      * <code>ProviderSessionBindingListener.valueUnbound</code> method is called
-     * to indicate the unbound value of this session.<p>
-     * If the value passed in is null, this has the same effect as calling
+     * to indicate the unbound eval of this session.<p>
+     * If the eval passed in is null, this has the same effect as calling
      * <code>removeAttribute()</code>.
      *
      * @param name
@@ -155,7 +155,7 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
      * <code>net.jini.core.event.RemoteEventListener</code>, the provider calls
      * <code>net.jini.core.event.RemoteEventListener.notify/code>. The container then
      * notifies any related service in the exerting federation to indicate the unbound 
-     * value of this session.
+     * eval of this session.
      *
      * @param name
      *            the name of the object to remove from this session

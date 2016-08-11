@@ -30,7 +30,7 @@ package sorcer.core.provider.cataloger.ui;
  */
 public class ContextNodeType {
 	/**
-	 * The value of the underlying data
+	 * The eval of the underlying data
 	 */
 	private Object value;
 
@@ -82,9 +82,9 @@ public class ContextNodeType {
 	}
 
 	/**
-	 * Returns a string representation of the value.
+	 * Returns a string representation of the eval.
 	 * 
-	 * @return String representation of the value
+	 * @return String representation of the eval
 	 */
 	public String getValue() {
 		return value.toString();
@@ -100,19 +100,19 @@ public class ContextNodeType {
 	}
 
 	/**
-	 * Overloading the toString operator to get the value of the data.
+	 * Overloading the toString operator to get the eval of the data.
 	 * 
-	 * @return String representation of the current value of the inner data
+	 * @return String representation of the current eval of the inner data
 	 */
 	public String toString() {
 		return value.toString();
 	}
 
 	/**
-	 * Used to update the internal value to a new one
+	 * Used to update the internal eval to a new one
 	 * 
 	 * @param value
-	 *            Object representing the new value the node should contain
+	 *            Object representing the new eval the node should contain
 	 */
 	public void setValue(Object value) {
 		this.value = value;

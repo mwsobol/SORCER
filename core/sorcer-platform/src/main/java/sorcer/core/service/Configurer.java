@@ -129,7 +129,7 @@ public class Configurer {
                 method.setAccessible(true);
             }
         } catch (SecurityException ignored) {
-            log.warn("Could not set value of {} because of access restriction", method);
+            log.warn("Could not set eval of {} because of access restriction", method);
             return;
         }
 
@@ -157,7 +157,7 @@ public class Configurer {
                 field.setAccessible(true);
             }
         } catch (SecurityException x) {
-            log.warn("Could not set value of {} because of access restriction", field, x);
+            log.warn("Could not set eval of {} because of access restriction", field, x);
             return;
         }
 
@@ -171,7 +171,7 @@ public class Configurer {
             Object value = config.getEntry(component, entryKey, entryType, defaultValue);
             value = convert(value, targetType, configEntry);
             if (configEntry.required() && value == null)
-                throw new IllegalArgumentException("Null value for required " + field);
+                throw new IllegalArgumentException("Null eval for required " + field);
             log.debug("Configure {} to {}", field.getName(), value);
             field.set(target, value);
         } catch (IllegalAccessException e) {

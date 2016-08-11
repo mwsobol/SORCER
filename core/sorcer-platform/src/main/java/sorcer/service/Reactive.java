@@ -25,10 +25,10 @@ import java.rmi.RemoteException;
 public interface Reactive<T> {
 
 	/**
-	 * Returns the current value of this evaluation. The current value can be
-	 * exiting value with no need to evaluate it if it's still valid.
+	 * Returns the current eval of this evaluation. The current eval can be
+	 * exiting eval with no need to evaluate it if it's still valid.
 	 * 
-	 * @return the current value of this evaluation
+	 * @return the current eval of this evaluation
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */

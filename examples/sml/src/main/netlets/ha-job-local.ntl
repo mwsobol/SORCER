@@ -23,18 +23,18 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl
 
 Task f4 = task("f4",
         sig("multiply", MultiplierImpl.class),
-        context("multiply", inEnt("arg/x1", 10.0d), inEnt("arg/x2", 50.0d), result("result/y1")));
+        context("multiply", inVal("arg/x1", 10.0d), inVal("arg/x2", 50.0d), result("result/y1")));
 
 Task f5 = task("f5",
         sig("add", AdderImpl.class),
-        context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d), result("result/y2")));
+        context("add", inVal("arg/x3", 20.0d), inVal("arg/x4", 80.0d), result("result/y2")));
 
 Task f3 = task("f3",
         sig("subtract", SubtractorImpl.class),
-        context("subtract", inEnt("arg/x5"), inEnt("arg/x6"), result("result/y3")));
+        context("subtract", inVal("arg/x5"), inVal("arg/x6"), result("result/y3")));
 
 job("f1", sig("exert", ServiceJobber.class),
-        cxt(inEnt("arg/x1", 20.0d),
+        cxt(inVal("arg/x1", 20.0d),
                 result("job/result", outPaths("f1/f3/result/y3"))),
         job("f2", sig("exert", ServiceJobber.class), f4, f5), f3,
         pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),

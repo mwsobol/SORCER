@@ -34,7 +34,7 @@ public final class ClassPathAppender {
     }
 
     /**
-     * Add all jar names found in the provided file. The file must contain entries
+     * Add all jar names found in the provided file. The file must contain args
      * of jar file names, each line a jar file.
      *
      * @param file The file containing jar names.

@@ -48,7 +48,7 @@ import static org.junit.Assert.assertTrue;
  *
  * When entering IP addresses, enter either the IP Address or the fully qualified host name
  *
- * If providing machine architecture, the provided value must be the same as what
+ * If providing machine architecture, the provided eval must be the same as what
  * System.getProperty("os.arch") returns for the required machine architecture
  */
 @RunWith(SorcerTestRunner.class)

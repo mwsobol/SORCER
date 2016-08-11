@@ -8,13 +8,13 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.co.operator;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.requestor.SorcerRequestor;
 import sorcer.service.*;
 
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 
 public class ArithmeticSorcerRequestor extends SorcerRequestor {
@@ -25,18 +25,18 @@ public class ArithmeticSorcerRequestor extends SorcerRequestor {
                 sFi("object/average", sig("average", AveragerImpl.class)),
                 sFi("net/subtract", sig("subtract", Subtractor.class)),
                 sFi("net/average", sig("average", Averager.class)),
-                context("t3-cxt", inEnt("arg/x1"), inEnt("arg/x2"),
-                        outEnt("result/y")));
+                context("t3-cxt", operator.inVal("arg/x1"), operator.inVal("arg/x2"),
+                        outVal("result/y")));
 
         Task t4 = task("t4", sFi("object", sig("multiply", MultiplierImpl.class)),
                 sFi("net", sig("multiply", Multiplier.class)),
-                context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-                        outEnt("result/y")));
+                context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
+                        outVal("result/y")));
 
         Task t5 = task("t5", sFi("object", sig("add", AdderImpl.class)),
                 sFi("net", sig("add", Adder.class)),
-                context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-                        outEnt("result/y")));
+                context("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
+                        outVal("result/y")));
 
         Job job = job("j1", sFi("object", sig("exert", ServiceJobber.class)),
                 sFi("net", sig("exert", Jobber.class)),

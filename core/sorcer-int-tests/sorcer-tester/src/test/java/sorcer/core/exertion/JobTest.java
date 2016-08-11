@@ -8,6 +8,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.Subtractor;
+import sorcer.co.operator;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.provider.Jobber;
 import sorcer.service.Job;
@@ -17,8 +18,7 @@ import sorcer.service.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 
 /**
@@ -38,16 +38,16 @@ public class JobTest {
 						Multiplier.class,
 						deploy(configuration("bin/sorcer/test/arithmetic/configs/multiplier-prv.config"),
 								idle(1), ServiceDeployment.Type.SELF)),
-				context("multiply", inEnt("arg/x1", 10.0d),
-						inEnt("arg/x2", 50.0d), outEnt("result/y1", null)));
+				context("multiply", operator.inVal("arg/x1", 10.0d),
+						operator.inVal("arg/x2", 50.0d), outVal("result/y1", null)));
 
 		Task f5 = task(
 				"f5",
 				sig("add",
 						Adder.class,
 						deploy(configuration("bin/sorcer/test/arithmetic/configs/AdderProviderConfig.groovy"))),
-				context("add", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
-						outEnt("result/y2", null)));
+				context("add", operator.inVal("arg/x3", 20.0d), operator.inVal("arg/x4", 80.0d),
+						outVal("result/y2", null)));
 
 		Task f3 = task(
 				"f3",
@@ -56,8 +56,8 @@ public class JobTest {
 						deploy(maintain(2, perNode(2)),
 								idle(1),
 								configuration("bin/sorcer/test/arithmetic/configs/subtractor-prv.config"))),
-				context("subtract", inEnt("arg/x5", null),
-						inEnt("arg/x6"), outEnt("result/y3")));
+				context("subtract", operator.inVal("arg/x5", null),
+						operator.inVal("arg/x6"), outVal("result/y3")));
 
 		Job f1 = job("f1", sig("exert", Jobber.class, "Jobber"),
 				job(sig("exert", Jobber.class, "Jobber"), "f2", f4, f5), f3,

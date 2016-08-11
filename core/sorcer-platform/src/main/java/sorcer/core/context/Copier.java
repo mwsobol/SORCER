@@ -18,11 +18,12 @@
 package sorcer.core.context;
 
 import sorcer.service.*;
+import sorcer.service.modeling.ServiceModel;
 
 import java.rmi.RemoteException;
 
 /**
- * Copier copies values of entries from one Context to another one.
+ * Copier copies values of args from one Context to another one.
  */
 public class Copier implements Evaluation<Context> {
 	private String name;
@@ -31,10 +32,10 @@ public class Copier implements Evaluation<Context> {
 	private Context toContext;
 	private Arg[] toEntries;
 
-	public Copier(Context fromContext, Arg[] fromEntries, Context toContext, Arg[] toEntries) throws EvaluationException {
-		this.fromContext = fromContext;
+	public Copier(ServiceModel fromContext, Arg[] fromEntries, ServiceModel toContext, Arg[] toEntries) throws EvaluationException {
+		this.fromContext = (Context)fromContext;
 		this.fromEntries = fromEntries;
-		this.toContext = toContext;
+		this.toContext = (Context)toContext;
 		this.toEntries = toEntries;
 		if (fromEntries.length != toEntries.length)
 			throw new EvaluationException("Sizes of from and to arguments do not match");
@@ -65,7 +66,7 @@ public class Copier implements Evaluation<Context> {
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {
-		Context cxt = Arg.getContext(args);
+		ServiceModel cxt = Arg.getServiceModel(args);
 		if (cxt != null) {
 			fromContext = (Context) cxt;
 			return getValue(args);
@@ -81,4 +82,5 @@ public class Copier implements Evaluation<Context> {
 	public String getName() {
 		return name;
 	}
+
 }

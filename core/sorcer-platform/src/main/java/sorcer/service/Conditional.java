@@ -23,7 +23,7 @@ public interface Conditional {
 
 	/**
 	 * The isTrue method is responsible for evaluating the condition component of
-	 * the Conditonal. Thus returning the boolean value true or false.
+	 * the Conditonal. Thus returning the boolean eval true or false.
 	 * 
 	 * @return boolean true or false depending on the condition
 	 * @throws ExertionException

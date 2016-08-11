@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.par;
+package sorcer.core.context.model.ent;
 
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.CmdInvoker;
@@ -31,7 +31,7 @@ import java.util.Properties;
 /**
  * Created by Mike Sobolewski on 4/14/16.
  */
-public class SysCall extends Par<Context> implements Serializable {
+public class SysCall extends Proc<Context> implements Serializable {
 
     private CmdInvoker invoker;
     private ServiceContext dataContext;
@@ -97,7 +97,7 @@ public class SysCall extends Par<Context> implements Serializable {
 
             Properties props = new Properties();
             props.load(new StringReader(result.getOut()));
-            out.putValue("exit/value", result.getExitValue());
+            out.putValue("exit/eval", result.getExitValue());
 
             // copy requested outputs into the context
             if (outPaths != null) {

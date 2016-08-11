@@ -23,7 +23,7 @@ import sorcer.service.Invocation;
 /**
  * Created by Mike Sobolewski on 8/9/15.
  */
-public class IntegerIncrementor extends InvokeIncrementor<Integer> {
+public class IntegerIncrementor extends IncrementInvoker<Integer> {
 
     public IntegerIncrementor(String path) {
         super(path);

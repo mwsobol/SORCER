@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.*;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.ent.Proc;
 import sorcer.core.deploy.DeploymentIdFactory;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.invoker.ExertInvoker;
@@ -32,6 +32,7 @@ import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
+import sorcer.eo.operator;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
@@ -43,8 +44,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
@@ -539,8 +538,8 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return controlContext.isExecTimeRequested();
     }
 
-    public Par getPar(String path) throws EvaluationException, RemoteException {
-        return new Par(path, this);
+    public Proc getPar(String path) throws EvaluationException, RemoteException {
+        return new Proc(path, this);
     }
 
     abstract public Context linkContext(Context context, String path)
@@ -783,7 +782,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     public void updateValue(Object value) throws ContextException {
         List<Mogram> exertions = getAllMograms();
-        // logger.info(" value = " + value);
+        // logger.info(" eval = " + eval);
         // logger.info(" this exertion = " + this);
         // logger.info(" mograms = " + mograms);
         for (Mogram e : exertions) {
@@ -906,7 +905,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * </p>
      *
      * @param dependers
-     *            the dependers to set
+     *            the dependers to setValue
      */
     public void setDependers(List<Evaluation> dependers) {
         this.dependers = dependers;
@@ -978,7 +977,15 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     public boolean isProvisionable() {
-        return controlContext.isProvisionable();
+        Boolean state = false;
+        ServiceSignature ss = (ServiceSignature) getProcessSignature();
+        if (ss != null) {
+            state = ((ServiceSignature) getProcessSignature()).getOperation().isProvisionable;
+            if (state.equals(false)) {
+                return controlContext.isProvisionable();
+            }
+        }
+        return state;
     }
 
     public void setProvisionable(boolean state) {
@@ -1026,10 +1033,10 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     @Override
     public Object exec(Arg... args) throws MogramException, RemoteException {
-        Context cxt = Arg.getContext(args);
+        Context cxt = (Context) Arg.getServiceModel(args);
         if (cxt != null) {
               dataContext = (ServiceContext) cxt;
-              return value(this, args);
+              return operator.eval(this, args);
         }
         return null;
     }

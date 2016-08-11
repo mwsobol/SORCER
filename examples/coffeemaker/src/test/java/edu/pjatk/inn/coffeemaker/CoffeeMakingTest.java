@@ -1,7 +1,5 @@
 package edu.pjatk.inn.coffeemaker;
 
-import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
-import edu.pjatk.inn.coffeemaker.impl.Inventory;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
 import org.junit.After;
 import org.junit.Before;
@@ -91,7 +89,7 @@ public class CoffeeMakingTest {
 				context(parameterTypes(Recipe.class), args(espresso),
 						result("recipe/added")));
 
-		assertEquals(value(cmt), true);
+		assertEquals(eval(cmt), true);
 	}
 
 	@Test

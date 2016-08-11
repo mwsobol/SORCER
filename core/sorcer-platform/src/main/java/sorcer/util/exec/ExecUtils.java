@@ -30,7 +30,7 @@ public class ExecUtils {
 	/**
 	 * Execute specified command and return its results. Waits for the command
 	 * to complete and returns its completion status and data written to
-	 * standard output and error streams. The process' standard input is set to
+	 * standard output and error streams. The process' standard input is setValue to
 	 * EOF. Example:
 	 * 
 	 * <pre>
@@ -68,7 +68,7 @@ public class ExecUtils {
 	 * Added by E. D. Thompson AFRL/RZTT 20100827 Execute specified command and
 	 * it arguments and return its results. Waits for the command to complete
 	 * and returns its completion status and data written to standard output and
-	 * error streams. The process' standard input is set to EOF. Example:
+	 * error streams. The process' standard input is setValue to EOF. Example:
 	 * 
 	 * <pre>
 	 * String[] cmd = { &quot;/bin/ls&quot;, &quot;-lah&quot; };
@@ -103,7 +103,7 @@ public class ExecUtils {
 	/**
 	 * Attach to the specified process and return its results. Waits for the
 	 * process to complete and returns its completion status and data written to
-	 * standard output and error streams. The process' standard input is set to
+	 * standard output and error streams. The process' standard input is setValue to
 	 * EOF. Example:
 	 * 
 	 * <pre>
@@ -127,7 +127,7 @@ public class ExecUtils {
 	/**
 	 * Added by E. D. Thompson AFRL/RZTT 20100827 Attach to the specified
 	 * process and return its results. Returns data written to standard output
-	 * and error streams. The process standard input is set to EOF. Example:
+	 * and error streams. The process standard input is setValue to EOF. Example:
 	 * 
 	 * <pre>
 	 * Process p = runtime.exec(&quot;/bin/ls&quot;);
@@ -273,7 +273,7 @@ public class ExecUtils {
 
 	/**
 	 * Represents the result of a native command. Consists of the process exit
-	 * value together with stdout and stderr dumped to strings.
+	 * eval together with stdout and stderr dumped to strings.
 	 * 
 	 * @author Dawid Kurzyniec
 	 * @version 1.0

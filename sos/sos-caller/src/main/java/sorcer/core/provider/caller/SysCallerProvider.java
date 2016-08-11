@@ -20,7 +20,7 @@ package sorcer.core.provider.caller;
 import com.sun.jini.start.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.context.model.par.SysCall;
+import sorcer.core.context.model.ent.SysCall;
 import sorcer.core.provider.SysCaller;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.service.Context;

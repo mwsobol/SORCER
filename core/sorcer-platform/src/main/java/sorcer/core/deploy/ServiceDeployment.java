@@ -65,7 +65,7 @@ public class ServiceDeployment implements Serializable, Deployment {
     private final Set<String> ips = new HashSet<String>();
     private final Set<String> excludeIps = new HashSet<String>();
 
-    /* An idle time for un-provisioning, value is in minutes */
+    /* An idle time for un-provisioning, eval is in minutes */
     public static final int DEFAULT_IDLE_TIME = 1;
     private int idle = DEFAULT_IDLE_TIME;
 

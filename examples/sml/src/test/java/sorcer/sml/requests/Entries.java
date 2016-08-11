@@ -10,6 +10,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.util.GenericUtil;
 
 import java.rmi.RemoteException;
@@ -21,7 +22,9 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.putValue;
 import static sorcer.po.operator.*;
+import static sorcer.po.operator.loop;
 import static sorcer.service.Signature.Direction;
 import static sorcer.util.exec.ExecUtils.CmdResult;
 
@@ -37,21 +40,21 @@ public class Entries {
 	@Test
 	public void directionalEntries() throws Exception {
 
-		Entry x1 = ent("arg/x1", 100.0);
-		assertEquals(100.0, value(x1));
+		Entry x1 = proc("arg/x1", 100.0);
+		assertEquals(100.0, eval(x1));
         assertTrue(direction(x1) == null);
 
-		Entry x2 = inEnt("arg/x2", 20.0);
-		assertEquals(20.0, value(x2));
+		Entry x2 = inVal("arg/x2", 20.0);
+		assertEquals(20.0, eval(x2));
         assertTrue(direction(x2) == Direction.IN);
 
-		Entry x3 = outEnt("arg/x3", 80.0);
-		assertEquals(80.0, value(x3));
+		Entry x3 = outVal("arg/x3", 80.0);
+		assertEquals(80.0, eval(x3));
         assertTrue(direction(x3) == Direction.OUT);
 
         // entry of entry
-		Entry x4 = inoutEnt("arg/x4", x3);
-		assertEquals(80.0, value(x4));
+		Entry x4 = inoutVal("arg/x4", x3);
+		assertEquals(80.0, eval(x4));
         assertTrue(direction(x4) == Direction.INOUT);
 		assertEquals(name(asis(x4)), "arg/x3");
         assertTrue(direction((Entry) asis(x4)) == Direction.OUT);
@@ -59,55 +62,56 @@ public class Entries {
 
     @Test
     public void entFidelities() throws Exception {
-        Entry mfiEnt = inEnt("by", eFi(inEnt("by-10", 10.0), inEnt("by-20", 20.0)));
+        Entry mfiEnt = inVal("by", eFi(inVal("by-10", 10.0), inVal("by-20", 20.0)));
 
-        assertTrue(value(mfiEnt, fi("by", "by-20")).equals(20.0));
-        assertTrue(value(mfiEnt, fi("by", "by-10")).equals(10.0));
+        assertTrue(eval(mfiEnt, fi("by", "by-20")).equals(20.0));
+        assertTrue(eval(mfiEnt, fi("by", "by-10")).equals(10.0));
     }
 
 	@Test
 	public void expressionEntry() throws Exception {
 
-		Entry z1 = ent("z1", expr("x1 + 4 * x2 + 30",
-					args("x1", "x2"),
-					context(ent("x1", 10.0), ent("x2", 20.0))));
+		Entry z1 = proc("z1", expr("x1 + 4 * x2 + 30",
+					context(proc("x1", 10.0), proc("x2", 20.0)),
+                    args("x1", "x2")));
 
-		assertEquals(120.0, value(z1));
+		assertEquals(120.0, eval(z1));
 	}
 
 	@Test
 	public void bindingEntryArgs() throws Exception {
 
-		Entry y = ent("y", expr("x1 + x2", args("x1", "x2")));
+		Entry y = proc("y", expr("x1 + x2", args("x1", "x2")));
 
-		assertTrue(value(y, ent("x1", 10.0), ent("x2", 20.0)).equals(30.0));
+		assertTrue(eval(y, proc("x1", 10.0), proc("x2", 20.0)).equals(30.0));
 	}
 
 
 	public static class Doer implements Invocation<Double> {
 
         @Override
-        public Double invoke(Context cxt, Arg... entries) throws RemoteException, ContextException {
-            Entry<Double> x = ent("x", 20.0);
-            Entry<Double> y = ent("y", 30.0);
-            Entry<Double> z = ent("z", invoker("x - y", x, y));
+        public Double invoke(Context<Double> cxt, Arg... entries) throws RemoteException, ContextException {
+            Entry<Double> x = proc("x", 20.0);
+            Entry<Double> y = proc("y", 30.0);
+            Entry<Double> z = proc("z", invoker("x - y", x, y));
 
             if (value(cxt, "x") != null)
                 setValue(x, value(cxt, "x"));
             if (value(cxt, "y") != null)
                 setValue(y, value(cxt, "y"));
-            return value(y) + value(x) + value(z);
+            return eval(y) + eval(x) + eval(z);
         }
 
         @Override
         public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
-            return invoke(Arg.getContext(args), args);
+            return invoke((Context)Arg.getServiceModel(args), args);
         }
 
         @Override
         public String getName() {
             return getClass().getName();
         }
+
     };
 
 	@Test
@@ -116,13 +120,13 @@ public class Entries {
         Object obj = new Doer();
 
         // no scope for invocation
-        Entry m1 = ent("m1", methodInvoker("invoke", obj));
-        assertEquals(value(m1), 40.0);
+        Entry m1 = proc("m1", methodInvoker("invoke", obj));
+        assertEquals(eval(m1), 40.0);
 
         // method invocation with a scope
-        Context scope = context(ent("x", 200.0), ent("y", 300.0));
-        m1 = ent("m1", methodInvoker("invoke", obj, scope));
-        assertEquals(value(m1), 400.0);
+        Context scope = context(proc("x", 200.0), proc("y", 300.0));
+        m1 = proc("m1", methodInvoker("invoke", obj, scope));
+        assertEquals(eval(m1), 400.0);
     }
 
     @Test
@@ -134,9 +138,9 @@ public class Entries {
             args = args("cmd",  "/C", "echo %USERNAME%");
         }
 
-        Entry cmd = ent("cmd", invoker(args));
+        Entry cmd = proc("cmd", invoker(args));
 
-        CmdResult result = (CmdResult) value(cmd);
+        CmdResult result = (CmdResult) eval(cmd);
         logger.info("result: " + result);
 
         logger.info("result out: " + result.getOut());
@@ -153,31 +157,130 @@ public class Entries {
     @Test
     public void signatureEntry() throws Exception {
 
-        Entry y1 = ent("y1", sig("add", AdderImpl.class, result("add/out",
+        Entry y1 = srv("y1", sig("add", AdderImpl.class, result("add/out",
                         inPaths("x1", "x2"))),
-                    context(inEnt("x1", 10.0), inEnt("x2", 20.0)));
+                    context(inVal("x1", 10.0), inVal("x2", 20.0)));
 
-        assertEquals(30.0, value(y1));
+        assertEquals(30.0, eval(y1));
     }
 
     @Test
-    public void getValueyWithSelector() throws Exception {
+    public void getEntryValueWithArgSelector() throws Exception {
 
-        Entry y1 = ent("y1", sig("add", AdderImpl.class),
-                context(inEnt("x1", 10.0), inEnt("x2", 20.0)));
+        Entry y1 = srv("y1", sig("add", AdderImpl.class),
+                context(inVal("x1", 10.0), inVal("x2", 20.0)));
 
-//        logger.info("out value: {}", value(y1, selector("result/value")));
-        assertEquals(30.0,  value(y1, selector("result/value")));
+//        logger.info("out eval: {}", eval(y1, selector("result/eval")));
+        assertEquals(30.0,  eval(y1, selector("result/eval")));
     }
 
     @Test
-    public void valueOfentryWithSelector() throws Exception {
+    public void getEntryValueWithSelector() throws Exception {
 
-        Entry y1 = ent("y1", sig("add", AdderImpl.class),
-                context(inEnt("x1", 10.0), inEnt("x2", 20.0)),
-                selector("result/value"));
+        Entry y1 = srv("y1", sig("add", AdderImpl.class),
+                context(inVal("x1", 10.0), inVal("x2", 20.0)),
+                selector("result/eval"));
 
-//        logger.info("out value: {}", value(y1));
-        assertEquals(30.0,  value(y1));
+//        logger.info("out eval: {}", eval(y1));
+        assertEquals(30.0,  eval(y1));
     }
+
+	@Test
+	public void getConditionalParValue() throws Exception {
+
+		Entry y1 = proc("y1", alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
+			opt(condition((Context<Double> cxt) -> value(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
+			context(proc("x1", 10.0), proc("x2", 20.0)));
+
+//        logger.info("out eval: {}", eval(y1));
+		assertEquals(30.0,  eval(y1));
+	}
+
+	@Test
+	public void getConditionalPar2Value() throws Exception {
+
+		Entry y1 = proc("y1", alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
+			opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
+			context(proc("x1", 20.0), proc("x2", 10.0)));
+
+//        logger.info("out eval: {}", eval(y1));
+		assertEquals(200.0,  eval(y1));
+	}
+
+	@Test
+	public void getConditionalPar3Value() throws Exception {
+
+		Entry y1 = proc("y1", alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
+			opt(30.0)),
+			context(proc("x1", 10.0), proc("x2", 20.0)));
+
+//        logger.info("out eval: {}", eval(y1));
+		assertEquals(30.0,  eval(y1));
+	}
+
+	@Test
+	public void getConditionalValueParModel() throws Exception {
+
+		Model mdl = model(
+			proc("x1", 10.0), proc("x2", 20.0),
+			proc("y1", alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
+				opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
+
+//        logger.info("out eval: {}", eval(mdl, "y1"));
+		assertEquals(30.0,  eval(mdl, "y1"));
+	}
+
+    @Test
+    public void getConditionalBlockSrvValue() throws Exception {
+
+        Entry y1 = srv("y1", block(context(proc("x1", 10.0), proc("x2", 20.0)),
+            alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))),
+                opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
+
+//        logger.info("out eval: {}", eval(y1));
+        assertEquals(30.0,  eval(y1));
+    }
+
+    @Test
+    public void getConditionalValueBlockSrvModel() throws Exception {
+
+        Model mdl = model(
+            proc("x1", 10.0), proc("x2", 20.0),
+            srv("y1", block(alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
+                    opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))))));
+
+//        logger.info("out eval: {}", eval(mdl, "y1"));
+        assertEquals(30.0,  eval(mdl, "y1"));
+    }
+
+	@Test
+	public void getConditionalLoopSrvValue() throws Exception {
+
+		Entry y1 = proc("y1",
+			loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),
+				invoker("lambda",
+                        (Context<Double> cxt) -> { putValue(cxt, "x1", v(cxt, "x1") + 1.0);
+                            return v(cxt, "x1") * v(cxt, "x3"); },
+				    context(val("x1", 10.0), val("x2", 20.0), val("x3", 40.0)),
+                    args("x1", "x2", "x3"))));
+
+//        logger.info("out eval: {}", eval(y1));
+		assertEquals(800.0,  eval(y1));
+	}
+
+	@Test
+	public void getConditionalLoopSrvModel() throws Exception {
+
+		Model mdl = model(
+			proc("x1", 10.0), proc("x2", 20.0), proc("x3", 40.0),
+			proc("y1",
+				loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),
+					invoker("lambda",
+						(Context<Double> cxt) -> { putValue(cxt, "x1", v(cxt, "x1") + 1.0);
+							return v(cxt, "x1") * v(cxt, "x3"); },
+                        args("x1", "x2", "x3")))));
+
+//        logger.info("out eval: {}", eval(mdl, "y1"));
+		assertEquals(800.0,  eval(mdl, "y1"));
+	}
 }

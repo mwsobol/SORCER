@@ -15,4 +15,4 @@
  * limitations under the License.
  */
 
-context(inEnt("x1", 20.0d), inEnt("x2", 40.0d))
+context(inVal("x1", 20.0d), inVal("x2", 40.0d))

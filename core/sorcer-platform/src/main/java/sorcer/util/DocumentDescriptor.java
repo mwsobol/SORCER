@@ -75,7 +75,7 @@ public class DocumentDescriptor implements SorcerConstants, Serializable {
 	// Version Info
 	private String activeVersionID;
 
-	// key -> versionID value -> (accessName + GApp.sep + VersionName)
+	// key -> versionID eval -> (accessName + GApp.sep + VersionName)
 	// accessName :This is the access name of the current version. ie, the
 	// physical name by which it's store in FileSystem.
 	// versionName :The logical name given to the file by the user.
@@ -104,7 +104,7 @@ public class DocumentDescriptor implements SorcerConstants, Serializable {
 	private String downloadVersionName;
 	public static ACLConvertor convertor;
 
-	// the http url of file to be uploaded or downloaded set by the file store
+	// the http url of file to be uploaded or downloaded setValue by the file store
 	// provider
 	public URL fileURL;
 

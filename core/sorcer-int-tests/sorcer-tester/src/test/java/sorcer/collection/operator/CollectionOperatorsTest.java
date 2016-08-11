@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ListContext;
+import sorcer.eo.operator;
 import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
 import sorcer.util.Table;
@@ -15,7 +16,6 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.eo.operator.value;
 
 /**
  * @author Mike Sobolewski
@@ -49,13 +49,13 @@ public class CollectionOperatorsTest {
 
 	@Test
 	public void mapOperatorTest() throws EvaluationException {
-		Map<Object, Object> map1 = dictionary(ent("name", "Mike"), ent("height", 174.0));
+		Map<Object, Object> map1 = dictionary(sorcer.po.operator.ent("name", "Mike"), sorcer.po.operator.ent("height", 174.0));
 				
-		Map<String, Double> map2 = map(ent("length", 248.0), ent("width", 2.0), ent("height", 17.0));
+		Map<String, Double> map2 = map(sorcer.po.operator.ent("length", 248.0), sorcer.po.operator.ent("width", 2.0), sorcer.po.operator.ent("height", 17.0));
 		
-		// keys and values of entries
-		String k = key(ent("name", "Mike"));
-		Double v = value(ent("height", 174.0));
+		// keys and values of args
+		String k = key(sorcer.po.operator.ent("name", "Mike"));
+		Double v = operator.eval(sorcer.po.operator.ent("height", 174.0));
 		assertEquals(k, "name");
 		assertTrue(v.equals(174.0));
 		
@@ -79,10 +79,10 @@ public class CollectionOperatorsTest {
 	@Test
 	public void bagOperatorTest() throws EvaluationException {
 		// the bag operator creates instances of java.util.Set
-		Set<Object> set = bag("name", "Mike", "name", "Ray", (Object)ent("height", 174));
+		Set<Object> set = bag("name", "Mike", "name", "Ray", (Object) sorcer.po.operator.ent("height", 174));
 		assertEquals(set.size(), 4);
-		assertEquals(ent("height", 174), ent("height", 174));
-		assertTrue(set.contains(ent("height", 174)));
+		assertEquals(sorcer.po.operator.ent("height", 174), sorcer.po.operator.ent("height", 174));
+		assertTrue(set.contains(sorcer.po.operator.ent("height", 174)));
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class CollectionOperatorsTest {
 		
 		assertEquals(table.getRowNames(), list("f1", "f2", "f3"));
 		assertEquals(table.getColumnNames(), list("x1", "x2", "x3", "x4", "x5"));
-		assertEquals(table.getRowMap("f2"), map(ent("x1", 2.1), ent("x2", 2.2), ent("x3", 2.3), ent("x4", 2.4), ent("x5",2.5)));
+		assertEquals(table.getRowMap("f2"), map(sorcer.po.operator.ent("x1", 2.1), sorcer.po.operator.ent("x2", 2.2), sorcer.po.operator.ent("x3", 2.3), sorcer.po.operator.ent("x4", 2.4), sorcer.po.operator.ent("x5",2.5)));
 	}
 	
 	@Test
@@ -126,20 +126,20 @@ public class CollectionOperatorsTest {
 //	@SuppressWarnings("rawtypes")
 //	@Test
 //	public void entriesTest() throws ContextException {
-//		Tuple2 e2 = ent("x1", 10.0);
+//		Tuple2 e2 = proc("x1", 10.0);
 //		//logger.info("tuple e2: " + e2);
 //		assertEquals("x1", e2.key());
-//		assertEquals(10.0, e2.value());
+//		assertEquals(10.0, e2.eval());
 //		
-//		Tuple3 e3a = ent("x1", 10.0, efFi("evaluator", "filter"));
+//		Tuple3 e3a = proc("x1", 10.0, efFi("evaluator", "filter"));
 //		//logger.info("tuple e3a: " + e3a);
 //		assertEquals(efFi("evaluator", "filter").getEvaluatorName(), ((VarFidelityInfo)e3a.fidelity()).getEvaluatorName());
 //		
-//		FidelityEntry e3b = ent("x1", efFi("evaluator", "filter"));
+//		FidelityEntry e3b = proc("x1", efFi("evaluator", "filter"));
 //		//logger.info("tuple e3b: " + e3b);
 //		assertEquals(efFi("evaluator", "filter").getFilterName(), ((VarFidelityInfo)e3b.fidelity()).getFilterName());
 //		
-//		StrategyEntry se = ent("j1/j2", strategy(Access.PULL, Flow.PAR));
+//		StrategyEntry se = proc("j1/j2", strategy(Access.PULL, Flow.PAR));
 //		//logger.info("tuple se: " + se);
 //		assertEquals(se.strategy().getFlowType(), Flow.PAR);
 //		assertEquals(se.strategy().getAccessType(), Access.PULL);
