@@ -540,52 +540,52 @@ public class operator {
 	protected static void popultePositionalContext(PositionalContext pcxt,
 												   List<Entry> entryList) throws ContextException {
 		for (int i = 0; i < entryList.size(); i++) {
-			Entry t = entryList.get(i);
-			if (t instanceof Srv) {
+			Entry ent = entryList.get(i);
+			if (ent instanceof Srv) {
 				try {
-					if (t.asis() instanceof Scopable) {
-						if (((Scopable) t.value()).getScope() != null)
-							((ServiceContext)((Scopable) t.value()).getScope()).setScope(pcxt);
+					if (ent.asis() instanceof Scopable) {
+						if (((Scopable) ent.value()).getScope() != null)
+							((ServiceContext)((Scopable) ent.value()).getScope()).setScope(pcxt);
 						else
-							((Scopable) t.value()).setScope(pcxt);
+							((Scopable) ent.value()).setScope(pcxt);
 					}
 				} catch (RemoteException e) {
 					throw new ContextException(e);
 				}
-				pcxt.putInoutValueAt(t.path(), t, i + 1);
-			} else if (t instanceof InputEntry || t.getType().equals(Variability.Type.INPUT)) {
-				Object par = t.value();
+				pcxt.putInoutValueAt(ent.path(), ent, i + 1);
+			} else if (ent instanceof InputEntry || ent.getType().equals(Variability.Type.INPUT)) {
+				Object par = ent.value();
 				if (par instanceof Scopable) {
 					((Scopable) par).setScope(pcxt);
 				}
-				if (t.isPersistent()) {
-					setProc(pcxt, t, i);
+				if (ent.isPersistent()) {
+					setProc(pcxt, ent, i);
 				} else {
-					pcxt.putInValueAt(t.path(), t.value(), i + 1);
+					pcxt.putInValueAt(ent.path(), ent.value(), i + 1);
 				}
-			} else if (t instanceof OutputEntry || t.getType().equals(Variability.Type.OUTPUT)) {
-				if (t.isPersistent()) {
-					setProc(pcxt, t, i);
+			} else if (ent instanceof OutputEntry || ent.getType().equals(Variability.Type.OUTPUT)) {
+				if (ent.isPersistent()) {
+					setProc(pcxt, ent, i);
 				} else {
-					pcxt.putOutValueAt(t.path(), t.value(), t.getValClass(), i + 1);
+					pcxt.putOutValueAt(ent.path(), ent.value(), ent.getValClass(), i + 1);
 				}
-			} else if (t instanceof InoutEntry || t.getType().equals(Variability.Type.INOUT)) {
-				if (t.isPersistent()) {
-					setProc(pcxt, t, i);
+			} else if (ent instanceof InoutEntry || ent.getType().equals(Variability.Type.INOUT)) {
+				if (ent.isPersistent()) {
+					setProc(pcxt, ent, i);
 				} else {
-					pcxt.putInoutValueAt(t.path(), t.value(), i + 1);
+					pcxt.putInoutValueAt(ent.path(), ent.value(), i + 1);
 				}
-			} else if (t instanceof Entry) {
-				if (t.isPersistent()) {
+			} else if (ent instanceof Entry) {
+				if (ent.isPersistent()) {
 					setProc(pcxt, entryList.get(i), i);
 				} else {
-					if (t.value() instanceof Scopable) {
-						((Scopable) t.value()).setScope(pcxt);
+					if (ent.value() instanceof Scopable) {
+						((Scopable) ent.value()).setScope(pcxt);
 					}
-					pcxt.putValueAt(t.path(), t.value(), i + 1);
+					pcxt.putValueAt(ent.path(), ent.value(), i + 1);
 				}
-			} else if (t instanceof DataEntry) {
-				pcxt.putValueAt(Context.DSD_PATH, t.value(), i + 1);
+			} else if (ent instanceof DataEntry) {
+				pcxt.putValueAt(Context.DSD_PATH, ent.value(), i + 1);
 			}
 		}
 	}
