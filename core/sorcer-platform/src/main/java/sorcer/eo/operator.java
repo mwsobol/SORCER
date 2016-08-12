@@ -551,6 +551,9 @@ public class operator {
 					}
 				} catch (RemoteException e) {
 					throw new ContextException(e);
+
+
+
 				}
 				pcxt.putInoutValueAt(ent.path(), ent, i + 1);
 			} else if (ent instanceof InputEntry || ent.getType().equals(Variability.Type.INPUT)) {
