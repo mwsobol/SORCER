@@ -485,7 +485,6 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	 */
 	@Override
 	public boolean isValueCurrent() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
