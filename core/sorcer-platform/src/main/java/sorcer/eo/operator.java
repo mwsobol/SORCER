@@ -250,7 +250,6 @@ public class operator {
 		return context(entries);
 	}
 
-
 	public static Context context(Object... entries) throws ContextException {
 		// do not create a context from Context, jut return
 		if (entries == null || entries.length == 0) {
@@ -401,7 +400,6 @@ public class operator {
 				}
 			}
 		}
-
 
 		if (cxt instanceof PositionalContext) {
 			PositionalContext pcxt = (PositionalContext) cxt;
