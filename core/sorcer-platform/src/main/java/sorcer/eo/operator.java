@@ -2830,6 +2830,10 @@ public class operator {
 			return as;
 		}
 
+		public int size() {
+			return args.length;
+		}
+
 		@Override
 		public String toString() {
 			return "args: " + Arrays.toString(args);
@@ -3242,7 +3246,7 @@ public class operator {
 					if (((EvaluationTask)e).getEvaluation() instanceof Proc) {
 						Proc p = (Proc)((EvaluationTask)e).getEvaluation();
 						((ProcModel)pm.getScope()).addProc(p);
-//						pm.addProc(p);
+//						pm.addPar(p);
 
 					}
 				} else if (e instanceof Exertion) {

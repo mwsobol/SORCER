@@ -31,7 +31,7 @@ import sorcer.service.EvaluationException;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class EntList extends ArrayList<Proc> {
+public class EntList extends ArrayList<Entry> {
 
 	static final long serialVersionUID = -4997255102658715823L;
 
@@ -68,8 +68,8 @@ public class EntList extends ArrayList<Proc> {
 		}
 	}
 
-	public Proc<? extends Object> getPar(String parName) throws EntException {
-		for (Proc<?> p : this) {
+	public Entry<? extends Object> getEntry(String parName) throws EntException {
+		for (Entry p : this) {
 			if (p.getName().equals(parName)) {
 				return p;
 			}
@@ -77,12 +77,12 @@ public class EntList extends ArrayList<Proc> {
 		return null;
 	}
 
-	public void setParValue(String parName, Object value)
+	public void setEntValue(String parName, Object value)
 			throws EvaluationException {
-		Proc procEntry = null;
-		for (Proc p : this) {
-			if (p.getName().equals(parName)) {
-				procEntry = p;
+		Entry procEntry = null;
+		for (Entry ent : this) {
+			if (ent.getName().equals(parName)) {
+				procEntry = ent;
 				try {
 					procEntry.setValue(value);
 				} catch (Exception e) {
@@ -95,13 +95,13 @@ public class EntList extends ArrayList<Proc> {
 			throw new EntException("No such Proc in the list: " + parName);
 	}
 
-	public EntList selectPars(List<String>... parNames) {
+	public EntList selectEnts(List<String>... entNames) {
 		List<String> allParNames = new ArrayList<String>();
-		for (List<String> nl : parNames) {
+		for (List<String> nl : entNames) {
 			allParNames.addAll(nl);
 		}
 		EntList out = new EntList();
-		for (Proc<?> v : this) {
+		for (Entry v : this) {
 			if (allParNames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -109,10 +109,10 @@ public class EntList extends ArrayList<Proc> {
 		return out;
 	}
 
-	public EntList selectPars(String... parNames) {
-		List<String> vnames = Arrays.asList(parNames);
+	public EntList selectEnts(String... entNames) {
+		List<String> vnames = Arrays.asList(entNames);
 		EntList out = new EntList();
-		for (Proc<?> v : this) {
+		for (Entry v : this) {
 			if (vnames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -120,8 +120,8 @@ public class EntList extends ArrayList<Proc> {
 		return out;
 	}
 
-	public boolean containsParName(String name) {
-		return contains(new Proc(name));
+	public boolean containsEntName(String name) {
+		return contains(new Entry(name));
 	}
 
 	@Override
@@ -129,7 +129,7 @@ public class EntList extends ArrayList<Proc> {
 		if (!(obj instanceof Proc<?>))
 			return false;
 		else {
-			for (Proc<?> v : this) {
+			for (Entry v : this) {
 				if (v.getName().equals(((Proc<?>) obj).getName()))
 					return true;
 			}
@@ -142,7 +142,7 @@ public class EntList extends ArrayList<Proc> {
 		if (obj == null || !(obj instanceof Proc<?>)) {
 			return false;
 		} else {
-			for (Proc<?> v : this) {
+			for (Entry v : this) {
 				if (v.getName().equals(((Proc<?>) obj).getName())) {
 					super.remove(v);
 					return true;
@@ -184,7 +184,7 @@ public class EntList extends ArrayList<Proc> {
 			throws EntException {
 		try {
 			for (Tuple2<String, ?> entry : entries) {
-				setParValue(entry._1, entry._2);
+				setEntValue(entry._1, entry._2);
 			}
 		} catch (Exception e) {
 			throw new EntException(e);
@@ -210,8 +210,8 @@ public class EntList extends ArrayList<Proc> {
 		return getNames().toString();
 	}
 	
-	public ParSet toParSet() {
-		ParSet out = new ParSet();
+	public EntSet toParSet() {
+		EntSet out = new EntSet();
 		for (Arg a : this) {
 			if (!(a instanceof Proc<?>))
 				throw new RuntimeException("wrong argument");
@@ -220,12 +220,12 @@ public class EntList extends ArrayList<Proc> {
 		return out;
 	}
 	
-	public EntList toParList() {
+	public EntList toEntList() {
 		EntList out = new EntList();
 		for (Arg a : this) {
-			if (!(a instanceof Proc<?>))
+			if (!(a instanceof Entry))
 				throw new RuntimeException("wrong argument");
-			out.add((Proc<?>)a);
+			out.add((Entry)a);
 		}
 		return out;
 	}

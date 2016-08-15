@@ -292,7 +292,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		} else if (par instanceof Identifiable) {
 			try {
 				Proc p = new Proc(((Identifiable) par).getName(), par, invokeContext);
-				((ServiceContext)invokeContext).putValue(p.getName(), p);
+				invokeContext.putValue(p.getName(), p);
 			} catch (ContextException e) {
 				throw new EvaluationException(e);
 			}
@@ -340,7 +340,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			throws RemoteException, InvocationException {
 		try {
 			if (invokeContext == null)
-				invokeContext = (ProcModel) context;
+				invokeContext = context;
 			else {
 				invokeContext.append(context);
 			}
@@ -523,7 +523,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.proc.ParSet)
+	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.proc.EntSet)
 	 */
 	@Override
 	public void addArgs(ArgSet set) throws EvaluationException, RemoteException {
