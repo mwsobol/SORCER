@@ -367,6 +367,10 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 		}
 	}
 
+	public ArgSet getArgs() {
+		return null;
+	}
+
 	@Override
 	public String name() {
 		return _1;

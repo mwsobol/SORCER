@@ -3130,16 +3130,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * @see sorcer.service.Context#addPar(sorcer.core.context.model.proc.Proc)
 	 */
 	@Override
-	public Arg addProc(Arg par) throws ContextException {
-		Proc p = (Proc)par;
+	public Arg addProc(Arg arg) throws ContextException {
+		Proc p = (Proc)arg;
 		put(p.getName(), (T)p);
-		if (p.getScope() == null || ((ServiceContext)p.getScope()).size() == 0)
+		if (p.getScope() == null || p.getScope().size() == 0)
 			p.setScope(this);
 		try {
-			if (p.asis() instanceof ServiceInvoker) {
-				ServiceInvoker si = (ServiceInvoker) p.asis();
+			if (p.asis() instanceof Scopable) {
+				Scopable si = (Scopable) p.asis();
 				if (si.getScope() == null || si.getScope().size() == 0)
-					((ServiceInvoker) p.asis()).setScope(this);
+					((Scopable) p.asis()).setScope(this);
 				else {
 					((ServiceContext)si.getScope()).setScope(this);
 				}

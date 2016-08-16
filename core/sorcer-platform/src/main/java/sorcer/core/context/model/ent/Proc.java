@@ -56,8 +56,6 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 
 	protected T value;
 
-	protected Context scope;
-
 	// data store URL for this proc
 	private URL dbURL;
 
