@@ -304,7 +304,7 @@ public class operator {
 		ReturnPath returnPath = null;
 		ExecPath execPath = null;
 		Args cxtArgs = null;
-		ParameterTypes parameterTypes = null;
+		ParTypes parTypes = null;
 		PathResponse response = null;
 		QueueStrategy modelStrategy = null;
 		Signature sig = null;
@@ -316,9 +316,9 @@ public class operator {
 			} else if (o instanceof Args) {
 //					&& ((Args) o).args.getClass().isArray()) {
 				cxtArgs = (Args) o;
-			} else if (o instanceof ParameterTypes)  {
-//					&& ((ParameterTypes) o).parameterTypes.getClass().isArray()) {
-				parameterTypes = (ParameterTypes) o;
+			} else if (o instanceof ParTypes)  {
+//					&& ((ParTypes) o).types.getClass().isArray()) {
+				parTypes = (ParTypes) o;
 			} else if (o instanceof PathResponse) {
 				response = (PathResponse) o;
 			} else if (o instanceof ReturnPath) {
@@ -425,16 +425,16 @@ public class operator {
 			}
 			((ServiceContext) cxt).setArgs(cxtArgs.args);
 		}
-		if (parameterTypes != null) {
-			if (parameterTypes.path() != null) {
-				((ServiceContext) cxt).setParameterTypesPath(parameterTypes
+		if (parTypes != null) {
+			if (parTypes.path() != null) {
+				((ServiceContext) cxt).setParameterTypesPath(parTypes
 						.path());
 			} else {
 				((ServiceContext) cxt)
 						.setParameterTypesPath(Context.PARAMETER_TYPES);
 			}
 			((ServiceContext) cxt)
-					.setParameterTypes(parameterTypes.parameterTypes);
+					.setParameterTypes(parTypes.parameterTypes);
 		}
 		if (response != null) {
 			if (response.path() != null) {
@@ -1077,8 +1077,8 @@ public class operator {
 					((ServiceSignature) sig).setShellRemote((Strategy.Shell) o);
 				} else if (o instanceof ReturnPath) {
 					sig.setReturnPath((ReturnPath) o);
-				} else if (o instanceof TypeList) {
-					((ServiceSignature)sig).setMatchTypes(((TypeList) o).toTypeArray());
+				} else if (o instanceof ParTypes) {
+					((ServiceSignature)sig).setMatchTypes(((ParTypes) o).parameterTypes);
 				} else if (o instanceof In ) {
 					if (sig.getReturnPath() == null) {
 						sig.setReturnPath(new ReturnPath((In) o));
@@ -1161,10 +1161,6 @@ public class operator {
 	public static ServiceType type(String typeName) {
 		ServiceType st = new ServiceType(typeName);
 		return st;
-	}
-
-	public static TypeList types(Class... types) {
-		return new TypeList(types);
 	}
 
 	public static String property(String property) {
@@ -2759,31 +2755,36 @@ public class operator {
 		}
 	}
 
-	public static ParameterTypes parameterTypes(Class... parameterTypes) {
-		return new ParameterTypes(parameterTypes);
+	public static ParTypes types(Class... parameterTypes) {
+		return new ParTypes(parameterTypes);
 	}
 
-	public static class ParameterTypes extends Path {
+	public static class ParTypes extends Path {
 		private static final long serialVersionUID = 1L;
 		public Class[] parameterTypes;
 
-		public ParameterTypes(Class... parameterTypes) {
+		public ParTypes(Class... parameterTypes) {
 			this.parameterTypes = parameterTypes;
 		}
 
-		public ParameterTypes(String path, Class... parameterTypes) {
+		public ParTypes(Class basicType, Class... parameterTypes) {
+			Class[] types = new Class[parameterTypes.length+1];
+			types[0] = basicType;
+			for (int i = 0; i < parameterTypes.length; i++) {
+				types[i+1] = parameterTypes[i];
+			}
+			this.parameterTypes = types;
+		}
+
+		public ParTypes(String path, Class... parameterTypes) {
 			this.parameterTypes = parameterTypes;
 			this.path = path;
 		}
 
 		@Override
 		public String toString() {
-			return "parameterTypes: " + Arrays.toString(parameterTypes);
+			return "types: " + Arrays.toString(parameterTypes);
 		}
-	}
-
-	public static Args parameterValues(Object... args) {
-		return new Args(args);
 	}
 
 	public static Args args(Object... args) {

@@ -70,7 +70,7 @@ public class CoffeeServiceTest {
 	public void cleanUp() throws Exception {
 		Exertion cmt =
 				task(sig("deleteRecipes", CoffeeMaking.class),
-						context(parameterTypes(), args()));
+						context(types(), args()));
 
 		cmt = exert(cmt);
 		logger.info("deleted recipes context: " + context(cmt));
