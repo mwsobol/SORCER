@@ -15,7 +15,6 @@ import java.util.List;
 
 @SuppressWarnings("rawtypes")
 public class AdderImpl implements Adder {
-	public static final String RESULT_PATH = "result/eval";
 	private ServiceProvider provider;
 	private static Logger logger = LoggerFactory.getLogger(AdderImpl.class.getName());
 	
@@ -43,7 +42,8 @@ public class AdderImpl implements Adder {
 			cxt.putValue("calculated/provider", provider.getProviderName());
 		else
 			cxt.putValue("calculated/provider", getClass().getName());
-		if (context.getReturnPath() != null) {
+
+		if (context.getReturnPath() != null && context.getReturnPath().getPath() != null) {
 			context.setReturnValue(result);
 		} else if (outpaths.size() == 1) {
 			// put the result in the existing output path

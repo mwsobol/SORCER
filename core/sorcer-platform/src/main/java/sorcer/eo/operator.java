@@ -309,6 +309,8 @@ public class operator {
 		QueueStrategy modelStrategy = null;
 		Signature sig = null;
 		Class customContextClass = null;
+		Out outPaths = null;
+		In inPaths = null;
 		boolean autoDeps = true;
 		for (Object o : entries) {
 			if (o instanceof Complement) {
@@ -355,6 +357,10 @@ public class operator {
 				projection = ((Projection)o);
 			} else if (o.equals(Strategy.Flow.EXPLICIT)) {
 				autoDeps = false;
+			} else if (o instanceof Out) {
+				outPaths = (Out)o;
+			} else if (o instanceof In) {
+				inPaths = (In)o;
 			}
 		}
 
@@ -462,6 +468,20 @@ public class operator {
 				path = e.getName();
 				dependentPaths = e.value();
 				dm.put(path, dependentPaths);
+			}
+		}
+		if (outPaths instanceof Out) {
+			if (cxt.getReturnPath() == null) {
+				cxt.setReturnPath(new ReturnPath(outPaths));
+			} else {
+				((ReturnPath)cxt.getReturnPath()).outPaths = (outPaths).getExtPaths();
+			}
+		}
+		if (inPaths instanceof In) {
+			if (cxt.getReturnPath() == null) {
+				cxt.setReturnPath(new ReturnPath(inPaths));
+			} else {
+				((ReturnPath)cxt.getReturnPath()).inPaths = inPaths.getSigPaths();
 			}
 		}
 		if (accessType != null)
@@ -1089,7 +1109,7 @@ public class operator {
 					if (sig.getReturnPath() == null) {
 						sig.setReturnPath(new ReturnPath((Out) o));
 					} else {
-						((ReturnPath)sig.getReturnPath()).outPaths = ((Out) o).getSigPaths();
+						((ReturnPath)sig.getReturnPath()).outPaths = ((Out) o).getExtPaths();
 					}
 				} else if (o instanceof ServiceDeployment) {
 					((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
@@ -1100,9 +1120,8 @@ public class operator {
 						&& o.getClass() != MapContext.class) {
 					if (sig.getReturnPath() == null) {
 						sig.setReturnPath(new ReturnPath());
-						((ReturnPath) sig.getReturnPath()).setDataContext((Context) o);
-					} else
-						throw new SignatureException("No return path defined in: " + sig);
+					}
+					((ReturnPath) sig.getReturnPath()).setDataContext((Context) o);
 				}
 			}
 		}

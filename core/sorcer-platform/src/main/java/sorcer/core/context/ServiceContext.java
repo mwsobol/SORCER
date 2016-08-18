@@ -2849,7 +2849,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				else if (returnPath != null)
 					return getReturnValue(entries);
 				else if (entries.length == 1 && entries[0] instanceof Signature.Out) {
-					return (T) getSubcontext(((Signature.Out)entries[0]).getSigPaths());
+					return (T) getSubcontext(((Signature.Out)entries[0]).getExtPaths());
 				} else {
 					return (T) this;
 				}
