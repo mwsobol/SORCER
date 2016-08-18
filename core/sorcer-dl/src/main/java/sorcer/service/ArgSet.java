@@ -17,6 +17,8 @@ package sorcer.service;
  * limitations under the License.
  */
 
+import sorcer.core.Name;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,8 +39,8 @@ public class ArgSet extends TreeSet<Arg> {
 	}
 	
 	public ArgSet(Arg...  args) {
-		for (Arg v : args) {
-			add(v);
+		for (Arg arg : args) {
+			add(arg);
 		}
 	}
 	
@@ -107,7 +109,7 @@ public class ArgSet extends TreeSet<Arg> {
 		}
 		return false;
 	}
-	
+
 	 public List<String> getNames() {
 		 List<String> names = new ArrayList<String>(size());
 		 Iterator<Arg> i = iterator();

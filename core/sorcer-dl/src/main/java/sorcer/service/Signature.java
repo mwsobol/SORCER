@@ -322,7 +322,7 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 			return paths;
 		}
 
-		public Path[] getSigPaths() {
+		public Path[] getExtPaths() {
 			Path[] paths = new Path[size()];
 			return this.toArray(paths);
 		}

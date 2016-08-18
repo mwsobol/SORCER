@@ -35,10 +35,11 @@ import sorcer.core.provider.Provider;
 import sorcer.core.provider.ProviderName;
 import sorcer.core.provider.ServiceName;
 import sorcer.core.signature.NetSignature;
+import sorcer.eo.operator;
 import sorcer.service.Service;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
-import sorcer.service.TypeList;
+import sorcer.eo.operator.ParTypes;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -108,10 +109,8 @@ public class ProviderLocator {
 
 		Class[] types =  new Class[] { serviceClass };
 		if (matchTypes != null && matchTypes.length > 0) {
-			TypeList allTypes = new TypeList(matchTypes);
-			allTypes.add(0, serviceClass);
-			types = new Class[allTypes.size()];
-			allTypes.toArray(types);
+			operator.ParTypes allTypes = new ParTypes(serviceClass, matchTypes);
+			types = allTypes.parameterTypes;
 		}
 
 		Entry[] entry = null;
@@ -198,10 +197,8 @@ public class ProviderLocator {
 
 		Class[] types =  new Class[] { serviceClass };
 		if (matchTypes != null && matchTypes.length > 0) {
-			TypeList allTypes = new TypeList(matchTypes);
-			allTypes.add(0, serviceClass);
-			types = new Class[allTypes.size()];
-			allTypes.toArray(types);
+			ParTypes allTypes = new ParTypes(serviceClass, matchTypes);
+			types = allTypes.parameterTypes;
 		}
 		Entry[] entry = null;
 

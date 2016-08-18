@@ -64,7 +64,7 @@ public class Procedures {
 	public void closingParWihEntries() throws Exception {
 		Proc y = proc("y",
 				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
-		Object val = eval(y, proc("x1", 10.0), proc("x2", 50.0), proc("x3", 20.0), proc("x4", 80.0));
+		Object val = eval(y, val("x1", 10.0), val("x2", 50.0), val("x3", 20.0), val("x4", 80.0));
 		// logger.info("y eval: " + val);
 		assertEquals(val, 400.0);
 	}
@@ -75,7 +75,7 @@ public class Procedures {
 		// invokers use contextual scope of args
 		Proc<?> add = proc("add", invoker("x + y", args("x", "y")));
 
-		Context<Double> cxt = context(proc("x", 10.0), proc("y", 20.0));
+		Context<Double> cxt = context(val("x", 10.0), val("y", 20.0));
 		logger.info("proc eval: " + eval(add, cxt));
 		// evaluate a proc
 		assertTrue(eval(add, cxt).equals(30.0));

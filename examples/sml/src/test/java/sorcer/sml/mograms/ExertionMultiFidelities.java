@@ -65,11 +65,11 @@ public class ExertionMultiFidelities {
             t3,
             pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
             pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-            fi("job1", cFi("j1/j2/t4", "object"), cFi("j1/j2/t5", "net")),
-            fi("job2",  cFi("j1/j2", "net"),
-                cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")),
+            fi("job1", cFi("object", "j1/j2/t4"), cFi("net", "j1/j2/t5")),
+            fi("job2",  cFi("net", "j1/j2"),
+                cFi("net", "j1/t3"), cFi("net", "j1/j2/t4"), cFi("net", "j1/j2/t5")),
             fi("job3",  cFi("j1", "net"), cFi("j1/j2", "net"),
-                cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")));
+                cFi("net", "j1/t3"), cFi("net", "j1/j2/t4"), cFi("net", "j1/j2/t5")));
 
         return (Job)tracable(job);
     }
@@ -186,11 +186,11 @@ public class ExertionMultiFidelities {
 			t3,
 			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-			fi("job1", cFi("j1/j2/t4", "object1"), cFi("j1/j2/t5", "object2")),
-			fi("job2", cFi("j1/j2", "net"),
-				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2")),
-			fi("job3", cFi("j1", "object2"), cFi("j1/j2", "object2"),
-				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2")));
+			fi("job1", cFi("object1", "j1/j2/t4"), cFi("object2", "j1/j2/t5")),
+			fi("job2", cFi("net", "j1/j2"),
+				cFi("object2", "j1/t3"), cFi("object2", "j1/j2/t4"), cFi("object2", "j1/j2/t5")),
+			fi("job3", cFi("object2", "j1"), cFi("object2", "j1/j2"),
+				cFi("object2", "j1/t3"), cFi("object2", "j1/j2/t4"), cFi("object2", "j1/j2/t5")));
 
 		return (Job) tracable(job);
 	}

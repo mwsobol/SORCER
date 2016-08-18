@@ -177,11 +177,11 @@ public class ArithmeticNetTest implements SorcerConstants {
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-				fi("job1", cFi("j1/j2/t4", "object"), cFi("j1/j2/t5", "net")),
-				fi("job2",  cFi("j1/j2", "net"),
-						cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")),
-				fi("job3",  cFi("j1", "net"), cFi("j1/j2", "net"),
-						cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")));
+				fi("job1", cFi("object", "j1/j2/t4"), cFi("net", "j1/j2/t5")),
+				fi("job2",  cFi("net", "j1/j2"),
+						cFi("net", "j1/t3"), cFi("net", "j1/j2/t4"), cFi("net", "j1/j2/t5")),
+				fi("job3",  cFi("net", "j1"), cFi("net", "j1/j2"),
+						cFi("net", "j1/t3"), cFi("net", "j1/j2/t4"), cFi("net", "j1/j2/t5")));
 
 		return (Job)tracable(job);
 	}

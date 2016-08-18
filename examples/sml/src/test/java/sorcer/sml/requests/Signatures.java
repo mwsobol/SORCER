@@ -93,7 +93,7 @@ public class Signatures {
 
 		ms = sig(Math.class, "max");
 		Context cxt = context(
-				parameterTypes(new Class[]{double.class, double.class}),
+				types(new Class[]{double.class, double.class}),
 				args(new Object[]{200.11, 3000.0}));
 
 		// request the service
@@ -142,7 +142,7 @@ public class Signatures {
 		Signature ps = sig("get", Calendar.class, "getInstance");
 
 		Context cxt = context(
-				parameterTypes(new Class[]{int.class}),
+				types(new Class[]{int.class}),
 				args(new Object[]{Calendar.MONTH}));
 
 		// get service provider for signature

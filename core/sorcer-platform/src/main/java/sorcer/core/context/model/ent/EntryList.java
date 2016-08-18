@@ -78,9 +78,9 @@ public class EntryList extends ArrayList<Entry> {
 		}
 	}
 	
-	public EntryList(ParSet parSet) {
+	public EntryList(EntSet parSet) {
 		super();
-		for (Proc<?> p : parSet) {
+		for (Entry p : parSet) {
 			add(new Entry(p.getName(), p));
 		}
 	}

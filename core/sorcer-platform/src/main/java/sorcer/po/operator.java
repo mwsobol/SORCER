@@ -655,7 +655,7 @@ public class operator {
 		return sorcer.co.operator.srv(sig);
 	}
 
-	public static Entry<Object>  ent(String path) {
+	public static Entry ent(String path) {
 		return new Entry(path, null);
 	}
 

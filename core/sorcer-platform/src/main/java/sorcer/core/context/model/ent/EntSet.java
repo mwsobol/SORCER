@@ -31,37 +31,37 @@ import sorcer.service.EvaluationException;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ParSet extends TreeSet<Proc> {
+public class EntSet extends TreeSet<Entry> {
 	
 	private static final long serialVersionUID = -4662755904016297879L;
 	
-	public ParSet() {
+	public EntSet() {
 		super();
 	}
 
-	public ParSet(EntList entList) {
+	public EntSet(EntList entList) {
 		addAll(entList);
 	}
 	
-	public ParSet(Set<Proc> procEntrySet) {
+	public EntSet(Set<Proc> procEntrySet) {
 		addAll(procEntrySet);
 	}
 
 	
-	public ParSet(EntList... entLists) {
+	public EntSet(EntList... entLists) {
 		for (EntList vl : entLists) {
 			addAll(vl);
 		}
 	}
 	
-	public ParSet(Proc<?>... procEntries) {
+	public EntSet(Proc<?>... procEntries) {
 		for (Proc<?> v : procEntries) {
 			add(v);
 		}
 	}
 	
-	public Proc<?> getPar(String parName) throws EntException {
-		for (Proc<?> v : this) {
+	public Entry getPar(String parName) throws EntException {
+		for (Entry v : this) {
 			if (v.getName().equals(parName))
 				return v;
 		}
@@ -70,8 +70,8 @@ public class ParSet extends TreeSet<Proc> {
 	
 	public void setValue(String parName, Object value)
 			throws EvaluationException {
-		Proc procEntry = null;
-		for (Proc<?> p : this) {
+		Entry procEntry = null;
+		for (Entry p : this) {
 			if (p.getName().equals(parName)) {
 				procEntry = p;
 				try {
@@ -92,7 +92,7 @@ public class ParSet extends TreeSet<Proc> {
 			allParNames.addAll(nl);
 		}
 		EntList out = new EntList();
-		for (Proc<?> v : this) {
+		for (Entry v : this) {
 			if (allParNames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -100,10 +100,10 @@ public class ParSet extends TreeSet<Proc> {
 		return out;
 	}
 	
-	public ParSet selectPars(String... parnames) {
+	public EntSet selectPars(String... parnames) {
 		List<String> vnames = Arrays.asList(parnames);
-		ParSet out = new ParSet();
-		for (Proc<?> v : this) {
+		EntSet out = new EntSet();
+		for (Entry v : this) {
 			if (vnames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -116,7 +116,7 @@ public class ParSet extends TreeSet<Proc> {
 		if (!(obj instanceof Proc<?>))
 			return false;
 		else {
-			for (Proc<?> v : this) {
+			for (Entry v : this) {
 				if (v.getName().equals(((Proc<?>)obj).getName()))
 					return true;
 			}
@@ -129,7 +129,7 @@ public class ParSet extends TreeSet<Proc> {
 		if (obj == null || !(obj instanceof Proc<?>)) {
 			return false;
 		} else {
-			for (Proc<?> v : this) {
+			for (Entry v : this) {
 				if (v.getName().equals(((Proc<?>) obj).getName())) {
 					super.remove(v);
 					return true;
@@ -141,7 +141,7 @@ public class ParSet extends TreeSet<Proc> {
 	
 	 public List<String> getNames() {
 		 List<String> names = new ArrayList<String>(size());
-		 Iterator<Proc> i = iterator();
+		 Iterator<Entry> i = iterator();
 		 while (i.hasNext()) {
 			 names.add(i.next().getName());
 		 }
@@ -150,7 +150,7 @@ public class ParSet extends TreeSet<Proc> {
 	 
 	 public List<Object> getValues() throws EvaluationException, RemoteException {
 		 List<Object> values = new ArrayList<Object>(size());
-		 Iterator<Proc> i = iterator();
+		 Iterator<Entry> i = iterator();
 		 while (i.hasNext()) {
 			 values.add(i.next().getValue());
 		 }
@@ -164,13 +164,13 @@ public class ParSet extends TreeSet<Proc> {
 			
 	 public EntList toParList() {
 		 EntList vl = new EntList(size());
-		 for (Proc<?> v : this)
+		 for (Entry v : this)
 			 vl.add(v);
 		 return vl;
 	 }
 
-	 public static ParSet asParSet(EntList list) {
-		 return new ParSet(list);
+	 public static EntSet asParSet(EntList list) {
+		 return new EntSet(list);
 	 }
 
 	 public static EntList asList(Proc<?>[] array) {
@@ -181,7 +181,7 @@ public class ParSet extends TreeSet<Proc> {
 	 }
 
 	 public void clearPars() throws EvaluationException {
-			for (Proc p : this) {
+			for (Entry p : this) {
 				try {
 					p.setValue(null);
 				} catch (Exception e) {

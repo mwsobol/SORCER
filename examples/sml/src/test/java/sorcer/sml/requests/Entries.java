@@ -64,8 +64,8 @@ public class Entries {
     public void entFidelities() throws Exception {
         Entry mfiEnt = inVal("by", eFi(inVal("by-10", 10.0), inVal("by-20", 20.0)));
 
-        assertTrue(eval(mfiEnt, fi("by", "by-20")).equals(20.0));
-        assertTrue(eval(mfiEnt, fi("by", "by-10")).equals(10.0));
+        assertTrue(eval(mfiEnt, fi("by-20", "by")).equals(20.0));
+        assertTrue(eval(mfiEnt, fi("by-10", "by")).equals(10.0));
     }
 
 	@Test

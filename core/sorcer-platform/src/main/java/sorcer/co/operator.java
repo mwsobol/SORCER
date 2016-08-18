@@ -318,13 +318,13 @@ public class operator {
 	public static <T> Entry<T> val(Path path, T value) {
 		Entry ent = new Entry<T>(path.path, value);
 		ent.annotation(path.info.toString());
-		ent.setType(Variability.Type.VAL);
+		ent.setType(Type.INPUT);
 		return ent;
 	}
 
 	public static <T> Entry<T> val(String path, T value) {
 		Entry ent = new Entry<T>(path, value);
-		ent.setType(Variability.Type.VAL);
+		ent.setType(Type.INPUT);
 		return ent;
 	}
 
@@ -334,12 +334,12 @@ public class operator {
 	}
 
 	public static Entry in(Entry entry) {
-		entry.setType(Variability.Type.INPUT);
+		entry.setType(Type.INPUT);
 		return entry;
 	}
 
 	public static Entry out(Entry entry) {
-		entry.setType(Variability.Type.OUTPUT);
+		entry.setType(Type.OUTPUT);
 		return entry;
 	}
 
