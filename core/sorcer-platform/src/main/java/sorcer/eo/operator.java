@@ -1042,7 +1042,7 @@ public class operator {
 					connList.add(((MapContext) o));
 				} else if (o instanceof ServiceType) {
 					srvType = (ServiceType) o;
-					// check if class can be loades
+					// check if class can be loaded
 //                    serviceType = srvType.providerType;
 //                    try {
 //                        if (serviceType == null) {
