@@ -1116,7 +1116,7 @@ public class operator {
 				} else if (o instanceof Version && sig instanceof NetSignature) {
 					((NetSignature) sig).setVersion(((Version) o).getName());
 				} else if (o instanceof ServiceContext
-						// not applied to connctors in Signatures
+						// not applied to connectors in Signatures
 						&& o.getClass() != MapContext.class) {
 					if (sig.getReturnPath() == null) {
 						sig.setReturnPath(new ReturnPath());
