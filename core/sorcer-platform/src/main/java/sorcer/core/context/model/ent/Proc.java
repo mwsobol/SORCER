@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sorcer.core.context.model.par;
+package sorcer.core.context.model.ent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.EntryList;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Variability;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -36,20 +35,20 @@ import java.security.Principal;
 import java.util.*;
 
 /**
- * In service-based modeling, a parameter (for short a par) is a special kind of
- * variable, used in a service context {@link ParModel} to refer to one of the
+ * In service-based modeling, a parameter (for short a proc) is a special kind of
+ * variable, used in a service context {@link ProcModel} to refer to one of the
  * pieces of data provided as input to the invokers (subroutines of the
  * context). These pieces of data are called arguments.
  * 
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
+public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, Serializable {
 
 	private static final long serialVersionUID = 7495489980319169695L;
 	 
-	private static Logger logger = LoggerFactory.getLogger(Par.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(Proc.class.getName());
 
 	protected final String name;
 	
@@ -57,59 +56,68 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 
 	protected T value;
 
-	protected Context<T> scope;
+	protected Context scope;
 
-	// data store URL for this par
+	// data store URL for this proc
 	private URL dbURL;
 
 	// A context returning eval at the path
-	// that is this par name
+	// that is this proc name
 	// Sorcer Mappable: Context, Exertion, or Var args
 	protected Mappable mappable;
 
 	protected String selectedFidelity;
 
-	// par fidelities for this par
+	// proc fidelities for this proc
 	protected Map<String, Object> fidelities;
 
-	public Par(String parname) {
+	public Proc(String parname) {
 		super(parname);
 		name = parname;
 		value = null;
+		type = Variability.Type.PROC;
 	}
 	
-	public Par(Identifiable identifiable) {
+	public Proc(Identifiable identifiable) {
 		super(identifiable.getName());
 		name = identifiable.getName();
 		value = (T)identifiable;
 	}
-	
-	public Par(String path, T argument) {
+
+	public Proc(String path, T argument) {
 		super(path);
 		name = path;
-		
+
 		if (argument instanceof EntryList) {
 			if (fidelities == null)
 				fidelities = new HashMap<String, Object>();
-			for (Entry e : (EntryList)argument) {
+			for (Entry e : (EntryList) argument) {
 				fidelities.put(e.getName(), e);
 			}
-			
-			Entry first = ((EntryList)argument).get(0);
-			selectedFidelity = first.getName();
-			value = (T)first;
-		} else {
-			if (argument instanceof Evaluation || argument instanceof Invocation) {
-				value = argument;
-			} else {
-				_2 = argument;
-				value = argument;
-			}
 
+			Entry first = ((EntryList) argument).get(0);
+			selectedFidelity = first.getName();
+			value = (T) first;
+		} else if (argument instanceof Evaluation || argument instanceof Invocation) {
+			if (argument instanceof ConditionalInvocation) {
+				Context cxt = ((ServiceInvoker) argument).getScope();
+				if (cxt != null) {
+					scope = cxt;
+					Condition condition = ((ConditionalInvocation) argument).getCondition();
+					if (condition != null) {
+						condition.setConditionalContext(cxt);
+					}
+				}
+			}
+			value = argument;
+		} else {
+			_2 = argument;
+			value = argument;
 		}
+		type = Variability.Type.PROC;
 	}
 
-	public Par(String path, Object argument, Object scope)
+	public Proc(String path, Object argument, Object scope)
 			throws ContextException {
 		this(path, (T) argument);
 		if (argument instanceof String && scope instanceof Service) {
@@ -121,11 +129,13 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 
 			}
 		}
-		if (argument instanceof Scopable)
+		if (argument instanceof Scopable) {
 			((Scopable) argument).setScope(this.scope);
+		}
+		type = Variability.Type.PROC;
 	}
 	
-	public Par(Mappable map, String name, String path) {
+	public Proc(Mappable map, String name, String path) {
 		this(name);
 		value =  (T)path;
 		mappable = map;
@@ -155,14 +165,14 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		if (mappable != null && this._2 instanceof String ) {
 			try {
 				Object val = mappable.asis((String)_2);
-				if (val instanceof Par) {
-					((Par)val).setValue(value);
+				if (val instanceof Proc) {
+					((Proc)val).setValue(value);
 				} else if (isPersistent) {
 					if (SdbUtil.isSosURL(val)) {
 						SdbUtil.update((URL)val, value);
 					} else {
 						URL url = SdbUtil.store(value);
-						Par p = new Par((String)this.value, url);
+						Proc p = new Proc((String)this.value, url);
 						p.setPersistent(true);
 						if (mappable instanceof ServiceContext) {
 							((ServiceContext) mappable).put((String) this.value, p);
@@ -207,7 +217,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	public T getValue(Arg... args) throws EvaluationException, RemoteException {
 		// check for a constant or cached eval
 		if (value instanceof Incrementor || ((value instanceof ServiceInvoker) &&
-				scope != null && (scope instanceof ParModel) && ((ParModel)scope).isChanged()))
+				scope != null && (scope instanceof ProcModel) && ((ProcModel)scope).isChanged()))
 			isValid = false;
 		if (_2 != null && isValid && args.length == 00 && !isPersistent) {
 			try {
@@ -232,8 +242,8 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 			}
 			if (mappable != null && value instanceof String) {
 				Object obj = mappable.asis((String) value);
-				if (obj instanceof Par && ((Par)obj).isPersistent())
-					return (T)((Par)obj).getValue();
+				if (obj instanceof Proc && ((Proc)obj).isPersistent())
+					return (T)((Proc)obj).getValue();
 				else
 					val = (T) mappable.getValue((String) value);
 			} else if (value == null && scope != null) {
@@ -242,8 +252,8 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 				val = value;
 			}
 			if (val instanceof Evaluation) {
-				if (val instanceof Par && ((Par)val).asis() == null && value == null) {
-					logger.warn("undefined par: " + val);
+				if (val instanceof Proc && ((Proc)val).asis() == null && value == null) {
+					logger.warn("undefined proc: " + val);
 					return null;
 				}
 				// direct scope
@@ -255,14 +265,14 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 				if (val instanceof Entry) {
 					Object ev = ((Entry)val).asis();
 					if (ev instanceof Scopable && ((Scopable)ev).getScope() != null) {
-						((Context)((Scopable)ev).getScope()).append(scope);
+						((Scopable)ev).getScope().append(scope);
 					}
 				}
 
 				if (val instanceof Exertion) {
 					// TODO context binding for all mograms, works for tasks only
 					Context cxt = ((Exertion)val).getDataContext();
-					List<String> paths = ((ServiceContext)cxt).getPaths();
+					List<String> paths = cxt.getPaths();
 					for (String an : (Set<String>)((ServiceContext)scope).keySet()) {
 						for (String p : paths) {
 							if (p.endsWith(an)) {
@@ -285,14 +295,14 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 					val = (T) ((URL) val).getContent();
 				} else {
 					URL url = SdbUtil.store(val);
-					Par p = null;
+					Proc p = null;
 					if (mappable != null && this.value instanceof String
 							&& mappable.asis((String) this.value) != null) {
-						p = new Par((String) this.value, url);
+						p = new Proc((String) this.value, url);
 						p.setPersistent(true);
 						mappable.putValue((String) this.value, p);
 					} else if (this.value instanceof Identifiable) {
-						p = new Par(((Identifiable) this.value).getName(), url);
+						p = new Proc(((Identifiable) this.value).getName(), url);
 						p.setPersistent(true);
 					} else {
 						this.value = (T)url;
@@ -319,11 +329,11 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 			return;
 		for (Arg p : parameters) {
 			try {
-				if (p instanceof Par) {
-					if (name.equals(((Par<T>) p).name)) {
-						value = ((Par<T>) p).value;
-						if (((Par<T>) p).getScope() != null)
-							scope.append(((Par<T>) p).getScope());
+				if (p instanceof Proc) {
+					if (name.equals(((Proc<T>) p).name)) {
+						value = ((Proc<T>) p).value;
+						if (((Proc<T>) p).getScope() != null)
+							scope.append(((Proc<T>) p).getScope());
 
 					}
 				} else if (p instanceof ServiceFidelity && fidelities != null) {
@@ -362,7 +372,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 
 	public void setScope(Context scope) {
 		if (scope != null && ((ServiceContext)scope).containsPath(Condition._closure_))
-			scope.remove(Condition._closure_);
+			((ServiceContext)scope).remove(Condition._closure_);
 		this.scope = scope;
 	}
 	
@@ -373,8 +383,8 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	public int compareTo(T o) {
 		if (o == null)
 			throw new NullPointerException();
-		if (o instanceof Par<?>)
-			return name.compareTo(((Par<?>) o).getName());
+		if (o instanceof Proc<?>)
+			return name.compareTo(((Proc<?>) o).getName());
 		else
 			return -1;
 	}
@@ -394,7 +404,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
             ps = "" + value;
         }
 
-        return "par [name: " + name + ", eval: " + ps + ", path: " + _1 + "]";
+        return "proc [name: " + name + ", eval: " + ps + ", path: " + _1 + "]";
     }
 
 	/* (non-Javadoc)
@@ -460,8 +470,8 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 
 	/**
 	 * <p>
-	 * Returns a Contextable (Context or Exertion) of this Par that by a its
-	 * name provides values of this Par.
+	 * Returns a Contextable (Context or Exertion) of this Proc that by a its
+	 * name provides values of this Proc.
 	 * </p>
 	 * 
 	 * @return the contextable
@@ -624,15 +634,15 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.core.context.model.Variability#addArgs(ArgSet set)
+	 * @see sorcer.core.context.model.Variability#addArgs(ArgSet setValue)
 	 */
 	@Override
 	public void addArgs(ArgSet set) throws EvaluationException {
 		Iterator<Arg> i = set.iterator();
 		while (i.hasNext()) {
-			Par parEntry = (Par)i.next();
+			Proc procEntry = (Proc)i.next();
 			try {
-				putValue(parEntry.getName(), parEntry.asis());
+				putValue(procEntry.getName(), procEntry.asis());
 			} catch (Exception e) {
 				throw new EvaluationException(e);
 			} 
@@ -648,8 +658,8 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof Par
-				&& ((Par) object).name.equals(name))
+		if (object instanceof Proc
+				&& ((Proc) object).name.equals(name))
 			return true;
 		else
 			return false;
@@ -676,11 +686,11 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		putFidelity(fidelity);
 	}
 
-	public void selectFidelity(String name) throws ParException {
+	public void selectFidelity(String name) throws EntException {
 		if (fidelities.containsKey(name))
 			value = (T) fidelities.get(name);
 		else
-			throw new ParException("no such service fidelity: " + name + " at: " + this);
+			throw new EntException("no such service fidelity: " + name + " at: " + this);
 	}
 
 	public void setFidelities(Map<String, Object> fidelities) {
@@ -695,7 +705,7 @@ public class Par<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {
-		Context cxt = Arg.getContext(args);
+		Context cxt = (Context) Arg.getServiceModel(args);
 		if (cxt != null) {
 			scope = cxt;
 			return getValue(args);

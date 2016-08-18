@@ -152,6 +152,16 @@ abstract public class CompoundExertion extends ServiceExertion {
 			return 0;
 	}
 
+	@Override
+	public Object get(String component) throws ServiceException {
+		for (Mogram mog : mograms) {
+			if (mog.getName().equals(component)) {
+				return mog;
+			}
+		}
+		return null;
+	}
+
 	abstract public Mogram getComponentMogram(String path);
 	
 	abstract public Context getComponentContext(String path) throws ContextException;

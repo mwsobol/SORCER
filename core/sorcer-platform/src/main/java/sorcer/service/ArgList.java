@@ -18,7 +18,7 @@
 package sorcer.service;
 
 import sorcer.core.Name;
-import sorcer.core.context.model.par.ParException;
+import sorcer.core.context.model.ent.EntException;
 import sorcer.service.modeling.Variability;
 
 import java.rmi.RemoteException;
@@ -70,7 +70,7 @@ public class ArgList extends ArrayList<Arg> {
 		}
 	}
 
-	public Arg getArg(String parName) throws ParException {
+	public Arg getArg(String parName) throws EntException {
 		for (Arg p : this) {
 			if (p.getName().equals(parName)) {
 				return p;
@@ -103,7 +103,7 @@ public class ArgList extends ArrayList<Arg> {
 			}
 		}
 		if (par == null)
-			throw new ParException("No such Arg in the list: " + parName);
+			throw new EntException("No such Arg in the list: " + parName);
 	}
 	
 	public ArgList selectArgs(List<String>... names) {

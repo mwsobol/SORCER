@@ -39,7 +39,7 @@ public class PublishEvent extends RemoteEvent {
      * </p>
      *
      * @param entry
-     *            the modelingContext to set
+     *            the modelingContext to setValue
      * @return nothing
      */
     public void setEntry(Entry entry) {
@@ -63,7 +63,7 @@ public class PublishEvent extends RemoteEvent {
      * </p>
      *
      * @param cause
-     *            the cause to set
+     *            the cause to setValue
      * @return nothing
      */
     public void setCause(Object cause) {

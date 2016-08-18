@@ -13,7 +13,7 @@ import sorcer.service.Incrementor;
 import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
-import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.inVal;
 import static sorcer.eo.operator.*;
 import static sorcer.po.operator.*;
 
@@ -28,8 +28,8 @@ public class IncrementBlockExertions implements SorcerConstants {
 
 	@Test
 	public void entryIncrementor() throws Exception {
-		Context cxt = model("add", inEnt("arg/x1", 20),
-						inEnt("arg/x2", 80.0), result("result++"));
+		Context cxt = model("add", inVal("arg/x1", 20),
+						inVal("arg/x2", 80.0), result("result++"));
 
 		Incrementor z2 = inc(invoker(cxt, "arg/x1"), 2);
 		assertEquals(next(z2), 22);
@@ -39,8 +39,8 @@ public class IncrementBlockExertions implements SorcerConstants {
 	@Test
 	public void taskIncrement() throws Exception {
 		Task t = task(sig("add", AdderImpl.class),
-				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
-						inEnt("arg/x2", 80.0), result("task/result")));
+				model("add", inVal("arg/x1", inc("arg/x2", 2.0)),
+						inVal("arg/x2", 80.0), result("task/result")));
 
 //		logger.info("result: " + eval(t));
 		assertEquals(eval(t), 162.00);

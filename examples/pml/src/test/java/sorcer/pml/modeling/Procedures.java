@@ -6,9 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.par.ParModel;
-import sorcer.eo.operator;
+import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.service.Context;
 
 import java.net.URL;
@@ -22,7 +21,6 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.value;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.set;
 import static sorcer.mo.operator.*;
 
 /**
@@ -31,28 +29,28 @@ import static sorcer.mo.operator.*;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/pml")
-public class Pars {
-	private final static Logger logger = LoggerFactory.getLogger(Pars.class.getName());
+public class Procedures {
+	private final static Logger logger = LoggerFactory.getLogger(Procedures.class.getName());
 
 	@Test
 	public void parScope() throws Exception {
-		// a par is a variable (entry) evaluated with its own scope (context)
-		Context<Double> cxt = context(ent("x", 20.0), ent("y", 30.0));
+		// a proc is a variable (entry) evaluated with its own scope (context)
+		Context<Double> cxt = context(proc("x", 20.0), proc("y", 30.0));
 
-		// par with its context scope
-		Par<?> add = par("add", invoker("x + y", pars("x", "y")), cxt);
-		logger.info("par eval: " + operator.eval(add));
-		assertTrue(operator.eval(add).equals(50.0));
+		// proc with its context scope
+		Proc<?> add = proc("add", invoker("x + y", args("x", "y")), cxt);
+		logger.info("proc eval: " + eval(add));
+		assertTrue(eval(add).equals(50.0));
 	}
 
 
 	@Test
 	public void contextScope() throws Exception {
 
-		Context<Double> cxt = context(ent("x", 20.0), ent("y", 30.0));
-		Par<?> add = par("add", invoker("x + y", pars("x", "y")), cxt);
+		Context<Double> cxt = context(proc("x", 20.0), proc("y", 30.0));
+		Proc<?> add = proc("add", invoker("x + y", args("x", "y")), cxt);
 
-		// adding a par to the context updates par's scope
+		// adding a proc to the context updates proc's scope
 		add(cxt, add);
 
 		// evaluate the entry of the context
@@ -64,9 +62,9 @@ public class Pars {
 	
 	@Test
 	public void closingParWihEntries() throws Exception {
-		Par y = par("y",
-				invoker("(x1 * x2) - (x3 + x4)", pars("x1", "x2", "x3", "x4")));
-		Object val = operator.eval(y, ent("x1", 10.0), ent("x2", 50.0), ent("x3", 20.0), ent("x4", 80.0));
+		Proc y = proc("y",
+				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
+		Object val = eval(y, proc("x1", 10.0), proc("x2", 50.0), proc("x3", 20.0), proc("x4", 80.0));
 		// logger.info("y eval: " + val);
 		assertEquals(val, 400.0);
 	}
@@ -74,21 +72,21 @@ public class Pars {
 	@Test
 	public void closingParWitScope() throws Exception {
 
-		// invokers use contextual scope of pars
-		Par<?> add = par("add", invoker("x + y", pars("x", "y")));
+		// invokers use contextual scope of args
+		Proc<?> add = proc("add", invoker("x + y", args("x", "y")));
 
-		Context<Double> cxt = context(ent("x", 10.0), ent("y", 20.0));
-		logger.info("par eval: " + operator.eval(add, cxt));
-		// evaluate a par 
-		assertTrue(operator.eval(add, cxt).equals(30.0));
+		Context<Double> cxt = context(proc("x", 10.0), proc("y", 20.0));
+		logger.info("proc eval: " + eval(add, cxt));
+		// evaluate a proc
+		assertTrue(eval(add, cxt).equals(30.0));
 
 	}
 
 	@Test
 	public void dbParOperator() throws Exception {	
 		
-		Par<Double> dbp1 = persistent(par("design/in", 25.0));
-		Par<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
+		Proc<Double> dbp1 = persistent(proc("design/in", 25.0));
+		Proc<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
 
 		assertTrue(asis(dbp1).equals(25.0));
 		assertEquals(asis(dbp2).getClass(), URL.class);
@@ -99,12 +97,12 @@ public class Pars {
 		assertTrue(content(dbp1Url).equals(25.0));
 		assertEquals(content(dbp2Url), "http://sorcersoft.org/sobol");
 		
-		assertTrue(operator.eval(dbp1).equals(25.0));
-		assertEquals(operator.eval(dbp2), "http://sorcersoft.org/sobol");
+		assertTrue(eval(dbp1).equals(25.0));
+		assertEquals(eval(dbp2), "http://sorcersoft.org/sobol");
 
 		// update persistent values
-		set(dbp1, 30.0);
-		set(dbp2, "http://sorcersoft.org");
+		setValue(dbp1, 30.0);
+		setValue(dbp2, "http://sorcersoft.org");
 	
 		assertTrue(content(storeArg(dbp1)).equals(30.0));
 		assertEquals(content(storeArg(dbp2)), "http://sorcersoft.org");
@@ -114,39 +112,38 @@ public class Pars {
 
 	}
 
-	
 	@Test
 	public void parFidelities() throws Exception {
 		
-		Par<Double> dbp = dbPar("shared/eval", 25.0);
+		Proc<Double> dbp = dbPar("shared/eval", 25.0);
 		
-		Par multi = par("multi",
+		Proc multi = proc("multi",
 				parFi(ent("init/eval"),
 				dbp,
-				ent("invoke", invoker("x + y", pars("x", "y")))));
+				proc("invoke", invoker("x + y", args("x", "y")))));
 		
-		Context<Double> cxt = context(ent("x", 10.0), 
-				ent("y", 20.0), ent("init/eval", 49.0));
+		Context<Double> cxt = context(proc("x", 10.0),
+				proc("y", 20.0), proc("init/eval", 49.0));
 		
-		set(dbp, 50.0);
+		setValue(dbp, 50.0);
 
-		assertTrue(operator.eval(multi, cxt, parFi("shared/eval")).equals(50.0));
+		assertTrue(eval(multi, cxt, parFi("shared/eval")).equals(50.0));
 
-		assertTrue(operator.eval(multi, cxt, parFi("init/eval")).equals(49.0));
+		assertTrue(eval(multi, cxt, parFi("init/eval")).equals(49.0));
 
-		assertTrue(operator.eval(multi, cxt, parFi("invoke")).equals(30.0));
+		assertTrue(eval(multi, cxt, parFi("invoke")).equals(30.0));
 
 	}
 	
 	@Test
 	public void parModelOperator() throws Exception {
 		
-		ParModel pm = parModel("par-model", par("v1", 1.0), par("v2", 2.0));
-		add(pm, par("x", 10.0), ent("y", 20.0));
-		// add an active ent, no scope
+		ProcModel pm = procModel("proc-model", proc("v1", 1.0), proc("v2", 2.0));
+		add(pm, proc("x", 10.0), proc("y", 20.0));
+		// add an active proc, no scope
 		add(pm, invoker("add1", "x + y", args("x", "y")));
-		// add a par with own scope
-		add(pm, par(invoker("add2", "x + y", args("x", "y")), context(ent("x", 30), ent("y", 40.0))
+		// add a proc with own scope
+		add(pm, proc(invoker("add2", "x + y", args("x", "y")), context(proc("x", 30), proc("y", 40.0))
 		));
 		
 		assertEquals(value(pm, "add1"), 30.0);

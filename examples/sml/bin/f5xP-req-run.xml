@@ -8,7 +8,7 @@
 	<echo message="webster: ${provider.webster.url}" />
 	<property name="webster" value="${provider.webster.url}" />
 
-	<!-- set property values here -->
+	<!-- setValue property values here -->
 	<property name="requestor.name" value="sorcer-tester" />
 	<property name="requestor.class" value="sorcer.arithmetic.requestor.ArithmeticTester" />
 

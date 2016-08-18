@@ -53,7 +53,7 @@ public class SessionDatabaseViews {
 	}
 	
 	/**
-	 * Return an entity set view of the session storage container.
+	 * Return an entity setValue view of the session storage container.
 	 */
 	public StoredValueSet<MonitorSession> getSessionSet() {
 		return (StoredValueSet) sessionMap.values();

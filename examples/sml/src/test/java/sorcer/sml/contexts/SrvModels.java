@@ -12,12 +12,12 @@ import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.eo.operator;
 import sorcer.service.Block;
 import sorcer.service.Context;
 import sorcer.service.Job;
 import sorcer.service.Strategy.Flow;
 import sorcer.service.Task;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
@@ -30,6 +30,7 @@ import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.*;
 
 /**
  * Created by Mike Sobolewski on 4/15/15.
@@ -44,11 +45,11 @@ public class SrvModels {
     public void lambdaInvoker() throws Exception {
 
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                ent(invoker("lambda", cxt -> (double) value(cxt, "x")
+                proc(invoker("lambda", cxt -> (double) value(cxt, "x")
                         + (double) value(cxt, "y")
-                        + 30)));
-        logger.info("invoke eval: " + operator.eval(mo, "lambda"));
-        assertEquals(operator.eval(mo, "lambda"), 60.0);
+                        + 30, args("x", "y"))));
+        logger.info("invoke eval: " + eval(mo, "lambda"));
+        assertEquals(eval(mo, "lambda"), 60.0);
     }
 
     @Test
@@ -58,22 +59,22 @@ public class SrvModels {
         Context scope = context(ent("x1", 20.0), ent("y1", 40.0));
 
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                ent(invoker("lambda", (cxt) -> {
+                proc(invoker("lambda", (cxt) -> {
                             return (double) value(cxt, "x")
                                     + (double) value(cxt, "y")
                                     + (double) value(cxt, "y1")
                                     + 30;
                         },
-                        scope)));
-        logger.info("invoke eval: " + operator.eval(mo, "lambda"));
-        assertEquals(operator.eval(mo, "lambda"), 100.0);
+                        scope, args("x", "y"))));
+        logger.info("invoke eval: " + eval(mo, "lambda"));
+        assertEquals(eval(mo, "lambda"), 100.0);
     }
 
     @Test
     public void evalauteLocalAddereModel() throws Exception {
 
         // three entry model
-        Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+        Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
                 ent(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
@@ -88,7 +89,7 @@ public class SrvModels {
     public void evalauteMultiFidelityModel() throws Exception {
 
         // three entry model
-        Model mod = model(inEnt("arg/x1", 10.0), inEnt("arg/x2", 90.0),
+        Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
                 ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
@@ -110,7 +111,7 @@ public class SrvModels {
     public void evalauteLocalAddereModel2() throws Exception {
 
         // three entry model
-        Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+        Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
                 ent(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
@@ -125,7 +126,7 @@ public class SrvModels {
     public void exertRemoteAddereModel() throws Exception {
 
         // three entry model
-        Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+        Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
                 ent(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
@@ -138,7 +139,7 @@ public class SrvModels {
     public void evalauteRemoteAddereModel() throws Exception {
 
         // three entry model
-        Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+        Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
                 ent(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
@@ -156,7 +157,7 @@ public class SrvModels {
         // exerting a model with the subject provider as its service context
 
         Model m = model(sig("add", AdderImpl.class),
-                inEnt("arg/x1", 1.0), inEnt("arg/x2", 2.0),
+                inVal("arg/x1", 1.0), inVal("arg/x2", 2.0),
                 ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
         add(m, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
@@ -166,14 +167,14 @@ public class SrvModels {
         // two response paths declared
         responseUp(m, "add", "multiply");
         // exert the model
-        Model model = exert(m);
+        ServiceModel model = exert(m);
         logger.info("model: " + model);
 
         assertTrue(response(model, "add").equals(4.0));
         System.out.println("responses: " + response(model));
 
         assertTrue(response(model).equals(context(ent("add", 4.0), ent("multiply", 20.0))));
-//                context(ent("add", 4.0), ent("multiply", 20.0), ent("result/eval", 3.0))));
+//                context(proc("add", 4.0), proc("multiply", 20.0), proc("result/eval", 3.0))));
 
     }
 
@@ -182,8 +183,8 @@ public class SrvModels {
         // get responses from a service model
 
         Model m = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
@@ -205,8 +206,8 @@ public class SrvModels {
         // get responses from a service model
 
         Model m = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
@@ -228,8 +229,8 @@ public class SrvModels {
         // get responses from a service model
 
         Model mdl = srvModel(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
@@ -264,11 +265,11 @@ public class SrvModels {
     public void exertModelToTaskMogram() throws Exception {
 
         // output connector from model to exertion
-        Context outConnector = outConn(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
+        Context outConnector = outConn(inVal("y1", "add"), inVal("y2", "multiply"), inVal("y3", "subtract"));
 
         Model model = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
@@ -308,29 +309,29 @@ public class SrvModels {
         Task t4 = task(
                 "t4",
                 sig("multiply", MultiplierImpl.class),
-                context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-                        outEnt("multiply/result/y")));
+                context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+                        outVal("multiply/result/y")));
 
         Task t5 = task(
                 "t5",
                 sig("add", AdderImpl.class),
-                context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-                        outEnt("add/result/y")));
+                context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+                        outVal("add/result/y")));
 
         // in connector from exertion to model
-        Context taskOutConnector = outConn(inEnt("add/x1", "j2/t4/multiply/result/y"),
-                inEnt("multiply/x1", "j2/t5/add/result/y"));
+        Context taskOutConnector = outConn(inVal("add/x1", "j2/t4/multiply/result/y"),
+                inVal("multiply/x1", "j2/t5/add/result/y"));
 
         Job j2 = job("j2", sig("exert", ServiceJobber.class),
                 t4, t5, strategy(Flow.PAR),
                 taskOutConnector);
 
         // out connector from model
-        Context modelOutConnector = outConn(inEnt("y1", "add"), inEnt("y2", "multiply"), inEnt("y3", "subtract"));
+        Context modelOutConnector = outConn(inVal("y1", "add"), inVal("y2", "multiply"), inVal("y3", "subtract"));
 
         Model model = model(
-                inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-                inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
+                inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+                inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
@@ -338,7 +339,7 @@ public class SrvModels {
                 ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
                         inPaths("multiply/out", "add/out")))));
 
-//                ent("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
+//                proc("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
 
         responseUp(model, "add", "multiply", "subtract");
         // specify how model connects to exertion

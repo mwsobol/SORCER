@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.par;
+package sorcer.core.context.model.proc;
 
 import java.util.ArrayList;
 

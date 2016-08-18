@@ -128,11 +128,11 @@ public class NetletEditor extends JPanel {
         //Disable boldface controls.
         UIManager.put("swing.boldMetal", Boolean.FALSE); 
 
-        //Create and set up the window.
+        //Create and setValue up the window.
         JFrame frame = new JFrame("Exertion Scripting");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //Create and set up the content pane.
+        //Create and setValue up the content pane.
         NetletEditor newContentPane = new NetletEditor(null);
         newContentPane.setOpaque(true); //content panes must be opaque
         frame.setContentPane(newContentPane);

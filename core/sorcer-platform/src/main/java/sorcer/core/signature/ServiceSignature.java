@@ -196,6 +196,10 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		this.serviceType.providerType = serviceType;
 	}
 
+	public void setServiceType(ServiceType serviceType) {
+		this.serviceType = serviceType;
+	}
+
 	public String getSelector() {
 		return operation.selector;
 	}
@@ -668,4 +672,5 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
 	    throw new MogramException("Signature service exec should be implementd in subclasses");
 	}
+
 }

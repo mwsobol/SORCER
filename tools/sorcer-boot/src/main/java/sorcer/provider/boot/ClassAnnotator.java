@@ -91,7 +91,7 @@ public class ClassAnnotator implements ClassAnnotation {
     /**
      * Get the properties
      *
-     * @return A Properties object set at creation time. A new Properties
+     * @return A Properties object setValue at creation time. A new Properties
      * object is created each time
      */
     protected Properties getProperties() {

@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.eo.operator;
+import sorcer.po.operator;
 import sorcer.provider.adder.impl.AdderImpl;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -31,7 +31,7 @@ public class LocalMograms {
 	public void exertTask() throws Exception {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0)));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		Task out = exert(t5);
 		Context cxt = context(out);
@@ -44,7 +44,7 @@ public class LocalMograms {
 		assertEquals(100.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(ent("arg/x1", 20.0), ent("result/eval", 100.0)).equals(
+		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/eval", 100.0)).equals(
 				value(cxt, outPaths("arg/x1", "result/eval"))));
 
 	}
@@ -54,14 +54,14 @@ public class LocalMograms {
 	public void evaluateTask() throws SignatureException, ExertionException, ContextException {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0), result("result/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		// get the result eval
-		assertEquals(100.0, operator.eval(t5));
+		assertEquals(100.0, eval(t5));
 
 		// get the subcontext output from the exertion
-		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				operator.eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/z", 100.0)).equals(
+				eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
 
 	}
 
@@ -69,7 +69,7 @@ public class LocalMograms {
 	public void evalauteLocalModel() throws Exception {
 
 		// three entry model
-		Model mod = model(inEnt("arg/x1", 10.00), inEnt("arg/x2", 90.00),
+		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
 				srv(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
 				response("add", "arg/x1", "arg/x2"));
 

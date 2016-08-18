@@ -30,7 +30,7 @@ import net.jini.config.ConfigurationException;
  * Utility for getting/creating the RMI Registry.
  *
  * <h4>Configuration</h4>
- * The RegistryUtil class supports the following configuration entries;
+ * The RegistryUtil class supports the following configuration args;
  * where each configuration entry name is associated with the component name
  * <tt>sorcer.provider.rmi</tt>.
  *
@@ -120,7 +120,7 @@ public class RegistryUtil {
     
     static final String BASE_COMPONENT = "sorcer.provider";
     /**
-     * System property set when an RMI Registry is started
+     * System property setValue when an RMI Registry is started
      */
     static final String REGISTRY_PORT = BASE_COMPONENT+".registryPort";
     
@@ -130,7 +130,7 @@ public class RegistryUtil {
      * system property to determine if the {@link java.rmi.registry.Registry} has
      * been created.
      *
-     * <p>If the RMI Registry is created, this method will also set the
+     * <p>If the RMI Registry is created, this method will also setValue the
      * @link sorcer.provider.config.Constants#REGISTRY_PORT} system property
      *
      * @param config Configuration object to use

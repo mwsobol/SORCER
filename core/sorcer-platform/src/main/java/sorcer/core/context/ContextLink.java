@@ -137,7 +137,7 @@ public class ContextLink implements SorcerConstants, Link {
 	 * recalculated and the link object is reset to point to the owning context
 	 * (removing the redundancy).
 	 * <P>
-	 * Note: when links are originally set in ServiceContext, checks are
+	 * Note: when links are originally setValue in ServiceContext, checks are
 	 * performed.
 	 */
 	public void setOffset(String offset) throws ContextException {
@@ -150,7 +150,7 @@ public class ContextLink implements SorcerConstants, Link {
 				// throw new ContextException("Failed in setOffset: offset=
 				// \""+offset+"\" is not in this context, but in the context
 				// with name=\""+context.getName()+"\". Link and
-				// offset=\""+result[1]+"\" should be set in this context
+				// offset=\""+result[1]+"\" should be setValue in this context
 				// instead");
 				this.offset = offset;
 			}
@@ -179,7 +179,7 @@ public class ContextLink implements SorcerConstants, Link {
 			// throw new ContextException("Failed in setOffset: offset=
 			// \""+offset+"\" is not in this context, but in the context with
 			// name=\""+context.getName()+"\". Link and offset=\""+result[1]+"\"
-			// should be set in this context instead");
+			// should be setValue in this context instead");
 		} else
 			this.offset = offset;
 	}

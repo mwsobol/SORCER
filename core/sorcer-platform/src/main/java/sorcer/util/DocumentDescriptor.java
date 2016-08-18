@@ -104,7 +104,7 @@ public class DocumentDescriptor implements SorcerConstants, Serializable {
 	private String downloadVersionName;
 	public static ACLConvertor convertor;
 
-	// the http url of file to be uploaded or downloaded set by the file store
+	// the http url of file to be uploaded or downloaded setValue by the file store
 	// provider
 	public URL fileURL;
 

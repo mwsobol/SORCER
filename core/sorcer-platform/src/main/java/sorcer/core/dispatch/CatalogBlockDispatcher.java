@@ -23,7 +23,7 @@ import net.jini.lease.LeaseRenewalManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.par.ParModel;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.exertion.AltMogram;
 import sorcer.core.exertion.EvaluationTask;
 import sorcer.core.exertion.LoopMogram;
@@ -37,7 +37,6 @@ import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
 
-import javax.xml.ws.spi.Invoker;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Set;
@@ -80,7 +79,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
                     exertion.getDataContext().getScope().append(xrt.getDataContext());
                 else {
 //                  exertion.getDataContext().setScope(xrt.getContext());
-                    exertion.getDataContext().setScope(new ParModel());
+                    exertion.getDataContext().setScope(new ProcModel());
                     exertion.getDataContext().getScope().append(xrt.getContext());
                 }
             }
@@ -145,7 +144,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             Context pc = ((OptMogram)exertion).getCondition().getConditionalContext();
             ((OptMogram)exertion).getCondition().setStatus(null);
             if (pc == null) {
-				pc = new ParModel(exertion.getName());
+				pc = new ProcModel(exertion.getName());
 				((OptMogram)exertion).getCondition().setConditionalContext(pc);
             }
             pc.append(xrt.getContext());
@@ -153,7 +152,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             ((LoopMogram)exertion).getCondition().setStatus(null);
 			Context pc = ((LoopMogram)exertion).getCondition().getConditionalContext();
 			if (pc == null) {
-				pc = new ParModel(exertion.getName());
+				pc = new ProcModel(exertion.getName());
 				((LoopMogram)exertion).getCondition().setConditionalContext(pc);
 			}
 			pc.append(xrt.getContext());
@@ -201,9 +200,9 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		}
 
 //		if (exertion instanceof AltExertion) {
-//			((ParModel)((Block)xrt).getContext()).appendNew(((AltExertion)exertion).getActiveOptExertion().getContext());
+//			((ProcModel)((Block)xrt).getContext()).appendNew(((AltExertion)exertion).getActiveOptExertion().getContext());
 //		} else if (exertion instanceof OptExertion) {
-//			((ParModel)((Block)xrt).getContext()).appendNew(((OptExertion)exertion).getContext());
+//			((ProcModel)((Block)xrt).getContext()).appendNew(((OptExertion)exertion).getContext());
 //		}
 		
 		ServiceContext cxt = (ServiceContext)xrt.getDataContext();

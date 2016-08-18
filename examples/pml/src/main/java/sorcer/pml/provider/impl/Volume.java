@@ -6,6 +6,7 @@ package sorcer.pml.provider.impl;
 
 import sorcer.pml.provider.Cylinder;
 import sorcer.pml.provider.Sphere;
+import sorcer.po.operator;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 
@@ -16,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.System.out;
-import static sorcer.co.operator.ent;
 import static sorcer.eo.operator.*;
 
 @SuppressWarnings("rawtypes")
@@ -33,13 +33,13 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	public Context getSphereSurface(Context context) throws RemoteException, ContextException {
 		double radius = (Double) value(context, "sphere/radius");
 		add(context,
-			ent("sphere/surface", 4.0 * Math.PI * Math.pow(radius, 3)));
+			operator.ent("sphere/surface", 4.0 * Math.PI * Math.pow(radius, 3)));
 		return context;
 	}
 
 	public Context getSphereVolume(Context context) throws ContextException, RemoteException {
 		double radius = (Double) value(context, "sphere/radius");
-		add(context, ent("sphere/volume",
+		add(context, operator.ent("sphere/volume",
 			(4.0 / 3.0) * Math.PI * Math.pow(radius, 3)));
 		return context;
 	}
@@ -47,7 +47,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	public Context getCylinderSurface(Context context) throws ContextException, RemoteException {
 		double radius = (Double) value(context, "cylinder/radius");
 		double height = (Double) value(context, "cylinder/height");
-		add(context, ent("cylinder/surface",
+		add(context, operator.ent("cylinder/surface",
 				(2 * Math.PI * Math.pow(radius, 2))
 						+ (2 * Math.PI * radius * height)));
 		return context;
@@ -56,7 +56,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	public Context getCylinderVolume(Context context) throws ContextException, RemoteException {
 		double radius = (Double) value(context, "cylinder/radius");
 		double height = (Double) value(context, "cylinder/height");
-		add(context, ent("cylinder/volume",
+		add(context, operator.ent("cylinder/volume",
 				Math.PI * Math.pow(radius, 2) * height));
 		return context;
 	}
@@ -75,16 +75,16 @@ public class Volume implements Sphere, Cylinder, Serializable {
 			} finally {
 				scanner.close();
 			}
-			Context context = context(ent("cylinder/radius", radius),
-					ent("cylinder/height", height));
+			Context context = context(operator.ent("cylinder/radius", radius),
+					operator.ent("cylinder/height", height));
 			out.println("cylinder volume: " + v.getCylinderVolume(context));
 		} else {
 			if (args[0].equals("cylinder")) {
-				Context context = context(ent("cylinder/radius", 2.0),
-						ent("cylinder/height", 3.0));
+				Context context = context(operator.ent("cylinder/radius", 2.0),
+						operator.ent("cylinder/height", 3.0));
 				out.println("cylinder volume: " + v.getCylinderVolume(context));
 			} else if (args[0].equals("sphere")) {
-				Context context = context(ent("sphere/radius", 2.0));
+				Context context = context(operator.ent("sphere/radius", 2.0));
 				out.println("sphere volume: " + v.getSphereVolume(context));
 			}
 		}

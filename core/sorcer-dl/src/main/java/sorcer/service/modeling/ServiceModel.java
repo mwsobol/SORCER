@@ -17,17 +17,14 @@
 
 package sorcer.service.modeling;
 
-import sorcer.service.Arg;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.ModelException;
+import sorcer.service.*;
 
 import java.rmi.RemoteException;
 
 /**
  * Created by Mike Sobolewski on 7/26/16.
  */
-public interface ContextModel {
+public interface ServiceModel extends Arg {
 
 	/**
 	 * Returns the context of all responses of this model with a provided configuration.
@@ -98,7 +95,7 @@ public interface ContextModel {
 	 * @return this model value at the path
 	 * @throws ModelException
 	 */
-	public Object getValue(String path, Arg... args) throws ContextException;
+	public Object getValue(String path, Arg... args) throws ContextException, RemoteException;
 
 	/**
 	 * Returns a value of the object at the path as is
@@ -110,5 +107,8 @@ public interface ContextModel {
 	 * @throws ModelException
 	 */
 	public Object asis(String path);
+
+	public ServiceModel add(Identifiable... objects) throws ContextException,
+			RemoteException;
 
 }

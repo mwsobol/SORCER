@@ -85,7 +85,7 @@ public class AdderImpl implements Adder {
         
         // save it in the session
         ss.setAttribute("sum", result);
-        // set it in the returned context
+        // setValue it in the returned context
         cxt.setReturnValue(result);
         return context;
     }

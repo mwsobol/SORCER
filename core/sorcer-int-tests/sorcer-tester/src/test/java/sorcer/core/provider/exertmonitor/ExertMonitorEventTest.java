@@ -31,6 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import sorcer.arithmetic.tester.provider.Adder;
+import sorcer.co.operator;
 import sorcer.core.monitor.MonitorEvent;
 import sorcer.core.monitor.MonitoringManagement;
 import sorcer.security.util.SorcerPrincipal;
@@ -44,8 +45,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 
 /**
@@ -80,8 +80,8 @@ public class ExertMonitorEventTest {
         leaseRenewalManager.renewUntil(registration.getLease(), Lease.FOREVER, TimeUnit.MINUTES.toMillis(1), null);
         Task t5 = task("t5",
                        sig("add", Adder.class),
-                       context("add", inEnt("arg/x1", 20.0),
-                               inEnt("arg/x2", 80.0), outEnt("result/y")),
+                       context("add", operator.inVal("arg/x1", 20.0),
+                               operator.inVal("arg/x2", 80.0), outVal("result/y")),
                        strategy(Strategy.Access.PULL, Strategy.Wait.YES, Strategy.Monitor.YES));
 
         t5 = exert(t5);

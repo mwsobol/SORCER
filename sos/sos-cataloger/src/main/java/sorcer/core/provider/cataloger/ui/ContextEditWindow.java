@@ -315,7 +315,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 	 * @param current
 	 *            DefaultMutableTreeNode the current node we are working on
 	 * @param direction
-	 *            String specifying the current direction to set the children
+	 *            String specifying the current direction to setValue the children
 	 *            nodes to
 	 */
 	void SetChildDirection(DefaultMutableTreeNode current, String direction) {

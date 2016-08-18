@@ -116,7 +116,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	/**
 	 * Stores the provider list into the model.<br />
 	 * Updates the Observer that a change has taken place. <br/>
-	 * If searched is true the bkproviderList is not set, this allows for
+	 * If searched is true the bkproviderList is not setValue, this allows for
 	 * caching providerList during searching.
 	 * 
 	 * @param providers
@@ -366,7 +366,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	 * </p>
 	 * 
 	 * @param contextScript
-	 *            the contextScript to set
+	 *            the contextScript to setValue
 	 */
 	public void setContextScript(String contextScript) {
 		this.contextScript = contextScript;

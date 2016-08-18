@@ -17,14 +17,12 @@
 
 package sorcer.mo;
 
-import sorcer.co.tuple.Tuple2;
 import sorcer.core.Name;
 import sorcer.core.context.MapContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.EntModel;
+import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.dispatch.SortingException;
@@ -33,7 +31,7 @@ import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
 
@@ -54,38 +52,43 @@ public class operator {
         return value;
     }
 
-    public static Object setValue(Model context, String parname, Object value)
+    public static Object setValue(Model model, String entName, Object value)
         throws ContextException {
-        Object parEntry = context.asis(parname);
-        if (parEntry == null)
-            ((ParModel)context).addPar(parname, value);
-        else if (parEntry instanceof Setter) {
+        Object entry = model.asis(entName);
+        if (entry == null)
             try {
-                ((Setter) parEntry).setValue(value);
+                model.add(sorcer.po.operator.ent(entName, value));
+            } catch (RemoteException e) {
+                throw new ContextException(e);
+            }
+        else if (entry instanceof Setter) {
+            try {
+                ((Setter) entry).setValue(value);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-        } else if (parEntry instanceof Par) {
-            Par par = (Par) parEntry;
-            if (par.getScope() != null && par.getContextable() == null)
-                par.getScope().putValue(par.getName(), value);
+        } else {
+            ((ServiceContext)model).putValue(entName, value);
         }
-        // just ssetting the eval
-        else {
-            ((ParModel)context).putValue(parname, value);
-            ((ParModel)context).setIsChanged(true);
+
+        if (entry instanceof Proc) {
+            Proc proc = (Proc) entry;
+            if (proc.getScope() != null && proc.getContextable() == null)
+                proc.getScope().putValue(proc.getName(), value);
         }
+
+        ((ServiceMogram)model).setIsChanged(true);
         return value;
     }
 
-    public static EntModel entModel(String name, Signature builder) throws SignatureException {
-        EntModel model = (EntModel) sorcer.co.operator.instance(builder);
+    public static ProcModel procModel(String name, Signature builder) throws SignatureException {
+        ProcModel model = (ProcModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         return model;
     }
 
-    public static ParModel parModel(String name, Signature builder) throws SignatureException {
-        ParModel model = (ParModel) sorcer.co.operator.instance(builder);
+    public static ProcModel parModel(String name, Signature builder) throws SignatureException {
+        ProcModel model = (ProcModel) sorcer.co.operator.instance(builder);
         model.setBuilder(builder);
         return model;
     }
@@ -96,21 +99,21 @@ public class operator {
         return model;
     }
 
-    public static Model entModel(Object... entries)
+    public static ProcModel procModel(Object... entries)
             throws ContextException {
         if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
             ((Context)entries[0]).setModeling(true);
             try {
-                return new EntModel((Context)entries[0]);
+                return new ProcModel((Context)entries[0]);
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }
         }
-        EntModel model = new EntModel();
+        ProcModel model = new ProcModel();
         Object[] dest = new Object[entries.length+1];
         System.arraycopy(entries,  0, dest,  1, entries.length);
         dest[0] = model;
-        return (Model) context(dest);
+        return (ProcModel) context(dest);
     }
 
     public static Model inConn(Model model, Context inConnector) {
@@ -132,23 +135,23 @@ public class operator {
         return model;
     }
 
-    public static ContextModel responseUp(ContextModel model, String... responsePaths) throws ContextException {
+    public static ServiceModel responseUp(ServiceModel model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
             ((ServiceContext)model).getMogramStrategy().getResponsePaths().add(new Name(path));
         return model;
     }
 
-    public static ContextModel responseDown(ContextModel model, String... responsePaths) throws ContextException {
+    public static ServiceModel responseDown(ServiceModel model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
             ((ServiceContext)model).getMogramStrategy().getResponsePaths().remove(new Name(path));
         return model;
     }
 
-    public static Context result(ContextModel model) throws ContextException {
+    public static Context result(ServiceModel model) throws ContextException {
         return ((ServiceContext)model).getMogramStrategy().getOutcome();
     }
 
-    public static Object get(ContextModel model, String path) throws ContextException {
+    public static Object get(ServiceModel model, String path) throws ContextException {
         return ((ServiceContext)((ServiceContext)model).getMogramStrategy().getOutcome()).get(path);
     }
 
@@ -157,11 +160,11 @@ public class operator {
         return model;
     }
 
-    public static Context ins(ContextModel model) throws ContextException {
+    public static Context ins(ServiceModel model) throws ContextException {
         return inputs(model);
     }
 
-    public static Context allInputs(ContextModel model) throws ContextException {
+    public static Context allInputs(ServiceModel model) throws ContextException {
         try {
             return model.getAllInputs();
         } catch (RemoteException e) {
@@ -169,7 +172,7 @@ public class operator {
         }
     }
 
-    public static Context inputs(ContextModel model) throws ContextException {
+    public static Context inputs(ServiceModel model) throws ContextException {
         try {
             return model.getInputs();
         } catch (RemoteException e) {
@@ -177,11 +180,11 @@ public class operator {
         }
     }
 
-    public static Context outs(ContextModel model) throws ContextException {
+    public static Context outs(ServiceModel model) throws ContextException {
         return outputs(model);
     }
 
-    public static Context outputs(ContextModel model) throws ContextException {
+    public static Context outputs(ServiceModel model) throws ContextException {
         try {
             return model.getOutputs();
         } catch (RemoteException e) {
@@ -189,11 +192,11 @@ public class operator {
         }
     }
 
-    public static Object resp(ContextModel model, String path) throws ContextException {
+    public static Object resp(ServiceModel model, String path) throws ContextException {
         return response(model, path);
     }
 
-    public static Object response(ContextModel model, String path) throws ContextException {
+    public static Object response(ServiceModel model, String path) throws ContextException {
         try {
             return ((ServiceContext)model).getResponseAt(path);
         } catch (RemoteException e) {
@@ -201,11 +204,11 @@ public class operator {
         }
     }
 
-    public static Context resp(ContextModel model) throws ContextException {
+    public static Context resp(ServiceModel model) throws ContextException {
         return response(model);
     }
 
-    public static Context response(ContextModel model, Arg... args) throws ContextException {
+    public static Context response(ServiceModel model, Arg... args) throws ContextException {
         try {
             return (Context) model.getResponse(args);
         } catch (RemoteException e) {
@@ -221,32 +224,32 @@ public class operator {
         return new Entry(path, model.asis(path));
     }
 
-    public static Context inConn(List<Tuple2<String, ?>> entries) throws ContextException {
+    public static Context inConn(List<Entry> entries) throws ContextException {
         MapContext map = new MapContext();
         map.direction = MapContext.Direction.IN;
         sorcer.eo.operator.populteContext(map, entries);
         return map;
     }
 
-    public static Context inConn(Tuple2<String, ?>... entries) throws ContextException {
+    public static Context inConn(Entry... entries) throws ContextException {
         MapContext map = new MapContext();
         map.direction = MapContext.Direction.IN;
-        List<Tuple2<String, ?>> items = Arrays.asList(entries);
+        List<Entry> items = Arrays.asList(entries);
         sorcer.eo.operator.populteContext(map, items);
         return map;
     }
 
-    public static Context outConn(List<Tuple2<String, ?>> entries) throws ContextException {
+    public static Context outConn(List<Entry> entries) throws ContextException {
         MapContext map = new MapContext();
         map.direction = MapContext.Direction.OUT;
         sorcer.eo.operator.populteContext(map, entries);
         return map;
     }
 
-    public static Context outConn(Tuple2<String, ?>... entries) throws ContextException {
+    public static Context outConn(Entry... entries) throws ContextException {
         MapContext map = new MapContext();
         map.direction = MapContext.Direction.OUT;
-        List<Tuple2<String, ?>> items = Arrays.asList(entries);
+        List<Entry> items = Arrays.asList(entries);
         sorcer.eo.operator.populteContext(map, items);
         return map;
     }
@@ -317,7 +320,7 @@ public class operator {
                     mFi.setSelect((Arg) mFi.getSelects().get(0));
                     mFi.addObserver(fiManager);
                     if (mFi.getMorpherFidelity() != null) {
-                        // set the default morpher
+                        // setValue the default morpher
                         mFi.setMorpher((Morpher) ((Entry)mFi.getMorpherFidelity().get(0))._2);
                     }
                 }

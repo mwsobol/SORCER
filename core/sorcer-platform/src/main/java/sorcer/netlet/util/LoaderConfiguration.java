@@ -293,7 +293,7 @@ public class LoaderConfiguration {
     /**
      * Determines if a main class is required when calling.
      *
-     * @param requireMain set to false if no main class is required
+     * @param requireMain setValue to false if no main class is required
      * @see #configure(InputStream)
      */
     public void setRequireMain(boolean requireMain) {

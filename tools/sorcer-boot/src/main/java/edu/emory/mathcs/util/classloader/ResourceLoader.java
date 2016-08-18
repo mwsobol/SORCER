@@ -42,7 +42,7 @@ import java.util.jar.Manifest;
  * of {@link java.net.URLClassLoader}, with JAR dependencies (Class-Path)
  * properly resolved and with JAR indexes properly handled.
  * <p>
- * This class provides two set of methods: <i>get</i> methods that return
+ * This class provides two setValue of methods: <i>get</i> methods that return
  * {@link edu.emory.mathcs.util.classloader.ResourceHandle}s (or their enumerations) and <i>find</i> methods that
  * return URLs (or their enumerations). If the resource is not found,
  * null (or empty enumeration) is returned. Resource handles represent a
@@ -479,7 +479,7 @@ public class ResourceLoader {
                 violating.removeAll(newIndex);
                 if (!violating.isEmpty()) {
                     throw new RuntimeException("Invalid JAR index: " +
-                        "the following entries were previously declared, but " +
+                        "the following args were previously declared, but " +
                         "they are not present in the new index: " +
                         violating.toString());
                 }
@@ -521,7 +521,7 @@ public class ResourceLoader {
                 this.perm = conn.getPermission();
                 JarFile jar = conn.getJarFile();
                 // conservatively check if index is accurate, that is, does not
-                // contain entries which are not in the JAR file
+                // contain args which are not in the JAR file
                 if (index != null) {
                     Set indices = new HashSet(Arrays.asList(index));
                     Enumeration entries = jar.entries();
@@ -537,7 +537,7 @@ public class ResourceLoader {
                     }
                     if (!indices.isEmpty()) {
                         throw new RuntimeException("Invalid JAR index: " +
-                            "the following entries not found in JAR: " +
+                            "the following args not found in JAR: " +
                             indices);
                     }
                 }

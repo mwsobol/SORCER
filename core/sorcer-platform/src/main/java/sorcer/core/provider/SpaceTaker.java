@@ -135,9 +135,9 @@ public class SpaceTaker implements Runnable {
 	}
 
 	/**
-	 * This is a Constructor. It executes the default constructor plus set the
+	 * This is a Constructor. It executes the default constructor plus setValue the
 	 * provider worker data and executor service pool. The transaction lease
-	 * time is set and space time out time is established.
+	 * time is setValue and space time out time is established.
 	 * 
 	 * @param data
 	 *            SpaceDispatcher data

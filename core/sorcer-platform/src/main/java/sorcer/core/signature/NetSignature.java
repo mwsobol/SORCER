@@ -37,6 +37,11 @@ import java.util.List;
 
 import static sorcer.eo.operator.*;
 
+/**
+ * Represents a handle to network service provider.
+ *
+ * Created by Mike Sobolewski
+ */
 public class NetSignature extends ObjectSignature {
 
 	private static final long serialVersionUID = 1L;
@@ -258,55 +263,6 @@ public class NetSignature extends ObjectSignature {
 		portalURL = url;
 	}
 
-//	public Signature copySignature(Signature m) {
-//		ServiceSignature method = (ServiceSignature) m;
-//		selector = method.selector;
-//		providerName = method.providerName;
-//		serviceInfo = method.serviceInfo;
-//		methodID = method.methodID;
-//		portalURL = method.portalURL;
-//		codebase = method.codebase;
-//		agentCodebase = method.agentCodebase;
-//		agentClass = method.agentClass;
-//
-//		execType = method.execType;
-//		selfMode = method.selfMode;
-//		isActive = method.isActive;
-//		group = method.group;
-//		contextTemplateIDs = method.contextTemplateIDs;
-//		exertion = method.exertion;
-//		order = method.order;
-//		// taskID = method.taskID;
-//		// contextID = method.contextID;
-//
-//		return this;
-//	}
-
-//	public void setSelector(String opertionName) throws SignatureException {
-//		selector = opertionName;
-//		isSelectable();
-//	}
-//
-//	public boolean isSelectable() throws SignatureException {
-//		if (selector == null && serviceInfo == null) {
-//			return false;
-//		}
-//		Method[] methods = serviceInfo.getMethods();
-//		for (Method m : methods) {
-//			if (m.getName().equals(selector)) {
-//				return true;
-//			}
-//		}
-//		throw new SignatureException("No selector:" + selector
-//				+ " in service type: " + serviceInfo.getName());
-//	}
-
-
-//	public String toString() {
-//		return providerName + ":" + execType + ":" + isActive + ":"
-//				+ serviceInfo + ":" + selector;
-//	}
-
 	public boolean equals(ServiceSignature method) {
 		return (method != null) ? toString().equals(method.toString()) : false;
 	}
@@ -322,28 +278,6 @@ public class NetSignature extends ObjectSignature {
 	public void setCodebase(String codebase) {
 		this.codebase = codebase;
 	}
-
-//	/**
-//	 * Returns a method provided by the requestor itself to substitute the
-//	 * existing provider'smethod. The implementation of this requestor's method
-//	 * overrides the existing implementation of the provider if one exists.Thus
-//	 * a new functionality is inserted into the executing provider if the
-//	 * alternative inserted method is acceptable (valid).
-//	 */
-//	public Method getSubstituteMethod(Class<?>[] argTypes) {
-//		Method m = null;
-//		try {
-//			Class<?> clazz = getSubstituteClass();
-//			if (clazz == null)
-//				return null;
-//			m = clazz.getMethod(selector, argTypes);
-//		} catch (NoSuchMethodException nsme) {
-//			nsme.printStackTrace();
-//			// logger.info("The method: \"" + selector
-//			// + "\" doesn't exist in requestor's signature code");
-//		}
-//		return m;
-//	}
 
 	@Override
 	public void close() throws RemoteException, IOException {
@@ -366,7 +300,7 @@ public class NetSignature extends ObjectSignature {
 				ExertionException eme = new ExertionException(
 						"Not supported method: " + serviceType + "#" + operation.selector
 								+ " by: "
-								+ ((Provider) provider).getProviderName());
+								+  provider.getProviderName());
 				((ServiceProvider) provider).notifyException(ex, "unsupported method",
 						eme);
 				throw eme;
@@ -414,7 +348,7 @@ public class NetSignature extends ObjectSignature {
 		try {
 			if (this.isShellRemote()) {
 				Provider prv= (Provider) Accessor.get().getService(sig(RemoteServiceShell.class));
-				return ((Exertion) prv.exert(mogram, txn)).getContext();
+				return prv.exert(mogram, txn).getContext();
 			}
 			Provider prv = (Provider) operator.provider(this);
 			Context cxt = null;
@@ -425,7 +359,7 @@ public class NetSignature extends ObjectSignature {
 				cxt = mogram.exert(txn);
 
 			task = new NetTask(this, cxt);
-			return ((Task) task.exert(txn)).getContext();
+			return task.exert(txn).getContext();
 		} catch (Exception e) {
 			throw new MogramException(e);
 		}
@@ -457,7 +391,7 @@ public class NetSignature extends ObjectSignature {
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
 		Exertion mog = Arg.getExertion(args);
-		Context cxt = Arg.getContext(args);
+		Context cxt = (Context) Arg.getServiceModel(args);
 		if (cxt == null && returnPath != null) {
 			cxt = returnPath.getDataContext();
 		}
@@ -479,10 +413,14 @@ public class NetSignature extends ObjectSignature {
 				}
 			} else if (cxt != null) {
 				Context out = null;
-				if (returnPath != null && returnPath.path != null) {
-					cxt.setReturnPath(returnPath);
+				ReturnPath rp = returnPath;
+				if (rp == null) {
+					rp = (ReturnPath)cxt.getReturnPath();;
+				}
+				if (rp != null && rp.path != null) {
+					cxt.setReturnPath(rp);
 					out = exert(task(this, cxt));
-					return out.getValue(returnPath.path);
+					return out.getValue(rp.path);
 				}
 				out = exert(task(this, cxt));
 				return out;

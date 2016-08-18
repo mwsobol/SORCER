@@ -21,8 +21,7 @@ package sorcer.service;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 
-import sorcer.service.modeling.ContextModel;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -76,10 +75,10 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends ContextModel, Mogram, Dependency, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
+public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
 
-	/** parameter (par) */
-	final static String PATH_PAR = "par";
+	/** parameter (proc) */
+	final static String PATH_PAR = "proc";
 
 	/** context parameter (cp) */
 	final static String CONTEXT_PARAMETER = "cp";
@@ -311,9 +310,9 @@ public interface Context<T> extends ContextModel, Mogram, Dependency, Mappable<T
 
 	public void appendTrace(String footprint);
 
-	public Context<T> append(Context<T> context) throws ContextException;
+	public Context append(Context context) throws ContextException;
 
-	public Context<T> updateEntries(Context<T> context) throws ContextException;
+	public Context<T> updateEntries(ServiceModel context) throws ContextException;
 	/**
 	 * Returns this context within its cuureent scope.
 	 *
@@ -342,9 +341,9 @@ public interface Context<T> extends ContextModel, Mogram, Dependency, Mappable<T
 
 	public Object addValue(Identifiable value) throws ContextException;
 
-	public Arg addPar(Arg value) throws ContextException;
+	public Arg addProc(Arg value) throws ContextException;
 
-	public Arg addPar(String path, Object value) throws ContextException;
+	public Arg addProc(String path, Object value) throws ContextException;
 
 	public Arg getPar(String path) throws ContextException, RemoteException;
 

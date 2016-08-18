@@ -1,4 +1,4 @@
-package sorcer.core.context.model.par;
+package sorcer.core.context.model.proc;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -6,7 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.tester.provider.impl.ParModelImpl;
+import sorcer.arithmetic.tester.provider.impl.ProcModelImpl;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -20,25 +21,24 @@ import static sorcer.po.operator.invoke;
 /**
  * @author Mike Sobolewski
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/sorcer-tester")
-public class ParModelServices {
-	private final static Logger logger = LoggerFactory.getLogger(ParModelServices.class);
+public class ProcModelServices {
+	private final static Logger logger = LoggerFactory.getLogger(ProcModelServices.class);
 	public static String sorcerVersion = System.getProperty("sorcer.version");
 
 
 	@Test
-	public void parModelerTest() throws RemoteException, ContextException,
+	public void procModelerTest() throws RemoteException, ContextException,
 			ExertionException, SignatureException {
-		ParModel pm = ParModelImpl.getParModel();
+		ProcModel pm = ProcModelImpl.getProcModel();
 		logger.info("result: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
 	}
 
 	@Test
-	public void parObjectModelServiceTest() throws Exception {
-		ParModel pm = ParModelImpl.getParModel();
+	public void procObjectModelServiceTest() throws Exception {
+		ProcModel pm = ProcModelImpl.getProcModel();
 		Task pmt = task(sig("invoke", pm),
 				context(result("invoke/result", outPaths("expr"))));
 
@@ -51,10 +51,10 @@ public class ParModelServices {
 	}
 
 	@Test
-	public void parNetModelServiceTest() throws Exception,
+	public void procNetModelServiceTest() throws Exception,
 			ExertionException, SignatureException {
-		// the provider in ex6/bin parmodel-prv-run.xml
-		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
+		// the provider in ex6/bin procmodel-prv-run.xml
+		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ProcModel")),
 				context(result("invoke/result", outPaths("expr"))));
 
 		logger.info("result: " + eval(pmt));
@@ -65,10 +65,10 @@ public class ParModelServices {
 	}
 	
 //	@Test
-//	public void parObjectModelAgentTest() throws RemoteException, ContextException, ExertionException,
+//	public void procObjectModelAgentTest() throws RemoteException, ContextException, ExertionException,
 //			SignatureException, MalformedURLException {
 //
-//		ParModel pm = ParModelImpl.getParModel();
+//		ProcModel pm = ProcModelImpl.getProcModel();
 //		Task pmt = task(sig("invoke", pm), context(
 //				invoker("getSphereVolume"),
 //				result("sphere/volume"),
@@ -84,10 +84,10 @@ public class ParModelServices {
 //
 //
 //	@Test
-//	public void parObjectModelMultiAgentTest() throws RemoteException, ContextException, ExertionException,
+//	public void procObjectModelMultiAgentTest() throws RemoteException, ContextException, ExertionException,
 //			SignatureException, MalformedURLException {
 //
-//		ParModel pm = ParModelImpl.getParModel();
+//		ProcModel pm = ProcModelImpl.getProcModel();
 //
 //		// invoking non existing agent and the return eval specified
 //		Task pmt = task(sig("invoke", pm), context(
@@ -125,10 +125,10 @@ public class ParModelServices {
 //	}
 //
 //	@Test
-//	public void parNetModelAgentTest() throws RemoteException, ContextException, ExertionException,
+//	public void procNetModelAgentTest() throws RemoteException, ContextException, ExertionException,
 //			SignatureException, MalformedURLException, TransactionException {
-//		// the provider in ex6/bin parmodel-prv-run.xml
-//		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
+//		// the provider in ex6/bin procmodel-prv-run.xml
+//		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ProcModel")),
 //				context(invoker("getSphereVolume"),
 ////						result("sphere/volume"),
 //						ent("sphere/radius", 20.0),
@@ -145,7 +145,7 @@ public class ParModelServices {
 //		assertEquals(get(cxt, "sphere/radius"), 20.0);
 //		assertEquals(get(cxt, "sphere/volume"), 33510.32163829113);
 //
-//		pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
+//		pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ProcModel")),
 //				context(invoker("getSphereVolume"),
 //						result("sphere/volume"),
 //						ent("sphere/radius", 20.0),
@@ -159,10 +159,10 @@ public class ParModelServices {
 //	}
 //
 //	@Test
-//	public void parNetModelMultiAgentTest() throws RemoteException, ContextException, ExertionException,
+//	public void procNetModelMultiAgentTest() throws RemoteException, ContextException, ExertionException,
 //			SignatureException, MalformedURLException, TransactionException {
-//		// the provider in ex6/bin parmodel-prv-run.xml
-//		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
+//		// the provider in ex6/bin procmodel-prv-run.xml
+//		Task pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ProcModel")),
 //				context(invoker("getSphereVolume"),
 //						result("sphere/volume"),
 //						ent("sphere/radius", 20.0),
@@ -177,7 +177,7 @@ public class ParModelServices {
 //
 //		assertEquals(eval(pmt), 33510.32163829113);
 //
-//		pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ParModel")),
+//		pmt = task(sig("invoke", Invocation.class, prvName("Arithmetic ProcModel")),
 //				context(invoker("getCylinderSurface"),
 //						result("cylinder/surface"),
 //						invoker("getCylinderSurface"),

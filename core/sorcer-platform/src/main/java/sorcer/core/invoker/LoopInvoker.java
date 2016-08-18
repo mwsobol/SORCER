@@ -75,6 +75,7 @@ public class LoopInvoker<V> extends ServiceInvoker<V> implements ConditionalInvo
 		super(name);
 		this.condition = condition;
 		target = (ServiceInvoker)invoker;
+		invokeContext = ((ServiceInvoker) invoker).getScope();
 	}
 
 	/**
@@ -105,6 +106,11 @@ public class LoopInvoker<V> extends ServiceInvoker<V> implements ConditionalInvo
 				}
 				return obj;
 			} else if (condition != null && max - min == 0) {
+				target.setScope(invokeContext);
+				if (condition.getConditionalContext() == null
+						|| condition.getConditionalContext().size()==0) {
+					condition.setConditionalContext(invokeContext);
+				}
 				while (condition.isTrue()) {
 					obj = target.getValue(entries);
 				}

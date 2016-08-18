@@ -26,7 +26,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Model extends ContextModel, Mogram, Dependency {
+public interface Model extends ServiceModel, Mogram, Dependency {
 
     /**
      * Returns a model current response context.

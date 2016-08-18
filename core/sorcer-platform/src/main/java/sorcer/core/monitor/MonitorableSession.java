@@ -55,7 +55,7 @@ import java.rmi.RemoteException;
  * 
  * For Space based programming, since we don't know who will exert the job,
  * broker calls init(space, timeout, duration). This means that the monitor is
- * going to mark the timeout and duration of this session. Note that from this
+ * going to tag the timeout and duration of this session. Note that from this
  * moment, the session is not activated. It waits till the timeout period for
  * some monitorable provider to pick up and call init(monitorable). From this
  * moment on, the session is activated and leases have to be renewed.
@@ -157,7 +157,7 @@ public class MonitorableSession implements MonitoringSession {
 	 * 
 	 * If the Broker wants to drop the exertion to space, then the Broker has no
 	 * idea who will pick up this exertion. In that case, the broker would have
-	 * already set the lease duration and timeout.
+	 * already setValue the lease duration and timeout.
 	 * 
 	 * The provider who picks up the entry must initialize this session by
 	 * calling init(Monitorable) so that the monitor will now know that the task

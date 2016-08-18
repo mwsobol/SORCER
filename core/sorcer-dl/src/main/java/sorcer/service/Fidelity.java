@@ -4,8 +4,9 @@ package sorcer.service;
  * Created by Mike Sobolewski on 6/27/16.
  */
 public class Fidelity<T> implements Arg, net.jini.core.entry.Entry {
+    static final long serialVersionUID = 1L;
 
-	public enum Type implements Arg {
+    public enum Type implements Arg {
 		SELECT, META, NAME, SYS, ENTRY, SIG, CONTEXT, COMPONENT,
 		MORPH, MULTI, VAR, REQUEST, UPDATE, ADD, REPLACE, DELETE;
 

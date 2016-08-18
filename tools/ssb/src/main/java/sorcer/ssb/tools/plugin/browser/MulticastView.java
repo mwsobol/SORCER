@@ -197,7 +197,7 @@ public class MulticastView extends JFrame {
 
 			while (!Thread.currentThread().isInterrupted()) {
 
-				// set timeout on socket to allow for interrupts to be detected
+				// setValue timeout on socket to allow for interrupts to be detected
 				socket.setSoTimeout(2000);
 				byte[] buf = new byte[512];
 

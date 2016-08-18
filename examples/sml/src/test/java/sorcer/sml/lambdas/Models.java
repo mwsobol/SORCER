@@ -10,7 +10,7 @@ import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.eo.operator;
+import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -35,13 +35,13 @@ public class Models {
 	@Test
 	public void lambdaModel() throws Exception {
 
-		Model mdl = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
-				ent("add/x1", 20.0), ent("add/x2", 80.0),
-				lambda("add", (Context<Double> model) ->
+		Model mdl = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
+				operator.lambda("add", (Context<Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
-				lambda("multiply", (Context<Double> model) ->
+				operator.lambda("multiply", (Context<Double> model) ->
 						v(model, "multiply/x1") * v(model, "multiply/x2")),
-				lambda("subtract", (Context<Double> model) ->
+				operator.lambda("subtract", (Context<Double> model) ->
 						v(model, "multiply") - v(model, "add")),
 				response("subtract", "multiply", "add"));
 
@@ -56,18 +56,18 @@ public class Models {
 	@Test
 	public void settingLambdaModel() throws Exception {
 
-		Model mdl = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
-				ent("add/x1", 20.0), ent("add/x2", 80.0),
-				lambda("add", (Context<Double> model) ->
+		Model mdl = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
+				operator.lambda("add", (Context<Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
-				lambda("multiply", (Context<Double> model) ->
+				operator.lambda("multiply", (Context<Double> model) ->
 						v(model, "multiply/x1") * v(model, "multiply/x2")),
-				lambda("subtract", (Context<Double> model) ->
+				operator.lambda("subtract", (Context<Double> model) ->
 						v(model, "multiply") - v(model, "add")),
 				response("subtract", "multiply", "add"));
 
 		logger.info("DEPS: " + printDeps(mdl));
-		Context out = response(mdl, ent("multiply/x1", 20.0), ent("multiply/x2", 100.0));
+		Context out = response(mdl, operator.ent("multiply/x1", 20.0), operator.ent("multiply/x2", 100.0));
 		logger.info("model response: " + out);
 		assertTrue(get(out, "subtract").equals(1900.0));
 		assertTrue(get(out, "multiply").equals(2000.0));
@@ -78,16 +78,16 @@ public class Models {
 	public void lazyLambdaModel() throws Exception {
 		// evaluate multiply only once
 
-		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
-				ent("add/x1", 20.0), ent("add/x2", 80.0),
-				ent("multiply/done", false),
-				lambda("add", (Context<Double> model) ->
+		Model mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
+				operator.ent("multiply/done", false),
+				operator.lambda("add", (Context<Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
-				lambda("multiply", (Context<Double> model) ->
+				operator.lambda("multiply", (Context<Double> model) ->
 						v(model, "multiply/x1") * v(model, "multiply/x2")),
-				lambda("subtract", (Context<Double> model) ->
+				operator.lambda("subtract", (Context<Double> model) ->
 						v(model, "multiply") - v(model, "add")),
-				lambda("multiply2", (Context<Object> cxt) -> {
+				operator.lambda("multiply2", (Context<Object> cxt) -> {
 					Entry multiply = (Entry) asis(cxt, "multiply");
 					double out = 0;
 					if (value(cxt, "multiply/done").equals(false)) {
@@ -98,7 +98,7 @@ public class Models {
 					}
 					return out;
 				}),
-				lambda("multiply3", (Context<Object> cxt) -> {
+				operator.lambda("multiply3", (Context<Object> cxt) -> {
 					Entry multiply = (Entry) asis(cxt, "multiply");
 					double out = 0;
 					if (value(cxt, "multiply/done").equals(false)) {
@@ -111,7 +111,7 @@ public class Models {
 				}),
 				response("multiply2", "multiply3"));
 
-//		dependsOn(mo, ent("subtract", paths("multiply2", "add")));
+//		dependsOn(mo, proc("subtract", paths("multiply2", "add")));
 
 		Context out = response(mo);
 		logger.info("model response: " + out);
@@ -124,26 +124,26 @@ public class Models {
 	public void dynamicLambdaModel() throws Exception {
 		// change scope at runtime for a selected entry ("multiply") in the model
 
-		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
-				ent("add/x1", 20.0), ent("add/x2", 80.0),
-				lambda("add", (Context <Double> model) ->
+		Model mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
+				operator.lambda("add", (Context <Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
-				lambda("multiply", (Context <Double> model) ->
+				operator.lambda("multiply", (Context <Double> model) ->
 						v(model, "multiply/x1") * v(model, "multiply/x2")),
-				lambda("subtract", (Context <Double> model) ->
+				operator.lambda("subtract", (Context <Double> model) ->
 						v(model, "multiply") - v(model, "add")),
-				lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
+				operator.lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
 					double out = (double) exec(entry, scope);
 					if (out > 400) {
 						putValue(scope, "multiply/x1", 20.0);
 						putValue(scope, "multiply/x2", 50.0);
 						out = (double)exec(entry, scope);
 					}
-					return context(ent("multiply2", out));
+					return context(operator.ent("multiply2", out));
 				} ),
 				response("subtract", "multiply2", "add"));
 
-		dependsOn(mo, ent("subtract", paths("multiply2", "add")));
+		dependsOn(mo, operator.ent("subtract", paths("multiply2", "add")));
 
 		Context out = response(mo);
 		logger.info("model response: " + out);
@@ -155,24 +155,24 @@ public class Models {
 	@Test
 	public void lambdaModelWithReturnPath() throws Exception {
 
-		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
-				ent("add/x1", 20.0), ent("add/x2", 80.0),
-				ent("arg/x1", 30.0), ent("arg/x2", 90.0),
-				lambda("add", (Context <Double> model) ->
+		Model mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
+				operator.ent("arg/x1", 30.0), operator.ent("arg/x2", 90.0),
+				operator.lambda("add", (Context <Double> model) ->
 								v(model, "add/x1") + v(model, "add/x2"),
 						result("add/out",
 								inPaths("add/x1", "add/x2"))),
-				lambda("multiply", (Context <Double> model) ->
+				operator.lambda("multiply", (Context <Double> model) ->
 								v(model, "multiply/x1") * v(model, "multiply/x2"),
 						result("multiply/out",
 								inPaths("multiply/x1", "multiply/x2"))),
-				lambda("subtract", (Context <Double> model) ->
+				operator.lambda("subtract", (Context <Double> model) ->
 								v(model, "multiply/out") - v(model, "add/out"),
 						result("model/response")),
 				response("subtract", "multiply/out", "add/out", "model/response"));
 
 		logger.info("DEPS: " + printDeps(mo));
-		dependsOn(mo, ent("subtract", paths("multiply", "add")));
+		dependsOn(mo, operator.ent("subtract", paths("multiply", "add")));
 
 		Context out = response(mo);
 		logger.info("model response: " + out);
@@ -189,23 +189,23 @@ public class Models {
 		EntryCollable<Double> entFunction = (Context<Double> cxt) -> {
 			double out = value(cxt, "multiply");
 			out = out + 1000.0 + delta;
-			return ent("out", out);
+			return operator.ent("out", out);
 		};
 
 		Model mo = model(
-				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
+				operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", AdderImpl.class, result("add/out",
+				operator.ent(sig("add", AdderImpl.class, result("add/out",
 						inPaths("add/x1", "add/x2")))),
-				ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+				operator.ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
 						inPaths("multiply/out", "add/out")))),
 				response("subtract", "lambda", "out"));
 
-	//	dependsOn(mo, ent("subtract", paths("multiply", "add")));
+	//	dependsOn(mo, proc("subtract", paths("multiply", "add")));
 
-		add(mo, lambda("lambda", entFunction));
+		add(mo, operator.lambda("lambda", entFunction));
 
 		Context out = response(mo);
 		logger.info("response: " + out);
@@ -226,31 +226,31 @@ public class Models {
 			out = context(exert(task));
 			value = (Double)get(out, "multiply/result");
 			// owerite the original eval with a new task
-			return ent("multiply/out", value);
+			return operator.ent("multiply/out", value);
 		};
 
 		// usage of in and out connectors associated with model
 		Task innerTask = task(
 				"task/multiply",
 				sig("multiply", MultiplierImpl.class),
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("multiply/result")));
 
 		Model mo = model(
-				inEnt("multiply/x1", 10.0), inEnt("multiply/x2", 50.0),
-				inEnt("add/x1", 20.0), inEnt("add/x2", 80.0),
-				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
+				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
+				operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", AdderImpl.class, result("add/out",
+				operator.ent(sig("add", AdderImpl.class, result("add/out",
 						inPaths("add/x1", "add/x2")))),
-				ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+				operator.ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
 						inPaths("multiply/out", "add/out")))),
 				response("subtract", "multiply"));
 
-		dependsOn(mo, ent("subtract", paths("lambda", "add")));
+		dependsOn(mo, operator.ent("subtract", paths("lambda", "add")));
 
 		add(mo, innerTask);
-		add(mo, lambda("lambda", callTask));
+		add(mo, operator.lambda("lambda", callTask));
 		responseDown(mo, "multiply");
 		responseUp(mo, "lambda");
 
@@ -264,13 +264,13 @@ public class Models {
 	public void lambdaTaskInLoop() throws Exception {
 		Task ti = task(
 				sig("add", AdderImpl.class),
-				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
-						inEnt("arg/x2", 80.0), result("task/result")));
+				model("add", inVal("arg/x1", inc("arg/x2", 2.0)),
+						inVal("arg/x2", 80.0), result("task/result")));
 
 		Block lb = block(sig(ServiceConcatenator.class),
-				context(ent("sum", 0.0)),
-				loop(0, 100, task(lambda("sum", (Context<Double> cxt) -> {
-					Double out = value(cxt, "sum") + (Double) operator.eval(ti);
+				context(operator.ent("sum", 0.0)),
+				loop(0, 100, task(operator.lambda("sum", (Context<Double> cxt) -> {
+					Double out = value(cxt, "sum") + (Double) eval(ti);
 					putValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
 					return out; }))));
 		lb = exert(lb);
@@ -282,16 +282,16 @@ public class Models {
 	public void canditionalEntryRangeLoop() throws Exception {
 		Task ti = task(
 				sig("add", AdderImpl.class),
-				model("add", inEnt("arg/x1", inc("arg/x2", 2.0)),
-						inEnt("arg/x2", 80.0), result("task/result")));
+				model("add", inVal("arg/x1", inc("arg/x2", 2.0)),
+						inVal("arg/x2", 80.0), result("task/result")));
 
 		Block lb = block(sig(ServiceConcatenator.class),
-				context(ent("sum", 0.0),
-						ent("from", 320.0), ent("to", 420.0)),
-				loop(0, 100, task(lambda("sum", (Context<Double> cxt) -> {
+				context(operator.ent("sum", 0.0),
+						operator.ent("from", 320.0), operator.ent("to", 420.0)),
+				loop(0, 100, task(operator.lambda("sum", (Context<Double> cxt) -> {
 					Double from = value(cxt, "from");
 					Double to = value(cxt, "to");
-					Double out = value(cxt, "sum") + (Double) operator.eval(ti);
+					Double out = value(cxt, "sum") + (Double) eval(ti);
 					putValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
 
 					// skip eval 333 but with increase by 100
@@ -348,10 +348,10 @@ public class Models {
                 result("result/y2", inPaths("arg/x1", "arg/x2")));
 
         // three entry multifidelity model with morphers
-        Model mod = model(inEnt("arg/x1", 90.0), inEnt("arg/x2", 10.0),
-                ent("mFi1", mFi(mFi1Morpher, add, multiply)),
-                ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),
-                ent("mFi3", mFi(average, divide, multiply)),
+        Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
+                operator.ent("mFi1", mFi(mFi1Morpher, add, multiply)),
+                operator.ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),
+                operator.ent("mFi3", mFi(average, divide, multiply)),
                 fi2, fi3, fi4,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 

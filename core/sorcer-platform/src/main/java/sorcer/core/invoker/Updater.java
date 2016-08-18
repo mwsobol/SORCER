@@ -24,14 +24,14 @@ package sorcer.core.invoker;
 import sorcer.service.Context;
 
 @SuppressWarnings("rawtypes")
-abstract public class Invocable<V> {
-	
+abstract public class Updater<V> {
+
 	protected Context context;
 
-	public Invocable(Context context) {
+	public Updater(Context context) {
 		this.context = context;
 	}
-	
+
 	public Context getContext() {
 		return context;
 	}
@@ -39,12 +39,12 @@ abstract public class Invocable<V> {
 	public void setContext(Context context) {
 		this.context = context;
 	}
-	
-    /**
-     * Computes a result, or throws an exception if unable to do so.
-     *
-     * @return computed result
-     * @throws Exception if unable to compute a result
-     */
-    abstract public V invoke(Context context) throws Exception;
+
+	/**
+	 * Computes a result, or throws an exception if unable to do so.
+	 *
+	 * @return computed result
+	 * @throws Exception if unable to compute a result
+	 */
+	abstract public V update(Context context) throws Exception;
 }

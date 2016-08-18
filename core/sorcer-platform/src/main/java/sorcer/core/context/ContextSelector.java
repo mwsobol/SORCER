@@ -50,7 +50,7 @@ public class ContextSelector implements ContextSelection {
 
 	protected Object target;
 
-	private String selectedTaskName;
+	private String selectedComponentName;
 
 	public ContextSelector(String path) {
 		name = defaultName + count++;
@@ -74,7 +74,7 @@ public class ContextSelector implements ContextSelection {
 
 	public ContextSelector(Task task, String path) {
 		name = defaultName + count++;
-		selectedTaskName = task.getName();
+		selectedComponentName = task.getName();
 		selectedPath = path;
 		this.paths.add(path);
 	}
@@ -101,8 +101,8 @@ public class ContextSelector implements ContextSelection {
 			throw new ContextException("ContextSelector requires input of Context type.");
 
 		try {
-			if (selectedTaskName != null) {
-				target = ((ServiceContext)in).getTaskContext(selectedTaskName);
+			if (selectedComponentName != null) {
+				target = ((ServiceContext)in).getTaskContext(selectedComponentName);
 			} else {
 				in = select((Context) target);
 			}
@@ -182,10 +182,10 @@ public class ContextSelector implements ContextSelection {
 	 * subcontext of the input (indirect) job responseContext.
 	 * </p>
 	 * 
-	 * @return the selectedTaskName
+	 * @return the selectedComponentName
 	 */
-	public String getTaskName() {
-		return selectedTaskName;
+	public String getComponentName() {
+		return selectedComponentName;
 	}
 
 	/**
@@ -194,10 +194,10 @@ public class ContextSelector implements ContextSelection {
 	 * </p>
 	 * 
 	 * @param selectedTaskName
-	 *            the selectedTaskName to set
+	 *            the selectedComponentName to setValue
 	 */
-	public void setTaskName(String selectedTaskName) {
-		this.selectedTaskName = selectedTaskName;
+	public void setComponentName(String selectedTaskName) {
+		this.selectedComponentName = selectedTaskName;
 	}
 
     @Override

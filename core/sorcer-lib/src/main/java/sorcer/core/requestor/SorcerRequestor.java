@@ -43,7 +43,7 @@ import java.util.StringTokenizer;
  * main method of the class initializes system properties. Then it parses the 
  * arguments passed to method if no arguments are passed to the method it 
  * terminates the Java Virtual Machine with an exit code of 1. Else, the first 
- * argument is set as the runnerType. Then the code attempts to create a
+ * argument is setValue as the runnerType. Then the code attempts to create a
  * new instance of the requestor as service runner if it fails the Virtual 
  * Machine exits with a code of 2. Next the code determines if an internal 
  * Webster is running. If one is running it attempts to get the webster 

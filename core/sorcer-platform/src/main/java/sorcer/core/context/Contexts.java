@@ -315,7 +315,7 @@ public class Contexts implements SorcerConstants {
 
 	/*
 	 * Return boolean result indicating if the eval at the designated path is
-	 * set as an empty leaf node.
+	 * setValue as an empty leaf node.
 	 */
 	public static boolean isEmptyLeafNode(Context cntxt, String path)
 			throws ContextException {
@@ -534,7 +534,7 @@ public class Contexts implements SorcerConstants {
 			obj = e.next();
 			if (obj != null && obj instanceof ContextNode)
 				nodes.add(obj);
-            // Look for ContextNodes also in values and set the ContextNode's direction
+            // Look for ContextNodes also in values and setValue the ContextNode's direction
             else {
                 Object val = ((ServiceContext)context).get((String)obj);
                 if (val!= null && val instanceof ContextNode) {
@@ -666,20 +666,35 @@ public class Contexts implements SorcerConstants {
 		return getMarkedConextNodes(sc, association)[0];
 	}
 
-	public static Object[] getMarkedValues(Context sc, String association)
+	public static Object[] getMarkedValues(Context context, String association)
 			throws ContextException {
-		String[] paths = getMarkedPaths(sc, association);
-		List<Object> values = new ArrayList<Object>();
+		String[] paths = getMarkedPaths(context, association);
+		List<Object> values = new ArrayList();
 		for (int i = 0; i < paths.length; i++) {
-			values.add(sc.getValue(paths[i]));
+			values.add(context.getValue(paths[i]));
+		}
+		if (paths == null || values.size() == 0) {
+			Context cxt = context.getScope();
+			if (cxt != null)
+				paths = getMarkedPaths(cxt, association);
+		}
+		for (int i = 0; i < paths.length; i++) {
+			values.add(context.getValue(paths[i]));
 		}
 		return values.toArray();
 	}
 
-	public static boolean hasMarkedValue(Context sc, String association)
+	public static boolean hasMarkedValue(Context context, String association)
 			throws ContextException {
-		String[] paths = getMarkedPaths(sc, association);
-        if (paths == null) return false;
+		String[] paths = getMarkedPaths(context, association);
+        if (paths == null) {
+			Context cxt = context.getScope();
+			if (cxt != null)
+				paths = getMarkedPaths(cxt, association);
+		}
+		if (paths == null) {
+			return false;
+		}
         return paths.length > 0;
 	}
 
@@ -1118,7 +1133,7 @@ public class Contexts implements SorcerConstants {
 		Vector keys = new Vector();
 		if (cntxt.isSingletonAttribute(attribute)) {
 			values = (Hashtable) cntxt.getMetacontext().get(attribute);
-			if (values != null) { // if no attributes are set, values==null;
+			if (values != null) { // if no attributes are setValue, values==null;
 				Enumeration e = values.keys();
 				while (e.hasMoreElements())
 					keys.addElement((String) e.nextElement());
@@ -1220,7 +1235,7 @@ public class Contexts implements SorcerConstants {
 		Vector keys = new Vector();
 		if (cntxt.isSingletonAttribute(attr)) {
 			values = (Hashtable) cntxt.getMetacontext().get(attr);
-			if (values != null) { // if there are no attributes set,
+			if (values != null) { // if there are no attributes setValue,
 				// values==null;
 				Enumeration e = values.keys();
 				while (e.hasMoreElements()) {

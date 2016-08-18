@@ -22,7 +22,7 @@ import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.ent.Proc;
 import sorcer.core.exertion.AltMogram;
 import sorcer.core.exertion.LoopMogram;
 import sorcer.core.exertion.OptMogram;
@@ -152,7 +152,7 @@ import java.util.Map;
 			} else if (closureExpression != null && conditionalContext != null) {
 				ArgSet ps = new ArgSet();
 				for (String name : pars) {
-					ps.add(new Par(name));
+					ps.add(new Proc(name));
 				}
 				ServiceInvoker invoker = new GroovyInvoker(closureExpression, ps.toArray());
 				invoker.setScope(conditionalContext);
@@ -274,7 +274,7 @@ import java.util.Map;
 		clenupContextScripts(exertion.getContext());
 		for (Mogram e : exertion.getMograms()) {
 			if (e instanceof Exertion) {
-				clenupContextScripts(((Exertion) e).getContext());
+				clenupContextScripts(e.getContext());
 				clenupExertionScripts((Exertion) e);
 			}
 		}
@@ -285,14 +285,14 @@ import java.util.Map;
 		Iterator i = ((ServiceContext) context).entryIterator();
 		while (i.hasNext()) {
 			Map.Entry entry = (Map.Entry) i.next();
-			// now check entries
+			// now check args
 			if (entry.getValue() instanceof ServiceInvoker) {
 				clenupContextScripts(((ServiceInvoker) entry.getValue())
 						.getScope());
-			} else if (entry.getValue() instanceof Par) {
-				Context cxt =  ((Par) entry.getValue()).getScope();
+			} else if (entry.getValue() instanceof Proc) {
+				Context cxt =  ((Proc) entry.getValue()).getScope();
 				if (cxt != null) cxt.remove(Condition._closure_);
-				cxt = ((Par)entry.getValue()).getScope();
+				cxt = ((Proc)entry.getValue()).getScope();
 				if (cxt != null) cxt.remove(Condition._closure_);
 			} else if (entry.getValue() instanceof ServiceContext) {
 				ServiceContext cxt = (ServiceContext)entry.getValue();
@@ -322,7 +322,7 @@ import java.util.Map;
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
-		Context cxt = Arg.getContext(args);
+		Context cxt = (Context) Arg.getServiceModel(args);
 		if (cxt != null) {
 			conditionalContext = cxt;
 			return isTrue();
@@ -338,4 +338,5 @@ import java.util.Map;
 	public String getName() {
 		return name;
 	}
+
 }

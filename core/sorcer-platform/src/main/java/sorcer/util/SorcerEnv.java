@@ -143,6 +143,7 @@ public class SorcerEnv extends SOS {
             if (hd == null)
                 hd = SOS.deriveSorcerHome();
             if (hd != null && hd.length() > 0) {
+				System.setProperty(SORCER_HOME, hd);
                 return new File(hd);
             }
 
@@ -497,7 +498,7 @@ public class SorcerEnv extends SOS {
 	protected static void reconcileProperties(Properties properties, boolean expanding)
         throws ConfigurationException {
 		update(properties, expanding);
-		// set the document root for HTTP server either for provider ormstc.data.dir
+		// setValue the document root for HTTP server either for provider ormstc.data.dir
 		// requestor
         //rootDir = properties.getProperty(P_DATA_ROOT_DIR);
 		String rootDir = DataService.getDataDir();
@@ -595,7 +596,7 @@ public class SorcerEnv extends SOS {
 				properties.put(key, value);
 			}
 		}
-		// now substitute matching entries accordingly
+		// now substitute matching args accordingly
 		e = properties.propertyNames();
 		while (e.hasMoreElements()) {
 			key = (String) e.nextElement();
@@ -961,10 +962,10 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * Checks whether a certain boolean property is set.
+	 * Checks whether a certain boolean property is setValue.
 	 * 
 	 * @param property
-	 * @return true if property is set
+	 * @return true if property is setValue
 	 */
 	public static boolean isOn(String property) {
 		return props.getProperty(property, "false").equals("true");
@@ -1006,7 +1007,7 @@ public class SorcerEnv extends SOS {
 
 	/**
 	 * Gets the eval for a certain property or the default eval if property is
-	 * not set.
+	 * not setValue.
 	 * 
 	 * @param property
 	 * @param defaultValue
@@ -1326,7 +1327,7 @@ public class SorcerEnv extends SOS {
 	 * Get an anonymous port.
 	 * 
 	 * @return An anonymous port created by invoking {@code getPortAvailable()}.
-	 *         Once this method is called the return eval is set statically for
+	 *         Once this method is called the return eval is setValue statically for
 	 *         future reference
 	 * @throws IOException
 	 *             If there are problems getting the anonymous port

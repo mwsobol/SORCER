@@ -23,8 +23,8 @@ import java.util.Date;
 
 /**
  * Wrapper around <code>RemoteEvent</code> to allow user defined event objects. 
- * Since <code>RemoteEvent</code> requires certain parameters to be set in its 
- * constructor this class provides set methods for those parameters. The
+ * Since <code>RemoteEvent</code> requires certain parameters to be setValue in its
+ * constructor this class provides setValue methods for those parameters. The
  * user can extend this class, creating their own event.
  *
  * <p>Developers of service events will extend this class, creating their own event.

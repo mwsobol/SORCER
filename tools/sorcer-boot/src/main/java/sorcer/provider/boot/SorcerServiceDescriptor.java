@@ -363,7 +363,7 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
 			/*
 			 * Grant "this" code enough permission to do its work under the
 			 * service policy, which takes effect (below) after the context
-			 * loader is (re)set.
+			 * loader is (re)setValue.
 			 */
             splitServicePolicy.grant(SorcerServiceDescriptor.class, null,
                                      new Permission[]{new AllPermission()});

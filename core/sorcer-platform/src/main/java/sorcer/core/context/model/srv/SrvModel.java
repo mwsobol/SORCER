@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.ParModel;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiRequest;
@@ -48,13 +48,13 @@ import static sorcer.eo.operator.*;
  * phenomenon, or service, that accounts for its properties and is used to study its characteristics.
  * Properties of a service model are represented by path of Context with values that depend
  * on other properties and can be evaluated as specified by ths model. Evaluations of the service 
- * model entries of the Srv type results in exerting a dynamic federation of services as specified by
- * these entries. A rendezvous service provider orchestrating a choreography of the model
+ * model args of the Srv type results in exerting a dynamic federation of services as specified by
+ * these args. A rendezvous service provider orchestrating a choreography of the model
  * is a local or remote one specified by a service signature of the model.
  *   
  * Created by Mike Sobolewski on 1/29/15.
  */
-public class SrvModel extends ParModel implements Model, Invocation<Object> {
+public class SrvModel extends ProcModel implements Model, Invocation<Object> {
     private static final Logger logger = LoggerFactory.getLogger(SrvModel.class);
 
     public static SrvModel instance(Signature builder) throws SignatureException {
@@ -116,68 +116,11 @@ public class SrvModel extends ParModel implements Model, Invocation<Object> {
         return true;
     }
 
-//    public void selectedServiceFidelity(String name) {
-//        ServiceFidelity<Signature> fidelity = serviceFidelities.get(name);
-//        serviceFidelitySelector = name;
-//        this.selectedFidelity = fidelity;
-//        selectFidelity();
-//    }
-//
-//    public void addServiceFidelity(ServiceFidelity fidelity) {
-//        putServiceFidelity(fidelity.getName(), fidelity);
-//        serviceFidelitySelector = fidelity.getName();
-//        this.selectedFidelity = fidelity;
-//    }
-//
-//    public void setServiceFidelity(ServiceFidelity fidelity) {
-//        this.serviceFidelity1 = fidelity;
-//        putServiceFidelity(fidelity.getName(), fidelity);
-//        serviceFidelitySelector = fidelity.getName();
-//    }
-//
-//    public void setServiceFidelity(String name, ServiceFidelity fidelity) {
-//        this.serviceFidelity1 = fidelity;
-//        putServiceFidelity(name, fidelity);
-//        serviceFidelitySelector = name;
-//    }
-//
-//    public void putServiceFidelity(ServiceFidelity fidelity) {
-//        if (serviceFidelities == null)
-//            serviceFidelities = new HashMap<String, ServiceFidelity>();
-//        serviceFidelities.put(fidelity.getName(), fidelity);
-//    }
-//
-//    public void putServiceFidelity(String name, ServiceFidelity fidelity) {
-//        if (serviceFidelities == null)
-//            serviceFidelities = new HashMap<String, ServiceFidelity>();
-//        serviceFidelities.put(name, fidelity);
-//    }
-//
-//    public Signature getProcessSignature() {
-//        for (Signature s : serviceFidelity1.getSelects()) {
-//            if (s.getType() == Signature.Type.PROC)
-//                return s;
-//        }
-//        return null;
-//    }
-//
-//    public void selectServiceFidelity(String selector) throws ExertionException {
-//        if (selector != null && serviceFidelities != null
-//                && serviceFidelities.containsKey(selector)) {
-//            ServiceFidelity sf = serviceFidelities.get(selector);
-//
-//            if (sf == null)
-//                throw new ExertionException("no such service fidelity: " + selector + " at: " + this);
-//            serviceFidelity1 = sf;
-//            serviceFidelitySelector = selector;
-//        }
-//    }
-
     public Object getValue(String path, Arg... args) throws EvaluationException {
         return getSrvValue(path, args);
     }
 
-    // calls from VarModels to call Srv entries of Vars
+    // calls from VarModels to call Srv args of Vars
     public Object getSrvValue(String path, Srv srv, Arg... args) throws EvaluationException {
         try {
             putValue(path, srv);
@@ -212,7 +155,7 @@ public class SrvModel extends ParModel implements Model, Invocation<Object> {
                 Object val2 = ((Srv) val).asis();
                 if (val2 instanceof SignatureEntry) {
                     // return the calculated eval
-                    if (((Srv) val).getSrvValue() != null && ((Srv) val).isValueCurrent())
+                    if (((Srv) val).getSrvValue() != null && ((Srv) val).isValueCurrent() && !isChanged())
                         return ((Srv) val).getSrvValue();
                     else {
                         Signature sig = ((SignatureEntry) ((Srv) val).asis()).value();

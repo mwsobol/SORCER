@@ -141,7 +141,7 @@ public class FidelityTest {
 	public void getFiList() throws EvaluationException {
 		String fis = "fis(fi('tip/displacement', 'astros'))";
 
-		FidelityList fl = (FidelityList) operator.eval(expr(fis));
+		FidelityList fl = (FidelityList) eval(expr(fis));
 		logger.info("fi map populated: " + fl);
 		assertTrue(fl.equals(fis(fi("tip/displacement", "astros"))));
 	}
@@ -150,7 +150,7 @@ public class FidelityTest {
 	public void getProjection() throws EvaluationException {
 		String fis = "po(fi('tip/displacement', 'astros'))";
 
-		Projection fl = (Projection) operator.eval(expr(fis));
+		Projection fl = (Projection) eval(expr(fis));
 		logger.info("fi map populated: " + fl);
    		assertTrue(fl.equals(po(fi("tip/displacement", "astros"))));
 	}

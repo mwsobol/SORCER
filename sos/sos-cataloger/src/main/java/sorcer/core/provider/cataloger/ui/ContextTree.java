@@ -389,7 +389,7 @@ public class ContextTree extends JPanel {
 	}
 
 	/**
-	 * Add child to the tree under parent, and set the visibility of it. If
+	 * Add child to the tree under parent, and setValue the visibility of it. If
 	 * parent is incorrect the child will be added under the root. This method
 	 * enforces rules prevents any item from appears as a child to a datanode,
 	 * also only allows one data node for path.
@@ -529,7 +529,7 @@ public class ContextTree extends JPanel {
 
 	/**
 	 * This class overrides the default rendering of a tree cell. We use this to
-	 * set the colors and icons of nodes.
+	 * setValue the colors and icons of nodes.
 	 */
 	private class ContextTreeRenderer extends DefaultTreeCellRenderer {
 		/**
@@ -577,15 +577,15 @@ public class ContextTree extends JPanel {
 							((ContextNodeType) userObject).toString(), sel,
 							expanded, leaf, row, hasFocus);
 
-				if (((ContextNodeType) userObject).isDataNode()) // set the
+				if (((ContextNodeType) userObject).isDataNode()) // setValue the
 					// datanodes
 					// to leaf
 					// icons
 					setIcon(leafIcon);
 				else
-					setIcon(openIcon); // set the paths to folder icons
+					setIcon(openIcon); // setValue the paths to folder icons
 
-				// set those crazy input/output colors
+				// setValue those crazy input/output colors
 				if (((ContextNodeType) userObject).getDirection().equals(
 						ContextNodeType.INPUTTYPE)) {
 					c.setForeground(Color.blue);

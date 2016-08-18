@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public abstract class InvokeIncrementor<T> extends ServiceInvoker<T> implements Incrementor<T> {
+public abstract class IncrementInvoker<T> extends ServiceInvoker<T> implements Incrementor<T> {
 
     private static final long serialVersionUID = 6556962121786495504L;
 
@@ -40,31 +40,31 @@ public abstract class InvokeIncrementor<T> extends ServiceInvoker<T> implements 
 
 	protected Invocation<T> target;
 
-	public InvokeIncrementor(String path) {
+	public IncrementInvoker(String path) {
 		this.path = path;
 	}
 
-	public InvokeIncrementor(String path, T increment) {
+	public IncrementInvoker(String path, T increment) {
 		this.path = path;
 		this.increment = increment;
 	}
 
-	public InvokeIncrementor(String path, T increment, T value) {
+	public IncrementInvoker(String path, T increment, T value) {
 		this.path = path;
 		this.increment = increment;
 		this.value = value;
 	}
 
-	public InvokeIncrementor(Invocation invoker, T increment) {
+	public IncrementInvoker(Invocation invoker, T increment) {
 		this.target = invoker;
 		this.increment = increment;
 	}
-	public InvokeIncrementor(String name, Invocation invoker) {
+	public IncrementInvoker(String name, Invocation invoker) {
 		super(name);
 		this.target = invoker;
 	}
 
-	public InvokeIncrementor(String name, Invocation invoker, T increment) {
+	public IncrementInvoker(String name, Invocation invoker, T increment) {
 		super(name);
 		this.target = invoker;
 		this.increment = increment;

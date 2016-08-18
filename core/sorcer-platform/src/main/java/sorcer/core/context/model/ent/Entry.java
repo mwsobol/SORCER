@@ -24,10 +24,7 @@ import sorcer.core.Name;
 import sorcer.core.context.ContextSelection;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
-import sorcer.service.modeling.EvaluationComponent;
-import sorcer.service.modeling.Model;
-import sorcer.service.modeling.SupportComponent;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -50,7 +47,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 
 	protected Class valClass;
 
-	protected Variability.Type type = Variability.Type.PAR;
+	protected Variability.Type type = Variability.Type.VAL;
 
 	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
 	protected boolean isReactive = false;
@@ -308,7 +305,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 			MogramException, RemoteException {
 		Context cxt = null;
 		Context out = new ServiceContext();
-		if (mogram instanceof EntModel) {
+		if (mogram instanceof ProcModel) {
 			if (_2 != null && _2 != Context.none)
 				add((Context)mogram, this);
 			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Name(_1));
@@ -338,7 +335,11 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 		return type;
 	}
 
-	public Context getScope() {
+	public void setType(Variability.Type type) {
+		this.type = type;
+	}
+
+	public ServiceModel getScope() {
 		return scope;
 	}
 
@@ -356,10 +357,10 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 
 	@Override
 	public Object exec(Arg... args) throws ServiceException, RemoteException {
-		Context cxt = Arg.getContext(args);
+		ServiceModel cxt = Arg.getServiceModel(args);
 		if (cxt != null) {
 			// entry substitution
-		 	cxt.putValue(_1, _2);
+			((ServiceContext)cxt).putValue(_1, _2);
 			return cxt;
 		} else {
 			return _2;

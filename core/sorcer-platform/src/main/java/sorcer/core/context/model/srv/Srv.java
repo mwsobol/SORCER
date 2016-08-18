@@ -9,9 +9,10 @@ import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
+import sorcer.service.Signature.ReturnPath;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
-import sorcer.service.Signature.ReturnPath;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -42,33 +43,32 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     public Srv(String name) {
         super(name);
         this.name = name;
-    }
-
-    public Srv(String name, String path, Type type) {
-        super(path, name);
-        this.name = name;
-        this.type = type;
+        type = Variability.Type.SRV;
     }
 
     public Srv(String name, String path,  Service service, String[] paths) {
         super(path, service);
         this.name = name;
         this.paths = paths;
+        type = Variability.Type.SRV;
     }
 
     public Srv(String name, String path, Client service) {
         super(path, service);
         this.name = name;
+        type = Variability.Type.SRV;
     }
 
     public Srv(String path, Object value, String[] paths) {
         super(path, value);
         this.name = path;
         this.paths = paths;
+        type = Variability.Type.SRV;
     }
     public Srv(String path, Object value) {
         super(path, value);
         this.name = path;
+        type = Variability.Type.SRV;
     }
 
     public Srv(String path, Object value, ReturnPath returnPath) {
@@ -80,6 +80,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
         super(path, value);
         this.returnPath = returnPath;
         this.name = name;
+        type = Variability.Type.SRV;
     }
 
     public Srv(String name, Object value, String path) {
@@ -95,6 +96,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
     public Srv(String name, Model model, String path) {
         super(path, model);
         this.name = name;
+        type = Variability.Type.SRV;
     }
 
     @Override
@@ -224,7 +226,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     @Override
     public Object exec(Arg... args) throws ServiceException, RemoteException {
-        Model mod = Arg.getModel(args);
+        ServiceModel mod = Arg.getServiceModel(args);
         if (mod != null) {
             if (mod instanceof SrvModel && _2 instanceof ValueCallable) {
                 return ((ValueCallable) _2).call((Context) mod);
