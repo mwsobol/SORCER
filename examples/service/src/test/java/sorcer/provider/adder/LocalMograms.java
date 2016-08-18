@@ -50,7 +50,6 @@ public class LocalMograms {
 		// get the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("eval/result", 100.0)).equals(
 				value(cxt, outPaths("arg/x1", "eval/result"))));
-
 	}
 
 	@Test
@@ -65,7 +64,6 @@ public class LocalMograms {
 		// get the output subcontext from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
 				eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
-
 	}
 
 	@Test
@@ -92,7 +90,6 @@ public class LocalMograms {
 		assertTrue(get(out, "add").equals(100.0));
 
 		assertTrue(get(mod, "result/y").equals(100.0));
-
 	}
 
 }
