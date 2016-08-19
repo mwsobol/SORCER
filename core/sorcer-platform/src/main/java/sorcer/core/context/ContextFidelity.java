@@ -75,7 +75,7 @@ public class ContextFidelity extends ArrayList<Entry> {
 	
 	@Override
 	public String toString() {
-		return "parFi: " + name + " " + super.toString();
+		return "procFi: " + name + " " + super.toString();
 	}
 	
 }

@@ -270,9 +270,9 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 					Object ev = ((Entry)val).asis();
 					if (ev instanceof Scopable && ((Scopable)ev).getScope() != null) {
 						if (scope instanceof VariabilityModeling) {
-							((Scopable)val).getScope().setScope(scope);
+							((Scopable)ev).getScope().setScope(scope);
 						} else {
-							((Scopable) val).getScope().append(scope);
+							((Scopable)ev).getScope().append(scope);
 						}
 					}
 				}

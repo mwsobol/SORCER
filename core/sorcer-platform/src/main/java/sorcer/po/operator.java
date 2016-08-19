@@ -126,19 +126,19 @@ public class operator {
 		return parameter;
 	}
 
-	public static EntryList parFi(String name, Entry... entries) {
+	public static EntryList procFi(String name, Entry... entries) {
 		return new EntryList(name, entries);
 	}
 
-	public static EntryList parFi(Entry... entries) {
+	public static EntryList procFi(Entry... entries) {
 		return new EntryList(entries);
 	}
 
-	public static ServiceFidelity<Arg> parFi(String name) {
+	public static ServiceFidelity<Arg> procFi(String name) {
 		return new ServiceFidelity(name);
 	}
 
-	public static Entry parFi(Proc procEntry) {
+	public static Entry procFi(Proc procEntry) {
 		Entry fi = new Entry(procEntry.getSelectedFidelity(), procEntry.getFidelities()
 				.get(procEntry.getSelectedFidelity()));
 		return fi;
