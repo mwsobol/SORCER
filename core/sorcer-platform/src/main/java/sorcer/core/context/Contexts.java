@@ -677,9 +677,9 @@ public class Contexts implements SorcerConstants {
 			Context cxt = context.getScope();
 			if (cxt != null)
 				paths = getMarkedPaths(cxt, association);
-		}
-		for (int i = 0; i < paths.length; i++) {
-			values.add(context.getValue(paths[i]));
+			for (int i = 0; i < paths.length; i++) {
+				values.add(context.getValue(paths[i]));
+			}
 		}
 		return values.toArray();
 	}
