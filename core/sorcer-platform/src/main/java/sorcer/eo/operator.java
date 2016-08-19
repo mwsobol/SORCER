@@ -70,8 +70,8 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.co.operator.rasis;
-import static sorcer.co.operator.srv;
 import static sorcer.mo.operator.*;
+import static sorcer.po.operator.srv;
 
 /**
  * Operators defined for the Service Modeling Language (SML).
