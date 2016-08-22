@@ -3294,8 +3294,9 @@ public class operator {
 	}
 
 	public static class Multiplicity {
-		public int multiplicity;
-		public int maxPerCybernode;
+		int multiplicity;
+		int maxPerCybernode;
+		boolean fixed;
 
 		Multiplicity(int multiplicity) {
 			this.multiplicity = multiplicity;
@@ -3308,6 +3309,11 @@ public class operator {
 		Multiplicity(int multiplicity, int maxPerCybernode) {
 			this.multiplicity = multiplicity;
 			this.maxPerCybernode = maxPerCybernode;
+		}
+
+		Multiplicity(int multiplicity, Fixed fixed) {
+			this.multiplicity = multiplicity;
+			this.fixed = fixed!=null;
 		}
 	}
 
@@ -3372,6 +3378,10 @@ public class operator {
 		}
 	}
 
+	static class Fixed {
+		Fixed() {}
+	}
+
 	public static PerNode perNode(int number) {
 		return new PerNode(number);
 	}
@@ -3396,16 +3406,20 @@ public class operator {
 		return new Configuration(configuration);
 	}
 
-	public static Multiplicity maintain(int multiplicity) {
-		return new Multiplicity(multiplicity);
+	public static Multiplicity maintain(int planned) {
+		return new Multiplicity(planned);
 	}
 
-	public static Multiplicity maintain(int multiplicity, int maxPerCybernode) {
-		return new Multiplicity(multiplicity, maxPerCybernode);
+	public static Multiplicity maintain(int planned, int maxPerCybernode) {
+		return new Multiplicity(planned, maxPerCybernode);
 	}
 
-	public static Multiplicity maintain(int multiplicity, PerNode perNode) {
-		return new Multiplicity(multiplicity, perNode);
+	public static Multiplicity maintain(int planned, PerNode perNode) {
+		return new Multiplicity(planned, perNode);
+	}
+
+	public static Multiplicity maintain(int planned, Fixed fixed) {
+		return new Multiplicity(planned, fixed);
 	}
 
 	public static Idle idle(String idle) {
@@ -3434,6 +3448,10 @@ public class operator {
 		return new OpSys(opsys);
 	}
 
+	public static Fixed fixed() {
+		return new Fixed();
+	}
+
 	public static <T> ServiceDeployment deploy(T... elems) {
 		ServiceDeployment deployment = new ServiceDeployment();
 		for (Object o : elems) {
@@ -3446,8 +3464,13 @@ public class operator {
 			} else if (o instanceof Impl) {
 				deployment.setImpl(((Impl) o).className);
 			} else if (o instanceof Multiplicity) {
-				deployment.setMultiplicity(((Multiplicity) o).multiplicity);
-				deployment.setMaxPerCybernode(((Multiplicity) o).maxPerCybernode);
+				Multiplicity m = (Multiplicity)o;
+				deployment.setMultiplicity(m.multiplicity);
+				deployment.setMaxPerCybernode(m.maxPerCybernode);
+				if(m.fixed)
+					deployment.setStrategy(Deployment.Strategy.FIXED);
+			} else if(o instanceof Fixed) {
+				deployment.setStrategy(Deployment.Strategy.FIXED);
 			} else if(o instanceof ServiceDeployment.Type) {
 				deployment.setType(((ServiceDeployment.Type) o));
 			} else if (o instanceof Idle) {
