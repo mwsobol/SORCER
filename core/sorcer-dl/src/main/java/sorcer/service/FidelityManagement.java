@@ -42,6 +42,8 @@ public interface FidelityManagement<T extends Arg> extends Service, RemoteEventL
 
     public void reconfigure(Fidelity... fidelities) throws RemoteException, ContextException;
 
+    public List<Fidelity> getDefaultFidelities() throws ContextException, RemoteException;
+
     public Mogram getMogram() throws RemoteException;
 
     public List<Fidelity> getFiTrace() throws RemoteException;
