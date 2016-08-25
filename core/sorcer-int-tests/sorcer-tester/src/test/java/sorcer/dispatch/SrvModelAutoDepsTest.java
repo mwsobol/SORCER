@@ -17,6 +17,8 @@ import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.printDeps;
 import static sorcer.mo.operator.response;
+import static sorcer.po.operator.ent;
+import static sorcer.po.operator.srv;
 
 /**
  * Created by pol on 24.11.15.
@@ -31,13 +33,13 @@ public class SrvModelAutoDepsTest {
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 inVal("addfinal/x1", 1000.0),
-                operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                operator.ent(sig("add", AdderImpl.class, result("add/out",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                operator.ent(sig("subtract", SubtractorImpl.class, result("model/response",
+                ent(sig("subtract", SubtractorImpl.class, result("model/response",
                         inPaths("multiply/out", "add/out")))),
-                operator.ent(sig("divide", DividerImpl.class, result("divider/out",
+                ent(sig("divide", DividerImpl.class, result("divider/out",
                         inPaths("model/response", "multiply/x1")))),
                 response("divide"));
 
@@ -55,15 +57,15 @@ public class SrvModelAutoDepsTest {
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 inVal("addfinal/x1", 1000.0), inVal("divider/out"),
-                operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                operator.ent(sig("add", AdderImpl.class, result("add/out",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                operator.ent(sig("subtract", SubtractorImpl.class, result("model/response",
+                ent(sig("subtract", SubtractorImpl.class, result("model/response",
                         inPaths("multiply/out", "add/out")))),
-                operator.ent(sig("divide", DividerImpl.class, result("divider/out",
+                ent(sig("divide", DividerImpl.class, result("divider/out",
                         inPaths("model/response", "multiply/x1")))),
-                srv("addfinal", sig("add", AdderImpl.class, result("addfinal/out",
+                ent("addfinal", sig("add", AdderImpl.class, result("addfinal/out",
                         inPaths("addfinal/x1", "divider/out")))),
                 response("addfinal"));
 

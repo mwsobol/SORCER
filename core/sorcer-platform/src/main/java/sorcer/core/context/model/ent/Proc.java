@@ -23,8 +23,10 @@ import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
+import sorcer.service.modeling.Modeling;
 import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.VariabilityModeling;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.io.Serializable;
@@ -256,14 +258,22 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 				}
 				// direct scope
 				if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
-					((Scopable)val).getScope().append(scope);
+					if (scope instanceof VariabilityModeling) {
+						((Scopable)val).getScope().setScope(scope);
+					} else {
+						((Scopable) val).getScope().append(scope);
+					}
 				}
 
 				// indirect scope for entry values
 				if (val instanceof Entry) {
 					Object ev = ((Entry)val).asis();
 					if (ev instanceof Scopable && ((Scopable)ev).getScope() != null) {
-						((Scopable)ev).getScope().append(scope);
+						if (scope instanceof VariabilityModeling) {
+							((Scopable)ev).getScope().setScope(scope);
+						} else {
+							((Scopable)ev).getScope().append(scope);
+						}
 					}
 				}
 

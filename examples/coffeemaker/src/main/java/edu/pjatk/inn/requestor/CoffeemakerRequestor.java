@@ -15,6 +15,7 @@ import static sorcer.mo.operator.responseUp;
 import static sorcer.mo.operator.srvModel;
 import static sorcer.po.operator.invoker;
 import static sorcer.po.operator.proc;
+import static sorcer.po.operator.srv;
 
 public class CoffeemakerRequestor extends ServiceRequestor {
 

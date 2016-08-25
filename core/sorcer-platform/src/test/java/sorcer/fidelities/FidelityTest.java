@@ -159,14 +159,14 @@ public class FidelityTest {
 
 	@Test
 	public void projectionTests() throws Exception {
-		ServiceFidelity<Fidelity> sFi1 = fi("job1", cFi("net", "j1/j2"),
-				cFi("object2", "j1/t3"), cFi("object2", "j1/j2/t4"), cFi("object2", "j1/j2/t5"));
+		ServiceFidelity<Fidelity> sFi1 = fi("job1", fi("net", "j1/j2"),
+				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"));
 
-		ServiceFidelity<Fidelity> sFi2 = fi("job2", cFi("net", "j1/j2"),
-				cFi("object2", "j1/t3"), cFi("object2", "j1/j2/t4"), cFi("object2", "j1/j2/t5"), sFi1);
+		ServiceFidelity<Fidelity> sFi2 = fi("job2", fi("net", "j1/j2"),
+				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"), sFi1);
 
-		ServiceFidelity<Fidelity> sFi3 = fi("job3", cFi("net", "j1/j2"),
-				cFi("object2", "j1/t3"), cFi("object2", "j1/j2/t4"), cFi("object2", "j1/j2/t5"), sFi1, sFi2);
+		ServiceFidelity<Fidelity> sFi3 = fi("job3", fi("net", "j1/j2"),
+				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"), sFi1, sFi2);
 
 		Projection p1 = po(sFi1);
 		logger.info("projection: " + p1);

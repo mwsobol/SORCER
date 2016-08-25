@@ -19,6 +19,7 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.response;
+import static sorcer.po.operator.ent;
 
 /**
  * @author Mike Sobolewski
@@ -45,7 +46,7 @@ public class NetMograms {
 		assertEquals(100.0, value(cxt, "result/y"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/y", 100.0)).equals(
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
 				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
@@ -59,7 +60,7 @@ public class NetMograms {
         assertTrue(eval(t5).equals(100.0));
 
         // get the subcontext output from the exertion
-        assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/z", 100.0)).equals(
+        assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
                 eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
 
     }
@@ -96,7 +97,7 @@ public class NetMograms {
 
 		// three entry model
 		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-				srv(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+				ent(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
 				response("add", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);

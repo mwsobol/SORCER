@@ -25,7 +25,9 @@ import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.result;
+import static sorcer.po.operator.ent;
 import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.srv;
 
 /**
  * @author Mike Sobolewski
@@ -48,21 +50,21 @@ public class CoffeeServiceTest {
 		recipe.setAmtSugar(1);
 		recipe.setAmtChocolate(0);
 
-		espresso = context(operator.ent("name", "espresso"), operator.ent("price", 50),
-				operator.ent("amtCoffee", 6), operator.ent("amtMilk", 0),
-				operator.ent("amtSugar", 1), operator.ent("amtChocolate", 0));
+		espresso = context(ent("name", "espresso"), ent("price", 50),
+				ent("amtCoffee", 6), ent("amtMilk", 0),
+				ent("amtSugar", 1), ent("amtChocolate", 0));
 
-		mocha  = context(operator.ent("name", "mocha"), operator.ent("price", 100),
-				operator.ent("amtCoffee", 8), operator.ent("amtMilk", 1),
-				operator.ent("amtSugar", 1), operator.ent("amtChocolate", 2));
+		mocha  = context(ent("name", "mocha"), ent("price", 100),
+				ent("amtCoffee", 8), ent("amtMilk", 1),
+				ent("amtSugar", 1), ent("amtChocolate", 2));
 
-		macchiato  = context(operator.ent("name", "macchiato"), operator.ent("price", 40),
-				operator.ent("amtCoffee", 7), operator.ent("amtMilk", 1),
-				operator.ent("amtSugar", 2), operator.ent("amtChocolate", 0));
+		macchiato  = context(ent("name", "macchiato"), ent("price", 40),
+				ent("amtCoffee", 7), ent("amtMilk", 1),
+				ent("amtSugar", 2), ent("amtChocolate", 0));
 
-		americano  = context(operator.ent("name", "americano"), operator.ent("price", 40),
-				operator.ent("amtCoffee", 4), operator.ent("amtMilk", 0),
-				operator.ent("amtSugar", 1), operator.ent("amtChocolate", 0));
+		americano  = context(ent("name", "americano"), ent("price", 40),
+				ent("amtCoffee", 4), ent("amtMilk", 0),
+				ent("amtSugar", 1), ent("amtChocolate", 0));
 
 	}
 
@@ -131,19 +133,19 @@ public class CoffeeServiceTest {
 
 		// order espresso with delivery
 		Model mod = model(
-				inVal("recipe/name", "espresso"),
-				inVal("paid$", 120),
-				inVal("location", "PJATK"),
-				inVal("room", "101"),
+				ent("recipe/name", "espresso"),
+				ent("paid$", 120),
+				ent("location", "PJATK"),
+				ent("room", "101"),
 
-				srv(sig("makeCoffee", CoffeeService.class,
+				ent(sig("makeCoffee", CoffeeService.class,
 						result("coffee$", inPaths("recipe/name")))),
-				srv(sig("deliver", Delivery.class,
+				ent(sig("deliver", Delivery.class,
 						result("delivery$", inPaths("location", "room")))));
-//				proc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
+//				ent("change$", invoker("paid$ - (coffee$ + delivery$)", args("paid$", "coffee$", "delivery$"))));
 
-		add(mod, operator.ent("change$", invoker("paid$ - (coffee$ + delivery$)", operator.ents("paid$", "coffee$", "delivery$"))));
-		dependsOn(mod, operator.ent("change$", "makeCoffee"), operator.ent("change$", "deliver"));
+		add(mod, ent("change$", invoker("paid$ - (coffee$ + delivery$)", operator.ents("paid$", "coffee$", "delivery$"))));
+		dependsOn(mod, ent("change$", "makeCoffee"), ent("change$", "deliver"));
 		responseUp(mod, "makeCoffee", "deliver", "change$", "paid$");
 		Context out = response(mod);
 		logger.info("out: " + out);

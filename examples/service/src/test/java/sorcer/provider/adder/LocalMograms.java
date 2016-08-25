@@ -79,6 +79,17 @@ public class LocalMograms {
 	}
 
 	@Test
+	public void filterSingleOutPathContext() throws SignatureException, ExertionException, ContextException {
+
+		Task t5 = task("t5", sig("add", AdderImpl.class),
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), outVal("out/val"),
+						outPaths("out/val")));
+
+		// get the result eval
+		assertEquals(100.0, eval(t5));
+	}
+
+	@Test
 	public void evalauteLocalModel() throws Exception {
 
 		// three entry model

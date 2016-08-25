@@ -70,8 +70,8 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.co.operator.rasis;
-import static sorcer.co.operator.srv;
 import static sorcer.mo.operator.*;
+import static sorcer.po.operator.srv;
 
 /**
  * Operators defined for the Service Modeling Language (SML).
@@ -1326,13 +1326,6 @@ public class operator {
 		return signature;
 	}
 
-	public static Fidelity<String> cFi(String name, String componentPath) {
-		Fidelity<String> fi = new Fidelity(name, componentPath);
-		fi.setSelect(componentPath);
-		fi.type = ServiceFidelity.Type.COMPONENT;
-		return fi;
-	}
-
 	public static ServiceFidelity<Fidelity> fi(String name, Fidelity... selectors) {
 		ServiceFidelity<Fidelity> fi = new ServiceFidelity(name, selectors);
 		fi.type = ServiceFidelity.Type.META;
@@ -2430,9 +2423,10 @@ public class operator {
 	 * @param tag
 	 * @throws ContextException
 	 */
-	public static void tagContext(Context context, String tag)
+	public static Context tagContext(Context context, String tag)
 			throws ContextException {
 		context.setAttribute(tag);
+		return context;
 	}
 
 	/**
@@ -2443,25 +2437,30 @@ public class operator {
 	 *
 	 * @param context
 	 * @param path
-	 * @param tuple
+	 * @param association
 	 * @return
 	 * @throws ContextException
 	 */
-	public static Context tag(Context context, String path, String tuple)
+	public static Context tag(Context context, String path, String association)
 			throws ContextException {
-		return context.mark(path, tuple);
+		return context.mark(path, association);
 	}
 
-	public static <T> List<T> valuesAt(Context<T> context, String tuple) throws ContextException {
-		return context.getMarkedValues(tuple);
+	public static Context tag(Context context, Path path)
+			throws ContextException {
+		return context.mark(path.path, path.info.toString());
 	}
 
-	public static String[] pathsAt(Context context, String tuple) throws ContextException {
-		return context.getMarkedPaths(tuple);
+	public static <T> List<T> valuesAt(Context<T> context, String association) throws ContextException {
+		return context.getMarkedValues(association);
 	}
 
-	public static <T> T valueAt(Context<T> context, String tuple) throws ContextException {
-		return valuesAt(context, tuple).get(0);
+	public static String[] pathsAt(Context context, String association) throws ContextException {
+		return context.getMarkedPaths(association);
+	}
+
+	public static <T> T valueAt(Context<T> context, String association) throws ContextException {
+		return valuesAt(context, association).get(0);
 	}
 
 	public static <T> T valueAt(Context<T> context, int i) throws ContextException {
@@ -2478,6 +2477,9 @@ public class operator {
 		return values;
 	}
 
+	public static Mogram exertion(Exertion exertion, String componentExertionName) {
+		return exertion.getComponentMogram(componentExertionName);
+	}
 	public static Mogram xrt(Exertion exertion, String componentExertionName) {
 		return exertion.getComponentMogram(componentExertionName);
 	}

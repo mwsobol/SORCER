@@ -249,71 +249,7 @@ public class operator {
 		return new Tuple3<T1, T2, T3>(x1, x2, x3);
 	}
 
-    public static Srv srv(ServiceFidelity<Signature> fidelity) {
-		Srv service = new Srv(fidelity.getName(), fidelity);
-		return service;
-	}
 
-	public static <T extends Arg> Srv srv(String name, ServiceFidelity<T> fidelity) {
-		Srv service = new Srv(name, fidelity);
-		return service;
-	}
-
-	public static Srv srv(String name, MorphFidelity<Signature> fidelity) {
-		Srv service = new Srv(name, fidelity);
-		return service;
-	}
-
-    public static Srv srv(String name, Identifiable item) {
-        return srv(name,  item,  null);
-    }
-
-    public static Srv srv(Identifiable item, Context context) {
-        return srv(null,  item,  context);
-    }
-
-	public static Srv srv(String name, Identifiable item, Context context, Arg... args) {
-		String srvName = item.getName();
-		Srv srv = null;
-		if (name != null)
-			srvName = name;
-
-		if (item instanceof Signature) {
-			srv = new Srv(srvName,
-					new SignatureEntry(item.getName(), (Signature) item, context));
-		} else if (item instanceof Mogram) {
-			srv = new Srv(srvName,
-					new MogramEntry(item.getName(), (Mogram) item));
-		} else {
-			srv = new Srv(srvName, item);
-		}
-		try {
-			srv.substitute(args);
-		} catch (SetterException e) {
-			e.printStackTrace();
-		}
-		return srv;
-	}
-
-    public static Srv srv(Identifiable item) {
-		return srv(null, item);
-	}
-
-	public static Srv srv(String name, String path, Model model) {
-		return new Srv(path, model, name);
-	}
-
-	public static Srv srv(String name, String path, Model model, Type type) {
-		return new Srv(path, model, name, type);
-	}
-
-	public static Srv aka(String name, String path) {
-		return new Srv(path, null, name);
-	}
-
-	public static Srv alias(String name, String path) {
-		return new Srv(path, null, name);
-	}
 
 	public static <T> Entry<T> val(Path path, T value) {
 		Entry ent = new Entry<T>(path.path, value);

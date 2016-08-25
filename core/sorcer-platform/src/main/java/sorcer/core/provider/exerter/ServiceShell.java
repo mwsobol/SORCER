@@ -784,7 +784,9 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 			if (rPath.outPaths != null) {
 				if (rPath.outPaths.length == 1) {
 					Object val = acxt.getValue(rPath.outPaths[0].path);
-					acxt.putValue(rPath.path, val);
+					if (rPath.path != null) {
+						acxt.putValue(rPath.path, val);
+					}
 					return val;
 				} else if (rPath.outPaths.length > 1) {
 					Object result = acxt.getValue(rPath.path);
