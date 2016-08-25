@@ -19,6 +19,8 @@ package sorcer.core.deploy;
 
 import net.jini.id.Uuid;
 import org.rioproject.resolver.Artifact;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.provider.ServiceTasker;
 import sorcer.service.Deployment;
 import sorcer.service.Strategy.Provision;
@@ -26,11 +28,7 @@ import sorcer.util.Sorcer;
 
 import java.io.File;
 import java.io.Serializable;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Attributes related to signature based deployment.
@@ -68,6 +66,7 @@ public class ServiceDeployment implements Serializable, Deployment {
     /* An idle time for un-provisioning, eval is in minutes */
     public static final int DEFAULT_IDLE_TIME = 1;
     private int idle = DEFAULT_IDLE_TIME;
+    private Strategy strategy = Strategy.DYNAMIC;
 
     private Boolean fork;
     private String jvmArgs;
@@ -311,6 +310,14 @@ public class ServiceDeployment implements Serializable, Deployment {
 
     public Collection<String> getDeployedNames() {
         return deployedNames;
+    }
+
+    @Override public Strategy getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
     }
 
     @Override
