@@ -4,41 +4,23 @@
     <meta charset="UTF-8">
     <title>Service Modeling Language (SML)</title>
     <style>
-        body {
-            padding-top: 0px !important;
-        }
-
         img {
-            /*webkit-user-select: none;*/
-            /*display: block;*/
             margin: 10px;
-            /*cursor: zoom-in;*/
-            /*-webkit-transition: width 2s, linear 2s; *//* Safari */
-            /*transition: width 2s, linear 2s;*/
-            /*transition: -webkit-transform 0.25s ease;*/
             max-width: 100%;
+            -webkit-transition: all 1s ease; /* Safari and Chrome */
+            -moz-transition: all 1s ease; /* Firefox */
+            -o-transition: all 1s ease; /* IE 9 */
+            -ms-transition: all 1s ease; /* Opera */
+            transition: all 1s ease;
         }
 
-        img:active {
-            -webkit-transform: scale(3);
-            transform: scale(3);
+        img:hover {
+            -webkit-transform:scale(1.5); /* Safari and Chrome */
+            -moz-transform:scale(1.5); /* Firefox */
+            -ms-transform:scale(1.5); /* IE 9 */
+            -o-transform:scale(1.5); /* Opera */
+            transform:scale(1.5);
         }
-
-        /*div {
-            -webkit-transition: width 2s, height 4s; !* Safari *!
-            transition: width 2s, height 4s;
-        }
-        div:hover {
-            width: 300px;
-        }*/
-        /*img {
-            width: auto\9;
-            height: auto;
-            max-width: 100%;
-            vertical-align: middle;
-            border: 10px;
-            -ms-interpolation-mode: bicubic
-        }*/
 
         body {
             margin: 20px;
