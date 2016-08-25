@@ -274,9 +274,9 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
 			Map.Entry<String, ServiceFidelity<T>> me = it.next();
             Object defaultFi =  me.getValue().getSelects().get(0);
             if (defaultFi instanceof ServiceFidelity) {
-                fl.add(new Fidelity(((ServiceFidelity)defaultFi).getName(), ((ServiceFidelity)defaultFi).getPath()));
+                fl.add(new Fidelity(((ServiceFidelity)defaultFi).getPath(), ((ServiceFidelity)defaultFi).getName()));
             } else {
-                fl.add(new Fidelity(me.getKey(), me.getValue().get(0).getName()));
+                fl.add(new Fidelity(me.getValue().get(0).getName(), me.getKey()));
             }
 		}
         return fl;
