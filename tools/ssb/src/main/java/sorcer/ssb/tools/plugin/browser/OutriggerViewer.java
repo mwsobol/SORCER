@@ -66,7 +66,7 @@ public class OutriggerViewer extends JPanel implements Runnable {
 	 */
 	private long refreshRate = 5000;
 	/*
-	 * paused if set by the GUI then polling is suspended
+	 * paused if setValue by the GUI then polling is suspended
 	 */
 	private boolean paused = false;
 
@@ -136,10 +136,10 @@ public class OutriggerViewer extends JPanel implements Runnable {
 	 * Poll the JavaSpaceAdmin proxy every <code>refreshRate</code> millis If we
 	 * get an Exception, drop out of the loop and report it The most likely
 	 * cause of an Exception occuring will be down to a retrieved entry not
-	 * having a valid codebase set for it
+	 * having a valid codebase setValue for it
 	 * 
-	 * If the client application that is writing the entries to the space is
-	 * being run from within the SSB environment, makes sure you have set a
+	 * If the client application that is writing the args to the space is
+	 * being run from within the SSB environment, makes sure you have setValue a
 	 * codebase alias, but right clicking on the project icon and selecting
 	 * "Add alias to webserver" and then selecting "Yes" when prompted.
 	 */
@@ -161,7 +161,7 @@ public class OutriggerViewer extends JPanel implements Runnable {
 				// drop out here if we get an exception,
 				// likely causes are UnusableEntryExceptions
 				// because the client program that wrote the entry
-				// didn't set a codebase (or set a wrong one) or the HTTPD of
+				// didn't setValue a codebase (or setValue a wrong one) or the HTTPD of
 				// the actual
 				// codebase isn't working
 				// JOptionPane.showMessageDialog(this,ex);
@@ -174,7 +174,7 @@ public class OutriggerViewer extends JPanel implements Runnable {
 	}
 
 	/**
-	 * Request all the entries currently in the space.
+	 * Request all the args currently in the space.
 	 * 
 	 * @throws TransactionException
 	 *             ,RemoteException,UnusableEntryException
@@ -193,7 +193,7 @@ public class OutriggerViewer extends JPanel implements Runnable {
 			addMouseListener(table);
 
 		}
-		// here we're asking for all the entries in the space
+		// here we're asking for all the args in the space
 		// you could modify this sample GUI to allow user input of an entry
 		// class name
 		AdminIterator iter = javaSpaceAdmin.contents(null/* Entry template */,
@@ -239,7 +239,7 @@ public class OutriggerViewer extends JPanel implements Runnable {
 		}
 
 		iter.close();
-		System.out.println("Outrigger viewer retreived " + got + " entries");
+		System.out.println("Outrigger viewer retreived " + got + " args");
 
 		if (ueCount > 0) {
 			entryMap.put(UNUSABLE_ENTRY, new Object[] { UNUSABLE_ENTRY,
@@ -261,7 +261,7 @@ public class OutriggerViewer extends JPanel implements Runnable {
 		// final JTextField max=new JTextField(5);
 		// max.setText("100   ");
 		final JButton auto = new JButton("Auto refresh");
-		final JButton update = new JButton("Get entries");
+		final JButton update = new JButton("Get args");
 		updateAction = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 
@@ -310,7 +310,7 @@ public class OutriggerViewer extends JPanel implements Runnable {
 			}
 		});
 
-		// panel.add(new JLabel("Max entries"));
+		// panel.add(new JLabel("Max args"));
 		// panel.add(max);
 		panel.add(update);
 		panel.add(auto);

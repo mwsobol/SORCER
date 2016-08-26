@@ -12,6 +12,7 @@ import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.util.Sorcer;
 
@@ -53,39 +54,39 @@ public class ServiceExertionTest {
 	public void exertTaskTest() throws Exception {
 		eTask = exert(eTask);
 
-		// exert and them get the value from task's context
-		//logger.info("eTask value @ result/y = " + get(exert(eTask), path(result, y)));
-		assertTrue("Wrong eTask value for 100.0", get(eTask, attPath(result, y)).equals(100.0));
+		// exert and them get the eval from task's context
+		//logger.info("eTask eval @ result/y = " + get(exert(eTask), path(result, y)));
+		assertTrue("Wrong eTask eval for 100.0", get(eTask, attPath(result, y)).equals(100.0));
 		
-		//logger.info("eTask value @ arg/x1 = " + exert(eTask, path("arg/x1")));
-		assertTrue("Wrong eTask value for 20.0", get(eTask, attPath("arg/x1")).equals(20.0));
+		//logger.info("eTask eval @ arg/x1 = " + exert(eTask, path("arg/x1")));
+		assertTrue("Wrong eTask eval for 20.0", get(eTask, attPath("arg/x1")).equals(20.0));
 
-		//logger.info("eTask value @  arg/x2 = " + exert(eTask, "arg/x2"));
-		assertTrue("Wrong eTask value for 80.0", get(eTask, "arg/x2").equals(80.0));
+		//logger.info("eTask eval @  arg/x2 = " + exert(eTask, "arg/x2"));
+		assertTrue("Wrong eTask eval for 80.0", get(eTask, "arg/x2").equals(80.0));
 	}
 	
 	@Test
 	public void exertJobTest() throws Exception {
-		// get value from job's exerted context
-		assertTrue(value(eJob, "j1/t3/arg/x2").equals(100.0));
+		// get eval from job's exerted context
+		assertTrue(operator.eval(eJob, "j1/t3/arg/x2").equals(100.0));
 		
 		// exert and then get the job's context (upcotext - a kind of supercontext)
 		Context out = upcontext(exert(eJob));
 		logger.info("job context: " + out);
 
-		//logger.info("eJob value @  j2/t5/arg/x1 = " + get(eJob, "j2/t5/arg/x1"));
+		//logger.info("eJob eval @  j2/t5/arg/x1 = " + get(eJob, "j2/t5/arg/x1"));
 		assertTrue(value(out, "j1/j2/t5/arg/x1").equals(20.0));
 			
-		//logger.info("eJob value @ j2/t4/arg/x1 = " + exert(eJob, path("j1/j2/t4/arg/x1")));
+		//logger.info("eJob eval @ j2/t4/arg/x1 = " + exert(eJob, path("j1/j2/t4/arg/x1")));
 		assertTrue(value(out, "j1/j2/t4/arg/x1").equals(10.0));
 
-		//logger.info("eJob value @  j1/j2/t5/arg/x2 = " + exert(eJob, "j1/j2/t5/arg/x2"));
+		//logger.info("eJob eval @  j1/j2/t5/arg/x2 = " + exert(eJob, "j1/j2/t5/arg/x2"));
 		assertTrue(value(out, "j1/j2/t5/arg/x2").equals(80.0));
 		
-		//logger.info("eJob value @  j2/t5/arg/x1 = " + exert(eJob, "j2/t5/arg/x1"));
+		//logger.info("eJob eval @  j2/t5/arg/x1 = " + exert(eJob, "j2/t5/arg/x1"));
 		assertTrue(value(out, "j1/j2/t5/arg/x1").equals(20.0));
 		
-		//logger.info("eJob value @  j2/t4/arg/x2 = " + exert(eJob, "j2/t4/arg/x2"));
+		//logger.info("eJob eval @  j2/t4/arg/x2 = " + exert(eJob, "j2/t4/arg/x2"));
 		assertTrue( value(out, "j1/j2/t4/arg/x2").equals(50.0));
 
 		// final result by three services
@@ -116,8 +117,8 @@ public class ServiceExertionTest {
 //		      out(path(result, y), null)));
 
 		Task task = task("t1", sig("add", AdderImpl.class), 
-				   context("add", inEnt(attPath(arg, x1), 20.0), inEnt(attPath(arg, x2), 80.0),
-				      outEnt(attPath(result, y), null)));
+				   context("add", inVal(attPath(arg, x1), 20.0), inVal(attPath(arg, x2), 80.0),
+				      outVal(attPath(result, y), null)));
 		
 		return task;
 	}
@@ -144,16 +145,16 @@ public class ServiceExertionTest {
 //		   pipe(out(t5, path(result, y)), in(t3, path(arg, x2))));
 		
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class), 
-				context("subtract", inEnt(attPath(arg, x1)), inEnt(attPath(arg, x2)),
-						outEnt(attPath(result, y))));
+				context("subtract", inVal(attPath(arg, x1)), inVal(attPath(arg, x2)),
+						outVal(attPath(result, y))));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), 
-				context("multiply", inEnt(attPath(arg, x1), 10.0), inEnt(attPath(arg, x2), 50.0),
-						outEnt(attPath(result, y))));
+				context("multiply", inVal(attPath(arg, x1), 10.0), inVal(attPath(arg, x2), 50.0),
+						outVal(attPath(result, y))));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
-				context("add", inEnt(attPath(arg, x1), 20.0), inEnt(attPath(arg, x2), 80.0),
-						outEnt(attPath(result, y))));
+				context("add", inVal(attPath(arg, x1), 20.0), inVal(attPath(arg, x2), 80.0),
+						outVal(attPath(result, y))));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		//Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL, Access.PULL)), t3,
@@ -172,32 +173,32 @@ public class ServiceExertionTest {
 		Exertion xrt = createXrt();
 		logger.info("job context " + ((Job)xrt).getJobContext());
 		
-		logger.info("xrt value @  t3/arg/x1 = " + get(xrt, "t3/arg/x1"));
-		logger.info("xrt value @  t3/arg/x2 = " + get(xrt, "t3/arg/x2"));
-		logger.info("xrt value @  t3/result/y = " + get(xrt, "t3/result/y"));
+		logger.info("xrt eval @  t3/arg/x1 = " + get(xrt, "t3/arg/x1"));
+		logger.info("xrt eval @  t3/arg/x2 = " + get(xrt, "t3/arg/x2"));
+		logger.info("xrt eval @  t3/result/y = " + get(xrt, "t3/result/y"));
 
-		//assertTrue("Wrong xrt value for " + Context.Value.NULL, get(srv, "t3/arg/x2").equals(Context.Value.NULL));
+		//assertTrue("Wrong xrt eval for " + Context.Value.NULL, get(srv, "t3/arg/x2").equals(Context.Value.NULL));
 	}
 	
 	// two level job composition
 	private Exertion createXrt() throws Exception {
 		// using the data context in jobs
 		Task t3 = xrt("t3", sig("subtract", SubtractorImpl.class), 
-				cxt("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-						outEnt("result/y")));
+				cxt("subtract", inVal("arg/x1"), inVal("arg/x2"),
+						outVal("result/y")));
 
 		Task t4 = xrt("t4", sig("multiply", MultiplierImpl.class), 
-				cxt("multiply", inEnt("super/arg/x1"), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
+				cxt("multiply", inVal("super/arg/x1"), inVal("arg/x2", 50.0),
+						outVal("result/y")));
 
 		Task t5 = xrt("t5", sig("add", AdderImpl.class), 
-				cxt("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+						outVal("result/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		//Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL, Access.PULL)), t3,
 		Job job = xrt("j1", sig("exert", ServiceJobber.class),
-					cxt(inEnt("arg/x1", 10.0), outEnt("job/result")), 
+					cxt(inVal("arg/x1", 10.0), outVal("job/result")),
 				xrt("j2", sig("exert", ServiceJobber.class), t4, t5),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),

@@ -15,7 +15,6 @@ import java.util.List;
 
 @SuppressWarnings("rawtypes")
 public class AdderImpl implements Adder {
-	public static final String RESULT_PATH = "result/value";
 	private ServiceProvider provider;
 	private static Logger logger = LoggerFactory.getLogger(AdderImpl.class.getName());
 	
@@ -43,7 +42,8 @@ public class AdderImpl implements Adder {
 			cxt.putValue("calculated/provider", provider.getProviderName());
 		else
 			cxt.putValue("calculated/provider", getClass().getName());
-		if (context.getReturnPath() != null) {
+
+		if (context.getReturnPath() != null && context.getReturnPath().getPath() != null) {
 			context.setReturnValue(result);
 		} else if (outpaths.size() == 1) {
 			// put the result in the existing output path
@@ -75,17 +75,17 @@ public class AdderImpl implements Adder {
         // add request values
         Context cxt = add(context);
         
-        // get previous 'add' value
+        // get previous 'add' eval
         Double previous = 0.0;
         if (ss.getAttribute("sum") != null)
             previous = (Double)ss.getAttribute("sum");
 
-        // get 'sum' value
+        // get 'sum' eval
         Double result = (Double)cxt.getReturnValue() + previous;
         
         // save it in the session
         ss.setAttribute("sum", result);
-        // set it in the returned context
+        // setValue it in the returned context
         cxt.setReturnValue(result);
         return context;
     }

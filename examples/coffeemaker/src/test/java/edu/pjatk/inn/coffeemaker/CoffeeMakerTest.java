@@ -97,10 +97,10 @@ public class CoffeeMakerTest {
 	@Test
 	public void addServiceRecepie() throws Exception {
 		Exertion cmt = task(sig("addRecipe", coffeeMaker),
-						context(parameterTypes(Recipe.class), args(espresso),
+						context(types(Recipe.class), args(espresso),
 							result("recipe/added")));
 
-		logger.info("isAdded: " + value(cmt));
+		logger.info("isAdded: " + eval(cmt));
 		assertEquals(coffeeMaker.getRecipeForName("espresso").getName(), "espresso");
 	}
 

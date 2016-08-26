@@ -81,7 +81,7 @@ public class StartSorcerPlugin {
 	 */
 	/*
 	 * public void setEnvironment(SSBEnvironment env) throws PluginException{
-	 * //keep hold of the environment object ssbEnv=env; //set your plugins icon
+	 * //keep hold of the environment object ssbEnv=env; //setValue your plugins icon
 	 * try{ URL
 	 * iconUrl=getClass().getClassLoader().getResource("rt-images/lus.gif");
 	 * ImageIcon myIcon=new ImageIcon(iconUrl); ssbEnv.setPluginIcon(myIcon);

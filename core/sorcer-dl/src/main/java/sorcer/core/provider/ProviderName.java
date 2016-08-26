@@ -31,7 +31,7 @@ public class ProviderName implements Identifiable, Arg, Serializable {
 
 	protected ServiceID id;
 
-	protected String  name;
+	protected String  name = SorcerConstants.ANY;;
 
 	public ProviderName() {
 		this.name  = SorcerConstants.ANY;

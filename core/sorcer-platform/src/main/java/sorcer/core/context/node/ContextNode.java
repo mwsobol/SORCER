@@ -62,7 +62,7 @@ public class ContextNode implements Serializable {
 	// data store for this context node
 	private Object data;
 
-	// current value for this context node
+	// current eval for this context node
 
 	private Object value;
 	// variables used to get values from the corresponding dependent variables
@@ -92,7 +92,7 @@ public class ContextNode implements Serializable {
 		this.isTransient = isTran;
 	}
 
-	// Method to set the datatype of the node's data
+	// Method to setValue the datatype of the node's data
 	// The type should be one of the types in java.sql.Types.
 	public void setDataType(int dataType) {
 		this.dataType = dataType;
@@ -253,7 +253,7 @@ public class ContextNode implements Serializable {
 			throw new ContextNodeException(
 					"ContextNode does not contain a URL string or URL object.");
 		String urlValue = data.toString();
-		// return new URL((String)this.value);
+		// return new URL((String)this.eval);
 		return new URL(urlValue);
 	}
 
@@ -359,7 +359,7 @@ public class ContextNode implements Serializable {
 			logger.info("setItemValue:\n"
 					+ "Checking to see if the setValue() took "
 					+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
-					+ "desired value=\"" + obj + "\"\n\t" + "read value=\""
+					+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 					+ obj2 + "\"");
 
 			while (ctr < 240 && !(((obj.toString())).equals(obj2.toString()))) {
@@ -374,7 +374,7 @@ public class ContextNode implements Serializable {
 				logger.info("setItemValue:\n"
 						+ "Checking to see if the setValue() took "
 						+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
-						+ "desired value=\"" + obj + "\"\n\t" + "read value=\""
+						+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 						+ obj2 + "\"");
 
 				System.out.print(".");
@@ -383,7 +383,7 @@ public class ContextNode implements Serializable {
 
 			if (ctr == 120)
 				throw new ContextNodeException("\nContextNode.setItemValue(): "
-						+ "There is a problem " + "setting value.");
+						+ "There is a problem " + "setting eval.");
 
 			logger.info("Network latency = " + (ctr * 0.5) + " seconds.\n");
 		}
@@ -400,7 +400,7 @@ public class ContextNode implements Serializable {
 			logger.info("setItemValue:\n"
 					+ "Checking to see if the setValue() took "
 					+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
-					+ "desired value=\"" + obj + "\"\n\t" + "read value=\""
+					+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 					+ obj2 + "\"");
 
 			while (ctr < 240 && !(((obj.toString())).equals(obj2.toString()))) {
@@ -415,7 +415,7 @@ public class ContextNode implements Serializable {
 				logger.info("setItemValue:\n"
 						+ "Checking to see if the setValue() took "
 						+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
-						+ "desired value=\"" + obj + "\"\n\t" + "read value=\""
+						+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 						+ obj2 + "\"");
 
 				System.out.print(".");
@@ -424,7 +424,7 @@ public class ContextNode implements Serializable {
 
 			if (ctr == 120)
 				throw new ContextNodeException("\nContextNode.setItemValue(): "
-						+ "There is a problem " + "setting value.");
+						+ "There is a problem " + "setting eval.");
 
 			logger.info("Network latency = " + (ctr * 0.5) + " seconds.\n");
 		}
@@ -443,7 +443,7 @@ public class ContextNode implements Serializable {
 			logger.info("setItemValue:\n"
 					+ "Checking to see if the setValue() took "
 					+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
-					+ "desired value=\"" + obj + "\"\n\t" + "read value=\""
+					+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 					+ obj2 + "\"");
 
 			while (ctr < 240 && !(((obj.toString())).equals(obj2.toString()))) {
@@ -458,7 +458,7 @@ public class ContextNode implements Serializable {
 				logger.info("setItemValue:\n"
 						+ "Checking to see if the setValue() took "
 						+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
-						+ "desired value=\"" + obj + "\"\n\t" + "read value=\""
+						+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 						+ obj2 + "\"");
 
 				System.out.print(".");
@@ -467,7 +467,7 @@ public class ContextNode implements Serializable {
 
 			if (ctr == 120)
 				throw new ContextNodeException("\nContextNode.setItemValue(): "
-						+ "There is a problem " + "setting value.");
+						+ "There is a problem " + "setting eval.");
 
 			logger.info("Network latency = " + (ctr * 0.5) + " seconds.\n");
 		}
@@ -491,7 +491,7 @@ public class ContextNode implements Serializable {
 			logger.info("setItemValue:\n"
 					+ "Checking to see if the setValue() took "
 					+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
-					+ "desired value=\"" + obj + "\"\n\t" + "read value=\""
+					+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 					+ obj2 + "\"");
 
 			while (ctr < 240 && !(((obj.toString())).equals(obj2.toString()))) {
@@ -506,7 +506,7 @@ public class ContextNode implements Serializable {
 				logger.info("setItemValue:\n"
 						+ "Checking to see if the setValue() took "
 						+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
-						+ "desired value=\"" + obj + "\"\n\t" + "read value=\""
+						+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 						+ obj2 + "\"");
 
 				System.out.print(".");
@@ -515,7 +515,7 @@ public class ContextNode implements Serializable {
 
 			if (ctr == 120)
 				throw new ContextNodeException("\nContextNode.setItemValue(): "
-						+ "There is a problem " + "setting value.");
+						+ "There is a problem " + "setting eval.");
 
 			logger.info("Network latency = " + (ctr * 0.5) + " seconds.\n");
 		}
@@ -551,7 +551,7 @@ public class ContextNode implements Serializable {
 
 					StringTokenizer pair = new StringTokenizer((argPair
 							.nextToken()).trim(), " ");
-					// parse each pair into type value and instantiate the
+					// parse each pair into type eval and instantiate the
 					// object
 					String type = (pair.nextToken()).trim();
 					String argV = (pair.nextToken()).trim();
@@ -564,11 +564,11 @@ public class ContextNode implements Serializable {
 						// constructor with a single string
 						Class[] paramTypes = { argV.getClass() };
 						Object[] objA = { obj };
-						if (argV.equals("value")) {
+						if (argV.equals("eval")) {
 							argObjects[tCount] = obj;
 							// check to see if the class of obj matches class of
 							// arg list
-							// This is due to the fact that the value may have
+							// This is due to the fact that the eval may have
 							// been obtained from a file as a String as
 							// is the case for parametric analysis
 							// System.out.println("\n**************** objclass
@@ -789,7 +789,7 @@ public class ContextNode implements Serializable {
 					StringTokenizer pair = new StringTokenizer((argPair
 							.nextToken()).trim(), " ");
 
-					// parse each pair into type value and instantiate the
+					// parse each pair into type eval and instantiate the
 					// object
 					String type = (pair.nextToken()).trim();
 					String argV = (pair.nextToken()).trim();
@@ -858,7 +858,7 @@ public class ContextNode implements Serializable {
 					"The data in ContextNode  File does not contain keyword = "
 							+ keyword);
 		}
-		// record with value is lineAfter keyword line
+		// record with eval is lineAfter keyword line
 		String lineX = (String) fC.elementAt(keyLine - 1 + lineAfter);
 		StringTokenizer lineXT = new StringTokenizer(lineX, delimiter);
 
@@ -872,7 +872,7 @@ public class ContextNode implements Serializable {
 
 	private Object getFileItemValue(String keyword) {
 		// TODO Auto-generated method stub
-		// For this type of filter which replaces a string with a value the
+		// For this type of filter which replaces a string with a eval the
 		// GetValue() method
 		// has no meaning, there is no way to find the original location in the
 		// file.
@@ -1034,7 +1034,7 @@ public class ContextNode implements Serializable {
 			} else {
 				value = getMethod.invoke(data, argObjects);
 			}
-			// System.out.println("value is "+value);
+			// System.out.println("eval is "+eval);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1381,7 +1381,7 @@ public class ContextNode implements Serializable {
 				download(localFile);
 				// download(new File(dir, fileName));
 				setData(Sorcer.getScratchURL(new File(dir, fileName)));
-				logger.info("set context node URL to: " + getData());
+				logger.info("setValue context node URL to: " + getData());
 				StringBuffer cmd = new StringBuffer("chmod +777 ")
 						.append(localFile);
 				Process p = Runtime.getRuntime().exec(cmd.toString());

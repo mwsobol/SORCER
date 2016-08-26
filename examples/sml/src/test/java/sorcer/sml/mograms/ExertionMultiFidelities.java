@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.value;
+import static sorcer.mo.operator.putValue;
 
 /**
  * Created by Mike Sobolewski on 06/24/16.
@@ -39,20 +40,20 @@ public class ExertionMultiFidelities {
         Task t3 = task("t3",
             sFi("object", sig("subtract", SubtractorImpl.class)),
             sFi("net", sig("subtract", Subtractor.class)),
-            context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-                outEnt("result/y")));
+            context("subtract", inVal("arg/x1"), inVal("arg/x2"),
+                outVal("result/y")));
 
         Task t4 = task("t4",
             sFi("object", sig("multiply", MultiplierImpl.class)),
             sFi("net", sig("multiply", Multiplier.class)),
-            context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-                outEnt("result/y")));
+            context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+                outVal("result/y")));
 
         Task t5 = task("t5",
             sFi("object", sig("add", AdderImpl.class)),
             sFi("net", sig("add", Adder.class)),
-            context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-                outEnt("result/y")));
+            context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+                outVal("result/y")));
 
         Job job = job("j1",
             sFi("object", sig("exert", ServiceJobber.class)),
@@ -64,11 +65,11 @@ public class ExertionMultiFidelities {
             t3,
             pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
             pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-            fi("job1", cFi("j1/j2/t4", "object"), cFi("j1/j2/t5", "net")),
-            fi("job2",  cFi("j1/j2", "net"),
-                cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")),
-            fi("job3",  cFi("j1", "net"), cFi("j1/j2", "net"),
-                cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")));
+            fi("job1", fi("object", "j1/j2/t4"), fi("net", "j1/j2/t5")),
+            fi("job2",  fi("net", "j1/j2"),
+                fi("net", "j1/t3"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")),
+            fi("job3",  fi("j1", "net"), fi("j1/j2", "net"),
+                fi("net", "j1/t3"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")));
 
         return (Job)tracable(job);
     }
@@ -94,7 +95,7 @@ public class ExertionMultiFidelities {
 
         //Local Jobbers with remote Multiplier nad Adder
         job = getMultiFiJob();
-        job = exert(job, fi("object"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net"));
+        job = exert(job, fi("object"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net"));
         out = upcontext(job);
         logger.info("job context: " + out);
         logger.info("job trace: " + trace(job));
@@ -102,7 +103,7 @@ public class ExertionMultiFidelities {
 
         // Local Jobbers, Adder, and Multiplier with remote Subtractor
         job = getMultiFiJob();
-        job = exert(job, fi("object"), cFi("j1/t3", "net"));
+        job = exert(job, fi("object"), fi("j1/t3", "net"));
         out = upcontext(job);
         logger.info("job context: " + out);
         logger.info("job trace: " + trace(job));
@@ -115,7 +116,7 @@ public class ExertionMultiFidelities {
 		Morpher t4mrp = (mgr, mFi, context) -> {
 			if (mFi.getPath().equals("t4")) {
 				if (((Double) value((Context)context, "result/y")) >= 200.0) {
-					setValue((Context)context, "result/y", 300.0);
+					putValue((Context)context, "result/y", 300.0);
 				}
 			}
 		};
@@ -123,8 +124,8 @@ public class ExertionMultiFidelities {
 		Task t4 = task("t4",
 				mFi(t4mrp, sFi("object", sig("multiply", MultiplierImpl.class)),
 						sFi("net", sig("multiply", Multiplier.class))),
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")));
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+						outVal("result/y")));
 
 
 		assertEquals("object", fiName(t4));
@@ -160,20 +161,20 @@ public class ExertionMultiFidelities {
 		Task t3 = task("t3",
 			sFi("object", sig("subtract", SubtractorImpl.class)),
 			sFi("net", sig("subtract", Subtractor.class)),
-			context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-				outEnt("result/y")));
+			context("subtract", inVal("arg/x1"), inVal("arg/x2"),
+				outVal("result/y")));
 
 		Task t4 = task("t4",
 			mFi(t4mrp, sFi("object1", sig("multiply", MultiplierImpl.class)),
 				sFi("object2", sig("add", AdderImpl.class))),
-			context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-				outEnt("result/y")));
+			context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+				outVal("result/y")));
 
 		Task t5 = task("t5",
 			mFi(t5mrp, sFi("object1", sig("add", AdderImpl.class)),
 				sFi("object2", sig("multiply", MultiplierImpl.class))),
-			context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-				outEnt("result/y")));
+			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+				outVal("result/y")));
 
 		Job job = job("j1",
 			sFi("object", sig("exert", ServiceJobber.class)),
@@ -185,11 +186,11 @@ public class ExertionMultiFidelities {
 			t3,
 			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-			fi("job1", cFi("j1/j2/t4", "object1"), cFi("j1/j2/t5", "object2")),
-			fi("job2", cFi("j1/j2", "net"),
-				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2")),
-			fi("job3", cFi("j1", "object2"), cFi("j1/j2", "object2"),
-				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2")));
+			fi("job1", fi("object1", "j1/j2/t4"), fi("object2", "j1/j2/t5")),
+			fi("job2", fi("net", "j1/j2"),
+				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5")),
+			fi("job3", fi("object2", "j1"), fi("object2", "j1/j2"),
+				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5")));
 
 		return (Job) tracable(job);
 	}

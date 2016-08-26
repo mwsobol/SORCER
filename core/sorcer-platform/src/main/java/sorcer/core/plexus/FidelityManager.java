@@ -236,11 +236,11 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
                 Iterator<Map.Entry<String, ServiceFidelity<T>>> i = fidelities.entrySet().iterator();
                 while (i.hasNext()) {
                     Map.Entry<String, ServiceFidelity<T>> fiEnt = i.next();
-                    if (fiEnt.getKey().equals(path)) {
-                        if (morphFidelities.get(path) != null) {
-                            morphFidelities.get(path).setMorpherSelect(name);
+                    if (fiEnt.getKey().equals(name)) {
+                        if (morphFidelities.get(name) != null) {
+                            morphFidelities.get(name).setMorpherSelect(path);
                         }
-                        fiEnt.getValue().setSelect(name);
+                        fiEnt.getValue().setSelect(path);
                     }
                 }
             }
@@ -267,12 +267,18 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         return fl;
     }
 
+    @Override
     public FidelityList getDefaultFidelities() throws ContextException, RemoteException {
         FidelityList fl = new FidelityList();
 		Iterator<Map.Entry<String, ServiceFidelity<T>>> it = fidelities.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry<String, ServiceFidelity<T>> me = it.next();
-			fl.add(new Fidelity(me.getValue().get(0).getName(), me.getKey()));
+            Object defaultFi =  me.getValue().getSelects().get(0);
+            if (defaultFi instanceof ServiceFidelity) {
+                fl.add(new Fidelity(((ServiceFidelity)defaultFi).getName(), ((ServiceFidelity)defaultFi).getPath()));
+            } else {
+                fl.add(new Fidelity(me.getKey(), me.getValue().get(0).getName()));
+            }
 		}
         return fl;
     }
@@ -315,9 +321,9 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         }
         if (this.fidelities.size() > 0) {
             for (Fidelity fi : fidelities) {
-                ServiceFidelity sFi = this.fidelities.get(fi.getPath());
+                ServiceFidelity sFi = this.fidelities.get(fi.getName());
                 if (sFi != null) {
-                    sFi.setSelect(fi.getName());
+                    sFi.setSelect(fi.getPath());
                     if (mogram instanceof Exertion) {
                         ((ServiceMogram)mogram).setSelectedFidelity((ServiceFidelity) sFi.getSelect());
                         if (mogram.getClass()==Task.class) {

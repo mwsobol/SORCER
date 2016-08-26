@@ -62,9 +62,9 @@ public class GenericUtil {
 		}
 
 		/**
-		 * This method gets the shell script exit value
+		 * This method gets the shell script exit eval
 		 *
-		 * @return Exit value
+		 * @return Exit eval
 		 */
 		public Integer getExitValue() {
 			return exitValue;
@@ -111,7 +111,7 @@ public class GenericUtil {
 		}
 
 		/**
-		 * This method gets the exit value of the shell script
+		 * This method gets the exit eval of the shell script
 		 * 
 		 * @return
 		 */
@@ -295,7 +295,7 @@ public class GenericUtil {
 		scriptVect.add("fi");
 		scriptVect.add("source " + mcrEnv);
 		
-		// mcr cache root should be set; it will use up all the space
+		// mcr cache root should be setValue; it will use up all the space
 		// in a tmp dir; hard to debug failure in slurm...script gets
 		// on queue then dies because drive is full
 		//
@@ -880,7 +880,7 @@ public class GenericUtil {
 		return tildePath;
 	}
 
-	/** Returns a unique set of references * */
+	/** Returns a unique setValue of references * */
 	public static Object[] getUniqueReferences(Object[] objA) {
 		Set<Object> mySet = Collections.synchronizedSet(new HashSet<Object>());
 		for (int i = 0; i < objA.length; i++) {
@@ -897,7 +897,7 @@ public class GenericUtil {
 	}
 
 	/**
-	 * Unpacks all Object[] in myVect and hands back a unique set of references
+	 * Unpacks all Object[] in myVect and hands back a unique setValue of references
 	 * (myVect elements must be Object[]).
 	 */
 	public static Object[] getUniqueReferences(Vector<Object> myVect) {
@@ -961,10 +961,10 @@ public class GenericUtil {
 	}
 
 	/**
-	 * This method returns a boolean value of true if the operating system name
+	 * This method returns a boolean eval of true if the operating system name
 	 * starts with Linux
 	 * 
-	 * @return Boolean value indicating if the operating system is Linux
+	 * @return Boolean eval indicating if the operating system is Linux
 	 */
 	public static boolean isLinux() {
 		if (whatOS().startsWith("Linux")) {
@@ -974,10 +974,10 @@ public class GenericUtil {
 	}
 
 	/**
-	 * This method returns a boolean value of true if the operating system name
+	 * This method returns a boolean eval of true if the operating system name
 	 * starts with Mac
 	 * 
-	 * @return Boolean value indicating if the operating system is Mac
+	 * @return Boolean eval indicating if the operating system is Mac
 	 */
 	public static boolean isMac() {
 		if (whatOS().startsWith("Mac")) {
@@ -987,7 +987,7 @@ public class GenericUtil {
 	}
 
 	/**
-	 * This method returns a boolean value of true if the operating system name
+	 * This method returns a boolean eval of true if the operating system name
 	 * starts with Linux and Mac
 	 * 
 	 * @return
@@ -1000,7 +1000,7 @@ public class GenericUtil {
 	}
 
 	/**
-	 * This method returns a boolean value of true if the operating system name
+	 * This method returns a boolean eval of true if the operating system name
 	 * starts with Win
 	 * 
 	 * @return
@@ -1538,7 +1538,7 @@ public class GenericUtil {
 	 *            Standard output
 	 * @param stderr
 	 *            Standard error
-	 * @return Exit value
+	 * @return Exit eval
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
@@ -1586,7 +1586,7 @@ public class GenericUtil {
 		redirectOutput(p, stdout);
 		redirectError(p, stderr);
 
-		// Wait for the process then return the exit value
+		// Wait for the process then return the exit eval
 		return p.waitFor();
 	}
 
@@ -1713,6 +1713,7 @@ public class GenericUtil {
 		
 		script.add("THIS_PID=$$");
 		script.add("echo \"THIS_PID=$THIS_PID\"");
+		script.add("echo \"THIS_PID=$THIS_PID\" >> " + wrapperLog);
 		script.add(childScriptFile.getAbsolutePath().replace("\\", "/") + " &");
 		script.add("SCRIPT_PID=$!");
 		script.add("echo \"SCRIPT_PID=$SCRIPT_PID\"");
@@ -1753,7 +1754,8 @@ public class GenericUtil {
 		script.add("\t\techo \"DONE dropping kill.txt file; killing child processes...\"");
 		script.add("\t\techo \"DONE dropping kill.txt file; killing child processes...\" >> " + wrapperLog);
 		script.add("\t\tkillChildProcess0 $THIS_PID");
-		script.add("\t\techo \"DONEkilling child processes; exiting with status = 1.\"");
+		script.add("\t\techo \"DONE killing child processes; exiting with status = 1.\"");
+		script.add("\t\techo \"DONE killing child processes; exiting with status = 1.\" >> " + wrapperLog);
 		script.add("\t\texit 1");
 		script.add("\tfi");
 		script.add("\t# check to see if child is still running");
@@ -1762,6 +1764,7 @@ public class GenericUtil {
 		script.add("\tIS_RUN=0");
 		script.add("\tIS_RUN=`ps -p $SCRIPT_PID > psLoop.txt ; awk -v p=\"$SCRIPT_PID\" 'BEGIN{flag=0} {if ($1~p) {flag=1}} END{print flag}' psLoop.txt`");
 		//script.add("\tIS_RUN=`ps -p $SCRIPT_PID > psLoop.txt ; awk -v p=\"$SCRIPT_PID\" 'BEGIN{flag=0} {if ($0~p) {flag=1}} END{print flag}' psLoop.txt`");
+		script.add("\techo \"loop: IS_RUN = $IS_RUN\"");
 		script.add("\techo \"loop: IS_RUN = $IS_RUN\" >> " + wrapperLog);
 
 		//script.add("\tif ps -p $SCRIPT_PID > /dev/null; then"); 
@@ -1770,6 +1773,7 @@ public class GenericUtil {
 		script.add("\t\tsleep 1");
 		//script.add("\t\tIS_RUN=`ps -p $SCRIPT_PID > psLoopDc.txt ; awk -v p=\"$SCRIPT_PID\" 'BEGIN{flag=0} {if ($0~p) {flag=1}} END{print flag}' psLoopDc.txt`");
 		script.add("\t\tIS_RUN=`ps -p $SCRIPT_PID > psLoopDc.txt ; sleep 1; awk -v p=\"$SCRIPT_PID\" 'BEGIN{flag=0} {if ($1~p) {flag=1}} END{print flag}' psLoopDc.txt`");
+		script.add("\t\techo \"loop2: IS_RUN = $IS_RUN\"");
 		script.add("\t\techo \"loop2: IS_RUN = $IS_RUN\" >> " + wrapperLog);
 
 		script.add("\t\tif [ $IS_RUN -eq 0 ]; then");
@@ -1809,7 +1813,7 @@ public class GenericUtil {
 		script.add("echo \"waiting for background processes...\"");
 		script.add("echo \"waiting for background processes...\" >> " + wrapperLog);
 		script.add("wait");
-		//script.add("wait $SCRIPT_PID");
+//		script.add("wait $SCRIPT_PID");
 		script.add("EXIT_CODE=$?");
 		
 		script.add("echo \"done waiting, setting exit code from background process = $EXIT_CODE\"");
@@ -1838,6 +1842,7 @@ public class GenericUtil {
 //		script.add("\tEXIT_CODE=007");
 //		script.add("fi");
 		script.add("echo \"exiting with code = $EXIT_CODE\"");
+		script.add("echo \"exiting with code = $EXIT_CODE\" >> " + wrapperLog);
 		script.add("exit $EXIT_CODE");
 		
 		return script;
@@ -1965,7 +1970,7 @@ public class GenericUtil {
 	 *
 	 *			 kill all processes matching the exec names in "".
 	 *
-	 * @return Exit value of exert command with worker method
+	 * @return Exit eval of exert command with worker method
 	 * @throws Exception 
 	 */
 	public static int runShellScript(File scriptFile,
@@ -2055,7 +2060,7 @@ public class GenericUtil {
 //				if ((cygwinHomeFile.exists()) && (cygwinHomeFile.canRead())) {
 //					cygwinHome = cygwinHomeTest;
 //				} else {
-//					String msg = "***error: the environment variable CYGWIN_HOME is not set correctly."
+//					String msg = "***error: the environment variable CYGWIN_HOME is not setValue correctly."
 //							+ "(Check env and make sure to use DOS file path format.)";
 //					logger.error(msg);
 //					throw new Exception(msg);
@@ -2110,7 +2115,7 @@ public class GenericUtil {
 	 *            Standard error file path
 	 * @param jobCheckInterval
 	 *            Time to wait between job status checks
-	 * @return Exit value of exert command with worker method
+	 * @return Exit eval of exert command with worker method
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
@@ -2855,30 +2860,45 @@ public class GenericUtil {
 				GenericUtil.appendFileContents("executeCommandWithWorker(): exitValue = " + exitValue, dir);
 
 				if (exitValue == null || exitValue > 0) {
-					GenericUtil.appendFileContents("executeCommandWithWorker(): worker exit value was null or > 0, sending kill...", dir);
+					GenericUtil.appendFileContents("executeCommandWithWorker(): worker exit eval was null or > 0, sending kill...", dir);
 					jobControlWriter.sendKillToWrapperScript();
-					
-					GenericUtil.appendFileContents("executeCommandWithWorker(): waiting for the kill; calling worker.join()...", dir);				
-					worker.join();
+//					GenericUtil.appendFileContents("executeCommandWithWorker(): waiting for the kill; calling worker.join()...", dir);
+//					worker.join();
 				} else {
 					GenericUtil.appendFileContents("executeCommandWithWorker(): calling jobControlWriter.closeDown()...", dir);				
 					jobControlWriter.closeDown();
 				}
 
 				
-				GenericUtil.appendFileContents("executeCommandWithWorker(): calling jobControlWriter.join()...", dir);
-				jobControlWriter.join();
-				GenericUtil.appendFileContents("executeCommandWithWorker(): DONE calling jobControlWriter.join()...closing gobblers...", dir);
+				GenericUtil.appendFileContents("executeCommandWithWorker(): calling jobControlWriter.join(1000)...", dir);
+				jobControlWriter.join(1000);
+				if (jobControlWriter.isAlive()) {
+					GenericUtil.appendFileContents("executeCommandWithWorker():calling jobControlWriter on output gobbler...", dir);
+				}
+
+				GenericUtil.appendFileContents("executeCommandWithWorker(): DONE calling jobControlWriter.join(1000)...closing gobblers...", dir);
 				outputGobbler.closeDown();
 				errorGobbler.closeDown();
-				GenericUtil.appendFileContents("executeCommandWithWorker(): DONE closing gobblers...calling join() on gobblers...", dir);
-				outputGobbler.join();
-				errorGobbler.join();
-				GenericUtil.appendFileContents("executeCommandWithWorker(): DONE joining gobblers...process.destroy()...", dir);
-				process.destroy();		
-				GenericUtil.appendFileContents("executeCommandWithWorker(): DONE process.destroy()...calling worker.join()...", dir);
-				worker.join();
-				GenericUtil.appendFileContents("executeCommandWithWorker(): DONE calling worker.join().", dir);
+				GenericUtil.appendFileContents("executeCommandWithWorker(): DONE closing gobblers...calling join(1000) on gobblers...", dir);
+				outputGobbler.join(1000);
+				errorGobbler.join(1000);
+
+				if (outputGobbler.isAlive()) {
+					GenericUtil.appendFileContents("executeCommandWithWorker():calling interrupt on output gobbler...", dir);
+					outputGobbler.interrupt();
+				}
+				if (outputGobbler.isAlive()){
+					GenericUtil.appendFileContents("executeCommandWithWorker():calling interrupt on errorGobbler gobbler...", dir);
+					errorGobbler.interrupt();
+				}
+				if (worker.isAlive()) {
+					GenericUtil.appendFileContents("executeCommandWithWorker():calling interrupt on worker", dir);
+					worker.interrupt();
+				}
+
+				GenericUtil.appendFileContents("executeCommandWithWorker(): calling process.destroy()...", dir);
+				process.destroy();
+
 				GenericUtil.appendFileContents("executeCommandWithWorker(): exitValue = " + exitValue, dir);
 				if (exitValue != null) {
 					logger.info("exitValue is not null; exitValue = " + exitValue);
@@ -3630,9 +3650,9 @@ public class GenericUtil {
 				+ middleScriptDoneFile);
 		middleScriptRecords.add("if [ $EXIT_VALUE -ne 0 ]; then");
 		middleScriptRecords
-				.add("	echo \"user script exit value was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping middleFailFile and exiting with $EXIT_VALUE.\"");
+				.add("	echo \"user script exit eval was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping middleFailFile and exiting with $EXIT_VALUE.\"");
 		middleScriptRecords
-				.add("	echo \"user script exit value was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping middleFailFile and exiting with $EXIT_VALUE.\" > "
+				.add("	echo \"user script exit eval was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping middleFailFile and exiting with $EXIT_VALUE.\" > "
 						+ middleScriptFailFile.getAbsolutePath());
 		middleScriptRecords.add("fi");
 		middleScriptRecords.add("rm -f "
@@ -3741,9 +3761,9 @@ public class GenericUtil {
 
 		slurmScriptRecords.add("if [ $EXIT_VALUE -ne 0 ]; then");
 		slurmScriptRecords
-				.add("	echo \"middle script exit value was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping slurmFailFile and exiting with $EXIT_VALUE.\"");
+				.add("	echo \"middle script exit eval was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping slurmFailFile and exiting with $EXIT_VALUE.\"");
 		slurmScriptRecords
-				.add("	echo \"middle script exit value was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping slurmFailFile and exiting with $EXIT_VALUE.\" > "
+				.add("	echo \"middle script exit eval was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping slurmFailFile and exiting with $EXIT_VALUE.\" > "
 						+ slurmFailFile.getAbsolutePath());
 		slurmScriptRecords.add("fi");
 

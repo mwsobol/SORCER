@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.jini.lookup.entry.DeployInfo;
+import sorcer.service.Deployment;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerEnv;
 
@@ -50,9 +51,9 @@ import java.util.*;
  * @author Dennis Reedy
  */
 public final class ServiceElementFactory  {
-    static final Logger logger = LoggerFactory.getLogger(ServiceElementFactory.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ServiceElementFactory.class.getName());
     /* The default provider codebase jars */
-    static final List<String> commonDLJars = Arrays.asList("rio-api-"+ RioVersion.VERSION+".jar");
+    private static final List<String> commonDLJars = Arrays.asList("rio-api-"+ RioVersion.VERSION+".jar");
 
     private ServiceElementFactory(){}
 
@@ -174,6 +175,15 @@ public final class ServiceElementFactory  {
                                                       "providerClass",
                                                       String.class,
                                                       null);
+
+        int plannedFromDeployment = deployment.getMultiplicity();
+        int plannedFromConfig = configuration.getEntry("sorcer.core.exertion.deployment",
+                                                       "planned",
+                                                       int.class,
+                                                       -1);
+        int planned = plannedFromConfig==-1?plannedFromDeployment:plannedFromConfig;
+
+
         int maxPerNode = deployment.getMaxPerCybernode();
         if(maxPerNode==0) {
             maxPerNode = configuration.getEntry("sorcer.core.exertion.deployment",
@@ -186,6 +196,8 @@ public final class ServiceElementFactory  {
                                                 String.class,
                                                 null);
 
+
+
         ServiceDetails serviceDetails = new ServiceDetails(name,
                                                            interfaces,
                                                            codebaseJars,
@@ -193,6 +205,7 @@ public final class ServiceElementFactory  {
                                                            providerClass,
                                                            jvmArgs,
                                                            fork,
+                                                           planned,
                                                            maxPerNode,
                                                            architecture,
                                                            operatingSystems,
@@ -206,8 +219,8 @@ public final class ServiceElementFactory  {
         return service;
     }
 
-    static ServiceElement create(final ServiceDetails serviceDetails,
-                                 final ServiceDeployment deployment) throws IOException {
+    private static ServiceElement create(final ServiceDetails serviceDetails,
+                                         final ServiceDeployment deployment) throws IOException {
         ServiceElement service = new ServiceElement();
 
         String websterUrl;
@@ -225,7 +238,7 @@ public final class ServiceElementFactory  {
             websterUrl = serviceDetails.webster;
         }
         /* Create client (export) ClassBundle */
-        List<ClassBundle> exports = new ArrayList<ClassBundle>();
+        List<ClassBundle> exports = new ArrayList<>();
         for(String s : serviceDetails.interfaces) {
             ClassBundle export = new ClassBundle(s);
             if(serviceDetails.codebaseJars.length==1 && Artifact.isArtifact(serviceDetails.codebaseJars[0])) {
@@ -259,7 +272,7 @@ public final class ServiceElementFactory  {
             ServiceLevelAgreements slas = new ServiceLevelAgreements();
             SystemRequirements systemRequirements = new SystemRequirements();
             if(serviceDetails.architecture!=null) {
-                Map<String, Object> attributeMap = new HashMap<String, Object>();
+                Map<String, Object> attributeMap = new HashMap<>();
                 attributeMap.put(ProcessorArchitecture.ARCHITECTURE, serviceDetails.architecture);
                 SystemComponent systemComponent = new SystemComponent("Processor",
                                                                       ProcessorArchitecture.class.getName(),
@@ -268,7 +281,7 @@ public final class ServiceElementFactory  {
             }
             for(String s : serviceDetails.operatingSystems) {
                 String opSys = checkAndMaybeFixOpSys(s);
-                Map<String, Object> attributeMap = new HashMap<String, Object>();
+                Map<String, Object> attributeMap = new HashMap<>();
                 attributeMap.put(OperatingSystem.NAME, opSys);
                 SystemComponent operatingSystem =
                     new SystemComponent("OperatingSystem", OperatingSystem.class.getName(), attributeMap);
@@ -288,13 +301,15 @@ public final class ServiceElementFactory  {
         }
 
 		/* Create simple ServiceBeanConfig */
-        Map<String, Object> configMap = new HashMap<String, Object>();
+        Map<String, Object> configMap = new HashMap<>();
         configMap.put(ServiceBeanConfig.NAME, serviceName);
         configMap.put(ServiceBeanConfig.GROUPS, Sorcer.getLookupGroups());
         ServiceBeanConfig sbc = new ServiceBeanConfig(configMap, new String[]{deployment.getConfig()});
         sbc.addAdditionalEntries(new DeployInfo(deployment.getType().name(), deployment.getUnique().name(), deployment.getIdle()));
         service.setServiceBeanConfig(sbc);
-        service.setPlanned(deployment.getMultiplicity());
+        service.setPlanned(serviceDetails.planned);
+        if(deployment.getStrategy().equals(Deployment.Strategy.FIXED))
+            service.setProvisionType(ServiceElement.ProvisionType.FIXED);
 
         /* If the service is to be forked, create an ExecDescriptor */
         if(serviceDetails.fork) {
@@ -311,7 +326,7 @@ public final class ServiceElementFactory  {
     }
 
     private static SystemComponent[] getSystemComponentAddresses(boolean exclude, String[] addresses) {
-        List<SystemComponent> machineAddresses = new ArrayList<SystemComponent>();
+        List<SystemComponent> machineAddresses = new ArrayList<>();
         for(String ip : addresses) {
             SystemComponent machineAddress = new SystemComponent(TCPConnectivity.ID);
             machineAddress.setExclude(exclude);
@@ -338,7 +353,7 @@ public final class ServiceElementFactory  {
     }
 
     private static String[] appendJars(final List<String> base, final String... jars) {
-        List<String> jarList = new ArrayList<String>();
+        List<String> jarList = new ArrayList<>();
         jarList.addAll(base);
         for(String jar : jars) {
             if(jarList.contains(jar)) {
@@ -349,7 +364,7 @@ public final class ServiceElementFactory  {
         return jarList.toArray(new String[jarList.size()]);
     }
 
-    public static boolean isIpAddress(String ip) {
+    static boolean isIpAddress(String ip) {
         String [] parts = ip.split ("\\.");
         for (String s : parts){
             try {
@@ -381,16 +396,11 @@ public final class ServiceElementFactory  {
             in.close();
         } else {
             File configFile = new File(configArg);
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new FileReader(configFile));
+            try (BufferedReader reader = new BufferedReader(new FileReader(configFile))) {
                 while ((line = reader.readLine()) != null) {
                     stringBuilder.append(line);
                     stringBuilder.append(ls);
                 }
-            } finally {
-                if(reader!=null)
-                    reader.close();
             }
         }
         return stringBuilder.toString();
@@ -404,6 +414,7 @@ public final class ServiceElementFactory  {
         final String providerClass;
         final String jvmArgs;
         final boolean fork;
+        final int planned;
         final int maxPerNode;
         final String architecture;
         final String[] operatingSystems;
@@ -418,6 +429,7 @@ public final class ServiceElementFactory  {
                                String providerClass,
                                String jvmArgs,
                                boolean fork,
+                               int planned,
                                int maxPerNode,
                                String architecture,
                                String[] operatingSystems,
@@ -431,6 +443,7 @@ public final class ServiceElementFactory  {
             this.providerClass = providerClass;
             this.jvmArgs = jvmArgs;
             this.fork = fork;
+            this.planned = planned;
             this.maxPerNode = maxPerNode;
             this.architecture = architecture;
             this.operatingSystems = operatingSystems;

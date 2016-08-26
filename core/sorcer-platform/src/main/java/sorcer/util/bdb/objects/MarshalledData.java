@@ -31,7 +31,7 @@ import sorcer.service.SecureIdentifiable;
  * A MarshalledData serves as the data in the key/data pair for multiple entities.
  *
  * <p> The MarshalledData class is used both as the storage entry for the
- * data as well as the object binding to the value.  Because it is used directly
+ * data as well as the object binding to the eval.  Because it is used directly
  * as storage data using serial format, it must be Serializable. </p>
  *
  * @author Mike Sobolewski

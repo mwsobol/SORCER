@@ -73,5 +73,6 @@ test {
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
     }
+    systemProperty "deploy.configs", "${project.projectDir.path}/src/test/resources/deploy/configs"
 }
 

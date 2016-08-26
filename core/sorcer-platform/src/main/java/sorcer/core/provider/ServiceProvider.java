@@ -108,7 +108,7 @@ import static sorcer.util.StringUtils.tName;
  * <p>
  * An inner or outer proxy can be a surrogate of a service partner defined by
  * this provider using <code>server</code> configuration entry or two realted
- * entries: <code>serverType</code> and <code>serverName</code>. If the entry
+ * args: <code>serverType</code> and <code>serverName</code>. If the entry
  * <code>server</code> is defined and its exporter is defined by the entry
  * <code>serverExporter</code> then this provider will use the server's proxy as
  * the outer (primary proxy) and itself as the inner proxy. However if the
@@ -354,7 +354,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	/**
-	 * Add attribute sets for the service. The resulting set will be used for
+	 * Add attribute sets for the service. The resulting setValue will be used for
 	 * all future joins. The attribute sets are also added to all
 	 * currently-joined lookup services.
 	 *
@@ -368,7 +368,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/**
 	 * Modify the current attribute sets, using the same semantics as
-	 * ServiceRegistration.modifyAttributes. The resulting set will be used for
+	 * ServiceRegistration.modifyAttributes. The resulting setValue will be used for
 	 * all future joins. The same modifications are also made to all
 	 * currently-joined lookup services.
 	 *
@@ -401,7 +401,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	/**
-	 * Add new groups to the set to join. Lookup services in the new groups will
+	 * Add new groups to the setValue to join. Lookup services in the new groups will
 	 * be discovered and joined.
 	 *
 	 * @param groups
@@ -435,7 +435,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	/**
-	 * Remove groups from the set to join. Leases are cancelled at lookup
+	 * Remove groups from the setValue to join. Leases are cancelled at lookup
 	 * services that are not members of any of the remaining groups.
 	 *
 	 * @param groups
@@ -515,7 +515,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	/**
-	 * Remove locators for specific lookup services from the set to join. Any
+	 * Remove locators for specific lookup services from the setValue to join. Any
 	 * leases held at the lookup services are cancelled.
 	 *
 	 * @param locators
@@ -618,7 +618,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	/**
-	 * Returns a proxy object for this object. This value should not be null.
+	 * Returns a proxy object for this object. This eval should not be null.
 	 * Implements the <code>ServiceProxyAccessor</code> interface.
 	 *
 	 * @return a proxy object reference
@@ -632,7 +632,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * Returns a proxy object for this provider. If the smart proxy is alocated
 	 * then returns a non exported object to be registerd with loookup services.
 	 * However, if a smart proxy implements {@link Outer} then the
-	 * provider's proxy is set as its inner proxy. Otherwise the {@link java.rmi.Remote}
+	 * provider's proxy is setValue as its inner proxy. Otherwise the {@link java.rmi.Remote}
 	 * outer proxy of this provider is returned.
 	 *
 	 * @return a proxy, or null
@@ -677,7 +677,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	/**
-	 * Simple container for an alternative return a value so we can provide more
+	 * Simple container for an alternative return a eval so we can provide more
 	 * detailed diagnostics.
 	 */
 	class InitException extends Exception {
@@ -1881,7 +1881,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					ServiceProvider.COMPONENT, THREAD_MANAGEMNT, boolean.class,
 					false);
 		} catch (Exception e) {
-			// do nothing, default value is used
+			// do nothing, default eval is used
 			// e.printStackTrace();
 		}
 		ConfigurableThreadFactory tf = new ConfigurableThreadFactory();

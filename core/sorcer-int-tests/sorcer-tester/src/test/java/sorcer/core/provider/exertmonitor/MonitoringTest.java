@@ -13,6 +13,7 @@ import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.Subtractor;
 import sorcer.core.exertion.TaskTest;
 import sorcer.core.provider.Concatenator;
+import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.util.GenericUtil;
 import sorcer.util.Sorcer;
@@ -53,15 +54,15 @@ public class MonitoringTest {
 		Task t5 = task(
 				"t5",
 				sig("add", Adder.class),
-				context("add", inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0), outEnt("result/y")),
+				context("add", inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0), outVal("result/y")),
 				strategy(Strategy.Access.PULL, Strategy.Wait.YES, Strategy.Monitor.YES));
 
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
 		assertNotNull(context(t5).asis("context/checkpoint/time"));
-		logger.info("t5 value: " + get(t5, "result/y"));
-		assertEquals("Wrong value for 100.0", 100d, get(t5, "result/y"));
+		logger.info("t5 eval: " + get(t5, "result/y"));
+		assertEquals("Wrong eval for 100.0", 100d, get(t5, "result/y"));
 
 		verifyExertionMonitorStatus(t5, "DONE");
 	}
@@ -111,16 +112,16 @@ public class MonitoringTest {
 	static Job createJob(Strategy.Flow flow, Strategy.Access access) throws Exception {
 
 		Task t3 = task("t3", sig("subtract", Subtractor.class),
-				context("subtract", inEnt("arg/x1"), inEnt("arg/x2"),
-						outEnt("result/y")), strategy(Strategy.Monitor.YES));
+				context("subtract", inVal("arg/x1"), inVal("arg/x2"),
+						outVal("result/y")), strategy(Strategy.Monitor.YES));
 
 		Task t4 = task("t4", sig("multiply", Multiplier.class),
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y")), strategy(Strategy.Monitor.YES));
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+						outVal("result/y")), strategy(Strategy.Monitor.YES));
 
 		Task t5 = task("t5", sig("add", Adder.class),
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
-						outEnt("result/y")), strategy(Strategy.Monitor.YES));
+				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+						outVal("result/y")), strategy(Strategy.Monitor.YES));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job("j1",
@@ -136,11 +137,11 @@ public class MonitoringTest {
 	@Test
 	public void optBlockTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", Multiplier.class), strategy(Strategy.Monitor.YES),
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
+				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("out")));
 
 		Task t5 = task("t5", sig("add", Adder.class), strategy(Strategy.Monitor.YES),
-				context("add", inEnt("arg/x1", 20.0), inEnt("arg/x2", 80.0),
+				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("out")));
 
 		Block block = block("block", sig(Concatenator.class), strategy(Strategy.Monitor.YES),
@@ -149,12 +150,12 @@ public class MonitoringTest {
 
 		block = exert(block);
 		logger.info("block context 1: " + context(block));
-//		logger.info("result: " + value(context(block), "out"));
+//		logger.info("result: " + eval(context(block), "out"));
 		assertEquals(value(context(block), "out"), 500.0);
 
-		block = exert(block, ent("block/t4/arg/x1", 200.0), ent("block/t4/arg/x2", 800.0));
+		block = exert(block, operator.ent("block/t4/arg/x1", 200.0), operator.ent("block/t4/arg/x2", 800.0));
 		logger.info("block context 2: " + context(block));
-//		logger.info("result: " + value(context(block), "out"));
+//		logger.info("result: " + eval(context(block), "out"));
 		assertEquals(value(context(block), "out"), 100.0);
 
 	}

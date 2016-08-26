@@ -206,7 +206,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 * 
 	 * If the Broker wants to drop the exertion to space, then the Broker has no
 	 * idea who will pick up this exertion. In that case, the broker would have
-	 * already set the lease duration and timeout.
+	 * already setValue the lease duration and timeout.
 	 * 
 	 * The provider who picks up the entry must initialize this session by
 	 * calling init(Monitorable) so that the we will now know that the task with
@@ -301,7 +301,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 * The spec requires that this method gets all the monitorable exertion
 	 * infos from all the monitor managers and return a Hashtable where
 	 * 
-	 * key -> ExertionReferenceID value -> Some info regarding this exertion
+	 * key -> ExertionReferenceID eval -> Some info regarding this exertion
 	 *
 	 * @throws MonitorException
 	 */

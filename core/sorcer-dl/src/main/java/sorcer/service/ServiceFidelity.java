@@ -63,6 +63,11 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 		this.name = name;
 	}
 
+	public ServiceFidelity(String name, String path) {
+		this.name = name;
+		this.path = path;
+	}
+
 	public ServiceFidelity(Arg name) {
 		this.name = name.getName();
 	}
@@ -162,6 +167,7 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 		for (T item : selects) {
 			if (item.getName().equals(fiName)) {
 				this.select = item;
+				return;
 			}
 
 		}
@@ -263,11 +269,13 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 
 	@Override
 	public String toString() {
-		return (path != null ? path + "@" + name : name )
+		return (path != null ? name + "@" + path : name )
 				+ (selects != null && selects.size() > 0 ? ":" + selects : "");
 	}
 
 	public int size() {
 		return selects.size();
 	}
+
+
 }

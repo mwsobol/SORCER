@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.par;
+package sorcer.core.context.model.proc;
 
 import java.util.ArrayList;
 
@@ -75,7 +75,7 @@ public class ContextFidelity extends ArrayList<Entry> {
 	
 	@Override
 	public String toString() {
-		return "parFi: " + name + " " + super.toString();
+		return "procFi: " + name + " " + super.toString();
 	}
 	
 }

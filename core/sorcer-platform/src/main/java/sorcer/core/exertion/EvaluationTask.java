@@ -19,9 +19,10 @@ package sorcer.core.exertion;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.par.ParModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.service.*;
@@ -52,9 +53,9 @@ public class EvaluationTask extends Task {
 		addSignature(es);
 		es.setEvaluator(evaluator);
 		dataContext.setExertion(this);
-		if (es.getEvaluator() instanceof Par) {
+		if (es.getEvaluator() instanceof Proc) {
 			if (dataContext.getScope() == null)
-				dataContext.setScope(new ParModel(name));
+				dataContext.setScope(new ProcModel(name));
 		}
 		if (evaluator instanceof Srv) {
 			if (dataContext.getReturnPath() == null)
@@ -80,8 +81,8 @@ public class EvaluationTask extends Task {
 		super(name);
 		addSignature(signature);
 		if (context != null) {
-			if (signature.getEvaluator() instanceof Par) {
-				((Par) signature.getEvaluator()).setScope(context);
+			if (signature.getEvaluator() instanceof Proc) {
+				((Proc) signature.getEvaluator()).setScope(context);
 			}
 			setContext(context);
 		}
@@ -133,8 +134,8 @@ public class EvaluationTask extends Task {
 						}
 				}
 			} else {
-				if (evaluator instanceof Par && dataContext.getScope() != null)
-					((Par) evaluator).getScope().append(dataContext.getScope());
+				if (evaluator instanceof Proc && dataContext.getScope() != null)
+					((Proc) evaluator).getScope().append(dataContext.getScope());
 			}
 
 			Object result = null;
@@ -148,10 +149,10 @@ public class EvaluationTask extends Task {
 				dataContext.setReturnPath(getProcessSignature().getReturnPath());
 			dataContext.setReturnValue(result);
 			if (evaluator instanceof Scopable) {
-				(((Scopable)evaluator).getScope()).putValue(dataContext.getReturnPath().path, result);
+				((ServiceContext)(((Scopable)evaluator).getScope())).putValue(dataContext.getReturnPath().path, result);
 			}
 			if (evaluator instanceof Srv && dataContext.getScope() != null)
-				dataContext.getScope().putValue(((Par) evaluator).getName(), result);
+				((ServiceContext)dataContext.getScope()).putValue(evaluator.getName(), result);
 		} catch (Exception e) {
 			e.printStackTrace();
 			dataContext.reportException(e);
@@ -173,10 +174,10 @@ public class EvaluationTask extends Task {
 		if (val instanceof ValueCallable && evaluator.getType() == Variability.Type.LAMBDA) {
 			ReturnPath rp = evaluator.getReturnPath();
 			if (rp != null && rp.inPaths != null) {
-				Context cxt = getScope().getDirectionalSubcontext(rp.inPaths);
+				Context cxt = ((ServiceContext)getScope()).getDirectionalSubcontext(rp.inPaths);
 				out = ((ValueCallable)val).call(cxt);
 			} else {
-				out = ((ValueCallable) val).call(getScope());
+				out = ((ValueCallable) val).call((Context)getScope());
 			}
 			if (rp != null && rp.path != null)
 				putValue((evaluator).getReturnPath().path, out);

@@ -41,7 +41,7 @@ public class EvaluationSignature extends ServiceSignature {
 	/**   
 	    <p> Sets the evaluator for this signature. </p>
 	
-	    @param evaluator the evaluation to set
+	    @param evaluator the evaluation to setValue
 	 */
 	public void setEvaluator(Evaluation evaluator) {
 		this.evaluator = evaluator;

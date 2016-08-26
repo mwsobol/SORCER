@@ -332,7 +332,7 @@ public class SpaceCmd extends ShellCmd {
 			ex.printStackTrace();
 		}
 		out.print("number of instances: " + tally);
-		out.print("\nnumber of unusable entries: " + ueCount);
+		out.print("\nnumber of unusable args: " + ueCount);
 	}
 	
 	private void printSpaceExertions(State xrtType) throws ContextException {

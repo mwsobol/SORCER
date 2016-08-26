@@ -63,7 +63,7 @@ public class ContextGroovyObject implements Serializable
 	}
 	
 	/** 
-	 * This returns the evaluated value of the Groovy expression specified in the constructor.
+	 * This returns the evaluated eval of the Groovy expression specified in the constructor.
 	 * In the event the expression was not valid an error message is displayed and the method returns null.
 	 * 
 	 * @return Object evaluated from expression
@@ -111,14 +111,14 @@ public class ContextGroovyObject implements Serializable
 	}
 	
 	/** 
-	 * This returns the evaluated value of the Groovy expression specified in the constructor.
+	 * This returns the evaluated eval of the Groovy expression specified in the constructor.
 	 * This version allows the user to register 
 	 * In the event the expression was not valid an error message is displayed and the method returns null.
 	 * 
 	 *
 	 * 
 	 * @param attributes HashMap<String,Object> of items to register with the Groovy interpreter. The key is the
-	 * 						name of the variable in Groovy and the Object is its value.
+	 * 						name of the variable in Groovy and the Object is its eval.
 	 * @return Object evaluated from expression, null if expression is empty.
 	 * @throws Exception if there is a problem
 	 */

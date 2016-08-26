@@ -24,12 +24,12 @@ import java.io.Serializable;
 /**
  * Created by Mike Sobolewski
  */
-public class Name implements Arg, Serializable {
+public class Name implements Arg, Serializable, Comparable {
     
     private String name;
 
-    public Name(String name) {
-        this.name = name;
+    public Name(Object name) {
+        this.name = name.toString();
     }
 
     @Override
@@ -53,5 +53,16 @@ public class Name implements Arg, Serializable {
     @Override
     public String toString() {
         return name;
+    }
+
+
+    @Override
+    public int compareTo(Object o) {
+        if (o == null)
+            throw new NullPointerException();
+        if (o instanceof Name)
+            return name.compareTo(((Name)o).getName());
+        else
+            return -1;
     }
 }

@@ -23,6 +23,6 @@ Double v2 = 200.0;
 
 task("hello adder", sig("add", Adder.class),
         context("adder",
-                inEnt("arg/x1", v1),
-                inEnt("arg/x2", v2),
+                inVal("arg/x1", v1),
+                inVal("arg/x2", v2),
                 result("out/y")));

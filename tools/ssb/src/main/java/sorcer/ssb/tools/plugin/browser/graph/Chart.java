@@ -129,7 +129,7 @@ implements ChartItemEnabler
 			d.date=dates;
 		else
 		{
-			//set to defaults
+			//setValue to defaults
 			int np=data.length;
 			d.date= new int[np];
 			for(int i=0;i<np;i++)
@@ -200,7 +200,7 @@ implements ChartItemEnabler
 			return;
 		}
 		int xoff=45;
-		int yoff=yOffset; //set in print(), default==25
+		int yoff=yOffset; //setValue in print(), default==25
 		int wid=dim.width-(2*xoff);
 		int hi=dim.height-(2*yoff);
 		int baseY=15;
@@ -282,7 +282,7 @@ implements ChartItemEnabler
 					
 					if(lastx==0 && lasty==0)
 					{
-						//set to current
+						//setValue to current
 						lastx=xpos;lasty=ypos;
 					}
 					if(xpos>(prevx+25))
@@ -319,7 +319,7 @@ implements ChartItemEnabler
 		if(isShown)
 		{
 			
-			double inc=(maxValue-minValue)/4;//number of labels (could be set by client)
+			double inc=(maxValue-minValue)/4;//number of labels (could be setValue by client)
 			double label=maxValue;
 			double y=yoff;
 			

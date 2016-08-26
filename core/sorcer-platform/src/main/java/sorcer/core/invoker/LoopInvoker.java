@@ -17,10 +17,7 @@
  */
 package sorcer.core.invoker;
 
-import sorcer.service.Arg;
-import sorcer.service.Condition;
-import sorcer.service.EvaluationException;
-import sorcer.service.Invocation;
+import sorcer.service.*;
 
 import java.rmi.RemoteException;
 
@@ -33,7 +30,7 @@ import java.rmi.RemoteException;
  * 
  * @param <V>
  */
-public class LoopInvoker<V> extends ServiceInvoker<V> {
+public class LoopInvoker<V> extends ServiceInvoker<V> implements ConditionalInvocation {
 
 	private int min = 0;
 
@@ -47,7 +44,6 @@ public class LoopInvoker<V> extends ServiceInvoker<V> {
 	 * Loop: while(true) { operand }
 	 * 
 	 * @param name
-	 * @param var
 	 */
 	public LoopInvoker(String name, ServiceInvoker<V> invoker) {
 		super(name);
@@ -61,7 +57,6 @@ public class LoopInvoker<V> extends ServiceInvoker<V> {
 	 * @param name
 	 * @param min
 	 * @param max
-	 * @param var
 	 */
 	public LoopInvoker(String name, int min, int max, ServiceInvoker<V> invoker) {
 		super(name);
@@ -75,12 +70,12 @@ public class LoopInvoker<V> extends ServiceInvoker<V> {
 	 * 
 	 * @param name
 	 * @param condition
-	 * @param var
 	 */
 	public LoopInvoker(String name, Condition condition, Invocation<V> invoker) {
 		super(name);
 		this.condition = condition;
 		target = (ServiceInvoker)invoker;
+		invokeContext = ((ServiceInvoker) invoker).getScope();
 	}
 
 	/**
@@ -91,7 +86,6 @@ public class LoopInvoker<V> extends ServiceInvoker<V> {
 	 * @param min
 	 * @param max
 	 * @param condition
-	 * @param var
 	 */
 	public LoopInvoker(String name, int min, int max, Condition condition,
 			ServiceInvoker<V> invoker) {
@@ -112,6 +106,11 @@ public class LoopInvoker<V> extends ServiceInvoker<V> {
 				}
 				return obj;
 			} else if (condition != null && max - min == 0) {
+				target.setScope(invokeContext);
+				if (condition.getConditionalContext() == null
+						|| condition.getConditionalContext().size()==0) {
+					condition.setConditionalContext(invokeContext);
+				}
 				while (condition.isTrue()) {
 					obj = target.getValue(entries);
 				}
@@ -133,5 +132,9 @@ public class LoopInvoker<V> extends ServiceInvoker<V> {
 		}
 		return obj;
 	}
-	
+
+	@Override
+	public Condition getCondition() {
+		return condition;
+	}
 }

@@ -7,7 +7,7 @@
 	<import file="${env.SORCER_HOME}/bin/common-run.xml" />
 	<echo message="webster: ${provider.webster.url}" />
 
-	<!-- set property values here -->
+	<!-- setValue property values here -->
 	<property name="requestor.name" value="worker-req" />
 	<property name="requestor.class" value="sorcer.worker.requestor.WorkerTaskApplication" />
 	<property name="webster" value="${provider.webster.url}" />

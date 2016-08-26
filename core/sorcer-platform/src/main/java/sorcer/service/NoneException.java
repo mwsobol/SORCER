@@ -19,7 +19,7 @@ package sorcer.service;
 
 /**
  * The NoneException represents an exception that is thrown if a
- * Context value is Context.none (undefined or null).
+ * Context eval is Context.none (undefined or null).
  * 
  * @author Mike Sobolewski
  */

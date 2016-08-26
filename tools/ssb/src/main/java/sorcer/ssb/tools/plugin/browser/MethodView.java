@@ -146,7 +146,7 @@ class MethodView extends JPanel implements ActionListener {
 					int nResults = data.length;
 
 					Object[][] tableData = new Object[nResults][2];
-					tableData[0][0] = "Return value";
+					tableData[0][0] = "Return eval";
 					for (int i = 0; i < nResults; i++) {
 						tableData[i][1] = data[i];
 					}
@@ -166,7 +166,7 @@ class MethodView extends JPanel implements ActionListener {
 					JOptionPane
 							.showMessageDialog(
 									frame,
-									"Method invoked successfully, but returned a null value",
+									"Method invoked successfully, but returned a null eval",
 									"SSB", JOptionPane.INFORMATION_MESSAGE);
 				}
 
@@ -217,7 +217,7 @@ class MethodView extends JPanel implements ActionListener {
 
 			Object val = _model.getValueAt(2 + i, 2);
 			if (val == null) {
-				throw new Exception("Missing parameter value " + i);
+				throw new Exception("Missing parameter eval " + i);
 			}
 
 			Class paramClass = params[i];
@@ -230,7 +230,7 @@ class MethodView extends JPanel implements ActionListener {
 			Constructor ctor = paramClass.getConstructor(stringCtor);
 
 			if (params[i].isArray()) {
-				// parse the table value which is in CSV format
+				// parse the table eval which is in CSV format
 				java.util.List arrayElements = new java.util.ArrayList();
 				StringTokenizer tok = new StringTokenizer(val.toString(), ",");
 				while (tok.hasMoreTokens()) {

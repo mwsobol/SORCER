@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  *
  * Sort a list of mograms taking into account the dependencies in pipes and
  * the tasks and jobs hierarchy. The sorter also determines the Flow for jobs
- * that have the Flow set to AUTO.
+ * that have the Flow setValue to AUTO.
  *
  * This code is based on the ProjectSorter class from Apache Maven 2
  */
@@ -87,7 +87,7 @@ public class ExertionSorter {
 
 
     /**
-     * Determine the Flow (PAR or SEQ) for mograms that have the Flow set to AUTO
+     * Determine the Flow (PAR or SEQ) for mograms that have the Flow setValue to AUTO
      *
      * @param topXrt
      * @param sortedSubXrt

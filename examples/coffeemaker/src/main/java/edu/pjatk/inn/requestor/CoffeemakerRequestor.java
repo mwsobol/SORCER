@@ -3,6 +3,7 @@ package edu.pjatk.inn.requestor;
 import edu.pjatk.inn.coffeemaker.CoffeeService;
 import edu.pjatk.inn.coffeemaker.Delivery;
 import sorcer.core.requestor.ServiceRequestor;
+import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -11,7 +12,10 @@ import java.io.File;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.responseUp;
+import static sorcer.mo.operator.srvModel;
 import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.proc;
+import static sorcer.po.operator.srv;
 
 public class CoffeemakerRequestor extends ServiceRequestor {
 
@@ -40,9 +44,9 @@ public class CoffeemakerRequestor extends ServiceRequestor {
     }
 
     private Context getEspressoContext() throws ContextException {
-        return context(ent("name", "espresso"), ent("price", 50),
-                ent("amtCoffee", 6), ent("amtMilk", 0),
-                ent("amtSugar", 1), ent("amtChocolate", 0));
+        return context(val("name", "espresso"), val("price", 50),
+            val("amtCoffee", 6), val("amtMilk", 0),
+            val("amtSugar", 1), val("amtChocolate", 0));
     }
 
     private Task getRecipeTask() throws MogramException, SignatureException {
@@ -52,18 +56,18 @@ public class CoffeemakerRequestor extends ServiceRequestor {
 
     private Exertion createExertion() throws Exception {
         Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
-                ent("recipe/name", "espresso"),
-                ent("coffee/paid", 120),
-                ent("coffee/change"),
-                ent("recipe", getEspressoContext())));
+            val("recipe/name", "espresso"),
+            val("coffee/paid", 120),
+            val("coffee/change"),
+            val("recipe", getEspressoContext())));
 
         Task delivery = task("delivery", sig("deliver", Delivery.class), context(
-                ent("location", "PJATK"),
-                ent("delivery/paid"),
-                ent("room", "101")));
+            val("location", "PJATK"),
+            val("delivery/paid"),
+            val("room", "101")));
 
         Job drinkCoffee = job(coffee, delivery,
-                pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "delivery/paid")));
+            pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "delivery/paid")));
 
         return drinkCoffee;
     }
@@ -72,20 +76,20 @@ public class CoffeemakerRequestor extends ServiceRequestor {
         exert(getRecipeTask());
 
         // order espresso with delivery
-        Model mdl = model(
-                ent("recipe/name", "espresso"),
-                ent("paid$", 120),
-                ent("location", "PJATK"),
-                ent("room", "101"),
+        Model mdl = srvModel(
+            val("recipe/name", "espresso"),
+            val("paid$", 120),
+            val("location", "PJATK"),
+            val("room", "101"),
 
                 srv(sig("makeCoffee", CoffeeService.class,
                         result("coffee$", inPaths("recipe/name")))),
                 srv(sig("deliver", Delivery.class,
                         result("delivery$", inPaths("location", "room")))));
-//				ent("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
+//				proc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
 
-        add(mdl, ent("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
-        dependsOn(mdl, ent("change$", "makeCoffee"), ent("change$", "deliver"));
+        add(mdl, proc("change$", invoker("paid$ - (coffee$ + delivery$)", operator.ents("paid$", "coffee$", "delivery$"))));
+        dependsOn(mdl, operator.ent("change$", "makeCoffee"), operator.ent("change$", "deliver"));
         responseUp(mdl, "makeCoffee", "deliver", "change$", "paid$");
 
         return mdl;

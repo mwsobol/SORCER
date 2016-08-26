@@ -47,7 +47,7 @@ public interface ContextAccessor {
 	public Context save(Context context) throws ContextException;
 
 	/**
-	 * Saves context to the data store, assigning a unique id with version set
+	 * Saves context to the data store, assigning a unique id with version setValue
 	 * to 1.0 to the returned context.
 	 * 
 	 * @param cntxt

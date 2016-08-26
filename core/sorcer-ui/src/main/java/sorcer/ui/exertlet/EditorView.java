@@ -708,11 +708,11 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		// Disable boldface controls.
 		UIManager.put("swing.boldMetal", Boolean.FALSE);
 
-		// Create and set up the window.
+		// Create and setValue up the window.
 		JFrame frame = new JFrame("Context Path Browser");
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-		// Create and set up the content pane.
+		// Create and setValue up the content pane.
 		EditorView pane = new EditorView("http://localhost", false);
 		pane.setOpaque(true); // content panes must be opaque
 		frame.setContentPane(pane);

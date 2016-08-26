@@ -41,8 +41,8 @@ public class ServiceClassLoader extends URIClassLoader implements ClassAnnotatio
 
     /**
      * Constructs a new ServiceClassLoader for the specified URLs having the
-     * given parent. The constructor takes two sets of URLs. The first set is
-     * where the class loader loads classes from, the second set is what it
+     * given parent. The constructor takes two sets of URLs. The first setValue is
+     * where the class loader loads classes from, the second setValue is what it
      * returns when getURLs() is called.
      * 
      * @param searchPath Array of URIs to search for classes
@@ -57,8 +57,8 @@ public class ServiceClassLoader extends URIClassLoader implements ClassAnnotatio
 
     /**
      * Constructs a new ServiceClassLoader for the specified URLs having the
-     * given parent. The constructor takes two sets of URLs. The first set is
-     * where the class loader loads classes from, the second set is what it
+     * given parent. The constructor takes two sets of URLs. The first setValue is
+     * where the class loader loads classes from, the second setValue is what it
      * returns when getURLs() is called.
      *
      * @param searchPath Array of URIs to search for classes

@@ -15,7 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.Assert.*;
-import static sorcer.co.operator.inEnt;
+import static sorcer.co.operator.inVal;
 import static sorcer.co.operator.instance;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.inConn;
@@ -90,7 +90,7 @@ public class SignatureTest {
 
 		ms = sig(Math.class, "max");
 		Context cxt = context(
-				parameterTypes(new Class[]{double.class, double.class}),
+				types(new Class[]{double.class, double.class}),
 				args(new Object[]{200.11, 3000.0}));
 
 		// request the service
@@ -139,7 +139,7 @@ public class SignatureTest {
 		Signature ps = sig("get", Calendar.class, "getInstance");
 
 		Context cxt = context(
-				parameterTypes(new Class[]{int.class}),
+				types(new Class[]{int.class}),
 				args(new Object[]{Calendar.MONTH}));
 
 		// get service provider for signature
@@ -166,8 +166,8 @@ public class SignatureTest {
 		// request the local service
 		Service as = task("as", lps,
 				context("add",
-						inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0),
+						inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		assertEquals(100.0, exec(as));
@@ -187,8 +187,8 @@ public class SignatureTest {
 		// request the remote service
 		Service as = task("as", rps,
 				context("add",
-						inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0),
+						inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		assertEquals(100.0, exec(as));
@@ -208,8 +208,8 @@ public class SignatureTest {
 		// request the remote service
 		Service as = task("as", ps,
 				context("add",
-						inEnt("arg/x1", 20.0),
-						inEnt("arg/x2", 80.0),
+						inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0),
 						result("result/y")));
 
 		assertEquals(100.0, exec(as));
@@ -219,13 +219,13 @@ public class SignatureTest {
 	public void localSigConnector() throws Exception {
 
 		Context cxt = context(
-				inEnt("y1", 20.0),
-				inEnt("y2", 80.0),
+				inVal("y1", 20.0),
+				inVal("y2", 80.0),
 				result("result/y"));
 
 		Context outConnector = outConn(
-				inEnt("arg/x1", "y1"),
-				inEnt("arg/x2", "y2"));
+				inVal("arg/x1", "y1"),
+				inVal("arg/x2", "y2"));
 
 		Signature ps = sig("add", AdderImpl.class, prvName("Adder"), outConnector);
 
@@ -247,13 +247,13 @@ public class SignatureTest {
 	public void rmoteSigConnector() throws Exception {
 
 		Context cxt = context(
-				inEnt("y1", 20.0),
-				inEnt("y2", 80.0),
+				inVal("y1", 20.0),
+				inVal("y2", 80.0),
 				result("result/y"));
 
 		Context inc = inConn(
-				inEnt("arg/x1", "y1"),
-				inEnt("arg/x2", "y2"));
+				inVal("arg/x1", "y1"),
+				inVal("arg/x2", "y2"));
 
 		Signature ps = sig("add", Adder.class, prvName("Adder"), inc);
 

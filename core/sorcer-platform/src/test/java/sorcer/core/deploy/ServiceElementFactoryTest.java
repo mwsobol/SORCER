@@ -145,17 +145,33 @@ public class ServiceElementFactoryTest {
         verifyServiceElement(ServiceElementFactory.create(deployment));
     }
 
+    @Test
+    public void testPlannedUsingGroovyConfiguration() throws URISyntaxException, ResolverException, ConfigurationException, IOException {
+        ServiceDeployment deployment = new ServiceDeployment();
+        deployment.setConfig(getConfigDir()+"/PlannedConfig.groovy");
+        ServiceElement service = ServiceElementFactory.create(deployment);
+        Assert.assertTrue(service.getPlanned()==10);
+        Assert.assertTrue(service.getMaxPerMachine()==1);
+    }
+
+    @Test
+    public void testPlannedUsingConfiguration() throws URISyntaxException, ResolverException, ConfigurationException, IOException {
+        ServiceDeployment deployment = new ServiceDeployment();
+        deployment.setConfig(getConfigDir()+"/plannedConfig.config");
+        ServiceElement service = ServiceElementFactory.create(deployment);
+        Assert.assertTrue(service.getPlanned()==10);
+        Assert.assertTrue(service.getMaxPerMachine()==2);
+    }
+
     private String getConfigDir() {
-        String baseDir = "";
-        if(System.getProperty("sorcer.home")==null) {
-            baseDir = "core/sorcer-platform/";
-        }
-        return String.format("%s%s/src/test/resources/deploy/configs/", baseDir, System.getProperty("user.dir"));
+        return System.getProperty("deploy.configs");
     }
 
     private void verifyServiceElement(ServiceElement serviceElement) {
         SystemRequirements systemRequirements = serviceElement.getServiceLevelAgreements().getSystemRequirements();
         Assert.assertEquals(8, systemRequirements.getSystemComponents().length);
+
+        Assert.assertTrue(serviceElement.getPlanned()==1);
 
         Assert.assertTrue(ServiceElementFactory.isIpAddress("10.131.5.106"));
         Assert.assertTrue(ServiceElementFactory.isIpAddress("10.131.4.201"));

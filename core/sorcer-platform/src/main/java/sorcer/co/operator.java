@@ -16,7 +16,6 @@
  */
 package sorcer.co;
 
-import groovy.lang.Closure;
 import org.rioproject.resolver.Artifact;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.resolver.ResolverHelper;
@@ -24,10 +23,9 @@ import sorcer.co.tuple.*;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.par.Par;
 import sorcer.core.context.model.srv.Srv;
-import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiRequest;
@@ -38,11 +36,14 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.Variability;
 import sorcer.service.modeling.Variability.Type;
 import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
+import sorcer.eo.operator.Args;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,6 +56,7 @@ import java.util.*;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
+import static sorcer.eo.operator.context;
 import static sorcer.po.operator.invoker;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -247,109 +249,34 @@ public class operator {
 		return new Tuple3<T1, T2, T3>(x1, x2, x3);
 	}
 
-    public static Entry ent(Model model, String path) throws ContextException {
-        return new Entry(path, model.asis(path));
-    }
 
-	public static <T extends Arg> Srv ent(String name, MorphFidelity<T> fidelity) {
-		fidelity.setPath(name);
-		fidelity.getFidelity().setPath(name);
-		return srv(name, fidelity);
+
+	public static <T> Entry<T> val(Path path, T value) {
+		Entry ent = new Entry<T>(path.path, value);
+		ent.annotation(path.info.toString());
+		ent.setType(Type.INPUT);
+		return ent;
 	}
 
-	public static Srv ent(String name, ServiceFidelity<Signature> fidelity) {
-		return srv(name, fidelity);
+	public static <T> Entry<T> val(String path, T value) {
+		Entry ent = new Entry<T>(path, value);
+		ent.setType(Type.INPUT);
+		return ent;
 	}
 
-	public static Srv ent(ServiceFidelity<Signature> fidelity) {
-		return srv(fidelity);
+    public static Entry db(Entry entry) {
+		entry.setPersistent(true);
+		return entry;
 	}
 
-	public static Srv srv(ServiceFidelity<Signature> fidelity) {
-		Srv service = new Srv(fidelity.getName(), fidelity);
-		return service;
+	public static Entry in(Entry entry) {
+		entry.setType(Type.INPUT);
+		return entry;
 	}
 
-	public static <T extends Arg> Srv srv(String name, ServiceFidelity<T> fidelity) {
-		Srv service = new Srv(name, fidelity);
-		return service;
-	}
-
-	public static Srv srv(String name, MorphFidelity<Signature> fidelity) {
-		Srv service = new Srv(name, fidelity);
-		return service;
-	}
-
-    public static Srv srv(String name, Identifiable item) {
-        return srv(name,  item,  null);
-    }
-
-    public static Srv srv(Identifiable item, Context context) {
-        return srv(null,  item,  context);
-    }
-
-	public static Srv srv(String name, Identifiable item, Context context, Arg... args) {
-		String srvName = item.getName();
-		Srv srv = null;
-		if (name != null)
-			srvName = name;
-
-		if (item instanceof Signature) {
-			srv = new Srv(srvName,
-					new SignatureEntry(item.getName(), (Signature) item, context));
-		} else if (item instanceof Mogram) {
-			srv = new Srv(srvName,
-					new MogramEntry(item.getName(), (Mogram) item));
-		} else {
-			srv = new Srv(srvName, item);
-		}
-		try {
-			srv.substitute(args);
-		} catch (SetterException e) {
-			e.printStackTrace();
-		}
-		return srv;
-	}
-
-    public static Srv srv(Identifiable item) {
-		return srv(null, item);
-	}
-
-	public static Srv srv(String name, String path, Model model) {
-		return new Srv(path, model, name);
-	}
-
-	public static Srv srv(String name, String path, Model model, Type type) {
-		return new Srv(path, model, name, type);
-	}
-
-	public static Srv aka(String name, String path) {
-		return new Srv(path, null, name);
-	}
-
-	public static Srv alias(String name, String path) {
-		return new Srv(path, null, name);
-	}
-
-	public static <T> Entry<T> ent(String path, T value) {
-		if (value instanceof Invocation) {
-			return new Par<T>(path, value);
-		} else if (value instanceof Evaluation) {
-			return new Entry<T>(path, value);
-		} else if (value instanceof ServiceFidelity) {
-			return (Entry<T>) new Srv(path, value);
-		} else if (value instanceof MultiFiRequest) {
-			try {
-				((MultiFiRequest)value).setUnifiedName(path);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-			return (Entry<T>) new Srv(path, value);
-		} else if (value instanceof List && ((List)value).get(0) instanceof Path) {
-			return (Entry<T>) new DependencyEntry(path, (List)value);
-		} else {
-			return new Entry<T>(path, value);
-		}
+	public static Entry out(Entry entry) {
+		entry.setType(Type.OUTPUT);
+		return entry;
 	}
 
     public static Object annotation(Entry entry) {
@@ -364,47 +291,7 @@ public class operator {
 			return (Signature.Direction) ann;
 	}
 
-	public static Srv lambda(String path, Service service, sorcer.eo.operator.Args args) {
-		return new Srv(path, path, service, args.argsToStrings());
-	}
-
-	public static Srv lambda(String path, Service service,  String name, sorcer.eo.operator.Args args) {
-		return new Srv(name, path, service,  args.argsToStrings());
-	}
-
-	public static Srv lambda(String path, String name, Client client) {
-		return new Srv(name, path, client);
-	}
-
-	public static <T> Srv lambda(String path, Callable<T> call) {
-		return new Srv(path, call);
-	}
-
-	public static <T> Srv lambda(String path, ValueCallable<T> call) {
-		return new Srv(path, call);
-	}
-	public static <T> Srv lambda(String path, ValueCallable<T> call, sorcer.eo.operator.Args args) {
-		return new Srv(path, call, args.argsToStrings());
-	}
-
-	public static <T> Srv lambda(String path, ValueCallable<T> lambda, Context context) throws InvocationException {
-		return new Srv(path, invoker(lambda, context));
-	}
-
-	public static <T> Srv lambda(String path, ValueCallable<T> lambda, sorcer.eo.operator.Args args, Context context)
-			throws InvocationException {
-		return new Srv(path, invoker(lambda, context), args.argsToStrings());
-	}
-
-	public static <T> Srv lambda(String path, EntryCollable<T> call) {
-		return new Srv(path, call);
-	}
-
-	public static <T> Srv lambda(String path, ValueCallable<T> call, ReturnPath returnPath) {
-		return new Srv(path, call, returnPath);
-	}
-
-	public static boolean isSorcerLambda(Class clazz) {
+    public static boolean isSorcerLambda(Class clazz) {
 		Class[] types = { EntryCollable.class, ValueCallable.class, Client.class,
 				ConditionCallable.class, Callable.class };
 		for (Class cl : types) {
@@ -415,39 +302,7 @@ public class operator {
 		return false;
 	}
 
-	public static Srv ent(String path, Closure call) {
-		return new Srv(path, call);
-	}
-
-	public static Srv cxtEnt(String path, EntryCollable call) {
-		return new Srv(path, call);
-	}
-
-	public static Srv xrtEnt(String path, ContextCallable call) {
-		return new Srv(path, call);
-	}
-
-	public static Srv ent(ServiceInvoker invoker) {
-		return new Srv(invoker.getName(), invoker);
-	}
-
-	public static Par ent(String path, Invocation invoker) {
-		return new Par(path, invoker);
-	}
-
-    public static Srv ent(Signature sig, Context context) {
-        return srv(sig, context);
-    }
-
-    public static Srv ent(String name, Signature sig, Context context, Arg... args) {
-        return srv(name, sig, context, args);
-    }
-
-	public static Srv ent(Signature sig) {
-		return srv(sig);
-	}
-
-	public static DependencyEntry dep(String path, Path... paths) {
+    public static DependencyEntry dep(String path, Path... paths) {
 		return new DependencyEntry(path, Arrays.asList(paths));
 	}
 
@@ -486,20 +341,15 @@ public class operator {
 			throw new ContextException("No Entry at path: " + path);
 	}
 
-
-	public static Entry<Object>  ent(String path) {
-		return new Entry<Object>(path, null);
+	public static Entry<Object>  val(String path) {
+		Entry ent = new Entry(path, null);
+		ent.setType(Variability.Type.VAL);
+		return ent;
 	}
 
-	public static <T> Entry<T> put(Entry<T> entry, T value)
-			throws SetterException, RemoteException {
-		entry.setValue(value);
-		return entry;
-	}
-
-	public static <T> OutputEntry<T> outEnt(String path, T value) {
+    public static <T> OutputEntry<T> outVal(String path, T value) {
 		if (value instanceof String && ((String)value).indexOf('|') > 0) {
-			OutputEntry oe =  outEnt(path, null);
+			OutputEntry oe =  outVal(path, null);
 			oe.annotation(value);
 			return oe;
 		}
@@ -509,19 +359,19 @@ public class operator {
 		return ent;
 	}
 
-	public static <T> OutputEntry<T> outEnt(String path, T value, String annotation) {
-		OutputEntry oe =  outEnt(path, value);
+	public static <T> OutputEntry<T> outVal(String path, T value, String annotation) {
+		OutputEntry oe =  outVal(path, value);
 		oe.annotation(annotation);
 		return oe;
 	}
 
-	public static class DataEntry<T2> extends Tuple2<String, T2> {
+	public static class DataEntry<T> extends Entry<T> {
 		private static final long serialVersionUID = 1L;
 
-		DataEntry(String path, T2 value) {
-			T2 v = value;
+		DataEntry(String path, T value) {
+			T v = value;
 			if (v == null)
-				v = (T2) Context.none;
+				v = (T) Context.none;
 
 			this._1 = path;
 			this._2 = v;
@@ -532,11 +382,11 @@ public class operator {
 		return new DataEntry(Context.DSD_PATH, data);
 	}
 
-	public static <T> OutputEntry<T> outEnt(String path, T value, int index) {
+	public static <T> OutputEntry<T> outVal(String path, T value, int index) {
 		return new OutputEntry(path, value, index);
 	}
 
-	public static <T> OutputEntry<T> dbOutEnt(String path, T value) {
+	public static <T> OutputEntry<T> dbOutVal(String path, T value) {
 		return new OutputEntry(path, value, true, 0);
 	}
 
@@ -544,11 +394,11 @@ public class operator {
 		return new InputEntry(path, null, 0);
 	}
 
-	public static OutputEntry outEnt(String path) {
+	public static OutputEntry outVal(String path) {
 		return new OutputEntry(path, null, 0);
 	}
 
-	public static InputEntry inEnt(String path) {
+	public static InputEntry inVal(String path) {
 		return new InputEntry(path, null, 0);
 	}
 
@@ -560,31 +410,31 @@ public class operator {
 		return new Entry(path, value, index);
 	}
 
-	public static <T> InputEntry<T> inEnt(String path, T value) {
+	public static <T> InputEntry<T> inVal(String path, T value) {
 		return new InputEntry(path, value, 0);
 	}
 
-	public static <T> InputEntry<T> dbInEnt(String path, T value, String annotation) {
+	public static <T> InputEntry<T> dbInVal(String path, T value, String annotation) {
 		InputEntry<T> ie = new InputEntry(path, value, true, 0);
 		ie.annotation(annotation);
 		return ie;
 	}
 
-	public static <T> InputEntry<T> dbInEnt(String path, T value) {
+	public static <T> InputEntry<T> dbInVal(String path, T value) {
 		return new InputEntry(path, value, true, 0);
 	}
 
-	public static <T> InputEntry<T> inEnt(String path, T value, int index) {
+	public static <T> InputEntry<T> inVal(String path, T value, int index) {
 		return new InputEntry(path, value, index);
 	}
 
-	public static <T> InputEntry<T> inEnt(String path, T value, String annotation) {
-		InputEntry<T> ie = inEnt(path, value);
+	public static <T> InputEntry<T> inVal(String path, T value, String annotation) {
+		InputEntry<T> ie = inVal(path, value);
 		ie.annotation(annotation);
 		return ie;
 	}
 
-	public static <T> InputEntry<T> inEnt(String path, T value, Class valClass, String annotation) {
+	public static <T> InputEntry<T> inVal(String path, T value, Class valClass, String annotation) {
 		InputEntry<T> ie = new InputEntry(path, value, 0);
 		if (valClass != null)
 			ie.setValClass(valClass);
@@ -592,53 +442,24 @@ public class operator {
 		return ie;
 	}
 
-	public static <T> InputEntry<T> inEnt(String path, T value, Class valClass) {
-		return inEnt(path, value, valClass, null);
+	public static <T> InputEntry<T> inVal(String path, T value, Class valClass) {
+		return inVal(path, value, valClass, null);
 	}
 
-	public static InputEntry inoutEnt(String path) {
-		return new InputEntry(path, null, 0);
-	}
-
-	public static <T> InoutEntry<T> inoutEnt(String path, T value) {
-		return new InoutEntry(path, value, 0);
-	}
-
-	public static <T> InoutEntry<T> inoutEnt(String path, T value, int index) {
-		return new InoutEntry(path, value, index);
-	}
-
-	public static <T> InoutEntry<T> inoutEnt(String path, T value, String annotation) {
-		InoutEntry<T> ie = inoutEnt(path, value);
-		ie.annotation(annotation);
-		return ie;
-	}
-
-	public static <T> TagEntry<T> ent(String path, T value, String association) {
-		return new TagEntry(path, value, association);
-	}
-
-	public static Entry setValue(Entry entry, Object value)
-			throws ContextException {
+    public static <T> Entry<T> setValue(Entry<T> entry, T value) throws ContextException {
 		try {
 			entry.setValue(value);
 		} catch (RemoteException e) {
 			throw new ContextException(e);
 		}
+		if (entry instanceof Proc) {
+			Proc procEntry = (Proc)entry;
+			if (procEntry.getScope() != null && procEntry.getContextable() == null) {
+				procEntry.getScope().putValue(procEntry.getName(), value);
+			}
+		}
+		entry.isValid(false);
 		return entry;
-	}
-
-	public static Context setValue(Context context, String path, Object value) throws ContextException {
-		context.putValue(path, value);
-		return context;
-	}
-
-	public static <S extends Setter> boolean isDB(S setter) {
-		return isPersistent(setter);
-	}
-
-	public static <S extends Setter> boolean isDb(S setter) {
-		return isPersistent(setter);
 	}
 
 	public static <S extends Setter> boolean isPersistent(S setter) {
@@ -658,9 +479,9 @@ public class operator {
 						((Setter) entry).setPersistent(true);
 						dburl = SdbUtil.store(obj);
 						((Setter)entry).setValue(dburl);
-						if (object instanceof Par) {
-							// its value is now persisted
-							((Par)object)._2 = null;
+						if (object instanceof Proc) {
+							// its eval is now persisted
+							((Proc)object)._2 = null;
 						}
 						return dburl;
 					}
@@ -694,8 +515,8 @@ public class operator {
 
 	public static void dbURL(Object object, URL dbUrl)
 			throws MalformedURLException {
-		if (object instanceof Par)
-			((Par) object).setDbURL(dbUrl);
+		if (object instanceof Proc)
+			((Proc) object).setDbURL(dbUrl);
 		else if (object instanceof ServiceContext)
 			((ServiceContext) object).setDbUrl("" + dbUrl);
 		else
@@ -703,8 +524,8 @@ public class operator {
 	}
 
 	public static URL dbURL(Object object) throws MalformedURLException {
-		if (object instanceof Par)
-			return ((Par) object).getDbURL();
+		if (object instanceof Proc)
+			return ((Proc) object).getDbURL();
 		else if (object instanceof ServiceContext)
 			return new URL(((ServiceContext) object).getDbUrl());
 		return null;
@@ -715,7 +536,7 @@ public class operator {
 	}
 
 	public static URL update(Object object) throws MogramException,
-			SignatureException, ContextException {
+			SignatureException {
 		return SdbUtil.update(object);
 	}
 
@@ -743,8 +564,12 @@ public class operator {
 		return collection.size();
 	}
 
-	public static int size(Model context) {
-		return ((ServiceContext)context).size();
+	public static int size(Model model) {
+		return ((ServiceContext)model).size();
+	}
+
+	public static int size(Context context) {
+		return context.size();
 	}
 
 	public static int size(Map map) {
@@ -761,13 +586,13 @@ public class operator {
 		return entry;
 	}
 
-	public static <T> Entry<T> dbEnt(String path) {
-		Entry<T> e = new Par<T>(path);
+	public static <T> Entry<T> dbVal(String path) {
+		Entry<T> e = new Proc<T>(path);
 		e.setPersistent(true);
 		return e;
 	}
 
-	public static <T> Entry<T> dbEnt(String path, T value) throws EvaluationException {
+	public static <T> Entry<T> dbVal(String path, T value) throws EvaluationException {
 		Entry<T> e = new Entry<T>(path, value);
 		e.setPersistent(true);
 		if (SdbUtil.isSosURL(value)) {
@@ -780,25 +605,7 @@ public class operator {
 		return e;
 	}
 
-	public static Arg[] ents(String... entries)
-			throws ContextException {
-		ArgSet as = new ArgSet();
-		for (String name : entries) {
-			as.add(new Entry(name, Context.none));
-		}
-		return as.toArray();
-	}
-
-	public static Arg[] ents(Entry... entries)
-			throws ContextException {
-		ArgSet as = new ArgSet();
-		for (Entry e : entries) {
-			as.add(e);
-		}
-		return as.toArray();
-	}
-
-	public static URL storeArg(Context context, String path) throws EvaluationException {
+    public static URL storeArg(Context context, String path) throws EvaluationException {
 		URL dburl = null;
 		try {
 			Object v = context.asis(path);
@@ -974,14 +781,11 @@ public class operator {
 
 	public static Object asis(Entry entry)
 			throws ContextException {
-		if (entry instanceof Par) {
-			if (entry._2 != null && entry.isValid())
-				return entry._2;
-			else
-				return entry.value();
+		try {
+			return entry.asis();
+		} catch (RemoteException e) {
+			throw new ContextException(e);
 		}
-		else
-			return entry._2;
 	}
 
 	public static <T> T asis(Context<T> context, String path)
@@ -1008,8 +812,8 @@ public class operator {
         return  mappable.asis(path);
     }
 
-    public static Copier copier(Context fromContext, Arg[] fromEntries,
-                                Context toContext, Arg[] toEntries) throws EvaluationException {
+    public static Copier copier(ServiceModel fromContext, Arg[] fromEntries,
+								ServiceModel toContext, Arg[] toEntries) throws EvaluationException {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
@@ -1026,12 +830,6 @@ public class operator {
 		}
 		return list;
 	}
-
-//    public static List<String> paths(String... paths) {
-//        List<String> list = new ArrayList<>();
-//        Collections.addAll(list, paths);
-//        return list;
-//    }
 
 	public static List<String> paths(Context context) throws ContextException {
 		return context.getPaths();

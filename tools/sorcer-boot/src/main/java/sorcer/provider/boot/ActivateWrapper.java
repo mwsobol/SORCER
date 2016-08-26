@@ -61,7 +61,7 @@ import java.util.Properties;
  * grants. The service's associated
  * {@link com.sun.jini.start.ActivateWrapper.ActivateDesc#importLocation
  * ActivateDesc.importLocation} is used as the {@link java.security.CodeSource}
- * for selecting the appropriate permission set to check against. If multiple
+ * for selecting the appropriate permission setValue to check against. If multiple
  * codebases are used, then all the codebases must have the necessary
  * <code>SharedActivationPolicyPermission</code> grants.
  *
@@ -188,7 +188,7 @@ public class ActivateWrapper implements Remote, Serializable {
      * the corresponding policy file obtained from the <code>ActivateDesc</code>
      * with the <code>AggregatePolicyProvider</code>
      * <LI>loads the "wrapped" activatable object's class and calls its
-     * activation constructor with the context classloader set to the newly
+     * activation constructor with the context classloader setValue to the newly
      * created {@link ServiceClassLoader}.
      * <LI>resets the context class loader to the original context classloader
      * </UL>
@@ -390,7 +390,7 @@ public class ActivateWrapper implements Remote, Serializable {
     /*
      * Utility method that converts a <code>URL[]</code> into a corresponding,
      * space-separated string with the same array elements. Note that if the
-     * array has zero elements, the return value is null, not the empty string.
+     * array has zero elements, the return eval is null, not the empty string.
      */
     private static String urlsToPath(URL[] urls) {
         //TODO - check if spaces in file paths are properly escaped (i.e.%

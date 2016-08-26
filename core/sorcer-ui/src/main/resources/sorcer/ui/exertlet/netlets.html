@@ -35,7 +35,7 @@ green {
   	    	</code><span class="light-blue"><code>&nbsp; &nbsp; context</code></span><code>("multiply", <span class="light-blue">inEnt</span>("arg/x1", 10.0),
   	    	<span class="light-blue">inEnt</span>("arg/x2", 50.0), <span class="light-blue"><br /> &nbsp; &nbsp; outEnt</span>("result/y1")));  </code></p>
 </blockquote>
-<p class="basicText">In the above task the operation is  specified by  <code>"multiply"</code> which is defined by the service type <code>Multiplier.class</code>. Service types are Java <em>interface types</em> that define the functionality  of services. Three basic types of context entries are distinguished: <code>inEnt</code>, <code>outEnt</code>, and <code>inoutEnt</code>. Additional attributes identifying the service, for example a <em>service name</em>,  can be associated with the operator <code>sig</code> using the <code>prvName</code> operator.  </p>
+<p class="basicText">In the above task the operation is  specified by  <code>"multiply"</code> which is defined by the service type <code>Multiplier.class</code>. Service types are Java <em>interface types</em> that define the functionality  of services. Three basic types of context args are distinguished: <code>inEnt</code>, <code>outEnt</code>, and <code>inoutEnt</code>. Additional attributes identifying the service, for example a <em>service name</em>,  can be associated with the operator <code>sig</code> using the <code>prvName</code> operator.  </p>
 <p class="basicText">A <em>job exertion</em> is a hierarchical composition of exertion tasks, blocks, and other jobs that defines a service composition. For example, the service composition
   <code>f1(f2(f4,f5),f3)</code> can be defined as follows: <br />
   execution of <code>f2</code> (<code>f4=x1*x2 and f5=x3+x4</code> in parallel) and then <code>f3=f4-f5</code>.</p>
@@ -76,7 +76,7 @@ green {
 A  <em>block</em> is a concatenation of exertions with control-flow exertions to define branching and looping for service-oriented algorithmic logic.
 </p>
 
-<p class="basicText">A <strong><em>context model</em></strong> is a <em>collection of functional compositions </em>as model entries with dependent entries (<span class="magenta"><code>inPaths</code></span>) that declares <strong><em>a dynamic service federation</em></strong>. The context model for the above exertion job f1 can be defined declaratively as follows: </p>
+<p class="basicText">A <strong><em>context model</em></strong> is a <em>collection of functional compositions </em>as model args with dependent args (<span class="magenta"><code>inPaths</code></span>) that declares <strong><em>a dynamic service federation</em></strong>. The context model for the above exertion job f1 can be defined declaratively as follows: </p>
 
 <blockquote>
   <p><code>
@@ -84,12 +84,12 @@ A  <em>block</em> is a concatenation of exertions with control-flow exertions to
      </code><code><span class="light-blue"> &nbsp; &nbsp; </span><span class="magenta">inEnt</span>("arg/x1", 10.0d), <span class="magenta">inEnt</span>("arg/x2", 50.0d),
     <span class="magenta"> <br /> 
     &nbsp; &nbsp; inEnt</span>("arg/x3", 20.0d), <span class="magenta">inEnt</span>("arg/x4", 80.0d),
-    <br /> &nbsp; &nbsp; <span class="light-blue">ent</span>(<span class="red">sig</span>("<span class="red">multiply</span>", <span class="red">Multiplier.class</span>, <span class="magenta">result</span>("result/y1",
+    <br /> &nbsp; &nbsp; <span class="light-blue">proc</span>(<span class="red">sig</span>("<span class="red">multiply</span>", <span class="red">Multiplier.class</span>, <span class="magenta">result</span>("result/y1",
     <span class="magenta"><br /> &nbsp; &nbsp; &nbsp; &nbsp; inPaths</span>("arg/x1", "arg/x2")))),
     <span class="light-blue"> <br /> 
-    &nbsp; &nbsp; ent</span>(<span class="red">sig</span>("<span class="red">add</span>", <span class="red">Adder.class</span>, <span class="magenta">result</span>("result/y2",
+    &nbsp; &nbsp; proc</span>(<span class="red">sig</span>("<span class="red">add</span>", <span class="red">Adder.class</span>, <span class="magenta">result</span>("result/y2",
     <span class="magenta">  <br /> &nbsp; &nbsp; &nbsp; &nbsp; inPaths</span>("arg/x3", "arg/x4")))),
-    <span class="light-blue"> <br /> &nbsp; &nbsp; ent</span>(<span class="red">sig</span>("out", "<span class="red">subtract</span>", <span class="red">Subtractor.class</span>, <span class="magenta"> result</span>("result/y3",
+    <span class="light-blue"> <br /> &nbsp; &nbsp; proc</span>(<span class="red">sig</span>("out", "<span class="red">subtract</span>", <span class="red">Subtractor.class</span>, <span class="magenta"> result</span>("result/y3",
     <span class="magenta"> <br /> &nbsp; &nbsp; &nbsp; &nbsp; inPaths</span>("result/y1", "result/y2")))),
   <span class="magenta"> <br /> &nbsp; &nbsp; response</span>("out", "result/y1", "result/y2", "result/y3"));</code></p>
 </blockquote>

@@ -18,22 +18,23 @@ package sorcer.po;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.co.tuple.ExecPath;
-import sorcer.co.tuple.InputEntry;
-import sorcer.co.tuple.Tuple2;
+import sorcer.co.tuple.*;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.EntryList;
-import sorcer.core.context.model.par.Agent;
-import sorcer.core.context.model.par.Par;
-import sorcer.core.context.model.par.ParModel;
-import sorcer.core.context.model.par.SysCall;
+import sorcer.core.context.model.ent.*;
+import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.*;
+import sorcer.core.plexus.MorphFidelity;
+import sorcer.core.plexus.MultiFiRequest;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
+import sorcer.eo.operator.Args;
+import sorcer.service.modeling.Variability;
 
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import static sorcer.eo.operator.context;
@@ -47,19 +48,19 @@ public class operator {
 	private static final Logger logger = LoggerFactory.getLogger(operator.class.getName());
 
 
-	public static <T> Par<T> par(String path, T argument) throws EvaluationException, RemoteException {
-		return new Par(path, argument);
+	public static <T> Proc<T> proc(String path, T argument) throws EvaluationException, RemoteException {
+		return new Proc(path, argument);
 	}
 
-	public static Par dbPar(String path, Object argument) throws EvaluationException, RemoteException {
-		Par p = new Par(path, argument);
+	public static Proc dbPar(String path, Object argument) throws EvaluationException, RemoteException {
+		Proc p = new Proc(path, argument);
 		p.setPersistent(true);
 		p.getValue();
 		return p;
 	}
 
-	public static Par par(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
-		Par p = new Par(identifiable.getName(), identifiable);
+	public static Proc proc(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
+		Proc p = new Proc(identifiable.getName(), identifiable);
 		if (identifiable instanceof Scopable)
 			try {
 				((Scopable)identifiable).setScope(context);
@@ -70,82 +71,147 @@ public class operator {
 		return p;
 	}
 
-	public static Par map(Par par, Service map) {
-		par.setMappable((Mappable)map);
-		return par;
+	public static Proc as(Proc proc, Service traget) {
+		proc.setMappable((Mappable)traget);
+		return proc;
 	}
 
-	public static Par par(Mappable argument, String name, String path) {
-		Par p = new Par(argument, name, path);
+	public static Proc proc(Mappable argument, String name, String path) {
+		Proc p = new Proc(argument, name, path);
 		return p;
 	}
 
-	public static Par par(String path, Object argument, Object object) throws ContextException, RemoteException {
-		Par p = null;
+	public static Proc proc(String path, Object argument, Object object) throws ContextException, RemoteException {
+		Proc p = null;
 		if (object instanceof Context) {
-			p = new Par(path, argument);
+			p = new Proc(path, argument);
 			p.setScope(object);
 		} else if (object instanceof Entry) {
-			p = new Par(path, argument);
+			p = new Proc(path, argument);
 			p.setScope(context((Entry)object));
 		} else if (object instanceof Service) {
-			p = new Par(path, argument, object);
+			p = new Proc(path, argument, object);
 		}
 		return p;
 	}
 
-	public static Par dPar(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
-		Par p = new Par(identifiable.getName(), identifiable);
+	public static Srv srv(ServiceFidelity<Signature> fidelity) {
+		Srv service = new Srv(fidelity.getName(), fidelity);
+		return service;
+	}
+
+	public static <T extends Arg> Srv srv(String name, ServiceFidelity<T> fidelity) {
+		Srv service = new Srv(name, fidelity);
+		return service;
+	}
+
+	public static Srv srv(String name, MorphFidelity<Signature> fidelity) {
+		Srv service = new Srv(name, fidelity);
+		return service;
+	}
+
+	public static Srv srv(String name, Identifiable item) {
+		return srv(name,  item,  null);
+	}
+
+	public static Srv srv(Identifiable item, Context context) {
+		return srv(null,  item,  context);
+	}
+
+	public static Srv srv(String name, Identifiable item, Context context, Arg... args) {
+		String srvName = item.getName();
+		Srv srv = null;
+		if (name != null)
+			srvName = name;
+
+		if (item instanceof Signature) {
+			srv = new Srv(srvName,
+					new SignatureEntry(item.getName(), (Signature) item, context));
+		} else if (item instanceof Mogram) {
+			srv = new Srv(srvName,
+					new MogramEntry(item.getName(), (Mogram) item));
+		} else {
+			srv = new Srv(srvName, item);
+		}
+		try {
+			srv.substitute(args);
+		} catch (SetterException e) {
+			e.printStackTrace();
+		}
+		return srv;
+	}
+
+	public static Srv srv(Identifiable item) {
+		return srv(null, item);
+	}
+
+	public static Srv srv(String name, String path, Model model) {
+		return new Srv(path, model, name);
+	}
+
+	public static Srv srv(String name, String path, Model model, Variability.Type type) {
+		return new Srv(path, model, name, type);
+	}
+
+	public static Srv aka(String name, String path) {
+		return new Srv(path, null, name);
+	}
+
+	public static Srv alias(String name, String path) {
+		return new Srv(path, null, name);
+	}
+	public static Proc dPar(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
+		Proc p = new Proc(identifiable.getName(), identifiable);
 		p.setPersistent(true);
 		p.setScope(context);
 		return p;
 	}
 
-	public static Par dbPar(String path, Object argument, Context context) throws EvaluationException, RemoteException {
-		Par p = new Par(path, argument);
+	public static Proc dbPar(String path, Object argument, Context context) throws EvaluationException, RemoteException {
+		Proc p = new Proc(path, argument);
 		p.setPersistent(true);
 		p.setScope(context);
 		return p;
 	}
 
-	public static Par pipe(Mappable in, String name, String path, Service out) throws ContextException {
-		Par p = new Par(name, path, out);
+	public static Proc pipe(Mappable in, String name, String path, Service out) throws ContextException {
+		Proc p = new Proc(name, path, out);
 		add(p, in);
 		return p;
 	}
 
-	public static Par storeUrl(Par parEntry, URL url) {
-		parEntry.setDbURL(url);
-		return parEntry;
+	public static Proc storeUrl(Proc procEntry, URL url) {
+		procEntry.setDbURL(url);
+		return procEntry;
 	}
 
-	public static Par par(ParModel pm, String name) throws ContextException, RemoteException {
-		Par parameter = new Par(name, pm.asis(name));
+	public static Proc proc(ProcModel pm, String name) throws ContextException, RemoteException {
+		Proc parameter = new Proc(name, pm.asis(name));
 		parameter.setScope(pm);
 		return parameter;
 	}
 
-	public static EntryList parFi(String name, Entry... entries) {
+	public static EntryList procFi(String name, Entry... entries) {
 		return new EntryList(name, entries);
 	}
 
-	public static EntryList parFi(Entry... entries) {
+	public static EntryList procFi(Entry... entries) {
 		return new EntryList(entries);
 	}
 
-	public static ServiceFidelity<Arg> parFi(String name) {
+	public static ServiceFidelity<Arg> procFi(String name) {
 		return new ServiceFidelity(name);
 	}
 
-	public static Entry parFi(Par parEntry) {
-		Entry fi = new Entry(parEntry.getSelectedFidelity(), parEntry.getFidelities()
-				.get(parEntry.getSelectedFidelity()));
+	public static Entry procFi(Proc procEntry) {
+		Entry fi = new Entry(procEntry.getSelectedFidelity(), procEntry.getFidelities()
+				.get(procEntry.getSelectedFidelity()));
 		return fi;
 	}
 
-	public static ParModel parModel(String name, Object... objects)
+	public static ProcModel procModel(String name, Object... objects)
 			throws RemoteException, ContextException {
-		ParModel pm = new ParModel(name);
+		ProcModel pm = new ProcModel(name);
 		for (Object o : objects) {
 			if (o instanceof Identifiable)
 				pm.add((Identifiable)o);
@@ -153,18 +219,18 @@ public class operator {
 		return pm;
 	}
 
-	public static <T> T get(ParModel<T> pm, String parname, Arg... parametrs)
+	public static Object get(ProcModel pm, String parname, Arg... parametrs)
 			throws ContextException, RemoteException {
 		Object obj = pm.asis(parname);
-		if (obj instanceof Par)
-			obj = ((Par)obj).getValue(parametrs);
-		return (T)obj;
+		if (obj instanceof Proc)
+			obj = ((Proc)obj).getValue(parametrs);
+		return obj;
 	}
 
 	public static Invocation invoker(Mappable mappable, String path)
 			throws ContextException {
 		Object obj = mappable.asis(path);
-		while (obj instanceof Mappable || obj instanceof Par) {
+		while (obj instanceof Mappable || obj instanceof Proc) {
 			try {
 				obj = ((Evaluation) obj).asis();
 			} catch (RemoteException e) {
@@ -187,94 +253,65 @@ public class operator {
 			((ServiceInvoker)invoker).clearPars();
 	}
 
-	public static ParModel parModel(Identifiable... objects)
+	public static ProcModel procModel(Identifiable... objects)
 			throws ContextException, RemoteException {
-		return new ParModel(objects);
+		return new ProcModel(objects);
 	}
 
-	public static ParModel add(ParModel parModel, Identifiable... objects)
+	public static ProcModel add(ProcModel procModel, Identifiable... objects)
 			throws RemoteException, ContextException {
-		parModel.add(objects);
-		return parModel;
+		procModel.add(objects);
+		return procModel;
 	}
 
-	public static ParModel append(ParModel parContext, Arg... objects)
+	public static ProcModel append(ProcModel parContext, Arg... objects)
 			throws RemoteException, ContextException {
 		parContext.append(objects);
 		return parContext;
 	}
 
-	public static Par put(ParModel parModel, String name, Object value) throws ContextException, RemoteException {
-		parModel.putValue(name, value);
-		parModel.setContextChanged(true);
-		return par(parModel, name);
+	public static Proc put(ProcModel procModel, String name, Object value) throws ContextException, RemoteException {
+		procModel.putValue(name, value);
+		procModel.setContextChanged(true);
+		return proc(procModel, name);
 	}
 
-	public static ParModel put(ParModel parModel, Tuple2... entries) throws ContextException {
+	public static ProcModel put(ProcModel procModel, Tuple2... entries) throws ContextException {
 		for (Tuple2 e : entries) {
-			parModel.putValue((String)e.key(), e.value());
+			procModel.putValue((String)e.key(), e.value());
 		}
-		parModel.setContextChanged(true);
-		return parModel;
+		procModel.setContextChanged(true);
+		return procModel;
 	}
 
-	public static Par set(Par parEntry, Object value)
-			throws ContextException {
-		try {
-			parEntry.setValue(value);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
-		if (parEntry.getScope() != null && parEntry.getContextable() == null) {
-			parEntry.getScope().putValue(parEntry.getName(), value);
-		}
-		return parEntry;
-	}
-
-	public static void set(Model context, String parname, Object value)
-			throws ContextException {
-		Object parEntry = context.asis(parname);
-		if (parEntry == null)
-			((ParModel)context).addPar(parname, value);
-		else if (parEntry instanceof Setter) {
-			try {
-				((Setter) parEntry).setValue(value);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-		} else if (parEntry instanceof Par) {
-			Par par = (Par) parEntry;
-			if (par.getScope() != null && par.getContextable() == null)
-				par.getScope().putValue(par.getName(), value);
-		}
-		// just ssetting the value
-		else {
-			((ParModel)context).putValue(parname, value);
-			((ParModel)context).setIsChanged(true);
-		}
-
-	}
-
-	public static Par add(Par parEntry, Object to)
+	public static Proc add(Proc procEntry, Object to)
 			throws ContextException {
 		if (to instanceof Exertion) {
-			((ServiceExertion)to).addPersister(parEntry);
-			return parEntry;
+			((ServiceExertion)to).addPersister(procEntry);
+			return procEntry;
 		}
-		return parEntry;
+		return procEntry;
 	}
 
-	public static Par connect(Object to, Par parEntry)
+	public static Proc connect(Object to, Proc procEntry)
 			throws ContextException {
-		return add(parEntry, to);
+		return add(procEntry, to);
 	}
 
-	public static Par par(Object object) throws EvaluationException, RemoteException {
+	public static Proc proc(Object object) throws EvaluationException, RemoteException {
 		if (object instanceof String)
-			return new Par((String)object);
+			return new Proc((String)object);
 		else if (object instanceof Identifiable)
-			return new Par(((Identifiable) object).getName(), object);
+			return new Proc(((Identifiable) object).getName(), object);
 		return null;
+	}
+
+	public static Proc proc(Invocation invoker) {
+		return new Proc(invoker.getName(), invoker);
+	}
+
+	public static Proc proc(String path, Invocation invoker) {
+		return new Proc(path, invoker);
 	}
 
 	public static Object invoke(Invocation invoker, Arg... parameters)
@@ -287,31 +324,31 @@ public class operator {
 		return invoker.invoke(context, parameters);
 	}
 
-	public static Object invoke(ParModel parModel, String parname, Arg... parameters)
+	public static Object invoke(ProcModel procModel, String parname, Arg... parameters)
 			throws RemoteException, InvocationException {
 		try {
-			Object obj = parModel.asis(parname);
+			Object obj = procModel.asis(parname);
 			Context scope = null;
 			// assume that the first argument is always context if provided
 			if (parameters.length > 0 && parameters[0] instanceof Context)
 				scope = (Context)parameters[0];
-			if (obj instanceof Par
-					&& ((Par) obj).asis() instanceof Invocation) {
-				Invocation invoker = (Invocation) ((Par) obj).asis();
-				//return invoker.invoke(parModel, parameters);
+			if (obj instanceof Proc
+					&& ((Proc) obj).asis() instanceof Invocation) {
+				Invocation invoker = (Invocation) ((Proc) obj).asis();
+				//return invoker.invoke(procModel, parameters);
 				if (scope != null)
 					return invoker.invoke(scope, parameters);
 				else
-					return invoker.invoke(parModel, parameters);
+					return invoker.invoke(procModel, parameters);
 			} else if (obj instanceof Invocation) {
 				Object out;
 				if (scope != null)
 					out = ((Invocation) obj).invoke(scope, parameters);
 				else
 					out = ((Invocation) obj).invoke(null, parameters);
-//				if (parModel.getScope() == null)
-//					parModel.setScope(new ServiceContext());
-//				parModel.getScope().putValue(parname, out);
+//				if (procModel.getScope() == null)
+//					procModel.setScope(new ServiceContext());
+//				procModel.getScope().putValue(parname, out);
 				return out;
 			} else if (obj instanceof Agent) {
 				return ((Agent)obj).getValue(parameters);
@@ -323,20 +360,20 @@ public class operator {
 		}
 	}
 
-	public static ArgSet pars(ServiceInvoker invoker) {
-		return invoker.getPars();
+	public static ArgSet args(ServiceInvoker invoker) {
+		return invoker.getArgs();
 	}
 
-	public static Arg[] pars(String... parnames)
-			throws ContextException {
-		ArgSet ps = new ArgSet();
-		for (String name : parnames) {
-			ps.add(new Par(name));
-		}
-		return ps.toArray();
-	}
+//	public static Arg[] args(String... parnames)
+//			throws ContextException {
+//		ArgSet ps = new ArgSet();
+//		for (String name : parnames) {
+//			ps.add(new Proc(name));
+//		}
+//		return ps.toArray();
+//	}
 
-	public static Arg[] args(ParModel pm, String... parnames)
+	public static Arg[] args(ProcModel pm, String... parnames)
 			throws ContextException {
 		ArgSet ps = new ArgSet();
 		for (String name : parnames) {
@@ -349,55 +386,67 @@ public class operator {
 		return new ServiceInvoker(evaluator,pars);
 	}
 
-	public static ServiceInvoker invoker(Evaluator evaluator, Par... parEntries) {
-		return new ServiceInvoker(evaluator, parEntries);
+//	public static ServiceInvoker invoker(Evaluator evaluator, Proc... procEntries) {
+//		return new ServiceInvoker(evaluator, procEntries);
+//	}
+
+	public static <T> ServiceInvoker invoker(ValueCallable<T> lambda, Args args) throws InvocationException {
+		return new ServiceInvoker(null, lambda, null, args.argSet());
 	}
 
-	public static ServiceInvoker invoker(ValueCallable lambda) throws InvocationException {
-		return new ServiceInvoker(null, lambda, null);
-	}
-
-	public static ServiceInvoker invoker(ValueCallable lambda, Context scope) throws InvocationException {
+	public static <T> ServiceInvoker invoker(ValueCallable<T> lambda, Context scope, Args args) throws InvocationException {
 		try {
-			return new ServiceInvoker(null, lambda, scope);
+			return new ServiceInvoker(null, lambda, scope, args.argSet());
 		} catch (Exception e) {
 			throw new InvocationException("Failed to create invoker!", e);
 		}
 	}
 
 	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda) throws InvocationException {
-		return new ServiceInvoker(name, lambda, null);
+		return new ServiceInvoker(name, lambda, null, null);
 	}
 
-	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda, Context scope) throws InvocationException {
-		return new ServiceInvoker(name, lambda, scope);
+	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda, Args args) throws InvocationException {
+		return new ServiceInvoker(name, lambda, args.argSet());
 	}
 
-	public static ServiceInvoker invoker(String name, String expression, sorcer.eo.operator.Args args) {
-		return new GroovyInvoker(name, expression, args.args());
+	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda, Context scope, Args args) throws InvocationException {
+		return new ServiceInvoker(name, lambda, scope, args.argSet());
 	}
 
-	public static ServiceInvoker invoker(String name, String expression, sorcer.eo.operator.Args args, Context scope) throws ContextException {
-		GroovyInvoker invoker = new GroovyInvoker(name, expression, args.args());
+	public static ServiceInvoker invoker(String name, String expression, Args args) {
+		return new GroovyInvoker(name, expression, args.argSet());
+	}
+
+	public static ServiceInvoker invoker(String name, String expression, Context scope, Args args) throws ContextException {
+		GroovyInvoker invoker = new GroovyInvoker(name, expression, args.argSet());
 		invoker.setScope(scope);
 		return invoker;
 	}
 
-	public static ServiceInvoker expr(String expression, sorcer.eo.operator.Args args, Context scope) throws ContextException {
-		return invoker(expression, args,  scope);
+	public static ServiceInvoker expr(String expression, Context scope,  Args args) throws ContextException {
+		return invoker(expression, scope, args);
 	}
 
-	public static ServiceInvoker invoker(String expression, sorcer.eo.operator.Args args, Context scope) throws ContextException {
-		GroovyInvoker invoker = new GroovyInvoker(expression, args.args());
+	public static ServiceInvoker invoker(String expression, Context scope, Args args) throws ContextException {
+		GroovyInvoker invoker = new GroovyInvoker(expression, args.argSet());
 		invoker.setScope(scope);
 		return invoker;
 	}
 
-	public static ServiceInvoker expr(String expression, sorcer.eo.operator.Args args) {
+	public static ServiceInvoker expr(String expression) {
+		return new GroovyInvoker(expression);
+	}
+
+	public static ServiceInvoker expr(String name, String expression) {
+		return new GroovyInvoker(name, expression);
+	}
+
+	public static ServiceInvoker expr(String expression, Args args) {
 		return 	invoker(expression, args);
 		}
 
-	public static ServiceInvoker invoker(String expression, sorcer.eo.operator.Args args) {
+	public static ServiceInvoker invoker(String expression, Args args) {
 		return new GroovyInvoker(expression, args.args());
 	}
 
@@ -417,26 +466,22 @@ public class operator {
 		return new GroovyInvoker(expression);
 	}
 
-	public static ServiceInvoker expr(String expression) {
-		return new GroovyInvoker(expression);
-	}
-
 	public static ServiceInvoker invoker(Exertion exertion) {
         return new ExertInvoker(exertion);
     }
 
-    public static ServiceInvoker invoker(sorcer.eo.operator.Args args) {
+    public static ServiceInvoker invoker(Args args) {
         return new CmdInvoker(args.argsToStrings());
     }
-    public static InvokeIncrementor inc(String path) {
+    public static IncrementInvoker inc(String path) {
 		return new IntegerIncrementor(path, 1);
 	}
 
-	public static InvokeIncrementor inc(String path, int increment) {
+	public static IncrementInvoker inc(String path, int increment) {
 		return new IntegerIncrementor(path, increment);
 	}
 
-	public static InvokeIncrementor inc(Invocation invoker, int increment) {
+	public static IncrementInvoker inc(Invocation invoker, int increment) {
 		if (invoker instanceof IntegerIncrementor) {
 			((IntegerIncrementor) invoker).setIncrement(increment);
 			return (IntegerIncrementor) invoker;
@@ -445,20 +490,20 @@ public class operator {
 		}
 	}
 
-	public static InvokeIncrementor inc(Invocation<Integer> invoker) {
+	public static IncrementInvoker inc(Invocation<Integer> invoker) {
 		return new IntegerIncrementor(invoker, 1);
 	}
 
-	public static InvokeIncrementor dinc(String path) {
+	public static IncrementInvoker dinc(String path) {
 		return new DoubleIncrementor(path, 1.0);
 	}
 
-	public static InvokeIncrementor inc(String path, double increment) {
+	public static IncrementInvoker inc(String path, double increment) {
 		return new DoubleIncrementor(path, increment);
 	}
 
 
-	public static InvokeIncrementor inc(Invocation invoker, double increment) {
+	public static IncrementInvoker inc(Invocation invoker, double increment) {
 		if (invoker instanceof IntegerIncrementor) {
 			((DoubleIncrementor) invoker).setIncrement(increment);
 			return (DoubleIncrementor) invoker;
@@ -467,7 +512,7 @@ public class operator {
 		}
 	}
 
-	public static InvokeIncrementor dinc(Invocation<Double> invoker) {
+	public static IncrementInvoker dinc(Invocation<Double> invoker) {
 		return new DoubleIncrementor(invoker, 1.0);
 	}
 
@@ -480,19 +525,18 @@ public class operator {
 		return incrementor.next();
 	}
 
-	public static <T> T next(ParModel model, String name) throws ContextException {
+	public static <T> T next(ProcModel model, String name) throws ContextException {
 		Incrementor<T> inceremntor = (Incrementor<T>)invoker(model, name);
 		return inceremntor.next();
 	}
 
-	public static MethodInvoker methodInvoker(String selector, Object methodObject, Par... parEntries) {
-		return methodInvoker(selector, methodObject, null, parEntries);
+	public static MethodInvoker methodInvoker(String selector, Object methodObject, Args... args) {
+		return methodInvoker(selector, methodObject, null, args);
 	}
 
 	public static MethodInvoker methodInvoker(String selector, Object methodObject,
-											  Context context, Par... parEntries) {
-		MethodInvoker mi = new MethodInvoker(selector, methodObject, selector,
-				parEntries);
+											  Context context, Args... args) {
+		MethodInvoker mi = new MethodInvoker(selector, methodObject, selector, args);
 		Context cxt = context;
 		if (context == null) {
 			cxt = new ServiceContext();
@@ -502,28 +546,36 @@ public class operator {
 		return mi;
 	}
 
-	public static ExertInvoker exertInvoker(String name, Exertion exertion, String path, Par... parEntries) {
-		return new ExertInvoker(name, exertion, path, parEntries);
+	public static ExertInvoker exertInvoker(String name, Exertion exertion, String path, Proc... procEntries) {
+		return new ExertInvoker(name, exertion, path, procEntries);
 	}
 
-	public static ExertInvoker exertInvoker(Exertion exertion, String path, Par... parEntries) {
-		return new ExertInvoker(exertion, path, parEntries);
+	public static ExertInvoker exertInvoker(Exertion exertion, String path, Proc... procEntries) {
+		return new ExertInvoker(exertion, path, procEntries);
 	}
 
-	public static ExertInvoker exertInvoker(Exertion exertion, Par... parEntries) {
-		return new ExertInvoker(exertion, parEntries);
+	public static ExertInvoker exertInvoker(Exertion exertion, Proc... procEntries) {
+		return new ExertInvoker(exertion, procEntries);
 	}
 
-	public static CmdInvoker cmdInvoker(String name, String cmd, Par... parEntries) {
-		return new CmdInvoker(name, cmd, parEntries);
+	public static CmdInvoker cmdInvoker(String name, String cmd, Proc... procEntries) {
+		return new CmdInvoker(name, cmd, procEntries);
 	}
 
-	public static RunnableInvoker runnableInvoker(String name, Runnable runnable, Par... parEntries) {
-		return new RunnableInvoker(name, runnable, parEntries);
+	public static RunnableInvoker runnableInvoker(String name, Runnable runnable, Proc... procEntries) {
+		return new RunnableInvoker(name, runnable, procEntries);
 	}
 
-	public static CallableInvoker callableInvoker(String name, Callable callable, Par... parEntries) {
-		return new CallableInvoker(name, callable, parEntries);
+	public static CallableInvoker callableInvoker(String name, Callable callable, Proc... procEntries) {
+		return new CallableInvoker(name, callable, procEntries);
+	}
+
+	public static <T> OptInvoker<T> opt(T value) {
+		return new OptInvoker(value);
+	}
+
+	public static OptInvoker opt(Condition condition, ServiceInvoker target) {
+		return new OptInvoker(null, condition, target);
 	}
 
 	public static OptInvoker opt(String name, ServiceInvoker target) {
@@ -534,17 +586,31 @@ public class operator {
 		return new OptInvoker(name, condition, target);
 	}
 
+	public static AltInvoker alt(OptInvoker...  invokers) {
+		return new AltInvoker(null, invokers);
+	}
+
 	public static AltInvoker alt(String name, OptInvoker...  invokers) {
 		return new AltInvoker(name, invokers);
+	}
+
+	public static LoopInvoker loop(Condition condition, Invocation target) {
+		return new LoopInvoker(null, condition, target);
+	}
+
+	public static LoopInvoker loop(Condition condition, Invocation target, Context context) throws ContextException {
+		LoopInvoker invoker = new LoopInvoker(null, condition, target);
+		invoker.setScope(context);
+		return invoker;
 	}
 
 	public static LoopInvoker loop(String name, Condition condition, Invocation target) {
 		return new LoopInvoker(name, condition, target);
 	}
 
-	public static LoopInvoker loop(String name, Condition condition, Par target)
+	public static LoopInvoker loop(String name, Condition condition, Proc target)
 			throws EvaluationException, RemoteException {
-		return new LoopInvoker(name, condition, (ServiceInvoker) ((Par) target).asis());
+		return new LoopInvoker(name, condition, (ServiceInvoker) target.asis());
 	}
 
 	public static OptInvoker get(AltInvoker invoker, int index) {
@@ -556,32 +622,204 @@ public class operator {
 		return new Agent(name, classNme, agentJar);
 	}
 
-//	public static ExecPath invoker(String name) {
-//		return new ExecPath(name);
-//	}
-
 	public static ExecPath invoker(String name, ServiceInvoker invoker) {
 		return new ExecPath(name, invoker);
 	}
 
-	public static InputEntry input(Par parEntry) {
-		return new InputEntry(parEntry.getName(), parEntry, 0);
+	public static ServiceModel scope(Proc procEntry) {
+		return procEntry.getScope();
 	}
 
-	public static InputEntry in(Par parEntry) {
-		return input(parEntry);
-	}
-
-	public static Context scope(Par parEntry) {
-		return parEntry.getScope();
-	}
-
-	public static Context invokeScope(Par parEntry) throws EvaluationException,
+	public static Context invokeScope(Proc procEntry) throws EvaluationException,
 			RemoteException {
-		Object obj = parEntry.asis();
+		Object obj = procEntry.asis();
 		if (obj instanceof ServiceInvoker)
 			return ((ServiceInvoker) obj).getScope();
 		else
 			return null;
+	}
+
+	public static Entry ent(Model model, String path) throws ContextException {
+        return new Entry(path, model.asis(path));
+    }
+
+	public static <T extends Arg> Srv ent(String name, MorphFidelity<T> fidelity) {
+        fidelity.setPath(name);
+        fidelity.getFidelity().setPath(name);
+        return srv(name, fidelity);
+    }
+
+	public static Srv ent(String name, ServiceFidelity<Signature> fidelity) {
+        return srv(name, fidelity);
+    }
+
+	public static Srv ent(ServiceFidelity<Signature> fidelity) {
+        return srv(fidelity);
+    }
+
+	public static <T> Entry<T> ent(Path path, T value, Arg... args) {
+		Entry<T> entry = ent(path.getName(), value, args);
+		entry.annotation(path.info.toString());
+		return entry;
+	}
+
+	public static <T> Entry<T> ent(String path, T value, Arg... args) {
+		Entry<T> entry = null;
+		if (value instanceof Invocation || value instanceof Evaluation) {
+			entry = new Proc<T>(path, value);
+		} else if (value instanceof Signature) {
+			Mogram mog = Arg.getMogram(args);
+			Context cxt = null;
+			if (mog instanceof Context) {
+				cxt = (Context)mog;
+			}
+			entry = (Entry<T>) srv(path, (Identifiable)value, cxt, args);
+		} else if (value instanceof ServiceFidelity) {
+			entry = (Entry<T>) new Srv(path, value);
+		} else if (value instanceof MultiFiRequest) {
+			try {
+				((MultiFiRequest)value).setUnifiedName(path);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			entry = (Entry<T>) new Srv(path, value);
+		} else if (value instanceof List && ((List)value).get(0) instanceof Path) {
+			entry = (Entry<T>) new DependencyEntry(path, (List)value);
+		} else if (value instanceof ServiceMogram) {
+			entry = (Entry<T>) new Srv(path, value);
+		} else if (value instanceof Service) {
+			entry = (Entry<T>) new Proc(path, value);
+		} else {
+			entry = new Entry<T>(path, value);
+		}
+
+		Context cxt = null;
+		for (Arg arg : args) {
+			cxt = (Context) Arg.getServiceModel(args);
+		}
+		try {
+			// special cases of procedural attachmnet
+			if (entry instanceof Proc) {
+				Proc proc = (Proc) entry;
+				if (cxt != null) {
+					((Proc) entry).setScope(cxt);
+				} else if (args.length == 1 && args[0] instanceof Entry) {
+					entry.setScope(context((Entry) args[0]));
+				} else if (args.length == 1 && args[0] instanceof Service) {
+					entry = new Proc(path, value, args[0]);
+				}
+			}
+		} catch (ContextException e) {
+			e.printStackTrace();
+		}
+		return entry;
+	}
+
+	public static Srv ent(Signature sig) {
+		return srv(sig);
+	}
+
+	public static Entry ent(String path) {
+		return new Entry(path, null);
+	}
+
+	public static <T> TagEntry<T> ent(String path, T value, String association) {
+		return new TagEntry(path, value, association);
+	}
+
+	public static Arg[] ents(String... entries)
+			throws ContextException {
+		ArgSet as = new ArgSet();
+		for (String name : entries) {
+			as.add(new Entry(name, Context.none));
+		}
+		return as.toArray();
+	}
+
+	public static Arg[] ents(Entry... entries)
+			throws ContextException {
+		ArgSet as = new ArgSet();
+		for (Entry e : entries) {
+			as.add(e);
+		}
+		return as.toArray();
+	}
+
+	public static Entry inout(Entry entry) {
+		entry.setType(Variability.Type.INOUT);
+		return entry;
+	}
+
+	public static InputEntry inoutVal(String path) {
+		return new InputEntry(path, null, 0);
+	}
+
+	public static <T> InoutEntry<T> inoutVal(String path, T value) {
+		return new InoutEntry(path, value, 0);
+	}
+
+	public static <T> InoutEntry<T> inoutVal(String path, T value, int index) {
+		return new InoutEntry(path, value, index);
+	}
+
+	public static <T> InoutEntry<T> inoutVal(String path, T value, String annotation) {
+		InoutEntry<T> ie = inoutVal(path, value);
+		ie.annotation(annotation);
+		return ie;
+	}
+
+	public static Srv lambda(String path, Service service, Args args) {
+		Srv srv = new Srv(path, path, service, args.argsToStrings());
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static Srv lambda(String path, Service service, String name, Args args) {
+		Srv srv = new Srv(name, path, service,  args.argsToStrings());
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static Srv lambda(String path, String name, Client client) {
+		Srv srv = new Srv(name, path, client);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static <T> Srv lambda(String path, Callable<T> call) {
+		Srv srv = new Srv(path, call);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static <T> Srv lambda(String path, ValueCallable<T> call) {
+		Srv srv = new Srv(path, call);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static <T> Srv lambda(String path, ValueCallable<T> call, Args args) {
+		Srv srv = new Srv(path, call, args.argsToStrings());
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static <T> Srv lambda(String path, ValueCallable<T> lambda, Context context, Args args)
+			throws InvocationException {
+		Srv srv = new Srv(path, invoker(lambda, context, args));
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static <T> Srv lambda(String path, EntryCollable<T> call) {
+		Srv srv = new Srv(path, call);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
+	}
+
+	public static <T> Srv lambda(String path, ValueCallable<T> call, Signature.ReturnPath returnPath) {
+		Srv srv = new Srv(path, call, returnPath);
+		srv.setType(Variability.Type.LAMBDA);
+		return srv;
 	}
 }

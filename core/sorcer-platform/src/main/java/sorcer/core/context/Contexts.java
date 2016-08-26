@@ -314,8 +314,8 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/*
-	 * Return boolean result indicating if the value at the designated path is
-	 * set as an empty leaf node.
+	 * Return boolean result indicating if the eval at the designated path is
+	 * setValue as an empty leaf node.
 	 */
 	public static boolean isEmptyLeafNode(Context cntxt, String path)
 			throws ContextException {
@@ -388,7 +388,7 @@ public class Contexts implements SorcerConstants {
 				try {
 					sb.append(sc.getValue(outPaths[i])).append(cr);
 				} catch (ContextException ex) {
-					sb.append("Unable to retrieve value").append(cr);
+					sb.append("Unable to retrieve eval").append(cr);
 				}
 			}
 		if (inoutPaths != null)
@@ -397,7 +397,7 @@ public class Contexts implements SorcerConstants {
 				try {
 					sb.append(sc.getValue(inoutPaths[i])).append(cr);
 				} catch (ContextException ex) {
-					sb.append("Unable to retrieve value").append(cr);
+					sb.append("Unable to retrieve eval").append(cr);
 				}
 			}
 		return sb.toString();
@@ -534,7 +534,7 @@ public class Contexts implements SorcerConstants {
 			obj = e.next();
 			if (obj != null && obj instanceof ContextNode)
 				nodes.add(obj);
-            // Look for ContextNodes also in values and set the ContextNode's direction
+            // Look for ContextNodes also in values and setValue the ContextNode's direction
             else {
                 Object val = ((ServiceContext)context).get((String)obj);
                 if (val!= null && val instanceof ContextNode) {
@@ -666,20 +666,35 @@ public class Contexts implements SorcerConstants {
 		return getMarkedConextNodes(sc, association)[0];
 	}
 
-	public static Object[] getMarkedValues(Context sc, String association)
+	public static Object[] getMarkedValues(Context context, String association)
 			throws ContextException {
-		String[] paths = getMarkedPaths(sc, association);
-		List<Object> values = new ArrayList<Object>();
+		String[] paths = getMarkedPaths(context, association);
+		List<Object> values = new ArrayList();
 		for (int i = 0; i < paths.length; i++) {
-			values.add(sc.getValue(paths[i]));
+			values.add(context.getValue(paths[i]));
+		}
+		if (paths == null || values.size() == 0) {
+			Context cxt = context.getScope();
+			if (cxt != null)
+				paths = getMarkedPaths(cxt, association);
+			for (int i = 0; i < paths.length; i++) {
+				values.add(context.getValue(paths[i]));
+			}
 		}
 		return values.toArray();
 	}
 
-	public static boolean hasMarkedValue(Context sc, String association)
+	public static boolean hasMarkedValue(Context context, String association)
 			throws ContextException {
-		String[] paths = getMarkedPaths(sc, association);
-        if (paths == null) return false;
+		String[] paths = getMarkedPaths(context, association);
+        if (paths == null) {
+			Context cxt = context.getScope();
+			if (cxt != null)
+				paths = getMarkedPaths(cxt, association);
+		}
+		if (paths == null) {
+			return false;
+		}
         return paths.length > 0;
 	}
 
@@ -1118,7 +1133,7 @@ public class Contexts implements SorcerConstants {
 		Vector keys = new Vector();
 		if (cntxt.isSingletonAttribute(attribute)) {
 			values = (Hashtable) cntxt.getMetacontext().get(attribute);
-			if (values != null) { // if no attributes are set, values==null;
+			if (values != null) { // if no attributes are setValue, values==null;
 				Enumeration e = values.keys();
 				while (e.hasMoreElements())
 					keys.addElement((String) e.nextElement());
@@ -1220,13 +1235,13 @@ public class Contexts implements SorcerConstants {
 		Vector keys = new Vector();
 		if (cntxt.isSingletonAttribute(attr)) {
 			values = (Hashtable) cntxt.getMetacontext().get(attr);
-			if (values != null) { // if there are no attributes set,
+			if (values != null) { // if there are no attributes setValue,
 				// values==null;
 				Enumeration e = values.keys();
 				while (e.hasMoreElements()) {
 					key = (String) e.nextElement();
 					/*
-					 * java 1.4.0 regex p = Pattern.compile(value); m =
+					 * java 1.4.0 regex p = Pattern.compile(eval); m =
 					 * p.matcher((String)values.get(key)); if (m.find())
 					 * keys.addElement(key);
 					 */
@@ -1364,7 +1379,7 @@ public class Contexts implements SorcerConstants {
 					values.add(attributeName + APS + val);
 			}
 		}
-		// we just added all the attribute-value pairs from
+		// we just added all the attribute-eval pairs from
 		// the top-level context; check first level links,
 		// which in turn will check their links, etc., etc.
 		List<String> paths= context.localLinkPaths();
@@ -1382,7 +1397,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/**
-	 * Get all singleton associations (attribute-value pairs) at the specified
+	 * Get all singleton associations (attribute-eval pairs) at the specified
 	 * context node.
 	 * 
 	 * @param context
@@ -1426,7 +1441,7 @@ public class Contexts implements SorcerConstants {
 		Hashtable values;
 		attr = metaAssoc.substring(0, metaAssoc.indexOf(APS));
 		value = metaAssoc.substring(metaAssoc.indexOf(APS) + 1);
-//		System.out.println("attr, value" + attr + "," + value);
+//		System.out.println("attr, eval" + attr + "," + eval);
 		if (!context.isMetaattribute(attr))
 			return false;
 		values = (Hashtable) context.getMetacontext().get(attr);

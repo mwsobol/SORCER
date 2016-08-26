@@ -136,14 +136,14 @@ public class SorcerDatabaseViews {
 	}
 
 	/**
-	 * Return an entity set view of the Exertion storage container.
+	 * Return an entity setValue view of the Exertion storage container.
 	 */
 	public StoredValueSet<Exertion> getExertionSet() {
 		return (StoredValueSet) exertionMap.values();
 	}
 
 	/**
-	 * Return an entity set view of the Runtime storage container.
+	 * Return an entity setValue view of the Runtime storage container.
 	 */
 	public StoredValueSet<ProviderRuntime> getRuntimeSet() {
 		return (StoredValueSet) runtimeMap.values();
@@ -157,21 +157,21 @@ public class SorcerDatabaseViews {
 	}
 	
 	/**
-	 * Return an entity set view of the Context storage container.
+	 * Return an entity setValue view of the Context storage container.
 	 */
 	public StoredValueSet<Context> getContextSet() {
 		return (StoredValueSet) contextMap.values();
 	}
 	
 	/**
-	 * Return an entity set view of the Table storage container.
+	 * Return an entity setValue view of the Table storage container.
 	 */
 	public StoredValueSet<ModelTable> getTableSet() {
 		return (StoredValueSet) tableMap.values();
 	}
 
 	/**
-	 * Return an entity set view of the UuidObject storage container.
+	 * Return an entity setValue view of the UuidObject storage container.
 	 */
 	public StoredValueSet<UuidObject> getUuidObjectSet() {
 		return (StoredValueSet) uuidObjectMap.values();
@@ -222,7 +222,7 @@ public class SorcerDatabaseViews {
 	 * <p>
 	 * The binding is "tricky" in that it uses the Runtime class for both the
 	 * stored data entry and the combined entity object. To do this, Runtime's
-	 * key field(s) are transient and are set by the binding after the data
+	 * key field(s) are transient and are setValue by the binding after the data
 	 * object has been deserialized. This avoids the use of a SupplierData class
 	 * completely.
 	 * </p>

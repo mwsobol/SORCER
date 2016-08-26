@@ -18,6 +18,7 @@ package sorcer.co.tuple;
 
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Signature;
+import sorcer.service.modeling.Variability;
 
 public class InputEntry<T> extends Entry<T> {
 
@@ -26,12 +27,14 @@ public class InputEntry<T> extends Entry<T> {
 	public InputEntry(String path, T value, int index) {
 		super(path, value);
 		this.index = index;
+		type = Variability.Type.INPUT;
         annotation = Signature.Direction.IN;
     }
 
 	public InputEntry(String path, T value, boolean isPersistant, int index) {
-		this(path, value, index);
-		this.isPersistent = isPersistant;
+		super(path, value, isPersistant, index);
+		annotation = Signature.Direction.IN;
+		type = Variability.Type.INPUT;
 	}
 
 }

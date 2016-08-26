@@ -7,6 +7,7 @@ import com.sleepycat.je.DatabaseException;
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.Subtractor;
+import sorcer.co.operator;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.exertmonitor.SessionDatabaseRunner;
 import sorcer.service.*;
@@ -19,8 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static sorcer.co.operator.inEnt;
-import static sorcer.co.operator.outEnt;
+import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 
 /**
@@ -286,23 +286,23 @@ public class SorcerDatabaseRunner {
 	
 	private Task getTask() throws ExertionException, SignatureException, ContextException {
 		Task f4 = task("f4", sig("multiply", Multiplier.class), 
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y1")));
+				context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
+						outVal("result/y1")));
 		return f4;
 	}
 		
 	private Job getJob() throws ExertionException, SignatureException, ContextException {
 		Task f4 = task("f4", sig("multiply", Multiplier.class), 
-				context("multiply", inEnt("arg/x1", 10.0), inEnt("arg/x2", 50.0),
-						outEnt("result/y1")));
+				context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
+						outVal("result/y1")));
 
 		Task f5 = task("f5", sig("add", Adder.class), 
-				context("add", inEnt("arg/x3", 20.0), inEnt("arg/x4", 80.0),
-						outEnt("result/y2")));
+				context("add", operator.inVal("arg/x3", 20.0), operator.inVal("arg/x4", 80.0),
+						outVal("result/y2")));
 
 		Task f3 = task("f3", sig("subtract", Subtractor.class), 
-				context("subtract", inEnt("arg/x5"), inEnt("arg/x6"),
-						outEnt("result/y3")));
+				context("subtract", operator.inVal("arg/x5"), operator.inVal("arg/x6"),
+						outVal("result/y3")));
 
 		// Service Composition f1(f2(x1, x2), f3(x1, x2))
 		// Service Composition f2(f4(x1, x2), f5(x1, x2))
@@ -336,7 +336,7 @@ public class SorcerDatabaseRunner {
 	}
 	
 	 /**
-     * Get the context names returned by an iterator of entity value objects.
+     * Get the context names returned by an iterator of entity eval objects.
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
      */
@@ -352,7 +352,7 @@ public class SorcerDatabaseRunner {
 		
 	
 	 /**
-     * Get the table names returned by an iterator of entity value objects.
+     * Get the table names returned by an iterator of entity eval objects.
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
      */
@@ -367,7 +367,7 @@ public class SorcerDatabaseRunner {
 	}
 	
 	 /**
-     * Get the exertion names returned by an iterator of entity value objects.
+     * Get the exertion names returned by an iterator of entity eval objects.
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
      */
@@ -382,7 +382,7 @@ public class SorcerDatabaseRunner {
 	}
 	
 	 /**
-     * Get the UuidObject names returned by an iterator of entity value objects.
+     * Get the UuidObject names returned by an iterator of entity eval objects.
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
      */
@@ -397,7 +397,7 @@ public class SorcerDatabaseRunner {
 	}
 	
     /**
-     * Print the objects returned by an iterator of entity value objects.
+     * Print the objects returned by an iterator of entity eval objects.
      * @throws ClassNotFoundException 
      * @throws IOException 
      */

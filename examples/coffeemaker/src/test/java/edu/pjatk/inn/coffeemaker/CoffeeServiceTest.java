@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.eo.operator;
+import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -25,7 +25,9 @@ import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.result;
+import static sorcer.po.operator.ent;
 import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.srv;
 
 /**
  * @author Mike Sobolewski
@@ -70,7 +72,7 @@ public class CoffeeServiceTest {
 	public void cleanUp() throws Exception {
 		Exertion cmt =
 				task(sig("deleteRecipes", CoffeeMaking.class),
-						context(parameterTypes(), operator.args()));
+						context(types(), args()));
 
 		cmt = exert(cmt);
 		logger.info("deleted recipes context: " + context(cmt));
@@ -131,18 +133,18 @@ public class CoffeeServiceTest {
 
 		// order espresso with delivery
 		Model mod = model(
-				inEnt("recipe/name", "espresso"),
-				inEnt("paid$", 120),
-				inEnt("location", "PJATK"),
-				inEnt("room", "101"),
+				ent("recipe/name", "espresso"),
+				ent("paid$", 120),
+				ent("location", "PJATK"),
+				ent("room", "101"),
 
-				srv(sig("makeCoffee", CoffeeService.class,
+				ent(sig("makeCoffee", CoffeeService.class,
 						result("coffee$", inPaths("recipe/name")))),
-				srv(sig("deliver", Delivery.class,
+				ent(sig("deliver", Delivery.class,
 						result("delivery$", inPaths("location", "room")))));
-//				ent("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
+//				ent("change$", invoker("paid$ - (coffee$ + delivery$)", args("paid$", "coffee$", "delivery$"))));
 
-		add(mod, ent("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
+		add(mod, ent("change$", invoker("paid$ - (coffee$ + delivery$)", operator.ents("paid$", "coffee$", "delivery$"))));
 		dependsOn(mod, ent("change$", "makeCoffee"), ent("change$", "deliver"));
 		responseUp(mod, "makeCoffee", "deliver", "change$", "paid$");
 		Context out = response(mod);
@@ -158,13 +160,13 @@ public class CoffeeServiceTest {
 	public void getCoffee() throws Exception {
 
 		Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
-				inEnt("recipe/name", "espresso"),
-				inEnt("coffee/paid", 120),
-				inEnt("recipe", espresso)));
+				inVal("recipe/name", "espresso"),
+				inVal("coffee/paid", 120),
+				inVal("recipe", espresso)));
 
 		Task delivery = task("delivery", sig("deliver", DeliveryImpl.class), context(
-				inEnt("location", "PJATK"),
-				inEnt("room", "101")));
+				inVal("location", "PJATK"),
+				inVal("room", "101")));
 
 		Job drinkCoffee = job(sig("exert", ServiceJobber.class), coffee, delivery);
 

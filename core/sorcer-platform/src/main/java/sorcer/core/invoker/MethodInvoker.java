@@ -21,9 +21,11 @@ import net.jini.core.transaction.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.par.Par;
+import sorcer.core.context.model.ent.Proc;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.util.SorcerUtil;
+import sorcer.eo.operator.Args;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -87,41 +89,46 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 		selector = methodName;
 	}
 
-	public MethodInvoker(Object target, Par... parEntries) {
+	public MethodInvoker(Object target, Args args) {
 		this.target = target;
-		this.pars = new ArgSet(parEntries);
+		this.args = args.argSet();
 	}
 
-	public MethodInvoker(Object target, String methodName, Par... parEntries) {
-		this(methodName, target, methodName);
-		this.pars = new ArgSet(parEntries);
+	public MethodInvoker(Object target, String methodName) {
+		this(null, target, methodName);
 	}
 
-	public MethodInvoker(String name, Object target, String methodName,
-			Par... parEntries) {
+	public MethodInvoker(String name, Object target, String methodName) {
 		this(name);
 		this.target = target;
 		selector = methodName;
-		this.pars = new ArgSet(parEntries);
+	}
+
+	public MethodInvoker(String name, Object target, String methodName, Arg... args) {
+		this(name, target, methodName);
+		this.args = new ArgSet(args);
+	}
+
+	public MethodInvoker(String name, Object target, String methodName, Args args) {
+		this(name, target, methodName);
+		this.args = args.argSet();
+	}
+
+	public MethodInvoker(String name, String className, String methodName, Args args) {
+		this(name, className, methodName, null, null, args);
+	}
+
+	public MethodInvoker(String name, String className, String methodName, Class<?>[] signature, Args args) {
+		this(name, className, methodName, signature, null, args);
 	}
 
 	public MethodInvoker(String name, String className, String methodName,
-			Par... parEntries) {
-		this(name, className, methodName, null, null, parEntries);
-	}
-
-	public MethodInvoker(String name, String className, String methodName,
-			Class<?>[] signature, Par... parEntries) {
-		this(name, className, methodName, signature, null, parEntries);
-	}
-
-	public MethodInvoker(String name, String className, String methodName,
-			Class<?>[] paramTypes, String distributionParameter, Par... parEntries) {
+			Class<?>[] paramTypes, String distributionParameter, Args args) {
 		this(name);
 		this.className = className;
 		selector = methodName;
 		this.paramTypes = paramTypes;
-		this.pars = new ArgSet(parEntries);
+		this.args = args.argSet();
 		if (distributionParameter != null)
 			params = new Object[] { distributionParameter };
 	}

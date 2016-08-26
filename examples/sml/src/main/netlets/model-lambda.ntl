@@ -29,20 +29,20 @@ def entFunction = { context ->
         } catch (ContextException e) {
                 e.printStackTrace();
         }
-        return ent("out", out);
+        return proc("out", out);
 };
 
 Model mo = model(
-        inEnt("multiply/x1", 10.0d), inEnt("multiply/x2", 50.0d),
-        inEnt("add/x1", 20.0d), inEnt("add/x2", 80.0d),
-        ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+        inEnt("multiply/x1", 10.0d), inVal("multiply/x2", 50.0d),
+        inEnt("add/x1", 20.0d), inVal("add/x2", 80.0d),
+        proc(sig("multiply", MultiplierImpl.class, result("multiply/out",
                 inPaths("multiply/x1", "multiply/x2")))),
-        ent(sig("add", AdderImpl.class, result("add/out",
+        proc(sig("add", AdderImpl.class, result("add/out",
                 inPaths("add/x1", "add/x2")))),
-        ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+        proc(sig("subtract", SubtractorImpl.class, result("subtract/out",
                 inPaths("multiply/out", "add/out")))),
         response("subtract", "lambda", "out"));
 
-dependsOn(mo, ent("subtract", paths("multiply", "add")));
+dependsOn(mo, proc("subtract", paths("multiply", "add")));
 
-add(mo, ent("lambda", entFunction));
+add(mo, proc("lambda", entFunction));

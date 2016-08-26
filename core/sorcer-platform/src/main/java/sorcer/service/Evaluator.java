@@ -29,9 +29,9 @@ public interface  Evaluator <T> extends Evaluation<T> {
 
 	
 	/**
-	 * Returns the current value of this evaluation.
+	 * Returns the current eval of this evaluation.
 	 * 
-	 * @return the current value of this evaluation
+	 * @return the current eval of this evaluation
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */

@@ -26,19 +26,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.co.operator;
 import sorcer.service.*;
 import sorcer.util.SorcerEnv;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.inEnt;
 import static sorcer.eo.operator.*;
 
 /**
@@ -61,7 +58,7 @@ public class OperationalStringFactoryTest {
                                          new ClassBundle("use.the.force.Luke"),
                                          new ClassBundle("on.a.planet.far.far.Away"));
 
-        ServiceBeanConfig serviceConfig = new ServiceBeanConfig(new HashMap<String, Object>(), new String[0]);
+        ServiceBeanConfig serviceConfig = new ServiceBeanConfig(new HashMap<>(), new String[0]);
         serviceConfig.setName("Luke");
         serviceElement.setServiceBeanConfig(serviceConfig);
         serviceElement1.setServiceBeanConfig(serviceConfig);
@@ -80,7 +77,7 @@ public class OperationalStringFactoryTest {
 		logger.info("job signatures: " + sigs.size());
 
         Map<ServiceDeployment.Unique, List<OperationalString>> deployments = OperationalStringFactory.create(job);
-        List<OperationalString> allOperationalStrings = new ArrayList<OperationalString>();
+        List<OperationalString> allOperationalStrings = new ArrayList<>();
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.YES));
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.NO));
         assertTrue("Expected 2, got " + allOperationalStrings.size(), allOperationalStrings.size() == 2);
@@ -93,7 +90,7 @@ public class OperationalStringFactoryTest {
         UndeployOption undeployOption = multiply.getUndeployOption();
         assertNotNull(undeployOption);
         assertTrue(UndeployOption.Type.WHEN_IDLE.equals(multiply.getUndeployOption().getType()));
-        assertTrue(1l==undeployOption.getWhen());
+        assertTrue(1L==undeployOption.getWhen());
 
         OperationalString federated = allOperationalStrings.get(1);
         String name = job.getDeploymentId();
@@ -123,7 +120,7 @@ public class OperationalStringFactoryTest {
     public void testOperationalStringCreationWithIPOpSysAndArch() throws Exception {
         Job job = JobUtil.createJobWithIPAndOpSys();
         Map<ServiceDeployment.Unique, List<OperationalString>> deployments = OperationalStringFactory.create(job);
-        List<OperationalString> allOperationalStrings = new ArrayList<OperationalString>();
+        List<OperationalString> allOperationalStrings = new ArrayList<>();
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.YES));
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.NO));
         assertTrue("Expected 2, got " + allOperationalStrings.size(), allOperationalStrings.size() == 2);
@@ -136,7 +133,7 @@ public class OperationalStringFactoryTest {
         UndeployOption undeployOption = multiply.getUndeployOption();
         assertNotNull(undeployOption);
         assertTrue(UndeployOption.Type.WHEN_IDLE.equals(multiply.getUndeployOption().getType()));
-        assertTrue(1l==undeployOption.getWhen());
+        assertTrue(1L==undeployOption.getWhen());
 
         ServiceElement multiplyService = multiply.getServices()[0];
 
@@ -151,6 +148,34 @@ public class OperationalStringFactoryTest {
 
         SystemComponent[] machines = getSystemComponents(components, TCPConnectivity.ID);
         assertEquals(4, machines.length);
+    }
+
+    @Test
+    public void testOperationalStringWithFixedProvisioning() throws Exception {
+        Job job = JobUtil.createFixedProvisioningJob();
+        Map<ServiceDeployment.Unique, List<OperationalString>> deployments = OperationalStringFactory.create(job);
+        assertNotNull(deployments);
+        List<OperationalString> opStrings = deployments.get(ServiceDeployment.Unique.NO);
+        assertTrue(opStrings.size()==1);
+        OperationalString os = opStrings.get(0);
+        StringBuilder sb = new StringBuilder();
+        for(ServiceElement s : os.getServices()) {
+            if(s.getName().startsWith("Subtract")) {
+                assertTrue(s.getProvisionType().equals(ServiceElement.ProvisionType.FIXED));
+                assertTrue(s.getPlanned()==2);
+            }
+            if(s.getName().startsWith("Multiplier")) {
+                assertTrue(s.getProvisionType().equals(ServiceElement.ProvisionType.FIXED));
+                assertTrue(s.getPlanned()==1);
+            }
+            sb.append("\t").append(s.getName()).append("\n\t\t")
+                .append("type: ").append(s.getProvisionType().name())
+                .append("\n\t\t")
+                .append("planned: ").append(s.getPlanned())
+                .append("\n\t\t")
+                .append("perNode: ").append(s.getMaxPerMachine()).append("\n");
+        }
+        logger.info("\n==============\n"+os.getName()+"\n"+sb.toString());
     }
 
     private SystemComponent getSystemComponent(SystemComponent[] components, String name, String attributeValue) {
@@ -184,7 +209,7 @@ public class OperationalStringFactoryTest {
                 sig("Foo",
                         Service.class,
                         deploy(configuration(JobUtil.getConfigDir() + "/TestConfig.groovy"))),
-                context("foo", inEnt("arg/x3", 20.0d), inEnt("arg/x4", 80.0d),
+                context("foo", operator.inVal("arg/x3", 20.0d), operator.inVal("arg/x4", 80.0d),
                         result("result/y2")));
 
         /* totally bogus job definition */

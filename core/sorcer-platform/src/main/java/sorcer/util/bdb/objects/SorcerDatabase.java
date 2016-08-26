@@ -238,7 +238,7 @@ public class SorcerDatabase {
         /**
          * Construct the city key extractor.
          * @param catalog is the class catalog.
-         * @param valueClass is the supplier value class.
+         * @param valueClass is the supplier eval class.
          */
         private RuntimeByProviderNameKeyCreator(ClassCatalog catalog,
                                          Class valueClass) {
@@ -246,8 +246,8 @@ public class SorcerDatabase {
         }
 
         /**
-         * Extract the city key from a supplier key/value pair.  The city key
-         * is stored in the supplier value, so the supplier key is not used.
+         * Extract the city key from a supplier key/eval pair.  The city key
+         * is stored in the supplier eval, so the supplier key is not used.
          */
 		public boolean createSecondaryKey(TupleInput primaryKeyInput,
 				Object valueInput, TupleOutput indexKeyOutput) {
@@ -277,7 +277,7 @@ public class SorcerDatabase {
         /**
          * Construct the part key extractor.
          * @param catalog is the class catalog.
-         * @param valueClass is the shipment value class.
+         * @param valueClass is the shipment eval class.
          */
 		private ExertionByRuntimeKeyCreator(ClassCatalog catalog,
 				Class valueClass) {
@@ -285,8 +285,8 @@ public class SorcerDatabase {
 		}
 
         /**
-         * Extract the part key from a shipment key/value pair.  The part key
-         * is stored in the shipment key, so the shipment value is not used.
+         * Extract the part key from a shipment key/eval pair.  The part key
+         * is stored in the shipment key, so the shipment eval is not used.
          */
 		public boolean createSecondaryKey(TupleInput primaryKeyInput,
 				Object valueInput, TupleOutput indexKeyOutput) {

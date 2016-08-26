@@ -48,7 +48,7 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.SorcerNotifierProtocol;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.par.ParModel;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.exertion.ExertionEnvelop;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.loki.member.LokiMemberUtil;
@@ -168,7 +168,7 @@ public class ProviderDelegate {
 
 	protected boolean idPersistent = false;
 
-	/** if true then we match all entries with interface type only. */
+	/** if true then we match all args with interface type only. */
 	protected boolean matchInterfaceOnly = true;
 
 	/** if true then its provider can be monitored for its exerting behavior. */
@@ -278,7 +278,7 @@ public class ProviderDelegate {
 	private Object[] serviceBeans;
 
 	/**
-	 * Exposed service type components. A key is an interface and a value its
+	 * Exposed service type components. A key is an interface and a eval its
 	 * implementing service-object.
 	 */
 	private Map<Class<?>, Object> serviceComponents;
@@ -372,15 +372,15 @@ public class ProviderDelegate {
         // Initialize hostName and hostAddress
         getHostName();
         getHostAddress();
-        // set provider's ID persistance flag if defined in provider's
+        // setValue provider's ID persistance flag if defined in provider's
 		// properties
 		idPersistent = Sorcer.getProperty(P_SERVICE_ID_PERSISTENT, "false").equals("true");
-		// set provider join groups if defined in provider's properties
+		// setValue provider join groups if defined in provider's properties
 		groupsToDiscover = Sorcer.getLookupGroups();
 		logger.info("ServiceProvider:groups to discover={}"+ SorcerUtil.arrayToString(groupsToDiscover));
-		// set provider space group if defined in provider's properties
+		// setValue provider space group if defined in provider's properties
 		spaceGroup = config.getProperty(J_SPACE_GROUP, Sorcer.getSpaceGroup());
-		// set provider space name if defined in provider's properties
+		// setValue provider space name if defined in provider's properties
 		spaceName = config.getProperty(J_SPACE_NAME, Sorcer.getActualSpaceName());
 
 		try {
@@ -389,7 +389,7 @@ public class ProviderDelegate {
                                                                      boolean.class,
                                                                      false);
 		} catch (ConfigurationException e) {
-			// do nothing, used the default value
+			// do nothing, used the default eval
 		}
 	//	initDynamicServiceAccessor();
 	}
@@ -602,7 +602,7 @@ public class ProviderDelegate {
         try {
             serviceTypes = (Class[]) config.jiniConfig.getEntry(ServiceProvider.COMPONENT, J_INTERFACES, Class[].class);
         } catch (ConfigurationException e) {
-            // do nothing, used the default value
+            // do nothing, used the default eval
             // e.printStackTrace();
         }
         if ((serviceTypes != null) && (serviceTypes.length > 0)) {
@@ -989,7 +989,7 @@ public class ProviderDelegate {
 			Method m = null;
 			try {
 				// select the proper method for the bean type
-				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof ParModel)) {
+				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof ProcModel)) {
 					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
 					isContextual = true;
 				} else if (selector.equals("exert") && impl instanceof ServiceShell) {
@@ -1041,7 +1041,7 @@ public class ProviderDelegate {
 		String selector = task.getProcessSignature().getSelector();
 		Object[] pars = new Object[] { task.getContext() };
 		if (selector.equals("invoke")
-				&& (impl instanceof Exertion || impl instanceof ParModel)) {
+				&& (impl instanceof Exertion || impl instanceof ProcModel)) {
 			Object obj = m.invoke(impl, new Object[] { pars[0], args });
 
 			if (obj instanceof Job)
@@ -1277,8 +1277,7 @@ public class ProviderDelegate {
 			logger.info("Executing method: " + m + " by: "
 					+ config.getProviderName());
 
-			Exertion result = (Exertion) m
-					.invoke(provider, new Object[] { ex });
+			Exertion result = (Exertion) m.invoke(provider, new Object[]{ex});
 			return result;
 		} catch (Exception e) {
 			ex.getControlContext().addException(e);
@@ -1289,7 +1288,7 @@ public class ProviderDelegate {
 	public Context invokeMethod(String selector, Context sc)
 			throws ExertionException {
 		try {
-			Class[] argTypes = new Class[] { Context.class };
+			Class[] argTypes = new Class[] { sc.getClass() };
 			Object[] args = new Object[] { sc };
 			ServiceContext cxt = (ServiceContext) sc;
 			boolean isContextual = true;
@@ -1298,9 +1297,18 @@ public class ProviderDelegate {
 				args = cxt.getArgs();
 				isContextual = false;
 			}
-			Method execMethod = provider.getClass().getMethod(selector,
-					argTypes);
-			Context result = null;
+			Method execMethod = null;
+			for(Method m : provider.getClass().getMethods()) {
+				if(m.getName().equals(selector) && m.getParameterCount()==1) {
+					if(m.getParameterTypes()[0].isAssignableFrom(argTypes[0])) {
+						execMethod = m;
+						break;
+					}
+				}
+			}
+			if(execMethod==null)
+				execMethod = provider.getClass().getMethod(selector, argTypes);
+			Context result;
 			if (isContextual) {
 				result = (ServiceContext) execMethod.invoke(provider, args);
 				// Setting Return Values
@@ -1389,13 +1397,13 @@ public class ProviderDelegate {
 	/**
 	 * Creates the service attributes to be used with Jini lookup services.
 	 * <p>
-	 * This function will create the following entries:
+	 * This function will create the following args:
 	 * <ul>
 	 * <li>A {@link Name}.
 	 * <li>A {@link SorcerServiceInfo}entry with all the information about this
 	 * provider.
 	 * <li>A main UIDescriptor if the provider overrides
-	 * <li>Extra lookup attributes set via #addExtraLookupAttribute(Entry)
+	 * <li>Extra lookup attributes setValue via #addExtraLookupAttribute(Entry)
 	 * </ul>
 	 * 
 	 * @return an array of Jini Service Entries.
@@ -1417,14 +1425,14 @@ public class ProviderDelegate {
 			attrVec.addAll(VersionInfo.productAttributesFor(getProviderName()));
 			Entry sst = getSorcerServiceTypeEntry();
 			attrVec.add(sst);
-			// add additional entries declared in the Jini provider's
+			// add additional args declared in the Jini provider's
 			// configuration
 			Entry[] miscEntries = (Entry[]) config.jiniConfig.getEntry(
-					ServiceProvider.COMPONENT, "entries", Entry[].class,
+					ServiceProvider.COMPONENT, "args", Entry[].class,
 					new Entry[] {});
 			for (int i = 0; i < miscEntries.length; i++) {
 				attrVec.add(miscEntries[i]);
-				// transfer location from entries if not defined in
+				// transfer location from args if not defined in
 				// SorcerServiceInfo
 				if (miscEntries[i] instanceof Location
 						&& ((SorcerServiceInfo) sst).location == null) {
@@ -1950,7 +1958,7 @@ public class ProviderDelegate {
 			String str;
 			String providerName;
 
-			// set provider name if defined in provider's properties
+			// setValue provider name if defined in provider's properties
 			str = getProperty(P_PROVIDER_NAME);
 			if (str != null) {
 				providerName = str.trim();
@@ -2048,9 +2056,9 @@ public class ProviderDelegate {
 		 * Sets a configuration property.
 		 * 
 		 * @param key
-		 *            they key to set (usualy starts with provider.)
+		 *            they key to setValue (usualy starts with provider.)
 		 * @param value
-		 *            the value to set to.
+		 *            the eval to setValue to.
 		 */
 		public void setProperty(String key, String value) {
 			props.setProperty(key, value);
@@ -2176,14 +2184,14 @@ public class ProviderDelegate {
 		}
 
 		/**
-		 * Returns a value of a comma separated property as defined in. If the
-		 * property value is not defined for the delegate's provider then the
-		 * equivalent SORCR environment value value is returned.
+		 * Returns a eval of a comma separated property as defined in. If the
+		 * property eval is not defined for the delegate's provider then the
+		 * equivalent SORCR environment eval eval is returned.
 		 * {@link SorcerConstants}.
 		 * 
 		 * @param key
 		 *            a property (attribute)
-		 * @return a property value
+		 * @return a property eval
 		 */
 		public String getProperty(String key) {
 			return props.getProperty(key);
@@ -2256,7 +2264,7 @@ public class ProviderDelegate {
 					suffixedName = val + "-" + nameSuffixed;
 					nameSuffixed = "true";
 				}
-				// add provider name and SorcerServiceType entries
+				// add provider name and SorcerServiceType args
 				// nameSuffixed not defined by this provider but in sorcer.env
 				if (nameSuffixed.length() == 0 && globalNameSuffixed) {
 					setProviderName(suffixedName);
@@ -2512,7 +2520,7 @@ public class ProviderDelegate {
 	/**
 	 * Returns a proxy object for this provider. If the smart proxy is alocated
 	 * then returns a non exported object to be registerd with loookup services.
-	 * However, if a smart proxy is defined then the provider's proxy is set as
+	 * However, if a smart proxy is defined then the provider's proxy is setValue as
 	 * its inner proxy. Otherwise the {@link Remote} outer proxy of this provider
 	 * is returned.
 	 * 
@@ -2607,7 +2615,7 @@ public class ProviderDelegate {
 			logger.info(">>>>> exporterPort: {}", exporterPort);
 
 			try {
-				// check if not set by the provider
+				// check if not setValue by the provider
 				if (smartProxy == null) {
 					// initialize smart proxy
 					smartProxy = config.getEntry(ServiceProvider.COMPONENT,

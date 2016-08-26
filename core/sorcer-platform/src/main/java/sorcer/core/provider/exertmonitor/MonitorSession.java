@@ -347,7 +347,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 	/**
 	 * Here's the algorithm to manage the states based on states of children
 	 * Rule 1: If any one of the child state is FAILED and all others are DONE,
-	 * marked ourself FAILED Rule 2: If all child are DONE, mark ourself as DONE
+	 * marked ourself FAILED Rule 2: If all child are DONE, tag ourself as DONE
 	 * Rule 3: If any child is SUSPENDED and all other child are DONE, then we
 	 * are in SUSPENDED state
 	 */
@@ -438,7 +438,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
     /**
 	 * 
 	 * Searches if any SessionResource exists with this parent session with a
-	 * child session having the same value for the cookie.
+	 * child session having the same eval for the cookie.
 	 * 
 	 * @param cookie for which corresponding to a SessionResource contained
 	 *            in this session resource

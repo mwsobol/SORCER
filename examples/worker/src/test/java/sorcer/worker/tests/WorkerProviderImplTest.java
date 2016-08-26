@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.po.operator;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.worker.provider.InvalidWork;
@@ -16,7 +17,7 @@ import java.rmi.RemoteException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.ent;
+import static sorcer.po.operator.ent;
 import static sorcer.eo.operator.*;
 
 /**
@@ -53,11 +54,11 @@ public class WorkerProviderImplTest {
 		};
 
 		context = context("work", 
-				ent("req/name", hostname),
-				ent("req/arg/1", 11),
-				ent("req/arg/2", 101),
-				ent("req/work", work),
-				ent("to/prv/name", "Worker Provider"));
+				operator.ent("req/name", hostname),
+				operator.ent("req/arg/1", 11),
+				operator.ent("req/arg/2", 101),
+				operator.ent("req/work", work),
+				operator.ent("to/prv/name", "Worker Provider"));
 	}
 
 

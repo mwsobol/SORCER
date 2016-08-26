@@ -49,6 +49,7 @@ import sorcer.tools.shell.cmds.*;
 import sorcer.tools.webster.Webster;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerEnv;
+import sorcer.util.SorcerUtil;
 import sorcer.util.TimeUtil;
 import sorcer.util.eval.PropertyEvaluator;
 import sorcer.util.exec.ExecUtils;
@@ -401,7 +402,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		}
 		if (result.getErr() != null && result.getErr().length() > 0)
 			shellOutput.println("cmd result err: " + result.getErr());
-		shellOutput.println("cmd exit value: " + result.getExitValue());
+		shellOutput.println("cmd exit eval: " + result.getExitValue());
 
 		if (result.getExitValue() != 0)
 			throw new RuntimeException("Failed to start " + appPath);
@@ -1112,13 +1113,13 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 						shellOutput.print(getUsage("http"));
 					/* First token will be "port" */
 					tok1.nextToken();
-					/* Next token must be the port value */
+					/* Next token must be the port eval */
 					String sPort = tok1.nextToken();
 					try {
 						port = Integer.parseInt(sPort);
 					} catch (NumberFormatException e) {
 						e.printStackTrace();
-						shellOutput.print("Bad port-number value : " + sPort
+						shellOutput.print("Bad port-number eval : " + sPort
 								+ "\n");
 					}
 				}
@@ -1411,7 +1412,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 				"output", PrintStream.class, System.out);
 		shellInput = new BufferedReader(new InputStreamReader(System.in));
 		groups = (String[]) sysConfig.getEntry(CONFIG_COMPONENT, "groups",
-				String[].class, DiscoveryGroupManagement.ALL_GROUPS);
+				String[].class, Sorcer.getLookupGroups());
 		String[] apps = (String[]) sysConfig.getEntry(
 				CONFIG_COMPONENT, "applications", String[].class,
 				new String[0]);
@@ -1419,8 +1420,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			appendApps(apps);
 		}
 
+		LookupLocator[] localLocators = new LookupLocator[] { new LookupLocator("jini://localhost") };
 		LookupLocator[] locators = (LookupLocator[]) sysConfig.getEntry(
-				CONFIG_COMPONENT, "locators", LookupLocator[].class, null);
+				CONFIG_COMPONENT, "locators", LookupLocator[].class, localLocators);
 
         debug = (Boolean) sysConfig.getEntry(CONFIG_COMPONENT,
                 "debug", boolean.class, Boolean.FALSE);

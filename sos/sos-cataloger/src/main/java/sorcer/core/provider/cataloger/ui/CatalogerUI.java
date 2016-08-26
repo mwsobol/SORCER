@@ -58,12 +58,12 @@ public class CatalogerUI extends JFrame {
 	 * invoked from the event-dispatching thread.
 	 */
 	private void createFrame() {
-		// Create and set up the window.
+		// Create and setValue up the window.
 		setTitle("Catalog Browser");
 		// closing is managed by a service browser
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 
-		// Create and set up the content pane.
+		// Create and setValue up the content pane.
 		BrowserModel b = new BrowserModel();
 		SignatureDispatchment s = new SignatureDispatcherForCataloger(b,
 				cataloger);
@@ -85,7 +85,7 @@ public class CatalogerUI extends JFrame {
 	 * this method is used for offline testing of the Cataloger UI
 	 */
 	private static void createAndShowGUI() {
-		// Create and set up the window.
+		// Create and setValue up the window.
 		JFrame frame = new JFrame("SplitPaneDemo");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

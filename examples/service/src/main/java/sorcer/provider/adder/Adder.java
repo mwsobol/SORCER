@@ -8,7 +8,9 @@ import java.rmi.RemoteException;
 @SuppressWarnings("rawtypes")
 public interface Adder {
 
-	public Context add(Context context) throws RemoteException, ContextException;
+	String RESULT_PATH = "eval/result";
 
-    public Context sum(Context context) throws RemoteException, ContextException;
+	Context add(Context context) throws RemoteException, ContextException;
+
+	Context sum(Context context) throws RemoteException, ContextException;
 }

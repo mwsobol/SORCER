@@ -183,7 +183,7 @@ public class DistribArray05 {
 	 * </p>
 	 * 
 	 * @param space
-	 *            the JavaSpace to set
+	 *            the JavaSpace to setValue
 	 * @return nothing
 	 */
 	public void setSpace(JavaSpace05 space) {

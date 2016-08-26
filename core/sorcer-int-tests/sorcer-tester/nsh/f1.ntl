@@ -15,16 +15,16 @@ import sorcer.util.SOS
 //deploy(configuration("org.sorcer:arithmetic:config:" + SOS.getSorcerVersion()),idle(1))
 
 Task f4 = task("f4", sig("multiply", Multiplier.class, deploy(configuration("org.sorcer:arithmetic:config:" + SOS.getSorcerVersion()),idle(1), Type.SELF)),
-	context("multiply", inEnt(path("arg/x1"), 10.0d), inEnt(path("arg/x2"), 50.0d),
-		outEnt(path("result/y1"), null)));
+	context("multiply", inVal(path("arg/x1"), 10.0d), inVal(path("arg/x2"), 50.0d),
+		outVal(path("result/y1"))));
 		
 Task f5 = task("f5", sig("add", Adder.class, deploy(configuration("org.sorcer:arithmetic:config:" + SOS.getSorcerVersion()),idle(1))),
-	context("add", inEnt(path("arg/x3"), 20.0d), inEnt(path("arg/x4"), 80.0d),
-		outEnt(path("result/y2"), null)));
+	context("add", inVal(path("arg/x3"), 20.0d), inVal(path("arg/x4"), 80.0d),
+		outVal(path("result/y2"))));
 
 Task f3 = task("f3", sig("subtract", Subtractor.class, deploy(configuration("org.sorcer:arithmetic:config:" + SOS.getSorcerVersion()),idle(1))),
-	context("subtract", inEnt(path("arg/x5"), null), inEnt(path("arg/x6"), null),
-		outEnt(path("result/y3"), null)));
+	context("subtract", inVal(path("arg/x5")), inVal(path("arg/x6")),
+		outVal(path("result/y3"))));
 		
 
 job("f1", sig("exert", Jobber.class, deploy(idle(1))), job("f2", f4, f5, strategy(Provision.YES, Flow.PAR, Access.PUSH)), f3, strategy(Provision.YES, Flow.SEQ, Access.PUSH),

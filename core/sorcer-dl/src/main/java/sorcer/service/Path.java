@@ -20,7 +20,7 @@ package sorcer.service;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Path implements Arg {
+public class Path implements Arg  {
 
 	private static final long serialVersionUID = 1L;
 
@@ -71,6 +71,14 @@ public class Path implements Arg {
 		return 	path + (info == null ? "" : ":" + info);
 	}
 
+	public static List<String> getNameList(List<Path> paths) {
+		List<String> sl = new ArrayList(paths.size());
+		for (int i = 0; i < paths.size(); i++)
+			sl.add(paths.get(i).path);
+
+		return sl;
+	}
+
 	public static List<String> getPathList(Path[] paths) {
 		List<String> sl = new ArrayList(paths.length);
 		for (int i = 0; i < paths.length; i++)
@@ -81,7 +89,6 @@ public class Path implements Arg {
 
 	public static List<Path> getPathList(List<String> paths) {
 		ArrayList pal = new ArrayList(paths.size());
-
 		for(int i = 0; i < paths.size(); ++i) {
 			pal.add(new Path(paths.get(i)));
 		}
