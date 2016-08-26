@@ -348,18 +348,22 @@ task distribution(type: Zip, dependsOn: [createDistribution]) {
 }
 
 def sorcerDistribution = file("build/sorcer-${version}.zip")
+def propertiesConfig = file("${project.buildDir.path}/sorcer-${version}/configs/versions.properties")
 artifacts {
     archives file: sorcerDistribution, name: 'distribution', type: 'zip', builtBy: distribution
+    archives file: propertiesConfig, classifier: "versions", type: "properties"
 }
 
 publishing {
     publications {
         distribution(MavenPublication) {
             artifact sorcerDistribution
+            artifact source: propertiesConfig, classifier: "versions"
         }
     }
     repositories {
-        maven { url "http://$enclaveRepo" }
+        //maven { url "http://$enclaveRepo" }
+        maven { url "file:///Users/dreedy/dev/src/projects/mstc/TEMP"}
     }
 }
 
