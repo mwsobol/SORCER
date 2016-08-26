@@ -198,7 +198,7 @@ public class LocalTaskExertions {
 	public void argTaskTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", new Multiply()),
 				context(
-						parameterTypes( double[].class),
+						types(double[].class),
 						args(new double[]{10.0, 50.0}),
 						result("result/y")));
 

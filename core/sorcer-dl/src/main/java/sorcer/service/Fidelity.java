@@ -88,7 +88,7 @@ public class Fidelity<T> implements Arg, net.jini.core.entry.Entry {
 
 	@Override
 	public String toString() {
-		return (path != null ? path + "@" + name : name);
+		return (path != null ? name + "@" + path : name);
 	}
 
 }

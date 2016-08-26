@@ -118,8 +118,8 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 				}
 			}
 
-			if ((val instanceof Proc) && (((Proc) val).asis() instanceof Variability)) {
-				bindVar((Variability) ((Proc) val).asis());
+			if ((val instanceof Proc) && (((Proc) val).asis() instanceof Entry)) {
+				bindEntry((Entry) ((Proc)val).asis());
 			} else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
 				((Scopable)((Scopable)val).getScope()).setScope(this);
 			} else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
@@ -205,20 +205,18 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			return new Proc(name, asis(name), this);
 	}
 	
-	public Variability bindVar(Variability var) throws EvaluationException,
-			ContextException, RemoteException {
-		ArgSet args = var.getArgs();
+	public Entry bindEntry(Entry ent) throws ContextException, RemoteException {
+		ArgSet args = ent.getArgs();
 		if (args != null) {
 			for (Arg v : args)
 				if (get(v.getName()) != null) {
-					((Variability) v).setValue(getValue(v.getName()));
+					((Entry) v).setValue(getValue(v.getName()));
 				}
 		}
-		return var;
+		return ent;
 	}
 	
-	public ProcModel add(List<Identifiable> objects) throws EvaluationException,
-			RemoteException, ContextException {
+	public ProcModel add(List<Identifiable> objects) throws RemoteException, ContextException {
 		Identifiable[] objs = new Identifiable[objects.size()];
 		objects.toArray(objs);
 		add(objs);

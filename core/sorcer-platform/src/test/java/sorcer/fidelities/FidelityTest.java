@@ -32,26 +32,28 @@ public class FidelityTest {
     @Test
     public void projectionOfToString() {
 
-        Projection fl1 = po(fi("atX", "x1"));
+        Projection fl1 = po(fi("x1", "atX"));
         logger.info("as String: " + fl1);
-        assertEquals(fl1.toString(), "fis(fi(\"atX\", \"x1\"))");
+        assertEquals(fl1.toString(), "fis(fi(\"x1\", \"atX\"))");
 
-        Projection fl2 = po(fi("atX", "x1"), fi("atY", "y2"));
+        Projection fl2 = po(fi("x1", "atX"), fi("y2", "atY"));
         logger.info("as String: " + fl2);
-        assertEquals(fl2.toString(), "fis(fi(\"atX\", \"x1\"), fi(\"atY\", \"y2\"))");
+        assertEquals(fl2.toString(), "fis(fi(\"x1\", \"atX\"), fi(\"y2\", \"atY\"))");
 
     }
 
     @Test
     public void fisToString() {
 
-        FidelityList fl1 = fis(fi("atX", "x1"));
-        logger.info("as String: " + fl1);
-        assertEquals(fl1.toString(), "fis(fi(\"atX\", \"x1\"))");
+        FidelityList fl1 = fis(fi("x1", "atX"));
+        logger.info("as String fl1: " + fl1);
+        assertEquals(fl1.toString(), "fis(fi(\"x1\", \"atX\"))");
 
-        FidelityList fl2 = fis(fi("atX", "x1"), fi("atY", "y2"));
-        logger.info("as String: " + fl2);
-        assertEquals(fl2.toString(), "fis(fi(\"atX\", \"x1\"), fi(\"atY\", \"y2\"))");
+        FidelityList fl2 = fis(fi("x1", "atX"), fi("y2", "atY"));
+        logger.info("as String fl2: " + fl2);
+		logger.info("as String fl3: " + "fis(fi(\"x1\", \"atX\"), fi(\"y2\", \"atY\"))");
+
+		assertEquals(fl2.toString(), "fis(fi(\"x1\", \"atX\"), fi(\"y2\", \"atY\"))");
 
     }
 
@@ -148,23 +150,23 @@ public class FidelityTest {
 
 	@Test
 	public void getProjection() throws EvaluationException {
-		String fis = "po(fi('tip/displacement', 'astros'))";
+		String fis = "po(fi('astros', 'tip/displacement'))";
 
 		Projection fl = (Projection) eval(expr(fis));
 		logger.info("fi map populated: " + fl);
-   		assertTrue(fl.equals(po(fi("tip/displacement", "astros"))));
+   		assertTrue(fl.equals(po(fi("astros", "tip/displacement"))));
 	}
 
 	@Test
 	public void projectionTests() throws Exception {
-		ServiceFidelity<Fidelity> sFi1 = fi("job1", cFi("j1/j2", "net"),
-				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2"));
+		ServiceFidelity<Fidelity> sFi1 = fi("job1", fi("net", "j1/j2"),
+				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"));
 
-		ServiceFidelity<Fidelity> sFi2 = fi("job2", cFi("j1/j2", "net"),
-				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2"), sFi1);
+		ServiceFidelity<Fidelity> sFi2 = fi("job2", fi("net", "j1/j2"),
+				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"), sFi1);
 
-		ServiceFidelity<Fidelity> sFi3 = fi("job3", cFi("j1/j2", "net"),
-				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2"), sFi1, sFi2);
+		ServiceFidelity<Fidelity> sFi3 = fi("job3", fi("net", "j1/j2"),
+				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"), sFi1, sFi2);
 
 		Projection p1 = po(sFi1);
 		logger.info("projection: " + p1);

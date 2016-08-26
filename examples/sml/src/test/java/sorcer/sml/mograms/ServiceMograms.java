@@ -146,7 +146,7 @@ public class ServiceMograms {
                         mdl));
 
 //        logger.info("DEPS: " + printDeps(looping));
-        looping = exert(looping, fi("by", "by-20"));
+        looping = exert(looping, fi("by-20", "by"));
         logger.info("block context: " + context(looping));
         logger.info("result: " + value(context(looping), "out"));
         logger.info("model result: " + value(result(mdl), "out"));

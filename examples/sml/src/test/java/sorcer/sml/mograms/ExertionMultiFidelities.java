@@ -65,11 +65,11 @@ public class ExertionMultiFidelities {
             t3,
             pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
             pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-            fi("job1", cFi("j1/j2/t4", "object"), cFi("j1/j2/t5", "net")),
-            fi("job2",  cFi("j1/j2", "net"),
-                cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")),
-            fi("job3",  cFi("j1", "net"), cFi("j1/j2", "net"),
-                cFi("j1/t3", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")));
+            fi("job1", fi("object", "j1/j2/t4"), fi("net", "j1/j2/t5")),
+            fi("job2",  fi("net", "j1/j2"),
+                fi("net", "j1/t3"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")),
+            fi("job3",  fi("j1", "net"), fi("j1/j2", "net"),
+                fi("net", "j1/t3"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")));
 
         return (Job)tracable(job);
     }
@@ -95,7 +95,7 @@ public class ExertionMultiFidelities {
 
         //Local Jobbers with remote Multiplier nad Adder
         job = getMultiFiJob();
-        job = exert(job, fi("object"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net"));
+        job = exert(job, fi("object"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net"));
         out = upcontext(job);
         logger.info("job context: " + out);
         logger.info("job trace: " + trace(job));
@@ -103,7 +103,7 @@ public class ExertionMultiFidelities {
 
         // Local Jobbers, Adder, and Multiplier with remote Subtractor
         job = getMultiFiJob();
-        job = exert(job, fi("object"), cFi("j1/t3", "net"));
+        job = exert(job, fi("object"), fi("j1/t3", "net"));
         out = upcontext(job);
         logger.info("job context: " + out);
         logger.info("job trace: " + trace(job));
@@ -186,11 +186,11 @@ public class ExertionMultiFidelities {
 			t3,
 			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-			fi("job1", cFi("j1/j2/t4", "object1"), cFi("j1/j2/t5", "object2")),
-			fi("job2", cFi("j1/j2", "net"),
-				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2")),
-			fi("job3", cFi("j1", "object2"), cFi("j1/j2", "object2"),
-				cFi("j1/t3", "object2"), cFi("j1/j2/t4", "object2"), cFi("j1/j2/t5", "object2")));
+			fi("job1", fi("object1", "j1/j2/t4"), fi("object2", "j1/j2/t5")),
+			fi("job2", fi("net", "j1/j2"),
+				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5")),
+			fi("job3", fi("object2", "j1"), fi("object2", "j1/j2"),
+				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5")));
 
 		return (Job) tracable(job);
 	}

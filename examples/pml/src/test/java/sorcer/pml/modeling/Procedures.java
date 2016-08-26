@@ -33,12 +33,12 @@ public class Procedures {
 	private final static Logger logger = LoggerFactory.getLogger(Procedures.class.getName());
 
 	@Test
-	public void parScope() throws Exception {
+	public void procScope() throws Exception {
 		// a proc is a variable (entry) evaluated with its own scope (context)
 		Context<Double> cxt = context(proc("x", 20.0), proc("y", 30.0));
 
 		// proc with its context scope
-		Proc<?> add = proc("add", invoker("x + y", args("x", "y")), cxt);
+		Proc add = proc("add", invoker("x + y", args("x", "y")), cxt);
 		logger.info("proc eval: " + eval(add));
 		assertTrue(eval(add).equals(50.0));
 	}
@@ -48,7 +48,7 @@ public class Procedures {
 	public void contextScope() throws Exception {
 
 		Context<Double> cxt = context(proc("x", 20.0), proc("y", 30.0));
-		Proc<?> add = proc("add", invoker("x + y", args("x", "y")), cxt);
+		Proc add = proc("add", invoker("x + y", args("x", "y")), cxt);
 
 		// adding a proc to the context updates proc's scope
 		add(cxt, add);
@@ -64,18 +64,18 @@ public class Procedures {
 	public void closingParWihEntries() throws Exception {
 		Proc y = proc("y",
 				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
-		Object val = eval(y, proc("x1", 10.0), proc("x2", 50.0), proc("x3", 20.0), proc("x4", 80.0));
+		Object val = eval(y, val("x1", 10.0), val("x2", 50.0), val("x3", 20.0), val("x4", 80.0));
 		// logger.info("y eval: " + val);
 		assertEquals(val, 400.0);
 	}
 
 	@Test
-	public void closingParWitScope() throws Exception {
+	public void closingProcWitScope() throws Exception {
 
 		// invokers use contextual scope of args
 		Proc<?> add = proc("add", invoker("x + y", args("x", "y")));
 
-		Context<Double> cxt = context(proc("x", 10.0), proc("y", 20.0));
+		Context<Double> cxt = context(val("x", 10.0), val("y", 20.0));
 		logger.info("proc eval: " + eval(add, cxt));
 		// evaluate a proc
 		assertTrue(eval(add, cxt).equals(30.0));
@@ -113,12 +113,12 @@ public class Procedures {
 	}
 
 	@Test
-	public void parFidelities() throws Exception {
+	public void procFidelities() throws Exception {
 		
 		Proc<Double> dbp = dbPar("shared/eval", 25.0);
 		
 		Proc multi = proc("multi",
-				parFi(ent("init/eval"),
+				procFi(ent("init/eval"),
 				dbp,
 				proc("invoke", invoker("x + y", args("x", "y")))));
 		
@@ -127,16 +127,16 @@ public class Procedures {
 		
 		setValue(dbp, 50.0);
 
-		assertTrue(eval(multi, cxt, parFi("shared/eval")).equals(50.0));
+		assertTrue(eval(multi, cxt, procFi("shared/eval")).equals(50.0));
 
-		assertTrue(eval(multi, cxt, parFi("init/eval")).equals(49.0));
+		assertTrue(eval(multi, cxt, procFi("init/eval")).equals(49.0));
 
-		assertTrue(eval(multi, cxt, parFi("invoke")).equals(30.0));
+		assertTrue(eval(multi, cxt, procFi("invoke")).equals(30.0));
 
 	}
 	
 	@Test
-	public void parModelOperator() throws Exception {
+	public void procModelOperator() throws Exception {
 		
 		ProcModel pm = procModel("proc-model", proc("v1", 1.0), proc("v2", 2.0));
 		add(pm, proc("x", 10.0), proc("y", 20.0));

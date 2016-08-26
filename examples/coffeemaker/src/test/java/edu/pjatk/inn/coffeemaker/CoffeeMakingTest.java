@@ -67,7 +67,7 @@ public class CoffeeMakingTest {
 	public void cleanUp() throws Exception {
 		Exertion cmt =
 				task(sig("deleteRecipes", CoffeeMaking.class),
-						context(parameterTypes(), args()));
+						context(types(), args()));
 
 		cmt = exert(cmt);
 		logger.info("deleted recipes context: " + context(cmt));
@@ -86,7 +86,7 @@ public class CoffeeMakingTest {
 	@Test
 	public void addRecepie() throws Exception {
 		Task cmt = task(sig("addRecipe", CoffeeMaking.class),
-				context(parameterTypes(Recipe.class), args(espresso),
+				context(types(Recipe.class), args(espresso),
 						result("recipe/added")));
 
 		assertEquals(eval(cmt), true);
@@ -96,11 +96,11 @@ public class CoffeeMakingTest {
 	public void addRecipes() throws Exception {
 		Exertion cmj = job("recipes",
 				task("mocha", sig("addRecipe", CoffeeMaking.class),
-					context(parameterTypes(Recipe.class), args(mocha))),
+					context(types(Recipe.class), args(mocha))),
 				task("macchiato", sig("addRecipe", CoffeeMaking.class),
-						context(parameterTypes(Recipe.class), args(macchiato))),
+						context(types(Recipe.class), args(macchiato))),
 				task("americano", sig("addRecipe", CoffeeMaking.class),
-						context(parameterTypes(Recipe.class), args(americano))));
+						context(types(Recipe.class), args(americano))));
 
 		cmj = exert(cmj);
 		Context out = upcontext(cmj);
@@ -113,7 +113,7 @@ public class CoffeeMakingTest {
 	@Test
 	public void getRecepies() throws Exception {
 		Exertion cmt = task(sig("getRecipes", CoffeeMaking.class),
-				context(parameterTypes(), args()));
+				context(types(), args()));
 		cmt = exert(cmt);
 		logger.info("getRecipes: " + context(cmt));
 	}
@@ -123,9 +123,9 @@ public class CoffeeMakingTest {
 
 		Exertion cmj = job("coffee",
 				task("recipe", sig("addRecipe", CoffeeMaking.class),
-						context(parameterTypes(Recipe.class), args(espresso))),
+						context(types(Recipe.class), args(espresso))),
 				task("pay", sig("makeCoffee", CoffeeMaking.class),
-						context(parameterTypes(Recipe.class, int.class), args(espresso, 200))));
+						context(types(Recipe.class, int.class), args(espresso, 200))));
 		cmj = exert(cmj);
 		logger.info("job context: " + upcontext(cmj));
 		logger.info("change: " + value(upcontext(cmj), "coffee/pay/context/result"));

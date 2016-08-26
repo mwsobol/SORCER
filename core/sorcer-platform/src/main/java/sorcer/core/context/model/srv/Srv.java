@@ -8,6 +8,7 @@ import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.plexus.MorphFidelity;
 import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.ServiceModel;
@@ -185,12 +186,42 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
                 } else {
                     return cxt;
                 }
+            } else if (_2 instanceof MorphFidelity) {
+                return execMorphFidelity((MorphFidelity) _2, entries);
             } else {
                 return super.getValue(entries);
             }
         } catch (Exception e) {
             throw new EvaluationException(e);
         }
+    }
+
+    private Object execMorphFidelity(MorphFidelity mFi, Arg... entries)
+        throws ServiceException, RemoteException, TransactionException {
+        Object obj = mFi.getSelect();
+        Object out = null;
+        if (obj instanceof Scopable) {
+            ((Scopable)obj).setScope(scope);
+            isValid(false);
+        }
+        if (obj instanceof Entry) {
+            out = ((Entry) obj).getValue(entries);
+        } else if (obj instanceof Mogram) {
+            Context cxt = ((Mogram)obj).exert(entries).getContext();
+            Object val = cxt.getValue(Context.RETURN);
+            if (val != null) {
+                return val;
+            } else {
+                return cxt;
+            }
+        }  else if (obj instanceof Service) {
+            out = ((Service)obj).exec(entries);
+        } else {
+            return obj;
+        }
+        mFi.setChanged();
+        mFi.notifyObservers(out);
+        return out;
     }
 
     public Object execSignature(Signature sig, Context scope) throws MogramException {

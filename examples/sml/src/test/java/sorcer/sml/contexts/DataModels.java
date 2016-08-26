@@ -126,8 +126,8 @@ public class DataModels {
         assertEquals(select(cxt, 2, 4, 5), list(1.2, 1.4, 1.5));
 
         // get input and output contexts
-        List<String> allInputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5", "proc/z");
-        List<String> inputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5");
+        List<String> allInputs = list("arg/x1", "arg/x2", "arg/x3", "arg/x4", "arg/x5", "proc/z");
+        List<String> inputs = list("arg/x1", "arg/x2", "arg/x3", "arg/x4", "arg/x5");
         List<String> outputs = list("out/y1", "out/y2", "proc/z");
 
         assertTrue(allInputs.equals(paths(allInputs(cxt))));
@@ -135,10 +135,10 @@ public class DataModels {
         assertTrue(outputs.equals(paths(outputs(cxt))));
 
         // return all values of inEntries
-        assertEquals(inCotextValues(cxt), list(1.5, 1.4, 1.3, 1.2));
+        assertEquals(inCotextValues(cxt), list(1.5, 1.4, 1.3, 1.2, 1.1));
 
         // return all paths of inEntries
-        assertEquals(inContextPaths(cxt), list("arg/x5", "arg/x4", "arg/x3", "arg/x2"));
+        assertEquals(inContextPaths(cxt), list("arg/x5", "arg/x4", "arg/x3", "arg/x2", "arg/x1"));
 
         // return all values of outEntries
         assertEquals(outContextValues(cxt), list(1.8, 1.7, 1.9));

@@ -88,7 +88,7 @@ public class ExchangeTasks {
 		int[] in = intArray();
 		Task ex = task(sig("exchangeInts", ExchangeProviderImpl.class),
 				context(
-						parameterTypes(int[].class),
+						types(int[].class),
 						args(in),
 						result("values")));
 
@@ -228,7 +228,7 @@ public class ExchangeTasks {
 		int[] in = intArray();
 		Task ex = task(sig("exchangeInts", ExchangeProviderImpl.class),
 				context(
-						parameterTypes(int[].class),
+						types(int[].class),
 						args(in),
 						result("values")));
 
@@ -248,7 +248,7 @@ public class ExchangeTasks {
 		int[] in = intArray();
 		Task ex = task(sig("exchangeInts", ExchangeRemote.class,  prvName("Exchange")),
 				context(
-						parameterTypes(int[].class),
+						types(int[].class),
 						args(in),
 						result("values")));
 
@@ -314,7 +314,7 @@ public class ExchangeTasks {
 	public void ipcSmartIntegerArrayTest() throws Exception {
 		Signature ipcSig = sig("ipcIntegerArray", IpcArray.class);
 		Task ipc = task(ipcSig,
-					context(parameterTypes(int[].class),
+					context(types(int[].class),
 						args(intArray()),
 						result("output")));
 

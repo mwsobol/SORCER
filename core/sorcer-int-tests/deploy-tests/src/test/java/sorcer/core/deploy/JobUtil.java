@@ -23,7 +23,7 @@ import sorcer.core.provider.Jobber;
 import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
 
-import static sorcer.co.operator.*;
+import static sorcer.co.operator.outVal;
 import static sorcer.eo.operator.*;
 
 /**
@@ -31,7 +31,7 @@ import static sorcer.eo.operator.*;
  *
  * @author Dennis Reedy
  */
-public class JobUtil {
+class JobUtil {
 
     static Job createJob() throws ContextException, SignatureException, ExertionException {
         return createJob(false);
@@ -69,6 +69,42 @@ public class JobUtil {
                    strategy(Provision.YES),
                    pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
                    pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
+    }
+
+    static Job createFixedProvisioningJob() throws SignatureException, ContextException, ExertionException {
+        Task f4 = task(
+            "f4",
+            sig("multiply",
+                Multiplier.class,
+                deploy(configuration(getConfigDir()+"/multiplier-prv.config"),
+                       idle(1),
+                       fixed())),
+            context("multiply", operator.inVal("arg/x1", 10.0d),
+                    operator.inVal("arg/x2", 50.0d), outVal("result/y1", null)));
+
+        Task f5 = task(
+            "f5",
+            sig("add",
+                Adder.class,
+                deploy(configuration(getConfigDir()+"/AdderProviderConfig.groovy"))),
+            context("add", operator.inVal("arg/x3", 20.0d), operator.inVal("arg/x4", 80.0d),
+                    outVal("result/y2", null)));
+
+        Task f3 = task(
+            "f3",
+            sig("subtract",
+                Subtractor.class,
+                deploy(maintain(2, fixed()),
+                       idle(1),
+                       configuration(getConfigDir()+"/subtractor-prv.config"))),
+            context("subtract", operator.inVal("arg/x5", null),
+                    operator.inVal("arg/x6"), outVal("result/y3")));
+
+        return job("f1", sig("exert", Jobber.class, "Jobber"),
+                   job(sig("exert", Jobber.class, "Jobber"), "f2", f4, f5), f3,
+                   strategy(Strategy.Provision.YES),
+                   pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+                     pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
     }
 
     static Job createJobWithIPAndOpSys() throws SignatureException, ContextException, ExertionException {
@@ -130,7 +166,8 @@ public class JobUtil {
                    pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
     }
 
-    static  String getConfigDir() {
-        return String.format("%s/src/test/resources/deploy/configs", System.getProperty("user.dir"));
+    static String getConfigDir() {
+        //return String.format("%s/src/test/resources/deploy/configs", System.getProperty("user.dir"));
+        return System.getProperty("deploy.configs");
     }
 }

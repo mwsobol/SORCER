@@ -151,6 +151,10 @@ public class operator {
         return ((ServiceContext)model).getMogramStrategy().getOutcome();
     }
 
+    public static Object result(ServiceModel model, String path) throws ContextException {
+        return ((ServiceContext)model).getMogramStrategy().getOutcome().asis(path);
+    }
+
     public static Object get(ServiceModel model, String path) throws ContextException {
         return ((ServiceContext)((ServiceContext)model).getMogramStrategy().getOutcome()).get(path);
     }

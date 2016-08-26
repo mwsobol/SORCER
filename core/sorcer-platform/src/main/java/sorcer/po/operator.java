@@ -95,6 +95,71 @@ public class operator {
 		return p;
 	}
 
+	public static Srv srv(ServiceFidelity<Signature> fidelity) {
+		Srv service = new Srv(fidelity.getName(), fidelity);
+		return service;
+	}
+
+	public static <T extends Arg> Srv srv(String name, ServiceFidelity<T> fidelity) {
+		Srv service = new Srv(name, fidelity);
+		return service;
+	}
+
+	public static Srv srv(String name, MorphFidelity<Signature> fidelity) {
+		Srv service = new Srv(name, fidelity);
+		return service;
+	}
+
+	public static Srv srv(String name, Identifiable item) {
+		return srv(name,  item,  null);
+	}
+
+	public static Srv srv(Identifiable item, Context context) {
+		return srv(null,  item,  context);
+	}
+
+	public static Srv srv(String name, Identifiable item, Context context, Arg... args) {
+		String srvName = item.getName();
+		Srv srv = null;
+		if (name != null)
+			srvName = name;
+
+		if (item instanceof Signature) {
+			srv = new Srv(srvName,
+					new SignatureEntry(item.getName(), (Signature) item, context));
+		} else if (item instanceof Mogram) {
+			srv = new Srv(srvName,
+					new MogramEntry(item.getName(), (Mogram) item));
+		} else {
+			srv = new Srv(srvName, item);
+		}
+		try {
+			srv.substitute(args);
+		} catch (SetterException e) {
+			e.printStackTrace();
+		}
+		return srv;
+	}
+
+	public static Srv srv(Identifiable item) {
+		return srv(null, item);
+	}
+
+	public static Srv srv(String name, String path, Model model) {
+		return new Srv(path, model, name);
+	}
+
+	public static Srv srv(String name, String path, Model model, Variability.Type type) {
+		return new Srv(path, model, name, type);
+	}
+
+	public static Srv aka(String name, String path) {
+		return new Srv(path, null, name);
+	}
+
+	public static Srv alias(String name, String path) {
+		return new Srv(path, null, name);
+	}
 	public static Proc dPar(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
 		Proc p = new Proc(identifiable.getName(), identifiable);
 		p.setPersistent(true);
@@ -126,19 +191,19 @@ public class operator {
 		return parameter;
 	}
 
-	public static EntryList parFi(String name, Entry... entries) {
+	public static EntryList procFi(String name, Entry... entries) {
 		return new EntryList(name, entries);
 	}
 
-	public static EntryList parFi(Entry... entries) {
+	public static EntryList procFi(Entry... entries) {
 		return new EntryList(entries);
 	}
 
-	public static ServiceFidelity<Arg> parFi(String name) {
+	public static ServiceFidelity<Arg> procFi(String name) {
 		return new ServiceFidelity(name);
 	}
 
-	public static Entry parFi(Proc procEntry) {
+	public static Entry procFi(Proc procEntry) {
 		Entry fi = new Entry(procEntry.getSelectedFidelity(), procEntry.getFidelities()
 				.get(procEntry.getSelectedFidelity()));
 		return fi;
@@ -561,14 +626,6 @@ public class operator {
 		return new ExecPath(name, invoker);
 	}
 
-	public static InputEntry input(Proc procEntry) {
-		return new InputEntry(procEntry.getName(), procEntry, 0);
-	}
-
-	public static InputEntry in(Proc procEntry) {
-		return input(procEntry);
-	}
-
 	public static ServiceModel scope(Proc procEntry) {
 		return procEntry.getScope();
 	}
@@ -589,15 +646,15 @@ public class operator {
 	public static <T extends Arg> Srv ent(String name, MorphFidelity<T> fidelity) {
         fidelity.setPath(name);
         fidelity.getFidelity().setPath(name);
-        return sorcer.co.operator.srv(name, fidelity);
+        return srv(name, fidelity);
     }
 
 	public static Srv ent(String name, ServiceFidelity<Signature> fidelity) {
-        return sorcer.co.operator.srv(name, fidelity);
+        return srv(name, fidelity);
     }
 
 	public static Srv ent(ServiceFidelity<Signature> fidelity) {
-        return sorcer.co.operator.srv(fidelity);
+        return srv(fidelity);
     }
 
 	public static <T> Entry<T> ent(Path path, T value, Arg... args) {
@@ -610,7 +667,14 @@ public class operator {
 		Entry<T> entry = null;
 		if (value instanceof Invocation || value instanceof Evaluation) {
 			entry = new Proc<T>(path, value);
-		} else if (value instanceof Signature || value instanceof ServiceFidelity) {
+		} else if (value instanceof Signature) {
+			Mogram mog = Arg.getMogram(args);
+			Context cxt = null;
+			if (mog instanceof Context) {
+				cxt = (Context)mog;
+			}
+			entry = (Entry<T>) srv(path, (Identifiable)value, cxt, args);
+		} else if (value instanceof ServiceFidelity) {
 			entry = (Entry<T>) new Srv(path, value);
 		} else if (value instanceof MultiFiRequest) {
 			try {
@@ -652,10 +716,10 @@ public class operator {
 	}
 
 	public static Srv ent(Signature sig) {
-		return sorcer.co.operator.srv(sig);
+		return srv(sig);
 	}
 
-	public static Entry<Object>  ent(String path) {
+	public static Entry ent(String path) {
 		return new Entry(path, null);
 	}
 

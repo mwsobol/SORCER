@@ -32,7 +32,7 @@ public interface Deployment extends Arg, Serializable {
      * Type.FED), and no provisioning (suspended provisioning) for a signature
      * (NONE)
      */
-    public enum Type {
+    enum Type {
         SELF, FED, NONE
     }
     
@@ -47,29 +47,44 @@ public interface Deployment extends Arg, Serializable {
      *     incremented within it's current deployment.</li>
      * </ul>.
      */
-    public enum Unique {
+    enum Unique {
         YES, NO
     }
+
+    /**
+     *
+     * <ul>
+     *     <li>DYNAMIC indicates that a service will be deployed to available machine instances that support the
+     *     service's operational criteria up to the amount specified by the number of planned instances.</li>
+     *     <li>FIXED type that the service will be deployed to every machine instance that supports the
+     *     service's operational criteria, and every machine will have the number of planned instances.</li>
+     * </ul>
+     */
+    enum Strategy {
+        DYNAMIC, FIXED
+    }
     
-    public Type getType();
+    Type getType();
     
-    public Unique getUnique();
+    Unique getUnique();
     
-    public String getArchitecture(); 
+    String getArchitecture();
         
-    public int getMultiplicity();
+    int getMultiplicity();
 
-    public String[] getCodebaseJars();
+    String[] getCodebaseJars();
    
-    public String[] getClasspathJars();
+    String[] getClasspathJars();
 
-    public String getImpl();
+    String getImpl();
 
-    public String getServiceType();
+    String getServiceType();
 
-    public String getProviderName();
+    String getProviderName();
  
-    public String getWebsterUrl();
+    String getWebsterUrl();
 
-    public int getIdle();
+    int getIdle();
+
+    Strategy getStrategy();
 }

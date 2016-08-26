@@ -108,23 +108,23 @@ public class Projection extends ServiceFidelity<Fidelity> {
 			int tally = fis.size();
 			sb.append("fis(");
 			if (tally > 0) {
-				sb.append("fi(\"").append(fis.get(0).getPath()).append("\", \"");
+				sb.append("fi(\"").append(fis.get(0).getName()).append("\", \"");
 				if (tally == 1)
-					sb.append(fis.get(0).getName()).append("\")");
+					sb.append(fis.get(0).getPath()).append("\")");
 				else
-					sb.append(fis.get(0).getName()).append("\"), ");
+					sb.append(fis.get(0).getPath()).append("\"), ");
 
 				for (int i = 1; i < tally - 1; i++) {
-					sb.append("fi(\"").append(fis.get(i).getPath()).append("\", \"");
+					sb.append("fi(\"").append(fis.get(i).getName()).append("\", \"");
 					if (tally == 1)
-						sb.append(fis.get(i).getName()).append("\")");
+						sb.append(fis.get(i).getPath()).append("\")");
 					else
-						sb.append(fis.get(i).getName()).append("\"), ");
+						sb.append(fis.get(i).getPath()).append("\"), ");
 				}
 
 				if (tally > 1) {
-					sb.append("fi(\"").append(fis.get(tally - 1).getPath()).append("\", \"");
-					sb.append(fis.get(tally - 1).getName()).append("\")");
+					sb.append("fi(\"").append(fis.get(tally - 1).getName()).append("\", \"");
+					sb.append(fis.get(tally - 1).getPath()).append("\")");
 				}
 
 			}

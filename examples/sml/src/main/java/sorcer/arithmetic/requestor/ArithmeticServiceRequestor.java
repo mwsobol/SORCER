@@ -49,8 +49,8 @@ public class ArithmeticServiceRequestor extends ServiceRequestor {
 					t3,
 					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-					fi("job1", cFi("j1", "net"), cFi("j1/j2/t4", "net")),
-					fi("job2", cFi("j1", "net"), cFi("j1/j2/t4", "net"), cFi("j1/j2/t5", "net")));
+					fi("job1", fi("net", "j1"), fi("net", "j1/j2/t4")),
+					fi("job2", fi("net", "j1"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")));
 
 		} catch (Exception e) {
 			throw new MogramException(e);

@@ -70,8 +70,8 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.co.operator.rasis;
-import static sorcer.co.operator.srv;
 import static sorcer.mo.operator.*;
+import static sorcer.po.operator.srv;
 
 /**
  * Operators defined for the Service Modeling Language (SML).
@@ -250,7 +250,6 @@ public class operator {
 		return context(entries);
 	}
 
-
 	public static Context context(Object... entries) throws ContextException {
 		// do not create a context from Context, jut return
 		if (entries == null || entries.length == 0) {
@@ -305,11 +304,13 @@ public class operator {
 		ReturnPath returnPath = null;
 		ExecPath execPath = null;
 		Args cxtArgs = null;
-		ParameterTypes parameterTypes = null;
+		ParTypes parTypes = null;
 		PathResponse response = null;
 		QueueStrategy modelStrategy = null;
 		Signature sig = null;
 		Class customContextClass = null;
+		Out outPaths = null;
+		In inPaths = null;
 		boolean autoDeps = true;
 		for (Object o : entries) {
 			if (o instanceof Complement) {
@@ -317,9 +318,9 @@ public class operator {
 			} else if (o instanceof Args) {
 //					&& ((Args) o).args.getClass().isArray()) {
 				cxtArgs = (Args) o;
-			} else if (o instanceof ParameterTypes)  {
-//					&& ((ParameterTypes) o).parameterTypes.getClass().isArray()) {
-				parameterTypes = (ParameterTypes) o;
+			} else if (o instanceof ParTypes)  {
+//					&& ((ParTypes) o).types.getClass().isArray()) {
+				parTypes = (ParTypes) o;
 			} else if (o instanceof PathResponse) {
 				response = (PathResponse) o;
 			} else if (o instanceof ReturnPath) {
@@ -356,6 +357,10 @@ public class operator {
 				projection = ((Projection)o);
 			} else if (o.equals(Strategy.Flow.EXPLICIT)) {
 				autoDeps = false;
+			} else if (o instanceof Out) {
+				outPaths = (Out)o;
+			} else if (o instanceof In) {
+				inPaths = (In)o;
 			}
 		}
 
@@ -402,7 +407,6 @@ public class operator {
 			}
 		}
 
-
 		if (cxt instanceof PositionalContext) {
 			PositionalContext pcxt = (PositionalContext) cxt;
 			if (entryList.size() > 0)
@@ -427,16 +431,16 @@ public class operator {
 			}
 			((ServiceContext) cxt).setArgs(cxtArgs.args);
 		}
-		if (parameterTypes != null) {
-			if (parameterTypes.path() != null) {
-				((ServiceContext) cxt).setParameterTypesPath(parameterTypes
+		if (parTypes != null) {
+			if (parTypes.path() != null) {
+				((ServiceContext) cxt).setParameterTypesPath(parTypes
 						.path());
 			} else {
 				((ServiceContext) cxt)
 						.setParameterTypesPath(Context.PARAMETER_TYPES);
 			}
 			((ServiceContext) cxt)
-					.setParameterTypes(parameterTypes.parameterTypes);
+					.setParameterTypes(parTypes.parameterTypes);
 		}
 		if (response != null) {
 			if (response.path() != null) {
@@ -464,6 +468,20 @@ public class operator {
 				path = e.getName();
 				dependentPaths = e.value();
 				dm.put(path, dependentPaths);
+			}
+		}
+		if (outPaths instanceof Out) {
+			if (cxt.getReturnPath() == null) {
+				cxt.setReturnPath(new ReturnPath(outPaths));
+			} else {
+				((ReturnPath)cxt.getReturnPath()).outPaths = (outPaths).getExtPaths();
+			}
+		}
+		if (inPaths instanceof In) {
+			if (cxt.getReturnPath() == null) {
+				cxt.setReturnPath(new ReturnPath(inPaths));
+			} else {
+				((ReturnPath)cxt.getReturnPath()).inPaths = inPaths.getSigPaths();
 			}
 		}
 		if (accessType != null)
@@ -540,52 +558,55 @@ public class operator {
 	protected static void popultePositionalContext(PositionalContext pcxt,
 												   List<Entry> entryList) throws ContextException {
 		for (int i = 0; i < entryList.size(); i++) {
-			Entry t = entryList.get(i);
-			if (t instanceof Srv) {
+			Entry ent = entryList.get(i);
+			if (ent instanceof Srv) {
 				try {
-					if (t.asis() instanceof Scopable) {
-						if (((Scopable) t.value()).getScope() != null)
-							((ServiceContext)((Scopable) t.value()).getScope()).setScope(pcxt);
+					if (ent.asis() instanceof Scopable) {
+						if (((Scopable) ent.value()).getScope() != null)
+							((ServiceContext)((Scopable) ent.value()).getScope()).setScope(pcxt);
 						else
-							((Scopable) t.value()).setScope(pcxt);
+							((Scopable) ent.value()).setScope(pcxt);
 					}
 				} catch (RemoteException e) {
 					throw new ContextException(e);
+
+
+
 				}
-				pcxt.putInoutValueAt(t.path(), t, i + 1);
-			} else if (t instanceof InputEntry || t.getType().equals(Variability.Type.INPUT)) {
-				Object par = t.value();
+				pcxt.putInoutValueAt(ent.path(), ent, i + 1);
+			} else if (ent instanceof InputEntry || ent.getType().equals(Variability.Type.INPUT)) {
+				Object par = ent.value();
 				if (par instanceof Scopable) {
 					((Scopable) par).setScope(pcxt);
 				}
-				if (t.isPersistent()) {
-					setProc(pcxt, t, i);
+				if (ent.isPersistent()) {
+					setProc(pcxt, ent, i);
 				} else {
-					pcxt.putInValueAt(t.path(), t.value(), i + 1);
+					pcxt.putInValueAt(ent.path(), ent.value(), i + 1);
 				}
-			} else if (t instanceof OutputEntry || t.getType().equals(Variability.Type.OUTPUT)) {
-				if (t.isPersistent()) {
-					setProc(pcxt, t, i);
+			} else if (ent instanceof OutputEntry || ent.getType().equals(Variability.Type.OUTPUT)) {
+				if (ent.isPersistent()) {
+					setProc(pcxt, ent, i);
 				} else {
-					pcxt.putOutValueAt(t.path(), t.value(), t.getValClass(), i + 1);
+					pcxt.putOutValueAt(ent.path(), ent.value(), ent.getValClass(), i + 1);
 				}
-			} else if (t instanceof InoutEntry || t.getType().equals(Variability.Type.INOUT)) {
-				if (t.isPersistent()) {
-					setProc(pcxt, t, i);
+			} else if (ent instanceof InoutEntry || ent.getType().equals(Variability.Type.INOUT)) {
+				if (ent.isPersistent()) {
+					setProc(pcxt, ent, i);
 				} else {
-					pcxt.putInoutValueAt(t.path(), t.value(), i + 1);
+					pcxt.putInoutValueAt(ent.path(), ent.value(), i + 1);
 				}
-			} else if (t instanceof Entry) {
-				if (t.isPersistent()) {
+			} else if (ent instanceof Entry) {
+				if (ent.isPersistent()) {
 					setProc(pcxt, entryList.get(i), i);
 				} else {
-					if (t.value() instanceof Scopable) {
-						((Scopable) t.value()).setScope(pcxt);
+					if (ent.value() instanceof Scopable) {
+						((Scopable) ent.value()).setScope(pcxt);
 					}
-					pcxt.putValueAt(t.path(), t.value(), i + 1);
+					pcxt.putValueAt(ent.path(), ent.value(), i + 1);
 				}
-			} else if (t instanceof DataEntry) {
-				pcxt.putValueAt(Context.DSD_PATH, t.value(), i + 1);
+			} else if (ent instanceof DataEntry) {
+				pcxt.putValueAt(Context.DSD_PATH, ent.value(), i + 1);
 			}
 		}
 	}
@@ -1021,7 +1042,7 @@ public class operator {
 					connList.add(((MapContext) o));
 				} else if (o instanceof ServiceType) {
 					srvType = (ServiceType) o;
-					// check if class can be loades
+					// check if class can be loaded
 //                    serviceType = srvType.providerType;
 //                    try {
 //                        if (serviceType == null) {
@@ -1076,8 +1097,8 @@ public class operator {
 					((ServiceSignature) sig).setShellRemote((Strategy.Shell) o);
 				} else if (o instanceof ReturnPath) {
 					sig.setReturnPath((ReturnPath) o);
-				} else if (o instanceof TypeList) {
-					((ServiceSignature)sig).setMatchTypes(((TypeList) o).toTypeArray());
+				} else if (o instanceof ParTypes) {
+					((ServiceSignature)sig).setMatchTypes(((ParTypes) o).parameterTypes);
 				} else if (o instanceof In ) {
 					if (sig.getReturnPath() == null) {
 						sig.setReturnPath(new ReturnPath((In) o));
@@ -1088,20 +1109,19 @@ public class operator {
 					if (sig.getReturnPath() == null) {
 						sig.setReturnPath(new ReturnPath((Out) o));
 					} else {
-						((ReturnPath)sig.getReturnPath()).outPaths = ((Out) o).getSigPaths();
+						((ReturnPath)sig.getReturnPath()).outPaths = ((Out) o).getExtPaths();
 					}
 				} else if (o instanceof ServiceDeployment) {
 					((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
 				} else if (o instanceof Version && sig instanceof NetSignature) {
 					((NetSignature) sig).setVersion(((Version) o).getName());
 				} else if (o instanceof ServiceContext
-						// not applied to connctors in Signatures
+						// not applied to connectors in Signatures
 						&& o.getClass() != MapContext.class) {
 					if (sig.getReturnPath() == null) {
 						sig.setReturnPath(new ReturnPath());
-						((ReturnPath) sig.getReturnPath()).setDataContext((Context) o);
-					} else
-						throw new SignatureException("No return path defined in: " + sig);
+					}
+					((ReturnPath) sig.getReturnPath()).setDataContext((Context) o);
 				}
 			}
 		}
@@ -1160,10 +1180,6 @@ public class operator {
 	public static ServiceType type(String typeName) {
 		ServiceType st = new ServiceType(typeName);
 		return st;
-	}
-
-	public static TypeList types(Class... types) {
-		return new TypeList(types);
 	}
 
 	public static String property(String property) {
@@ -1310,14 +1326,8 @@ public class operator {
 		return signature;
 	}
 
-	public static Fidelity cFi(String componentPath, String fidelity) {
-		Fidelity fi = new Fidelity(fidelity, componentPath);
-		fi.type = ServiceFidelity.Type.COMPONENT;
-		return fi;
-	}
-
 	public static ServiceFidelity<Fidelity> fi(String name, Fidelity... selectors) {
-		ServiceFidelity fi = new ServiceFidelity(name, selectors);
+		ServiceFidelity<Fidelity> fi = new ServiceFidelity(name, selectors);
 		fi.type = ServiceFidelity.Type.META;
 		return fi;
 	}
@@ -1476,29 +1486,30 @@ public class operator {
 		return new FiEntry(index, fiList);
 	}
 
-	public static Fidelity fi(String path, String name) {
+	public static Fidelity fi(String name, String path) {
 		Fidelity fi = new Fidelity(name, path);
 		fi.type = Fidelity.Type.SELECT;
 		return fi;
 	}
 
-	public static ServiceFidelity srvFi(String path, String name) {
-		ServiceFidelity fi = new ServiceFidelity(name);
+	public static ServiceFidelity<Path> srvFi(String name, String path) {
+		ServiceFidelity<Path> fi = new ServiceFidelity(name, path(path));
 		fi.setPath(path);
-		fi.setSelect(name);
+		fi.setSelect(path);
 		fi.type = ServiceFidelity.Type.SELECT;
 		return fi;
 	}
 
-	public static Fidelity mFi(String path, String name) {
-		Fidelity fi = new Fidelity(name);
+	public static Fidelity<String> mFi(String name, String path) {
+		Fidelity<String> fi = new Fidelity(name);
 		fi.setPath(path);
 		fi.type = ServiceFidelity.Type.MORPH;
 		return fi;
 	}
 
 	public static ServiceFidelity<Signature> sFi(String name, Signature... signatures) {
-		ServiceFidelity<Signature> fi = new ServiceFidelity<Signature>(name, signatures);
+		ServiceFidelity<Signature> fi = new ServiceFidelity(name, signatures);
+		fi.setSelect(signatures[0]);
 		fi.type = ServiceFidelity.Type.SIG;
 		return fi;
 	}
@@ -2412,9 +2423,10 @@ public class operator {
 	 * @param tag
 	 * @throws ContextException
 	 */
-	public static void tagContext(Context context, String tag)
+	public static Context tagContext(Context context, String tag)
 			throws ContextException {
 		context.setAttribute(tag);
+		return context;
 	}
 
 	/**
@@ -2425,25 +2437,30 @@ public class operator {
 	 *
 	 * @param context
 	 * @param path
-	 * @param tuple
+	 * @param association
 	 * @return
 	 * @throws ContextException
 	 */
-	public static Context tag(Context context, String path, String tuple)
+	public static Context tag(Context context, String path, String association)
 			throws ContextException {
-		return context.mark(path, tuple);
+		return context.mark(path, association);
 	}
 
-	public static <T> List<T> valuesAt(Context<T> context, String tuple) throws ContextException {
-		return context.getMarkedValues(tuple);
+	public static Context tag(Context context, Path path)
+			throws ContextException {
+		return context.mark(path.path, path.info.toString());
 	}
 
-	public static String[] pathsAt(Context context, String tuple) throws ContextException {
-		return context.getMarkedPaths(tuple);
+	public static <T> List<T> valuesAt(Context<T> context, String association) throws ContextException {
+		return context.getMarkedValues(association);
 	}
 
-	public static <T> T valueAt(Context<T> context, String tuple) throws ContextException {
-		return valuesAt(context, tuple).get(0);
+	public static String[] pathsAt(Context context, String association) throws ContextException {
+		return context.getMarkedPaths(association);
+	}
+
+	public static <T> T valueAt(Context<T> context, String association) throws ContextException {
+		return valuesAt(context, association).get(0);
 	}
 
 	public static <T> T valueAt(Context<T> context, int i) throws ContextException {
@@ -2460,6 +2477,9 @@ public class operator {
 		return values;
 	}
 
+	public static Mogram exertion(Exertion exertion, String componentExertionName) {
+		return exertion.getComponentMogram(componentExertionName);
+	}
 	public static Mogram xrt(Exertion exertion, String componentExertionName) {
 		return exertion.getComponentMogram(componentExertionName);
 	}
@@ -2756,31 +2776,36 @@ public class operator {
 		}
 	}
 
-	public static ParameterTypes parameterTypes(Class... parameterTypes) {
-		return new ParameterTypes(parameterTypes);
+	public static ParTypes types(Class... parameterTypes) {
+		return new ParTypes(parameterTypes);
 	}
 
-	public static class ParameterTypes extends Path {
+	public static class ParTypes extends Path {
 		private static final long serialVersionUID = 1L;
 		public Class[] parameterTypes;
 
-		public ParameterTypes(Class... parameterTypes) {
+		public ParTypes(Class... parameterTypes) {
 			this.parameterTypes = parameterTypes;
 		}
 
-		public ParameterTypes(String path, Class... parameterTypes) {
+		public ParTypes(Class basicType, Class... parameterTypes) {
+			Class[] types = new Class[parameterTypes.length+1];
+			types[0] = basicType;
+			for (int i = 0; i < parameterTypes.length; i++) {
+				types[i+1] = parameterTypes[i];
+			}
+			this.parameterTypes = types;
+		}
+
+		public ParTypes(String path, Class... parameterTypes) {
 			this.parameterTypes = parameterTypes;
 			this.path = path;
 		}
 
 		@Override
 		public String toString() {
-			return "parameterTypes: " + Arrays.toString(parameterTypes);
+			return "types: " + Arrays.toString(parameterTypes);
 		}
-	}
-
-	public static Args parameterValues(Object... args) {
-		return new Args(args);
 	}
 
 	public static Args args(Object... args) {
@@ -2825,6 +2850,10 @@ public class operator {
 				as[i] = args[i].toString();
 			}
 			return as;
+		}
+
+		public int size() {
+			return args.length;
 		}
 
 		@Override
@@ -3239,7 +3268,7 @@ public class operator {
 					if (((EvaluationTask)e).getEvaluation() instanceof Proc) {
 						Proc p = (Proc)((EvaluationTask)e).getEvaluation();
 						((ProcModel)pm.getScope()).addProc(p);
-//						pm.addProc(p);
+//						pm.addPar(p);
 
 					}
 				} else if (e instanceof Exertion) {
@@ -3294,8 +3323,9 @@ public class operator {
 	}
 
 	public static class Multiplicity {
-		public int multiplicity;
-		public int maxPerCybernode;
+		int multiplicity;
+		int maxPerCybernode;
+		boolean fixed;
 
 		Multiplicity(int multiplicity) {
 			this.multiplicity = multiplicity;
@@ -3308,6 +3338,11 @@ public class operator {
 		Multiplicity(int multiplicity, int maxPerCybernode) {
 			this.multiplicity = multiplicity;
 			this.maxPerCybernode = maxPerCybernode;
+		}
+
+		Multiplicity(int multiplicity, Fixed fixed) {
+			this.multiplicity = multiplicity;
+			this.fixed = fixed!=null;
 		}
 	}
 
@@ -3372,6 +3407,10 @@ public class operator {
 		}
 	}
 
+	static class Fixed {
+		Fixed() {}
+	}
+
 	public static PerNode perNode(int number) {
 		return new PerNode(number);
 	}
@@ -3396,16 +3435,20 @@ public class operator {
 		return new Configuration(configuration);
 	}
 
-	public static Multiplicity maintain(int multiplicity) {
-		return new Multiplicity(multiplicity);
+	public static Multiplicity maintain(int planned) {
+		return new Multiplicity(planned);
 	}
 
-	public static Multiplicity maintain(int multiplicity, int maxPerCybernode) {
-		return new Multiplicity(multiplicity, maxPerCybernode);
+	public static Multiplicity maintain(int planned, int maxPerCybernode) {
+		return new Multiplicity(planned, maxPerCybernode);
 	}
 
-	public static Multiplicity maintain(int multiplicity, PerNode perNode) {
-		return new Multiplicity(multiplicity, perNode);
+	public static Multiplicity maintain(int planned, PerNode perNode) {
+		return new Multiplicity(planned, perNode);
+	}
+
+	public static Multiplicity maintain(int planned, Fixed fixed) {
+		return new Multiplicity(planned, fixed);
 	}
 
 	public static Idle idle(String idle) {
@@ -3434,6 +3477,10 @@ public class operator {
 		return new OpSys(opsys);
 	}
 
+	public static Fixed fixed() {
+		return new Fixed();
+	}
+
 	public static <T> ServiceDeployment deploy(T... elems) {
 		ServiceDeployment deployment = new ServiceDeployment();
 		for (Object o : elems) {
@@ -3446,8 +3493,13 @@ public class operator {
 			} else if (o instanceof Impl) {
 				deployment.setImpl(((Impl) o).className);
 			} else if (o instanceof Multiplicity) {
-				deployment.setMultiplicity(((Multiplicity) o).multiplicity);
-				deployment.setMaxPerCybernode(((Multiplicity) o).maxPerCybernode);
+				Multiplicity m = (Multiplicity)o;
+				deployment.setMultiplicity(m.multiplicity);
+				deployment.setMaxPerCybernode(m.maxPerCybernode);
+				if(m.fixed)
+					deployment.setStrategy(Deployment.Strategy.FIXED);
+			} else if(o instanceof Fixed) {
+				deployment.setStrategy(Deployment.Strategy.FIXED);
 			} else if(o instanceof ServiceDeployment.Type) {
 				deployment.setType(((ServiceDeployment.Type) o));
 			} else if (o instanceof Idle) {
