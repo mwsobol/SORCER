@@ -228,31 +228,30 @@ varComponent : 'evaluator' '('evaluatorName')' | 'getter' '('getterName')' | 'se
 
 modelingTask : mdlResponseTask | mdlParamericTask | mdlOptimizationTask ;
 
-mdlResponseTask: 'responseTask' '(' 'outerSig' '('selector',' mdlSig ')'
-		(',' responseContext ')')? ')' ;
-			
-responseContext : 'modelingContext' '(' (mdlInputs',')? (mdlResponses',')? returnPath? ')';
-	
-mdlInputs : 'inputs' '('((dataEntry ',')+ dataEntry)')'; 
-	 
-mdlResponses : 'responses' '('((varName ',')+ varName)')';
-
-returnPath : 'result' '('pathName')';
-
+mdlResponseTask : 'responseTask' '(' 'outerSig' '('selector',' mdlSig ')'(',' responseContext ')')? ')' ;
+		
 mdlParamericTask : 'parametricTask' '(' 'outerSig' '(' selector',' mdlSig')' ',' paramContext ')' ;
 
+mdlOptimizationTask : 'optimizationTask' '('explorerSignature',' optiContext ',' optiStrategy ')' ;
+			
+responseContext : 'modelingContext' '(' (mdlInputs',')? (mdlResponses',')? returnPath? ')';
+
 paramContext : 'modelingContext' '(' varParametricTable',' (varResponseTable',')? (mdlParmeters',')?  (mdlResponses',')?  parStrategy? (',' returnPath)?')'; 
+
+optiContext : 'modelingContext' '(' mdlInputs (',' returnPath)?')'; 
+	
+mdlInputs : 'inputs' '('((dataEntry ',')* dataEntry)')'; 
+	 
+mdlResponses : 'responses' '('((varName ',')* varName)')';
+
+returnPath : 'result' '('pathName')';
 
 outTable : 'table' '(' varParametricTable(',' varResponseTable)?')';
 	
 parStrategy : 'parallel' '(' 'queue' '('int')'',' 'pool' '('int')' ')';
 
-mdlParmeters : 'parameters' '('((varName ',')+ varName)')'; 
-	 
-mdlOptimizationTask: 'optimizationTask' '('explorerSignature',' optiContext ',' optiStrategy ')' ;
-						
-optiContext : 'modelingContext' '(' mdlInputs (',' returnPath)?')'; 
-
+mdlParmeters : 'parameters' '('((varName ',')* varName)')'; 
+	 						
 optiStrategy : 'strategy' '(' optiTarget',' dispatchSig',' mdlSig',' optiSig ')';
 
 dispatchSig : 'dispatcherSig' '('prvSignature')';

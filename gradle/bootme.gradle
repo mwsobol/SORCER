@@ -80,6 +80,7 @@ class BootMe extends DefaultTask {
         args << "-Dorg.rioproject.service=${logName}"
         args << "-Djava.security.policy=${project.sorcerDistHome}/policy/policy.all"
         args << "-Djava.rmi.server.useCodebaseOnly=false"
+        args << "-Djava.net.preferIPv4Stack=true"
         args << "-Dplexus.version=${project.plexusVersion}"
         args << "-Dguava.version=${project.guavaVersion}"
         args << "-Driver.version=${project.riverVersion}"

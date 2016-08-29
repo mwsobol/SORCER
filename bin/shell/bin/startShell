@@ -344,6 +344,7 @@ startShell ( ) {
             -Dsorcer.home="$SORCER_HOME" \
             -Drio.home="$RIO_HOME" \
             -Djava.protocol.handler.pkgs="net.jini.url|sorcer.util.url|org.rioproject.url" \
+            -Djava.net.preferIPv4Stack="true" \
             -Dtools.jar="$TOOLS_JAR" \
             -Dlogback.configurationFile="$SORCER_HOME"/bin/shell/configs/shell-logging.groovy \
             $STARTER_MAIN_CLASS \
