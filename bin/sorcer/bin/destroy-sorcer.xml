@@ -22,6 +22,7 @@
             </classpath>
             <sysproperty key="java.security.policy" value="${sorcer.home}/policy/sorcer.policy" />
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.bdb.sos|org.rioproject.url" />
+            <sysproperty key="java.net.preferIPv4Stack" value="true" />
             <sysproperty key="rio.home" value="${rio.home}" />
             <arg value="jvm:boot-sorcer" />
         </java>

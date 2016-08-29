@@ -25,6 +25,7 @@
 			<sysproperty key="java.security.policy" value="../policy/shell.policy" />
 			<sysproperty key="rio.home" value="${sorcer.home}/rio-${rio.version}" />
 			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="java.net.preferIPv4Stack" value="true" />
 			<sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
 			<sysproperty key="java.rmi.server.RMIClassLoaderSpi" value="org.rioproject.rmi.ResolvingLoader"/>
 			<sysproperty key="ssb.logFile" value="../logs/browser.log" />

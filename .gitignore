@@ -39,3 +39,11 @@ junit*.properties
 
 ### Generated config files
 bin/webster/websterConfig.groovy
+/docs/grammar/images/
+/docs/grammar/sml-grammar.html
+/docs/grammar/sml.g.txt
+.DS_Store
+core/sorcer-int-tests/sorcer-tester/tmp/
+docs/grammar/.DS_Store
+docs/grammar/output/
+sorcer-int-tests/

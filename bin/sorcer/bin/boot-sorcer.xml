@@ -61,6 +61,7 @@
             <sysproperty key="org.rioproject.service" value="sorcer"/>
 			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
 			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+			<sysproperty key="java.net.preferIPv4Stack" value="true" />
 			<sysproperty key="java.security.policy" value="${sorcer.home}/policy/sorcer.policy" />
 			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
             <sysproperty key="logback.configurationFile" value="${sorcer.home}/configs/sorcer-logging.groovy"/>
