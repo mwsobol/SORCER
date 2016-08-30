@@ -2,19 +2,23 @@ grammar sml;
 
 /* <PROVIDER-RULES> */
 srvSignature : prvSignature | opSignature | 'sig' '(' srvSignature ',' signatureOp ')' ;
-prvSignature : 'sig' '(' ( name ',' )? prvSpec ')' ;
-opSignature  : 'sig' '(' ( name ',' )? opSpec ',' prvSpec ')' ;
+prvSignature : 'sig' '(' ( sigName ',' )? prvSpec ')' ;
+opSignature  : 'sig' '(' ( sigName ',' )? opSpec ',' prvSpec ')' ;
+prvSpec : (srvType | prvInstance | 'type' '(' srvTypeName ')' (',' matchTypes)? (',' (srvTag | prvTag))? (',' prvDeployment)? ) ;
+matchTypes : 'types' '(' (interfaceType ',')* interfaceType ')' ; 
+opSpec  : selector signatureOp ( ',' dataContext )? (',' srvResult)? (',' inputConnector)? (',' outputConnector)? ;
+inputConnector : 'inConn' '(' (mapEntry ',')* mapEntry ')' ;
+outputConnector : 'outConn' '(' (mapEntry ',')* mapEntry ')' ;
+mapEntry : 'ent' '(' fromPathName ',' toPathName ')' ;
 
-prvSpec : (javaType | prvInstance | 'type' '(' srvTypeName ')' (',' 'types' '(' javaType* ')' )? (',' (srvTag | prvTag))? (',' prvDeployment)? ) ;
-opSpec  : selector signatureOp ( ',' dataContext )? (',' srvResult)? (',' 'inConn' '(' mapEntry*')')? (',' 'outConn' '(' mapEntry* ')' )? ;
+srvType : classType | interfaceType ;
 
-srvType options { backtrack = true; } : classType | interfaceType ;
-
-signatureOp : ('op' '(' selector (',' srvArg*)? ')' | 'op' '(' opSignature ')' ) ;
-access : 'Access.PUSH' | 'Access.PULL' ;
+signatureOp : 'op' '(' selector (',' opArg)* ')' | 'op' '(' opSignature ')' ;
+opArg : accessType | flowType | provisionable ;
+accessType : 'Access.PUSH' | 'Access.PULL' ;
 provisionable : 'Provision.YES' | 'Provision.NO' ;
 prvTag : 'prvName' '(' providerName ')' ;
-srvTag : 'srvName' '(' serviceName (',' 'locators'(locatorName*))? (',' groupName*)? ')' ;
+srvTag : 'srvName' '(' serviceName (',' 'locators' '('(locatorName',')+ ')')? ((',' groupName)+)? ')' ;
 srvResult : 'result' '(' pathName? (',' inputPaths)? (',' outputPaths)? (',' dataContext)? ')' ;
 prvDeployment : 'deploy' '(' 'implementation' '(' providerClassName ')' 
                'classpath' '(' jarName* ')' 
@@ -34,13 +38,10 @@ srvRequest : srvSignature | contextEntry | srvMogram ;
 
 /* <ENTRIES> */
 
-entType : 'in' | 'out' | 'inout' | 'db' ;
 annotatedPath : 'path' '(' pathName ( ',' pathTag)? ')' ;
 srvPath : pathName | annotatedPath ;
-
-dataEntry : 'val' '(' srvPath ',' value ')' | 'entTypeVal' '(' srvPath ',' value ')' ;
-
-mapEntry : 'ent' '(' fromPathName ',' toPathName ')' ;
+dataEntry : entOp '(' srvPath ',' value ')' ;
+entOp : 'inVal' | 'outVal' | 'inoutVal' | 'dbVal' ;
 
 procEntry : ('ent' '(' opSignature ')' | 'ent' '(' pathName ',' srvEvaluator ')' | 'ent' '(' pathName ',' srvInvoker ( ',' srvModel)? ')' | lambdaEntry  ')') ;
 
@@ -50,8 +51,8 @@ lambdaEntry : 'lambda' '(' pathName ',' entrycallableLambdaExpression ')'
 			| 'lambda' '(' pathName ',' clientLambdaExpression',' srvArgs ')'
 			| 'lambda' '(' pathName ',' valueCallableLambdaExpression',' srvArgs ')' ;
 
-srvEntry options { backtrack = true; } : 'ent' '(' pathName ',' opSignature ( ',' srvModel)? ( ',' cxtSelector)? ')' 
-			| 'ent' '(' pathName ',' srvRoutine ')' | 'ent' '(' pathName ',' srvMogram ')' ;
+srvEntry : ('ent' '(' pathName ',' opSignature ( ',' srvModel)? ( ',' cxtSelector)? ')') 
+			| ('ent' '(' pathName ',' srvRoutine ')') | ('ent' '(' pathName ',' srvMogram ')') ;
 
 cxtSelector : selector '(' (componentName',' )? pathName+ ')' ;
 
@@ -68,10 +69,12 @@ entFidelity : 'eFi' '(' contextEntry* ')' ;
 contextEntry : dataEntry | srvEntry | varEntry | fiEntry
 			| entType '(' contextEntry ')' ;
 
+entType : 'in' | 'out' | 'inout' | 'db' ;
+
 sigFidelity : 'sFi' '(' fiName ',' opSignature+ ')' ;
 
-morphFidelity : 'mFi' '(' fiName ',' srvRequest+ ')'
-			| 'mFi' '(' fiName ',' srvMorpher ',' srvRequest+ ')' ;
+morphFidelity : 'mFi' '(' fiName (',' srvRequest)+ ')'
+			| 'mFi' '(' fiName ',' srvMorpher (',' srvRequest)+ ')' ;
 			
 srvMorpher: morpherLambdaExpression ;
 
@@ -119,7 +122,7 @@ dataContext : 'context ' '(' (name',')? dataEntry* (',' srvResult)? (',' inputPa
 
 contextModel : 'contextModelType' '('(name',' )? contextEntry* (',' 'response' '('pathName*')' (',' srvDependency)? )? ')';
 		
-parTypes : 'types' '('class*')' ;
+parTypes : 'types' '('srvType*')' ;
 parArgs : 'args' '('object*')' ;
 srvDependency : 'dependsOn' '(' 'ent' '('pathName',' 'paths' '('pathName*')'* ')' ;
 
@@ -147,7 +150,7 @@ srvOption : 'opt' '('srvCondition',' srvMogram')' ;
 contextPipe : 'pipe' '(' 'outPoint' '('srvCondition',' contextPathName')' ',' 
 			'inPoint' '('srvExertion',' contextPathName')' ')' ;
 
-exertionStrategy : 'strategy' '(' (access',')? (flowType',')? (monitorable',')? (provisionable)? ')' ;
+exertionStrategy : 'strategy' '(' (accessType',')? (flowType',')? (monitorable',')? (provisionable)? ')' ;
 
 flowType: 'Flow.PAR' | 'Flow.SEQ' ;
 
@@ -191,8 +194,12 @@ responseModeling : 'responseModel' '('(modelName',' )?
 					(modelingInstance',' )?  baseVar*',' varRealization*')' ;
 
 parametricModeling : 'paramericModel' '('(modelName',' )? 
-					(modelingInstance',' )?  baseVar*',' varRealization*','
-					'table' '('varParametricTable',' varResponseTable')' ')' ;
+					(modelingInstance',' )?  inVars',' outVars',' varRealizations ','mdlTable ')' ;
+					
+inVars 	: 'inputVars' '(' ((baseVar',')+)? baseVar')' ;
+outVars : 'outputVars' '(' ((baseVar',')+)? baseVar')' ;
+varRealizations : ((varRealization',')* (varRealization))? ;
+mdlTable : 'table' '('varParametricTable',' varResponseTable')' ;
 
 streamingParametricModeling : 'streamingParametricModel' '('(modelName',')?	modelingInstance')' ;
 
@@ -331,23 +338,21 @@ morpherLambdaExpression       : name;
 
 providerClassName : name ;
 providerName	  : name ;	
-
+sigName	  	  : name ;	
 selector          : name ;
 serviceName       : name ;
-modelName 	      : name ;
-varName 	      : name ;
+modelName 	  : name ;
+varName 	  : name ;
 outputVarName	  : name ;
 srvTypeName       : name ;	 
 value 	          : name ;	
-
-instanceofArg   : javaType ;
-class           : javaType ;
-object          : name ;
-interfaceType 	: classType ;
-classType 	    : javaType;
-javaType        : class_or_package'.class' ;
-class_or_package     : ID ;
-name                 : ID ;
+object 		: name ;
+instanceofArg   : name ;
+class 		: name ;
+interface 	: name;
+classType 	: name'.class' ;
+interfaceType 	: name'.class' ;
+name            : ID ;
 string_literal       : '"'ID'"' ;
 
 ID                   : ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '0'..'9' | '_')* ;
