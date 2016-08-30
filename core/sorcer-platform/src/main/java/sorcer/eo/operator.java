@@ -205,10 +205,14 @@ public class operator {
 	}
 
 	public static Context upcxt(Exertion mogram) throws ContextException {
-		return upcontext(mogram);
+		return snapshot(mogram);
 	}
 
 	public static Context upcontext(Mogram mogram) throws ContextException {
+		return snapshot(mogram);
+	}
+
+	public static Context snapshot(Mogram mogram) throws ContextException {
 		if (mogram instanceof CompoundExertion)
 			return mogram.getContext();
 		else

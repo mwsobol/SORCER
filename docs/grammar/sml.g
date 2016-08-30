@@ -59,8 +59,9 @@ cxtSelector : selector '(' (componentName',' )? pathName+ ')' ;
 srvRoutine : contextEntry | srvInvoker | srvEvaluator ;
 
 varEntry : 'var' '(' pathName ',' value ')' | 'var' '(' pathName ',' opSignature ')'
-			| 'var' '(' pathName ',' varFidelity+ ')' | 'var' '(' pathName ',' morphFidelity* ')'
-			| 'var' '(' pathName ',' lambdaEvaluator ')' | 'var' '(' pathName ',' varProxy ')' ;
+			| 'var' '(' pathName (',' varFidelity)+ ')' | 'var' '(' pathName ',' morphFidelity ')'
+			| 'var' '(' pathName ',' srvRoutine ')' | 'var' '('(pathName',')? srvEntry')'
+			| 'var' '(' pathName ',' varProxy ')' | objectiveVar | constraintVar ;
 
 fiEntry : 'ent' '(' pathName',' entFidelity* ')' ;
 
@@ -171,9 +172,9 @@ contextValue : 'value' '('dataContext',' pathName | outputPaths')'
 			| 'valueAt' '('dataContext',' index')' 
 			| 'valueAt' '('dataContext',' pathTag')' | 'valuesAt' '('dataContext',' pathTag')' ;
 
-srvValue : 'exec' '(' srvRequest',' arg*')' | 
-			'eval' '('contextEntry',' srvArg*')' | 'eval' '('srvModel',' pathName',' srvArg *')' 
-			| 'eval' '('srvExertion',' srvArg*')' | 'returnValue' '('srvMogram')' ; 
+srvValue : 'exec' '(' srvRequest(',' srvArg)*')' | 
+			'eval' '('contextEntry(',' srvArg)*')' | 'eval' '('srvModel',' pathName(',' srvArg)*')' 
+			| 'eval' '('srvExertion(',' srvArg)*')' | 'returnValue' '('srvMogram')' ; 
 
 srvMogramResult : 'exert' '('srvMogram',' srvArg*')' ;
 
@@ -183,47 +184,47 @@ dataContextResult : 'response' '('srvModel',' srvArg*')'
 
 srvEntryResult : srvValue | 'get' '('srvMogram',' componentName')' ;
 
-srvArg : instanceofArg'.class' | opSignature | dataEntry | srvMogram | fiSelector
-			| compFiSelector | cxtSelector | inputPaths | outputPaths | srvResult ;
+srvArg : opSignature | dataEntry | srvMogram | fiSelector
+			| compFiSelector | cxtSelector | inputPaths | outputPaths | srvResult | instanceofArg ;
 
 /* <VAR-ORIENTED-MODELING> */
 
 varOrientedModel : responseModeling | parametricModeling | optimizationModeling	| streamingParametricModeling ;
 
 responseModeling : 'responseModel' '('(modelName',' )? 
-					(modelingInstance',' )?  baseVar*',' varRealization*')' ;
+					(modelingInstance',' )?  baseVars*',' varRealization*')' ;
 
 parametricModeling : 'paramericModel' '('(modelName',' )? 
 					(modelingInstance',' )?  inVars',' outVars',' varRealizations ','mdlTable ')' ;
 					
-inVars 	: 'inputVars' '(' ((baseVar',')+)? baseVar')' ;
-outVars : 'outputVars' '(' ((baseVar',')+)? baseVar')' ;
+inVars 	: 'inputVars' '(' ((baseVars',')+)? baseVars')' ;
+outVars : 'outputVars' '(' ((baseVars',')+)? baseVars')' ;
 varRealizations : ((varRealization',')* (varRealization))? ;
 mdlTable : 'table' '('varParametricTable',' varResponseTable')' ;
 
 streamingParametricModeling : 'streamingParametricModel' '('(modelName',')?	modelingInstance')' ;
 
-optimizationModeling : 'optimizationModel' '(' (modelName',' )? baseVar*',' varRealization*','
+optimizationModeling : 'optimizationModel' '(' (modelName',' )? baseVars*',' varRealization*','
 					'objectiveVars' '('objectiveVar+',' 'constraintVars' '('constraintVar+ ')' ')' ;
 
 modelingInstance: 'instance' '('opSignature')' ; 
 
-varType : 'input' | 'output' | 'linked' | 'constant' ;
+varType : 'inputVars' | 'outputVars' | 'linkedVars' | 'constantVars' ;
 
-baseVar : 'varTypeVars' '('varName+')' | 'varTypeVars' '('varName',' count')' 
-					| 'varTypeVars' '('varName',' from',' to')' | 'var' '('(name',')? srvEntry')' ;
+baseVars : 'varType' '('(varName',')+ varName ')' | 'varType' '('varName',' count')' 
+					| 'varType' '('varName',' from',' to')' ;
 
 varParametricTable : 'parametricTable' '('tableURL (',' tableSeparator)?')'  
 					| 'table' '(' 'header' '('varName+')' ',' 'row' '('value+')'+')' ;
 
 varResponseTable : 'responseTable' '('tableURL (',' tableSeparator)? ')' ;
-
+ 
 objectiveVar : 'var' '('varName',' outputVarName',' optiTarget ')' ;
 
 optiTarget : 'Target.min' | 'Target.max' ;
 
 constraintVar : 'var' '('varName',' outputVarName',' 'Relation'.relationSuffix ')' ;
-
+ 	
 relationSuffix: 'lt' | 'lte' | 'eq' | 'gt' | 'gte' ;
 
 varRealization : 'realization' '('varName',' 'fi' '('fiName',' varComponent+')'* ',' 
@@ -273,7 +274,6 @@ explorerSignature : opSignature;
 
 
 /* Concrete labels */
-arg       : name;
 argName   : name;
 classpath : name;
 componentName : name;
