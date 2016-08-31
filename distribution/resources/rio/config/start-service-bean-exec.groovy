@@ -43,8 +43,8 @@ class StartServiceBeanExecConfig {
 
     String sorcerData() {
         String user = System.properties['user.name']
-        String dir = System.properties['java.io.tmpdir']
-        File sorcerDataDir = new File("${dir}/sorcer-${user}/data")
+        String tmpDir = System.getenv("TEMP_DIR")==null?System.properties['java.io.tmpdir']:System.getenv("TEMP_DIR")
+        File sorcerDataDir = new File("${tmpDir}/sorcer-${user}/data")
         sorcerDataDir.mkdirs()
         String sorcerData = sorcerDataDir.absolutePath
         System.setProperty("sorcer.data.dir", sorcerData)

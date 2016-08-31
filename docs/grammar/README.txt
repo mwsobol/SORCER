@@ -5,7 +5,7 @@ Load the sml.g file with ANTLRWorks
 
 java -jar <location where you installed it>antlrworks-1.5.2-complete.jar sml.g
 
-Go to File-> Export All Rukes -> As Bitmap Image ...
+Go to File-> Export All Rules -> As Bitmap Image ...
 
 Choose the images directory
 

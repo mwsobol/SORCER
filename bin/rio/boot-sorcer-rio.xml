@@ -69,6 +69,7 @@
             <sysproperty key="org.rioproject.service" value="${service}"/>
             <sysproperty key="rio.script.mainClass" value="org.rioproject.start.ServiceStarter"/>
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+            <sysproperty key="java.net.preferIPv4Stack" value="true" />
             <sysproperty key="sorcer.home" value="${sorcer.home}"/>
             <sysproperty key="sorcer.version" value="${sorcer.version}"/>
             <sysproperty key="plexus.version" value="${plexus.version}"/>

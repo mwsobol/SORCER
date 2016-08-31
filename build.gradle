@@ -20,7 +20,7 @@ int ndx = ref.lastIndexOf("/")
 String branch = ref.substring(ndx+1).trim()
 String branchRef = branch.equals("master")?"":"-$branch"
 
-version = "5.4.8$branchRef"
+version = "5.4.9$branchRef"
 
 apply plugin: 'idea'
 idea {
@@ -67,7 +67,7 @@ allprojects {
     apply plugin: 'idea'
     group = 'org.sorcer'
     String user = System.properties['user.name']
-    String tmpDir = System.properties['java.io.tmpdir']
+    String tmpDir = System.getenv("TEMP_DIR")==null?System.properties['java.io.tmpdir']:System.getenv("TEMP_DIR")
     ext {
         sorcerData = file("${tmpDir}/sorcer-${user}/data").path
     }

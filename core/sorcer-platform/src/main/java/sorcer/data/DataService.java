@@ -320,7 +320,7 @@ public class DataService implements FileURLHandler {
 
     /**
      * Get the DataService data directory. The {@link DataService#DATA_DIR} system property is first
-     * consulted, if that property is not setValue, the default of
+     * consulted, if that property is not setValue, the default is either the TEMP_DIR
      * System.getProperty("java.io.tmpdir")/sorcer/user/data is used and the {@link DataService#DATA_DIR}
      * system property is setValue.
      *
@@ -375,8 +375,9 @@ public class DataService implements FileURLHandler {
     }
 
     static String getDefaultDataDir() {
+        String tmpDir = System.getenv("TEMP_DIR")==null?System.getProperty("java.io.tmpdir"):System.getenv("TEMP_DIR");
         return new File(String.format("%s%ssorcer-%s%sdata",
-                                      System.getProperty("java.io.tmpdir"),
+                                      tmpDir,
                                       File.separator,
                                       System.getProperty("user.name"),
                                       File.separator)).getAbsolutePath();

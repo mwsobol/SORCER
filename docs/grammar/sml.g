@@ -228,20 +228,37 @@ varComponent : 'evaluator' '('evaluatorName')' | 'getter' '('getterName')' | 'se
 
 modelingTask : mdlResponseTask | mdlParamericTask | mdlOptimizationTask ;
 
-mdlResponseTask: 'responseTask' '(' 'outerSig' '('selector',' modelSig ')'
-		(',' 'modelingContext' '(' ('inputs' '('dataEntry *')' ',' )? ('responses' '('varName*')' ',' )? 
-			(',' 'result' '('pathName')' )? ')')? ')' ;
+mdlResponseTask : 'responseTask' '(' 'outerSig' '('selector',' mdlSig ')'(',' responseContext ')')? ')' ;
+		
+mdlParamericTask : 'parametricTask' '(' 'outerSig' '(' selector',' mdlSig')' ',' paramContext ')' ;
 
-mdlParamericTask : 'parametricTask' '(' 'outerSig' '(' selector',' modelSig')' ','
-		'modelingContext' '(' varParametricTable',' varResponseTable','	(',' 'parameters' '('varName*')')? (',' 'responses' '('varName*')')?
-		(',' 'parallel' '(' 'queue' '('int',' 'pool' '('int')' ')' ')' )? (',' 'result' '('pathName')')? ')' ')' ;
+mdlOptimizationTask : 'optimizationTask' '('explorerSignature',' optiContext ',' optiStrategy ')' ;
+			
+responseContext : 'modelingContext' '(' (mdlInputs',')? (mdlResponses',')? returnPath? ')';
 
-mdlOptimizationTask: 'optimizationTask' '('explorerSignature',' 'exploreContext' '(' 'initialDesgn' '('dataEntry *')' 
-                        (',' 'result' '('pathName')')? ')' ','
-		                'strategy' '('optiTarget',' 'dispatcherSig' '('prvSignature')' ',' 
-						'modelSig' '('opSignature')' ',' 'optimizerSig' '('prvSignature')' ')' ')' ;
+paramContext : 'modelingContext' '(' varParametricTable',' (varResponseTable',')? (mdlParmeters',')?  (mdlResponses',')?  parStrategy? (',' returnPath)?')'; 
 
-modelSig : opSignature ;
+optiContext : 'modelingContext' '(' mdlInputs (',' returnPath)?')'; 
+	
+mdlInputs : 'inputs' '('((dataEntry ',')* dataEntry)')'; 
+	 
+mdlResponses : 'responses' '('((varName ',')* varName)')';
+
+returnPath : 'result' '('pathName')';
+
+outTable : 'table' '(' varParametricTable(',' varResponseTable)?')';
+	
+parStrategy : 'parallel' '(' 'queue' '('int')'',' 'pool' '('int')' ')';
+
+mdlParmeters : 'parameters' '('((varName ',')* varName)')'; 
+	 						
+optiStrategy : 'strategy' '(' optiTarget',' dispatchSig',' mdlSig',' optiSig ')';
+
+dispatchSig : 'dispatcherSig' '('prvSignature')';
+
+mdlSig : 'modelSig' '('prvSignature')';
+
+optiSig : 'optimizerSig' '('prvSignature')';
 
 explorerSignature : opSignature;
 

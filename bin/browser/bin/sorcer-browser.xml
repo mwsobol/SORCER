@@ -63,6 +63,7 @@
             <sysproperty key="java.security.policy" value="../policy/ssb.policy" />
             <sysproperty key="rio.home" value="${rio.home}"/>
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
+            <sysproperty key="java.net.preferIPv4Stack" value="true" />
             <sysproperty key="ssb.logFile" value="${sorcer.home}/bin/browser/logs/browser.log" />
             <sysproperty key="java.util.logging.config.file" value="../configs/browser-logging.properties" />
             <sysproperty key="logback.configurationFile" value="../configs/browser-logging.groovy"/>
