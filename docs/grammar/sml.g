@@ -141,11 +141,12 @@ srvExertion : srvTask | compoundExertion | 'exertion' '(' srvExertionParamters '
 
 compoundExertion : srvJob | srvBlock | conditionalExertion ;
 
-srvJob : 'job' '('(name',')? (opSignature | sigFidelity) ',' dataContext ',' srvMogram* ','
-				contextPipe* (',' exertionStrategy) (',' dependency)? ',' exertionFidelity* ')' ;
+srvJob : 'job' '('(name',')? (opSignature | sigFidelity) ',' dataContext (',' srvMogram)+ ','jobOptions? ')' ;
+				
+jobOptions : contextPipe* (',' exertionStrategy)? (',' dependency)? ',' metaFiSelector* ;			
 
 srvBlock :	 'block' '('(name',')? (opSignature | sigFidelity)',' (dataContext',')? 
-			srvMogram*',' exertionFidelity* ')' ;
+			(srvMogram',')+ metaFiSelector* ')' ;
 
 conditionalExertion : 'loop' '('srvCondition',' srvMogram')' 
 			| 'loop' '('min',' max',' (srvCondition',')? srvMogram')' | 'alt' '('srvOption*')' ;
@@ -320,7 +321,6 @@ objectImplementingEvaluation :	 name;
 evaluatorName :	 name;
 
 compFiSelector : name;
-exertionFidelity : name ;
 
 contextModelParameters : name;
 srvExertionParamters : name;
