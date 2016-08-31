@@ -58,9 +58,9 @@
     <li><a href="#Models">Models</a></li>
     <li><a href="#Tasks">Tasks</a></li>
     <li><a href="#Exertions">Exertions</a></li>
+    <li><a href="#Structured Var-Modeling">Structured Var-Modeling</a></li>
+    <li><a href="#Structured Var-Modeling Tasks">Structured Var-Modeling Tasks</a></li>
     <li><a href="#Accessing Values and Getting Results">Accessing Values and Getting Results</a></li>
-    <li><a href="#Var-Oriented Modeling">Var-Oriented Modeling</a></li>
-    <li><a href="#Var-Oriented Modeling Tasks">Var-Oriented Modeling Tasks</a></li>
 </ul>
 
 <p>
@@ -84,7 +84,10 @@
 
 <hr/>
 <a name="Provider Services"><b><big>Provider Services</big></b></a>
-<p>A service provider is an instance of local or remote concrete service specified by a signature</p>
+<p>
+    A service provider is an instance of local or remote concrete service specified by a signature. Signatures,
+    signature entries and elementary tasks are bounded to single service providers but service mograms
+    are bound to federations of service providers by the SORCER platform at runtime.</p>
 
 <% PROVIDER-SERVICES %>
 <hr/>
@@ -118,10 +121,10 @@
 
  <hr/>
 <a name="Models"><b><big>Models</big></b></a>
-    <p>
+    <i>
         A <i>model</i>/ is an aggregation of entries representing service federations as functionals.
-        A data context is composed of entries of the dataEntry type and a context model of entries of
-        the contextEntry type.
+        A data context is composed of entries of the <i>dataEntry</i> type and a context model of entries of
+        the <i>contextEntry</i> type.
     </p>
 
 <% MODELS %>
@@ -138,38 +141,40 @@
 <hr/>
 <a name="Exertions"><b><big>Exertions</big></b></a>
 <p>
-    An exertion is an elementary exertion – task or a hierarchical composition of tasks – a compound exertion.
-    A concatenated exertion (block), workflow exertion (job) and a conditional exertion are compound exertions
-    that are specified accordingly by signature, data context, and component mograms with optional strategy and
-    execution dependencies.
+    An exertion is a task – an elementary exertion – or a hierarchical composition of tasks and other
+    exertions – a compound exertion. Concatenated exertions (blocks), workflow exertions (jobs)
+    and a conditional exertions are compound exertions that are specified accordingly by signature,
+    data context, and component mograms with optional control strategy and execution dependencies.
 </p>
 
 <% EXERTIONS %>
 
 <hr/>
-<a name="Accessing Values and Getting Results"><b><big>Accessing Values and Getting Results</big></b></a>
-
-<% ACCESSING-VALUES %>
-
-<hr/>
-<a name="Var-Oriented Modeling"><b><big>Var-Oriented Modeling</big></b></a>
+<a name="Structured Var-Modeling"><b><big>Structured Var-Modeling</big></b></a>
 <p>
-    Var-oriented models are contextModels as defined above with various aggregations of varEntries to specify,
-    for example, a response, parametric, or exploration modeling tasks. A result is a response, for example an
-    output vector for a vector of design inputs, a response table for a parametric table, and exploration context,
-    for example, for an optimization task. To be executed, a var-oriented model has to be configured by specifying
-    all vars as declared in a model. That follows the metamodeling approach such that each var-oriented model in
-    fact is a metamodel for a modeling task. Var-entries in var-oriented models collaborate in the model accordingly
-    to a declared type of modeling. Var-oriented models can be used as local or remote service providers. In either
-    case an exertion task specifies a required service provider and its data context and returns a result context by
-    the executed model.
+    Var-oriented models are structured contextModels with additional specialized aggregations of multifidelity
+    varEntries (for example inputs, outputs, constraints, objectives vars, etc.), The structured var-models
+    are associated with specialized modeling tasks, for example, a response, parametric, or exploration tasks.
+    A result of executing a modeling task is, for example, a response vector for a vector of design inputs,
+    a response table for a parametric table, and exploration context for an optimization task. When declared,
+    a structured var-model can be more or less concrete. To be executed, to some degree an abstract model has
+    to be configured by specifying all vars as fully declared in a model. Aggregated var-entries in structured
+    var-models collaborate in the model accordingly to a declared type of structured modeling. Structured
+    var-models can be used as local or remote service providers. In either case a modeling task specifies
+    a required modeling provider with its modeling context and returns a corresponding result.
 </p>
 
 <% VAR-ORIENTED-MODELING %>
 
 <hr/>
-<a name="Var-Oriented Modeling Tasks"><b><big>Var-Oriented Modeling Tasks</big></b></a>
+<a name="Structured Var-Modeling Tasks"><b><big>Structured Var-Modeling Tasks</big></b></a>
 
 <% VAR-ORIENTED-MODELING-TASKS %>
+
+<hr/>
+ <a name="Accessing Values and Getting Results"><b><big>Accessing Values and Getting Results</big></b></a>
+
+ <% ACCESSING-VALUES %>
+
 </body>
 </html>

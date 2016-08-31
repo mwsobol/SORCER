@@ -1,15 +1,15 @@
 grammar sml;
 
 /* <PROVIDER-RULES> */
-srvSignature : prvSignature | opSignature | 'sig' '(' srvSignature ',' signatureOp ')' ;
+srvSignature : prvSignature | opSignature | bldrSignature | 'sig' '(' srvSignature ',' signatureOp ')' ;
 prvSignature : 'sig' '(' ( sigName ',' )? prvSpec ')' ;
 opSignature  : 'sig' '(' ( sigName ',' )? opSpec ',' prvSpec ')' ;
-prvSpec : (srvType | prvInstance | 'type' '(' srvTypeName ')' (',' matchTypes)? (',' (srvTag | prvTag))? (',' prvDeployment)? ) ;
+prvSpec : (srvType | 'type' '(' srvTypeName ')') (',' matchTypes)? (',' (prvId))? (',' prvDeployment)? | bldrSignature | prvInstance ;
+bldrSignature : 'sig' '('( sigName ',' )? classSelector ','classType ')' ;
 matchTypes : 'types' '(' (interfaceType ',')* interfaceType ')' ; 
-opSpec  : selector signatureOp ( ',' dataContext )? (',' srvResult)? (',' inputConnector)? (',' outputConnector)? ;
+opSpec  : (selector | signatureOp) ( ',' dataContext )? (',' srvResult)? (',' inputConnector)? (',' outputConnector)? ;
 inputConnector : 'inConn' '(' (mapEntry ',')* mapEntry ')' ;
 outputConnector : 'outConn' '(' (mapEntry ',')* mapEntry ')' ;
-mapEntry : 'ent' '(' fromPathName ',' toPathName ')' ;
 
 srvType : classType | interfaceType ;
 
@@ -17,8 +17,7 @@ signatureOp : 'op' '(' selector (',' opArg)* ')' | 'op' '(' opSignature ')' ;
 opArg : accessType | flowType | provisionable ;
 accessType : 'Access.PUSH' | 'Access.PULL' ;
 provisionable : 'Provision.YES' | 'Provision.NO' ;
-prvTag : 'prvName' '(' providerName ')' ;
-srvTag : 'srvName' '(' serviceName (',' 'locators' '('(locatorName',')+ ')')? ((',' groupName)+)? ')' ;
+prvId : 'srvName' '(' serviceName (',' 'locators' '('(locatorName',')+ ')')? ((',' groupName)+)? ')' | 'prvName' '(' providerName ')' ;
 srvResult : 'result' '(' pathName? (',' inputPaths)? (',' outputPaths)? (',' dataContext)? ')' ;
 prvDeployment : 'deploy' '(' 'implementation' '(' providerClassName ')' 
                'classpath' '(' jarName* ')' 
@@ -40,10 +39,17 @@ srvRequest : srvSignature | contextEntry | srvMogram ;
 
 annotatedPath : 'path' '(' pathName ( ',' pathTag)? ')' ;
 srvPath : pathName | annotatedPath ;
-dataEntry : entOp '(' srvPath ',' value ')' ;
 entOp : 'inVal' | 'outVal' | 'inoutVal' | 'dbVal' ;
 
-procEntry : ('ent' '(' opSignature ')' | 'ent' '(' pathName ',' srvEvaluator ')' | 'ent' '(' pathName ',' srvInvoker ( ',' srvModel)? ')' | lambdaEntry  ')') ;
+dataEntry : entOp '(' srvPath ',' value ')' ;
+
+procEntry : ('ent' '(' pathName ',' (srvEvaluator | srvInvoker ( ',' srvModel)?) ')' | sigEntry | lambdaEntry) ;
+
+srvRoutine : contextEntry | srvInvoker | srvEvaluator ;
+
+sigEntry : 'ent' '(' pathName? ',' opSignature ')' ;
+
+mapEntry : 'ent' '(' fromPathName ',' toPathName ')' ;
 
 lambdaEntry : 'lambda' '(' pathName ',' entrycallableLambdaExpression ')'
 			| 'lambda' '(' pathName ',' serviceLambdaExpression',' srvArgs ')'
@@ -56,8 +62,6 @@ srvEntry : ('ent' '(' pathName ',' opSignature ( ',' srvModel)? ( ',' cxtSelecto
 
 cxtSelector : selector '(' (componentName',' )? pathName+ ')' ;
 
-srvRoutine : contextEntry | srvInvoker | srvEvaluator ;
-
 varEntry : 'var' '(' pathName ',' value ')' | 'var' '(' pathName ',' opSignature ')'
 			| 'var' '(' pathName (',' varFidelity)+ ')' | 'var' '(' pathName ',' morphFidelity ')'
 			| 'var' '(' pathName ',' srvRoutine ')' | 'var' '('(pathName',')? srvEntry')'
@@ -67,7 +71,7 @@ fiEntry : 'ent' '(' pathName',' entFidelity* ')' ;
 
 entFidelity : 'eFi' '(' contextEntry* ')' ;
 
-contextEntry : dataEntry | srvEntry | varEntry | fiEntry
+contextEntry : dataEntry | procEntry | srvEntry | varEntry | fiEntry
 			| entType '(' contextEntry ')' ;
 
 entType : 'in' | 'out' | 'inout' | 'db' ;
@@ -340,6 +344,7 @@ providerClassName : name ;
 providerName	  : name ;	
 sigName	  	  : name ;	
 selector          : name ;
+classSelector     : name ;
 serviceName       : name ;
 modelName 	  : name ;
 varName 	  : name ;

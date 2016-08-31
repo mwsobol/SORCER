@@ -27,6 +27,7 @@ import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
+import static sorcer.po.operator.ent;
 
 /**
  * Created by Mike Sobolewski on 10/26/15.
@@ -42,7 +43,7 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                operator.ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
 
@@ -57,9 +58,9 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mdl = model(
-                operator.ent("arg/x1", eFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
-                operator.ent("arg/x2", eFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
-                operator.ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                ent("arg/x1", eFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
+                ent("arg/x2", eFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
+                ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
 
@@ -79,9 +80,9 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mdl = model(
-                operator.ent("arg/x1", eFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
-                operator.ent("arg/x2", eFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
-                operator.ent("sFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                ent("arg/x1", eFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
+                ent("arg/x2", eFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
+                ent("sFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 FidelityMangement.YES,
                 response("sFi", "arg/x1", "arg/x2"));
@@ -103,7 +104,7 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                operator.ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
 
@@ -154,9 +155,9 @@ public class ModelMultiFidelities {
 
         // three entry multifidelity model
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
-                operator.ent("mFi1", mFi(add, multiply)),
-                operator.ent("mFi2", mFi(average, divide, subtract)),
-                operator.ent("mFi3", mFi(average, divide, multiply)),
+                ent("mFi1", mFi(add, multiply)),
+                ent("mFi2", mFi(average, divide, subtract)),
+                ent("mFi3", mFi(average, divide, multiply)),
                 manager,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
@@ -212,9 +213,9 @@ public class ModelMultiFidelities {
 
         // three entry multifidelity model
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
-                operator.ent("mFi1", mFi(add, multiply)),
-                operator.ent("mFi2", mFi(average, divide, subtract)),
-                operator.ent("mFi3", mFi(average, divide, multiply)),
+                ent("mFi1", mFi(add, multiply)),
+                ent("mFi2", mFi(average, divide, subtract)),
+                ent("mFi3", mFi(average, divide, multiply)),
                 manager, fi2, fi3,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
@@ -260,22 +261,22 @@ public class ModelMultiFidelities {
             }
         };
 
-        Entry addEnt = operator.ent(sig("add", AdderImpl.class,
+        Entry addEnt = ent(sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2"))));
-        Entry subtractEnt = operator.ent(sig("subtract", SubtractorImpl.class,
+        Entry subtractEnt = ent(sig("subtract", SubtractorImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2"))));
-        Entry multiplyEnt = operator.ent(sig("multiply", MultiplierImpl.class,
+        Entry multiplyEnt = ent(sig("multiply", MultiplierImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2"))));
-        Entry divideEnt = operator.ent(sig("divide", DividerImpl.class,
+        Entry divideEnt = ent(sig("divide", DividerImpl.class,
                 result("result/y2", inPaths("arg/x1", "arg/x2"))));
-        Entry averageEnt = operator.ent(sig("average", AveragerImpl.class,
+        Entry averageEnt = ent(sig("average", AveragerImpl.class,
                 result("result/y2", inPaths("arg/x1", "arg/x2"))));
 
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 addEnt, multiplyEnt, divideEnt, averageEnt,
-                operator.ent("mFi1", mFi(addEnt, multiplyEnt)),
-                operator.ent("mFi2", mFi(averageEnt, divideEnt, subtractEnt)),
-                operator.ent("mFi3", mFi(averageEnt, divideEnt, multiplyEnt)),
+                ent("mFi1", mFi(addEnt, multiplyEnt)),
+                ent("mFi2", mFi(averageEnt, divideEnt, subtractEnt)),
+                ent("mFi3", mFi(averageEnt, divideEnt, multiplyEnt)),
                 manager,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
@@ -337,11 +338,11 @@ public class ModelMultiFidelities {
 
         // three entry multifidelity model with morphers
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
-				operator.ent("arg/y1", eFi(inVal("arg/y1/fi1", 10.0), inVal("arg/y1/fi2", 11.0))),
-				operator.ent("arg/y2", eFi(inVal("arg/y2/fi1", 90.0), inVal("arg/y2/fi2", 91.0))),
-                operator.ent("mFi1", mFi(morpher1, add, multiply)),
-                operator.ent("mFi2", mFi(morpher2, average, divide, subtract)),
-                operator.ent("mFi3", mFi(average, divide, multiply)),
+				ent("arg/y1", eFi(inVal("arg/y1/fi1", 10.0), inVal("arg/y1/fi2", 11.0))),
+				ent("arg/y2", eFi(inVal("arg/y2/fi1", 90.0), inVal("arg/y2/fi2", 91.0))),
+                ent("mFi1", mFi(morpher1, add, multiply)),
+                ent("mFi2", mFi(morpher2, average, divide, subtract)),
+                ent("mFi3", mFi(average, divide, multiply)),
                 fi2, fi3, fi4,
                 FidelityMangement.YES,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
@@ -362,9 +363,9 @@ public class ModelMultiFidelities {
 
     @Test
     public void selectMultifidelityEntries() throws Exception {
-        Entry e1 = operator.ent("x1", 5.0);
-        Entry e2 = operator.ent("x2", 6.0);
-        Entry e3 = operator.ent("x3", 7.0);
+        Entry e1 = ent("x1", 5.0);
+        Entry e2 = ent("x2", 6.0);
+        Entry e3 = ent("x3", 7.0);
 
         MultiFiRequest mfs = multiFiReq("args", srvFi(e1, e2, e3));
 
@@ -385,9 +386,9 @@ public class ModelMultiFidelities {
 
     @Test
     public void morphMultifidelityEntries() throws Exception {
-        Entry e1 = operator.ent("x1", 5.0);
-        Entry e2 = operator.ent("x2", 6.0);
-        Entry e3 = operator.ent("x3", 7.0);
+        Entry e1 = ent("x1", 5.0);
+        Entry e2 = ent("x2", 6.0);
+        Entry e3 = ent("x3", 7.0);
 
         Morpher morpher = (mgr, mFi, value) -> {
             ServiceFidelity<Signature> fi =  mFi.getFidelity();
@@ -594,10 +595,10 @@ public class ModelMultiFidelities {
 
         // four entry multifidelity model with morphers
         Model mdl = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
-                operator.ent("mFi1", mFi(morpher1, add, multiply)),
-                operator.ent("mFi2", mFi(eFi(operator.ent("ph2", morpher2), operator.ent("ph4", morpher4)), average, divide, subtract)),
-                operator.ent("mFi3", mFi(average, divide, multiply)),
-                operator.ent("mFi4", multiFiReq(mFi(morpher3, t5, t4))),
+                ent("mFi1", mFi(morpher1, add, multiply)),
+                ent("mFi2", mFi(eFi(ent("ph2", morpher2), ent("ph4", morpher4)), average, divide, subtract)),
+                ent("mFi3", mFi(average, divide, multiply)),
+                ent("mFi4", multiFiReq(mFi(morpher3, t5, t4))),
                 fi2, fi3, fi4, fi5,
                 FidelityMangement.YES,
                 response("mFi1", "mFi2", "mFi3", "mFi4", "arg/x1", "arg/x2"));
