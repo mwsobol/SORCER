@@ -15,6 +15,7 @@
  */
 package sorcer.data;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.rioproject.impl.util.FileUtils;
 
@@ -30,8 +31,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import static org.junit.Assert.assertTrue;
+import static sorcer.data.DataService.DATA_DIR;
 
 public class DataServiceTest {
+    @Before
+    public void reset() {
+        System.clearProperty(DATA_DIR);
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreateWithNoRoots() {
@@ -185,8 +191,9 @@ public class DataServiceTest {
 
     @Test
     public void testGetDataDir() {
+        String tmpDir = System.getenv("TEMP_DIR")==null?System.getProperty("java.io.tmpdir"):System.getenv("TEMP_DIR");
         String dataDirName = new File(String.format(String.format("%s%ssorcer-%s%sdata",
-                                                                  System.getProperty("java.io.tmpdir"),
+                                                                  tmpDir,
                                                                   File.separator,
                                                                   System.getProperty("user.name"),
                                                                   File.separator))).getAbsolutePath();

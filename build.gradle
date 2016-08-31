@@ -67,7 +67,7 @@ allprojects {
     apply plugin: 'idea'
     group = 'org.sorcer'
     String user = System.properties['user.name']
-    String tmpDir = System.properties['java.io.tmpdir']
+    String tmpDir = System.getenv("TEMP_DIR")==null?System.properties['java.io.tmpdir']:System.getenv("TEMP_DIR")
     ext {
         sorcerData = file("${tmpDir}/sorcer-${user}/data").path
     }
