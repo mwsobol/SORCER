@@ -13,9 +13,8 @@ import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MultiFiRequest;
-import sorcer.po.operator;
 import sorcer.service.*;
-import sorcer.service.Strategy.FidelityMangement;
+import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
@@ -84,7 +83,7 @@ public class ModelMultiFidelities {
                 ent("arg/x2", eFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
                 ent("sFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                FidelityMangement.YES,
+                FidelityManagement.YES,
                 response("sFi", "arg/x1", "arg/x2"));
 
         logger.info("DEPS: " + printDeps(mdl));
@@ -344,7 +343,7 @@ public class ModelMultiFidelities {
                 ent("mFi2", mFi(morpher2, average, divide, subtract)),
                 ent("mFi3", mFi(average, divide, multiply)),
                 fi2, fi3, fi4,
-                FidelityMangement.YES,
+                FidelityManagement.YES,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
@@ -600,7 +599,7 @@ public class ModelMultiFidelities {
                 ent("mFi3", mFi(average, divide, multiply)),
                 ent("mFi4", multiFiReq(mFi(morpher3, t5, t4))),
                 fi2, fi3, fi4, fi5,
-                FidelityMangement.YES,
+                FidelityManagement.YES,
                 response("mFi1", "mFi2", "mFi3", "mFi4", "arg/x1", "arg/x2"));
 
         return mdl;

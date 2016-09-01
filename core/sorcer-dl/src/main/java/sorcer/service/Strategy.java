@@ -127,7 +127,7 @@ public interface Strategy extends Arg {
 		}
 	}
 
-	public enum FidelityMangement implements Arg {
+	public enum FidelityManagement implements Arg {
 		YES, NO;
 
 		@Override

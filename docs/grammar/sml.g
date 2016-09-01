@@ -2,8 +2,11 @@ grammar sml;
 
 /* <PROVIDER-RULES> */
 srvSignature : prvSignature | opSignature | bldrSignature | 'sig' '(' srvSignature ',' signatureOp ')' ;
+
 prvSignature : 'sig' '(' ( sigName ',' )? prvSpec ')' ;
-opSignature  : 'sig' '(' ( sigName ',' )? opSpec ',' prvSpec ')' | 'sig' '(' prvSignature ',' selector ')' | | 'sig' '(' prvSignature ',' opSpec ')' ;
+
+opSignature  : 'sig' '(' ( sigName ',' )? opSpec ',' prvSpec ')' | 'sig' '(' prvSignature ',' selector ')' | 'sig' '(' prvSignature ',' opSpec ')' ;
+
 bldrSignature : 'sig' '('( sigName ',' )? classSelector ','classType ')' ;
 
 prvSpec : (srvType | 'type' '(' srvTypeName ')') (',' matchTypes)? (',' (prvId))? (',' prvDeployment)? | bldrSignature | prvInstance ;
@@ -15,23 +18,24 @@ outputConnector : 'outConn' '(' (mapEntry ',')* mapEntry ')' ;
 srvType : classType | interfaceType ;
 
 signatureOp : 'op' '(' selector (',' opArg)* ')' | 'op' '(' opSignature ')' ;
-opArg : accessType | flowType | provisionable | monitorable | waitable | fiMangement | srvShellExec;
+opArg : accessType | flowType | provisionable | monitorable | waitable | fiManagement | srvShellExec;
 accessType : 'Access.PUSH' | 'Access.PULL' ;
 flowType: 'Flow.PAR' | 'Flow.SEQ' ;
 provisionable : 'Provision.YES' | 'Provision.NO' ;
 monitorable : 'Monitor.YES' | 'Monitor.NO' ;
 waitable : 'Wait.YES' | 'Wait.NO' ;
-fiMangement : 'FidelityMangement.YES' | 'FidelityMangement.NO' ;
+fiManagement : 'FidelityManagement.YES' | 'FidelityManagement.NO' ;
 srvShellExec : 'Shell.LOCAL' | 'Shell.REMOTE' ;
 
 prvId : 'srvName' '(' serviceName (',' 'locators' '('(locatorName',')+ ')')? ((',' groupName)+)? ')' | 'prvName' '(' providerName ')' ;
 srvResult : 'result' '(' pathName? (',' inputPaths)? (',' outputPaths)? (',' dataContext)? ')' ;
-prvDeployment : 'deploy' '(' 'implementation' '(' providerClassName ')' ','
-               'classpath' '(' (jarName',')* jarName')' ',' 
-			   'codebase' '(' jarName* 'configuration' '('configName ')' 'maintain' '(' intNumber ')' 'idle' '(' intNumber ')' ')' ;
-			   
-dplClasspath : 'classpath' '(' (jarName',')* jarName')';
-dplCodebase : 'classpath' '(' (jarName',')* jarName')';
+prvDeployment : 'deploy' '(' ('configuration' '('configName ')' | prvCodeSpec) deployOptions ')' ;
+	
+	
+prvCodeSpec : 'implementation' '(' prvClassName ')' ','prvClasspath ',' prvCodebase ;		   
+prvClasspath : 'classpath' '(' (jarName',')* jarName')';
+prvCodebase : 'codebase' '(' (jarName',')* jarName')';
+deployOptions :	(',''maintain' '(' intNumber ')')? (',''perNode' '(' intNumber ')')? (',''idle' '(' intNumber ')')? ;
 
 inputPaths : 'inPaths' '(' srvPath+ ')' ;
 outputPaths : 'outPaths' '(' srvPath+ ')' ;
@@ -347,7 +351,7 @@ clientLambdaExpression        : name;
 valueCallableLambdaExpression : name;
 morpherLambdaExpression       : name;
 
-providerClassName : name ;
+prvClassName 	  : name ;
 providerName	  : name ;	
 sigName	  	  : name ;	
 selector          : name ;

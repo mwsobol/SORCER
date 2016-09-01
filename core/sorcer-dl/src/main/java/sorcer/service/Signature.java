@@ -27,7 +27,6 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * A service <code>Signature</code> is an indirect behavioral feature of
@@ -390,7 +389,7 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 
 		public Strategy.Wait toWait = Strategy.Wait.YES;
 
-		public Strategy.FidelityMangement toManageFi = Strategy.FidelityMangement.NO;
+		public Strategy.FidelityManagement toManageFi = Strategy.FidelityManagement.NO;
 
 		public Strategy.Shell isShellRemote = Strategy.Shell.LOCAL;
 

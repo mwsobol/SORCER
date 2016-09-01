@@ -269,7 +269,7 @@ public class operator {
 		List<MapContext> connList = new ArrayList<MapContext>();
 		Strategy.Access accessType = null;
 		Strategy.Flow flowType = null;
-		Strategy.FidelityMangement fm = null;
+		Strategy.FidelityManagement fm = null;
 		FidelityManager fiManager = null;
 		Projection projection = null;
 		if (entries[0] instanceof Exertion) {
@@ -354,8 +354,8 @@ public class operator {
 				accessType = (Strategy.Access)o;
 			} else if (o instanceof Strategy.Access) {
 				flowType = (Strategy.Flow)o;
-			} else if (o instanceof Strategy.FidelityMangement) {
-				fm = (Strategy.FidelityMangement)o;
+			} else if (o instanceof Strategy.FidelityManagement) {
+				fm = (Strategy.FidelityManagement)o;
 			} else if (o instanceof FidelityManager) {
 				fiManager = ((FidelityManager)o);
 			} else if (o instanceof Projection) {
@@ -503,7 +503,7 @@ public class operator {
 			throw new ContextException(e);
 		}
 
-		if (cxt.getFidelityManager() == null && fm == Strategy.FidelityMangement.YES) {
+		if (cxt.getFidelityManager() == null && fm == Strategy.FidelityManagement.YES) {
 			((ServiceContext)cxt).setFidelityManager(new FidelityManager(cxt));
 			setupFiManager(cxt);
 		} else if (fiManager != null) {
@@ -1152,8 +1152,8 @@ public class operator {
 				sop.flowType = (Strategy.Flow) arg;
 			} else if (arg instanceof Strategy.Monitor) {
 				sop.toMonitor = (Strategy.Monitor) arg;
-			} else if (arg instanceof Strategy.FidelityMangement) {
-				sop.toManageFi = (Strategy.FidelityMangement) arg;
+			} else if (arg instanceof Strategy.FidelityManagement) {
+				sop.toManageFi = (Strategy.FidelityManagement) arg;
 			} else if (arg instanceof Strategy.Wait) {
 				sop.toWait = (Strategy.Wait) arg;
 			} else if (arg instanceof Strategy.Shell) {
@@ -1740,7 +1740,7 @@ public class operator {
 		}
 
 		FidelityManager fiManager = null;
-		Strategy.FidelityMangement fm = null;
+		Strategy.FidelityManagement fm = null;
 		Access access = null;
 		Flow flow = null;
 		List<ServiceFidelity> fis = new ArrayList<>();
@@ -1757,8 +1757,8 @@ public class operator {
 				mFi = (MorphFidelity) o;
 			} else if (o instanceof ServiceFidelity) {
 				fis.add(((ServiceFidelity) o));
-			} else if (o instanceof Strategy.FidelityMangement) {
-				fm = (Strategy.FidelityMangement) o;
+			} else if (o instanceof Strategy.FidelityManagement) {
+				fm = (Strategy.FidelityManagement) o;
 			}
 		}
 
@@ -1816,7 +1816,7 @@ public class operator {
 			task.setSelectedFidelity(first);
 		}
 
-		if (fm == Strategy.FidelityMangement.YES && task.getFidelityManager() == null
+		if (fm == Strategy.FidelityManagement.YES && task.getFidelityManager() == null
 				|| mFi != null) {
 			fiManager = new FidelityManager(task);
 			task.setFidelityManager(fiManager);
@@ -2010,7 +2010,7 @@ public class operator {
 		List<Exertion> exertions = new ArrayList();
 		List<Pipe> pipes = new ArrayList();
 		FidelityManager fiManager = null;
-		Strategy.FidelityMangement fm = null;
+		Strategy.FidelityManagement fm = null;
 		List<ServiceFidelity> fis = new ArrayList<>();
 		MorphFidelity mFi = null;
 		List<ServiceFidelity<ServiceFidelity>> metaFis = new ArrayList();
@@ -2043,8 +2043,8 @@ public class operator {
 				} else {
 					fis.add(((ServiceFidelity) elems[i]));
 				}
-			} else if (elems[i] instanceof Strategy.FidelityMangement) {
-				fm = (Strategy.FidelityMangement) elems[i];
+			} else if (elems[i] instanceof Strategy.FidelityManagement) {
+				fm = (Strategy.FidelityManagement) elems[i];
 			}
 		}
 		Job job = null;
@@ -2123,7 +2123,7 @@ public class operator {
 			job.setSelectedMetafidelity(first);
 		}
 
-		if (fm == Strategy.FidelityMangement.YES && job.getFidelityManager() == null
+		if (fm == Strategy.FidelityManagement.YES && job.getFidelityManager() == null
 				|| mFi != null) {
 			fiManager = new FidelityManager(job);
 			job.setFidelityManager(fiManager);
