@@ -58,7 +58,7 @@ entOp : 'inVal' | 'outVal' | 'inoutVal' | 'dbVal' ;
 
 dataEntry : entOp '(' srvPath ',' value ')' ;
 
-procEntry : ('ent' '(' pathName ',' (srvEvaluator | srvInvoker ( ',' srvModel)?) ')' | sigEntry | lambdaEntry) ;
+procEntry : ('ent' '(' pathName ',' (srvEvaluator | srvInvoker ( ',' entModel)?) ')' | sigEntry | lambdaEntry) ;
 
 srvRoutine : contextEntry | srvInvoker | srvEvaluator ;
 
@@ -72,7 +72,7 @@ lambdaEntry : 'lambda' '(' pathName ',' entrycallableLambdaExpression ')'
 			| 'lambda' '(' pathName ',' clientLambdaExpression',' srvArgs ')'
 			| 'lambda' '(' pathName ',' valueCallableLambdaExpression',' srvArgs ')' ;
 
-srvEntry : ('ent' '(' pathName ',' opSignature ( ',' srvModel)? ( ',' cxtSelector)? ')') 
+srvEntry : ('ent' '(' pathName ',' opSignature ( ',' entModel)? ( ',' cxtSelector)? ')') 
 			| ('ent' '(' pathName ',' srvRoutine ')') | ('ent' '(' pathName ',' srvMogram ')') ;
 
 cxtSelector : selector '(' (componentName',' )? pathName+ ')' ;
@@ -126,21 +126,24 @@ entSetter : objectImplementingSetter ;
 
 /* <MOGRAMS> */
 
-contextModelType : 'entModel' | 'parModel' | 'srvModel' | 'model' | 'mdl' | 'varModel' ;
+contextModelType : 'procModel' | 'srvModel' | 'varModel' | 'model' | 'mdl' ;
 srvExertionType : 'task' | 'block' | 'job' | conditionalExertion | 'exertion' | 'xrt' ;
 conditionalExertionType : 'loop' | 'alt' | 'opt' ;
-srvMogramType : contextModel | srvExertion | 'mogram' | 'mog' ;
+srvMogramType : contextModelType | srvExertionType | 'mogram' | 'mog' ;
 
-srvMogram : dataContext  | contextModel | srvExertion | multiFiMogram | 'mogram' '(' contextModelParameters | srvExertionParamters ')' ;
+srvMogram : dataContext  | contextModel | srvExertion | multiFiMogram | 'mogram' '(' (contextModelParameters | srvExertionParamters) ')' ;
 
 multiFiMogram : 'multiFiReq' '(' (name',')? (morphFidelity | srvFidelity) ')' ;
 
+
 /* <MODELS> */
-srvModel : dataContext | contextModel | varOrientedModel ;
+
+entModel : dataContext | contextModel | structuredVarModel | contextSnapshotResult ;
+
 dataContext : 'context ' '(' (name',')? (dataEntry',')+ (srvResult)? (',' inputPaths)? (',' outputPaths)? ')' 
 			| 'tag' '(' dataContext',' annotatedPath ')' | 'tagAssociation' '(' dataContext',' newTagAssociation ')' ;
 
-contextModel : 'contextModelType' '('(name',' )? contextEntry* (',' 'response' '('pathName*')' (',' srvDependency)? )? ')';
+contextModel : contextModelType '('(name',' )? (contextEntry',')+ (',' 'response' '('(pathName',')+')')? (',' srvDependency)? ')';
 		
 parTypes : 'types' '('srvType*')' ;
 parArgs : 'args' '('object*')' ;
@@ -177,35 +180,13 @@ srvFidelity : 'srvFi' '('(fiName',')? srvRequest+')' ;
 
 fiSelector : 'fi' '('pathName',' fiName')' ;
 
-metaFiSelector : 'fi' '('fiName',' fiSelector+ | compFiSelector+')' ;
+metaFiSelector : 'fi''('fiName',' (fiSelector',')+')';
 
-multiFi : entFidelity | sigFi | morphFi | varFidelity | srvFidelity ;
-
-
-/* <ACCESSING-VALUES> */
-
-contextValue : 'value' '('dataContext',' pathName | outputPaths')' 
-			| 'valueAt' '('dataContext',' index')' 
-			| 'valueAt' '('dataContext',' pathTag')' | 'valuesAt' '('dataContext',' pathTag')' ;
-
-srvValue : 'exec' '(' srvRequest(',' srvArg)*')' | 
-			'eval' '('contextEntry(',' srvArg)*')' | 'eval' '('srvModel',' pathName(',' srvArg)*')' 
-			| 'eval' '('srvExertion(',' srvArg)*')' | 'returnValue' '('srvMogram')' ; 
-
-srvMogramResult : 'exert' '('srvMogram',' srvArg*')' ;
-
-dataContextResult : 'response' '('srvModel',' srvArg*')' 
-			| 'result' '('srvModel (',' pathName)?')' | 'context' '('srvMogram')' 
-			| 'upcontext' '('compoundExertion')' ;
-
-srvEntryResult : srvValue | 'get' '('srvMogram',' componentName')' ;
-
-srvArg : opSignature | dataEntry | srvMogram | fiSelector
-			| compFiSelector | cxtSelector | inputPaths | outputPaths | srvResult | instanceofArg ;
+fiList : 'fis''(' ((fiSelector | fiList)',')+ ')' ;
 
 /* <VAR-ORIENTED-MODELING> */
 
-varOrientedModel : responseModeling | parametricModeling | optimizationModeling	| streamingParametricModeling ;
+structuredVarModel : responseModeling | parametricModeling | optimizationModeling | streamingParametricModeling ;
 
 responseModeling : 'responseModel' '('(modelName',' )? 
 					(modelingInstance',' )?  baseVars*',' varRealization*')' ;
@@ -286,6 +267,43 @@ optiSig : 'optimizerSig' '('prvSignature')';
 
 explorerSignature : opSignature;
 
+
+/* <ACCESSING-VALUES> */
+
+contextValueResult : 'value' '('dataContext',' pathName | outputPaths')' 
+			| 'valueAt' '('dataContext',' index')' 
+			| 'valueAt' '('dataContext',' pathTag')' | 'valuesAt' '('dataContext',' pathTag')' ;
+
+srvValueResult : 'exec' '(' srvRequest(',' srvArg)*')' | 
+			'eval' '('contextEntry(',' srvArg)*')' | 'eval' '('entModel',' pathName(',' srvArg)*')' 
+			| 'eval' '('srvExertion(',' srvArg)*')' | 'returnValue' '('srvMogram')' ; 
+
+srvMogramResult : 'exert' '('srvMogram',' srvArg*')' ;
+
+dataContextResult : 'response' '('entModel',' srvArg*')' 
+			| 'result' '('entModel (',' pathName)?')' | 'context' '('srvMogram')' 
+			| 'upcontext' '('compoundExertion')' ;
+
+srvEexrtionResult : 'get' '('srvExertion',' componentPathName')' ;
+
+srvEntryResult : 'getEntry''('(dataContext | contextModel)',' pathName')' ;
+
+structuredVarModelResult : 'setInputs''('structuredVarModel',' dataContext ')' ;
+
+contextSnapshotResult : 'snapshot''(' (srvExertion | structuredVarModel (',' varInformation)* | prvSignature (',' varInformation)*')') ')' 
+			| 'evalSnapshot' '(' (structuredVarModel (',' varInformation) | prvSignature (',' varInformation)* ) ')';
+			
+		
+varInformation  : 'varInfo''('varsType (',' varName)*')' ;
+
+varsType : 'INPUTS' | 'CONSTANTS' | 'INVARIANTS' | 'DESIGN' | 'PARAMETERS'
+			| 'ALL_OUTPUTS' | 'OUTPUTS' | 'RESPONSES' | 'LINKED' | 'OBJECTIVES'
+			| 'CONSTRAINTS' | 'WATCHABLE' | 'ALL' | 'NONE' | 'NULL' ;
+
+srvArg : (opSignature | dataEntry | srvMogram | fiSelector | metaFiSelector | cxtSelector
+            | inputPaths | outputPaths | srvResult | opSignature | instanceofArg'.class') ;
+
+
 /*<END>*/
 
 
@@ -320,6 +338,7 @@ locatorName :	 name ;
 fromPathName : name ;
 toPathName : name ;
 pathName :	 name ;
+componentPathName : name ;	
 pathTag :	 name ;
 newTagAssociation :	 name;
 lambdaEvaluator :	 name;
