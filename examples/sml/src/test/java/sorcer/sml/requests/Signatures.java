@@ -65,6 +65,22 @@ public class Signatures {
 	}
 
 	@Test
+	public void referencingBuilderSignature() throws Exception {
+
+//		Signature s = sig("getTime", sig("new", Date.class));
+		Signature s = sig("getTime", sig(Date.class));
+
+		// get service provider - a given object
+		Object prv = provider(s);
+		logger.info("provider of s: " + prv);
+		assertTrue(prv instanceof Date);
+
+//		logger.info("getTime: " + exec(xrt("gt", s)));
+		assertTrue(exec(xrt("gt", s)) instanceof Long);
+
+	}
+
+	@Test
 	public void referencingClassWithConstructor() throws Exception {
 
 		Signature s = sig("getTime", Date.class);
@@ -218,13 +234,34 @@ public class Signatures {
 	}
 
 	@Test
-	public void providerVsOperationSignatures() throws Exception {
+	public void operationSinatureWithBuilder() throws Exception {
 
 		Signature localProviderSig = sig(AdderImpl.class);
 		Object prv = provider(localProviderSig);
 		assertTrue(prv instanceof AdderImpl);
 
 		Signature localProviderOperationSig = sig("add", localProviderSig);
+
+		// request the local service
+		Service as = task("as", localProviderOperationSig,
+				context("add",
+						inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0),
+						result("result/y")));
+
+		assertEquals(100.0, exec(as));
+
+	}
+
+
+	@Test
+	public void localOperationSinature() throws Exception {
+
+		Signature localProviderSig = sig(AdderImpl.class);
+		Object prv = provider(localProviderSig);
+		assertTrue(prv instanceof AdderImpl);
+
+		Signature localProviderOperationSig = sig(localProviderSig, "add");
 
 		// request the local service
 		Service as = task("as", localProviderOperationSig,
@@ -252,16 +289,16 @@ public class Signatures {
 	}
 
 	@Test
-	public void providerVsOperationRemoteSignatures() throws Exception {
+	public void remoteOperationSinature() throws Exception {
 
 		Signature remoteProviderSig = sig(Adder.class);
 		Object prv = provider(remoteProviderSig);
 		assertTrue(prv instanceof Adder);
 
-		Signature remoteProviderOperationSig = sig("add", remoteProviderSig);
+		Signature remoteOperationSig = sig(remoteProviderSig, "add");
 
 		// request the remote service
-		Service as = task("as", remoteProviderOperationSig,
+		Service as = task("as", remoteOperationSig,
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),

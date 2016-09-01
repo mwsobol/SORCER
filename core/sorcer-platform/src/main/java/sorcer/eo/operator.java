@@ -69,6 +69,7 @@ import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.*;
 
+import static sorcer.co.operator.instance;
 import static sorcer.co.operator.rasis;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.srv;
@@ -900,9 +901,6 @@ public class operator {
 		return signature.getServiceType();
 	}
 
-	public static String selector(Signature signature) {
-		return signature.getSelector();
-	}
 
 	public static ContextSelector selector(String componentName, List<Path> paths) {
 		ContextSelector cs = new ContextSelector(Path.getNameList(paths));
@@ -959,10 +957,8 @@ public class operator {
 		}
 	}
 
-	public static Signature sig(String operation, Signature signature) throws SignatureException {
-		((ServiceSignature)signature).setSelector(operation);
-		((ServiceSignature)signature).setName(operation);
-		return signature;
+	public static String selector(Signature signature) {
+		return signature.getSelector();
 	}
 
 	public static Signature sig(String operation, Object provider, Object... args) throws SignatureException {
@@ -1022,6 +1018,11 @@ public class operator {
 	public static Signature sig(Class classType, Object... items) throws SignatureException {
 		ServiceType serviceType = new ServiceType(classType);
 		return sig(serviceType, items);
+	}
+
+	public static Signature sig(Signature signature, String operation) throws SignatureException {
+		((ServiceSignature)signature).setSelector(operation);
+		return signature;
 	}
 
 	public static Signature sig(Signature signature, Operation operation) throws SignatureException {
@@ -1119,6 +1120,8 @@ public class operator {
 					((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
 				} else if (o instanceof Version && sig instanceof NetSignature) {
 					((NetSignature) sig).setVersion(((Version) o).getName());
+				} else if (o instanceof ServiceSignature && sig instanceof ObjectSignature) {
+					((ObjectSignature) sig).setTargetSignature(((ServiceSignature) o));
 				} else if (o instanceof ServiceContext
 						// not applied to connectors in Signatures
 						&& o.getClass() != MapContext.class) {
@@ -3025,9 +3028,11 @@ public class operator {
 		}
 		Object target = null;
 		Object provider = null;
+		Signature targetSignatue = null;
 		Class<?> providerType = signature.getServiceType();
 		if (signature.getClass() == ObjectSignature.class) {
 			target = ((ObjectSignature) signature).getTarget();
+			targetSignatue = ((ObjectSignature) signature).getTargetSignature();
 		}
 		try {
 			if (signature.getClass() == NetSignature.class) {
@@ -3039,6 +3044,9 @@ public class operator {
 			} else if (signature.getClass() == ObjectSignature.class) {
 				if (target != null) {
 					provider = target;
+				} else if (targetSignatue != null) {
+					provider = instance(targetSignatue);
+					((ObjectSignature)signature).setTarget(provider);
 				} else if (Provider.class.isAssignableFrom(providerType)) {
 					provider = providerType.newInstance();
 				} else {

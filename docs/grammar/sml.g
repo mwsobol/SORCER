@@ -3,25 +3,36 @@ grammar sml;
 /* <PROVIDER-RULES> */
 srvSignature : prvSignature | opSignature | bldrSignature | 'sig' '(' srvSignature ',' signatureOp ')' ;
 prvSignature : 'sig' '(' ( sigName ',' )? prvSpec ')' ;
-opSignature  : 'sig' '(' ( sigName ',' )? opSpec ',' prvSpec ')' ;
-prvSpec : (srvType | 'type' '(' srvTypeName ')') (',' matchTypes)? (',' (prvId))? (',' prvDeployment)? | bldrSignature | prvInstance ;
+opSignature  : 'sig' '(' ( sigName ',' )? opSpec ',' prvSpec ')' | 'sig' '(' prvSignature ',' selector ')' | | 'sig' '(' prvSignature ',' opSpec ')' ;
 bldrSignature : 'sig' '('( sigName ',' )? classSelector ','classType ')' ;
+
+prvSpec : (srvType | 'type' '(' srvTypeName ')') (',' matchTypes)? (',' (prvId))? (',' prvDeployment)? | bldrSignature | prvInstance ;
 matchTypes : 'types' '(' (interfaceType ',')* interfaceType ')' ; 
-opSpec  : (selector | signatureOp) ( ',' dataContext )? (',' srvResult)? (',' inputConnector)? (',' outputConnector)? ;
+opSpec  : (selector | signatureOp) (',' srvResult)? (',' inputConnector)? (',' outputConnector)? ( ',' dataContext )? ;
 inputConnector : 'inConn' '(' (mapEntry ',')* mapEntry ')' ;
 outputConnector : 'outConn' '(' (mapEntry ',')* mapEntry ')' ;
 
 srvType : classType | interfaceType ;
 
 signatureOp : 'op' '(' selector (',' opArg)* ')' | 'op' '(' opSignature ')' ;
-opArg : accessType | flowType | provisionable ;
+opArg : accessType | flowType | provisionable | monitorable | waitable | fiMangement | srvShellExec;
 accessType : 'Access.PUSH' | 'Access.PULL' ;
+flowType: 'Flow.PAR' | 'Flow.SEQ' ;
 provisionable : 'Provision.YES' | 'Provision.NO' ;
+monitorable : 'Monitor.YES' | 'Monitor.NO' ;
+waitable : 'Wait.YES' | 'Wait.NO' ;
+fiMangement : 'FidelityMangement.YES' | 'FidelityMangement.NO' ;
+srvShellExec : 'Shell.LOCAL' | 'Shell.REMOTE' ;
+
 prvId : 'srvName' '(' serviceName (',' 'locators' '('(locatorName',')+ ')')? ((',' groupName)+)? ')' | 'prvName' '(' providerName ')' ;
 srvResult : 'result' '(' pathName? (',' inputPaths)? (',' outputPaths)? (',' dataContext)? ')' ;
-prvDeployment : 'deploy' '(' 'implementation' '(' providerClassName ')' 
-               'classpath' '(' jarName* ')' 
+prvDeployment : 'deploy' '(' 'implementation' '(' providerClassName ')' ','
+               'classpath' '(' (jarName',')* jarName')' ',' 
 			   'codebase' '(' jarName* 'configuration' '('configName ')' 'maintain' '(' intNumber ')' 'idle' '(' intNumber ')' ')' ;
+			   
+dplClasspath : 'classpath' '(' (jarName',')* jarName')';
+dplCodebase : 'classpath' '(' (jarName',')* jarName')';
+
 inputPaths : 'inPaths' '(' srvPath+ ')' ;
 outputPaths : 'outPaths' '(' srvPath+ ')' ;
 
@@ -157,10 +168,6 @@ contextPipe : 'pipe' '(' 'outPoint' '('srvCondition',' contextPathName')' ','
 			'inPoint' '('srvExertion',' contextPathName')' ')' ;
 
 exertionStrategy : 'strategy' '(' (accessType',')? (flowType',')? (monitorable',')? (provisionable)? ')' ;
-
-flowType: 'Flow.PAR' | 'Flow.SEQ' ;
-
-monitorable : 'Monitor.YES' | 'Monitor.NO' ;
 
 srvFidelity : 'srvFi' '('(fiName',')? srvRequest+')' ; 
 
