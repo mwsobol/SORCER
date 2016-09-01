@@ -2430,7 +2430,7 @@ public class operator {
 	 * @param association
 	 * @throws ContextException
 	 */
-	public static Context tagContext(Context context, String association)
+	public static Context tagAssociation(Context context, String association)
 			throws ContextException {
 		context.setAttribute(association);
 		return context;

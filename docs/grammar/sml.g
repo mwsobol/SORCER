@@ -138,7 +138,7 @@ multiFiMogram : 'multiFiReq' '(' (name',')? (morphFidelity | srvFidelity) ')' ;
 /* <MODELS> */
 srvModel : dataContext | contextModel | varOrientedModel ;
 dataContext : 'context ' '(' (name',')? (dataEntry',')+ (srvResult)? (',' inputPaths)? (',' outputPaths)? ')' 
-			| 'tag' '(' dataContext',' annotatedPath ')' | 'contextTag' '(' dataContext',' newTagAssociation ')' ;
+			| 'tag' '(' dataContext',' annotatedPath ')' | 'tagAssociation' '(' dataContext',' newTagAssociation ')' ;
 
 contextModel : 'contextModelType' '('(name',' )? contextEntry* (',' 'response' '('pathName*')' (',' srvDependency)? )? ')';
 		
