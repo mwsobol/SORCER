@@ -133,12 +133,12 @@ srvMogramType : contextModel | srvExertion | 'mogram' | 'mog' ;
 
 srvMogram : dataContext  | contextModel | srvExertion | multiFiMogram | 'mogram' '(' contextModelParameters | srvExertionParamters ')' ;
 
-multiFiMogram : 'multiFiReq' '(' (name',')? morphFidelity ')' | 'multiFiReq' '(' (name',')? srvFidelity ')' ;
+multiFiMogram : 'multiFiReq' '(' (name',')? (morphFidelity | srvFidelity) ')' ;
 
 /* <MODELS> */
 srvModel : dataContext | contextModel | varOrientedModel ;
-dataContext : 'context ' '(' (name',')? dataEntry* (',' srvResult)? (',' inputPaths)? (',' outputPaths)? ')' 
-			| 'tag' '(' dataContext',' annotatedPath ')' | 'tagContext' '(' dataContext',' newTagAssociation ')' ;
+dataContext : 'context ' '(' (name',')? (dataEntry',')+ (srvResult)? (',' inputPaths)? (',' outputPaths)? ')' 
+			| 'tag' '(' dataContext',' annotatedPath ')' | 'contextTag' '(' dataContext',' newTagAssociation ')' ;
 
 contextModel : 'contextModelType' '('(name',' )? contextEntry* (',' 'response' '('pathName*')' (',' srvDependency)? )? ')';
 		
@@ -168,7 +168,7 @@ conditionalExertion : 'loop' '('srvCondition',' srvMogram')'
 
 srvOption : 'opt' '('srvCondition',' srvMogram')' ;
 
-contextPipe : 'pipe' '(' 'outPoint' '('srvCondition',' contextPathName')' ',' 
+contextPipe : 'pipe' '(' 'outPoint' '('srvExertion',' contextPathName')' ',' 
 			'inPoint' '('srvExertion',' contextPathName')' ')' ;
 
 exertionStrategy : 'strategy' '(' (accessType',')? (flowType',')? (monitorable',')? (provisionable)? ')' ;

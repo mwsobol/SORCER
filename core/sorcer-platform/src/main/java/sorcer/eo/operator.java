@@ -2427,12 +2427,12 @@ public class operator {
 	 * tag (relation) named 'triplet' as a product of three "places" one, two, three.
 	 *
 	 * @param context
-	 * @param tag
+	 * @param association
 	 * @throws ContextException
 	 */
-	public static Context tagContext(Context context, String tag)
+	public static Context tagContext(Context context, String association)
 			throws ContextException {
-		context.setAttribute(tag);
+		context.setAttribute(association);
 		return context;
 	}
 
