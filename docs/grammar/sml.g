@@ -5,7 +5,7 @@ srvSignature : prvSignature | opSignature | bldrSignature | 'sig' '(' srvSignatu
 
 prvSignature : 'sig' '(' ( sigName ',' )? prvSpec ')' ;
 
-opSignature  : 'sig' '(' ( sigName ',' )? opSpec ',' prvSpec ')' | 'sig' '(' prvSignature ',' selector ')' | 'sig' '(' prvSignature ',' opSpec ')' ;
+opSignature  : 'sig' '(' (( sigName ',' )? opSpec ',' prvSpec ')' | prvSignature ',' selector ')' | prvSignature ',' opSpec) ')' ;
 
 bldrSignature : 'sig' '('( sigName ',' )? classSelector ','classType ')' ;
 
@@ -17,7 +17,7 @@ outputConnector : 'outConn' '(' (mapEntry ',')* mapEntry ')' ;
 
 srvType : classType | interfaceType ;
 
-signatureOp : 'op' '(' selector (',' opArg)* ')' | 'op' '(' opSignature ')' ;
+signatureOp : 'op' '(' (selector (',' opArg)* ')' |opSignature) ')' ;
 opArg : accessType | flowType | provisionable | monitorable | waitable | fiManagement | srvShellExec;
 accessType : 'Access.PUSH' | 'Access.PULL' ;
 flowType: 'Flow.PAR' | 'Flow.SEQ' ;
@@ -55,9 +55,11 @@ srvRequest : srvSignature | contextEntry | srvMogram ;
 annotatedPath : 'path' '(' pathName ( ',' pathTag)? ')' ;
 srvPath : pathName | annotatedPath ;
 entOp : 'inVal' | 'outVal' | 'inoutVal' | 'dbVal' ;
-
 dataEntry : entOp '(' srvPath ',' value ')' ;
 
+contextEntry : dataEntry | procEntry | srvEntry | varEntry | fiEntry
+			| entType '(' (pathName ',')? contextEntry ')' ;
+			
 procEntry : ('ent' '(' pathName ',' (srvEvaluator | srvInvoker ( ',' entModel)?) ')' | sigEntry | lambdaEntry) ;
 
 srvRoutine : contextEntry | srvInvoker | srvEvaluator ;
@@ -66,46 +68,46 @@ sigEntry : 'ent' '(' pathName? ',' opSignature ')' ;
 
 mapEntry : 'ent' '(' fromPathName ',' toPathName ')' ;
 
-lambdaEntry : 'lambda' '(' pathName ',' entrycallableLambdaExpression ')'
-			| 'lambda' '(' pathName ',' serviceLambdaExpression',' srvArgs ')'
-			| 'lambda' '(' pathName ',' callableLambdaExpression',' srvArgs ')'
-			| 'lambda' '(' pathName ',' clientLambdaExpression',' srvArgs ')'
-			| 'lambda' '(' pathName ',' valueCallableLambdaExpression',' srvArgs ')' ;
+lambdaEntry : 'lambda' '(' pathName ',' (entrycallableLambdaExpression
+			| serviceLambdaExpression
+			| callableLambdaExpression
+			| clientLambdaExpression
+			| valueCallableLambdaExpression)(',' srvArgs)? ')' ;
 
-srvEntry : ('ent' '(' pathName ',' opSignature ( ',' entModel)? ( ',' cxtSelector)? ')') 
-			| ('ent' '(' pathName ',' srvRoutine ')') | ('ent' '(' pathName ',' srvMogram ')') ;
+srvEntry : 'ent' '(' pathName ',' (opSignature  (',' entModel)? (',' cxtSelector)?  
+			| srvRoutine | srvMogram) ')' ;
 
 cxtSelector : selector '(' (componentName',' )? pathName+ ')' ;
 
-varEntry : 'var' '(' pathName ',' value ')' | 'var' '(' pathName ',' opSignature ')'
-			| 'var' '(' pathName (',' varFidelity)+ ')' | 'var' '(' pathName ',' morphFidelity ')'
-			| 'var' '(' pathName ',' srvRoutine ')' | 'var' '('(pathName',')? srvEntry')'
-			| 'var' '(' pathName ',' varProxy ')' | objectiveVar | constraintVar ;
+varEntry : ('var' '(' (pathName ( ',' (value | opSignature | morphFidelity 
+			|srvRoutine 
+			| varProxy 
+			| contextEntry )
+			|(',' varFidelity)+ ) ')')
+			| objectiveVar | constraintVar)  ;
 
 fiEntry : 'ent' '(' pathName',' entFidelity* ')' ;
 
 entFidelity : 'eFi' '(' contextEntry* ')' ;
 
-contextEntry : dataEntry | procEntry | srvEntry | varEntry | fiEntry
-			| entType '(' contextEntry ')' ;
-
 entType : 'in' | 'out' | 'inout' | 'db' ;
 
 sigFidelity : 'sFi' '(' fiName ',' opSignature+ ')' ;
 
-morphFidelity : 'mFi' '(' fiName (',' srvRequest)+ ')'
-			| 'mFi' '(' fiName ',' srvMorpher (',' srvRequest)+ ')' ;
+morphFidelity : 'mFi' '(' fiName ((',' srvRequest)+ 
+			| ',' srvMorpher (',' srvRequest)+) ')' ;
 			
 srvMorpher: morpherLambdaExpression ;
 
-varFidelity : 'vFi' '(' fiName ',' value ')' | 'vFi' '(' fiName ',' opSignature ')'
-			| 'vFi' '(' fiName ( ',' srvRoutine)? ( ',' entGetter)? ( ',' entSetter)? ')' ;
+varFidelity : 'vFi' '(' fiName (',' (value | opSignature)
+			| (',' srvRoutine)? ( ',' entGetter)? ( ',' entSetter)?) ')' ;
 
 varProxy : 'proxy' '(' pathName ',' opSignature ')' ;
 		
-srvInvoker : 'invoker' '(' javaExpression ',' 'srvArgs' ( ',' dataContext)? ')'
-			| 'invoker' '(' opSignature ')' | srvExertion | 'inc' '(' srvInvoker ',' double | int ')'
-			| 'methodInvoker()'
+srvInvoker : 'invoker' '(' (javaExpression ',' 'srvArgs' ( ',' dataContext)? 
+			| opSignature) ')' | srvExertion | 'inc' '(' srvInvoker ',' double | int ')'
+			| 'methodInvoker(TODO)'
+			| 'cmdInvoker(TODO)'
 			| 'invoker' '('(name',')? valueCallableLambdaExpression ( ',' contextModel)?',' srvArgs ')'
 			| procEntry  | conditionalInvoker ;
 		
@@ -208,8 +210,8 @@ modelingInstance: 'instance' '('opSignature')' ;
 
 varType : 'inputVars' | 'outputVars' | 'linkedVars' | 'constantVars' ;
 
-baseVars : 'varType' '('(varName',')+ varName ')' | 'varType' '('varName',' count')' 
-					| 'varType' '('varName',' from',' to')' ;
+baseVars : 'varType' '('((varName',')+ varName |varName',' count 
+					| varName',' from',' to)')' ;
 
 varParametricTable : 'parametricTable' '('tableURL (',' tableSeparator)?')'  
 					| 'table' '(' 'header' '('varName+')' ',' 'row' '('value+')'+')' ;
@@ -343,7 +345,6 @@ pathTag :	 name ;
 newTagAssociation :	 name;
 lambdaEvaluator :	 name;
 contextPathName	:	 name ;
-morphFi :	 name ;
 sigFi :	 name ;
 entEvaluator :	 name;
 objectImplementingEvaluation :	 name;
