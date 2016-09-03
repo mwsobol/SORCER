@@ -51,6 +51,7 @@
 <p>Each of the links below will illustrate the syntax diagrams for the SML</p>
 <ul>
     <li><a href="#Signatures">Signatures</a></li>
+    <li><a href="#Multifidelities">Multifidelities</a></li>
     <li><a href="#Provider Services">Provider Services</a></li>
     <li><a href="#Requests">Requests</a></li>
     <li><a href="#Entries">Entries</a></li>
@@ -82,12 +83,33 @@
 
 <% PROVIDER-RULES %>
 
+<a name="Multifidelities"><b><big>Multifidelities</big></b></a>
+<p>
+    <i>Fidelity</i> is defined to be “the degree to which something matches or copies something else”
+    (webster.com) or in general “adherence to fact or detail” (dictionary.com). In SML, a degree of adherence,
+    matching, or accuracy has the same meaning, though it is acknowledged they have different meanings in some
+    circles. Similarly, <i>multifidelity</i> in a SML perspective refers to a modeling environment with multiple
+    fidelity levels for a given computing process, meaning there are different computing components or functions
+    to choose from. Fidelity and cost (or similarly accuracy and time) are positively correlated; this represents
+    a fundamental trade in modeling and design. is defined to be “the degree to which something matches or copies
+    something else” (webster.com) or in general “adherence to fact or detail” (dictionary.com). In SML,
+    a degree of adherence, matching, or accuracy has the same meaning, though it is acknowledged they have
+    different meanings in some circles. Similarly, “multifidelity” in a SML perspective refers to a modeling
+    environment with multiple fidelity levels for a given computing process, meaning there are different computing
+    components or functions to choose from. Fidelity and cost (or similarly accuracy and time) are positively
+    correlated; this represents a fundamental trade in modeling and design.
+</p>
+
+<% MULTIFIDELITY-RULES %>
+
 <hr/>
 <a name="Provider Services"><b><big>Provider Services</big></b></a>
 <p>
-    A service provider is an instance of local or remote concrete service specified by a signature. Signatures,
-    signature entries and elementary tasks are bounded to single service providers but service mograms
-    are bound to federations of service providers by the SORCER platform at runtime.</p>
+    A <i>computing service</i> is the work performed in which a <i>service provider</i> (one that serves) exerts
+    acquired abilities to execute a computation. A service provider is an instance of local or remote concrete
+    service specified by a signature. Signatures, signature entries, and elementary tasks are bounded to single
+    service providers but service mograms are bound to federations of service providers in the SORCER platform
+    at runtime.</p>
 
 <% PROVIDER-SERVICES %>
 <hr/>

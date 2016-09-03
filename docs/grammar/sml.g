@@ -10,12 +10,11 @@ opSignature  : 'sig' '(' (( sigName ',' )? opSpec ',' prvSpec ')' | prvSignature
 bldrSignature : 'sig' '('( sigName ',' )? classSelector ','classType ')' ;
 
 prvSpec : (srvType | 'type' '(' srvTypeName ')') (',' matchTypes)? (',' (prvId))? (',' prvDeployment)? | bldrSignature | prvInstance ;
-matchTypes : 'types' '(' (interfaceType ',')* interfaceType ')' ; 
+srvType : classType | interfaceType ;
 opSpec  : (selector | signatureOp) (',' srvResult)? (',' inputConnector)? (',' outputConnector)? ( ',' dataContext )? ;
+matchTypes : 'types' '(' (interfaceType ',')* interfaceType ')' ; 
 inputConnector : 'inConn' '(' (mapEntry ',')* mapEntry ')' ;
 outputConnector : 'outConn' '(' (mapEntry ',')* mapEntry ')' ;
-
-srvType : classType | interfaceType ;
 
 signatureOp : 'op' '(' (selector (',' opArg)* ')' |opSignature) ')' ;
 opArg : accessType | flowType | provisionable | monitorable | waitable | fiManagement | srvShellExec;
@@ -26,19 +25,36 @@ monitorable : 'Monitor.YES' | 'Monitor.NO' ;
 waitable : 'Wait.YES' | 'Wait.NO' ;
 fiManagement : 'FidelityManagement.YES' | 'FidelityManagement.NO' ;
 srvShellExec : 'Shell.LOCAL' | 'Shell.REMOTE' ;
-
 prvId : 'srvName' '(' serviceName (',' 'locators' '('(locatorName',')+ ')')? ((',' groupName)+)? ')' | 'prvName' '(' providerName ')' ;
 srvResult : 'result' '(' pathName? (',' inputPaths)? (',' outputPaths)? (',' dataContext)? ')' ;
-prvDeployment : 'deploy' '(' ('configuration' '('configName ')' | prvCodeSpec) deployOptions ')' ;
-	
+prvDeployment : 'deploy' '(' ('configuration' '('configName ')' | prvCodeSpec) deployOptions ')' ;	
 	
 prvCodeSpec : 'implementation' '(' prvClassName ')' ','prvClasspath ',' prvCodebase ;		   
 prvClasspath : 'classpath' '(' (jarName',')* jarName')';
 prvCodebase : 'codebase' '(' (jarName',')* jarName')';
 deployOptions :	(',''maintain' '(' intNumber ')')? (',''perNode' '(' intNumber ')')? (',''idle' '(' intNumber ')')? ;
 
-inputPaths : 'inPaths' '(' srvPath+ ')' ;
-outputPaths : 'outPaths' '(' srvPath+ ')' ;
+inputPaths : 'inPaths' '(' (srvPath',')* srvPath')' ;
+outputPaths : 'outPaths' '(' (srvPath',')* srvPath')' ;
+
+
+/* <MULTIFIDELITY-RULES> */
+
+multiFi : entFidelity | sigFidelity | morphFidelity | reqFidelity | varFidelity | fiMogram ;
+
+entFidelity : 'eFi' '(' (contextEntry',')* contextEntry ')' ;
+
+sigFidelity : 'sFi' '(' fiName ',' (opSignature',')* opSignature ')' ;
+
+morphFidelity : 'mFi' '(' fiName ',' srvMorpher? (srvRequest',')+ srvRequest')' ;
+			
+reqFidelity : 'rFi' '('(fiName',')? (srvRequest',')+ srvRequest ')' ; 
+
+varFidelity : 'vFi' '(' fiName (',' (value | opSignature)
+			| (',' srvRoutine)? ( ',' entGetter)? ( ',' entSetter)?) ')' ;
+			
+srvMorpher: morpherLambdaExpression ;
+
 
 /* <PROVIDER-SERVICES> */
 
@@ -47,7 +63,7 @@ prvInstance : 'prv' '(' srvSignature ')' ;
 
 /* <REQUESTS> */
 
-srvRequest : srvSignature | contextEntry | srvMogram ;
+srvRequest : srvSignature | contextEntry | multiFi | srvMogram ;
 
 
 /* <ENTRIES> */
@@ -77,30 +93,18 @@ lambdaEntry : 'lambda' '(' pathName ',' (entrycallableLambdaExpression
 srvEntry : 'ent' '(' pathName ',' (opSignature  (',' entModel)? (',' cxtSelector)?  
 			| srvRoutine | srvMogram) ')' ;
 
-cxtSelector : selector '(' (componentName',' )? pathName+ ')' ;
+cxtSelector : selector '(' (componentName)? (',' pathName)+ ')' ;
 
 varEntry : ('var' '(' (pathName ( ',' (value | opSignature | morphFidelity 
-			|srvRoutine 
+			| srvRoutine 
 			| varProxy 
 			| contextEntry )
 			|(',' varFidelity)+ ) ')')
-			| objectiveVar | constraintVar)  ;
+			| objectiveVar | constraintVar) ;
 
 fiEntry : 'ent' '(' pathName',' entFidelity* ')' ;
 
-entFidelity : 'eFi' '(' contextEntry* ')' ;
-
 entType : 'in' | 'out' | 'inout' | 'db' ;
-
-sigFidelity : 'sFi' '(' fiName ',' opSignature+ ')' ;
-
-morphFidelity : 'mFi' '(' fiName ((',' srvRequest)+ 
-			| ',' srvMorpher (',' srvRequest)+) ')' ;
-			
-srvMorpher: morpherLambdaExpression ;
-
-varFidelity : 'vFi' '(' fiName (',' (value | opSignature)
-			| (',' srvRoutine)? ( ',' entGetter)? ( ',' entSetter)?) ')' ;
 
 varProxy : 'proxy' '(' pathName ',' opSignature ')' ;
 		
@@ -133,9 +137,9 @@ srvExertionType : 'task' | 'block' | 'job' | conditionalExertion | 'exertion' | 
 conditionalExertionType : 'loop' | 'alt' | 'opt' ;
 srvMogramType : contextModelType | srvExertionType | 'mogram' | 'mog' ;
 
-srvMogram : dataContext  | contextModel | srvExertion | multiFiMogram | 'mogram' '(' (contextModelParameters | srvExertionParamters) ')' ;
+srvMogram : dataContext  | contextModel | srvExertion | fiMogram | 'mogram' '(' (contextModelParameters | srvExertionParamters) ')' ;
 
-multiFiMogram : 'multiFiReq' '(' (name',')? (morphFidelity | srvFidelity) ')' ;
+fiMogram : 'fiMog' '(' (name',')? (morphFidelity | reqFidelity) ')' ;
 
 
 /* <MODELS> */
@@ -147,9 +151,9 @@ dataContext : 'context ' '(' (name',')? (dataEntry',')+ (srvResult)? (',' inputP
 
 contextModel : contextModelType '('(name',' )? (contextEntry',')+ (',' 'response' '('(pathName',')+')')? (',' srvDependency)? ')';
 		
-parTypes : 'types' '('srvType*')' ;
-parArgs : 'args' '('object*')' ;
-srvDependency : 'dependsOn' '(' 'ent' '('pathName',' 'paths' '('pathName*')'* ')' ;
+parTypes : 'types' '('(srvType',')* srvType')' ;
+parArgs : 'args' '('(object',')* object ')' ;
+srvDependency : 'dependsOn' '(' ('ent' '('pathName',' 'paths' '('(pathName',')+ pathName ')')+ ')' ;
 
 /* <TASKS> */
 srvTask : 'task' '('(name',')? (opSignature* | sigFidelity* | morphFidelity)',' dataContext')' ;
@@ -161,15 +165,15 @@ srvExertion : srvTask | compoundExertion | 'exertion' '(' srvExertionParamters '
 
 compoundExertion : srvJob | srvBlock | conditionalExertion ;
 
-srvJob : 'job' '('(name',')? (opSignature | sigFidelity) ',' dataContext (',' srvMogram)+ ','jobOptions? ')' ;
+srvJob : 'job' '('(name',')? (opSignature | sigFidelity) ',' dataContext (',' srvMogram)+ jobOptions? ')' ;
 				
-jobOptions : contextPipe* (',' exertionStrategy)? (',' dependency)? ',' metaFiSelector* ;			
+jobOptions : (','contextPipe)* (',' exertionStrategy)? (',' dependency)? (','metaFiSelector)* ;			
 
 srvBlock :	 'block' '('(name',')? (opSignature | sigFidelity)',' (dataContext',')? 
-			(srvMogram',')+ metaFiSelector* ')' ;
+			(srvMogram',')+ (metaFiSelector',')* metaFiSelector ')' ;
 
 conditionalExertion : 'loop' '('srvCondition',' srvMogram')' 
-			| 'loop' '('min',' max',' (srvCondition',')? srvMogram')' | 'alt' '('srvOption*')' ;
+			| 'loop' '('min',' max',' (srvCondition',')? srvMogram')' | 'alt' '('(srvOption',')* srvOption ')' ;
 
 srvOption : 'opt' '('srvCondition',' srvMogram')' ;
 
@@ -178,11 +182,9 @@ contextPipe : 'pipe' '(' 'outPoint' '('srvExertion',' contextPathName')' ','
 
 exertionStrategy : 'strategy' '(' (accessType',')? (flowType',')? (monitorable',')? (provisionable)? ')' ;
 
-srvFidelity : 'srvFi' '('(fiName',')? srvRequest+')' ; 
-
 fiSelector : 'fi' '('pathName',' fiName')' ;
 
-metaFiSelector : 'fi''('fiName',' (fiSelector',')+')';
+metaFiSelector : 'fi''('fiName',' (fiSelector',')+ fiSelector ')';
 
 fiList : 'fis''(' ((fiSelector | fiList)',')+ ')' ;
 
@@ -199,6 +201,7 @@ parametricModeling : 'paramericModel' '('(modelName',' )?
 inVars 	: 'inputVars' '(' ((baseVars',')+)? baseVars')' ;
 outVars : 'outputVars' '(' ((baseVars',')+)? baseVars')' ;
 varRealizations : ((varRealization',')* (varRealization))? ;
+
 mdlTable : 'table' '('varParametricTable',' varResponseTable')' ;
 
 streamingParametricModeling : 'streamingParametricModel' '('(modelName',')?	modelingInstance')' ;
