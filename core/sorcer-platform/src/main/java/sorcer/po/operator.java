@@ -25,7 +25,7 @@ import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.*;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MultiFiRequest;
+import sorcer.core.plexus.FiMogram;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ServiceModel;
@@ -676,9 +676,9 @@ public class operator {
 			entry = (Entry<T>) srv(path, (Identifiable)value, cxt, args);
 		} else if (value instanceof ServiceFidelity) {
 			entry = (Entry<T>) new Srv(path, value);
-		} else if (value instanceof MultiFiRequest) {
+		} else if (value instanceof FiMogram) {
 			try {
-				((MultiFiRequest)value).setUnifiedName(path);
+				((FiMogram)value).setUnifiedName(path);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}

@@ -25,17 +25,13 @@ import sorcer.core.context.ListContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.FiEntry;
-import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MultiFiRequest;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ScriptExerter;
 import sorcer.service.*;
-import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -43,7 +39,6 @@ import sorcer.service.modeling.Variability.Type;
 import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
-import sorcer.eo.operator.Args;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +51,6 @@ import java.util.*;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
-import static sorcer.eo.operator.context;
 import static sorcer.po.operator.invoker;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })

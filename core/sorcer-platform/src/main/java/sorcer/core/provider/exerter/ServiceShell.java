@@ -42,7 +42,7 @@ import sorcer.core.dispatch.ExertionSorter;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MultiFiRequest;
+import sorcer.core.plexus.FiMogram;
 import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.NetletSignature;
@@ -925,18 +925,18 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 					throw new ExertionException("No return path in the context: "
 							+ cxt.getName());
 				}
-			} else if (service instanceof MultiFiRequest) {
+			} else if (service instanceof FiMogram) {
 				Object out = null;
-				MorphFidelity morphFidelity = ((MultiFiRequest)service).getMorphFidelity();
-				ServiceFidelity<Request> sfi = ((MultiFiRequest)service).getServiceFidelity();
+				MorphFidelity morphFidelity = ((FiMogram)service).getMorphFidelity();
+				ServiceFidelity<Request> sfi = ((FiMogram)service).getServiceFidelity();
 				if (sfi == null) {
-					ServiceFidelity fi = ((MultiFiRequest)service).getMorphFidelity().getFidelity();
+					ServiceFidelity fi = ((FiMogram)service).getMorphFidelity().getFidelity();
 					Object select = fi.getSelect();
 					if (select != null) {
 						if (select instanceof Mogram)
 							out = ((Mogram) select).exert(args);
 						else {
-							Context cxt = ((MultiFiRequest)service).getScope();
+							Context cxt = ((FiMogram)service).getScope();
 							if (select instanceof Signature && cxt != null)
 								out = ((Service) select).exec(cxt);
 							else
@@ -944,7 +944,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 						}
 					}
 				}
-				Context cxt = ((MultiFiRequest)service).getScope();
+				Context cxt = ((FiMogram)service).getScope();
 				if (sfi.getSelect() instanceof Signature && cxt != null) {
 					out = sfi.getSelect().exec(cxt);
 				} else {

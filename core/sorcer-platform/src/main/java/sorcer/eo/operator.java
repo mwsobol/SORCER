@@ -1382,13 +1382,13 @@ public class operator {
 		return morphFi;
 	}
 
-	public static ServiceFidelity<Request> srvFi(Request... services) {
+	public static ServiceFidelity<Request> rFi(Request... services) {
 		ServiceFidelity<Request> srvFi = new ServiceFidelity(services);
 		srvFi.type = ServiceFidelity.Type.REQUEST;
 		return srvFi;
 	}
 
-	public static ServiceFidelity<Request> srvFi(String name, Request... services) {
+	public static ServiceFidelity<Request> rFi(String name, Request... services) {
 		ServiceFidelity<Request> srvFi = new ServiceFidelity(services);
 		srvFi.setPath(name);
 		srvFi.type = ServiceFidelity.Type.REQUEST;
@@ -1400,35 +1400,35 @@ public class operator {
 	}
 
 	public static void selectFi(Mogram mogram, String selection) {
-		((MultiFiRequest)mogram).selectFidelity(selection);
+		((FiMogram)mogram).selectFidelity(selection);
 	}
 
-	public static MultiFiRequest multiFiReq(ServiceFidelity<Request> fidelity) {
-		return new MultiFiRequest(fidelity.getName(), fidelity);
+	public static FiMogram fiMog(ServiceFidelity<Request> fidelity) {
+		return new FiMogram(fidelity.getName(), fidelity);
 	}
-	public static MultiFiRequest multiFiReq(MorphFidelity<Request> fidelity) {
-		return new MultiFiRequest(fidelity.getName(), fidelity);
-	}
-
-	public static MultiFiRequest multiFiReq(String name, ServiceFidelity<Request> fidelity) {
-		return new MultiFiRequest(name, fidelity);
-	}
-	public static MultiFiRequest multiFiReq(String name, MorphFidelity<Request> fidelity) {
-		return new MultiFiRequest(name, fidelity);
+	public static FiMogram fiMog(MorphFidelity<Request> fidelity) {
+		return new FiMogram(fidelity.getName(), fidelity);
 	}
 
-	public static MultiFiRequest multiFiReq(ServiceFidelity<Request> fidelity, Context context) {
-		return new MultiFiRequest(context, fidelity);
+	public static FiMogram fiMog(String name, ServiceFidelity<Request> fidelity) {
+		return new FiMogram(name, fidelity);
+	}
+	public static FiMogram fiMog(String name, MorphFidelity<Request> fidelity) {
+		return new FiMogram(name, fidelity);
 	}
 
-	public static MultiFiRequest multiFiReq(String name, MorphFidelity<Request> fidelity, Context context) {
-		MultiFiRequest mfr = new MultiFiRequest(context, fidelity);
+	public static FiMogram fiMog(ServiceFidelity<Request> fidelity, Context context) {
+		return new FiMogram(context, fidelity);
+	}
+
+	public static FiMogram fiMog(String name, MorphFidelity<Request> fidelity, Context context) {
+		FiMogram mfr = new FiMogram(context, fidelity);
 		mfr.setName(fidelity.getName());
 		return mfr;
 	}
 
-	public static MultiFiRequest multiFiReq(MorphFidelity<Request> fidelity, Context context) {
-		MultiFiRequest mfr = new MultiFiRequest(context, fidelity);
+	public static FiMogram fiMog(MorphFidelity<Request> fidelity, Context context) {
+		FiMogram mfr = new FiMogram(context, fidelity);
 		mfr.setName(fidelity.getName());
 		return mfr;
 	}
@@ -1441,6 +1441,12 @@ public class operator {
 	public static ServiceFidelity<Signature> sFi(Signature... signatures) {
 		ServiceFidelity<Signature> fi = new ServiceFidelity(signatures);
 		fi.type = ServiceFidelity.Type.SIG;
+		return fi;
+	}
+
+	public static ServiceFidelity<Entry> eFi(String fiName, Entry... entries) {
+		ServiceFidelity<Entry> fi = new ServiceFidelity(fiName, entries);
+		fi.type = ServiceFidelity.Type.ENTRY;
 		return fi;
 	}
 
@@ -1499,7 +1505,7 @@ public class operator {
 		return fi;
 	}
 
-	public static ServiceFidelity<Path> srvFi(String name, String path) {
+	public static ServiceFidelity<Path> rFi(String name, String path) {
 		ServiceFidelity<Path> fi = new ServiceFidelity(name, path(path));
 		fi.setPath(path);
 		fi.setSelect(path);
@@ -2525,7 +2531,7 @@ public class operator {
 		try {
 			if (service instanceof Entry || service instanceof Signature ) {
 				return service.exec(args);
-			} else if (service instanceof Context || service instanceof MultiFiRequest) {
+			} else if (service instanceof Context || service instanceof FiMogram) {
 				return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
 			} else if (service instanceof Exertion) {
 				return new ServiceShell().evaluate((Mogram) service, args);

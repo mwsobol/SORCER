@@ -12,7 +12,7 @@ import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
-import sorcer.core.plexus.MultiFiRequest;
+import sorcer.core.plexus.FiMogram;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.Model;
@@ -366,7 +366,7 @@ public class ModelMultiFidelities {
         Entry e2 = ent("x2", 6.0);
         Entry e3 = ent("x3", 7.0);
 
-        MultiFiRequest mfs = multiFiReq("args", srvFi(e1, e2, e3));
+        FiMogram mfs = fiMog("args", rFi(e1, e2, e3));
 
         Object out = exec(mfs);
         logger.info("out: " + out);
@@ -398,7 +398,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        MultiFiRequest mfs = multiFiReq(mFi(morpher, e1, e2, e3));
+        FiMogram mfs = fiMog(mFi(morpher, e1, e2, e3));
 
         Object out = exec(mfs);
         logger.info("out: " + out);
@@ -417,7 +417,7 @@ public class ModelMultiFidelities {
         Signature ms = sig("multiply", MultiplierImpl.class);
         Signature as = sig("add", AdderImpl.class);
 
-        MultiFiRequest mfs = multiFiReq(srvFi(ms, as), cxt);
+        FiMogram mfs = fiMog(rFi(ms, as), cxt);
 
         Context out = (Context) exec(mfs);
         logger.info("out: " + out);
@@ -445,7 +445,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        MultiFiRequest mfs = multiFiReq(mFi("sigFi", morpher, ms, as), cxt);
+        FiMogram mfs = fiMog(mFi("sigFi", morpher, ms, as), cxt);
 
         Context out = (Context) exec(mfs);
         logger.info("out: " + out);
@@ -471,7 +471,7 @@ public class ModelMultiFidelities {
                         outVal("result/y")));
 
 
-        MultiFiRequest mfs = multiFiReq(mFi("takFi", t5, t4));
+        FiMogram mfs = fiMog(mFi("takFi", t5, t4));
         Mogram mog = exert(mfs);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(100.0));
@@ -507,9 +507,9 @@ public class ModelMultiFidelities {
             }
         };
 
-        MultiFiRequest mfs = multiFiReq(mFi(morpher, t5, t4));
+        FiMogram mfs = fiMog(mFi(morpher, t5, t4));
         Mogram mog = exert(mfs);
-        logger.info("out: " + mog.getContext());
+        logger.info("out: " + context(mog));
         assertTrue(value(context(mog), "result/y").equals(100.0));
 
         mog = exert(mfs);
@@ -597,7 +597,7 @@ public class ModelMultiFidelities {
                 ent("mFi1", mFi(morpher1, add, multiply)),
                 ent("mFi2", mFi(eFi(ent("ph2", morpher2), ent("ph4", morpher4)), average, divide, subtract)),
                 ent("mFi3", mFi(average, divide, multiply)),
-                ent("mFi4", multiFiReq(mFi(morpher3, t5, t4))),
+                ent("mFi4", fiMog(mFi(morpher3, t5, t4))),
                 fi2, fi3, fi4, fi5,
                 FidelityManagement.YES,
                 response("mFi1", "mFi2", "mFi3", "mFi4", "arg/x1", "arg/x2"));
