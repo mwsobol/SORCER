@@ -50,7 +50,7 @@ morphFidelity : 'mFi' '(' fiName ',' srvMorpher? (srvRequest',')+ srvRequest')' 
 			
 reqFidelity : 'rFi' '('(fiName',')? (srvRequest',')+ srvRequest ')' ; 
 
-varFidelity : 'vFi' '(' fiName (',' (value | opSignature)
+varFidelity : 'vFi' '(' fiName (',' (value | opSignature | contextEntry)
 			| (',' srvRoutine)? ( ',' entGetter)? ( ',' entSetter)?) ')' ;
 			
 srvMorpher: morpherLambdaExpression ;
@@ -149,14 +149,14 @@ entModel : dataContext | contextModel | structuredVarModel | contextSnapshotResu
 dataContext : 'context ' '(' (name',')? (dataEntry',')+ (srvResult)? (',' inputPaths)? (',' outputPaths)? ')' 
 			| 'tag' '(' dataContext',' annotatedPath ')' | 'tagAssociation' '(' dataContext',' newTagAssociation ')' ;
 
-contextModel : contextModelType '('(name',' )? (contextEntry',')+ (',' 'response' '('(pathName',')+')')? (',' srvDependency)? ')';
+contextModel : contextModelType '('(name',' )? (contextEntry',')+ (',' 'response' '('(pathName',')* pathName')')? (',' srvDependency)? ')';
 		
 parTypes : 'types' '('(srvType',')* srvType')' ;
 parArgs : 'args' '('(object',')* object ')' ;
-srvDependency : 'dependsOn' '(' ('ent' '('pathName',' 'paths' '('(pathName',')+ pathName ')')+ ')' ;
+srvDependency : 'dependsOn' '(' ('ent' '('pathName',' 'paths' '('(pathName',')* pathName ')')+ ')' ;
 
 /* <TASKS> */
-srvTask : 'task' '('(name',')? (opSignature* | sigFidelity* | morphFidelity)',' dataContext')' ;
+srvTask : 'task' '('(name',')? ((opSignature',')* opSignature | (sigFidelity',')* sigFidelity | morphFidelity) ',' dataContext')' ;
 
 
 /* <EXERTIONS> */
