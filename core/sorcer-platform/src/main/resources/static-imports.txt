@@ -1,7 +1,7 @@
 import static sorcer.eo.operator.*;
 import static sorcer.co.operator.*;
 import static sorcer.po.operator.*;
-//import static sorcer.vo.operator.*;
+//import static sorcer.modeling.vo.*;
 //import static sorcer.tools.shell.NetworkShell.nshUrl;
 
 //common SORCER classes
@@ -9,6 +9,7 @@ import sorcer.service.*;
 import sorcer.service.Signature.*;
 import sorcer.core.exertion.*;
 import sorcer.service.Strategy.*;
+import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.Strategy.Flow;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Provision;
@@ -17,6 +18,10 @@ import sorcer.service.Strategy.Wait;
 
 import sorcer.service.*;
 import sorcer.core.context.model.*;
-//import sorcer.vfe.util.*;
-//import sorcer.vfe.*;
+//import sorcer.modeling.core.context.model.var
+//import sorcer.modeling.vfe.*;
+//import sorcer.modeling.vfe.evaluator.*;
+//import sorcer.modeling.vfe.filter.*;
+//import sorcer.modeling.vfe.persiste.*;
+//import sorcer.modeling.vfe.util.*;
 import java.io.*;
