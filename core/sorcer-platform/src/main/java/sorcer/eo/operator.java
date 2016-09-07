@@ -1531,12 +1531,12 @@ public class operator {
 		return fi;
 	}
 
-	public static ObjectSignature sig(String operation, Object object)
+	public static Signature sig(String operation, Object object)
 			throws SignatureException {
 		return sig(operation, object, null, null, null);
 	}
 
-	public static ObjectSignature sig(String operation, Object object,
+	public static Signature sig(String operation, Object object,
 									  Class[] types, Object... args) throws SignatureException {
 		if (args == null || args.length == 0)
 			return sig(operation, object, (String) null, types);
@@ -1575,10 +1575,15 @@ public class operator {
 		}
 	}
 
-	public static ObjectSignature sig(String selector, Object object, String initSelector,
+	public static Signature sig(String selector, Object object, String initSelector,
 									  Class[] types, Object[] args) throws SignatureException {
 		try {
-			return new ObjectSignature(selector, object, initSelector, types, args);
+			if (object instanceof NetSignature) {
+				((NetSignature)object).setSelector(selector);
+				return (Signature)object;
+			} else {
+				return new ObjectSignature(selector, object, initSelector, types, args);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SignatureException(e);
