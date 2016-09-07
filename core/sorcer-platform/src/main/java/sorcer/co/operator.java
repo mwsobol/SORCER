@@ -242,9 +242,7 @@ public class operator {
 	public static <T1, T2, T3> Tuple3<T1, T2, T3> triplet(T1 x1, T2 x2, T3 x3) {
 		return new Tuple3<T1, T2, T3>(x1, x2, x3);
 	}
-
-
-
+	
 	public static <T> Entry<T> val(Path path, T value) {
 		Entry ent = new Entry<T>(path.path, value);
 		ent.annotation(path.info.toString());
@@ -263,17 +261,28 @@ public class operator {
 		return entry;
 	}
 
-	public static Entry in(Entry entry) {
-		entry.setType(Type.INPUT);
-		return entry;
+	public static Entry in(Entry... entries) {
+		for (Entry  entry : entries) {
+			entry.setType(Type.INPUT);
+		}
+		return entries[0];
 	}
 
-	public static Entry out(Entry entry) {
-		entry.setType(Type.OUTPUT);
-		return entry;
+	public static Entry out(Entry... entries) {
+		for (Entry  entry : entries) {
+			entry.setType(Type.OUTPUT);
+		}
+		return entries[0];
 	}
 
-    public static Object annotation(Entry entry) {
+	public static Entry inout(Entry... entries) {
+		for (Entry  entry : entries) {
+			entry.setType(Type.INOUT);
+		}
+		return entries[0];
+	}
+
+	public static Object annotation(Entry entry) {
         return entry.annotation();
     }
 

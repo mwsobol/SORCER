@@ -214,14 +214,14 @@ public class operator {
 	}
 
 	public static Context upcontext(Mogram mogram) throws ContextException {
-		return snapshot(mogram);
-	}
-
-	public static Context snapshot(Mogram mogram) throws ContextException {
 		if (mogram instanceof CompoundExertion)
 			return mogram.getContext();
 		else
 			return  mogram.getDataContext();
+	}
+
+	public static Context snapshot(Exertion mogram) throws ContextException {
+		return upcontext(mogram);
 	}
 
 	public static Context taskContext(String path, Exertion service) throws ContextException {
