@@ -3312,7 +3312,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 		if (inpaths != null) {
 			for (Path path : inpaths) {
-				if (path.info != null) {
+				if (path.info != null && path.getType().equals(Path.Type.PATH)) {
 					putInValue(path.getName(), (T) getValue(path.getName()), path.info.toString());
 				} else {
 					putInValue(path.getName(), (T) getValue(path.getName()));
@@ -3322,7 +3322,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 		if (outpaths != null) {
 			for (Path path : outpaths) {
-				if (path.info != null) {
+				if (path.info != null && path.getType().equals(Path.Type.PATH)) {
 					putOutValue(path.getName(), (T) getValue(path.getName()), path.info.toString());
 				} else {
 					putOutValue(path.getName(), (T) getValue(path.getName()));
