@@ -57,26 +57,26 @@ public class SosCmd extends ShellCmd {
 
 		if (option.equals("-h")) {
 			NetworkShell.setRequest("cd " + Sorcer.getHome());
-			ShellCmd cmd = (ShellCmd) NetworkShell.getCommandTable().get("ls");
+			ShellCmd cmd = NetworkShell.getCommandTable().get("ls");
 			cmd.execute();
 		} else if (option.equals("-r")) {
 			NetworkShell.setRequest("cd " + getSosRootDir());
-			ShellCmd cmd = (ShellCmd) NetworkShell.getCommandTable().get("ls");
+			ShellCmd cmd = NetworkShell.getCommandTable().get("ls");
 			cmd.execute();
 		} else if (option.equals("-n")) {
 			NetworkShell.setRequest("cd " + getSosRootDir()  + File.separator + "examples"
 					+ File.separator + "sml" + File.separator + "src" + File.separator + "main"
 					+ File.separator + "netlets");
-			ShellCmd cmd = (ShellCmd) NetworkShell.getCommandTable().get("ls");
+			ShellCmd cmd = NetworkShell.getCommandTable().get("ls");
 			cmd.execute();
 		} else if (option.equals("-d")) {
 			NetworkShell.setRequest("cd " + Sorcer.getHome()
 					+ File.separator + "data");
-			ShellCmd cmd = (ShellCmd) NetworkShell.getCommandTable().get("ls");
+			ShellCmd cmd = NetworkShell.getCommandTable().get("ls");
 			cmd.execute();
 		} else if (option.equals("~")) {
 			NetworkShell.setRequest("cd " + System.getProperty("user.home"));
-			ShellCmd cmd = (ShellCmd) NetworkShell.getCommandTable().get("ls");
+			ShellCmd cmd = NetworkShell.getCommandTable().get("ls");
 			cmd.execute();
 		} else if (option.equals("-v") || option.equals("-version")) {
 			NetworkShell.shellOutput.println("SOS version: " + getSosVersion());

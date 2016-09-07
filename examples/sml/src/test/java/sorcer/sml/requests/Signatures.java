@@ -475,6 +475,8 @@ public class Signatures {
 
 		logger.info("task context: " + context(task));
 
+		// the input context used by provides as-is
+		// but ouput context from provider remapped
 		assertEquals(20.0, value(context(task), "arg/x1"));
 		assertEquals(80.0, value(context(task), "arg/x2"));
 		assertEquals(100.0, value(context(task), "result/y"));
@@ -504,6 +506,7 @@ public class Signatures {
 
 		logger.info("input context: " + context(task));
 
+		// input context for provider remapped as then is returned as-is
 		assertEquals(20.0, value(context(task), "arg/x1"));
 		assertEquals(80.0, value(context(task), "arg/x2"));
 		assertEquals(100.0, value(context(task), "result/y"));

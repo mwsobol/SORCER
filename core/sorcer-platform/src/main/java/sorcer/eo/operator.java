@@ -157,6 +157,10 @@ public class operator {
 		return new Path(path, info);
 	}
 
+	public static Path map(String path, Object info) {
+		return new Path(path, info, Path.Type.MAP);
+	}
+
 	public static String attPath(String... attributes) {
 		if (attributes.length == 0)
 			return null;

@@ -22,6 +22,6 @@ import sorcer.core.context.model.*;
 //import sorcer.modeling.vfe.*;
 //import sorcer.modeling.vfe.evaluator.*;
 //import sorcer.modeling.vfe.filter.*;
-//import sorcer.modeling.vfe.persiste.*;
+//import sorcer.modeling.vfe.persist.*;
 //import sorcer.modeling.vfe.util.*;
 import java.io.*;

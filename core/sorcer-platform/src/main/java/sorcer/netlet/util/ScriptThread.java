@@ -106,7 +106,6 @@ public class ScriptThread extends Thread {
                 } else {
                     result = serviceShell.evaluate();
                 }
-
             }
         }catch (TransactionException e) {
             e.printStackTrace();
@@ -140,7 +139,14 @@ public class ScriptThread extends Thread {
             "sorcer.core.provider",
             "sorcer.core.provider.rendezvous",
             "sorcer.core.context.model",
-            "java.io"
+            "java.io",
+			// var-oriented modeling
+            "sorcer.modeling.core.context.model.var",
+			"sorcer.modeling.vfe",
+			"sorcer.modeling.vfe.evaluator",
+			"sorcer.modeling.vfe.filter",
+			"sorcer.modeling.vfe.persist",
+			"sorcer.modeling.vfe.util"
     };
 
     private static String[] staticImports = {
