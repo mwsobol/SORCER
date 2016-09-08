@@ -11,6 +11,7 @@ import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.netlet.util.NetletClassLoader;
 import sorcer.netlet.util.ScriptExertException;
 import sorcer.netlet.util.ScriptThread;
+import sorcer.service.Mogram;
 
 import java.io.File;
 import java.io.FileReader;
@@ -23,10 +24,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Sorcer Script Exerter - this class handles parsing an ntl (Netlet) script and executing it or returning its
+ * Sorcer Netlet Scripter - this class handles parsing an ntl (Netlet) script and executing it or returning its
  * content as an object
  * <p/>
- * User: prubach
+ * User: prubach & Mile Sobolewski
  * Date: 02.07.13
  */
 public class ScriptExerter {
@@ -55,7 +56,7 @@ public class ScriptExerter {
 
     private Configuration config;
 
-    private boolean isExerted = true;
+    private boolean isExertable = true;
 
     private boolean debug = false;
 
@@ -69,8 +70,8 @@ public class ScriptExerter {
 
     static {
         try {
-            defaultCodebase = new URL[]{
-                    new URL("artifact:org.rioproject/rio-api/" + RioVersion.VERSION),
+            defaultCodebase = new URL[] {
+                new URL("artifact:org.rioproject/rio-api/" + RioVersion.VERSION)
             };
         } catch (MalformedURLException e) {
             throw new ExceptionInInitializerError(e);
@@ -102,20 +103,26 @@ public class ScriptExerter {
 
     public Object execute() throws Throwable {
         if (scriptThread != null) {
-            scriptThread.run();
+            scriptThread.evalScript();
+            scriptThread.exert();
             result = scriptThread.getResult();
             return result;
         }
-        throw new ScriptExertException("You must first call parse() before calling exert() ");
+        throw new ScriptExertException("You must first call evaluate() before calling exert() ");
     }
 
-    public Object parse() throws Throwable {
-
+    public Object evaluate() throws Throwable {
         try {
             if (out!=null && debug) out.println("creating scriptThread..."+ (System.currentTimeMillis()-startTime)+"ms");
-            scriptThread = new ScriptThread(script, classLoader, isExerted);
+            scriptThread = new ScriptThread(script, classLoader, isExertable);
+            scriptThread.evalScript();
             if (out!=null && debug) out.println("get target..." + (System.currentTimeMillis()-startTime)+"ms");
             this.target = scriptThread.getTarget();
+            if (target instanceof Mogram) {
+                isExertable = true;
+            } else {
+                isExertable = false;
+            }
             this.serviceShell = scriptThread.getServiceShell();
             return target;
         }
@@ -153,7 +160,7 @@ public class ScriptExerter {
     }
 
     public void setIsExerted(boolean isExerted) {
-        this.isExerted = isExerted;
+        this.isExertable = isExerted;
     }
 
     public Object getTarget() {
@@ -162,6 +169,10 @@ public class ScriptExerter {
 
     public Object getResult() {
         return result;
+    }
+
+    public boolean isExertable() {
+        return isExertable;
     }
 
     public ServiceShell getServiceShell() {

@@ -80,13 +80,13 @@ import static sorcer.util.StringUtils.tName;
 public class NetworkShell implements DiscoveryListener, INetworkShell {
 
     public static final String NSH_HELP="SORCER Network Shell - command line options:\n" +
-             "\t<file[.ext]> \t\t- exert the sorcer.netlet script provided in the specified file\n" +
+             "\t<file[.ext]> \t\t- eval the sorcer.netlet script provided in the specified file\n" +
              "\t-b <file[.ext]> \t- run batch file - start non-interactive shell\n" +
-             "\t\t\t\tand exert commands specified in file\n" +
+             "\t\t\t\tand eval commands specified in file\n" +
              "\t-c <command [args]> \t- start non-interactive shell and run <command> with arguments\n" +
              "\t\t\t\tto see the full list of available commands run 'nsh -c help'\n" +
              "\t-e <file[.ext]> \t- evaluate groovy script contained in specified file\n" +
-             "\t-f <file[.ext]> \t- exert the sorcer.netlet script provided in the specified file\n"+
+             "\t-f <file[.ext]> \t- eval the sorcer.netlet script provided in the specified file\n"+
              "\t-help \t\t\t- show this help\n" +
              "\t-version \t\t- show NSH version info";
 
@@ -296,90 +296,89 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		// shellOutput.println("Thanks for using the SORCER Network Shell!");
 	}
 
-    public static void processRequest(boolean outsideCall) {
-        ShellCmd cmd;
-			shellTokenizer = new WhitespaceTokenizer(request);
-        String curToken = "";
-			if (shellTokenizer.hasMoreTokens()) {
-				curToken = shellTokenizer.nextToken();
+	public static void processRequest(boolean outsideCall) {
+		ShellCmd cmd;
+		shellTokenizer = new WhitespaceTokenizer(request);
+		String curToken = "";
+		if (shellTokenizer.hasMoreTokens()) {
+			curToken = shellTokenizer.nextToken();
+		}
+		try {
+			if (commandTable.containsKey(curToken)) {
+				cmd = commandTable.get(curToken);
+				cmd.execute();
 			}
+			// admissible shortcuts in the 'synonyms' map
+			else if (aliases.containsKey(curToken)) {
+				String cmdName = aliases.get(curToken);
+				int i = cmdName.indexOf(" -");
+				if (i > 0) {
+					request = cmdName;
+					cmdName = cmdName.substring(0, i);
+					shellTokenizer = new WhitespaceTokenizer(request);
+				} else {
+					request = cmdName + " " + request;
+					cmdName = new StringTokenizer(cmdName).nextToken();
+					shellTokenizer = new WhitespaceTokenizer(request);
+				}
+				cmd = commandTable.get(cmdName);
+				cmd.execute();
+			} else if (request.length() > 0) {
+				if (request.equals("?")) {
+					instance.listCommands();
+
+				} else {
+					shellOutput.println(UNKNOWN_COMMAND_MSG);
+				}
+			}
+			if(outsideCall) {
+				return;
+			}
+			shellOutput.print(SYSTEM_PROMPT);
+			shellOutput.flush();
+			String in = shellInput.readLine();
+			// Exit if CTRL+D pressed
+			if (in==null || in.equals("q")) System.exit(0);
+			for (String q : BUILTIN_QUIT_COMMAND.split(",")) {
+				if (in != null && in.equals(q)) System.exit(0);
+			}
+			// for !! run the previous command
+			if (in!=null && !in.equals("!!")) {
+				instance.request = in;
+			}
+		} catch (IOException io) {
+			shellOutput.println(io.getMessage());
 			try {
-				if (commandTable.containsKey(curToken)) {
-					cmd = commandTable.get(curToken);
-                cmd.execute();
-				}
-				// admissible shortcuts in the 'synonyms' map
-				else if (aliases.containsKey(curToken)) {
-					String cmdName = aliases.get(curToken);
-					int i = cmdName.indexOf(" -");
-					if (i > 0) {
-						request = cmdName;
-						cmdName = cmdName.substring(0, i);
-						shellTokenizer = new WhitespaceTokenizer(request);
-					} else {
-						request = cmdName + " " + request;
-						cmdName = new StringTokenizer(cmdName).nextToken();
-						shellTokenizer = new WhitespaceTokenizer(request);
-					}
-					cmd = commandTable.get(cmdName);
-                	cmd.execute();
-				} else if (request.length() > 0) {
-					if (request.equals("?")) {
-						instance.listCommands();
-
-					} else {
-						shellOutput.println(UNKNOWN_COMMAND_MSG);
-					}
-				}
-				if(outsideCall) {
-					return;
-				}
-                shellOutput.print(SYSTEM_PROMPT);
-				shellOutput.flush();
-				String in = shellInput.readLine();
-            // Exit if CTRL+D pressed
-            if (in==null || in.equals("q")) System.exit(0);
-            for (String q : BUILTIN_QUIT_COMMAND.split(",")) {
-                if (in != null && in.equals(q)) System.exit(0);
-            }
-
-				// fore !! run the previous command
-				if (in!=null && !in.equals("!!")) {
-					instance.request = in;
-				}
-        } catch (IOException io) {
-            shellOutput.println(io.getMessage());
-            try {
-                request = shellInput.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-			} catch (Throwable ex) {
-            if (ex instanceof ScriptExertException) {
-                String msg = "Problem parsing script @ line: " +
-                        ((ScriptExertException)ex).getLineNum() + ":\n" + ex.getLocalizedMessage();
-                logger.error(msg);
-                shellOutput.println(ansi().render("@|red " + msg + "|@"));
-            } else
-                ex.printStackTrace(shellOutput);
-				try {
-					request = shellInput.readLine();
-				} catch (IOException e) {
-					e.printStackTrace();
-					System.exit(1);
-				}
+				request = shellInput.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		} catch (Throwable ex) {
+			if (ex instanceof ScriptExertException) {
+				String msg = "Problem parsing script @ line: " +
+						((ScriptExertException)ex).getLineNum() + ":\n" + ex.getLocalizedMessage();
+				logger.error(msg);
+				shellOutput.println(ansi().render("@|red " + msg + "|@"));
+			} else
+				ex.printStackTrace(shellOutput);
+			try {
+				request = shellInput.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1);
 			}
 		}
-		// shellOutput.println("Thanks for using the SORCER Network Shell!");
+	}
+	// shellOutput.println("Thanks for using the SORCER Network Shell!");
 
 	public static String getUserName() {
 		return userName;
 	}
 
-    public boolean isDebug() {
-        return debug;
-    }
+	public boolean isDebug() {
+		return debug;
+	}
 
 	public boolean isRemoteLogging() {
 		return isRemoteLogging;
@@ -441,8 +440,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                 } else {
                     // Added reading the file as default first argument
                     // Check if file exists
-					shellOutput.println("exerting nsh: " + (System.currentTimeMillis() - startTime) + "ms");
-                    ShellCmd cmd = commandTable.get("exert");
+					shellOutput.println("exec nsh: " + (System.currentTimeMillis() - startTime) + "ms");
+                    ShellCmd cmd = commandTable.get("eval");
 					waitForReggie();
 					shellOutput.println("found reggie: " + (System.currentTimeMillis() - startTime) + "ms");
                     cmd.execute();
@@ -450,14 +449,14 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
             } else if (args.length > 1) {
 			if (args[0].equals("-f") || args[0].equals("-n")) {
 				// evaluate file
-                    ShellCmd cmd = commandTable.get("exert");
-					waitForReggie();
+				ShellCmd cmd = commandTable.get("eval");
+				waitForReggie();
                     cmd.execute();
 			} else if (args[0].equals("-e")) {
 				// evaluate command line expression
-				ExertCmd cmd = (ExertCmd) commandTable.get("exert");
+				EvalCmd cmd = (EvalCmd) commandTable.get("eval");
 				// cmd.setScript(instance.getText(args[1]));
-				cmd.setScript(ExertCmd.readFile(huntForTheScriptFile(args[1])));
+				cmd.setScript(EvalCmd.readFile(huntForTheScriptFile(args[1])));
 				waitForReggie();
 				cmd.execute();
 			} else if (args[0].equals("-c")) {
@@ -1317,7 +1316,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	 * Initialize the nsh, parsing arguments, loading configuration.
 	 * 
 	 * @param args
-	 *            Command line arguments to parse, must not be null
+	 *            Command line arguments to evaluate, must not be null
 	 * 
 	 * @return Array of string args to be parsed
 	 * 
@@ -1773,12 +1772,12 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
     }
 
     static final String[] shellCommands = { "start", "disco", "ls", "chgrp",
-			"groups", "lup", "chgrp", "chport", "help", "exert", "http", "emx",
+			"groups", "lup", "chgrp", "chport", "help", "eval", "http", "emx",
 			"gvy", "edit", "clear", "exec", "about", "sos", "ds", "sp" };
 
 	static final Class[] shellCmdClasses = { StartStopCmd.class, DiscoCmd.class,
 			DirCmd.class, ChgrpCmd.class, GroupsCmd.class, LookupCmd.class,
-			ChgrpCmd.class, SetPortCmd.class, HelpCmd.class, ExertCmd.class,
+			ChgrpCmd.class, SetPortCmd.class, HelpCmd.class, EvalCmd.class,
 			HttpCmd.class, EmxCmd.class, GroovyCmd.class, EditCmd.class,
 			ClearCmd.class, ExecCmd.class, InfoCmd.class, SosCmd.class, DataStorageCmd.class,
 			SpaceCmd.class };

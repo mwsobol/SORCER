@@ -62,7 +62,7 @@ public class NetletSignature extends ServiceSignature {
         try {
             ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
             se.readFile(new File(serviceSource.getName()));
-            return sorcer.eo.operator.exec((Mogram)se.parse());
+            return sorcer.eo.operator.exec((Mogram)se.evaluate());
         } catch (Throwable throwable) {
             throw new MogramException(throwable);
         }

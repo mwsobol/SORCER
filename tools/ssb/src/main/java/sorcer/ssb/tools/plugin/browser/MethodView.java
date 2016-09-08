@@ -230,7 +230,7 @@ class MethodView extends JPanel implements ActionListener {
 			Constructor ctor = paramClass.getConstructor(stringCtor);
 
 			if (params[i].isArray()) {
-				// parse the table eval which is in CSV format
+				// evaluate the table eval which is in CSV format
 				java.util.List arrayElements = new java.util.ArrayList();
 				StringTokenizer tok = new StringTokenizer(val.toString(), ",");
 				while (tok.hasMoreTokens()) {

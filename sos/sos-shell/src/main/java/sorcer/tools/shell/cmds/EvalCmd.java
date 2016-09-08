@@ -41,25 +41,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExertCmd extends ShellCmd {
+public class EvalCmd extends ShellCmd {
 
 	{
-		COMMAND_NAME = "exert";
+		COMMAND_NAME = "eval";
 
 		NOT_LOADED_MSG = "***command not loaded due to conflict";
 
-		COMMAND_USAGE = "exert [-eval] [-stgy] [[-s | --s | --m] <output filename>] <input filename>";
+		COMMAND_USAGE = "eval [[-s | --s | --m] <output filename>] <input filename>";
 
-		COMMAND_HELP = "Manage and exert the federation of services specified by the <input filename>;"
-				+ "\n  -eval   evaluation result"
-				+ "\n  -stgy   print the executed exertion with control context"
+		COMMAND_HELP = "Evaluate a netlet specified by the <input filename>;"
 				+ "\n  -db   save the command output in a DB"
 				+ "\n  -s   save the command output in a file"
 				+ "\n  --s   serialize the command output in a file"
 				+ "\n  --m   marshal the the command output in a file";
 	}
 
-	private final static Logger logger = LoggerFactory.getLogger(ExertCmd.class
+	private final static Logger logger = LoggerFactory.getLogger(EvalCmd.class
 			.getName());
 
     private ScriptExerter scriptExerter;
@@ -76,7 +74,7 @@ public class ExertCmd extends ShellCmd {
 
     private INetworkShell shell;
 
-	public ExertCmd() {
+	public EvalCmd() {
 	}
 
 	public void execute() throws Throwable {
@@ -117,27 +115,28 @@ public class ExertCmd extends ShellCmd {
 				} else if (nextToken.equals("-eval") || nextToken.equals("-e")) {
 					ifEvaluation = true;
 					scriptExerter.setIsExerted(false);
-				}
-				else if (nextToken.equals("-stgy"))
+				} else if (nextToken.equals("-stgy")) {
 					ifMogramControl = true;
-				else if (nextToken.equals("-m"))
+				} else if (nextToken.equals("-m")) {
 					ifMarshalled = true;
 					// evaluate text
-				else if (nextToken.equals("-t")) {
+				} else if (nextToken.equals("-t")) {
 					if (script == null || script.length() == 0) {
 						throw new NullPointerException("Must have not empty script");
 					}
 				}
 				// evaluate file script
-				else if (nextToken.equals("-f"))
+				else if (nextToken.equals("-f")) {
 					scriptFilename = argsList.get(i + 1);
-				else
+				} else {
 					scriptFilename = nextToken;
+				}
 			}
 		} catch (IndexOutOfBoundsException ie) {
 			out.println("Wrong number of arguments");
 			return;
 		}
+		out.println(">>>>>>>>>>> execute argsList: " + argsList);
 
 		if (script != null) {
 			scriptExerter.readScriptWithHeaders(script);
@@ -157,31 +156,35 @@ public class ExertCmd extends ShellCmd {
 			out.println("Missing exertion input filename!");
 			return;
 		}
-		Object target = scriptExerter.parse();
+		Object target = scriptExerter.evaluate();
+		out.println(">>>>>>>>>>> scriptExerter.evaluate result: " + target);
+		if (target == null && !scriptExerter.isExertable()) {
+			return;
+		}
 
-        // Create RemoteLoggerListener
+		// Create RemoteLoggerListener
 		RemoteLoggerListener listener = null;
 		if (shell.isRemoteLogging() && target instanceof Mogram) {
-            List<Map<String, String>> filterMapList = new ArrayList<Map<String, String>>();
-            for (String exId : ((ServiceMogram)target).getAllMogramIds()) {
-                Map<String, String> map = new HashMap<String, String>();
-                map.put(RemoteLogger.KEY_MOGRAM_ID, exId);
-                filterMapList.add(map);
-            }
-            if (!filterMapList.isEmpty()) {
-                try {
-                    listener = new RemoteLoggerListener(filterMapList);
-                    //listener.register(filterMapList);
-                } catch (LoggerRemoteException lre) {
-                    out.append("Remote logging disabled: " + lre.getMessage());
-                    listener = null;
-                }
-            }
-        }
+			List<Map<String, String>> filterMapList = new ArrayList<Map<String, String>>();
+			for (String exId : ((ServiceMogram)target).getAllMogramIds()) {
+				Map<String, String> map = new HashMap<String, String>();
+				map.put(RemoteLogger.KEY_MOGRAM_ID, exId);
+				filterMapList.add(map);
+			}
+			if (!filterMapList.isEmpty()) {
+				try {
+					listener = new RemoteLoggerListener(filterMapList);
+					//listener.register(filterMapList);
+				} catch (LoggerRemoteException lre) {
+					out.append("Remote logging disabled: " + lre.getMessage());
+					listener = null;
+				}
+			}
+		}
 
 //		if (NetworkShell.getInstance().isDebug()) out.println("Starting exert netlet!");
 		Object result = scriptExerter.execute();
-//		out.println(">>>>>>>>>>> result: " + result);
+		out.println(">>>>>>>>>>> scriptExerter.execute result: " + result);
 		if (result != null) {
 			if (ifEvaluation) {
 				if (target instanceof Model) {
@@ -264,7 +267,7 @@ public class ExertCmd extends ShellCmd {
 		if (nextLine.indexOf("#!") < 0) {
 			sb.append(nextLine);
 			sb.append(lineSep);
-        }
+		}
 		while ((nextLine = br.readLine()) != null) {
 			sb.append(nextLine);
 			sb.append(lineSep);
@@ -276,7 +279,7 @@ public class ExertCmd extends ShellCmd {
 		InputStream is = null;
 		BufferedReader br = null;
 		String line;
-		StringBuilder sb = new StringBuilder();		
+		StringBuilder sb = new StringBuilder();
 
 		try {
 			is = getClass().getResourceAsStream(filename);
@@ -302,22 +305,22 @@ public class ExertCmd extends ShellCmd {
 		return sb;
 	}
 
-    private void saveFilesFromContext(Exertion xrt, PrintStream out) {
-        try {
-            ContextNode[] cns = (xrt.isJob() ? Contexts.getTaskContextNodes((ServiceExertion)xrt)
-                    : Contexts.getTaskContextNodes((ServiceExertion)xrt));
-            for (ContextNode cn : cns) {
+	private void saveFilesFromContext(Exertion xrt, PrintStream out) {
+		try {
+			ContextNode[] cns = (xrt.isJob() ? Contexts.getTaskContextNodes((ServiceExertion)xrt)
+					: Contexts.getTaskContextNodes((ServiceExertion)xrt));
+			for (ContextNode cn : cns) {
 
-                if (cn.isOut() && cn.getData()!=null && cn.getData() instanceof byte[]) {
-                    File f = new File(cn.getName());
-                    FileUtils.writeByteArrayToFile(f, (byte[])cn.getData());
-                    out.println("A file was extracted and saved from context to: " + f.getAbsolutePath());
-                }
-            }
-        } catch (ContextException e) {
-            out.println(e.getMessage());
-        } catch (IOException e) {
-            out.println(e.getMessage());
-        }
-    }
+				if (cn.isOut() && cn.getData()!=null && cn.getData() instanceof byte[]) {
+					File f = new File(cn.getName());
+					FileUtils.writeByteArrayToFile(f, (byte[])cn.getData());
+					out.println("A file was extracted and saved from context to: " + f.getAbsolutePath());
+				}
+			}
+		} catch (ContextException e) {
+			out.println(e.getMessage());
+		} catch (IOException e) {
+			out.println(e.getMessage());
+		}
+	}
 }

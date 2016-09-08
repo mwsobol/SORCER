@@ -20,22 +20,22 @@ public class ScriptExerterTest {
     @Test
     public void testParseNetletF1() throws Throwable {
         ScriptExerter se = new ScriptExerter(new File(SCRIPT_FILE1));
-        se.parse();
-        Assert.assertNotNull(se.getTarget() instanceof Job);
+        Object obj = se.evaluate();
+        Assert.assertNotNull(obj instanceof Job);
     }
 
     @Test
     public void testParseNetletF2() throws Throwable {
         ScriptExerter se = new ScriptExerter(new File(SCRIPT_FILE2));
-        se.parse();
-        Assert.assertNotNull(se.getTarget() instanceof Job);
+        Object obj = se.evaluate();
+        Assert.assertNotNull(obj instanceof Job);
     }
 
     @Test
     public void testParseNetletF3() throws Throwable {
         ScriptExerter se = new ScriptExerter(new File(SCRIPT_FILE3));
-        se.parse();
-        Assert.assertNotNull(se.getTarget() instanceof Job);
+        Object obj = se.evaluate();
+        Assert.assertNotNull(obj instanceof Job);
     }
 
 }

@@ -92,7 +92,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	}
 
 	private static void processLine(String line) {
-		// use a second Scanner to parse the content of each line
+		// use a second Scanner to evaluate the content of each line
 		Scanner scanner = new Scanner(line);
 		scanner.useDelimiter("=");
 		if (scanner.hasNext()) {

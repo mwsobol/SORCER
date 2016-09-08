@@ -62,15 +62,15 @@ public class ScriptThread extends Thread {
 
         gShell = new GroovyShell(classLoader, new Binding(), compilerConfig);
         this.script = script;
-        this.parseScript();
     }
 
-    public void parseScript() {
+    public void evalScript() {
         ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(classLoader);
             synchronized (gShell) {
                 target = gShell.evaluate(script);
+                logger.info(">>>>>>>>>>> gShell target: " + target);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(currentCL);
@@ -78,9 +78,14 @@ public class ScriptThread extends Thread {
     }
 
     public void run() {
+        exert();
+    }
+
+    public void exert() {
         try {
-            if (target == null)
-                parseScript();
+            if (target == null) {
+                evalScript();
+            }
 
             if (target instanceof Mogram) {
                 serviceShell = new ServiceShell((Mogram) target);
@@ -103,8 +108,10 @@ public class ScriptThread extends Thread {
 */
                 if (isExerted)  {
                     result = serviceShell.exert();
+                    logger.info(">>>>>>>>>>> serviceShell exerted result: " + result);
                 } else {
                     result = serviceShell.evaluate();
+                    logger.info(">>>>>>>>>>> serviceShell evaluated result: " + result);
                 }
             }
         }catch (TransactionException e) {

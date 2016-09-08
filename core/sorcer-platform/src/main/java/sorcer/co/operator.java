@@ -971,7 +971,7 @@ public class operator {
 				try {
 					ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
 					se.readFile(new File(source));
-					return se.parse();
+					return se.evaluate();
 				} catch (Throwable e) {
 					throw new SignatureException(e);
 				}

@@ -908,7 +908,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 			if (service instanceof NetletSignature) {
 				ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
 				se.readFile(new File(((NetletSignature)service).getServiceSource()));
-				return evaluate((Mogram)se.parse());
+				return evaluate((Mogram)se.evaluate());
 			} else if (service instanceof Exertion) {
 				return eval((Evaluation) service, args);
 			} else if (service instanceof ProcModel) {

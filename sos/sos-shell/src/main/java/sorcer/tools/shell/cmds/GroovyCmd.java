@@ -48,7 +48,7 @@ public class GroovyCmd extends ShellCmd {
 			+ "\n  -s   save the excution reult in file <output filename>";
 	}
 
-	private final static Logger logger = LoggerFactory.getLogger(ExertCmd.class
+	private final static Logger logger = LoggerFactory.getLogger(EvalCmd.class
 			.getName());
 
 	private String input;

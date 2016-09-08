@@ -368,7 +368,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 					try {
 						scriptExerter = new ScriptExerter(script, System.out, this.getClass().getClassLoader(),
 								Sorcer.getWebsterUrl());
-						Object target = scriptExerter.parse();
+						Object target = scriptExerter.evaluate();
 						// Create RemoteLoggerListener
 						Object result = null;
 						if (target instanceof Mogram) {
@@ -477,7 +477,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		logger.info(">>> executing task script: " + sb.toString());
 		try {
 			scriptExerter = new ScriptExerter(sb.toString(), System.out, taskClassLoader, Sorcer.getWebsterUrl());
-			Object target = scriptExerter.parse();
+			Object target = scriptExerter.evaluate();
 			// Create RemoteLoggerListener
 			RemoteLoggerListener listener = null;
 			Object result = null;
