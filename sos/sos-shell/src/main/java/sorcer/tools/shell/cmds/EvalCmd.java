@@ -136,7 +136,6 @@ public class EvalCmd extends ShellCmd {
 			out.println("Wrong number of arguments");
 			return;
 		}
-		out.println(">>>>>>>>>>> execute argsList: " + argsList);
 
 		if (script != null) {
 			scriptExerter.readScriptWithHeaders(script);
@@ -157,9 +156,14 @@ public class EvalCmd extends ShellCmd {
 			return;
 		}
 		Object target = scriptExerter.evaluate();
-		out.println(">>>>>>>>>>> scriptExerter.evaluate result: " + target);
-		if (target == null && !scriptExerter.isExertable()) {
-			return;
+//		out.println(">>>>>>>>>>> scriptExerter.evaluate result: " + target);
+		if (!scriptExerter.isExertable()) {
+			if (target == null) {
+				return;
+			} else {
+				out.println("\n---> EVALUATION RESULT --->");
+				out.println(target);
+			}
 		}
 
 		// Create RemoteLoggerListener
@@ -184,7 +188,7 @@ public class EvalCmd extends ShellCmd {
 
 //		if (NetworkShell.getInstance().isDebug()) out.println("Starting exert netlet!");
 		Object result = scriptExerter.execute();
-		out.println(">>>>>>>>>>> scriptExerter.execute result: " + result);
+//		out.println(">>>>>>>>>>> scriptExerter.execute result: " + result);
 		if (result != null) {
 			if (ifEvaluation) {
 				if (target instanceof Model) {
