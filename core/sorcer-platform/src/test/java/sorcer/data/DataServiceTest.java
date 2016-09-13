@@ -191,7 +191,7 @@ public class DataServiceTest {
 
     @Test
     public void testGetDataDir() {
-        String tmpDir = System.getenv("TEMP_DIR")==null?System.getProperty("java.io.tmpdir"):System.getenv("TEMP_DIR");
+        String tmpDir = System.getenv("TMPDIR")==null?System.getProperty("java.io.tmpdir"):System.getenv("TMPDIR");
         String dataDirName = new File(String.format(String.format("%s%ssorcer-%s%sdata",
                                                                   tmpDir,
                                                                   File.separator,

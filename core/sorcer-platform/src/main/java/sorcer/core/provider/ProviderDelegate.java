@@ -78,6 +78,7 @@ import javax.security.auth.Subject;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
@@ -1458,8 +1459,8 @@ public class ProviderDelegate {
 		try {
 			Class c = this.getClass().getClassLoader().loadClass("org.rioproject.entry.ComputeResourceInfo");
 			Object computeResourceInfo = c.newInstance();
-			Method m = c.getMethod("initialize", new Class[] {});
-			m.invoke(computeResourceInfo, (Object[]) null);
+			Method m = c.getMethod("initialize", InetAddress.class);
+			m.invoke(computeResourceInfo, SorcerEnv.getLocalHost());
 			attrVec.add((Entry) computeResourceInfo);
 		} catch (Exception e) {
 			// This happens if Rio classes are not in classpath. Ignore
