@@ -1651,7 +1651,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			while (it.hasNext()) {
 				Map.Entry e = (Map.Entry) it.next();
 				putInValue((String) e.getKey(), asis((String) e.getValue()));
-				removePath((String) e.getValue());
+//				removePath((String) e.getValue());
 			}
 		}
 		return this;
