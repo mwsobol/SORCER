@@ -9,6 +9,8 @@ public class MapContext extends ServiceContext {
 
     public Direction direction;
 
+    public boolean pathUnigue = false;
+
     public MapContext() {
         super();
     }

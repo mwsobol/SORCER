@@ -235,12 +235,16 @@ public class operator {
         return map;
     }
 
-    public static Context inConn(Entry... entries) throws ContextException {
+    public static Context inConn(boolean isUnique, Entry... entries) throws ContextException {
         MapContext map = new MapContext();
         map.direction = MapContext.Direction.IN;
+        map.pathUnigue = isUnique;
         List<Entry> items = Arrays.asList(entries);
         sorcer.eo.operator.populteContext(map, items);
         return map;
+    }
+    public static Context inConn(Entry... entries) throws ContextException {
+        return inConn(false, entries);
     }
 
     public static Context outConn(List<Entry> entries) throws ContextException {

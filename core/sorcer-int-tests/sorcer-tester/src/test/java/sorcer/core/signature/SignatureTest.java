@@ -216,7 +216,7 @@ public class SignatureTest {
 	}
 
 	@Test
-	public void localSigConnector() throws Exception {
+	public void localSigOutputConnector() throws Exception {
 
 		Context cxt = context(
 				inVal("y1", 20.0),
@@ -244,14 +244,14 @@ public class SignatureTest {
 	}
 
 	@Test
-	public void rmoteSigConnector() throws Exception {
+	public void rmoteSigInputConnector() throws Exception {
 
 		Context cxt = context(
 				inVal("y1", 20.0),
 				inVal("y2", 80.0),
 				result("result/y"));
 
-		Context inc = inConn(
+		Context inc = inConn(true,
 				inVal("arg/x1", "y1"),
 				inVal("arg/x2", "y2"));
 
