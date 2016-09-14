@@ -244,14 +244,14 @@ public class SignatureTest {
 	}
 
 	@Test
-	public void rmoteSigInputConnector() throws Exception {
+	public void remoteSigInputConnector() throws Exception {
 
 		Context cxt = context(
 				inVal("y1", 20.0),
 				inVal("y2", 80.0),
 				result("result/y"));
 
-		Context inc = inConn(true,
+		Context inc = inConn(
 				inVal("arg/x1", "y1"),
 				inVal("arg/x2", "y2"));
 

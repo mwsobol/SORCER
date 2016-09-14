@@ -33,8 +33,8 @@ public interface Modeling {
 			RemoteEventListener toInform, long leaseLenght)
 			throws UnknownEventException, RemoteException;
 
-	public void deregister(long eventID) throws UnknownEventException,
-			RemoteException;
+	public void deregister(long eventID) throws
+			UnknownEventException, RemoteException;
 
 	public void notifyEvaluation(Context modelContext)
 			throws EvaluationException, RemoteException;
@@ -48,13 +48,25 @@ public interface Modeling {
 	public void notifyUpdateEvaluation(Context modelContext)
 			throws EvaluationException, RemoteException;
 
-	public Context setInputs(Context entries) throws ContextException,
-			RemoteException;
+	public Context setInputs(Context entries)
+			throws ContextException, RemoteException;
 
-	public void evaluate(ServiceFidelity... fidelities) throws EvaluationException, RemoteException;
+	public void evaluate(ServiceFidelity... fidelities)
+			throws EvaluationException, RemoteException;
 
-	public Context evaluate(Context modelContext) throws EvaluationException,
-			RemoteException;
+	public Context evaluate(Context modelContext)
+			throws EvaluationException, RemoteException;
+
+	/**
+	 * Returns a value at the path.
+	 *
+	 * @param path
+	 *            the attribute-based path
+	 * @return this model value
+	 * @throws ContextException
+	 */
+	public Object getValue(String path, Arg... args)
+			throws ContextException, RemoteException;
 
 	public Context configureEvaluation(Context modelContext)
 			throws EvaluationException, RemoteException;
@@ -65,15 +77,20 @@ public interface Modeling {
 	public Context updateEvaluation(Context modelContext)
 			throws EvaluationException, RemoteException;
 
-	public boolean writeResult() throws EvaluationException, RemoteException;
+	public boolean writeResult() throws
+			EvaluationException, RemoteException;
 	
-	public void setContext(Context context) throws ContextException;
+	public void setContext(Context context)
+			throws ContextException;
 
-	public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException;
+	public void reconfigure(Fidelity... fidelities)
+			throws ContextException, RemoteException;
 
-	public void isolateModel(Context inContext) throws ContextException;
+	public void isolateModel(Context inContext)
+			throws ContextException;
 	
-	public void initializeBuilder() throws ContextException;
+	public void initializeBuilder()
+			throws ContextException;
 	
 	public static enum Type {
 		RESPONSE, PARAMETRIC, OPTIMIZATION

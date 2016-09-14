@@ -2403,6 +2403,15 @@ public class operator {
 		}
 	}
 
+	public static Object eval(Modeling model, String evalSelector,
+							  Arg... args) throws ContextException {
+		try {
+			return model.getValue(evalSelector, args);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
+	}
+
 	public static <T> T v(Context<T> context, String path,
 							  Arg... args) throws ContextException {
 		return value(context, path, args);
