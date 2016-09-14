@@ -491,8 +491,7 @@ public class Signatures {
 				inVal("y2", 80.0),
 				result("result/y"));
 
-		Context inc = inConn(true,
-				inVal("arg/x1", "y1"),
+		Context inc = inConn(inVal("arg/x1", "y1"),
 				inVal("arg/x2", "y2"));
 
 		Signature ps = sig("add", Adder.class, prvName("Adder"), inc);

@@ -1645,14 +1645,17 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	// TODO in/out/inout marking as defined in the connector
-	public Context updateContextWith(Context connector) throws ContextException {
-		boolean isUnigue = ((MapContext)connector).pathUnigue;
-		if (connector != null) {
-			Iterator it = ((ServiceContext)connector).entryIterator();
+	public Context updateContextWith(Context context) throws ContextException {
+		boolean isRedundant = false;
+		if (context instanceof MapContext) {
+			isRedundant = ((MapContext) context).isRedundant;
+		}
+		if (context != null) {
+			Iterator it = ((ServiceContext)context).entryIterator();
 			while (it.hasNext()) {
 				Map.Entry e = (Map.Entry) it.next();
 				putInValue((String) e.getKey(), asis((String) e.getValue()));
-				if (isUnigue) {
+				if (!isRedundant) {
 					removePath((String) e.getValue());
 				}
 			}
