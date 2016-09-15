@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static sorcer.co.operator.instance;
 import static sorcer.eo.operator.context;
 
 /**
@@ -82,19 +83,19 @@ public class operator {
     }
 
     public static ProcModel procModel(String name, Signature builder) throws SignatureException {
-        ProcModel model = (ProcModel) sorcer.co.operator.instance(builder);
+        ProcModel model = (ProcModel) instance(builder);
         model.setBuilder(builder);
         return model;
     }
 
     public static ProcModel parModel(String name, Signature builder) throws SignatureException {
-        ProcModel model = (ProcModel) sorcer.co.operator.instance(builder);
+        ProcModel model = (ProcModel) instance(builder);
         model.setBuilder(builder);
         return model;
     }
 
     public static SrvModel srvModel(String name, Signature builder) throws SignatureException {
-        SrvModel model = (SrvModel) sorcer.co.operator.instance(builder);
+        SrvModel model = (SrvModel) instance(builder);
         model.setBuilder(builder);
         return model;
     }
@@ -210,6 +211,14 @@ public class operator {
 
     public static Context resp(ServiceModel model) throws ContextException {
         return response(model);
+    }
+
+    public static Context response(Signature signature, Arg... args) throws ContextException {
+        try {
+            return (Context) ((ServiceModel)instance(signature)).getResponse(args);
+        } catch (RemoteException | SignatureException e) {
+            throw new ContextException(e);
+        }
     }
 
     public static Context response(ServiceModel model, Arg... args) throws ContextException {
