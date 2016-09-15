@@ -407,69 +407,68 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			throw new RuntimeException("Failed to start " + appPath);
 	}
 
-	static private void execNoninteractiveCommand(String args[])
-			throws Throwable {
-		// check for external commands
-		//System.out.println("nonintercative nsh: " + Arrays.toString(args));
+    static private void execNoninteractiveCommand(String args[])
+            throws Throwable {
+        // check for external commands
+        System.err.println("nonintercative nsh: " + Arrays.toString(args));
 
-		if (args[0].indexOf("--") == 0) {
-			String path = nishAppMap.get(args[0].substring(2));
+        if (args[0].indexOf("--") == 0) {
+            String path = nishAppMap.get(args[0].substring(2));
             if (path!=null)
                 startApplication(path);
             else
                 shellOutput.println(ansi().render("@|red No such internal command available: " + args[0].substring(2) + "|@"));
-			System.exit(0);
-		}
+            System.exit(0);
+        }
         PropertyEvaluator propsEval = new PropertyEvaluator();
         propsEval.addDefaultSources();
         for (int i = 0; i < args.length; i++) {
             args[i] = propsEval.eval(args[i]);
         }
-		request = arrayToRequest(args);
+        request = arrayToRequest(args);
         shellTokenizer = new WhitespaceTokenizer(request);
         System.err.println("----------------------------------------------------");
         System.err.println("Starting non-interactive exec of request: " + request);
 
-		if (debug) shellOutput.println("initializing nsh: " + (System.currentTimeMillis() - startTime) + "ms");
+        if (debug) shellOutput.println("initializing nsh: " + (System.currentTimeMillis() - startTime) + "ms");
         try {
             if (args.length == 1) {
                 if (args[0].equals("-version")) {
-					shellOutput.println(WELCOME_HEADER_1);
+                    shellOutput.println(WELCOME_HEADER_1);
                 } else if (args[0].equals("-help")) {
                     shellOutput.println(NSH_HELP);
                 } else {
                     // Added reading the file as default first argument
                     // Check if file exists
-					shellOutput.println("exec nsh: " + (System.currentTimeMillis() - startTime) + "ms");
+                    shellOutput.println("exec nsh: " + (System.currentTimeMillis() - startTime) + "ms");
                     ShellCmd cmd = commandTable.get("eval");
-					waitForReggie();
-					shellOutput.println("found reggie: " + (System.currentTimeMillis() - startTime) + "ms");
+                    waitForReggie();
+                    shellOutput.println("found reggie: " + (System.currentTimeMillis() - startTime) + "ms");
                     cmd.execute();
                 }
             } else if (args.length > 1) {
-			if (args[0].equals("-f") || args[0].equals("-n")) {
-				// evaluate file
-				ShellCmd cmd = commandTable.get("eval");
-				waitForReggie();
+                if (args[0].equals("-f") || args[0].equals("-n")) {
+                    // evaluate file
+                    ShellCmd cmd = commandTable.get("eval");
+                    waitForReggie();
                     cmd.execute();
-			} else if (args[0].equals("-e")) {
-				// evaluate command line expression
-				EvalCmd cmd = (EvalCmd) commandTable.get("eval");
-				// cmd.setScript(instance.getText(args[1]));
-				cmd.setScript(EvalCmd.readFile(huntForTheScriptFile(args[1])));
-				waitForReggie();
-				cmd.execute();
-			} else if (args[0].equals("-c")) {
+                } else if (args[0].equals("-e")) {
+                    // evaluate command line expression
+                    EvalCmd cmd = (EvalCmd) commandTable.get("eval");
+                    // cmd.setScript(instance.getText(args[1]));
+                    cmd.setScript(EvalCmd.readFile(huntForTheScriptFile(args[1])));
+                    waitForReggie();
+                    cmd.execute();
+                } else if (args[0].equals("-c")) {
                     ShellCmd cmd = commandTable.get(args[1]);
                     if (args.length > 2)
                         shellTokenizer = new WhitespaceTokenizer(request.substring(4 + args[1].length()));
                     else
                         shellTokenizer = new WhitespaceTokenizer(request.substring(3 + args[1].length()));
-                    if (cmd!=null) {
-						waitForReggie();
-						cmd.execute();
-					}
-                    else
+                    if (cmd != null) {
+                        waitForReggie();
+                        cmd.execute();
+                    } else
                         shellOutput.println(ansi().render("@|red Command: " + args[1] + " not found. |@" +
                                 "Please run 'nsh -help' to see the list of available commands"));
                 } else if (args[0].equals("-b")) {
@@ -477,7 +476,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                     System.err.println("Processing batch request on file: " + batchFile.getAbsolutePath());
                     String batchCmds = readScript(batchFile);
                     shellOutput.println("Executing batch file: " + batchFile.getAbsolutePath());
-					waitForReggie();
+                    waitForReggie();
                     for (String batchCmd : batchCmds.split("\n")) {
                         WhitespaceTokenizer tok = new WhitespaceTokenizer(batchCmd);
                         List<String> argsList = new ArrayList<String>();
@@ -496,7 +495,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                             cmd.execute();
                         else
                             shellOutput.println(ansi().render("@|red Command: " + args[1] + " not found. |@" +
-									"Please run 'nsh -help' to see the list of available commands"));
+                                    "Please run 'nsh -help' to see the list of available commands"));
                         System.err.println("Execution of command: '" + batchCmd + "' finished");
                         request = originalRequest;
                     }
@@ -1650,7 +1649,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         propsEval.addDefaultSources();
         String lineSep = "\n";
         BufferedReader br = new BufferedReader(new FileReader(file));
-        String nextLine = br.readLine();
+        String nextLine;
         StringBuilder sb = new StringBuilder();
         while ((nextLine = br.readLine()) != null) {
             if (!nextLine.startsWith("#")) {
