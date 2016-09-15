@@ -180,7 +180,7 @@ public class SrvModels {
 
     @Test
     public void serviceResponses() throws Exception {
-        // get responses from a service model
+        // get response from a service model
 
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
@@ -203,7 +203,7 @@ public class SrvModels {
 
     @Test
     public void serviceResponses2() throws Exception {
-        // get responses from a service model
+        // get response from a service model
 
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
@@ -226,7 +226,7 @@ public class SrvModels {
     @Test
     public void evaluateServiceModel() throws Exception {
 
-        // get responses from a service model
+        // get response from a service model
 
         Model mdl = srvModel(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),

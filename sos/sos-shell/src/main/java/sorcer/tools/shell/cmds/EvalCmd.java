@@ -27,7 +27,7 @@ import sorcer.core.context.node.ContextNode;
 import sorcer.core.provider.RemoteLogger;
 import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.core.provider.logger.RemoteLoggerListener;
-import sorcer.netlet.ScriptExerter;
+import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.tools.shell.INetworkShell;
@@ -51,6 +51,7 @@ public class EvalCmd extends ShellCmd {
 		COMMAND_USAGE = "eval [[-s | --s | --m] <output filename>] <input filename>";
 
 		COMMAND_HELP = "Evaluate a netlet specified by the <input filename>;"
+				+ "\n  -stgy show control strategy"
 				+ "\n  -db   save the command output in a DB"
 				+ "\n  -s   save the command output in a file"
 				+ "\n  --s   serialize the command output in a file"
@@ -60,7 +61,7 @@ public class EvalCmd extends ShellCmd {
 	private final static Logger logger = LoggerFactory.getLogger(EvalCmd.class
 			.getName());
 
-    private ScriptExerter scriptExerter;
+    private ServiceScripter scriptExerter;
 
 	private String input;
 
@@ -80,7 +81,7 @@ public class EvalCmd extends ShellCmd {
 	public void execute() throws Throwable {
 		out = NetworkShell.getShellOutputStream();
 		shell = NetworkShell.getInstance();
-		scriptExerter = new ScriptExerter(out, null, NetworkShell.getWebsterUrl(), shell.isDebug());
+		scriptExerter = new ServiceScripter(out, null, NetworkShell.getWebsterUrl(), shell.isDebug());
 		shell.setServiceShell(scriptExerter.getServiceShell());
 		scriptExerter.setConfig(config);
 		input = shell.getCmd();
@@ -188,7 +189,7 @@ public class EvalCmd extends ShellCmd {
 
 //		if (NetworkShell.getInstance().isDebug()) out.println("Starting exert netlet!");
 		Object result = scriptExerter.execute();
-//		out.println(">>>>>>>>>>> scriptExerter.execute result: " + result);
+		out.println(">>>>>>>>>>> scriptExerter.execute result: " + result);
 		if (result != null) {
 			if (ifEvaluation) {
 				if (target instanceof Model) {
@@ -216,7 +217,8 @@ public class EvalCmd extends ShellCmd {
 				}
 
 				out.println("\n---> OUTPUT MOGRAM --->");
-				out.println(mog.describe());
+//				out.println(mog.describe());
+				out.println(mog.getName()+"@"+mog.getClass().getSimpleName());
 				if (mog instanceof Exertion) {
 					Exertion xrt = (Exertion)mog;
 					out.println("\n---> OUTPUT DATA CONTEXT --->");
@@ -228,8 +230,11 @@ public class EvalCmd extends ShellCmd {
 					}
 				} else {
 					out.println("\n---> MODEL RESPONSE --->");
-					out.println(((Model)mog).getResult());
-//					out.println(((Model)target).getResponse());
+					if (target instanceof Model) {
+						out.println(((Model) target).getResult());
+					} else {
+						out.println(result);
+					}
 				}
 			}
 			if (ifMogramControl) {

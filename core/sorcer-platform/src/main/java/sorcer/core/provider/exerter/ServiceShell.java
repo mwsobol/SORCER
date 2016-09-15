@@ -49,7 +49,7 @@ import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.jini.lookup.ProviderID;
-import sorcer.netlet.ScriptExerter;
+import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.Exec.State;
 import sorcer.service.Signature.ReturnPath;
@@ -906,7 +906,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 				return null;
 
 			if (service instanceof NetletSignature) {
-				ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+				ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
 				se.readFile(new File(((NetletSignature)service).getServiceSource()));
 				return evaluate((Mogram)se.evaluate());
 			} else if (service instanceof Exertion) {

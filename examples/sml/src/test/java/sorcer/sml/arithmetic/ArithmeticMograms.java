@@ -125,7 +125,7 @@ public class ArithmeticMograms {
 
 	@Test
 	public void sigLocalModel() throws Exception {
-		// get responses from a local service model and resolve dependencies
+		// get response from a local service model and resolve dependencies
 
 		Model m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
@@ -147,7 +147,7 @@ public class ArithmeticMograms {
 
 	@Test
 	public void sigRemoteModel() throws Exception {
-		// get responses from a remote service model and resolve dependencies
+		// get response from a remote service model and resolve dependencies
 
 		Model m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
@@ -169,7 +169,7 @@ public class ArithmeticMograms {
 
 	@Test
 	public void sigMixedModel() throws Exception {
-		// get responses from a remote service model and resolve dependencies
+		// get response from a remote service model and resolve dependencies
 
 		Model m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),

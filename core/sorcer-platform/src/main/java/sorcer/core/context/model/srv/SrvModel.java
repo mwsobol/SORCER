@@ -413,7 +413,7 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
                 Exertion xrt = out.exert();
                 return xrt.getDataContext();
             } else {
-                // evaluate model responses
+                // evaluate model response
                 getResponse(entries);
                 return this;
             }

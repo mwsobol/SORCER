@@ -10,7 +10,8 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.netlet.util.NetletClassLoader;
 import sorcer.netlet.util.ScriptExertException;
-import sorcer.netlet.util.ScriptThread;
+import sorcer.netlet.util.ScripterThread;
+import sorcer.service.Exertion;
 import sorcer.service.Mogram;
 
 import java.io.File;
@@ -30,9 +31,9 @@ import java.util.regex.Pattern;
  * User: prubach & Mile Sobolewski
  * Date: 02.07.13
  */
-public class ScriptExerter {
+public class ServiceScripter {
 
-    private final static Logger logger = LoggerFactory.getLogger(ScriptExerter.class
+    private final static Logger logger = LoggerFactory.getLogger(ServiceScripter.class
             .getName());
 
 
@@ -48,7 +49,7 @@ public class ScriptExerter {
 
     private Object result;
 
-    private ScriptThread scriptThread;
+    private ScripterThread scriptThread;
 
     private ServiceShell serviceShell;
 
@@ -60,7 +61,7 @@ public class ScriptExerter {
 
     private boolean debug = false;
 
-    public ScriptExerter() {
+    public ServiceScripter() {
         this(null, null, null, false);
     }
 
@@ -78,7 +79,7 @@ public class ScriptExerter {
         }
     }
 
-    public ScriptExerter(PrintStream out, ClassLoader classLoader, String websterStrUrl, boolean debug) {
+    public ServiceScripter(PrintStream out, ClassLoader classLoader, String websterStrUrl, boolean debug) {
         this.out = out;
         if (out==null) this.out = System.out;
         this.debug = debug;
@@ -87,23 +88,25 @@ public class ScriptExerter {
         this.websterStrUrl = websterStrUrl;
     }
 
-    public ScriptExerter(File scriptFile) throws IOException {
+    public ServiceScripter(File scriptFile) throws IOException {
         this(scriptFile, null, null, null);
     }
 
-    public ScriptExerter(File scriptFile, PrintStream out, ClassLoader classLoader, String websterStrUrl) throws IOException {
+    public ServiceScripter(File scriptFile, PrintStream out, ClassLoader classLoader, String websterStrUrl) throws IOException {
         this(out, classLoader, websterStrUrl, false);
         script = IOUtils.toString(new FileReader(scriptFile));
     }
 
-    public ScriptExerter(String script, PrintStream out, ClassLoader classLoader, String websterStrUrl) throws IOException {
+    public ServiceScripter(String script, PrintStream out, ClassLoader classLoader, String websterStrUrl) throws IOException {
         this(out, classLoader, websterStrUrl, false);
         this.script = script;
     }
 
     public Object execute() throws Throwable {
         if (scriptThread != null) {
-            scriptThread.evalScript();
+            if (target == null) {
+                scriptThread.evalScript();
+            }
             scriptThread.exert();
             result = scriptThread.getResult();
             return result;
@@ -114,11 +117,11 @@ public class ScriptExerter {
     public Object evaluate() throws Throwable {
         try {
             if (out!=null && debug) out.println("creating scriptThread..."+ (System.currentTimeMillis()-startTime)+"ms");
-            scriptThread = new ScriptThread(script, classLoader, isExertable);
+            scriptThread = new ScripterThread(script, classLoader, isExertable);
             scriptThread.evalScript();
             if (out!=null && debug) out.println("get target..." + (System.currentTimeMillis()-startTime)+"ms");
             this.target = scriptThread.getTarget();
-            if (target instanceof Mogram) {
+            if (target instanceof Exertion) {
                 isExertable = true;
             } else {
                 isExertable = false;

@@ -40,7 +40,7 @@ public class NetletTest {
 
     @Test
     public void evalNetletCmdTest() throws Exception {
-        cmds = new String[] { baseCmd, "-c", "eval", netletDir +"/adder-local.ntl"};
+        cmds = new String[] { baseCmd, "-c", "eval", netletDir + "/adder-local.ntl"};
 
         ExecUtils.CmdResult result = ExecUtils.execCommand(cmds);
         String res =  result.getOut();

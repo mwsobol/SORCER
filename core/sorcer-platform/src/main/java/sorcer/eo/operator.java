@@ -49,7 +49,7 @@ import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.requestor.ServiceRequestor;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.*;
-import sorcer.netlet.ScriptExerter;
+import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
@@ -1943,7 +1943,7 @@ public class operator {
 			String source = ((NetletSignature)items[0]).getServiceSource();
 			if(source != null) {
 				try {
-					ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+					ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
 					se.readFile(new File(source));
 					return (M)se.evaluate();
 				} catch (Throwable e) {
@@ -3042,7 +3042,7 @@ public class operator {
 			String source = ((NetletSignature)signature).getServiceSource();
 			if(source != null) {
 				try {
-					ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+					ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
 					se.readFile(new File(source));
 					return se.evaluate();
 				} catch (Throwable e) {

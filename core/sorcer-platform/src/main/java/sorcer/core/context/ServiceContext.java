@@ -3231,7 +3231,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				signature = sig(subjectPath, subjectValue);
 				return (T) ((Exertion)operator.xrt(name, signature, this).exert(txn, entries)).getContext();
 			} else {
-				// evaluates model outputs - responses
+				// evaluates model outputs - response
 				getResponse(entries);
 				return (T) this;
 			}

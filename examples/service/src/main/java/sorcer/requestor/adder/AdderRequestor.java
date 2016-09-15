@@ -1,6 +1,7 @@
 package sorcer.requestor.adder;
 
 import sorcer.core.requestor.ServiceRequestor;
+import sorcer.mo.operator;
 import sorcer.provider.adder.Adder;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -56,7 +57,7 @@ public class AdderRequestor extends ServiceRequestor {
         // model three args
         return model(inVal("arg/x1", v1), inVal("arg/x2", v2),
                 ent(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
-                response("add", "arg/x1", "arg/x2"));
+                operator.response("add", "arg/x1", "arg/x2"));
     }
 
 }

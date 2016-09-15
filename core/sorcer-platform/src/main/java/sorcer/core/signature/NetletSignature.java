@@ -18,7 +18,7 @@
 package sorcer.core.signature;
 
 import net.jini.core.transaction.TransactionException;
-import sorcer.netlet.ScriptExerter;
+import sorcer.netlet.ServiceScripter;
 import sorcer.service.Arg;
 import sorcer.service.Mogram;
 import sorcer.service.MogramException;
@@ -60,7 +60,7 @@ public class NetletSignature extends ServiceSignature {
     @Override
     public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
         try {
-            ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+            ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
             se.readFile(new File(serviceSource.getName()));
             return sorcer.eo.operator.exec((Mogram)se.evaluate());
         } catch (Throwable throwable) {

@@ -27,7 +27,7 @@ import sorcer.core.provider.Provider;
 import sorcer.core.provider.RemoteLogger;
 import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.core.provider.logger.RemoteLoggerListener;
-import sorcer.netlet.ScriptExerter;
+import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.ui.util.JIconButton;
@@ -86,7 +86,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			getContextMenuItem, exertMenuItem, closeMenuItem;
 	private Provider provider;
 	private EditorViewSignature model;
-    private ScriptExerter scriptExerter;
+    private ServiceScripter scriptExerter;
 	private JTextArea feedbackPane;
 	private RemoteLoggerListener listener;
 
@@ -366,7 +366,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 					runTaskScript(script);
 				} else {
 					try {
-						scriptExerter = new ScriptExerter(script, System.out, this.getClass().getClassLoader(),
+						scriptExerter = new ServiceScripter(script, System.out, this.getClass().getClassLoader(),
 								Sorcer.getWebsterUrl());
 						Object target = scriptExerter.evaluate();
 						// Create RemoteLoggerListener
@@ -476,7 +476,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 
 		logger.info(">>> executing task script: " + sb.toString());
 		try {
-			scriptExerter = new ScriptExerter(sb.toString(), System.out, taskClassLoader, Sorcer.getWebsterUrl());
+			scriptExerter = new ServiceScripter(sb.toString(), System.out, taskClassLoader, Sorcer.getWebsterUrl());
 			Object target = scriptExerter.evaluate();
 			// Create RemoteLoggerListener
 			RemoteLoggerListener listener = null;

@@ -30,7 +30,7 @@ import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.netlet.ScriptExerter;
+import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
@@ -969,7 +969,7 @@ public class operator {
 			String source = ((NetletSignature) signature).getServiceSource();
 			if (source != null) {
 				try {
-					ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+					ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
 					se.readFile(new File(source));
 					return se.evaluate();
 				} catch (Throwable e) {

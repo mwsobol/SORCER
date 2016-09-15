@@ -306,7 +306,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			if (context != null) {
 				ReturnPath rp = ((ServiceContext)context).getReturnPath();
 				this.append(context);
-				// check for multiple responses of this model
+				// check for multiple response of this model
 				if (rp != null && rp.outPaths.length > 0) {
 					Object val = null;
 					if (rp.outPaths.length == 1)
@@ -357,7 +357,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 
 	private Object getReturnValue(ReturnPath rp) throws ContextException {
 		Object val = null;
-		// check for multiple responses of this model
+		// check for multiple response of this model
 		if (rp != null && rp.outPaths.length > 0) {
 			if (rp.outPaths.length == 1)
 				val = getValue(rp.outPaths[0].path);
