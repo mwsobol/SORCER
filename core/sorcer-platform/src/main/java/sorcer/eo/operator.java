@@ -1197,6 +1197,10 @@ public class operator {
 		return System.getProperty(property);
 	}
 
+	public static String property(String property, String value) {
+		return System.setProperty(property, value);
+	}
+
 	public static String home() {
 		return Sorcer.getHome();
 	}
