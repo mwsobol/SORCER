@@ -72,7 +72,7 @@ public class ScripterThread extends Thread {
             Thread.currentThread().setContextClassLoader(classLoader);
             synchronized (gShell) {
                 target = gShell.evaluate(script);
-                logger.info(">>>>>>>>>>> gShell target: " + target);
+//                logger.info(">>>>>>>>>>> gShell target: " + target);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(currentCL);

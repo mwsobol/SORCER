@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.tools.shell.NetworkShell;
 import sorcer.util.Sorcer;
 import sorcer.util.StringUtils;
 import sorcer.util.exec.ExecUtils;
@@ -38,13 +39,18 @@ public class NetletTest {
         netletDir = new File("").getAbsolutePath() + "/src/main/netlets";
     }
 
+    public void evalNetletCmdTestX() throws Exception {
+        cmds = new String[] { "-c", "eval", netletDir + "/adder-local.ntl"};
+        NetworkShell.main(cmds);
+    }
+
     @Test
     public void evalNetletCmdTest() throws Exception {
-        cmds = new String[] { baseCmd, "-c", "eval", netletDir + "/adder-local.ntl"};
+        cmds = new String[] { baseCmd, "-c",  "eval", netletDir + "/adder-local.ntl"};
 
         ExecUtils.CmdResult result = ExecUtils.execCommand(cmds);
         String res =  result.getOut();
-//        logger.info("Result running: " + StringUtils.join(cmds, " ") +":\n" + res);
+        logger.info("Result running: " + StringUtils.join(cmds, " ") +":\n" + res);
         if (!result.getErr().isEmpty())
             logger.info("batchCmdTest Result ERROR: " + result.getErr());
         assertFalse(result.getErr().contains(EXCEPTION));

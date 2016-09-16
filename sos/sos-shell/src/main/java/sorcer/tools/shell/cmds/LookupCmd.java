@@ -75,7 +75,7 @@ public class LookupCmd extends ShellCmd {
 	public LookupCmd() {
 	}
 
-	public void execute() throws IOException, ClassNotFoundException {
+	public void execute(String... args) throws IOException, ClassNotFoundException {
 		out = NetworkShell.getShellOutputStream();
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();

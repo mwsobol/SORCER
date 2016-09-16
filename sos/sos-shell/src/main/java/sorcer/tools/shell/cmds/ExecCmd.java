@@ -48,7 +48,7 @@ public class ExecCmd extends ShellCmd {
 
 	private Thread execThread;
 	
-	public void execute() throws Throwable {
+	public void execute(String... args) throws Throwable {
 		out = NetworkShell.getShellOutputStream();
 		String cmd = "";
 		input = shell.getCmd();

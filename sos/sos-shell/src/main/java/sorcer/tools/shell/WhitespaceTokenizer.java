@@ -54,5 +54,9 @@ public class WhitespaceTokenizer {
             return "";
     }
 
+    public List<String> getTokens() {
+        return tokens;
+    }
+
 }
 

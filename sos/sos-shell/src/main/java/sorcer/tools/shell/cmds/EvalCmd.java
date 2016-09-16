@@ -96,7 +96,8 @@ public class EvalCmd extends ShellCmd {
 		boolean ifMarshalled = false;
 		boolean commandLine = NetworkShell.isInteractive();
 
-		List<String> argsList = WhitespaceTokenizer.tokenize(input);
+//		List<String> argsList = WhitespaceTokenizer.tokenize(input);
+		List<String> argsList = NetworkShell.getShellTokenizer().getTokens();
 
 //       Pattern p = Pattern.compile("(\"[^\"]*\"|[^\"^\\s]+)(\\s+|$)", Pattern.MULTILINE);
 //       Matcher m = p.matcher(input);
@@ -104,7 +105,14 @@ public class EvalCmd extends ShellCmd {
 			out.println(COMMAND_USAGE);
 			return;
 		}
-
+		// check if exrting or evaluating
+		if (args != null && args.length > 0) {
+			if (args[0].equals("eval")) {
+				ifEvaluation = true;
+			} else if (args[0].equals("exert")) {
+				ifEvaluation = false;
+			}
+		}
 		try {
 			for (int i = 0; i < argsList.size(); i++) {
 				String nextToken = argsList.get(i);
@@ -113,10 +121,10 @@ public class EvalCmd extends ShellCmd {
 				if (nextToken.equals("-s")) {
 					ifOutPersisted = true;
 					outputFile = new File("" + cdir + File.separator + argsList.get(i + 1));
-				} else if (args[0].equals("eval") || nextToken.equals("-eval") || nextToken.equals("-e")) {
+				} else if (nextToken.equals("-eval") || nextToken.equals("-e")) {
 					ifEvaluation = true;
 					scriptExerter.setIsExerted(false);
-				} else if (args[0].equals("exert") || nextToken.equals("-exert") || nextToken.equals("-x")) {
+				} else if (nextToken.equals("-exert") || nextToken.equals("-x")) {
 					ifEvaluation = false;
 					scriptExerter.setIsExerted(true);
 				} else if (nextToken.equals("-stgy")) {
@@ -195,10 +203,14 @@ public class EvalCmd extends ShellCmd {
 //		out.println(">>>>>>>>>>> ServiceScripter.execute result: " + result);
 		if (result != null) {
 			if (ifEvaluation) {
-				if (!(target instanceof Mogram)) {
-					out.println("\n---> EVALUATION RESULT --->");
-					out.println(result);
-				}
+                out.println("\n---> EVALUATION RESULT --->");
+                if (target instanceof Exertion) {
+					out.println(((Mogram)result).getContext());
+				} else if (target instanceof Model) {
+                    out.println(((Model)result).getResult());
+                } else {
+                    out.println(result);
+                }
 				return;
 			} else if ((result instanceof Mogram)) {
 				Mogram mog = (Mogram) result;

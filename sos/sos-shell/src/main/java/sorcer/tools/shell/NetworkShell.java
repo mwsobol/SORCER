@@ -222,12 +222,12 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		}
 	}
 
-	static public void main(String argv[]) {
+	static public void main(String... argv) {
         AnsiConsole.systemInstall();
         //Ansi.setDetector(new AnsiDetector());
 		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
 		String curToken = null;
-		//System.out.println("nsh main args: " + Arrays.toString(argv));	
+//		System.out.println("nsh main args: " + Arrays.toString(argv));
 		if (argv.length > 0) {
 			if ((argv.length == 1 && argv[0].startsWith("--"))
 						|| (argv.length == 2 && (argv[0].equals("-e"))
@@ -408,9 +408,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
     static private void execNoninteractiveCommand(String args[])
             throws Throwable {
-        // check for external commands
-        System.err.println("nonintercative nsh: " + Arrays.toString(args));
-
+        // check for external commandsx
         if (args[0].indexOf("--") == 0) {
             String path = nishAppMap.get(args[0].substring(2));
             if (path!=null)
@@ -466,7 +464,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                         shellTokenizer = new WhitespaceTokenizer(request.substring(3 + args[1].length()));
                     if (cmd != null) {
                         waitForReggie();
-                        cmd.execute();
+                        cmd.execute(args[1]);
                     } else
                         shellOutput.println(ansi().render("@|red Command: " + args[1] + " not found. |@" +
                                 "Please run 'nsh -help' to see the list of available commands"));
