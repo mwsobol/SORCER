@@ -44,11 +44,11 @@ import java.util.Map;
 public class EvalCmd extends ShellCmd {
 
 	{
-		COMMAND_NAME = "eval";
+		COMMAND_NAME = "'eval' or 'exert'";
 
 		NOT_LOADED_MSG = "***command not loaded due to conflict";
 
-		COMMAND_USAGE = "eval [[-s | --s | --m] <output filename>] <input filename>";
+		COMMAND_USAGE = "(eval | exert) [[-s | --s | --m] <output filename>] <input filename>";
 
 		COMMAND_HELP = "Evaluate a netlet specified by the <input filename>;"
 				+ "\n  -stgy show control strategy"
@@ -78,7 +78,7 @@ public class EvalCmd extends ShellCmd {
 	public EvalCmd() {
 	}
 
-	public void execute() throws Throwable {
+	public void execute(String... args) throws Throwable {
 		out = NetworkShell.getShellOutputStream();
 		shell = NetworkShell.getInstance();
 		scriptExerter = new ServiceScripter(out, null, NetworkShell.getWebsterUrl(), shell.isDebug());
@@ -113,9 +113,12 @@ public class EvalCmd extends ShellCmd {
 				if (nextToken.equals("-s")) {
 					ifOutPersisted = true;
 					outputFile = new File("" + cdir + File.separator + argsList.get(i + 1));
-				} else if (nextToken.equals("-eval") || nextToken.equals("-e")) {
+				} else if (args[0].equals("eval") || nextToken.equals("-eval") || nextToken.equals("-e")) {
 					ifEvaluation = true;
 					scriptExerter.setIsExerted(false);
+				} else if (args[0].equals("exert") || nextToken.equals("-exert") || nextToken.equals("-x")) {
+					ifEvaluation = false;
+					scriptExerter.setIsExerted(true);
 				} else if (nextToken.equals("-stgy")) {
 					ifMogramControl = true;
 				} else if (nextToken.equals("-m")) {
@@ -157,7 +160,7 @@ public class EvalCmd extends ShellCmd {
 			return;
 		}
 		Object target = scriptExerter.evaluate();
-//		out.println(">>>>>>>>>>> scriptExerter.evaluate result: " + target);
+//		out.println(">>>>>>>>>>> ServiceScripter.evaluate result: " + target);
 		if (!scriptExerter.isExertable()) {
 			if (target == null) {
 				return;
@@ -189,13 +192,10 @@ public class EvalCmd extends ShellCmd {
 
 //		if (NetworkShell.getInstance().isDebug()) out.println("Starting exert netlet!");
 		Object result = scriptExerter.execute();
-		out.println(">>>>>>>>>>> scriptExerter.execute result: " + result);
+//		out.println(">>>>>>>>>>> ServiceScripter.execute result: " + result);
 		if (result != null) {
 			if (ifEvaluation) {
-				if (target instanceof Model) {
-					out.println("\n---> MODEL RESPONSE --->");
-					out.println(result);
-				} else {
+				if (!(target instanceof Mogram)) {
 					out.println("\n---> EVALUATION RESULT --->");
 					out.println(result);
 				}

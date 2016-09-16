@@ -280,7 +280,6 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		ShellCmd cmd = null;
 		nshUrl = getWebsterUrl();
 		//System.out.println("main request: " + request);
 		//ClassLoaderUtil.displayContextClassLoaderTree();    	
@@ -306,7 +305,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		try {
 			if (commandTable.containsKey(curToken)) {
 				cmd = commandTable.get(curToken);
-				cmd.execute();
+				cmd.execute(curToken);
 			}
 			// admissible shortcuts in the 'synonyms' map
 			else if (aliases.containsKey(curToken)) {
@@ -874,7 +873,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			COMMAND_HELP = "Describes the Network Shell (nsh) commands";
 		}
 
-		public void execute() {		
+		public void execute(String... args) {
 			// noninteractive shell
 			if (shellTokenizer == null) {
 				instance.listCommands();
@@ -913,7 +912,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 					+ "  -e   clear monitored exertion infos";
 		}
 		
-		public void execute() throws IOException, InterruptedException {
+		public void execute(String... args) throws IOException, InterruptedException {
 			if (shellOutput == null)
 				throw new NullPointerException(
 						"Must have an output PrintStream");
@@ -951,7 +950,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 					+ "on Mac /Applications/TextEdit.app/Contents/MacOS/TextEdit can be used.";
 		}
 
-		public void execute() throws IOException, InterruptedException {
+		public void execute(String... args) throws IOException, InterruptedException {
 			final String cmd = getEditorCmd();
 			Thread edt = new Thread(new Runnable() {
 				public void run() {
@@ -1009,7 +1008,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 					+ "  -a   list available external applications";
 		}
 
-		public void execute() throws IOException, ClassNotFoundException {
+		public void execute(String... args) throws IOException, ClassNotFoundException {
 			if (shellOutput == null)
 				throw new NullPointerException(
 						"Must have an output PrintStream");
@@ -1085,7 +1084,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 					+ "  [" + debugGetDefaultRoots() + "]";
 		}
 
-		public void execute() {
+		public void execute(String... args) {
 			if (shellOutput == null)
 				throw new NullPointerException(
 						"Must have an output PrintStream");
@@ -1771,12 +1770,12 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
     }
 
     static final String[] shellCommands = { "start", "disco", "ls", "chgrp",
-			"groups", "lup", "chgrp", "chport", "help", "eval", "http", "emx",
+			"groups", "lup", "chgrp", "chport", "help", "eval", "exert", "http", "emx",
 			"gvy", "edit", "clear", "exec", "about", "sos", "ds", "sp" };
 
 	static final Class[] shellCmdClasses = { StartStopCmd.class, DiscoCmd.class,
 			DirCmd.class, ChgrpCmd.class, GroupsCmd.class, LookupCmd.class,
-			ChgrpCmd.class, SetPortCmd.class, HelpCmd.class, EvalCmd.class,
+			ChgrpCmd.class, SetPortCmd.class, HelpCmd.class, EvalCmd.class, EvalCmd.class,
 			HttpCmd.class, EmxCmd.class, GroovyCmd.class, EditCmd.class,
 			ClearCmd.class, ExecCmd.class, InfoCmd.class, SosCmd.class, DataStorageCmd.class,
 			SpaceCmd.class };
