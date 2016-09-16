@@ -988,6 +988,14 @@ public class operator {
 			return ((ObjectSignature) signature).initInstance();
 	}
 
+	public static ServiceModel model(Signature signature) throws SignatureException {
+		Object model = instance(signature);
+		if (!(model instanceof ServiceModel)) {
+			throw new SignatureException("Signature does not specify te ServiceModel: " + signature);
+		}
+		return (ServiceModel) model;
+	}
+
 	public static URL url(String urlName) throws MalformedURLException {
 		return new URL(urlName);
 	}

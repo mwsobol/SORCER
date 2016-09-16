@@ -39,14 +39,22 @@ public class NetletTest {
         netletDir = new File("").getAbsolutePath() + "/src/main/netlets";
     }
 
-    public void evalNetletCmdTestX() throws Exception {
-        cmds = new String[] { "-c", "eval", netletDir + "/adder-local.ntl"};
-        NetworkShell.main(cmds);
-    }
-
     @Test
     public void evalNetletCmdTest() throws Exception {
         cmds = new String[] { baseCmd, "-c",  "eval", netletDir + "/adder-local.ntl"};
+
+        ExecUtils.CmdResult result = ExecUtils.execCommand(cmds);
+        String res =  result.getOut();
+        logger.info("Result running: " + StringUtils.join(cmds, " ") +":\n" + res);
+        if (!result.getErr().isEmpty())
+            logger.info("batchCmdTest Result ERROR: " + result.getErr());
+        assertFalse(result.getErr().contains(EXCEPTION));
+        assertTrue(res.contains("300.0"));
+    }
+
+    @Test
+    public void exertNetletCmdTest() throws Exception {
+        cmds = new String[] { baseCmd, "-c",  "exert", netletDir + "/adder-local.ntl"};
 
         ExecUtils.CmdResult result = ExecUtils.execCommand(cmds);
         String res =  result.getOut();

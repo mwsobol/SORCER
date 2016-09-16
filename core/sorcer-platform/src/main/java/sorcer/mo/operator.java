@@ -148,6 +148,26 @@ public class operator {
         return model;
     }
 
+    public static Entry ent(String path, ServiceModel model) {
+        return new Entry(path, model);
+    }
+
+    public static Entry result(Entry entry) throws ContextException {
+        try {
+            Entry out = null;
+
+            if (entry.asis() instanceof ServiceContext) {
+                out = new Entry(entry.path(), ((ServiceContext)entry.asis()).getValue(entry.path()));
+                return out;
+            } else {
+                out = new Entry(entry.path(), entry.getValue());
+            }
+            return out;
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+    }
+
     public static Context result(ServiceModel model) throws ContextException {
         return ((ServiceContext)model).getMogramStrategy().getOutcome();
     }
@@ -231,10 +251,6 @@ public class operator {
 
     public static void traced(Model model, boolean isTraced) throws ContextException {
         ((FidelityManager)model.getFidelityManager()).setTraced(isTraced);
-    }
-
-    public static Entry entry(Model model, String path) throws ContextException {
-        return new Entry(path, model.asis(path));
     }
 
     public static Context inConn(List<Entry> entries) throws ContextException {

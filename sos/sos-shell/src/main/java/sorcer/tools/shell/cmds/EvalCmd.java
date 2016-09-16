@@ -33,7 +33,6 @@ import sorcer.service.modeling.Model;
 import sorcer.tools.shell.INetworkShell;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
-import sorcer.tools.shell.WhitespaceTokenizer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -61,7 +60,7 @@ public class EvalCmd extends ShellCmd {
 	private final static Logger logger = LoggerFactory.getLogger(EvalCmd.class
 			.getName());
 
-    private ServiceScripter scriptExerter;
+    private ServiceScripter serviceScripter;
 
 	private String input;
 
@@ -81,9 +80,9 @@ public class EvalCmd extends ShellCmd {
 	public void execute(String... args) throws Throwable {
 		out = NetworkShell.getShellOutputStream();
 		shell = NetworkShell.getInstance();
-		scriptExerter = new ServiceScripter(out, null, NetworkShell.getWebsterUrl(), shell.isDebug());
-		shell.setServiceShell(scriptExerter.getServiceShell());
-		scriptExerter.setConfig(config);
+		serviceScripter = new ServiceScripter(out, null, NetworkShell.getWebsterUrl(), shell.isDebug());
+		shell.setServiceShell(serviceScripter.getServiceShell());
+		serviceScripter.setConfig(config);
 		input = shell.getCmd();
 		if (out == null)
 			throw new NullPointerException("Must have an output PrintStream");
@@ -123,10 +122,8 @@ public class EvalCmd extends ShellCmd {
 					outputFile = new File("" + cdir + File.separator + argsList.get(i + 1));
 				} else if (nextToken.equals("-eval") || nextToken.equals("-e")) {
 					ifEvaluation = true;
-					scriptExerter.setIsExerted(false);
 				} else if (nextToken.equals("-exert") || nextToken.equals("-x")) {
 					ifEvaluation = false;
-					scriptExerter.setIsExerted(true);
 				} else if (nextToken.equals("-stgy")) {
 					ifMogramControl = true;
 				} else if (nextToken.equals("-m")) {
@@ -149,8 +146,9 @@ public class EvalCmd extends ShellCmd {
 			return;
 		}
 
+		serviceScripter.setIsExerted(!ifEvaluation);
 		if (script != null) {
-			scriptExerter.readScriptWithHeaders(script);
+			serviceScripter.readScriptWithHeaders(script);
 		} else if (scriptFilename != null) {
 			if ((new File(scriptFilename)).isAbsolute()) {
 				scriptFile = NetworkShell.huntForTheScriptFile(scriptFilename);
@@ -159,7 +157,7 @@ public class EvalCmd extends ShellCmd {
 						+ File.separator + scriptFilename);
 			}
 			try {
-				scriptExerter.readFile(scriptFile);
+				serviceScripter.readFile(scriptFile);
 			} catch (IOException e) {
 				out.append("File: " + scriptFile.getAbsolutePath() + " could not be found or read: " + e.getMessage());
 			}
@@ -167,12 +165,12 @@ public class EvalCmd extends ShellCmd {
 			out.println("Missing exertion input filename!");
 			return;
 		}
-		Object target = scriptExerter.evaluate();
+		Object target = serviceScripter.evaluate();
 //		out.println(">>>>>>>>>>> ServiceScripter.evaluate result: " + target);
-		if (!scriptExerter.isExertable()) {
+		if (!serviceScripter.isExertable()) {
 			if (target == null) {
 				return;
-			} else {
+			} else if (!(target instanceof Mogram)){
 				out.println("\n---> EVALUATION RESULT --->");
 				out.println(target);
 			}
@@ -199,14 +197,14 @@ public class EvalCmd extends ShellCmd {
 		}
 
 //		if (NetworkShell.getInstance().isDebug()) out.println("Starting exert netlet!");
-		Object result = scriptExerter.execute();
+		Object result = serviceScripter.execute();
 //		out.println(">>>>>>>>>>> ServiceScripter.execute result: " + result);
 		if (result != null) {
 			if (ifEvaluation) {
                 out.println("\n---> EVALUATION RESULT --->");
-                if (target instanceof Exertion) {
+                if (result instanceof Exertion) {
 					out.println(((Mogram)result).getContext());
-				} else if (target instanceof Model) {
+				} else if (result instanceof Model) {
                     out.println(((Model)result).getResult());
                 } else {
                     out.println(result);
@@ -243,7 +241,7 @@ public class EvalCmd extends ShellCmd {
 				} else {
 					out.println("\n---> MODEL RESPONSE --->");
 					if (target instanceof Model) {
-						out.println(((Model) target).getResult());
+						out.println(((Model) result).getResult());
 					} else {
 						out.println(result);
 					}

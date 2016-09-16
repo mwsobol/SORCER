@@ -119,8 +119,7 @@ public class operator {
 	public static Object revalue(Object object, String path,
 								 Arg... entries) throws ContextException {
 		Object obj = null;
-		if (object instanceof Evaluation || object instanceof Context) {
-			obj = eval((Evaluation) object, path, entries);
+		if (object instanceof Evaluation) {
 			obj = eval((Evaluation) obj, entries);
 		} else if (object instanceof Context) {
 			obj = value((Context) object, path, entries);
@@ -2386,7 +2385,11 @@ public class operator {
 				if (evaluation instanceof Exertion) {
 					return (T) exec(evaluation, args);
 				} else if (evaluation instanceof Entry){
-					return evaluation.getValue(args);
+					if (evaluation.asis() instanceof ServiceContext) {
+						return (T) ((ServiceContext)evaluation.asis()).getValue(((Entry)evaluation).path());
+					} else {
+						return evaluation.getValue(args);
+					}
 				} else if (evaluation instanceof Incrementor){
 					return ((Incrementor<T>) evaluation).next();
 				} else {
@@ -2416,10 +2419,28 @@ public class operator {
 		}
 	}
 
-	public static <T> T v(Context<T> context, String path,
-							  Arg... args) throws ContextException {
-		return value(context, path, args);
+	public static <T> T v(Context<T> context, String path) throws ContextException {
+		return value(context, path);
 	}
+
+	public static <T> T val(Context<T> context, String path) throws ContextException {
+		return value(context, path);
+	}
+
+//	public static <T> T value(Context<T> context, String path) throws ContextException {
+//		try {
+//			Object val = ((Context) context).asis(path);
+//			if (SdbUtil.isSosURL(val)) {
+//				return (T) ((URL) val).getContent();
+//			} else {
+//				return (T)val;
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new ContextException(e);
+//		}
+//	}
+
 	public static <T> T value(Context<T> context, String path,
 							  Arg... args) throws ContextException {
 		try {
@@ -2435,20 +2456,16 @@ public class operator {
 		}
 	}
 
-	public static <T> T eval(Evaluation<T> evaluation, String evalSelector,
+	public static Object eval(Exertion exertion, String evalSelector,
 							 Arg... args) throws EvaluationException {
-		if (evaluation instanceof Exertion) {
 			try {
-				((ServiceContext)((Exertion) evaluation).getDataContext())
-						.setReturnPath(new ReturnPath(evalSelector));
-				return (T) exec((Exertion) evaluation, args);
+				exertion.getDataContext().setReturnPath(new ReturnPath(evalSelector));
+				return exec(exertion, args);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new EvaluationException(e);
 			}
 		}
-		return null;
-	}
 
 	/**
 	 * Assigns the tag for this context, for example "triplet|one|two|three" is a
@@ -2734,11 +2751,19 @@ public class operator {
 	}
 
 	public static Flow flow(Entry entry) throws EvaluationException {
-		return ((Strategy) eval(entry)).getFlowType();
+		try {
+			return ((Strategy) entry.getValue()).getFlowType();
+		} catch (RemoteException e) {
+			throw new EvaluationException(e);
+		}
 	}
 
 	public static Access access(Entry entry) throws EvaluationException {
-		return ((Strategy) eval(entry)).getAccessType();
+		try {
+			return ((Strategy) entry.getValue()).getAccessType();
+		} catch (RemoteException e) {
+			throw new EvaluationException(e);
+		}
 	}
 
 	public static Flow flow(Strategy strategy) {

@@ -95,7 +95,7 @@ public class ProcModels {
 
 //		eval(model, "j1", proc("x1", 10.0), proc("x2", 50.0)).equals(400.0);
 
-		assertTrue(value(model, "j1", proc("x1", 10.0), proc("x2", 50.0)).equals(400.0));
+		assertTrue(eval(model, "j1", proc("x1", 10.0), proc("x2", 50.0)).equals(400.0));
 
 //		// equivalent to the above line
 //		assertEquals(
