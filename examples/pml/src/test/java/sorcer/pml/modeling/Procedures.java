@@ -86,7 +86,7 @@ public class Procedures {
 	public void dbParOperator() throws Exception {	
 		
 		Proc<Double> dbp1 = persistent(proc("design/in", 25.0));
-		Proc<String> dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
+		Proc<String> dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
 
 		assertTrue(asis(dbp1).equals(25.0));
 		assertEquals(asis(dbp2).getClass(), URL.class);
@@ -115,7 +115,7 @@ public class Procedures {
 	@Test
 	public void procFidelities() throws Exception {
 		
-		Proc<Double> dbp = dbPar("shared/eval", 25.0);
+		Proc<Double> dbp = dbEnt("shared/eval", 25.0);
 		
 		Proc multi = proc("multi",
 				procFi(ent("init/eval"),

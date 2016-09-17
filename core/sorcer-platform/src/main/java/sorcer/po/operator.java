@@ -52,7 +52,7 @@ public class operator {
 		return new Proc(path, argument);
 	}
 
-	public static Proc dbPar(String path, Object argument) throws EvaluationException, RemoteException {
+	public static Proc dbEnt(String path, Object argument) throws EvaluationException, RemoteException {
 		Proc p = new Proc(path, argument);
 		p.setPersistent(true);
 		p.getValue();
@@ -167,7 +167,7 @@ public class operator {
 		return p;
 	}
 
-	public static Proc dbPar(String path, Object argument, Context context) throws EvaluationException, RemoteException {
+	public static Proc dbEnt(String path, Object argument, Context context) throws EvaluationException, RemoteException {
 		Proc p = new Proc(path, argument);
 		p.setPersistent(true);
 		p.setScope(context);

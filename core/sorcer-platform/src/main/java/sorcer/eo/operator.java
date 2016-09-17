@@ -69,8 +69,8 @@ import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.*;
 
-import static sorcer.co.operator.instance;
-import static sorcer.co.operator.rasis;
+import static sorcer.co.operator.path;
+import static sorcer.co.operator.*;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.srv;
 
@@ -91,20 +91,6 @@ public class operator {
 
 	public static ServiceRequestor requestor(Class requestorType, String... args) {
 		return  new ServiceRequestor(requestorType, args);
-	}
-
-	public static String path(List<String> attributes) {
-		if (attributes.size() == 0)
-			return null;
-		if (attributes.size() > 1) {
-			StringBuilder spr = new StringBuilder();
-			for (int i = 0; i < attributes.size() - 1; i++) {
-				spr.append(attributes.get(i)).append(SorcerConstants.CPS);
-			}
-			spr.append(attributes.get(attributes.size() - 1));
-			return spr.toString();
-		}
-		return attributes.get(0);
 	}
 
 	public static Object revalue(Context evaluation, String path,
@@ -146,18 +132,6 @@ public class operator {
 			obj = object;
 		}
 		return obj;
-	}
-
-	public static Path path(String path) {
-		return new Path(path);
-	}
-
-	public static Path path(String path, Object info) {
-		return new Path(path, info);
-	}
-
-	public static Path map(String path, Object info) {
-		return new Path(path, info, Path.Type.MAP);
 	}
 
 	public static String attPath(String... attributes) {

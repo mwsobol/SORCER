@@ -20,6 +20,7 @@ import org.rioproject.resolver.Artifact;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.resolver.ResolverHelper;
 import sorcer.co.tuple.*;
+import sorcer.core.SorcerConstants;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.ServiceContext;
@@ -62,7 +63,7 @@ public class operator {
 		return new Tuple1<T1>( x1 );
 	}
 
-	public static <T1> Tuple1<T1> tuple(T1 x1 ){
+	public static <T1> Tuple1<T1> t(T1 x1 ){
 		return new Tuple1<T1>( x1 );
 	}
 
@@ -70,7 +71,11 @@ public class operator {
 		return new Tuple2<T1,T2>( x1, x2 );
 	}
 
-	public static <T1,T2> Tuple2<T1,T2> tuple(T1 x1, T2 x2 ){
+	public static <T1,T2> Tuple2<T1,T2> t(T1 x1, T2 x2 ){
+		return new Tuple2<T1,T2>( x1, x2 );
+	}
+
+	public static <T1,T2> Tuple2<T1,T2> kv(T1 x1, T2 x2 ){
 		return new Tuple2<T1,T2>( x1, x2 );
 	}
 
@@ -78,7 +83,7 @@ public class operator {
 		return new Tuple3<T1,T2,T3>( x1, x2, x3 );
 	}
 
-	public static <T1,T2,T3> Tuple3<T1,T2,T3> tuple(T1 x1, T2 x2, T3 x3 ){
+	public static <T1,T2,T3> Tuple3<T1,T2,T3> t(T1 x1, T2 x2, T3 x3 ){
 		return new Tuple3<T1,T2,T3>( x1, x2, x3 );
 	}
 
@@ -86,7 +91,7 @@ public class operator {
 		return new Tuple4<T1,T2,T3,T4>( x1, x2, x3, x4 );
 	}
 
-	public static <T1,T2,T3,T4> Tuple4<T1,T2,T3,T4> tuple(T1 x1, T2 x2, T3 x3, T4 x4 ){
+	public static <T1,T2,T3,T4> Tuple4<T1,T2,T3,T4> t(T1 x1, T2 x2, T3 x3, T4 x4 ){
 		return new Tuple4<T1,T2,T3,T4>( x1, x2, x3, x4 );
 	}
 
@@ -94,7 +99,7 @@ public class operator {
 		return new Tuple5<T1,T2,T3,T4,T5>( x1, x2, x3, x4, x5 );
 	}
 
-	public static <T1,T2,T3,T4,T5> Tuple5<T1,T2,T3,T4,T5> tuple(T1 x1, T2 x2, T3 x3, T4 x4, T5 x5 ){
+	public static <T1,T2,T3,T4,T5> Tuple5<T1,T2,T3,T4,T5> t(T1 x1, T2 x2, T3 x3, T4 x4, T5 x5 ){
 		return new Tuple5<T1,T2,T3,T4,T5>( x1, x2, x3, x4, x5 );
 	}
 
@@ -102,7 +107,7 @@ public class operator {
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
 	}
 
-	public static <T1,T2,T3,T4,T5,T6> Tuple6<T1,T2,T3,T4,T5,T6> tuple(T1 x1, T2 x2, T3 x3, T4 x4, T5 x5, T6 x6 ){
+	public static <T1,T2,T3,T4,T5,T6> Tuple6<T1,T2,T3,T4,T5,T6> t(T1 x1, T2 x2, T3 x3, T4 x4, T5 x5, T6 x6 ){
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
 	}
 
@@ -239,10 +244,32 @@ public class operator {
 		return new Tuple2<T1, T2>(x1, x2);
 	}
 
-	public static <T1, T2, T3> Tuple3<T1, T2, T3> triplet(T1 x1, T2 x2, T3 x3) {
-		return new Tuple3<T1, T2, T3>(x1, x2, x3);
+	public static String path(List<String> attributes) {
+		if (attributes.size() == 0)
+			return null;
+		if (attributes.size() > 1) {
+			StringBuilder spr = new StringBuilder();
+			for (int i = 0; i < attributes.size() - 1; i++) {
+				spr.append(attributes.get(i)).append(SorcerConstants.CPS);
+			}
+			spr.append(attributes.get(attributes.size() - 1));
+			return spr.toString();
+		}
+		return attributes.get(0);
 	}
-	
+
+	public static Path path(String path) {
+		return new Path(path);
+	}
+
+	public static Path path(String path, Object info) {
+		return new Path(path, info);
+	}
+
+	public static Path map(String path, Object info) {
+		return new Path(path, info, Path.Type.MAP);
+	}
+
 	public static <T> Entry<T> val(Path path, T value) {
 		Entry ent = new Entry<T>(path.path, value);
 		ent.annotation(path.info.toString());

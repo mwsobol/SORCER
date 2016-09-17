@@ -133,14 +133,7 @@ public class ScripterThread extends Thread {
             "sorcer.core.provider",
             "sorcer.core.provider.rendezvous",
             "sorcer.core.context.model",
-            "java.io",
-			// var-oriented modeling
-            "sorcer.modeling.core.context.model.var",
-			"sorcer.modeling.vfe",
-			"sorcer.modeling.vfe.evaluator",
-			"sorcer.modeling.vfe.filter",
-			"sorcer.modeling.vfe.persist",
-			"sorcer.modeling.vfe.util"
+            "java.io"
     };
 
     private static String[] staticImports = {
@@ -152,26 +145,44 @@ public class ScripterThread extends Thread {
             "sorcer.mo.operator"
     };
 
+    private static String[] modelingImports = {
+            "sorcer.netlet.annotation",
+            "sorcer.service",
+            "sorcer.core.exertion",
+            "sorcer.service.modeling",
+            "sorcer.service",
+            "sorcer.core.provider",
+            "sorcer.core.provider.rendezvous",
+            "sorcer.core.context.model",
+            "java.io",
+            // var-oriented modeling
+            "sorcer.modeling.core.context.model.var",
+            "sorcer.modeling.vfe",
+            "sorcer.modeling.vfe.evaluator",
+            "sorcer.modeling.vfe.filter",
+            "sorcer.modeling.vfe.persist",
+            "sorcer.modeling.vfe.util"
+    };
+
     private static String[] modelingStaticImports = {
-        "sorcer.service.Strategy",
-        "sorcer.service.Deployment",
-        "sorcer.eo.operator",
-        "sorcer.co.operator",
-        "sorcer.po.operator",
-        "sorcer.mo.operator",
-        "sorcer.modeling.vo.operator"
+            "sorcer.service.Strategy",
+            "sorcer.service.Deployment",
+            "sorcer.co.operator",
+            "sorcer.po.operator",
+            "sorcer.mo.operator",
+            // var-oriented modeling
+            "sorcer.modeling.vo.operator"
     };
 
     private ImportCustomizer getImports() {
         ImportCustomizer result = new ImportCustomizer();
-        result.addStarImports(imports);
         try {
             if (Class.forName("sorcer.modeling.vfe.Var") != null) {
-				result.addStaticStars(modelingStaticImports);
-			} else {
-				result.addStaticStars(staticImports);
-			}
+                result.addStarImports(modelingImports);
+                result.addStaticStars(modelingStaticImports);
+            }
         } catch (ClassNotFoundException e) {
+            result.addStarImports(imports);
             result.addStaticStars(staticImports);
         }
         return result;

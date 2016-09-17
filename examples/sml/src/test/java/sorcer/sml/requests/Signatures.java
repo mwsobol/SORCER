@@ -324,7 +324,7 @@ public class Signatures {
 
 	@Test
 	public void signatureWithSrvName() throws Exception  {
-		String group = System.getProperty("user.name");
+		String group = property("user.name");
 
 		Task t5 = task("t5", sig("add", Adder.class,
 				types(Service.class, Provider.class),
@@ -338,7 +338,7 @@ public class Signatures {
 
 	@Test
 	public void signatureWithProviderName() throws Exception  {
-		String group = System.getProperty("user.name");
+		String group = property("user.name");
 
 		Task t5 = task("t5", sig(type("sorcer.arithmetic.provider.Adder"), op("add"),
 				types(Service.class, Provider.class),

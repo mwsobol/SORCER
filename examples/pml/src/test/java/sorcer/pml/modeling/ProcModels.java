@@ -270,7 +270,7 @@ public class ProcModels {
 		// persistable just indicates that argument is persistent,
 		// for example when eval(proc) is invoked
 		Proc dbp1 = persistent(proc("design/in", 25.0));
-		Proc dbp2 = dbPar("url", "myUrl1");
+		Proc dbp2 = dbEnt("url", "myUrl1");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
