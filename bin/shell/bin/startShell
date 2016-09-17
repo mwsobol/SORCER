@@ -332,7 +332,7 @@ startShell ( ) {
     if $useprofiler ; then
         runProfiler
     else
-        echo "==> STARTER_CLASSPATH: $STARTER_CLASSPATH"
+        #echo "==> STARTER_CLASSPATH: $STARTER_CLASSPATH"
         exec $RLWRAP"$JAVACMD" $JAVA_OPTS \
             -classpath "$STARTER_CLASSPATH" \
             -Djava.security.policy="$SORCER_HOME"/bin/shell/policy/shell.policy \
