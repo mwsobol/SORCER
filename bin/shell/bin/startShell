@@ -189,6 +189,7 @@ $SORCER_HOME/lib/river/serviceui-$river_version.jar:\
 $SORCER_HOME/lib/sorcer/lib/sos-shell-$sorcer_version.jar:\
 $SORCER_HOME/lib/sorcer/lib-ext/webster-$sorcer_version.jar:\
 $SORCER_HOME/lib/sorcer/lib/sorcer-platform-$sorcer_version.jar:\
+$SORCER_HOME/lib/sorcer/lib/sorcer-modeling-lib-$modeling_version.jar:\
 $SORCER_HOME/lib/sorcer/lib/sorcer-resolving-loader-$sorcer_version.jar:\
 $RIO_CLASSPATH"
 
