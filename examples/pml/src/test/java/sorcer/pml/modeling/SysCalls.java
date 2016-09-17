@@ -103,7 +103,7 @@ public class SysCalls {
 				outVal("cylinder/height")));
         add(pm, caller);
 
-		Context result = (Context) eval(pm, "volume");
+		Context result = (Context) value(pm, "volume");
 //		Context result = (Context) invoke(pm, "volume");
         // get from the result the volume of cylinder and assign to y parameter
         assertTrue("EXPECTED '0' return eval, GOT: "+value(result, "exit/eval"),

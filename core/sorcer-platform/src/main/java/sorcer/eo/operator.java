@@ -2419,27 +2419,13 @@ public class operator {
 		}
 	}
 
-	public static <T> T v(Context<T> context, String path) throws ContextException {
-		return value(context, path);
+	public static <T> T v(Context<T> context, String path, Arg... args) throws ContextException {
+		return value(context, path, args);
 	}
 
-	public static <T> T val(Context<T> context, String path) throws ContextException {
-		return value(context, path);
+	public static <T> T val(Context<T> context, String path, Arg... args) throws ContextException {
+		return value(context, path, args);
 	}
-
-//	public static <T> T value(Context<T> context, String path) throws ContextException {
-//		try {
-//			Object val = ((Context) context).asis(path);
-//			if (SdbUtil.isSosURL(val)) {
-//				return (T) ((URL) val).getContent();
-//			} else {
-//				return (T)val;
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new ContextException(e);
-//		}
-//	}
 
 	public static <T> T value(Context<T> context, String path,
 							  Arg... args) throws ContextException {

@@ -19,6 +19,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -68,7 +69,7 @@ public class Invokers {
 			// y setValue from construtor's context 'in'
 			assertTrue(eval(y).equals(30.0));
 			assertTrue(eval(z).equals(170.0));
-			return (double)eval(x) + (double)eval(y) + (double)eval(pm, "z");
+			return (double)eval(x) + (double)eval(y) + (double)value(pm, "z");
 		}
 	};
 
