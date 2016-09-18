@@ -2333,16 +2333,20 @@ public class operator {
 		}
 	}
 
-	public static <T> T value(Context<T> context, Arg... args)
-			throws ContextException {
-		try {
-			synchronized (context) {
-				return (T) ((ServiceContext)context).getValue(args);
-			}
-		} catch (Exception e) {
-			throw new ContextException(e);
-		}
-	}
+    public static <T> T v(Context<T> context, String path, Arg... args) throws ContextException {
+        return value(context, path, args);
+    }
+
+    public static <T> T value(Context<T> context, Arg... args)
+            throws ContextException {
+        try {
+            synchronized (context) {
+                return (T) ((ServiceContext)context).getValue(args);
+            }
+        } catch (Exception e) {
+            throw new ContextException(e);
+        }
+    }
 
 	public static Object execItem(Item item, Arg... args) throws ServiceException {
 		try {
@@ -2382,19 +2386,6 @@ public class operator {
 		} catch (RemoteException e) {
 			throw new ContextException(e);
 		}
-	}
-
-	public static Object eval(Modeling model, String evalSelector,
-							  Arg... args) throws ContextException {
-		try {
-			return model.getValue(evalSelector, args);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
-	}
-
-	public static <T> T v(Context<T> context, String path, Arg... args) throws ContextException {
-		return value(context, path, args);
 	}
 
 	public static <T> T val(Context<T> context, String path, Arg... args) throws ContextException {

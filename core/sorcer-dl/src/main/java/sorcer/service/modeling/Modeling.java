@@ -25,7 +25,7 @@ import sorcer.service.*;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
 
-public interface Modeling {
+public interface Modeling extends Model {
 	
 //	public String getName() throws RemoteException;
 	

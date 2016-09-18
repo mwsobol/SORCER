@@ -511,7 +511,6 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 		} catch (SignatureException e) {
 			throw new MogramException(e);
 		}
-		;
 		exertion.getControlContext().appendTrace(String.format("shell: %s:%s", providerName, providerID));
 		logger.info("Provider found for: {}\n\t{}", signature, provider);
 		if (((Provider) provider).mutualExclusion()) {

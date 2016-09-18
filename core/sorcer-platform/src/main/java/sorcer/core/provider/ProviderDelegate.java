@@ -2653,6 +2653,7 @@ public class ProviderDelegate {
             if (dataBeans.length > 0) {
 				logger.debug("*** data service beans by {}\nfor: {}", getProviderName(), Arrays.toString(dataBeans));
                 for (Object dataBean : dataBeans) {
+                    initBean(dataBean);
                     allBeans.add(dataBean);
                     exports.put(dataBean, this);
                 }
