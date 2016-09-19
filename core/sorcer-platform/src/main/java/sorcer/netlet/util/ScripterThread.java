@@ -96,9 +96,12 @@ public class ScripterThread extends Thread {
                 logger.info(">>>>>>>>>>> model eval result: " + result);
             } else if (target instanceof Mogram) {
                 serviceShell = new ServiceShell((Mogram) target);
-                if (isExerted) {
+                if (target instanceof Mogram && isExerted) {
                     result = serviceShell.exert();
                     logger.info(">>>>>>>>>>> serviceShell exerted result: " + result);
+                } else{
+                    result = serviceShell.evaluate();
+                    logger.info(">>>>>>>>>>> serviceShell eval result: " + result);
                 }
             } else if (target instanceof Entry){
                 result = new Entry(((Entry)target).name(), eval((Entry)target));
