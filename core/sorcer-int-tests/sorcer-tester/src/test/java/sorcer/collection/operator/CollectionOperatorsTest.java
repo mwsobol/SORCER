@@ -7,7 +7,7 @@ import sorcer.core.context.ListContext;
 import sorcer.eo.operator;
 import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
-import sorcer.util.Table;
+import sorcer.util.DataTable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -87,7 +87,7 @@ public class CollectionOperatorsTest {
 
 	@Test
 	public void tableOperatorTest() throws EvaluationException {
-		Table table = table(
+		DataTable table = table(
 				list(1.1, 1.2, 1.3, 1.4, 1.5),
 				list(2.1, 2.2, 2.3, 2.4, 2.5),
 				list(3.1, 3.2, 3.3, 3.4, 3.5));

@@ -251,21 +251,9 @@ public class EvalCmd extends ShellCmd {
 				out.println("\n---> OUTPUT STRATEGY --->");
 				out.println(((Model) out).getMogramStrategy());
 			}
-		} else {
-			if (target != null) {
-				out.println("\n--- Failed to excute exertion ---");
-				out.println(((ServiceExertion) target).describe());
-				out.println(((ServiceExertion) target).getDataContext());
-				if (!commandLine) {
-					out.println("Script failed: " + scriptFilename);
-					out.println(script);
-				}
-			}
-			// System.out.println(">>> executing script: \n" + sb.toString());
 		}
 //		if (listener != null) listener.destroy();
 	}
-
 
 	public String getScript() {
 		return script;

@@ -18,7 +18,7 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.util.Runner;
-import sorcer.util.Table;
+import sorcer.util.DataTable;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -146,7 +146,7 @@ public class CollectionOperators {
 	@Test
 	public void tableOperator() throws Exception {
 
-		Table t = table(
+		DataTable t = table(
 				row(1.1, 1.2, 1.3, 1.4, 1.5),
 				row(2.1, 2.2, 2.3, 2.4, 2.5),
 				row(3.1, 3.2, 3.3, 3.4, 3.5));

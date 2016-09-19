@@ -18,7 +18,6 @@ package sorcer.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.provider.Provider;
 import sorcer.service.Identity;
 import sorcer.service.Signature;
 
@@ -71,7 +70,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	protected boolean lazy;
 
-	protected Table.Cell cellType;
+	protected DataTable.Cell cellType;
 
 	protected static int count = 0;
 

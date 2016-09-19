@@ -139,6 +139,7 @@ public class ScripterThread extends Thread {
             "sorcer.core.provider",
             "sorcer.core.provider.rendezvous",
             "sorcer.core.context.model",
+            "sorcer.util",
             "java.io"
     };
 
@@ -162,6 +163,7 @@ public class ScripterThread extends Thread {
             "sorcer.core.provider",
             "sorcer.core.provider.rendezvous",
             "sorcer.core.context.model",
+            "sorcer.util",
             "java.io",
             // var-oriented modeling
             "sorcer.modeling.core.context.model.var",

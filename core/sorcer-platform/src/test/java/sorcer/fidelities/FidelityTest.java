@@ -5,13 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.plexus.FiMap;
 import sorcer.core.service.Projection;
-import sorcer.eo.operator;
 import sorcer.service.EvaluationException;
 import sorcer.service.Fidelity;
 import sorcer.service.FidelityList;
 import sorcer.service.ServiceFidelity;
 import sorcer.util.ModelTable;
-import sorcer.util.Table;
+import sorcer.util.DataTable;
 
 import java.util.List;
 
@@ -71,7 +70,7 @@ public class FidelityTest {
 
 	@Test
 	public void fidelityTable() {
-		Table dataTable = table(header("span"),
+		DataTable dataTable = table(header("span"),
 				row(110.0),
 				row(120.0),
 				row(130.0),
@@ -96,7 +95,7 @@ public class FidelityTest {
 
     @Test
     public void populateFidelityTable() {
-        Table dataTable = table(header("span"),
+        DataTable dataTable = table(header("span"),
                 row(110.0),
                 row(120.0),
                 row(130.0),
@@ -120,7 +119,7 @@ public class FidelityTest {
 
     @Test
 	public void selectFiMap() {
-		Table dataTable = table(header("span", "fis"),
+		DataTable dataTable = table(header("span", "fis"),
 				row(110.0,  fiList(fi("tip/displacement", "astros"))),
 				row(120.0),
 				row(130.0,  fiList(fi("tip/displacement", "nastran"))),

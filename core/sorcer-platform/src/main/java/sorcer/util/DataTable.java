@@ -47,11 +47,11 @@ import java.util.Collections;
  * @see Serializable
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class Table implements ModelTable {
+public class DataTable implements ModelTable {
 	/** Serial version user identification number */
 	static final long serialVersionUID = -1968282524723965792L;
 	/** Logger */
-	protected static Logger logger = LoggerFactory.getLogger(Table.class.getName());
+	protected static Logger logger = LoggerFactory.getLogger(DataTable.class.getName());
 	/** Encoding for the table */
 	protected static String ENCODING = "UTF-8";
 	/**
@@ -126,7 +126,7 @@ public class Table implements ModelTable {
 	 * Constructs a <code>Table</code> which is a table of zero columns and zero
 	 * rows.
 	 */
-	public Table() {
+	public DataTable() {
 		this(0, 0);
 		name = "undefined" + count++;
 	}
@@ -152,7 +152,7 @@ public class Table implements ModelTable {
 	 * 
 	 * @see #setValueAt
 	 */
-	public Table(int rowCount, int columnCount) {
+	public DataTable(int rowCount, int columnCount) {
 		this(newList(columnCount), rowCount);
 	}
 
@@ -170,7 +170,7 @@ public class Table implements ModelTable {
 	 * @see #setDataList
 	 * @see #setValueAt
 	 */
-	public Table(List<?> columnNames, int rowCount) {
+	public DataTable(List<?> columnNames, int rowCount) {
 		id = UuidFactory.generate();
 		setDataList(newList(rowCount), columnNames);
 	}
@@ -189,7 +189,7 @@ public class Table implements ModelTable {
 	 * @see #setDataList
 	 * @see #setValueAt
 	 */
-	public Table(Object[] columnNames, int rowCount) {
+	public DataTable(Object[] columnNames, int rowCount) {
 		this(convertToList(columnNames), rowCount);
 	}
 
@@ -206,7 +206,7 @@ public class Table implements ModelTable {
 	 * @see #getDataList
 	 * @see #setDataList
 	 */
-	public Table(List<List<?>> data, List<?> columnNames) {
+	public DataTable(List<List<?>> data, List<?> columnNames) {
 		setDataList(data, columnNames);
 	}
 
@@ -224,7 +224,7 @@ public class Table implements ModelTable {
 	 * @see #getDataList
 	 * @see #setDataList
 	 */
-	public Table(Object[][] data, Object[] columnNames) {
+	public DataTable(Object[][] data, Object[] columnNames) {
 		id = UuidFactory.generate();
 		setDataList(data, columnNames);
 	}
@@ -733,9 +733,9 @@ public class Table implements ModelTable {
 		return getValueAtAsDouble(row, columnIndexOf(columnName));
 	}
 
-	public Table getValuesSuchThat(String colName1, String col1Value, 
-			String colName2, String col2Value){
-		Table qTable = new Table();
+	public DataTable getValuesSuchThat(String colName1, String col1Value,
+									   String colName2, String col2Value){
+		DataTable qTable = new DataTable();
 		int col1Idx = columnIndexOf(colName1);
 		int col2Idx = columnIndexOf(colName2);
 
@@ -769,8 +769,8 @@ public class Table implements ModelTable {
 		return false;
 	}
 	
-	public Table getValuesSuchThat(String colName1, String col1Value){
-		Table qTable = new Table();
+	public DataTable getValuesSuchThat(String colName1, String col1Value){
+		DataTable qTable = new DataTable();
 		int col1Idx = columnIndexOf(colName1);
 		if (col1Idx < 0) return qTable;
 		if (columnIdentifiers != null)qTable.setColumnIdentifiers(columnIdentifiers);
@@ -784,8 +784,8 @@ public class Table implements ModelTable {
 		return qTable;
 	}
 
-	public Table getValuesSuchThat(String colName1, Integer col1Value){
-		Table qTable = new Table();
+	public DataTable getValuesSuchThat(String colName1, Integer col1Value){
+		DataTable qTable = new DataTable();
 		int col1Idx = columnIndexOf(colName1);
 
 		if (columnIdentifiers != null)qTable.setColumnIdentifiers(columnIdentifiers);
@@ -1409,7 +1409,7 @@ public class Table implements ModelTable {
 		this.fiColumnName = fiColumnName;
 	}
 
-	public Table trimFidelities() throws EvaluationException {
+	public DataTable trimFidelities() throws EvaluationException {
 		removeColumn(columnIdentifiers.indexOf(fiColumnName));
 		columnIdentifiers.remove(fiColumnName);
 		return this;
@@ -1417,12 +1417,12 @@ public class Table implements ModelTable {
 
 	@Override
 	public boolean equals(Object table) {
-		if (table instanceof Table) {
-			if (dataList.size() != ((Table) table).dataList.size())
+		if (table instanceof DataTable) {
+			if (dataList.size() != ((DataTable) table).dataList.size())
 				return false;
 
 			for (int i = 0; i < dataList.size(); i++) {
-				if (!dataList.get(i).equals(((Table) table).dataList.get(i))) {
+				if (!dataList.get(i).equals(((DataTable) table).dataList.get(i))) {
 					return false;
 				}
 			}
@@ -1500,27 +1500,27 @@ public class Table implements ModelTable {
 	}
 
 	public boolean compareTo(Object table, double delta) {
-		if (dataList.size() != ((Table) table).dataList.size())
+		if (dataList.size() != ((DataTable) table).dataList.size())
 			return false;
 
-		if (table instanceof Table) {
+		if (table instanceof DataTable) {
 			for (int i = 0; i < dataList.size(); i++) {
 				if (cellType == Cell.DOUBLE) {
 					for (int j = 0; j < dataList.get(i).size(); j++) {
 						if (dataList.get(i).get(j) instanceof Double) {
 							Object x = dataList.get(i).get(j);
-							Object y = ((Table) table).dataList.get(i).get(j);
+							Object y = ((DataTable) table).dataList.get(i).get(j);
 							if (Math.abs((double) x - (double) y) > delta) {
 								return false;
 							}
 						} else {
-							if (!dataList.get(i).get(j).equals(((Table) table).dataList.get(i).get(j))) {
+							if (!dataList.get(i).get(j).equals(((DataTable) table).dataList.get(i).get(j))) {
 								return false;
 							}
 						}
 					}
 				} else {
-					if (!dataList.get(i).equals(((Table) table).dataList.get(i))) {
+					if (!dataList.get(i).equals(((DataTable) table).dataList.get(i))) {
 						return false;
 					}
 				}

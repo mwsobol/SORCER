@@ -677,10 +677,10 @@ public class operator {
 		return entry._1;
 	}
 
-	public static <T extends List<?>> Table table(T... elems) {
+	public static <T extends List<?>> DataTable table(T... elems) {
 		int rowCount = elems.length;
 		int columnCount = ((List<?>) elems[0]).size();
-		Table out = new Table(rowCount, columnCount);
+		DataTable out = new DataTable(rowCount, columnCount);
 		for (int i = 0; i < rowCount; i++) {
 			if (elems[i] instanceof Header) {
 				out.setColumnIdentifiers(elems[0]);
@@ -691,13 +691,13 @@ public class operator {
 		return out;
 	}
 
-	public static Table fiColumnName(Table table, String name) {
+	public static DataTable fiColumnName(DataTable table, String name) {
 		table.setFiColumnName(name);
 		return table;
 	}
 
 	public static ModelTable populateFidelities(ModelTable table, FiEntry... entries) {
-		Table impl = (Table)table;
+		DataTable impl = (DataTable)table;
 		List fiColumn = impl.getColumn(impl.getFiColumnName());
 		if (fiColumn == null) {
 			fiColumn = new ArrayList(impl.getRowCount());
@@ -719,7 +719,7 @@ public class operator {
 	}
 
 	public static ModelTable appendFidelities(ModelTable table, FiEntry... entries) {
-		Table impl = (Table)table;
+		DataTable impl = (DataTable)table;
 		List fiColumn = impl.getColumn(impl.getFiColumnName());
 		if (fiColumn == null) {
 			fiColumn = new ArrayList(impl.getRowCount());
@@ -733,40 +733,40 @@ public class operator {
 		return impl;
 	}
 
-	public static void rowNames(Table table, List rowIdentifiers) {
+	public static void rowNames(DataTable table, List rowIdentifiers) {
 		table.setRowIdentifiers(rowIdentifiers);
 	}
 
-	public static List<String> rowNames(Table table) {
+	public static List<String> rowNames(DataTable table) {
 		return table.getRowNames();
 	}
 
 
-	public static void columnNames(Table table, List columnIdentifiers) {
+	public static void columnNames(DataTable table, List columnIdentifiers) {
 		table.setColumnIdentifiers(columnIdentifiers);
 	}
 
-	public static List<String> columnNames(Table table) {
+	public static List<String> columnNames(DataTable table) {
 		return table.getColumnNames();
 	}
 
-	public static int rowSize(Table table) {
+	public static int rowSize(DataTable table) {
 		return table.getRowCount();
 	}
 
-	public static int columnSize(Table table) {
+	public static int columnSize(DataTable table) {
 		return table.getColumnCount();
 	}
 
-	public static Map<String, Object> rowMap(Table table, String rowName) {
+	public static Map<String, Object> rowMap(DataTable table, String rowName) {
 		return table.getRowMap(rowName);
 	}
 
-	public static Object value(Table table, String rowName, String columnName) {
+	public static Object value(DataTable table, String rowName, String columnName) {
 		return table.getValue(rowName, columnName);
 	}
 
-	public static Object value(Table table, int row, int column) {
+	public static Object value(DataTable table, int row, int column) {
 		return table.getValueAt(row, column);
 	}
 
