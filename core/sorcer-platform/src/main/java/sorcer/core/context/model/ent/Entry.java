@@ -272,7 +272,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 		try {
 			if (_2 instanceof Evaluation && ((Evaluation) _2).asis() != null) {
 				if (this == _2) {
-					return "[" + _1 + ":" + ((Evaluation)_2).getName() + "x]";  // loop
+					return "[" + _1 + "=" + ((Evaluation)_2).getName() + "x]";  // loop
 				}
 				en = ((Evaluation) _2).asis().toString();
 			} else {
@@ -283,7 +283,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		return "[" + _1 + ":" + en + "]";
+		return "[" + _1 + "=" + en + "]";
 	}
 
 	public Entry(String path, T value, boolean isPersistant, int index) {

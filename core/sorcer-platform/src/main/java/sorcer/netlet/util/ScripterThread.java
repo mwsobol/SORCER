@@ -27,13 +27,16 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.provider.exerter.ServiceShell;
+import sorcer.service.Exertion;
 import sorcer.service.Mogram;
 import sorcer.service.MogramException;
 import sorcer.service.modeling.ServiceModel;
 
 import java.rmi.RemoteException;
 
+import static sorcer.eo.operator.eval;
 import static sorcer.util.StringUtils.tName;
 
 public class ScripterThread extends Thread {
@@ -72,7 +75,6 @@ public class ScripterThread extends Thread {
             Thread.currentThread().setContextClassLoader(classLoader);
             synchronized (gShell) {
                 target = gShell.evaluate(script);
-//                logger.info(">>>>>>>>>>> gShell target: " + target);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(currentCL);
@@ -87,23 +89,24 @@ public class ScripterThread extends Thread {
         try {
             if (target == null) {
                 evalScript();
-
             }
 
             if (target instanceof ServiceModel &&  !isExerted) {
                 result = ((ServiceContext)target).getResponse();
                 logger.info(">>>>>>>>>>> model eval result: " + result);
-            } else {
+            } else if (target instanceof Mogram) {
                 serviceShell = new ServiceShell((Mogram) target);
-                if (target instanceof Mogram && isExerted) {
+                if (isExerted) {
                     result = serviceShell.exert();
                     logger.info(">>>>>>>>>>> serviceShell exerted result: " + result);
-                } else{
-                    result = serviceShell.evaluate();
-                    logger.info(">>>>>>>>>>> serviceShell eval result: " + result);
                 }
+            } else if (target instanceof Entry){
+                result = new Entry(((Entry)target).name(), eval((Entry)target));
+                logger.info(">>>>>>>>>>> eval entry: " + result);
+            } else if (target != null) {
+                logger.info(">>>>>>>>>>> eval result: " + target);
             }
-        }catch (CompilationFailedException | TransactionException | RemoteException | MogramException e) {
+        } catch (CompilationFailedException | TransactionException | RemoteException | MogramException e) {
             e.printStackTrace();
         }
     }

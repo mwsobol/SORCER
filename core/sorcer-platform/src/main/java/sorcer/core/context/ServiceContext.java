@@ -1610,7 +1610,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return subcntxt;
 	}
 
-	public ServiceContext getMergedSubcontext(ServiceContext intial, List<Name> paths, Arg... args)
+	public ServiceContext getMergedSubcontext(ServiceContext intial, List<Arg> paths, Arg... args)
 			throws ContextException {
 		ServiceContext subcntxt = null;
 		if (intial != null) {
@@ -1620,7 +1620,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 		subcntxt.setModeling(true);
 		Object val = null;
-		for (Name arg : paths) {
+		for (Arg arg : paths) {
 			String path = arg.getName();
 			val = getValue(path, args);
 			if (val instanceof Context) {

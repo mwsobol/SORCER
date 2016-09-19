@@ -12,7 +12,6 @@ import sorcer.netlet.util.NetletClassLoader;
 import sorcer.netlet.util.ScriptExertException;
 import sorcer.netlet.util.ScripterThread;
 import sorcer.service.Exertion;
-import sorcer.service.Mogram;
 
 import java.io.File;
 import java.io.FileReader;
@@ -49,7 +48,7 @@ public class ServiceScripter {
 
     private Object result;
 
-    private ScripterThread scriptThread;
+    private ScripterThread scripterThread;
 
     private ServiceShell serviceShell;
 
@@ -103,12 +102,12 @@ public class ServiceScripter {
     }
 
     public Object execute() throws Throwable {
-        if (scriptThread != null) {
+        if (scripterThread != null) {
             if (target == null) {
-                scriptThread.evalScript();
+                scripterThread.evalScript();
             }
-            scriptThread.exert();
-            result = scriptThread.getResult();
+            scripterThread.exert();
+            result = scripterThread.getResult();
             return result;
         }
         throw new ScriptExertException("You must first call evaluate() before calling exert() ");
@@ -116,17 +115,17 @@ public class ServiceScripter {
 
     public Object evaluate() throws Throwable {
         try {
-            if (out!=null && debug) out.println("creating scriptThread..."+ (System.currentTimeMillis()-startTime)+"ms");
-            scriptThread = new ScripterThread(script, classLoader, isExertable);
-            scriptThread.evalScript();
+            if (out!=null && debug) out.println("creating scripterThread..."+ (System.currentTimeMillis()-startTime)+"ms");
+            scripterThread = new ScripterThread(script, classLoader, isExertable);
+            scripterThread.evalScript();
             if (out!=null && debug) out.println("get target..." + (System.currentTimeMillis()-startTime)+"ms");
-            this.target = scriptThread.getTarget();
+            this.target = scripterThread.getTarget();
             if (target instanceof Exertion) {
                 isExertable = true;
             } else {
                 isExertable = false;
             }
-            this.serviceShell = scriptThread.getServiceShell();
+            this.serviceShell = scripterThread.getServiceShell();
             return target;
         }
         // Parse Groovy errors and replace line numbers to adjust according to show the actual line number with an error

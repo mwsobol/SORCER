@@ -19,6 +19,7 @@ package sorcer.mo;
 
 import sorcer.core.Name;
 import sorcer.core.context.MapContext;
+import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
@@ -241,8 +242,22 @@ public class operator {
         }
     }
 
-    public static Context response(ServiceModel model, Arg... args) throws ContextException {
+    public static Context response(ServiceModel model, Object... items) throws ContextException {
         try {
+            List<Arg> argl = new ArrayList();
+            List<Arg> paths = null;
+            for (Object item : items) {
+                if (item instanceof Arg) {
+                    argl.add((Arg) item);
+                } else if (item instanceof List) {
+                    paths = (List<Arg>) item;
+                }
+            }
+            if (paths != null) {
+                ((ModelStrategy)((Mogram)model).getMogramStrategy()).setResponsePaths(paths);
+            }
+            Arg[] args = new Arg[argl.size()];
+            argl.toArray(args);
             return (Context) model.getResponse(args);
         } catch (RemoteException e) {
             throw new ContextException(e);

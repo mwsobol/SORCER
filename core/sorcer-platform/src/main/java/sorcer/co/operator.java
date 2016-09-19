@@ -1020,6 +1020,9 @@ public class operator {
 		if (!(model instanceof ServiceModel)) {
 			throw new SignatureException("Signature does not specify te ServiceModel: " + signature);
 		}
+		if (model instanceof Model) {
+			((Model)model).setBuilder(signature);
+		}
 		return (ServiceModel) model;
 	}
 

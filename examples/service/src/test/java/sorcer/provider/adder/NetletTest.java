@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.tools.shell.NetworkShell;
 import sorcer.util.Sorcer;
 import sorcer.util.StringUtils;
 import sorcer.util.exec.ExecUtils;
@@ -17,6 +16,8 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static sorcer.util.exec.ExecUtils.*;
+import static sorcer.util.StringUtils.*;
 
 /**
  * @author Mike Sobolewski
@@ -29,7 +30,7 @@ public class NetletTest {
     private static final String EXCEPTION = "Exception";
     private static String baseCmd;
     private static String netletDir;
-    private String[] cmds;
+    private String[] nshCmd;
 
     @BeforeClass
     public static void init() throws IOException {
@@ -41,24 +42,25 @@ public class NetletTest {
 
     @Test
     public void evalNetletCmdTest() throws Exception {
-        cmds = new String[] { baseCmd, "-c",  "eval", netletDir + "/adder-local.ntl"};
+        nshCmd = new String[] { baseCmd, "-c",  "eval", netletDir + "/adder-local.ntl"};
 
-        ExecUtils.CmdResult result = ExecUtils.execCommand(cmds);
-        String res =  result.getOut();
-        logger.info("Result running: " + StringUtils.join(cmds, " ") +":\n" + res);
-        if (!result.getErr().isEmpty())
-            logger.info("batchCmdTest Result ERROR: " + result.getErr());
-        assertFalse(result.getErr().contains(EXCEPTION));
-        assertTrue(res.contains("300.0"));
+        ExecUtils.CmdResult result = execCommand(nshCmd);
+        String out =  sysOut(result);
+        String err =  sysErr(result);
+        logger.info("Result running: " + join(nshCmd, " ") +":\n" + out);
+        if (!sysErr(result).isEmpty())
+            logger.info("batchCmdTest Result ERROR: " + err);
+        assertFalse(err.contains(EXCEPTION));
+        assertTrue(out.contains("300.0"));
     }
 
     @Test
     public void exertNetletCmdTest() throws Exception {
-        cmds = new String[] { baseCmd, "-c",  "exert", netletDir + "/adder-local.ntl"};
+        nshCmd = new String[] { baseCmd, "-c",  "exert", netletDir + "/adder-local.ntl"};
 
-        ExecUtils.CmdResult result = ExecUtils.execCommand(cmds);
+        ExecUtils.CmdResult result = execCommand(nshCmd);
         String res =  result.getOut();
-        logger.info("Result running: " + StringUtils.join(cmds, " ") +":\n" + res);
+        logger.info("Result running: " + StringUtils.join(nshCmd, " ") +":\n" + res);
         if (!result.getErr().isEmpty())
             logger.info("batchCmdTest Result ERROR: " + result.getErr());
         assertFalse(result.getErr().contains(EXCEPTION));
@@ -67,11 +69,11 @@ public class NetletTest {
 
     @Test
     public void batchCmdTest() throws Exception {
-        cmds = new String[] { baseCmd, "-b", getNshDir() + "/batch.nsh"};
+        nshCmd = new String[] { baseCmd, "-b", getNshDir() + "/batch.nsh"};
 
-        ExecUtils.CmdResult result = ExecUtils.execCommand(cmds);
+        ExecUtils.CmdResult result = execCommand(nshCmd);
         String res =  result.getOut();
-//        logger.info("Result running: " + StringUtils.join(cmds, " ") +":\n" + res);
+//        logger.info("Result running: " + StringUtils.join(nshCmd, " ") +":\n" + res);
         if (!result.getErr().isEmpty())
             logger.info("batchCmdTest Result ERROR: " + result.getErr());
         assertFalse(result.getErr().contains(EXCEPTION));

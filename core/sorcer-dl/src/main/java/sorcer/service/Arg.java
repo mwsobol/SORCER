@@ -22,6 +22,8 @@ import sorcer.service.modeling.ServiceModel;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Any named configuration parameter value in particular a free variable.

@@ -19,11 +19,11 @@
 
 import sorcer.provider.adder.impl.AdderImpl
 
-Double v1 = 100.0;
-Double v2 = 200.0;
+    Double v1 = 100.0;
+    Double v2 = 200.0;
 
-task("hello adder", sig("add", AdderImpl.class),
-    context(inVal("arg/x1", v1), inVal("arg/x2", v2), result("out/y")));
+    task(sig("add", AdderImpl.class),
+        context(inVal("arg/x1", v1), inVal("arg/x2", v2), result("out/y")));
 
 
 
