@@ -66,7 +66,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Context<T>, AssociativeContext<T>, Contexter<T>, SorcerConstants {
 
 	private static final long serialVersionUID = 3311956866023311727L;
-	private ServiceProvider provider;
+	protected Provider provider;
 	protected Map<String, T> data = new ConcurrentHashMap<String, T>();
 	protected String subjectPath = "";
 	protected Object subjectValue = "";
@@ -127,7 +127,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * Initialization by a service provider when used as as a service bean.
 	 */
 	public void init(Provider provider) {
-		this.provider = (ServiceProvider)provider;
+		this.provider = provider;
 	}
 
 	/**
@@ -137,7 +137,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	public ServiceContext(String name) {
 		super();
-		if (name == null || name.length() == 0) {
+        initContext();
+        if (name == null || name.length() == 0) {
 			this.name = defaultName + count++;
 		} else {
 			this.name = name;
@@ -242,7 +243,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * are component attributes; cxt.tag("arg/x3", "triplet|mike|w|sobol");
 	 * and get tagged eval at arg/x3: cxt.getMarkedValues("triplet|mike|w|sobol"));
 	 */
-	protected void init() {
+    private void initContext() {
 		super.init();
 		data = new ConcurrentHashMap<String, T>();
 		metacontext = new HashMap<String, Map<String, String>>();
@@ -3258,37 +3259,40 @@ public class ServiceContext<T> extends ServiceMogram implements
 	/* (non-Javadoc)
      * @see sorcer.service.Service#exert(sorcer.service.Exertion, net.jini.core.transaction.Transaction)
      */
-	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws TransactionException,
-			MogramException, RemoteException {
-		try {
-			if (mogram instanceof NetTask) {
-				Task task = (NetTask)mogram;
-				Class serviceType = task.getServiceType();
-				 if (Invocation.class.isAssignableFrom(serviceType)) {
-					 Object out = ((Invocation)this).invoke(task.getContext(), args);
-					 handleExertOutput(task, out);
-					 return (T) task;
-				 } else if (Evaluation.class.isAssignableFrom(serviceType)) {
-					 Object out = ((Evaluation)this).getValue(args);
-					 handleExertOutput(task, out);
-					 return (T) task;
-				 } else if (provider != null) {
-                     return (T) provider.doExertion(task, txn);
-                 }
-			}
-			exertion.getContext().appendContext(this);
-			return (T) exertion.exert(txn);
-		} catch (Exception e) {
-			e.printStackTrace();
-			mogram.getContext().reportException(e);
-			if (e instanceof Exception)
-				mogram.setStatus(FAILED);
-			else
-				mogram.setStatus(ERROR);
+    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws TransactionException,
+            MogramException, RemoteException {
+        try {
+            if (mogram instanceof NetTask) {
+                Task task = (NetTask)mogram;
+                Class serviceType = task.getServiceType();
+                if (provider != null) {
+					Task out = ((ServiceProvider)provider).getDelegate().doTask(task, txn, args);
+					// remove provider execution scope
+					out.getContext().setScope(null);
+					return (T) out;
+                } else if (Invocation.class.isAssignableFrom(serviceType)) {
+                    Object out = ((Invocation)this).invoke(task.getContext(), args);
+                    handleExertOutput(task, out);
+                    return (T) task;
+                } else if (Evaluation.class.isAssignableFrom(serviceType)) {
+                    Object out = ((Evaluation)this).getValue(args);
+                    handleExertOutput(task, out);
+                    return (T) task;
+                }
+            }
+            exertion.getContext().appendContext(this);
+            return (T) exertion.exert(txn);
+        } catch (Exception e) {
+            e.printStackTrace();
+            mogram.getContext().reportException(e);
+            if (e instanceof Exception)
+                mogram.setStatus(FAILED);
+            else
+                mogram.setStatus(ERROR);
 
-			throw new ExertionException(e);
-		}
-	}
+            throw new ExertionException(e);
+        }
+    }
 
 	private void handleExertOutput(Task task, Object result ) throws ContextException {
 		ServiceContext dataContext = (ServiceContext) task.getDataContext();
@@ -3375,10 +3379,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return data.values();
 	}
 
-	public void clear() {
-		data.clear();
-	}
-
 	public T put(String key, T value) {
 		if (value == null)
 			return data.put(key, (T)none);
@@ -3430,6 +3430,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public Entry<T> getEntry(String path) {
 		return new Entry(path, data.get(path));
+	}
+
+	public String getProviderName() throws RemoteException {
+		if (provider == null)
+			return name;
+		else
+			return provider.getProviderName();
 	}
 
 	@Override
