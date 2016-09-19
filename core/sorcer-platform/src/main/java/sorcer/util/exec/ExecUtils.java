@@ -271,6 +271,18 @@ public class ExecUtils {
 		void processExited(Process process);
 	}
 
+	public static String sysOut(CmdResult result) {
+		return result.out;
+	}
+
+	public static String sysErr(CmdResult result) {
+		return result.err;
+	}
+
+	public static int exitValue(CmdResult result) {
+		return result.exitValue;
+	}
+
 	/**
 	 * Represents the result of a native command. Consists of the process exit
 	 * eval together with stdout and stderr dumped to strings.
