@@ -38,7 +38,8 @@ import static sorcer.eo.operator.add;
 /**
  * @author Mike Sobolewski
  */
-public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, EvaluationComponent, SupportComponent, Setter, Reactive<T> {
+public class
+Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, EvaluationComponent, SupportComponent, Setter, Reactive<T> {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;

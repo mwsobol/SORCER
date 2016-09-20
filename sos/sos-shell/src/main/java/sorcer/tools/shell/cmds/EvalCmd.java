@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.node.ContextNode;
 import sorcer.core.provider.RemoteLogger;
 import sorcer.core.provider.logger.LoggerRemoteException;
@@ -171,7 +172,9 @@ public class EvalCmd extends ShellCmd {
 //		out.println(">>>>>>>>>>> ServiceScripter.evaluate result: " + target);
 		if (target == null) {
 			return;
-		} else if (!(target instanceof Model) || !(target instanceof Exertion)) {
+		} else if (!(target instanceof Model)
+				|| !(target instanceof Exertion)
+				|| !(target instanceof Proc)) {
 			out.println("\n---> EVALUATION RESULT --->");
 			out.println(target);
 			return;
