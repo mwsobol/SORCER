@@ -1922,7 +1922,7 @@ public class operator {
 				try {
 					ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
 					se.readFile(new File(source));
-					return (M)se.evaluate();
+					return (M)se.interpret();
 				} catch (Throwable e) {
 					throw new MogramException(e);
 				}
@@ -3028,7 +3028,7 @@ public class operator {
 				try {
 					ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
 					se.readFile(new File(source));
-					return se.evaluate();
+					return se.interpret();
 				} catch (Throwable e) {
 					throw new SignatureException(e);
 				}

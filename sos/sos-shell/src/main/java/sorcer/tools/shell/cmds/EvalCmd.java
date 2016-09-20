@@ -168,8 +168,8 @@ public class EvalCmd extends ShellCmd {
 			out.println("Missing exertion input filename!");
 			return;
 		}
-		Object target = serviceScripter.evaluate();
-//		out.println(">>>>>>>>>>> ServiceScripter.evaluate result: " + target);
+		Object target = serviceScripter.interpret();
+//		out.println(">>>>>>>>>>> ServiceScripter.interpret result: " + target);
 		if (target == null) {
 			return;
 		} else if (!(target instanceof Model ||

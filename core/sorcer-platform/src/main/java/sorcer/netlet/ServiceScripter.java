@@ -113,7 +113,7 @@ public class ServiceScripter {
         throw new ScriptExertException("You must first call evaluate() before calling exert() ");
     }
 
-    public Object evaluate() throws Throwable {
+    public Object interpret() throws Throwable {
         try {
             if (out!=null && debug) out.println("creating scripterThread..."+ (System.currentTimeMillis()-startTime)+"ms");
             scripterThread = new ScripterThread(script, classLoader, isExertable);
