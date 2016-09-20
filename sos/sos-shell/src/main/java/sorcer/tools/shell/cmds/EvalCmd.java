@@ -172,9 +172,9 @@ public class EvalCmd extends ShellCmd {
 //		out.println(">>>>>>>>>>> ServiceScripter.evaluate result: " + target);
 		if (target == null) {
 			return;
-		} else if (!(target instanceof Model)
-				|| !(target instanceof Exertion)
-				|| !(target instanceof Proc)) {
+		} else if (!(target instanceof Model ||
+				target instanceof Exertion ||
+				target instanceof Proc)) {
 			out.println("\n---> EVALUATION RESULT --->");
 			out.println(target);
 			return;

@@ -56,6 +56,19 @@ public class NetletTest {
     }
 
     @Test
+    public void evalNetletCmdTestXXX() throws Exception {
+        nshCmd = new String[] { "-c",  "eval", netletDir + "/adder-local.ntl"};
+        NetworkShell.main(nshCmd);
+        ExecUtils.CmdResult result = execCommand(nshCmd);
+        String out =  sysOut(result);
+        String err =  sysErr(result);
+        logger.info("Result running: " + join(nshCmd, " ") +":\n" + out);
+        if (!sysErr(result).isEmpty())
+            logger.info("batchCmdTest Result ERROR: " + err);
+        assertTrue(out.contains("300.0"));
+    }
+
+    @Test
     public void exertNetletCmdTest() throws Exception {
         nshCmd = new String[] { baseCmd, "-c",  "exert", netletDir + "/adder-local.ntl"};
 
