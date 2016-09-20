@@ -205,14 +205,14 @@ public class EvalCmd extends ShellCmd {
 //		out.println(">>>>>>>>>>> ServiceScripter.execute result: " + result);
 		if (result != null) {
 			if (ifEvaluation) {
-                out.println("\n---> EVALUATION RESULT --->");
-                if (result instanceof Exertion) {
-					out.println(((Mogram)result).getContext());
+				out.println("\n---> EVALUATION RESULT --->");
+				if (result instanceof Exertion) {
+					out.println(((Mogram) result).getContext());
 				} else if (result instanceof Model) {
-                    out.println(((Model)result).getResult());
-                } else {
-                    out.println(result);
-                }
+					out.println(((Model) result).getResult());
+				} else {
+					out.println(result);
+				}
 				return;
 			} else if ((result instanceof Mogram)) {
 				Mogram mog = (Mogram) result;
@@ -232,9 +232,9 @@ public class EvalCmd extends ShellCmd {
 
 				out.println("\n---> OUTPUT MOGRAM --->");
 //				out.println(mog.describe());
-				out.println(mog.getName()+"@"+mog.getClass().getSimpleName());
+				out.println(mog.getName() + "@" + mog.getClass().getSimpleName());
 				if (mog instanceof Exertion) {
-					Exertion xrt = (Exertion)mog;
+					Exertion xrt = (Exertion) mog;
 					out.println("\n---> OUTPUT DATA CONTEXT --->");
 					out.println(xrt.getContext());
 					saveFilesFromContext(xrt, out);
@@ -250,10 +250,13 @@ public class EvalCmd extends ShellCmd {
 						out.println(result);
 					}
 				}
-			}
-			if (ifMogramControl) {
-				out.println("\n---> OUTPUT STRATEGY --->");
-				out.println(((Model) out).getMogramStrategy());
+				if (ifMogramControl) {
+					out.println("\n---> OUTPUT STRATEGY --->");
+					out.println(((Model) out).getMogramStrategy());
+				}
+			} else {
+				out.println("\n---> EVALUATION RESULT --->");
+				out.println(result);
 			}
 		}
 //		if (listener != null) listener.destroy();
