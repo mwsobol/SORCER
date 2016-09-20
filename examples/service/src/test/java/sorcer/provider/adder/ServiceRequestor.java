@@ -8,8 +8,12 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.requestor.adder.AdderRequestor;
 import sorcer.service.Context;
+import sorcer.util.ModelTable;
 
 import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.header;
+import static sorcer.co.operator.row;
+import static sorcer.co.operator.dataTable;
 import static sorcer.eo.operator.*;
 
 /**
@@ -36,6 +40,14 @@ public class ServiceRequestor {
 
 		// get a single context argument
 		assertEquals(200.0, value(cxt, "out/y"));
+
+
+		ModelTable dataTable = dataTable(header("x1", "x2"),
+				row(1.0, 0.1),
+				row(2.0, 0.2),
+				row(3.0, 0.3),
+				row(4.0, 0.4));
+
 	}
 
 }

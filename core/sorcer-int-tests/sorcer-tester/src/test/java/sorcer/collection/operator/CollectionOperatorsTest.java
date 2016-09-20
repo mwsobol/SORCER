@@ -87,14 +87,14 @@ public class CollectionOperatorsTest {
 
 	@Test
 	public void tableOperatorTest() throws EvaluationException {
-		DataTable table = table(
+		DataTable table = dataTable(
 				list(1.1, 1.2, 1.3, 1.4, 1.5),
 				list(2.1, 2.2, 2.3, 2.4, 2.5),
 				list(3.1, 3.2, 3.3, 3.4, 3.5));
 		
 		table.setColumnIdentifiers(list("x1", "x2", "x3", "x4", "x5"));
 		table.setRowIdentifiers(list("f1", "f2", "f3"));
-		//logger.info("table: " + table);
+		//logger.info("dataTable: " + dataTable);
 		assertEquals(table.getRowCount(), 3);
 		assertEquals(table.getColumnCount(), 5);
 		

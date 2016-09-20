@@ -677,9 +677,9 @@ public class operator {
 		return entry._1;
 	}
 
-	public static <T extends List<?>> DataTable table(T... elems) {
+	public static <T extends List> DataTable dataTable(T... elems) {
 		int rowCount = elems.length;
-		int columnCount = ((List<?>) elems[0]).size();
+		int columnCount = elems[0].size();
 		DataTable out = new DataTable(rowCount, columnCount);
 		for (int i = 0; i < rowCount; i++) {
 			if (elems[i] instanceof Header) {

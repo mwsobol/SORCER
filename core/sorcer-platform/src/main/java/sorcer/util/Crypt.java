@@ -34,7 +34,7 @@ public class Crypt {
 	static int sub[] = new int[48];
 
 	// TABLES
-	/* Expansion table (32 to 48) */
+	/* Expansion dataTable (32 to 48) */
 	int E_p[] = { 32, 1, 2, 3, 4, 5, 4, 5, 6, 7, 8, 9, 8, 9, 10, 11, 12, 13,
 			12, 13, 14, 15, 16, 17, 16, 17, 18, 19, 20, 21, 20, 21, 22, 23, 24,
 			25, 24, 25, 26, 27, 28, 29, 28, 29, 30, 31, 32, 1 };
@@ -51,7 +51,7 @@ public class Crypt {
 			45, 33, 48, 44, 49, 39, 56, 34, 53, 46, 42, 50, 36, 29, 32 };
 
 	/* Number of rotations for the iteration of key scheduling */
-	/* The concept of a table here doesn't fit our behavioral model */
+	/* The concept of a dataTable here doesn't fit our behavioral model */
 	/* This will be logic in our final design */
 	int keyrots[] = { 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1 };
 

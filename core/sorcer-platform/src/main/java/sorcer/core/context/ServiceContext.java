@@ -1831,7 +1831,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Map table, attrTable;
 		attrTable = ((ServiceContext) mappedCntxt).metacontext;
 		// note the metacontext contains only singleton attributes
-		// AND the SORCER.CONTEXT_ATTRIBUTES table
+		// AND the SORCER.CONTEXT_ATTRIBUTES dataTable
 		e = attrTable.keySet().iterator();
 		String attr, val, metapath;
 		while (e.hasNext()) {
@@ -2950,7 +2950,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			result = mogramStrategy.outcome;
 			mogramStrategy.outcome.setModeling(true);
 		}
-		result.setName("Response of model: " + name);
+		result.setName("Response of " + getClass().getSimpleName() + " " + name);
 		return result;
 	}
 

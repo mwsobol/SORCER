@@ -352,7 +352,7 @@ public class SorcerDatabaseRunner {
 		
 	
 	 /**
-     * Get the table names returned by an iterator of entity eval objects.
+     * Get the dataTable names returned by an iterator of entity eval objects.
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
      */

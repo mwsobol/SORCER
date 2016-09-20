@@ -70,7 +70,7 @@ public class FidelityTest {
 
 	@Test
 	public void fidelityTable() {
-		DataTable dataTable = table(header("span"),
+		DataTable dataTable = dataTable(header("span"),
 				row(110.0),
 				row(120.0),
 				row(130.0),
@@ -82,7 +82,7 @@ public class FidelityTest {
 				fiEnt(1, fis(fi("atX", "x1"))),
 				fiEnt(3, fis(fi("atX", "x1"), fi("atY", "y2"))));
 
-		logger.info("fi table: " + fiTable);
+		logger.info("fi dataTable: " + fiTable);
         FiMap fiMap = new FiMap(dataTable);
         fiMap.populateFidelities(dataTable.getRowCount()-1);
         logger.info("fi map populated: " + fiMap);
@@ -95,7 +95,7 @@ public class FidelityTest {
 
     @Test
     public void populateFidelityTable() {
-        DataTable dataTable = table(header("span"),
+        DataTable dataTable = dataTable(header("span"),
                 row(110.0),
                 row(120.0),
                 row(130.0),
@@ -107,7 +107,7 @@ public class FidelityTest {
                 fiEnt(1, fis(fi("atX", "x1"))),
                 fiEnt(3, fis(fi("atX", "x1"), fi("atY", "y2"))));
 
-        logger.info("fi table: " + fiTable);
+        logger.info("fi dataTable: " + fiTable);
         FiMap fiMap = new FiMap(dataTable);
         logger.info("fi map: " + fiMap);
         assertEquals(fiMap.get(0), null);
@@ -119,7 +119,7 @@ public class FidelityTest {
 
     @Test
 	public void selectFiMap() {
-		DataTable dataTable = table(header("span", "fis"),
+		DataTable dataTable = dataTable(header("span", "fis"),
 				row(110.0,  fiList(fi("tip/displacement", "astros"))),
 				row(120.0),
 				row(130.0,  fiList(fi("tip/displacement", "nastran"))),

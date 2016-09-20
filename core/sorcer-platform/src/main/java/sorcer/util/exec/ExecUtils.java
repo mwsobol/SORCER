@@ -188,12 +188,12 @@ public class ExecUtils {
 		}
 		process.waitFor();
 		int exitValue = process.exitValue();
-        logger.info("exitValue: " + exitValue);
+        logger.debug("exitValue: " + exitValue);
 
 		if (stdout != null) {
 			stdout.throwIfHadException();
 			out = new String(stdout.getResult());
-            logger.info("out: " + out);
+            logger.debug("out: " + out);
         }
 		stderr.throwIfHadException();
 		String err = new String(stderr.getResult());

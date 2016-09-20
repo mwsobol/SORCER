@@ -146,14 +146,14 @@ public class CollectionOperators {
 	@Test
 	public void tableOperator() throws Exception {
 
-		DataTable t = table(
+		DataTable t = dataTable(
 				row(1.1, 1.2, 1.3, 1.4, 1.5),
 				row(2.1, 2.2, 2.3, 2.4, 2.5),
 				row(3.1, 3.2, 3.3, 3.4, 3.5));
 
 		columnNames(t, list("x1", "x2", "x3", "x4", "x5"));
 		rowNames(t, list("f1", "f2", "f3"));
-		//logger.info("table: " + table);
+		//logger.info("dataTable: " + dataTable);
 		assertEquals(rowSize(t), 3);
 		assertEquals(columnSize(t), 5);
 
