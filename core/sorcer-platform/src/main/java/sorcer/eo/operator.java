@@ -2522,7 +2522,11 @@ public class operator {
 			if (service instanceof Entry || service instanceof Signature ) {
 				return service.exec(args);
 			} else if (service instanceof Context || service instanceof FiMogram) {
-				return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
+				if (service instanceof Model) {
+					return ((Model)service).getResponse(args);
+				} else {
+					return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
+				}
 			} else if (service instanceof Exertion) {
 				return new ServiceShell().evaluate((Mogram) service, args);
 			} else if (service instanceof Evaluation) {

@@ -395,14 +395,14 @@ public class Signatures {
 	@Test
 	public void execNetletSignature() throws Exception {
 		String netlet = "src/main/netlets/ha-job-local.ntl";
-		assertEquals(exec(sig(file(netlet))), 400.00);
+		assertEquals(exec(sig(filePath(netlet))), 400.00);
 	}
 
 	@Test
 	public void netletSignatureProvider() throws Exception {
 		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
 
-		Service srv = (Service)provider(sig(file(netlet)));
+		Service srv = (Service)provider(sig(filePath(netlet)));
 //		logger.info("job service: " + exec(srv));
 		assertTrue(exec(srv).equals(400.0));
 	}
@@ -410,7 +410,7 @@ public class Signatures {
 	@Test
 	public void execMogramWithNetletSignature() throws Exception {
 		String netlet = "src/main/netlets/ha-job-local.ntl";
-		assertEquals(exec(mog(sig(file(netlet)))), 400.00);
+		assertEquals(exec(mog(sig(filePath(netlet)))), 400.00);
 	}
 
 	@Test

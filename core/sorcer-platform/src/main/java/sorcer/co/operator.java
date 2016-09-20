@@ -153,7 +153,7 @@ public class operator {
 		return new ServiceSignature.In(pl.toArray(pa));
 	}
 
-	public static Path file(String filename) {
+	public static Path filePath(String filename) {
 		if(Artifact.isArtifact(filename)) {
 			try {
 				URL url = ResolverHelper.getResolver().getLocation(filename, "ntl");
