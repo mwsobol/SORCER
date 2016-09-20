@@ -2948,13 +2948,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 				mogramStrategy.outcome = this;
 			}
 			result = mogramStrategy.outcome;
-			mogramStrategy.outcome.setModeling(true);
 		}
+		mogramStrategy.outcome.setModeling(false);
 		result.setName("Response of " + getClass().getSimpleName() + " " + name);
 		return result;
 	}
 
 	public Object getResult() throws ContextException, RemoteException {
+		mogramStrategy.outcome.setModeling(false);
 		return mogramStrategy.outcome;
 	}
 

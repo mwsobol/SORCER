@@ -22,6 +22,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.Contexts;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.node.ContextNode;
 import sorcer.core.provider.RemoteLogger;
@@ -30,6 +31,7 @@ import sorcer.core.provider.logger.RemoteLoggerListener;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.tools.shell.INetworkShell;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
@@ -167,13 +169,12 @@ public class EvalCmd extends ShellCmd {
 		}
 		Object target = serviceScripter.evaluate();
 //		out.println(">>>>>>>>>>> ServiceScripter.evaluate result: " + target);
-		if (!serviceScripter.isExertable()) {
-			if (target == null) {
-				return;
-			} else if (!(target instanceof Mogram)){
-				out.println("\n---> EVALUATION RESULT --->");
-				out.println(target);
-			}
+		if (target == null) {
+			return;
+		} else if (!(target instanceof Model) || !(target instanceof Exertion)) {
+			out.println("\n---> EVALUATION RESULT --->");
+			out.println(target);
+			return;
 		}
 
 		// Create RemoteLoggerListener
