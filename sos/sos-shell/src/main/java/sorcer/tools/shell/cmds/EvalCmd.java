@@ -46,7 +46,7 @@ import java.util.Map;
 public class EvalCmd extends ShellCmd {
 
 	{
-		COMMAND_NAME = "'eval' or 'exert'";
+		COMMAND_NAME = "eval";
 
 		NOT_LOADED_MSG = "***command not loaded due to conflict";
 
