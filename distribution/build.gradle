@@ -362,8 +362,8 @@ publishing {
         }
     }
     repositories {
-        //maven { url "http://$enclaveRepo" }
-        maven { url "file:///Users/dreedy/dev/src/projects/mstc/TEMP"}
+        maven { url "http://$enclaveRepo" }
+//        maven { url "file:///Users/dreedy/dev/src/projects/mstc/TEMP"}
     }
 }
 

@@ -7,6 +7,8 @@ prvSignature : 'sig' '(' ( sigName ',' )? prvSpec ')' ;
 
 opSignature  : 'sig' '(' (( sigName ',' )? opSpec ',' prvSpec ')' | prvSignature ',' selector ')' | prvSignature ',' opSpec) ')' ;
 
+ntlSignature : 'sig' '(' ( sigName ',' )? 'filePath' '(' (netletFilename | netletArtifact) ')' ')' ;
+
 bldrSignature : 'sig' '('( sigName ',' )? classSelector ','classType ')' ;
 
 prvSpec : (srvType | 'type' '(' srvTypeName ')') (',' matchTypes)? (',' (prvId))? (',' prvDeployment)? | bldrSignature | prvInstance ;
@@ -69,7 +71,8 @@ srvRequest : srvSignature | contextEntry | multiFi | srvMogram ;
 /* <ENTRIES> */
 
 annotatedPath : 'path' '(' pathName ( ',' pathTag)? ')' ;
-srvPath : pathName | annotatedPath ;
+mapPath : 'map' '(' toPath ',' fromPath ')' ;
+srvPath : pathName | annotatedPath |mapPath ;
 entOp : 'inVal' | 'outVal' | 'inoutVal' | 'dbVal' ;
 dataEntry : entOp '(' srvPath ',' value ')' ;
 
@@ -80,7 +83,7 @@ procEntry : ('ent' '(' pathName ',' (srvEvaluator | srvInvoker ( ',' entModel)?)
 
 srvRoutine : contextEntry | srvInvoker | srvEvaluator ;
 
-sigEntry : 'ent' '(' pathName? ',' opSignature ')' ;
+sigEntry : 'ent' '(' (pathName ',')? opSignature ')' ;
 
 mapEntry : 'ent' '(' fromPathName ',' toPathName ')' ;
 
@@ -100,9 +103,9 @@ varEntry : ('var' '(' (pathName ( ',' (value | opSignature | morphFidelity
 			| varProxy 
 			| contextEntry )
 			|(',' varFidelity)+ ) ')')
-			| objectiveVar | constraintVar) ;
+			| entVar | objectiveVar | constraintVar) ;
 
-fiEntry : 'ent' '(' pathName',' entFidelity* ')' ;
+fiEntry : 'ent' '(' pathName (entFidelity ',')* entFidelity ')' ;
 
 entType : 'in' | 'out' | 'inout' | 'db' ;
 
@@ -123,9 +126,9 @@ invokeOption : 'opt' '(' srvCondition ',' srvInvoker ')' ;
 srvCondition : 'condition' '(' conditionCallableLambda ')'
 		    |  'condition' '(' conditionExpression ','  parameterName* ')' ;
 
-srvArgs : 'args' '(' argName+ ')' ;
+srvArgs : 'args' '(' (argName ',')* argName ')' ;
 
-dependentVars : 'vars' '(' dependentVarName* ')' ;
+dependentVars : 'vars' '(' (dependentVarName ',')* dependentVarName ')' ;
 srvEvaluator : lambdaEvaluator | entEvaluator | objectImplementingEvaluation ;
 entGetter : objectImplementingGetter ;
 entSetter : objectImplementingSetter ;
@@ -184,9 +187,9 @@ exertionStrategy : 'strategy' '(' (accessType',')? (flowType',')? (monitorable',
 
 fiSelector : 'fi' '('pathName',' fiName')' ;
 
-metaFiSelector : 'fi''('fiName',' (fiSelector',')+ fiSelector ')';
+metaFiSelector : 'fi''('fiName',' (fiSelector',')* fiSelector ')';
 
-fiList : 'fis''(' ((fiSelector | fiList)',')+ ')' ;
+fiList : 'fis''(' (((fiSelector | fiList))',')* (fiSelector | fiList)')' ;
 
 /* <VAR-ORIENTED-MODELING> */
 
@@ -198,11 +201,13 @@ responseModeling : 'responseModel' '('(modelName',' )?
 parametricModeling : 'paramericModel' '('(modelName',' )? 
 					(modelingInstance',' )?  inVars',' outVars',' varRealizations ','mdlTable ')' ;
 					
-inVars 	: 'inputVars' '(' ((baseVars',')+)? baseVars')' ;
-outVars : 'outputVars' '(' ((baseVars',')+)? baseVars')' ;
+inVars 	: 'inputVars' '(' ((basicVar',')+)? basicVar')' ;
+
+outVars : 'outputVars' '(' ((basicVar',')+)? basicVar')' ;
+
 varRealizations : ((varRealization',')* (varRealization))? ;
 
-mdlTable : 'table' '('varParametricTable',' varResponseTable')' ;
+mdlTable : 'table' '('mdlParametricTable',' mdlResponseTable')' ;
 
 streamingParametricModeling : 'streamingParametricModel' '('(modelName',')?	modelingInstance')' ;
 
@@ -213,13 +218,21 @@ modelingInstance: 'instance' '('opSignature')' ;
 
 varType : 'inputVars' | 'outputVars' | 'linkedVars' | 'constantVars' ;
 
-baseVars : 'varType' '('((varName',')+ varName |varName',' count 
-					| varName',' from',' to)')' ;
+basicVar : entVar | ('var' '(' (varName',' count 
+					| varName',' from',' to) ')')) ;				
+					
+baseVars : 'varType' '('(basicVar',')+ basicVar ')' ;
 
-varParametricTable : 'parametricTable' '('tableURL (',' tableSeparator)?')'  
-					| 'table' '(' 'header' '('varName+')' ',' 'row' '('value+')'+')' ;
+typeVars : 'varType' '('(basicVar',')+ basicVar ')' ;
 
-varResponseTable : 'responseTable' '('tableURL (',' tableSeparator)? ')' ;
+
+mdlParametricTable : 'parametricTable' '(' (( tableURL | filename) (',' tableSeparator)?  | dataTable | instanceofModelTable'.class')')' ;
+
+dataTable : 'table' '(' 'header' '('(varName ',')* varName')' (',' 'row' '(' ( value ',')* value')')* ')' ;	
+ 
+mdlResponseTable : 'responseTable' '(' (filename |tableURL) (',' tableSeparator)? ')' ;
+ 
+entVar : 'var' '('(varName ',')? contextEntry ')' ;
  
 objectiveVar : 'var' '('varName',' outputVarName',' optiTarget ')' ;
 
@@ -246,7 +259,7 @@ mdlOptimizationTask : 'optimizationTask' '('explorerSignature',' optiContext ','
 			
 responseContext : 'modelingContext' '(' (mdlInputs',')? (mdlResponses',')? returnPath? ')';
 
-paramContext : 'modelingContext' '(' varParametricTable',' (varResponseTable',')? (mdlParmeters',')?  (mdlResponses',')?  parStrategy? (',' returnPath)?')'; 
+paramContext : 'modelingContext' '(' mdlParametricTable',' (mdlResponseTable',')? (mdlParmeters',')?  (mdlResponses',')?  parStrategy? (',' returnPath)?')'; 
 
 optiContext : 'modelingContext' '(' mdlInputs (',' returnPath)?')'; 
 	
@@ -256,7 +269,7 @@ mdlResponses : 'responses' '('((varName ',')* varName)')';
 
 returnPath : 'result' '('pathName')';
 
-outTable : 'table' '(' varParametricTable(',' varResponseTable)?')';
+outTable : 'table' '(' mdlParametricTable(',' mdlResponseTable)?')';
 	
 parStrategy : 'parallel' '(' 'queue' '('int')'',' 'pool' '('int')' ')';
 
@@ -373,6 +386,13 @@ callableLambdaExpression      : name;
 clientLambdaExpression        : name;
 valueCallableLambdaExpression : name;
 morpherLambdaExpression       : name;
+instanceofModelTable 	 : name ;
+
+filename 	: name ;
+netletFilename	: name ;
+netletArtifact  : name ;
+toPath       	: name ;
+fromPath       	: name ;
 
 prvClassName 	  : name ;
 providerName	  : name ;	
