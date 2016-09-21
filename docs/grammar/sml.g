@@ -196,35 +196,35 @@ fiList : 'fis''(' (((fiSelector | fiList))',')* (fiSelector | fiList)')' ;
 structuredVarModel : responseModeling | parametricModeling | optimizationModeling | streamingParametricModeling ;
 
 responseModeling : 'responseModel' '('(modelName',' )? 
-					(modelingInstance',' )?  baseVars*',' varRealization*')' ;
+					(modelingInstance',' )?  (basicVars',')+ basicVars ',' varRealizations')' ;
 
 parametricModeling : 'paramericModel' '('(modelName',' )? 
-					(modelingInstance',' )?  inVars',' outVars',' varRealizations ','mdlTable ')' ;
-					
-inVars 	: 'inputVars' '(' ((basicVar',')+)? basicVar')' ;
-
-outVars : 'outputVars' '(' ((basicVar',')+)? basicVar')' ;
+					(modelingInstance',' )?  (basicVars',')+ basicVars ',' varRealizations ','mdlTable ')' ;
 
 varRealizations : ((varRealization',')* (varRealization))? ;
 
 mdlTable : 'table' '('mdlParametricTable',' mdlResponseTable')' ;
 
-streamingParametricModeling : 'streamingParametricModel' '('(modelName',')?	modelingInstance')' ;
+streamingParametricModeling : 'streamingParametricModel' '('(modelName',')?	parametricModeling')' ;
 
-optimizationModeling : 'optimizationModel' '(' (modelName',' )? baseVars*',' varRealization*','
-					'objectiveVars' '('objectiveVar+',' 'constraintVars' '('constraintVar+ ')' ')' ;
-
-modelingInstance: 'instance' '('opSignature')' ; 
-
-varType : 'inputVars' | 'outputVars' | 'linkedVars' | 'constantVars' ;
+optimizationModeling : 'optimizationModel' '(' (modelName',' )? basicVars* ','
+					mdlObjectiveVars ','  mdlConstraintVars ',' varRealizations ')' ;
 
 basicVar : entVar | ('var' '(' (varName',' count 
 					| varName',' from',' to) ')')) ;				
 					
-baseVars : 'varType' '('(basicVar',')+ basicVar ')' ;
+basicVars : 'varType' '('(basicVar',')* basicVar ')' ;
 
 typeVars : 'varType' '('(basicVar',')+ basicVar ')' ;
 
+varType : 'inputVars' | 'outputVars' | 'linkedVars' | 'constantVars' ;
+
+mdlObjectiveVars :	'objectiveVars' '('objectiveVar*','objectiveVar ')' ;
+
+mdlConstraintVars :	'constraintVars' '('constraintVar*','constraintVar ')' ;
+
+	
+modelingInstance: 'instance' '('bldrSignature')' ; 
 
 mdlParametricTable : 'parametricTable' '(' (( tableURL | filename) (',' tableSeparator)?  | dataTable | instanceofModelTable'.class')')' ;
 
@@ -238,7 +238,7 @@ objectiveVar : 'var' '('varName',' outputVarName',' optiTarget ')' ;
 
 optiTarget : 'Target.min' | 'Target.max' ;
 
-constraintVar : 'var' '('varName',' outputVarName',' 'Relation'.relationSuffix ')' ;
+constraintVar : 'var' '('varName',' outputVarName',' 'Relation.'relationSuffix ')' ;
  	
 relationSuffix: 'lt' | 'lte' | 'eq' | 'gt' | 'gte' ;
 
