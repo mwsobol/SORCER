@@ -288,28 +288,28 @@ explorerSignature : opSignature;
 
 /* <ACCESSING-VALUES> */
 
-contextValueResult : 'value' '('dataContext',' pathName | outputPaths')' 
-			| 'valueAt' '('dataContext',' index')' 
-			| 'valueAt' '('dataContext',' pathTag')' | 'valuesAt' '('dataContext',' pathTag')' ;
+contextValueResult : ('value' '('dataContext',' ( pathName | outputPaths ) 
+			| 'valueAt' '('dataContext',' index 
+			| ('valueAt' | 'valuesAt') '('dataContext',' pathTag )')' ;
 
-srvValueResult : 'exec' '(' srvRequest(',' srvArg)*')' | 
-			'eval' '('contextEntry(',' srvArg)*')' | 'eval' '('entModel',' pathName(',' srvArg)*')' 
-			| 'eval' '('srvExertion(',' srvArg)*')' | 'returnValue' '('srvMogram')' ; 
+srvValueResult : (('exec' '(' srvRequest | 
+			'eval' '('contextEntry | 'eval' '('entModel',' pathName
+			| 'eval' '('srvExertion )(',' srvArg)* | 'returnValue' '('srvMogram 
+			| 'get' '(' contextModel ',' pathName)')' ; 
 
-srvMogramResult : 'exert' '('srvMogram',' srvArg*')' ;
+srvMogramResult : 'exert' '('srvMogram (',' srvArg)*')' ;
 
-dataContextResult : 'response' '('entModel',' srvArg*')' 
-			| 'result' '('entModel (',' pathName)?')' | 'context' '('srvMogram')' 
-			| 'upcontext' '('compoundExertion')' ;
+dataContextResult : ('response' '('entModel (',' srvArg)* 
+			| 'result' '('entModel (',' pathName)? | 'context' '('srvMogram 
+			| 'upcontext' '('compoundExertion ) ')' ;
 
 srvEexrtionResult : 'get' '('srvExertion',' componentPathName')' ;
 
-srvEntryResult : 'getEntry''('(dataContext | contextModel)',' pathName')' ;
+dataEntryResult : 'getEntry''('contextModel',' pathName')' ;
 
 structuredVarModelResult : 'setInputs''('structuredVarModel',' dataContext ')' ;
 
-contextSnapshotResult : 'snapshot''(' (srvExertion | structuredVarModel (',' varInformation)* | prvSignature (',' varInformation)*')') ')' 
-			| 'evalSnapshot' '(' (structuredVarModel (',' varInformation) | prvSignature (',' varInformation)* ) ')';
+contextSnapshotResult : ( 'snapshot''(' structuredVarModel ',' responseContext? )')'  ;
 			
 		
 varInformation  : 'varInfo''('varsType (',' varName)*')' ;

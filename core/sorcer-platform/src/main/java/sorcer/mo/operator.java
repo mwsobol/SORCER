@@ -83,6 +83,13 @@ public class operator {
         return value;
     }
 
+    public static Model setValue(Model model, Entry... entries) throws ContextException {
+        for(Entry ent :entries) {
+            setValue(model, ent.name(), ent.value());
+        }
+        return model;
+    }
+
     public static ProcModel procModel(String name, Signature builder) throws SignatureException {
         ProcModel model = (ProcModel) instance(builder);
         model.setBuilder(builder);
