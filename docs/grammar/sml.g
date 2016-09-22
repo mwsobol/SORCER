@@ -294,21 +294,23 @@ contextValueResult : ('value' '('dataContext',' ( pathName | outputPaths )
 
 srvValueResult : (('exec' '(' srvRequest | 
 			'eval' '('contextEntry | 'eval' '('entModel',' pathName
-			| 'eval' '('srvExertion )(',' srvArg)* | 'returnValue' '('srvMogram 
+			| 'eval' '('srvExertion )(',' srvArg)* | 'returnValue' '(' srvMogram 
 			| 'get' '(' contextModel ',' pathName)')' ; 
 
 srvMogramResult : 'exert' '('srvMogram (',' srvArg)*')' ;
 
 dataContextResult : ('response' '('entModel (',' srvArg)* 
-			| 'result' '('entModel (',' pathName)? | 'context' '('srvMogram 
+			| 'result' '('entModel (',' pathName)? | 'context' '(' srvMogram 
 			| 'upcontext' '('compoundExertion ) ')' ;
 
 srvEexrtionResult : 'get' '('srvExertion',' componentPathName')' ;
 
-dataEntryResult : 'getEntry''('contextModel',' pathName')' ;
+contextEntryResult : ('getEntry''('contextModel',' pathName |  'setValue' '(' contextEntry value ) ')' ;
 
-structuredVarModelResult : 'setInputs''('structuredVarModel',' dataContext ')' ;
-
+contextModelResult : ('setValue''('contextModel',' pathName',' value 
+	| 'setValue''('contextModel',' (contextEntry ',')* contextEntry 
+	|  'append''('contextModel',' contextModel ) ')' ;
+	
 contextSnapshotResult : ( 'snapshot''(' structuredVarModel ',' responseContext? )')'  ;
 			
 		
