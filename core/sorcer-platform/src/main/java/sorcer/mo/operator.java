@@ -85,7 +85,7 @@ public class operator {
 
     public static Model setValue(Model model, Entry... entries) throws ContextException {
         for(Entry ent :entries) {
-            setValue(model, ent.name(), ent.value());
+            setValue(model, ent.getName(), ent.value());
         }
         return model;
     }

@@ -29,8 +29,6 @@ import java.rmi.RemoteException;
  */
 public interface Callable<T> extends Item {
 
-    public String name();
-
     public T call(Arg... args) throws EvaluationException, RemoteException;
 
 }

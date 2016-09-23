@@ -269,7 +269,7 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
             throw new EvaluationException(e);
         }
         // the same entry in entry
-        if (val instanceof Entry && ((Entry) val).name().equals(path)) {
+        if (val instanceof Entry && ((Entry) val).getName().equals(path)) {
             return ((Entry) val).value();
         }
         if (val instanceof ServiceFidelity) {

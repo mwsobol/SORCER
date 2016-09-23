@@ -373,11 +373,6 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 	}
 
 	@Override
-	public String name() {
-		return _1;
-	}
-
-	@Override
 	public T call(Arg... args) throws EvaluationException, RemoteException {
 		return getValue(args);
 	}

@@ -104,7 +104,7 @@ public class ScripterThread extends Thread {
                     logger.info(">>>>>>>>>>> serviceShell eval result: " + result);
                 }
             } else if (target instanceof Entry){
-                result = new Entry(((Entry)target).name(), eval((Entry)target));
+                result = new Entry(((Entry)target).getName(), eval((Entry)target));
                 logger.info(">>>>>>>>>>> eval entry: " + result);
             } else if (target != null) {
                 logger.info(">>>>>>>>>>> eval result: " + target);
