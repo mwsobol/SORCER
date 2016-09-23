@@ -446,8 +446,4 @@ public class Task extends ServiceExertion {
 		return getFidelities().get(component);
 	}
 
-	@Override
-	public Object call(Arg... args) throws EvaluationException, RemoteException {
-		return null;
-	}
 }
