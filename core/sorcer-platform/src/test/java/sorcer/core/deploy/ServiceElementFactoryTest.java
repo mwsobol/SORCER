@@ -185,8 +185,7 @@ public class ServiceElementFactoryTest {
     }
 
     private String getConfigDir() {
-        return "/Users/dreedy/dev/src/projects/mstc/sorcer/core/sorcer-platform/src/test/resources/deploy/configs";
-        //return System.getProperty("deploy.configs");
+        return System.getProperty("deploy.configs");
     }
 
     private void verifyServiceElement(ServiceElement serviceElement) {
