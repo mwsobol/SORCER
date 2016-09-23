@@ -28,7 +28,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MultiFiRequest;
+import sorcer.core.plexus.FiMogram;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
@@ -197,8 +197,8 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
                     if (rp != null && rp.path != null)
                         putValue(((Srv) val).getReturnPath().path, obj);
                     return obj;
-                }  else if (val2 instanceof MultiFiRequest) {
-                    Object out = ((MultiFiRequest)val2).exert(args);
+                }  else if (val2 instanceof FiMogram) {
+                    Object out = ((FiMogram)val2).exert(args);
                     Context cxt = null;
                     if (out instanceof Exertion) {
                         cxt = ((Exertion) out).getContext();
@@ -269,7 +269,7 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
             throw new EvaluationException(e);
         }
         // the same entry in entry
-        if (val instanceof Entry && ((Entry) val).name().equals(path)) {
+        if (val instanceof Entry && ((Entry) val).getName().equals(path)) {
             return ((Entry) val).value();
         }
         if (val instanceof ServiceFidelity) {
@@ -413,7 +413,7 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
                 Exertion xrt = out.exert();
                 return xrt.getDataContext();
             } else {
-                // evaluate model responses
+                // evaluate model response
                 getResponse(entries);
                 return this;
             }

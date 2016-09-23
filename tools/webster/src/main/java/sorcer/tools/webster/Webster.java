@@ -393,9 +393,9 @@ public class Webster implements Runnable {
             if (bindAddress == null) {
                 bindAddress = System.getProperty("webster.interface");
             }
-            if (bindAddress == null)
-                bindAddress = HostUtil.getInetAddress().getHostAddress();
-
+            if (bindAddress == null) {
+                bindAddress = HostUtil.getInetAddressFromProperty("java.rmi.server.hostname").getHostAddress();
+            }
             addr = InetAddress.getByName(bindAddress);
         } catch (UnknownHostException e) {
             logger.error("Bind address server socket failure", e);

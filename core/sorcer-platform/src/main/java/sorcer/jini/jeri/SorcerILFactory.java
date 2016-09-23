@@ -34,6 +34,8 @@ import sorcer.core.provider.Modeler;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
+import sorcer.service.modeling.Modeling;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -376,7 +378,6 @@ public class SorcerILFactory extends BasicILFactory {
             Class serviceType = ((Exertion) target).getProcessSignature().getServiceType();
             if (target instanceof CompoundExertion
                 || Modeler.class.isAssignableFrom(serviceType)
-//					|| Modeling.class.isAssignableFrom(serviceType)
                 || Evaluation.class.isAssignableFrom(serviceType)
                 || Invocation.class.isAssignableFrom(serviceType))
                 return true;

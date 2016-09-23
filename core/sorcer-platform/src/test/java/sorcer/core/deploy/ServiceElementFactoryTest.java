@@ -152,6 +152,16 @@ public class ServiceElementFactoryTest {
         ServiceElement service = ServiceElementFactory.create(deployment);
         Assert.assertTrue(service.getPlanned()==10);
         Assert.assertTrue(service.getMaxPerMachine()==1);
+        Assert.assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.DYNAMIC);
+    }
+
+    @Test
+    public void testFixedUsingGroovyConfiguration() throws URISyntaxException, ResolverException, ConfigurationException, IOException {
+        ServiceDeployment deployment = new ServiceDeployment();
+        deployment.setConfig(getConfigDir()+"/FixedConfig.groovy");
+        ServiceElement service = ServiceElementFactory.create(deployment);
+        Assert.assertTrue(service.getPlanned()==10);
+        Assert.assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.FIXED);
     }
 
     @Test
@@ -161,6 +171,17 @@ public class ServiceElementFactoryTest {
         ServiceElement service = ServiceElementFactory.create(deployment);
         Assert.assertTrue(service.getPlanned()==10);
         Assert.assertTrue(service.getMaxPerMachine()==2);
+        Assert.assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.DYNAMIC);
+    }
+
+    @Test
+    public void testFixedUsingConfiguration() throws URISyntaxException, ResolverException, ConfigurationException, IOException {
+        ServiceDeployment deployment = new ServiceDeployment();
+        deployment.setConfig(getConfigDir()+"/fixedConfig.config");
+        ServiceElement service = ServiceElementFactory.create(deployment);
+        Assert.assertTrue(service.getPlanned()==10);
+        Assert.assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.FIXED);
+        Assert.assertTrue(service.getMaxPerMachine()==-1);
     }
 
     private String getConfigDir() {

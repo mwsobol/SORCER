@@ -1065,7 +1065,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 		/**
 		 * Returns a list of selectors of <code>serviceType</code> along with
-		 * hash tables per each interface. The hash table key is an interface
+		 * hash tables per each interface. The hash dataTable key is an interface
 		 * name and the eval is a list of all interface selectors.
 		 * 
 		 * @param serviceType
@@ -1094,7 +1094,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		/**
 		 * Returns a list of maps per each interface in the array clazz
 		 * such that they are registered by the service provider as sorcerTypes.
-		 * The hash table key is an interface name and the eval is a list of
+		 * The hash dataTable key is an interface name and the eval is a list of
 		 * all interface selectors.
 		 * 
 		 * @param clazz

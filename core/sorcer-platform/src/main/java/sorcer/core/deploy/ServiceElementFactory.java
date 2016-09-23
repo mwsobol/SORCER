@@ -196,7 +196,15 @@ public final class ServiceElementFactory  {
                                                 String.class,
                                                 null);
 
-
+        Boolean fixedFromConfig = configuration.getEntry("sorcer.core.exertion.deployment",
+                                                         "fixed",
+                                                         Boolean.class,
+                                                         null);
+        boolean fixed;
+        if(fixedFromConfig!=null)
+            fixed = fixedFromConfig;
+        else
+            fixed = deployment.getStrategy().equals(Deployment.Strategy.FIXED);
 
         ServiceDetails serviceDetails = new ServiceDetails(name,
                                                            interfaces,
@@ -211,7 +219,8 @@ public final class ServiceElementFactory  {
                                                            operatingSystems,
                                                            ips,
                                                            excludeIPs,
-                                                           webster);
+                                                           webster,
+                                                           fixed);
         ServiceElement service = create(serviceDetails, deployment);
         if(logger.isTraceEnabled())
             logger.trace("Created ServiceElement\n=================\n{}\n=================\nFrom [{}]",
@@ -265,7 +274,7 @@ public final class ServiceElementFactory  {
 
         String serviceName = serviceDetails.name;
 
-        if(serviceDetails.maxPerNode>0) {
+        if(!serviceDetails.fixed && serviceDetails.maxPerNode>0) {
             service.setMaxPerMachine(serviceDetails.maxPerNode);
         }
         if(serviceDetails.architecture!=null || serviceDetails.operatingSystems.length>0) {
@@ -308,7 +317,7 @@ public final class ServiceElementFactory  {
         sbc.addAdditionalEntries(new DeployInfo(deployment.getType().name(), deployment.getUnique().name(), deployment.getIdle()));
         service.setServiceBeanConfig(sbc);
         service.setPlanned(serviceDetails.planned);
-        if(deployment.getStrategy().equals(Deployment.Strategy.FIXED))
+        if(serviceDetails.fixed)
             service.setProvisionType(ServiceElement.ProvisionType.FIXED);
 
         /* If the service is to be forked, create an ExecDescriptor */
@@ -421,6 +430,7 @@ public final class ServiceElementFactory  {
         final String[] ips;
         final String[] excludeIps;
         final String webster;
+        final boolean fixed;
 
         private ServiceDetails(String name,
                                String[] interfaces,
@@ -435,7 +445,8 @@ public final class ServiceElementFactory  {
                                String[] operatingSystems,
                                String[] ips,
                                String[] excludeIps,
-                               String webster) {
+                               String webster,
+                               boolean fixed) {
             this.name = name;
             this.interfaces = interfaces;
             this.codebaseJars = codebaseJars;
@@ -450,6 +461,7 @@ public final class ServiceElementFactory  {
             this.ips = ips;
             this.excludeIps = excludeIps;
             this.webster = webster;
+            this.fixed = fixed;
         }
     }
 }

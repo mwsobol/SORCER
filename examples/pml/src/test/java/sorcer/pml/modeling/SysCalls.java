@@ -103,7 +103,7 @@ public class SysCalls {
 				outVal("cylinder/height")));
         add(pm, caller);
 
-		Context result = (Context) eval(pm, "volume");
+		Context result = (Context) value(pm, "volume");
 //		Context result = (Context) invoke(pm, "volume");
         // get from the result the volume of cylinder and assign to y parameter
         assertTrue("EXPECTED '0' return eval, GOT: "+value(result, "exit/eval"),
@@ -121,11 +121,11 @@ public class SysCalls {
 
 	@Test
 	public void systemCallerTask() throws Exception {
-		String riverVersion = System.getProperty("river.version");
-		String sorcerVersion = System.getProperty("sorcer.version");
-		String slf4jVersion = System.getProperty("slf4j.version");
-		String logbackVersion = System.getProperty("logback.version");
-		String buildDir = System.getProperty("project.build.dir");
+		String riverVersion = property("river.version");
+		String sorcerVersion = property("sorcer.version");
+		String slf4jVersion = property("slf4j.version");
+		String logbackVersion = property("logback.version");
+		String buildDir = property("project.build.dir");
 
 		String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator

@@ -46,7 +46,7 @@ abstract public class ShellCmd {
 
 	protected static final int MAX_MATCHES = 64;
 
-	abstract public void execute() throws Throwable;
+	abstract public void execute(String... args) throws Throwable;
 
 	public String getCommandWord() {
 		return COMMAND_NAME;

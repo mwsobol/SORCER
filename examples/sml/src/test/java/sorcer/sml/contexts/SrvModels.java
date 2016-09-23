@@ -11,6 +11,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Block;
 import sorcer.service.Context;
@@ -26,7 +27,6 @@ import static sorcer.co.operator.*;
 import static sorcer.co.operator.asis;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.result;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
@@ -55,19 +55,20 @@ public class SrvModels {
     @Test
     public void lambdaInvokerWithScopel() throws Exception {
 
-
         Context scope = context(ent("x1", 20.0), ent("y1", 40.0));
 
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                proc(invoker("lambda", (cxt) -> {
-                            return (double) value(cxt, "x")
-                                    + (double) value(cxt, "y")
-                                    + (double) value(cxt, "y1")
-                                    + 30;
-                        },
-                        scope, args("x", "y"))));
-        logger.info("invoke eval: " + eval(mo, "lambda"));
+            proc(invoker("lambda", (cxt) -> {
+                    return (double) value(cxt, "x")
+                        + (double) value(cxt, "y")
+                        + (double) value(cxt, "y1")
+                        + 30;
+                },
+                scope, args("x", "y"))));
+//        logger.info("invoke eval: " + eval(mo, "lambda"));
         assertEquals(eval(mo, "lambda"), 100.0);
+        assertEquals(eval(ent("lambda", mo)), 100.0);
+        assertEquals(result(ent("lambda", mo)), ent("lambda", 100.0));
     }
 
     @Test
@@ -180,7 +181,7 @@ public class SrvModels {
 
     @Test
     public void serviceResponses() throws Exception {
-        // get responses from a service model
+        // get response from a service model
 
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
@@ -203,7 +204,7 @@ public class SrvModels {
 
     @Test
     public void serviceResponses2() throws Exception {
-        // get responses from a service model
+        // get response from a service model
 
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
@@ -226,7 +227,7 @@ public class SrvModels {
     @Test
     public void evaluateServiceModel() throws Exception {
 
-        // get responses from a service model
+        // get response from a service model
 
         Model mdl = srvModel(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),

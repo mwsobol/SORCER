@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * 
  * <p>The ClassLoader hierarchy when starting a Rio service is as follows :
  * <br>
-<table cellpadding="2" cellspacing="2" border="0"
+<dataTable cellpadding="2" cellspacing="2" border="0"
  style="text-align: left; width: 50%;">
   <tbody>
     <tr>
@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
       </td>
     </tr>
   </tbody>
-</table>
+</dataTable>
  <span style="font-weight: bold;">AppCL</span> - Contains the main()
 class of the container. Main-Class in
 manifest points to <span style="font-family: monospace;">com.sun.jini.start.ServiceStarter</span><br>

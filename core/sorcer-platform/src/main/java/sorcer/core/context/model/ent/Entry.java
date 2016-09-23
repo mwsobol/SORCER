@@ -38,7 +38,8 @@ import static sorcer.eo.operator.add;
 /**
  * @author Mike Sobolewski
  */
-public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, EvaluationComponent, SupportComponent, Setter, Reactive<T> {
+public class
+Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, EvaluationComponent, SupportComponent, Setter, Reactive<T> {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
@@ -272,7 +273,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 		try {
 			if (_2 instanceof Evaluation && ((Evaluation) _2).asis() != null) {
 				if (this == _2) {
-					return "[" + _1 + ":" + ((Evaluation)_2).getName() + "x]";  // loop
+					return "[" + _1 + "=" + ((Evaluation)_2).getName() + "x]";  // loop
 				}
 				en = ((Evaluation) _2).asis().toString();
 			} else {
@@ -283,7 +284,7 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		return "[" + _1 + ":" + en + "]";
+		return "[" + _1 + "=" + en + "]";
 	}
 
 	public Entry(String path, T value, boolean isPersistant, int index) {
@@ -369,11 +370,6 @@ public class Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependen
 
 	public ArgSet getArgs() {
 		return null;
-	}
-
-	@Override
-	public String name() {
-		return _1;
 	}
 
 	@Override

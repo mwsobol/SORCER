@@ -33,8 +33,8 @@ import sorcer.core.provider.ProviderRuntime;
 import sorcer.service.Context;
 import sorcer.service.Exertion;
 import sorcer.service.ServiceExertion;
+import sorcer.util.DataTable;
 import sorcer.util.ModelTable;
-import sorcer.util.Table;
 
 import java.io.IOException;
 
@@ -360,10 +360,10 @@ public class SorcerDatabaseViews {
 		 */
 		@Override
 		public Object entryToObject(Object keyInput, Object object) {
-			Table table = null;
+			DataTable table = null;
 			MarshalledData md = (MarshalledData)object;
 			try {
-				table = (Table)md.get();
+				table = (DataTable)md.get();
 				table.setId(((UuidKey)keyInput).getId());
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -378,7 +378,7 @@ public class SorcerDatabaseViews {
 		 */
 		@Override
 		public Object objectToKey(Object object) {
-			return new UuidKey(((Table)object).getId());
+			return new UuidKey(((DataTable)object).getId());
 		}
 	}
 		

@@ -38,7 +38,7 @@ import net.jini.config.ConfigurationException;
  <li><span
  style="font-weight: bold; font-family: courier new,courier,monospace; color: rgb(0, 0, 0);"><a
  name="registryPort_"></a>registryPort</span>
- <table style="text-align: left; width: 100%;" border="0"
+ <dataTable style="text-align: left; width: 100%;" border="0"
  cellspacing="2" cellpadding="2">
  <tbody>
  <tr>
@@ -66,7 +66,7 @@ import net.jini.config.ConfigurationException;
  </td>
  </tr>
  </tbody>
- </table>
+ </dataTable>
  </li>
  </ul>
  <code></code>
@@ -74,7 +74,7 @@ import net.jini.config.ConfigurationException;
  <li><span
  style="font-weight: bold; font-family: courier new,courier,monospace; color: rgb(0, 0, 0);"><a
  name="registryRetries_"></a>registryRetries</span>
- <table style="text-align: left; width: 100%;" border="0"
+ <dataTable style="text-align: left; width: 100%;" border="0"
  cellspacing="2" cellpadding="2">
  <tbody>
  <tr>
@@ -106,7 +106,7 @@ import net.jini.config.ConfigurationException;
  </td>
  </tr>
  </tbody>
- </table>
+ </dataTable>
  </li>
  </ul>
 

@@ -195,7 +195,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 
     public ModelTable getTable(Uuid uuid) {
         try {
-            append(uuid, "table");
+            append(uuid, "dataTable");
             StoredMap<UuidKey, ModelTable> xrtMap = views.getTableMap();
             return xrtMap.get(new UuidKey(uuid));
         } finally {
@@ -387,7 +387,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 //			obj = getContext(uuid);
 //		else if (storeType == Store.exertion)
 //			obj = getMogram(uuid);
-//        else if (storeType == Store.table)
+//        else if (storeType == Store.dataTable)
 //            obj = getTable(uuid);
 //        else if (storeType == Store.object)
 			obj = getObject(uuid);
@@ -695,7 +695,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
         try {
             return getDatabaseURL(type, uuid);
         } catch (MalformedURLException e) {
-            throw new IllegalStateException("Couldn't parse object URL", e);
+            throw new IllegalStateException("Couldn't evaluate object URL", e);
         }
     }
 

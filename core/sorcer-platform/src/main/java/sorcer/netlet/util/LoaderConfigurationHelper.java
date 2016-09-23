@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Used by LoaderConfiguration and ScriptThread to load jars from path
+ * Used by LoaderConfiguration and ScripterThread to load jars from path
  * User: Pawel.Rubach
  * Date: 06.06.13
  * Time: 01:56
