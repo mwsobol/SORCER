@@ -48,7 +48,7 @@ public class DirCmd extends ShellCmd {
 
     private PrintStream out;
 
-	public void execute() throws Throwable {
+	public void execute(String... args) throws Throwable {
 		BufferedReader br = NetworkShell.getShellInputStream();
 		out = NetworkShell.getShellOutputStream();
         String input = shell.getCmd();

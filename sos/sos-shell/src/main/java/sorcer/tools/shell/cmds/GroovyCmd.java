@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sorcer.netlet.util.NetletClassLoader;
-import sorcer.netlet.util.ScriptThread;
+import sorcer.netlet.util.ScripterThread;
 import sorcer.tools.shell.INetworkShell;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
@@ -48,7 +48,7 @@ public class GroovyCmd extends ShellCmd {
 			+ "\n  -s   save the excution reult in file <output filename>";
 	}
 
-	private final static Logger logger = LoggerFactory.getLogger(ExertCmd.class
+	private final static Logger logger = LoggerFactory.getLogger(EvalCmd.class
 			.getName());
 
 	private String input;
@@ -69,7 +69,7 @@ public class GroovyCmd extends ShellCmd {
 		}
 	}
 
-	public void execute() throws Throwable {
+	public void execute(String... args) throws Throwable {
 		INetworkShell shell = NetworkShell.getInstance();
 		BufferedReader br = NetworkShell.getShellInputStream();
 		out = NetworkShell.getShellOutputStream();
@@ -118,7 +118,7 @@ public class GroovyCmd extends ShellCmd {
 			out.println("Missing script input filename!");
 			return;
 		}
-		ScriptThread et = new ScriptThread(sb.toString(), new NetletClassLoader(null, null, getClass().getClassLoader(), null));
+		ScripterThread et = new ScripterThread(sb.toString(), new NetletClassLoader(null, null, getClass().getClassLoader(), null));
 		et.start();
 		et.join();
 		Object outObject = et.getResult();

@@ -34,7 +34,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static sorcer.eo.operator.srvFi;
+import static sorcer.eo.operator.rFi;
 
 /**
  * Created by Mike Sobolewski on 6/14/15.
@@ -252,7 +252,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         Collection<ServiceFidelity<T>> fc = fidelities.values();
         for (ServiceFidelity sf : fc) {
             sf.setSelect(sf.get(0));
-            fl.add(srvFi(sf.getPath(), sf.getSelect().getName()));
+            fl.add(rFi(sf.getPath(), sf.getSelect().getName()));
         }
         return fl;
     }
@@ -262,7 +262,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
 		Iterator<Map.Entry<String, ServiceFidelity<T>>> it = fidelities.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry<String, ServiceFidelity<T>> me = it.next();
-			fl.add(srvFi(me.getKey(), me.getValue().getSelect().getName()));
+			fl.add(rFi(me.getKey(), me.getValue().getSelect().getName()));
 		}
         return fl;
     }

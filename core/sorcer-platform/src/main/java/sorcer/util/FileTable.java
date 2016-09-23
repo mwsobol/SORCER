@@ -18,7 +18,6 @@ package sorcer.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.provider.Provider;
 import sorcer.service.Identity;
 import sorcer.service.Signature;
 
@@ -71,7 +70,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	protected boolean lazy;
 
-	protected Table.Cell cellType;
+	protected DataTable.Cell cellType;
 
 	protected static int count = 0;
 
@@ -285,7 +284,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Returns the output file for this table.
+	 * Returns the output file for this dataTable.
 	 * </p>
 	 *
 	 * @return the inputFile
@@ -296,7 +295,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output file for this table.
+	 * Sets the output file for this dataTable.
 	 * </p>
 	 *
 	 * @param inputFile
@@ -308,7 +307,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Returns the output file for this table.
+	 * Returns the output file for this dataTable.
 	 * </p>
 	 *
 	 * @return the outputFile
@@ -319,7 +318,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output file for this table.
+	 * Sets the output file for this dataTable.
 	 * </p>
 	 *
 	 * @param outputFile
@@ -331,7 +330,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output URL for this table.
+	 * Sets the output URL for this dataTable.
 	 * </p>
 	 *
 	 * @return the outputURL
@@ -342,7 +341,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output URL for this table.
+	 * Sets the output URL for this dataTable.
 	 * </p>
 	 *
 	 * @param outputURL
@@ -354,7 +353,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the input URL for this table.
+	 * Sets the input URL for this dataTable.
 	 * </p>
 	 *
 	 * @return the inputURL
@@ -365,7 +364,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the input URL for this table.
+	 * Sets the input URL for this dataTable.
 	 * </p>
 	 *
 	 * @param inputURL
@@ -401,7 +400,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Returns the input delimiter for this table.
+	 * Returns the input delimiter for this dataTable.
 	 * </p>
 	 *
 	 * @return the inDelimiter
@@ -412,7 +411,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the input delimiter for this table.
+	 * Sets the input delimiter for this dataTable.
 	 * </p>
 	 *
 	 * @param inDelimiter
@@ -424,7 +423,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Returns the output delimiter for this table.
+	 * Returns the output delimiter for this dataTable.
 	 * </p>
 	 *
 	 * @return the outDelimiter
@@ -435,7 +434,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output delimiter for this table.
+	 * Sets the output delimiter for this dataTable.
 	 * </p>
 	 *
 	 * @param outDelimiter
@@ -524,7 +523,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	}
 
 	/**
-	 * Returns the key of last recorded entry in this data table.
+	 * Returns the key of last recorded entry in this data dataTable.
 	 *
 	 * @return the last Entry
 	 */
@@ -534,9 +533,9 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 
 	/**
-	 * Returns the last recorded eval in this data table.
+	 * Returns the last recorded eval in this data dataTable.
 	 *
-	 * @return the last table entry
+	 * @return the last dataTable entry
 	 */
 	public V getLastValue() throws IOException {
 		return get(lastKey);
@@ -554,7 +553,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	}
 
 	/**
-	 * Returns the number of rows in this data table.
+	 * Returns the number of rows in this data dataTable.
 	 *
 	 * @return the number of rows in the model
 	 */

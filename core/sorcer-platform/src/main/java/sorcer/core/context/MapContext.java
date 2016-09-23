@@ -9,8 +9,11 @@ public class MapContext extends ServiceContext {
 
     public Direction direction;
 
+    public boolean isRedundant = false;
+
     public MapContext() {
         super();
+
     }
 
     /**

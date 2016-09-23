@@ -112,7 +112,7 @@ public class UtilTest {
 		assertEquals(table.get(key1), "String11111");
 		assertEquals(table.get(key2), "String22222");
 
-//		table.cleanup();
+//		dataTable.cleanup();
 		table.close();
 
 		File obf = new File("test.obf");
@@ -138,7 +138,7 @@ public class UtilTest {
 		assertEquals(table.getRow(1), "String11111");
 		assertEquals(table.getRow(2), "String22222");
 
-//		table.cleanup();
+//		dataTable.cleanup();
 		table.close();
 
 		File obf = new File("test.obf");

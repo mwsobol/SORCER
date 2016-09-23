@@ -47,7 +47,7 @@ public class ProcModels {
 
 
 	@Before
-	public void initParModel() throws Exception {
+	public void initProcModel() throws Exception {
 
 		pm = new ProcModel();
 		x = proc("x", 10.0);
@@ -95,7 +95,7 @@ public class ProcModels {
 
 //		eval(model, "j1", proc("x1", 10.0), proc("x2", 50.0)).equals(400.0);
 
-		assertTrue(value(model, "j1", proc("x1", 10.0), proc("x2", 50.0)).equals(400.0));
+		assertTrue(eval(model, "j1", proc("x1", 10.0), proc("x2", 50.0)).equals(400.0));
 
 //		// equivalent to the above line
 //		assertEquals(
@@ -145,10 +145,10 @@ public class ProcModels {
 		add(pm, proc("y", 20.0));
 		add(pm, proc("add", invoker("x + y", args("x", "y"))));
 
-		assertTrue(value(pm, "x").equals(10.0));
-		assertTrue(value(pm, "y").equals(20.0));
+		assertTrue(eval(pm, "x").equals(10.0));
+		assertTrue(eval(pm, "y").equals(20.0));
 		logger.info("add eval: " + eval(pm, "add"));
-		assertTrue(value(pm, "add").equals(30.0));
+		assertTrue(eval(pm, "add").equals(30.0));
 
         responseUp(pm, "add");
 		logger.info("pm context eval: " + eval(pm));
@@ -156,8 +156,8 @@ public class ProcModels {
 
 		setValue(pm, "x", 100.0);
 		setValue(pm, "y", 200.0);
-		logger.info("add eval: " + value(pm, "add"));
-		assertTrue(value(pm, "add").equals(300.0));
+		logger.info("add eval: " + eval(pm, "add"));
+		assertTrue(eval(pm, "add").equals(300.0));
 
 		assertTrue(eval(pm, proc("x", 200.0), proc("y", 300.0)).equals(500.0));
 
@@ -169,9 +169,9 @@ public class ProcModels {
 		ProcModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
 				proc("add", invoker("x + y", args("x", "y"))));
 
-		assertTrue(value(pm, "x").equals(10.0));
-		assertTrue(value(pm, "y").equals(20.0));
-		assertTrue(value(pm, "add").equals(30.0));
+		assertTrue(eval(pm, "x").equals(10.0));
+		assertTrue(eval(pm, "y").equals(20.0));
+		assertTrue(eval(pm, "add").equals(30.0));
 
 		// now evaluate model for its target       
         responseUp(pm, "add");
@@ -188,32 +188,32 @@ public class ProcModels {
 		logger.info("proc x: " + x);
 		setValue(x, 20.0);
 		logger.info("val x: " + eval(x));
-		logger.info("val x: " + value(pm, "x"));
+		logger.info("val x: " + eval(pm, "x"));
 
 		put(pm, "y", 40.0);
 
-		assertTrue(value(pm, "x").equals(20.0));
-		assertTrue(value(pm, "y").equals(40.0));
-		assertTrue(value(pm, "add").equals(60.0));
+		assertTrue(eval(pm, "x").equals(20.0));
+		assertTrue(eval(pm, "y").equals(40.0));
+		assertTrue(eval(pm, "add").equals(60.0));
 
         responseUp(pm, "add");
 		assertEquals(eval(pm), 60.0);
 
 		add(pm, proc("x", 10.0), proc("y", 20.0));
-		assertTrue(value(pm, "x").equals(10.0));
-		assertTrue(value(pm, "y").equals(20.0));
+		assertTrue(eval(pm, "x").equals(10.0));
+		assertTrue(eval(pm, "y").equals(20.0));
 
-		assertTrue(value(pm, "add").equals(30.0));
+		assertTrue(eval(pm, "add").equals(30.0));
 
 		response(pm, "add");
 		assertTrue(eval(pm).equals(30.0));
 
 		// with new arguments, closure
-		assertTrue(value(pm, proc("x", 20.0), proc("y", 30.0)).equals(50.0));
+		assertTrue(eval(pm, proc("x", 20.0), proc("y", 30.0)).equals(50.0));
 
 		add(pm, proc("z", invoker("(x * y) + add", args("x", "y", "add"))));
-		logger.info("z eval: " + value(pm, "z"));
-		assertTrue(value(pm, "z").equals(650.0));
+		logger.info("z eval: " + eval(pm, "z"));
+		assertTrue(eval(pm, "z").equals(650.0));
 
 	}
 
@@ -231,8 +231,8 @@ public class ProcModels {
 		put(pc, "x", 10.0);
 		put(pc, "x1", 20.0);
 
-		logger.info("y3 eval: " + value(pc, "y3"));
-		assertEquals(value(pc, "y3"), 1010.0);
+		logger.info("y3 eval: " + eval(pc, "y3"));
+		assertEquals(eval(pc, "y3"), 1010.0);
 	}
 
 
@@ -270,7 +270,7 @@ public class ProcModels {
 		// persistable just indicates that argument is persistent,
 		// for example when eval(proc) is invoked
 		Proc dbp1 = persistent(proc("design/in", 25.0));
-		Proc dbp2 = dbPar("url", "myUrl1");
+		Proc dbp2 = dbEnt("url", "myUrl1");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
@@ -331,8 +331,8 @@ public class ProcModels {
 		assertTrue(eval(x2).equals(55.0));
 
 		ProcModel pc = procModel(x1, x2);
-		assertTrue(value(pc, "x1").equals(45.0));
-		assertTrue(value(pc, "x2").equals(55.0));
+		assertTrue(eval(pc, "x1").equals(45.0));
+		assertTrue(eval(pc, "x2").equals(55.0));
 
 	}
 
@@ -414,7 +414,7 @@ public class ProcModels {
 
 		// map args are aliased args
 		ProcModel pc = procModel(x1p, x2p, j1p);
-		logger.info("y eval: " + value(pc, "y"));
+		logger.info("y eval: " + eval(pc, "y"));
 
 	}
 
@@ -549,7 +549,7 @@ public class ProcModels {
 
 		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
 		add(pm, iloop);
-		assertEquals(value(pm, "iloop"), 48);
+		assertEquals(eval(pm, "iloop"), 48);
 
 	}
 
@@ -571,7 +571,7 @@ public class ProcModels {
 					x.setValue((Double) x.getValue() + 1.0);
 					y.setValue((Double) y.getValue() + 1.0);
 				}
-				return (Double) eval(x) + (Double) eval(y) + (Double)value(pm, "z");
+				return (Double) eval(x) + (Double) eval(y) + (Double)eval(pm, "z");
 			}
 		};
 

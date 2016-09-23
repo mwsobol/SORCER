@@ -1,7 +1,6 @@
 package sorcer.arithmetic.tester.provider.impl;
 
 import static sorcer.eo.operator.attPath;
-import static sorcer.eo.operator.path;
 import static sorcer.eo.operator.revalue;
 
 import java.io.Serializable;

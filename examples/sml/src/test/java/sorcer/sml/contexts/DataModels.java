@@ -182,7 +182,7 @@ public class DataModels {
         add(cxt, inVal("arg/x7", 1.7));
         add(cxt, outVal("arg/y", 1.8));
 
-        // the default tagContext (attribute) 'tag'
+        // the default tagAssociation (attribute) 'tag'
         tag(cxt, "arg/x1", "tag|set1");
         tag(cxt, "arg/x2", "tag|set1");
         assertEquals(valuesAt(cxt, "tag|set1"), list(1.2, 1.1));
@@ -205,12 +205,12 @@ public class DataModels {
         tag(cxt, "arg/y", "dnt|open|text|mesh");
         assertTrue(valueAt(cxt, "dnt|open|text|mesh").equals(1.8));
 
-        // still the previous tagContext 'tag' holds with 'triplet'
+        // still the previous tagAssociation 'tag' holds with 'triplet'
         // for the same paths: arg/x1 and arg/x2
         assertEquals(valuesAt(cxt, "tag|set2"), list(1.4, 1.2));
 
         // custom annotation with the association: "person|first|last"
-        tagContext(cxt, "person|first|last");
+        tagAssociation(cxt, "person|first|last");
         add(cxt, ent("arg/Mike/height", 174.0, "person|Mike|Sobolewski"));
         add(cxt, inVal("arg/John/height", 178.0, "person|John|Doe"));
         assertTrue(valueAt(cxt, "person|Mike|Sobolewski").equals(174.0));

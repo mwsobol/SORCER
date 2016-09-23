@@ -22,6 +22,8 @@ import sorcer.service.modeling.ServiceModel;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Any named configuration parameter value in particular a free variable.
@@ -73,7 +75,7 @@ public interface Arg extends Serializable {
 
 	public static Object getValue(Arg[] args, String path) throws EvaluationException, RemoteException {
 		for (Arg arg : args) {
-			if (arg instanceof Callable && ((Callable)arg).name().equals(path))
+			if (arg instanceof Callable && arg.getName().equals(path))
 				return ((Callable)arg).call(args);
 		}
 		return null;
@@ -81,14 +83,14 @@ public interface Arg extends Serializable {
 
 	public static void setArgValue(Arg[] args, String path, Object value) throws SetterException, RemoteException {
 		for (Arg arg : args) {
-			if (arg instanceof Callable && ((Callable)arg).name().equals(path))
+			if (arg instanceof Callable && arg.getName().equals(path))
 				((Setter)arg).setValue(value);
 		}
 	}
 
 	public static Callable getEntry(Arg[] args, String name) {
 		for (Arg arg : args) {
-			if (arg instanceof Callable && ((Callable) arg).name().equals(name))
+			if (arg instanceof Callable && arg.getName().equals(name))
 				return (Callable)arg;
 		}
 		return null;

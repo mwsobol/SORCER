@@ -3032,7 +3032,7 @@ public class GenericUtil {
 		}
 
 		/*
-		 * Build the table only if we have file URLs. This happens if the
+		 * Build the dataTable only if we have file URLs. This happens if the
 		 * ClassLoader is a Rio classloader, and triggers the approach for the
 		 * DelegateLauncher to create a URLClassLoader. If there are no file
 		 * URLs. the CLASSPATH environment variable will be used.

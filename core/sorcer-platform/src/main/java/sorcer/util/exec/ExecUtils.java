@@ -188,12 +188,12 @@ public class ExecUtils {
 		}
 		process.waitFor();
 		int exitValue = process.exitValue();
-        logger.info("exitValue: " + exitValue);
+        logger.debug("exitValue: " + exitValue);
 
 		if (stdout != null) {
 			stdout.throwIfHadException();
 			out = new String(stdout.getResult());
-            logger.info("out: " + out);
+            logger.debug("out: " + out);
         }
 		stderr.throwIfHadException();
 		String err = new String(stderr.getResult());
@@ -269,6 +269,18 @@ public class ExecUtils {
 		 *            the process that exited.
 		 */
 		void processExited(Process process);
+	}
+
+	public static String sysOut(CmdResult result) {
+		return result.out;
+	}
+
+	public static String sysErr(CmdResult result) {
+		return result.err;
+	}
+
+	public static int exitValue(CmdResult result) {
+		return result.exitValue;
 	}
 
 	/**

@@ -38,7 +38,7 @@ import java.util.*;
 import java.util.Collections;
 
 /**
- * This is a Java class that is an implementation of table of objects that uses a 
+ * This is a Java class that is an implementation of dataTable of objects that uses a
  * <code>List</code> of <code>Lists</code> to store the cell data objects. It 
  * implements the interface <code>Serializable</code>.
  * 
@@ -47,12 +47,12 @@ import java.util.Collections;
  * @see Serializable
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class Table implements ModelTable {
+public class DataTable implements ModelTable {
 	/** Serial version user identification number */
 	static final long serialVersionUID = -1968282524723965792L;
 	/** Logger */
-	protected static Logger logger = LoggerFactory.getLogger(Table.class.getName());
-	/** Encoding for the table */
+	protected static Logger logger = LoggerFactory.getLogger(DataTable.class.getName());
+	/** Encoding for the dataTable */
 	protected static String ENCODING = "UTF-8";
 	/**
 	 * The <code>List</code> of <code>Lists</code> of <code>Object</code>
@@ -70,30 +70,30 @@ public class Table implements ModelTable {
 		FEET, INCH, METER
 	}
 
-	/* Enumeration type for table cell */
+	/* Enumeration type for dataTable cell */
 	public enum Cell {
 		STRING, FLOAT, DOUBLE, INTEGER, LONG, SERIALIZED, MARSHALED
 	}
 
-	/* List of List that defines a table */
+	/* List of List that defines a dataTable */
 	protected List<List<?>> dataList;
 
-	// Input table properties
-	/* Input table file name */
+	// Input dataTable properties
+	/* Input dataTable file name */
 	protected String inputFileName;
-	/* Input table URL */
+	/* Input dataTable URL */
 	protected URL inputTableURL;
-	/* Input table delimiter */
+	/* Input dataTable delimiter */
 	protected String inputTableDelimiter;
 
-	// Output table properties
-	/* Output table file name */
+	// Output dataTable properties
+	/* Output dataTable file name */
 	protected String outputFileName;
-	/* Output table URL */
+	/* Output dataTable URL */
 	protected URL outputTableURL;
-	/* Output table delimiter */
+	/* Output dataTable delimiter */
 	protected String outputTableDelimiter = " ";
-	/* output table storage signature 
+	/* output dataTable storage signature
 	 * a signature in the format 'sos://self' indicates
 	 * self storage, the storage by the parametric model itself.
 	 */
@@ -123,10 +123,10 @@ public class Table implements ModelTable {
 	protected static int count = 0;
 
 	/**
-	 * Constructs a <code>Table</code> which is a table of zero columns and zero
+	 * Constructs a <code>Table</code> which is a dataTable of zero columns and zero
 	 * rows.
 	 */
-	public Table() {
+	public DataTable() {
 		this(0, 0);
 		name = "undefined" + count++;
 	}
@@ -146,13 +146,13 @@ public class Table implements ModelTable {
 	 * <code>columnCount</code> of <code>null</code> object values.
 	 * 
 	 * @param rowCount
-	 *            the number of rows the table holds
+	 *            the number of rows the dataTable holds
 	 * @param columnCount
-	 *            the number of columns the table holds
+	 *            the number of columns the dataTable holds
 	 * 
 	 * @see #setValueAt
 	 */
-	public Table(int rowCount, int columnCount) {
+	public DataTable(int rowCount, int columnCount) {
 		this(newList(columnCount), rowCount);
 	}
 
@@ -166,11 +166,11 @@ public class Table implements ModelTable {
 	 *            <code>list</code> containing the names of the new columns; if
 	 *            this is <code>null</code> then the model has no columns
 	 * @param rowCount
-	 *            the number of rows the table holds
+	 *            the number of rows the dataTable holds
 	 * @see #setDataList
 	 * @see #setValueAt
 	 */
-	public Table(List<?> columnNames, int rowCount) {
+	public DataTable(List<?> columnNames, int rowCount) {
 		id = UuidFactory.generate();
 		setDataList(newList(rowCount), columnNames);
 	}
@@ -185,53 +185,53 @@ public class Table implements ModelTable {
 	 *            <code>array</code> containing the names of the new columns; if
 	 *            this is <code>null</code> then the model has no columns
 	 * @param rowCount
-	 *            the number of rows the table holds
+	 *            the number of rows the dataTable holds
 	 * @see #setDataList
 	 * @see #setValueAt
 	 */
-	public Table(Object[] columnNames, int rowCount) {
+	public DataTable(Object[] columnNames, int rowCount) {
 		this(convertToList(columnNames), rowCount);
 	}
 
 	/**
-	 * Constructs a <code>Table</code> and initializes the table by passing
+	 * Constructs a <code>Table</code> and initializes the dataTable by passing
 	 * <code>data</code> and <code>columnNames</code> to the
 	 * <code>setDataList</code> method.
 	 * 
 	 * @param data
-	 *            the data of the table, a <code>List</code> of
+	 *            the data of the dataTable, a <code>List</code> of
 	 *            <code>List</code>s of <code>Object</code> values
 	 * @param columnNames
 	 *            <code>list</code> containing the names of the new columns
 	 * @see #getDataList
 	 * @see #setDataList
 	 */
-	public Table(List<List<?>> data, List<?> columnNames) {
+	public DataTable(List<List<?>> data, List<?> columnNames) {
 		setDataList(data, columnNames);
 	}
 
 	/**
-	 * Constructs a <code>DefaultTableModel</code> and initializes the table by
+	 * Constructs a <code>DefaultTableModel</code> and initializes the dataTable by
 	 * passing <code>data</code> and <code>columnNames</code> to the
 	 * <code>setDataList</code> method. The first index in the
 	 * <code>Object[][]</code> array is the row index and the second is the
 	 * column index.
 	 * 
 	 * @param data
-	 *            the data of the table
+	 *            the data of the dataTable
 	 * @param columnNames
 	 *            the names of the columns
 	 * @see #getDataList
 	 * @see #setDataList
 	 */
-	public Table(Object[][] data, Object[] columnNames) {
+	public DataTable(Object[][] data, Object[] columnNames) {
 		id = UuidFactory.generate();
 		setDataList(data, columnNames);
 	}
 
 	/**
 	 * Returns the <code>List</code> of <code>Lists</code> that contains the
-	 * table's data values. The lists contained in the outer list are each a
+	 * dataTable's data values. The lists contained in the outer list are each a
 	 * single row of values. In other words, to get to the cell at row 1, column
 	 * 5:
 	 * <p>
@@ -446,7 +446,7 @@ public class Table implements ModelTable {
 	 * @param to
 	 *            the destination of the rows to be moved
 	 * @exception ArrayIndexOutOfBoundsException
-	 *                if any of the elements would be moved out of the table's
+	 *                if any of the elements would be moved out of the dataTable's
 	 *                range
 	 * 
 	 */
@@ -640,7 +640,7 @@ public class Table implements ModelTable {
 	}
 
 	/**
-	 * Returns the number of rows in this data table.
+	 * Returns the number of rows in this data dataTable.
 	 * 
 	 * @return the number of rows in the model
 	 */
@@ -652,7 +652,7 @@ public class Table implements ModelTable {
 	}
 
 	/**
-	 * Returns the number of columns in this data table.
+	 * Returns the number of columns in this data dataTable.
 	 * 
 	 * @return the number of columns in the model
 	 */
@@ -733,9 +733,9 @@ public class Table implements ModelTable {
 		return getValueAtAsDouble(row, columnIndexOf(columnName));
 	}
 
-	public Table getValuesSuchThat(String colName1, String col1Value, 
-			String colName2, String col2Value){
-		Table qTable = new Table();
+	public DataTable getValuesSuchThat(String colName1, String col1Value,
+									   String colName2, String col2Value){
+		DataTable qTable = new DataTable();
 		int col1Idx = columnIndexOf(colName1);
 		int col2Idx = columnIndexOf(colName2);
 
@@ -769,8 +769,8 @@ public class Table implements ModelTable {
 		return false;
 	}
 	
-	public Table getValuesSuchThat(String colName1, String col1Value){
-		Table qTable = new Table();
+	public DataTable getValuesSuchThat(String colName1, String col1Value){
+		DataTable qTable = new DataTable();
 		int col1Idx = columnIndexOf(colName1);
 		if (col1Idx < 0) return qTable;
 		if (columnIdentifiers != null)qTable.setColumnIdentifiers(columnIdentifiers);
@@ -784,8 +784,8 @@ public class Table implements ModelTable {
 		return qTable;
 	}
 
-	public Table getValuesSuchThat(String colName1, Integer col1Value){
-		Table qTable = new Table();
+	public DataTable getValuesSuchThat(String colName1, Integer col1Value){
+		DataTable qTable = new DataTable();
 		int col1Idx = columnIndexOf(colName1);
 
 		if (columnIdentifiers != null)qTable.setColumnIdentifiers(columnIdentifiers);
@@ -896,7 +896,7 @@ public class Table implements ModelTable {
 			writeToFile(new File(outputFileName));
 		} else {
 			throw new EvaluationException(
-					"No output file specified for the parametric table: "
+					"No output file specified for the parametric dataTable: "
 							+ name);
 		}
 	}
@@ -945,7 +945,7 @@ public class Table implements ModelTable {
 			pw.flush();
 			pw.close();
 		} catch (IOException e) {
-			throw new EvaluationException("No directory for writing a table: " + file, e);
+			throw new EvaluationException("No directory for writing a dataTable: " + file, e);
 		}
 	}
 
@@ -954,7 +954,7 @@ public class Table implements ModelTable {
 			return writeToURL(outputTableURL);
 		} else {
 			throw new EvaluationException(
-					"No output URL specified for the parametric table: " + name);
+					"No output URL specified for the parametric dataTable: " + name);
 		}
 	}
 
@@ -969,7 +969,7 @@ public class Table implements ModelTable {
 		HttpURLConnection con = null;;
 		PrintWriter pw = null;
 		BufferedReader is = null;
-		logger.info("wrtite table to: " + url);
+		logger.info("wrtite dataTable to: " + url);
 		try {
 			con = (HttpURLConnection) url.openConnection();
 			con.setDoOutput(true);
@@ -978,7 +978,7 @@ public class Table implements ModelTable {
 			con.setRequestProperty("Content-Type", "text/plain");
 
 			pw = new PrintWriter(con.getOutputStream());
-			// write the parametric table
+			// write the parametric dataTable
 			List<String> names = getColumnNames();
 			for (int i = 0; i < names.size() - 1; i++) {
 				pw.print(names.get(i));
@@ -1095,9 +1095,9 @@ public class Table implements ModelTable {
 	}
 
 	/**
-	 * Describe the table contents and table input and output sources.
+	 * Describe the dataTable contents and dataTable input and output sources.
 	 * 
-	 * @return a table description
+	 * @return a dataTable description
 	 */
 	public String describe() {
 		StringBuilder sb = null;
@@ -1109,18 +1109,18 @@ public class Table implements ModelTable {
 	}
 
 	/**
-	 * Describe the table input and output sources.
+	 * Describe the dataTable input and output sources.
 	 * 
-	 * @return a table in/out sources description
+	 * @return a dataTable in/out sources description
 	 */
 	public String describe(StringBuilder sb) {
-		sb.append("parametric table: " + (inputFileName != null ? inputFileName : "")
+		sb.append("parametric dataTable: " + (inputFileName != null ? inputFileName : "")
 				+ (inputTableURL != null ? inputTableURL : "" ));
 		sb.append("|").append(inputTableDelimiter != null ? "`" +  inputTableDelimiter + "`": "");
-		sb.append("\nresponse table: " + (outputFileName != null ? outputFileName : "" )
+		sb.append("\nresponse dataTable: " + (outputFileName != null ? outputFileName : "" )
 				+ (outputTableURL != null ? outputTableURL : ""));
 		sb.append("|").append(outputTableDelimiter != null ? "`" + outputTableDelimiter + "`" : "");
-		//sb.append("table responses: ").append(responseNames);
+		//sb.append("dataTable responses: ").append(responseNames);
 		return sb.toString();
 	}
 
@@ -1131,7 +1131,7 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * Returns the output file for this table.
+	 * Returns the output file for this dataTable.
 	 * </p>
 	 * 
 	 * @return the inputFile
@@ -1142,7 +1142,7 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output file for this table.
+	 * Sets the output file for this dataTable.
 	 * </p>
 	 * 
 	 * @param inputFile
@@ -1154,7 +1154,7 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * Returns the output file for this table.
+	 * Returns the output file for this dataTable.
 	 * </p>
 	 * 
 	 * @return the outputFile
@@ -1165,7 +1165,7 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output file for this table.
+	 * Sets the output file for this dataTable.
 	 * </p>
 	 * 
 	 * @param outputFile
@@ -1177,7 +1177,7 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output URL for this table.
+	 * Sets the output URL for this dataTable.
 	 * </p>
 	 * 
 	 * @return the outputURL
@@ -1188,7 +1188,7 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output URL for this table.
+	 * Sets the output URL for this dataTable.
 	 * </p>
 	 * 
 	 * @param outputURL
@@ -1200,7 +1200,7 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the input URL for this table.
+	 * Sets the input URL for this dataTable.
 	 * </p>
 	 * 
 	 * @return the inputURL
@@ -1211,7 +1211,7 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the input URL for this table.
+	 * Sets the input URL for this dataTable.
 	 * </p>
 	 * 
 	 * @param inputURL
@@ -1247,7 +1247,7 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * Returns the input delimiter for this table.
+	 * Returns the input delimiter for this dataTable.
 	 * </p>
 	 * 
 	 * @return the inDelimiter
@@ -1258,7 +1258,7 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the input delimiter for this table.
+	 * Sets the input delimiter for this dataTable.
 	 * </p>
 	 * 
 	 * @param inDelimiter
@@ -1270,7 +1270,7 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * Returns the output delimiter for this table.
+	 * Returns the output delimiter for this dataTable.
 	 * </p>
 	 * 
 	 * @return the outDelimiter
@@ -1281,7 +1281,7 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output delimiter for this table.
+	 * Sets the output delimiter for this dataTable.
 	 * </p>
 	 * 
 	 * @param outDelimiter
@@ -1293,7 +1293,7 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * Returns the name of this table.
+	 * Returns the name of this dataTable.
 	 * </p>
 	 * 
 	 * @return the name
@@ -1304,7 +1304,7 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * Assigns the name for this table.
+	 * Assigns the name for this dataTable.
 	 * </p>
 	 * 
 	 * @param name
@@ -1363,10 +1363,10 @@ public class Table implements ModelTable {
 
 	/**
 	 * <p>
-	 * A flag for lazy table population with data from a URL or file.
+	 * A flag for lazy dataTable population with data from a URL or file.
 	 * </p>
 	 * 
-	 * @return the lazy true for lazy table population 
+	 * @return the lazy true for lazy dataTable population
 	 */
 	public boolean isLazy() {
 		return lazy;
@@ -1409,7 +1409,7 @@ public class Table implements ModelTable {
 		this.fiColumnName = fiColumnName;
 	}
 
-	public Table trimFidelities() throws EvaluationException {
+	public DataTable trimFidelities() throws EvaluationException {
 		removeColumn(columnIdentifiers.indexOf(fiColumnName));
 		columnIdentifiers.remove(fiColumnName);
 		return this;
@@ -1417,12 +1417,12 @@ public class Table implements ModelTable {
 
 	@Override
 	public boolean equals(Object table) {
-		if (table instanceof Table) {
-			if (dataList.size() != ((Table) table).dataList.size())
+		if (table instanceof DataTable) {
+			if (dataList.size() != ((DataTable) table).dataList.size())
 				return false;
 
 			for (int i = 0; i < dataList.size(); i++) {
-				if (!dataList.get(i).equals(((Table) table).dataList.get(i))) {
+				if (!dataList.get(i).equals(((DataTable) table).dataList.get(i))) {
 					return false;
 				}
 			}
@@ -1500,27 +1500,27 @@ public class Table implements ModelTable {
 	}
 
 	public boolean compareTo(Object table, double delta) {
-		if (dataList.size() != ((Table) table).dataList.size())
+		if (dataList.size() != ((DataTable) table).dataList.size())
 			return false;
 
-		if (table instanceof Table) {
+		if (table instanceof DataTable) {
 			for (int i = 0; i < dataList.size(); i++) {
 				if (cellType == Cell.DOUBLE) {
 					for (int j = 0; j < dataList.get(i).size(); j++) {
 						if (dataList.get(i).get(j) instanceof Double) {
 							Object x = dataList.get(i).get(j);
-							Object y = ((Table) table).dataList.get(i).get(j);
+							Object y = ((DataTable) table).dataList.get(i).get(j);
 							if (Math.abs((double) x - (double) y) > delta) {
 								return false;
 							}
 						} else {
-							if (!dataList.get(i).get(j).equals(((Table) table).dataList.get(i).get(j))) {
+							if (!dataList.get(i).get(j).equals(((DataTable) table).dataList.get(i).get(j))) {
 								return false;
 							}
 						}
 					}
 				} else {
-					if (!dataList.get(i).equals(((Table) table).dataList.get(i))) {
+					if (!dataList.get(i).equals(((DataTable) table).dataList.get(i))) {
 						return false;
 					}
 				}

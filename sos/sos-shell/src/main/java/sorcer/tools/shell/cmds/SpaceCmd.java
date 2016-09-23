@@ -94,7 +94,7 @@ public class SpaceCmd extends ShellCmd {
 	public SpaceCmd() {
 	}
 
-	public void execute() throws RemoteException, MonitorException, ContextException {
+	public void execute(String... args) throws RemoteException, MonitorException, ContextException {
 		out = NetworkShell.getShellOutputStream();
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();

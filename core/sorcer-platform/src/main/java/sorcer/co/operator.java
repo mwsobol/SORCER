@@ -20,22 +20,19 @@ import org.rioproject.resolver.Artifact;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.resolver.ResolverHelper;
 import sorcer.co.tuple.*;
+import sorcer.core.SorcerConstants;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.FiEntry;
-import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MultiFiRequest;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.netlet.ScriptExerter;
+import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
-import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
@@ -43,7 +40,6 @@ import sorcer.service.modeling.Variability.Type;
 import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
-import sorcer.eo.operator.Args;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +52,6 @@ import java.util.*;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
-import static sorcer.eo.operator.context;
 import static sorcer.po.operator.invoker;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -68,7 +63,7 @@ public class operator {
 		return new Tuple1<T1>( x1 );
 	}
 
-	public static <T1> Tuple1<T1> tuple(T1 x1 ){
+	public static <T1> Tuple1<T1> t(T1 x1 ){
 		return new Tuple1<T1>( x1 );
 	}
 
@@ -76,7 +71,11 @@ public class operator {
 		return new Tuple2<T1,T2>( x1, x2 );
 	}
 
-	public static <T1,T2> Tuple2<T1,T2> tuple(T1 x1, T2 x2 ){
+	public static <T1,T2> Tuple2<T1,T2> t(T1 x1, T2 x2 ){
+		return new Tuple2<T1,T2>( x1, x2 );
+	}
+
+	public static <T1,T2> Tuple2<T1,T2> kv(T1 x1, T2 x2 ){
 		return new Tuple2<T1,T2>( x1, x2 );
 	}
 
@@ -84,7 +83,7 @@ public class operator {
 		return new Tuple3<T1,T2,T3>( x1, x2, x3 );
 	}
 
-	public static <T1,T2,T3> Tuple3<T1,T2,T3> tuple(T1 x1, T2 x2, T3 x3 ){
+	public static <T1,T2,T3> Tuple3<T1,T2,T3> t(T1 x1, T2 x2, T3 x3 ){
 		return new Tuple3<T1,T2,T3>( x1, x2, x3 );
 	}
 
@@ -92,7 +91,7 @@ public class operator {
 		return new Tuple4<T1,T2,T3,T4>( x1, x2, x3, x4 );
 	}
 
-	public static <T1,T2,T3,T4> Tuple4<T1,T2,T3,T4> tuple(T1 x1, T2 x2, T3 x3, T4 x4 ){
+	public static <T1,T2,T3,T4> Tuple4<T1,T2,T3,T4> t(T1 x1, T2 x2, T3 x3, T4 x4 ){
 		return new Tuple4<T1,T2,T3,T4>( x1, x2, x3, x4 );
 	}
 
@@ -100,7 +99,7 @@ public class operator {
 		return new Tuple5<T1,T2,T3,T4,T5>( x1, x2, x3, x4, x5 );
 	}
 
-	public static <T1,T2,T3,T4,T5> Tuple5<T1,T2,T3,T4,T5> tuple(T1 x1, T2 x2, T3 x3, T4 x4, T5 x5 ){
+	public static <T1,T2,T3,T4,T5> Tuple5<T1,T2,T3,T4,T5> t(T1 x1, T2 x2, T3 x3, T4 x4, T5 x5 ){
 		return new Tuple5<T1,T2,T3,T4,T5>( x1, x2, x3, x4, x5 );
 	}
 
@@ -108,7 +107,7 @@ public class operator {
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
 	}
 
-	public static <T1,T2,T3,T4,T5,T6> Tuple6<T1,T2,T3,T4,T5,T6> tuple(T1 x1, T2 x2, T3 x3, T4 x4, T5 x5, T6 x6 ){
+	public static <T1,T2,T3,T4,T5,T6> Tuple6<T1,T2,T3,T4,T5,T6> t(T1 x1, T2 x2, T3 x3, T4 x4, T5 x5, T6 x6 ){
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
 	}
 
@@ -154,7 +153,7 @@ public class operator {
 		return new ServiceSignature.In(pl.toArray(pa));
 	}
 
-	public static Path file(String filename) {
+	public static Path filePath(String filename) {
 		if(Artifact.isArtifact(filename)) {
 			try {
 				URL url = ResolverHelper.getResolver().getLocation(filename, "ntl");
@@ -245,11 +244,31 @@ public class operator {
 		return new Tuple2<T1, T2>(x1, x2);
 	}
 
-	public static <T1, T2, T3> Tuple3<T1, T2, T3> triplet(T1 x1, T2 x2, T3 x3) {
-		return new Tuple3<T1, T2, T3>(x1, x2, x3);
+	public static String path(List<String> attributes) {
+		if (attributes.size() == 0)
+			return null;
+		if (attributes.size() > 1) {
+			StringBuilder spr = new StringBuilder();
+			for (int i = 0; i < attributes.size() - 1; i++) {
+				spr.append(attributes.get(i)).append(SorcerConstants.CPS);
+			}
+			spr.append(attributes.get(attributes.size() - 1));
+			return spr.toString();
+		}
+		return attributes.get(0);
 	}
 
+	public static Path path(String path) {
+		return new Path(path);
+	}
 
+	public static Path path(String path, Object info) {
+		return new Path(path, info);
+	}
+
+	public static Path map(String path, Object info) {
+		return new Path(path, info, Path.Type.MAP);
+	}
 
 	public static <T> Entry<T> val(Path path, T value) {
 		Entry ent = new Entry<T>(path.path, value);
@@ -269,17 +288,28 @@ public class operator {
 		return entry;
 	}
 
-	public static Entry in(Entry entry) {
-		entry.setType(Type.INPUT);
-		return entry;
+	public static Entry in(Entry... entries) {
+		for (Entry  entry : entries) {
+			entry.setType(Type.INPUT);
+		}
+		return entries[0];
 	}
 
-	public static Entry out(Entry entry) {
-		entry.setType(Type.OUTPUT);
-		return entry;
+	public static Entry out(Entry... entries) {
+		for (Entry  entry : entries) {
+			entry.setType(Type.OUTPUT);
+		}
+		return entries[0];
 	}
 
-    public static Object annotation(Entry entry) {
+	public static Entry inout(Entry... entries) {
+		for (Entry  entry : entries) {
+			entry.setType(Type.INOUT);
+		}
+		return entries[0];
+	}
+
+	public static Object annotation(Entry entry) {
         return entry.annotation();
     }
 
@@ -647,10 +677,10 @@ public class operator {
 		return entry._1;
 	}
 
-	public static <T extends List<?>> Table table(T... elems) {
+	public static <T extends List> DataTable dataTable(T... elems) {
 		int rowCount = elems.length;
-		int columnCount = ((List<?>) elems[0]).size();
-		Table out = new Table(rowCount, columnCount);
+		int columnCount = elems[0].size();
+		DataTable out = new DataTable(rowCount, columnCount);
 		for (int i = 0; i < rowCount; i++) {
 			if (elems[i] instanceof Header) {
 				out.setColumnIdentifiers(elems[0]);
@@ -661,13 +691,13 @@ public class operator {
 		return out;
 	}
 
-	public static Table fiColumnName(Table table, String name) {
+	public static DataTable fiColumnName(DataTable table, String name) {
 		table.setFiColumnName(name);
 		return table;
 	}
 
 	public static ModelTable populateFidelities(ModelTable table, FiEntry... entries) {
-		Table impl = (Table)table;
+		DataTable impl = (DataTable)table;
 		List fiColumn = impl.getColumn(impl.getFiColumnName());
 		if (fiColumn == null) {
 			fiColumn = new ArrayList(impl.getRowCount());
@@ -689,7 +719,7 @@ public class operator {
 	}
 
 	public static ModelTable appendFidelities(ModelTable table, FiEntry... entries) {
-		Table impl = (Table)table;
+		DataTable impl = (DataTable)table;
 		List fiColumn = impl.getColumn(impl.getFiColumnName());
 		if (fiColumn == null) {
 			fiColumn = new ArrayList(impl.getRowCount());
@@ -703,40 +733,40 @@ public class operator {
 		return impl;
 	}
 
-	public static void rowNames(Table table, List rowIdentifiers) {
+	public static void rowNames(DataTable table, List rowIdentifiers) {
 		table.setRowIdentifiers(rowIdentifiers);
 	}
 
-	public static List<String> rowNames(Table table) {
+	public static List<String> rowNames(DataTable table) {
 		return table.getRowNames();
 	}
 
 
-	public static void columnNames(Table table, List columnIdentifiers) {
+	public static void columnNames(DataTable table, List columnIdentifiers) {
 		table.setColumnIdentifiers(columnIdentifiers);
 	}
 
-	public static List<String> columnNames(Table table) {
+	public static List<String> columnNames(DataTable table) {
 		return table.getColumnNames();
 	}
 
-	public static int rowSize(Table table) {
+	public static int rowSize(DataTable table) {
 		return table.getRowCount();
 	}
 
-	public static int columnSize(Table table) {
+	public static int columnSize(DataTable table) {
 		return table.getColumnCount();
 	}
 
-	public static Map<String, Object> rowMap(Table table, String rowName) {
+	public static Map<String, Object> rowMap(DataTable table, String rowName) {
 		return table.getRowMap(rowName);
 	}
 
-	public static Object value(Table table, String rowName, String columnName) {
+	public static Object value(DataTable table, String rowName, String columnName) {
 		return table.getValue(rowName, columnName);
 	}
 
-	public static Object value(Table table, int row, int column) {
+	public static Object value(DataTable table, int row, int column) {
 		return table.getValueAt(row, column);
 	}
 
@@ -966,9 +996,9 @@ public class operator {
 			String source = ((NetletSignature) signature).getServiceSource();
 			if (source != null) {
 				try {
-					ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+					ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
 					se.readFile(new File(source));
-					return se.parse();
+					return se.interpret();
 				} catch (Throwable e) {
 					throw new SignatureException(e);
 				}
@@ -983,6 +1013,17 @@ public class operator {
 			return ((ObjectSignature) signature).newInstance();
 		else
 			return ((ObjectSignature) signature).initInstance();
+	}
+
+	public static ServiceModel model(Signature signature) throws SignatureException {
+		Object model = instance(signature);
+		if (!(model instanceof ServiceModel)) {
+			throw new SignatureException("Signature does not specify te ServiceModel: " + signature);
+		}
+		if (model instanceof Model) {
+			((Model)model).setBuilder(signature);
+		}
+		return (ServiceModel) model;
 	}
 
 	public static URL url(String urlName) throws MalformedURLException {

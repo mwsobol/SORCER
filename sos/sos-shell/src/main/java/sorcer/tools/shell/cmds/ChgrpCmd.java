@@ -45,7 +45,7 @@ public class ChgrpCmd extends ShellCmd {
 	public ChgrpCmd() {
 	}
 
-	public void execute() throws Throwable {
+	public void execute(String... args) throws Throwable {
 		out = NetworkShell.getShellOutputStream();
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		// pass in a clone of list - command may modify it

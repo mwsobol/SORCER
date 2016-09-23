@@ -78,6 +78,7 @@ import javax.security.auth.Subject;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
@@ -866,6 +867,7 @@ public class ProviderDelegate {
 					}
 					confirmExec(task);
 					task.stopExecTime();
+					task.setService(null);
 					logger.info("provider name = {}\nreturning task; transaction = {}", provider.getDescription(), transaction);
 					return task;
 				} else {
@@ -1458,8 +1460,8 @@ public class ProviderDelegate {
 		try {
 			Class c = this.getClass().getClassLoader().loadClass("org.rioproject.entry.ComputeResourceInfo");
 			Object computeResourceInfo = c.newInstance();
-			Method m = c.getMethod("initialize", new Class[] {});
-			m.invoke(computeResourceInfo, (Object[]) null);
+			Method m = c.getMethod("initialize", InetAddress.class);
+			m.invoke(computeResourceInfo, SorcerEnv.getLocalHost());
 			attrVec.add((Entry) computeResourceInfo);
 		} catch (Exception e) {
 			// This happens if Rio classes are not in classpath. Ignore
@@ -2653,6 +2655,7 @@ public class ProviderDelegate {
             if (dataBeans.length > 0) {
 				logger.debug("*** data service beans by {}\nfor: {}", getProviderName(), Arrays.toString(dataBeans));
                 for (Object dataBean : dataBeans) {
+                    initBean(dataBean);
                     allBeans.add(dataBean);
                     exports.put(dataBean, this);
                 }
@@ -2817,12 +2820,12 @@ public class ProviderDelegate {
 		return bean;
 	}
 
-	private Object initBean(Object serviceBean) {
+	private Object initBean(Object serviceBean) throws RemoteException {
 		try {
 			// Configure the bean
 			Configurer configurer = new Configurer();
 			configurer.preProcess((ServiceProvider)this.getProvider(), serviceBean);
-			//
+			// Initialize its servive provider
 			Method m = serviceBean.getClass().getMethod(
 					"init", new Class[] { Provider.class });
 			m.invoke(serviceBean, new Object[] { provider });
@@ -2832,7 +2835,7 @@ public class ProviderDelegate {
 		}
 		exports.put(serviceBean, this);
 		logger.debug(">>>>>>>>>>> exported service bean: \n" + serviceBean
-				+ "\n by provider: " + provider);
+				+ "\n by provider: " + provider.getProviderName());
 		return serviceBean;
 	}
 

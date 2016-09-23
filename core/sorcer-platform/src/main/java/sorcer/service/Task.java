@@ -445,4 +445,5 @@ public class Task extends ServiceExertion {
 	public Object get(String component) throws ServiceException {
 		return getFidelities().get(component);
 	}
+
 }

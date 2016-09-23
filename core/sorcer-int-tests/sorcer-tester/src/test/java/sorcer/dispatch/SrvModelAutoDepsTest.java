@@ -7,7 +7,6 @@ import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.DividerImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
-import sorcer.po.operator;
 import sorcer.service.Context;
 import sorcer.service.modeling.Model;
 
@@ -41,7 +40,7 @@ public class SrvModelAutoDepsTest {
                         inPaths("multiply/out", "add/out")))),
                 ent(sig("divide", DividerImpl.class, result("divider/out",
                         inPaths("model/response", "multiply/x1")))),
-                response("divide"));
+                sorcer.mo.operator.response("divide"));
 
         logger.info("Map of dependents: " + dependencies(m));
         logger.info("Dependencies: " + printDeps(m));
@@ -67,7 +66,7 @@ public class SrvModelAutoDepsTest {
                         inPaths("model/response", "multiply/x1")))),
                 ent("addfinal", sig("add", AdderImpl.class, result("addfinal/out",
                         inPaths("addfinal/x1", "divider/out")))),
-                response("addfinal"));
+                sorcer.mo.operator.response("addfinal"));
 
         logger.info("Map of dependents: " + dependencies(m));
         logger.info("Dependencies: " + printDeps(m));

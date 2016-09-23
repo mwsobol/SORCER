@@ -42,7 +42,7 @@ public class GroupsCmd extends ShellCmd {
 	public GroupsCmd() {
 	}
 
-	public void execute() throws Throwable {
+	public void execute(String... args) throws Throwable {
 		out = NetworkShell.getShellOutputStream();
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();

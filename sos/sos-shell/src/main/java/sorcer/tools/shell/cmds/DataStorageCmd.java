@@ -71,7 +71,7 @@ public class DataStorageCmd extends ShellCmd {
 	public DataStorageCmd() {
 	}
 
-	public void execute() throws RemoteException, MonitorException {
+	public void execute(String... args) throws RemoteException, MonitorException {
 		out = NetworkShell.getShellOutputStream();
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();

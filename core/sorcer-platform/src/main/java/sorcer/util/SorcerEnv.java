@@ -1018,7 +1018,7 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * All database table names start with this schema prefix.
+	 * All database dataTable names start with this schema prefix.
 	 * 
 	 * @return
 	 */
@@ -1393,7 +1393,7 @@ public class SorcerEnv extends SOS {
 	}
 
     public static InetAddress getLocalHost() throws UnknownHostException {
-        String hostnameProp = getProperty(JavaSystemProperties.RMI_SERVER_HOSTNAME);
+        String hostnameProp = System.getProperty(JavaSystemProperties.RMI_SERVER_HOSTNAME);
         if (hostnameProp != null && !hostnameProp.isEmpty())
             return InetAddress.getByName(hostnameProp);
         else

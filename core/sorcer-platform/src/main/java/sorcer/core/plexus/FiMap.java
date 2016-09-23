@@ -17,7 +17,7 @@
 package sorcer.core.plexus;
 
 import sorcer.service.FidelityList;
-import sorcer.util.Table;
+import sorcer.util.DataTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +52,7 @@ public class FiMap extends HashMap<Integer, FidelityList> {
 		fiList = new ArrayList();
 	}
 
-	public FiMap(Table table) {
+	public FiMap(DataTable table) {
 		fiList = table.getColumn(fiColumnName);
 		if (fiList != null && fiList.size() > 0) {
 			for (int i = 0; i < fiList.size(); i++) {

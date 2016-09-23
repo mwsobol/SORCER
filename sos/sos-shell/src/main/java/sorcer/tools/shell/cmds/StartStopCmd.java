@@ -50,7 +50,7 @@ public class StartStopCmd extends ShellCmd {
 	public StartStopCmd() {
 	}
 
-	public void execute() throws Throwable {
+	public void execute(String... args) throws Throwable {
 		out = NetworkShell.getShellOutputStream();
 		LookupDiscovery ld = NetworkShell.getDisco();
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();

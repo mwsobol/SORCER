@@ -19,6 +19,7 @@ package sorcer.mo;
 
 import sorcer.core.Name;
 import sorcer.core.context.MapContext;
+import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static sorcer.co.operator.instance;
 import static sorcer.eo.operator.context;
 
 /**
@@ -81,20 +83,27 @@ public class operator {
         return value;
     }
 
+    public static Model setValue(Model model, Entry... entries) throws ContextException {
+        for(Entry ent :entries) {
+            setValue(model, ent.getName(), ent.value());
+        }
+        return model;
+    }
+
     public static ProcModel procModel(String name, Signature builder) throws SignatureException {
-        ProcModel model = (ProcModel) sorcer.co.operator.instance(builder);
+        ProcModel model = (ProcModel) instance(builder);
         model.setBuilder(builder);
         return model;
     }
 
     public static ProcModel parModel(String name, Signature builder) throws SignatureException {
-        ProcModel model = (ProcModel) sorcer.co.operator.instance(builder);
+        ProcModel model = (ProcModel) instance(builder);
         model.setBuilder(builder);
         return model;
     }
 
     public static SrvModel srvModel(String name, Signature builder) throws SignatureException {
-        SrvModel model = (SrvModel) sorcer.co.operator.instance(builder);
+        SrvModel model = (SrvModel) instance(builder);
         model.setBuilder(builder);
         return model;
     }
@@ -145,6 +154,26 @@ public class operator {
         for (String path : responsePaths)
             ((ServiceContext)model).getMogramStrategy().getResponsePaths().remove(new Name(path));
         return model;
+    }
+
+    public static Entry ent(String path, ServiceModel model) {
+        return new Entry(path, model);
+    }
+
+    public static Entry result(Entry entry) throws ContextException {
+        try {
+            Entry out = null;
+
+            if (entry.asis() instanceof ServiceContext) {
+                out = new Entry(entry.path(), ((ServiceContext)entry.asis()).getValue(entry.path()));
+                return out;
+            } else {
+                out = new Entry(entry.path(), entry.getValue());
+            }
+            return out;
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
     }
 
     public static Context result(ServiceModel model) throws ContextException {
@@ -212,8 +241,30 @@ public class operator {
         return response(model);
     }
 
-    public static Context response(ServiceModel model, Arg... args) throws ContextException {
+    public static Context response(Signature signature, Arg... args) throws ContextException {
         try {
+            return (Context) ((ServiceModel)instance(signature)).getResponse(args);
+        } catch (RemoteException | SignatureException e) {
+            throw new ContextException(e);
+        }
+    }
+
+    public static Context response(ServiceModel model, Object... items) throws ContextException {
+        try {
+            List<Arg> argl = new ArrayList();
+            List<Arg> paths = null;
+            for (Object item : items) {
+                if (item instanceof Arg) {
+                    argl.add((Arg) item);
+                } else if (item instanceof List) {
+                    paths = (List<Arg>) item;
+                }
+            }
+            if (paths != null) {
+                ((ModelStrategy)((Mogram)model).getMogramStrategy()).setResponsePaths(paths);
+            }
+            Arg[] args = new Arg[argl.size()];
+            argl.toArray(args);
             return (Context) model.getResponse(args);
         } catch (RemoteException e) {
             throw new ContextException(e);
@@ -224,10 +275,6 @@ public class operator {
         ((FidelityManager)model.getFidelityManager()).setTraced(isTraced);
     }
 
-    public static Entry entry(Model model, String path) throws ContextException {
-        return new Entry(path, model.asis(path));
-    }
-
     public static Context inConn(List<Entry> entries) throws ContextException {
         MapContext map = new MapContext();
         map.direction = MapContext.Direction.IN;
@@ -235,12 +282,16 @@ public class operator {
         return map;
     }
 
-    public static Context inConn(Entry... entries) throws ContextException {
+    public static Context inConn(boolean isRedundant, Entry... entries) throws ContextException {
         MapContext map = new MapContext();
         map.direction = MapContext.Direction.IN;
+        map.isRedundant = isRedundant;
         List<Entry> items = Arrays.asList(entries);
         sorcer.eo.operator.populteContext(map, items);
         return map;
+    }
+    public static Context inConn(Entry... entries) throws ContextException {
+        return inConn(false, entries);
     }
 
     public static Context outConn(List<Entry> entries) throws ContextException {

@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.tools.webster.Webster;
 import sorcer.util.FileURLHandler;
 import sorcer.util.GenericUtil;
+import sorcer.util.JavaSystemProperties;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -132,7 +133,7 @@ public class DataService implements FileURLHandler {
                 writeRoots();
             } catch (IOException e) {
                 try {
-                    address = HostUtil.getInetAddress().getHostAddress();
+                    address = HostUtil.getInetAddressFromProperty(JavaSystemProperties.RMI_SERVER_HOSTNAME).getHostAddress();
                 } catch (UnknownHostException e1) {
                     logger.error("Can not get host address", e1);
                     throw new RuntimeException("Can not get host address", e1);
@@ -320,7 +321,7 @@ public class DataService implements FileURLHandler {
 
     /**
      * Get the DataService data directory. The {@link DataService#DATA_DIR} system property is first
-     * consulted, if that property is not setValue, the default of
+     * consulted, if that property is not setValue, the default is either the TMPDIR
      * System.getProperty("java.io.tmpdir")/sorcer/user/data is used and the {@link DataService#DATA_DIR}
      * system property is setValue.
      *
@@ -375,8 +376,9 @@ public class DataService implements FileURLHandler {
     }
 
     static String getDefaultDataDir() {
+        String tmpDir = System.getenv("TMPDIR")==null?System.getProperty("java.io.tmpdir"):System.getenv("TMPDIR");
         return new File(String.format("%s%ssorcer-%s%sdata",
-                                      System.getProperty("java.io.tmpdir"),
+                                      tmpDir,
                                       File.separator,
                                       System.getProperty("user.name"),
                                       File.separator)).getAbsolutePath();
