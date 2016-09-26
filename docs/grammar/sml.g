@@ -142,7 +142,7 @@ srvMogramType : contextModelType | srvExertionType | 'mogram' | 'mog' ;
 
 srvMogram : dataContext  | contextModel | srvExertion | fiMogram | 'mogram' '(' (contextModelParameters | srvExertionParamters) ')' ;
 
-fiMogram : 'fiMog' '(' (name',')? (morphFidelity | reqFidelity) ')' ;
+fiMogram : 'fiMog' '(' (name',')? (morphFidelity | reqFidelity) dataContext?')' ;
 
 
 /* <MODELS> */
