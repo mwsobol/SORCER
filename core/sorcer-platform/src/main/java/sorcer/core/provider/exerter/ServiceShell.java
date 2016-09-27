@@ -512,7 +512,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 			throw new MogramException(e);
 		}
 		exertion.getControlContext().appendTrace(String.format("shell: %s:%s", providerName, providerID));
-		logger.info("Provider found for: {}\n\t{}", signature, provider);
+		logger.info("Provider found for: {}", signature);
 		if (((Provider) provider).mutualExclusion()) {
 			try {
 				return serviceMutualExclusion((Provider) provider, exertion, transaction);
