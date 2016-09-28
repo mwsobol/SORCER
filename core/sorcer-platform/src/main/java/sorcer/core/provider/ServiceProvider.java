@@ -83,9 +83,18 @@ import static sorcer.util.StringUtils.tName;
 /**
  * The ServiceProvider class is a type of {@link Provider} with dependency
  * injection defined by a Jini 2 configuration, proxy management, and own
- * service discovery management for registering its proxies. In the simplest
- * case, the provider exports and registers its own (outer) proxy with the
- * primary method {@code Service.service(Exertion, Transaction)}. The functionality of an
+ * service discovery management for registering its proxies. This class can
+ * be inherited by custom service providers or used as a container for service
+ * beans - objects that implement Java interfaces to be exposed as service types.
+ * Service beans are declared in a provider configuration file as an array of
+ * <i>dataBeans</i>. A bean can be declared with a static method, e.g.,
+ * <code>MyServiceBean.buildMyBean($data)</code>, where <code>$data</code>
+ * refers to provider properties passed as argument of the static method
+ *  <code>buildMyBean</code> of the class <code>MyServiceBean</code>.
+ * <p>
+ * In the simplest case, the provider exports and registers its own (outer) proxy with
+ * the primary methods {@code Service.exec(Arg[])} and service federation request
+ * {@code Exerter.exert(Mogram, Transaction, Arg[])}. The functionality of an
  * outer proxy can be extended by its inner server functionality with its Remote
  * inner proxy. In this case, the outer proxies have to implement {@link sorcer.core.proxy.Outer}
  * interface and each outer proxy is registered with the inner proxy allocated
