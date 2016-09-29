@@ -66,7 +66,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Context<T>, AssociativeContext<T>, Contexter<T>, SorcerConstants {
 
 	private static final long serialVersionUID = 3311956866023311727L;
-	protected Provider provider;
 	protected Map<String, T> data = new ConcurrentHashMap<String, T>();
 	protected String subjectPath = "";
 	protected Object subjectValue = "";
@@ -120,14 +119,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	public ServiceContext() {
 		this(defaultName + count++);
-	}
-
-
-	/**
-	 * Initialization by a service provider when used as as a service bean.
-	 */
-	public void init(Provider provider) {
-		this.provider = provider;
 	}
 
 	/**
@@ -3268,7 +3259,7 @@ public class ServiceContext<T> extends ServiceMogram implements
                 Class serviceType = task.getServiceType();
                 if (provider != null) {
 					Task out = ((ServiceProvider)provider).getDelegate().doTask(task, txn, args);
-					// remove provider execution scope
+					// clear provider execution scope
 					out.getContext().setScope(null);
 					return (T) out;
                 } else if (Invocation.class.isAssignableFrom(serviceType)) {
