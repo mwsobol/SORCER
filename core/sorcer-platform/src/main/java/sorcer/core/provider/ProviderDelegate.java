@@ -2640,7 +2640,8 @@ public class ProviderDelegate {
 			if (beans.length > 0) {
 				logger.debug("*** service beans by {}\nfor: {}", getProviderName(), Arrays.toString(beans));
                 for (Object bean : beans) {
-                    allBeans.add(bean);
+					initBean(bean);
+					allBeans.add(bean);
                     exports.put(bean, this);
                 }
 			}

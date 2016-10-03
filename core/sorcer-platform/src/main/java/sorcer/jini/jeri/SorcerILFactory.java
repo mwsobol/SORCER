@@ -326,7 +326,7 @@ public class SorcerILFactory extends BasicILFactory {
                     if (logger.isTraceEnabled())
                         logger.trace("{} declaring class {}", method.getName(), method.getDeclaringClass().getName());
                     service = getBean(method.getDeclaringClass());
-                    if (service != null) {
+                    if (service != null && args != null) {
                         if (logger.isTraceEnabled()) {
                             String indent = "    ";
                             logger.trace("Process bean invocation for\n{}{}\n{}{}",
