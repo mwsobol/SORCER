@@ -130,6 +130,9 @@ task gatherDeps() {
                 File docs = new File("$distDir-${version}/rio-${rioVersion}/docs")
                 if(docs.exists())
                     docs.deleteDir()
+                File hyperic = new File("$distDir-${version}/rio-${rioVersion}/lib/hyperic")
+                if(hyperic.exists())
+                    hyperic.deleteDir()
             } else {
                 if (file.path.contains("jini") || file.path.contains("river"))
                     dest = "lib/river"

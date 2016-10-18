@@ -42,15 +42,15 @@ def checkEndsWithFileSeparator(String s) {
 
 /*
  * Naming pattern for the output file:
- *
- * a) The output file is placed in the directory defined by the "rio.log.dir" System property
- * b) With a name based on the "org.rioproject.service" System property.
- * c) The return value from ManagementFactory.getRuntimeMXBean().getName(). This value is expected to have the
- * following format: pid@hostname. If the return includes the @hostname, the @hostname is stripped off.
  */
 def getLogLocationAndName() {
+    String s = InetAddress.getLocalHost().getHostName()
+    int ndx = s.indexOf(".")
+    String hostName = s.substring(0, ndx)
     String logDir = checkEndsWithFileSeparator(System.getProperty("rio.log.dir"))
-    return "$logDir${System.getProperty("org.rioproject.service")}"
+    String name = "${System.getProperty("org.rioproject.service")}-${hostName}"
+    System.setProperty("org.rioproject.service", name)
+    return "$logDir${System.getProperty("org.rioproject.service")}-${hostName}"
 }
 
 def appenders = []
