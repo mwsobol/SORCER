@@ -87,12 +87,12 @@ public class ServiceDeployment implements Serializable, Deployment {
             Artifact temp = new Artifact(config);
             String classifier = temp.getClassifier();
             if(classifier==null || !classifier.equals("deploy")) {
-                logger.info("Setting classifier to \"deploy\" for "+temp.getGAV());
+                logger.debug("Setting classifier to \"deploy\" for {}", temp.getGAV());
                 classifier = "deploy";
             }
             String type = temp.getType();
             if(type==null || !type.equals("config")) {
-                logger.info("Setting type to \"config\" for "+temp.getGAV());
+                logger.debug("Setting type to \"config\" for {}", temp.getGAV());
                 type = "config";
             }
             this.config = new Artifact(temp.getGroupId(),

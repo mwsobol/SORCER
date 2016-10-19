@@ -26,7 +26,9 @@ import net.jini.discovery.LookupDiscoveryManager;
 import net.jini.lookup.ServiceDiscoveryManager;
 import org.rioproject.config.Constants;
 import org.rioproject.deploy.DeployAdmin;
+import org.rioproject.event.RemoteServiceEventListener;
 import org.rioproject.impl.client.JiniClient;
+import org.rioproject.monitor.ProvisionMonitorEvent;
 import sorcer.util.Sorcer;
 
 import java.rmi.RemoteException;
@@ -43,7 +45,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ProvisionMonitorCache {
     private final net.jini.lookup.LookupCache cache;
     private static final ProvisionMonitorCache instance = new ProvisionMonitorCache();
-    private final Map<String, String> discoveryInfo = new HashMap<String, String>();
+    private final Map<String, String> discoveryInfo = new HashMap<>();
+    private static Listener listener;
 
     private ProvisionMonitorCache() {
         try {
@@ -59,12 +62,14 @@ public class ProvisionMonitorCache {
                 g.append(group);
             }
             discoveryInfo.put("groups", g.toString());
+            Class cl = org.rioproject.deploy.ProvisionManager.class;
+            listener = new Listener();
             ServiceDiscoveryManager lookupMgr =
                     new ServiceDiscoveryManager(new LookupDiscoveryManager(Sorcer.getLookupGroups(),
                                                                            locators,
-                                                                           null), // DiscoveryListener
+                                                                           listener), // DiscoveryListener
                                                 null);
-            Class cl = org.rioproject.deploy.ProvisionManager.class;
+
             cache = lookupMgr.createLookupCache(new ServiceTemplate(null, new Class[]{cl}, null),
                                                 null,
                                                 null);
@@ -86,9 +91,12 @@ public class ProvisionMonitorCache {
     }
 
     public DeployAdmin getDeployAdmin() {
+        if(listener.monitor.get()!=null) {
+            return listener.monitor.get();
+        }
         DeployAdmin dAdmin = null;
         int waited = 0;
-        int timeout = 60; /* We will timout after 30 seconds */
+        int timeout = 60; /* We will timeout after 30 seconds */
         while(dAdmin==null && waited < timeout) {
             ServiceItem item = cache.lookup(null);
             if(item!=null) {
@@ -110,21 +118,19 @@ public class ProvisionMonitorCache {
     }
 
     static class Listener implements DiscoveryListener {
-        final AtomicReference<Object> monitor = new AtomicReference<Object>();
-        private Class<?> serviceType;
-        private final List<ServiceRegistrar> lookups = new ArrayList<ServiceRegistrar>();
-
-        public Listener(Class<?> providerInterface) {
-            serviceType = providerInterface;
-        }
+        final AtomicReference<DeployAdmin> monitor = new AtomicReference<>();
+        private Class<?> serviceType = org.rioproject.deploy.ProvisionManager.class;
+        private final List<ServiceRegistrar> lookups = new ArrayList<>();
 
         void lookup() {
+            if(monitor.get()!=null)
+                return;
             final ServiceTemplate template = new ServiceTemplate(null, new Class[]{serviceType}, null);
             for(ServiceRegistrar registrar : lookups) {
                 try {
                     Object service = registrar.lookup(template);
                     if(service!=null) {
-                        monitor.set(service);
+                        monitor.set((DeployAdmin)((Administrable)service).getAdmin());
                         break;
                     }
                 } catch (RemoteException e) {
@@ -135,9 +141,25 @@ public class ProvisionMonitorCache {
 
         public void discovered(DiscoveryEvent discoveryEvent) {
             Collections.addAll(lookups, discoveryEvent.getRegistrars());
+            lookup();
         }
 
         public void discarded(DiscoveryEvent discoveryEvent) {
+        }
+    }
+
+    static class DeploymentListener implements RemoteServiceEventListener<ProvisionMonitorEvent> {
+
+        @Override public void notify(ProvisionMonitorEvent event) {
+            ProvisionMonitorEvent.Action action = event.getAction();
+            switch (action) {
+                case OPSTRING_DEPLOYED:
+                    break;
+                case OPSTRING_UNDEPLOYED:
+                    break;
+                default:
+
+            }
         }
     }
 

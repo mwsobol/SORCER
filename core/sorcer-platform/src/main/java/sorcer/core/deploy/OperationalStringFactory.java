@@ -15,24 +15,23 @@
  */
 package sorcer.core.deploy;
 
+import org.rioproject.impl.opstring.OpString;
+import org.rioproject.opstring.OperationalString;
+import org.rioproject.opstring.ServiceElement;
+import org.rioproject.opstring.UndeployOption;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sorcer.core.signature.ServiceSignature;
+import sorcer.service.Exertion;
+import sorcer.service.ServiceExertion;
+import sorcer.service.Signature;
+
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.rioproject.impl.opstring.OpString;
-import org.rioproject.opstring.ClassBundle;
-import org.rioproject.opstring.OperationalString;
-import org.rioproject.opstring.ServiceElement;
-import org.rioproject.opstring.UndeployOption;
-import sorcer.core.signature.ServiceSignature;
-import sorcer.service.Exertion;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Signature;
 
 /**
  * Create an {@link OperationalString} from an {@link Exertion}.
@@ -40,8 +39,14 @@ import sorcer.service.Signature;
  * @author Dennis Reedy
  */
 public final class OperationalStringFactory {
-    static final Logger logger = LoggerFactory.getLogger(OperationalStringFactory.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(OperationalStringFactory.class.getName());
     private OperationalStringFactory() throws Exception {
+    }
+
+    public static List<String> getDeploymentIds(final Exertion exertion) {
+        List<String> deploymentIds = new ArrayList<>();
+        Iterable<Signature> netSignatures = getNetSignatures(exertion);
+        return deploymentIds;
     }
 
     /**
@@ -60,10 +65,10 @@ public final class OperationalStringFactory {
             throw new IllegalArgumentException("exertion is null");
 
         Iterable<Signature> netSignatures = getNetSignatures(exertion);
-        List<Signature> selfies = new ArrayList<Signature>();
-        List<Signature> federated = new ArrayList<Signature>();
+        List<Signature> selfies = new ArrayList<>();
+        List<Signature> federated = new ArrayList<>();
 
-        List<OperationalString> uniqueOperationalStrings = new ArrayList<OperationalString>();
+        List<OperationalString> uniqueOperationalStrings = new ArrayList<>();
 
         for(Signature netSignature : netSignatures) {
             if(netSignature.getDeployment()==null)
@@ -75,7 +80,7 @@ public final class OperationalStringFactory {
             }
         }
 
-        List<OperationalString> operationalStrings = new ArrayList<OperationalString>();
+        List<OperationalString> operationalStrings = new ArrayList<>();
 
         for(Signature self : selfies) {
             ServiceElement service = ServiceElementFactory.create((ServiceSignature)self);
@@ -90,7 +95,7 @@ public final class OperationalStringFactory {
             }
         }
 
-        List<ServiceElement> services = new ArrayList<ServiceElement>();
+        List<ServiceElement> services = new ArrayList<>();
         int idle = 0;
         for(Signature signature : federated) {
             services.add(ServiceElementFactory.create((ServiceSignature)signature));
@@ -115,7 +120,7 @@ public final class OperationalStringFactory {
         } else {
             operationalStrings.add(opString);
         }
-        Map<ServiceDeployment.Unique, List<OperationalString>> opStringMap = new HashMap<ServiceDeployment.Unique, List<OperationalString>>();
+        Map<ServiceDeployment.Unique, List<OperationalString>> opStringMap = new HashMap<>();
         opStringMap.put(ServiceDeployment.Unique.YES, uniqueOperationalStrings);
         opStringMap.put(ServiceDeployment.Unique.NO, operationalStrings);
         return opStringMap;
@@ -140,7 +145,7 @@ public final class OperationalStringFactory {
     }
 
     private static Iterable<Signature> getNetSignatures(final Exertion exertion) {
-        List<Signature> signatures = new ArrayList<Signature>();
+        List<Signature> signatures = new ArrayList<>();
         if(exertion instanceof ServiceExertion) {
             ServiceExertion serviceExertion = (ServiceExertion)exertion;
             signatures.addAll(serviceExertion.getAllNetTaskSignatures());

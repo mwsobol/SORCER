@@ -17,21 +17,21 @@ package sorcer.core.deploy;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.rioproject.config.Configuration;
 import org.rioproject.deploy.SystemComponent;
 import org.rioproject.opstring.*;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sorcer.test.ProjectContext;
-import org.sorcer.test.SorcerTestRunner;
 import sorcer.co.operator;
 import sorcer.service.*;
 import sorcer.util.SorcerEnv;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
@@ -41,8 +41,8 @@ import static sorcer.eo.operator.*;
 /**
  * @author Dennis Reedy
  */
-@RunWith(SorcerTestRunner.class)
-@ProjectContext("core/sorcer-int-tests/deploy-tests")
+//@RunWith(SorcerTestRunner.class)
+//@ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class OperationalStringFactoryTest {
 	private final static Logger logger = LoggerFactory.getLogger(OperationalStringFactoryTest.class.getName());
 

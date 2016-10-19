@@ -50,7 +50,7 @@ def getLogLocationAndName() {
     String logDir = checkEndsWithFileSeparator(System.getProperty("rio.log.dir"))
     String name = "${System.getProperty("org.rioproject.service")}-${hostName}"
     System.setProperty("org.rioproject.service", name)
-    return "$logDir${System.getProperty("org.rioproject.service")}-${hostName}"
+    return "$logDir${name}"
 }
 
 def appenders = []
