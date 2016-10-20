@@ -190,7 +190,7 @@ public class ProviderDelegate {
 
 	private ThreadGroup namedGroup, interfaceGroup;
 
-	private int workerCount = 10;
+	private int workerCount = Runtime.getRuntime().availableProcessors()/2;
 
 	private int[] workerPerInterfaceCount = new int[0];
 
@@ -508,9 +508,9 @@ public class ProviderDelegate {
 		}
 
         try {
-            workerCount = (Integer) jconfig.getEntry(ServiceProvider.COMPONENT,
-                                                     WORKER_COUNT, int.class, 10);
-        } catch (Exception e) {
+			workerCount = (Integer) jconfig.getEntry(ServiceProvider.COMPONENT,
+													 WORKER_COUNT, int.class, Runtime.getRuntime().availableProcessors()/2);
+		} catch (Exception e) {
             logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, WORKER_COUNT, e);
         }
 

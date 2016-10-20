@@ -128,6 +128,7 @@ logger("org.rioproject.monitor.service.managers.FixedServiceManager", INFO)
 logger("org.rioproject.resolver.aether", OFF)
 
 logger("org.rioproject.rmi.ResolvingLoader", OFF)
+
 logger("org.rioproject.config.GroovyConfig", INFO)
 
 logger("net.jini.discovery.LookupDiscovery", OFF)
@@ -137,41 +138,7 @@ logger("org.rioproject.resolver.aether.util.ConsoleRepositoryListener", WARN)
 /* ==================================================================
  *  SORCER Loggers
  * ==================================================================*/
-logger("sorcer.util.ProviderAccessor", WARN)
-logger("sorcer.core.provider.cataloger.ServiceCataloger", WARN)
-logger("sorcer.core.provider.exerter.ServiceShell", INFO)
-logger("sorcer.provider.boot", INFO)
-logger("sorcer.core.provider.ServiceProvider", INFO)
-logger("sorcer.core.provider.ControlFlowManager", WARN)
-logger("sorcer.core.provider.ProviderDelegate", INFO)
-logger("sorcer.tools.shell.NetworkShell", WARN)
-logger("sorcer.core.provider.exertmonitor.ExertMonitor", WARN)
-logger("sorcer.core.provider.SpaceTaker", WARN)
-logger("sorcer.core.provider.exertmonitor", TRACE)
-logger("sorcer.core.monitor", TRACE)
-logger("sorcer.core.dispatch", INFO)
-logger("sorcer.core.dispatch.ExertionSorter", WARN)
-logger("sorcer.rio.rmi", WARN)
-logger("sorcer.service.Accessor", WARN)
-logger("sorcer.core.provider.exerter", WARN)
-logger("sorcer.platform.logger", WARN)
-logger("sorcer.core.provider.logger", WARN)
-
-/* ==================================================================
- *  SORCER Variable oriented loggers
- * ==================================================================*/
-logger("sorcer.modeling.core.context.model.var.ResponseModel", WARN)
-logger("sorcer.modeling.core.context.model.var.ParametricModel", WARN)
-logger("sorcer.util.Table", WARN)
-/* ==================================================================
- *  SORCER Other specialized loggers
- * ==================================================================*/
-logger("sorcer.core.context.eval", OFF)
-logger("sorcer.core.context", TRACE)
-logger("sorcer.jini.jeri.SorcerILFactory", WARN)
-
-logger("sorcer.ui.tools", DEBUG)
-logger("sorcer.util", DEBUG)
+logger("sorcer", WARN)
 
 root(INFO, appenders)
 
