@@ -274,6 +274,10 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
      */
     public String getProjectName();
 
+    public boolean isValid();
+
+    public void isValid(boolean state);
+
     /**
      * Returns a data service context (service data) of this mogram.
      *

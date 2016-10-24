@@ -151,6 +151,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected Signature builder;
 
+    protected boolean isValid = true;
+
     protected transient Provider provider;
 
     protected ServiceMogram() {
@@ -670,6 +672,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
      */
     public boolean isModeling() {
         return isRevaluable;
+    }
+
+    public boolean isValid() {
+        return isValid;
+    }
+
+    public void isValid(boolean state) {
+        isValid = state;
     }
 
     public void setModeling(boolean isRevaluable) {

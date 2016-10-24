@@ -18,6 +18,9 @@ package sorcer.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.Tuple2;
+import sorcer.core.context.ServiceContext;
+import sorcer.service.Context;
+import sorcer.service.ContextException;
 import sorcer.service.Identity;
 import sorcer.service.Signature;
 
@@ -183,7 +186,8 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	}
 
 	public static class ObjectFile {
-		RandomAccessFile dataFile;
+
+        RandomAccessFile dataFile;
 
 		public ObjectFile(String fileName) throws IOException {
 			dataFile = new RandomAccessFile(fileName, "rw");
@@ -280,6 +284,10 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 		public void close() throws IOException {
 			dataFile.close();
 		}
+
+        public RandomAccessFile getDataFile() {
+            return dataFile;
+        }
 	}
 
 	/**
@@ -566,6 +574,22 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	public ConcurrentHashMap<K, Long> getTable() {
 		return table;
+	}
+
+	public Context getFileContext() throws ContextException {
+		ServiceContext sc = new ServiceContext(this.getName());
+
+        sc.putValue("object/file/name", fileName +".obf");
+        sc.putValue("index/file/name", fileName +"-index.obf");
+
+		sc.putValue("input/file/name", inputFileName);
+		sc.putValue("input/table/URL", inputTableURL);
+
+		sc.putValue("output/file/name", outputFileName);
+		sc.putValue("output/table/URL", outputTableURL);
+		sc.putValue("input/table/delimiter", inputTableDelimiter);
+
+		return sc;
 	}
 
 	@Override
