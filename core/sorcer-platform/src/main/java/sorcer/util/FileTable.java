@@ -77,10 +77,16 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	protected static int count = 0;
 
-	public FileTable(String fileName) throws IOException {
-		name = fileName;
-		this.fileName = fileName;
-
+	public FileTable(String parent, String child) throws IOException {
+		if (child == null) {
+			throw new NullPointerException();
+		}
+		String tableName = null;
+		if (parent != null) {
+			tableName = parent + File.separator + child;
+		}
+		name = tableName;
+		this.fileName = tableName;
 		ofl = new ObjectFile(fileName +".obf");
 		ifl = new ObjectFile(fileName +"-index.obf");
 
@@ -91,6 +97,10 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 		Thread t = new Thread(this);
 		t.setDaemon(true);
 		t.start();
+	}
+
+	public FileTable(String fileName) throws IOException {
+		this(".", fileName);
 	}
 
 	public synchronized final void close() throws  IOException {
