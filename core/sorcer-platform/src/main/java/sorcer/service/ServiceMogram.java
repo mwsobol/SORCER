@@ -95,9 +95,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected boolean isChanged = false;
 
-    // when mogram is changed then isValid == false
-    protected boolean isValid = true;
-
     // indicates that is the parent of another mogram
     protected boolean isSuper = false;
 
@@ -898,14 +895,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         }
         selectedFidelity.select = getProcessSignature();
         return selectedFidelity;
-    }
-
-    public boolean isValid() {
-        return isValid;
-    }
-
-    public void isValid(boolean state) {
-        isValid = state;
     }
 
     @Override
