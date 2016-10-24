@@ -14,7 +14,6 @@ import sorcer.core.service.Projection;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.modeling.ServiceModel;
 
 import javax.security.auth.Subject;
 import java.io.Serializable;
@@ -151,7 +150,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected Signature builder;
 
-    protected boolean isValid = true;
+    //protected boolean isValid = true;
 
     protected transient Provider provider;
 
@@ -674,13 +673,13 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return isRevaluable;
     }
 
-    public boolean isValid() {
+    /*public boolean isValid() {
         return isValid;
     }
 
     public void isValid(boolean state) {
         isValid = state;
-    }
+    }*/
 
     public void setModeling(boolean isRevaluable) {
         this.isRevaluable = isRevaluable;
