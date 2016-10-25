@@ -109,6 +109,7 @@ if (System.getProperty("org.rioproject.service")!=null) {
  *  Rio Loggers
  * ==================================================================*/
 logger("org.rioproject.cybernode", DEBUG)
+logger("org.rioproject.cybernode.service.ServiceBeanExecutorImpl", ERROR)
 logger("org.rioproject.config", INFO)
 logger("org.rioproject.resources.servicecore", INFO)
 logger("org.rioproject.system", DEBUG)
@@ -171,6 +172,7 @@ logger("sorcer.modeling.core.context.model.var.ResponseModel", WARN)
 logger("sorcer.modeling.core.context.model.var.ParametricModel", WARN)
 logger("sorcer.util.Table", WARN)
 logger("sorcer.modeling.vfe.evaluator", WARN)
+logger("sorcer.modeling.vfe.filter", WARN)
 logger("sorcer.modeling.vfe.persist", WARN)	
 /* ==================================================================
  *  SORCER Other specialized loggers

@@ -43,6 +43,7 @@ import sorcer.util.SorcerEnv;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.rmi.MarshalledObject;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -106,7 +107,7 @@ public final class ServiceElementFactory  {
                 try {
                     service = resolverFutureTask.call();
                     return service;
-                } catch (InterruptedException e) {
+                } catch (InterruptedException | ClassNotFoundException e) {
                     throw new ResolverException("Failed to get artifact location", e);
                 }
             } else {
@@ -463,9 +464,9 @@ public final class ServiceElementFactory  {
             counter.countDown();
         }
 
-        public ServiceElement call() throws InterruptedException {
+        public ServiceElement call() throws InterruptedException, IOException, ClassNotFoundException {
             counter.await();
-            return serviceElement;
+            return new MarshalledObject<>(serviceElement).get();
         }
     }
 
