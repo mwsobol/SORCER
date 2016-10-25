@@ -20,6 +20,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.service.Accessor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -125,6 +126,8 @@ public class SorcerTestRunner extends BlockJUnit4ClassRunner {
                                    " test bootstrapping short-circuited");
             }
         }
+        /* Prime the Accessor, get it setup */
+        Accessor.create();
         super.run(notifier);
     }
 

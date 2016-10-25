@@ -498,6 +498,10 @@ public final class ServiceElementFactory  {
         }
     }
 
+    static void clear() {
+        resolvedArtifacts.clear();
+    }
+
     private static class ServiceDetails {
         final String name;
         final String[] interfaces;

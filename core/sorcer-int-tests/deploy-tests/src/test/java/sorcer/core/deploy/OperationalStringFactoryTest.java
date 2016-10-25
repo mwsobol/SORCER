@@ -16,6 +16,7 @@
 package sorcer.core.deploy;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.rioproject.config.Configuration;
 import org.rioproject.deploy.SystemComponent;
@@ -45,6 +46,11 @@ import static sorcer.eo.operator.*;
 //@ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class OperationalStringFactoryTest {
 	private final static Logger logger = LoggerFactory.getLogger(OperationalStringFactoryTest.class.getName());
+
+    @Before
+    public void init() {
+        ServiceElementFactory.clear();
+    }
 
     @Test
     public void testCreateDeploymentID() throws NoSuchAlgorithmException, InterruptedException {
@@ -111,7 +117,7 @@ public class OperationalStringFactoryTest {
 
         assertNotNull(federated.getUndeployOption());
         assertTrue(UndeployOption.Type.WHEN_IDLE.equals(federated.getUndeployOption().getType()));
-        assertTrue(1==federated.getUndeployOption().getWhen());
+        assertTrue(5==federated.getUndeployOption().getWhen());
 
         assertEquals(2, subtract.getPlanned());
     }

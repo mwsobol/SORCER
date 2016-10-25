@@ -15,7 +15,6 @@
  */
 package sorcer.core.deploy;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -24,7 +23,6 @@ import org.sorcer.test.SorcerTestRunner;
 import org.sorcer.test.TestsRequiringRio;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.service.Job;
-import sorcer.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +44,7 @@ public class ProvisionManagerTest extends DeploySetup {
 
     @Category(TestsRequiringRio.class)
     @Test
-    public void testDeploy() throws Exception {
+    public void testDeployServicesSync() throws Exception {
         banner("testDeploy");
         Job f1 = JobUtil.createJob();
         ProvisionManager provisionManager = new ProvisionManager(f1);

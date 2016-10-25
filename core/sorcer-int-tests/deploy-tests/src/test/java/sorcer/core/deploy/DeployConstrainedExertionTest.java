@@ -5,9 +5,8 @@ import net.jini.jeri.BasicILFactory;
 import net.jini.jeri.BasicJeriExporter;
 import net.jini.jeri.tcp.TcpServerEndpoint;
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.rioproject.deploy.DeployAdmin;
 import org.rioproject.deploy.ServiceBeanInstance;
@@ -15,9 +14,10 @@ import org.rioproject.deploy.ServiceProvisionListener;
 import org.rioproject.deploy.SystemRequirements;
 import org.rioproject.opstring.OperationalString;
 import org.rioproject.opstring.ServiceElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import org.sorcer.test.TestsRequiringRio;
 import sorcer.core.SorcerConstants;
 import sorcer.service.Job;
 
@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -56,7 +54,12 @@ import static org.junit.Assert.assertTrue;
 public class DeployConstrainedExertionTest  extends DeploySetup implements SorcerConstants {
     private final static Logger logger = LoggerFactory.getLogger(DeployConstrainedExertionTest.class.getName());
 
-    @Category(TestsRequiringRio.class)
+    @Before
+    public void init() {
+        ServiceElementFactory.clear();
+    }
+
+    //@Category(TestsRequiringRio.class)
     @Test
     public void testDeployToCurrentMachine() throws Exception {
         String opSys = System.getProperty("os.name");
@@ -92,7 +95,7 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
         }
     }
 
-    @Category(TestsRequiringRio.class)
+    //@Category(TestsRequiringRio.class)
     @Test
     public void testDeployFailToCurrentMachine() throws Exception {
         String opSys = "CICS";
@@ -118,7 +121,7 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
         deployAdmin.undeploy(multiply.getName());
     }
 
-    @Category(TestsRequiringRio.class)
+    //@Category(TestsRequiringRio.class)
     @Test
     public void testDeployFailToCurrentMachineIPExcludes() throws Exception {
         String opSys = System.getProperty("os.name");

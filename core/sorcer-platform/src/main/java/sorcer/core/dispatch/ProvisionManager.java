@@ -81,7 +81,6 @@ public class ProvisionManager {
         if(!deployServices()) {
             return false;
         }
-        deployments = createDeployments();
         List<Callable<Boolean>> tasks = new ArrayList<>();
         for (Map.Entry<ServiceDeployment.Unique, List<OperationalString>> entry : deployments.entrySet()) {
             for(OperationalString deployment : entry.getValue()) {
