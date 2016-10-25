@@ -55,7 +55,7 @@ public final class ServiceElementFactory  {
     private static final Logger logger = LoggerFactory.getLogger(ServiceElementFactory.class.getName());
     /* The default provider codebase jars */
     private static final List<String> commonDLJars = Arrays.asList("rio-api-"+ RioVersion.VERSION+".jar");
-    private static final Map<String, String> resolvedArtifacts = new ConcurrentHashMap<>();
+    private static final Map<String, ServiceElement> resolvedArtifacts = new ConcurrentHashMap<>();
     private static final BlockingQueue<ResolveRequest> resolverQueue = new LinkedBlockingDeque<>();
     private static final ExecutorService futureExecutor = Executors.newCachedThreadPool();
     private static final ExecutorService execService = Executors.newSingleThreadExecutor();
@@ -94,23 +94,32 @@ public final class ServiceElementFactory  {
                                                                                    ConfigurationException,
                                                                                    ResolverException,
                                                                                    URISyntaxException {
-        String configurationFilePath;
-        if(Artifact.isArtifact(deployment.getConfig())) {
-            configurationFilePath = resolvedArtifacts.get(deployment.getConfig());
-            if(configurationFilePath==null) {
+        if (Artifact.isArtifact(deployment.getConfig())) {
+            ServiceElement service = resolvedArtifacts.get(deployment.getConfig());
+            if (service == null) {
                 ResolverFutureTask resolverFutureTask = new ResolverFutureTask();
-                ResolveRequest resolveRequest = new ResolveRequest(deployment.getConfig(), resolverFutureTask);
+                ResolveRequest resolveRequest = new ResolveRequest(deployment.getConfig(),
+                                                                   deployment,
+                                                                   resolverFutureTask);
                 futureExecutor.submit(resolverFutureTask);
                 resolverQueue.offer(resolveRequest);
                 try {
-                    configurationFilePath = resolverFutureTask.call();
+                    service = resolverFutureTask.call();
+                    return service;
                 } catch (InterruptedException e) {
                     throw new ResolverException("Failed to get artifact location", e);
                 }
+            } else {
+                return service;
             }
         } else {
-            configurationFilePath = deployment.getConfig();
+            String configurationFilePath = deployment.getConfig();
+            return create(deployment, configurationFilePath);
         }
+    }
+
+    private static ServiceElement create(ServiceDeployment deployment,
+                                         String configurationFilePath) throws ConfigurationException, IOException {
         logger.debug("Loading {}", configurationFilePath);
         Configuration configuration = Configuration.getInstance(configurationFilePath);
         String component = "sorcer.core.provider.ServiceProvider";
@@ -251,12 +260,12 @@ public final class ServiceElementFactory  {
         if(serviceDetails.webster==null) {
             if(deployment.getWebsterUrl()==null) {
                 websterUrl = Sorcer.getWebsterUrl();
-                if(logger.isDebugEnabled())
-                    logger.debug("Set code base derived from Sorcer.getWebsterUrl: {}", websterUrl);
+                if(logger.isTraceEnabled())
+                    logger.trace("Set code base derived from Sorcer.getWebsterUrl: {}", websterUrl);
             } else {
                 websterUrl = deployment.getWebsterUrl();
-                if(logger.isDebugEnabled())
-                    logger.debug("Set code base derived from Deployment: {}", websterUrl);
+                if(logger.isTraceEnabled())
+                    logger.trace("Set code base derived from Deployment: {}", websterUrl);
             }
         } else {
             websterUrl = serviceDetails.webster;
@@ -345,7 +354,10 @@ public final class ServiceElementFactory  {
             }
         }
         if(logger.isDebugEnabled())
-            logger.debug("Generated Service Element :"+service);
+            logger.debug("Generated Service Element: {}", service.getName());
+        else if(logger.isTraceEnabled()){
+            logger.trace("Generated Service Element: {}", service);
+        }
         return service;
     }
 
@@ -433,25 +445,27 @@ public final class ServiceElementFactory  {
     private static class ResolveRequest {
         String artifactConfig;
         ResolverFutureTask resolverFutureTask;
+        ServiceDeployment deployment;
 
-        ResolveRequest(String artifactConfig, ResolverFutureTask resolverFutureTask) {
+        ResolveRequest(String artifactConfig, ServiceDeployment deployment, ResolverFutureTask resolverFutureTask) {
             this.artifactConfig = artifactConfig;
             this.resolverFutureTask = resolverFutureTask;
+            this.deployment = deployment;
         }
     }
 
-    private static class ResolverFutureTask implements Callable<String> {
-        String artifactLocation;
+    private static class ResolverFutureTask implements Callable<ServiceElement> {
+        ServiceElement serviceElement;
         private CountDownLatch counter = new CountDownLatch(1);
 
-        void setArtifactLocation(String artifactLocation) {
-            this.artifactLocation = artifactLocation;
+        void setServiceElement(ServiceElement serviceElement) {
+            this.serviceElement = serviceElement;
             counter.countDown();
         }
 
-        public String call() throws InterruptedException {
+        public ServiceElement call() throws InterruptedException {
             counter.await();
-            return artifactLocation;
+            return serviceElement;
         }
     }
 
@@ -463,16 +477,17 @@ public final class ServiceElementFactory  {
                 while (true) {
                     try {
                         ResolveRequest resolveRequest = resolverQueue.take();
-                        String configurationFilePath = resolvedArtifacts.get(resolveRequest.artifactConfig);
-                        if(configurationFilePath==null) {
+                        ServiceElement serviceElement = resolvedArtifacts.get(resolveRequest.artifactConfig);
+                        if(serviceElement==null) {
                             logger.debug("Resolve {}", resolveRequest.artifactConfig);
                             Artifact artifact = new Artifact(resolveRequest.artifactConfig);
                             URL configLocation = resolver.getLocation(artifact.getGAV(), artifact.getType());
-                            configurationFilePath = new File(configLocation.toURI()).getPath();
-                            resolvedArtifacts.put(resolveRequest.artifactConfig, configurationFilePath);
+                            String configurationFilePath = new File(configLocation.toURI()).getPath();
+                            serviceElement = create(resolveRequest.deployment, configurationFilePath);
+                            resolvedArtifacts.put(resolveRequest.artifactConfig, serviceElement);
                         }
-                        resolveRequest.resolverFutureTask.setArtifactLocation(configurationFilePath);
-                    } catch (InterruptedException | ResolverException | URISyntaxException e) {
+                        resolveRequest.resolverFutureTask.setServiceElement(serviceElement);
+                    } catch (InterruptedException | ResolverException | URISyntaxException | ConfigurationException | IOException e) {
                         logger.error("Unable to resolve artifact", e);
                     }
                 }

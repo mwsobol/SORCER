@@ -59,18 +59,18 @@ public class ServiceDeployment implements Serializable, Deployment {
     private String websterUrl = Sorcer.getWebsterUrl();
     private String config;
     private String architecture;
-    private final Set<String> operatingSystems = new HashSet<String>();
-    private final Set<String> ips = new HashSet<String>();
-    private final Set<String> excludeIps = new HashSet<String>();
+    private final Set<String> operatingSystems = new HashSet<>();
+    private final Set<String> ips = new HashSet<>();
+    private final Set<String> excludeIps = new HashSet<>();
 
     /* An idle time for un-provisioning, eval is in minutes */
-    public static final int DEFAULT_IDLE_TIME = 1;
+    public static final int DEFAULT_IDLE_TIME = 5;
     private int idle = DEFAULT_IDLE_TIME;
     private Strategy strategy = Strategy.DYNAMIC;
 
     private Boolean fork;
     private String jvmArgs;
-    private final List<String> deployedNames = new ArrayList<String>();
+    private final List<String> deployedNames = new ArrayList<>();
     private static final Logger logger = LoggerFactory.getLogger(ServiceDeployment.class.getName());
 
     public ServiceDeployment() {
