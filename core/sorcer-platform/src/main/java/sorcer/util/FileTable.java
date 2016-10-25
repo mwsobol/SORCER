@@ -84,8 +84,10 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 		String tableName = null;
 		if (parent != null) {
 			tableName = parent + File.separator + child;
+		} else {
+			tableName = child;
 		}
-		name = tableName;
+		name = child;
 		this.fileName = tableName;
 		ofl = new ObjectFile(fileName +".obf");
 		ifl = new ObjectFile(fileName +"-index.obf");
@@ -100,7 +102,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	}
 
 	public FileTable(String fileName) throws IOException {
-		this(".", fileName);
+		this(null, fileName);
 	}
 
 	public synchronized final void close() throws  IOException {
@@ -600,6 +602,13 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 		sc.putValue("input/table/delimiter", inputTableDelimiter);
 
 		return sc;
+	}
+
+	public void delete() {
+		File obf = new File(fileName +".obf");
+		File iobf = new File(fileName +"-index.obf");
+		obf.delete();
+		iobf.delete();
 	}
 
 	@Override
