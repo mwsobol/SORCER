@@ -18,7 +18,7 @@
     </target>
 
 	<target name="clean" description="Deletes Cybernode log files">
-        <delete includeemptydirs="true" >
+        <delete includeemptydirs="true" failonerror="false">
             <fileset dir="${rio.home}/logs" includes="**/cybernode*" />
         </delete>
 	</target>
