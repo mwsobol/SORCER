@@ -274,6 +274,10 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
      */
     public String getProjectName();
 
+    public boolean isValid();
+
+    public void isValid(boolean state);
+
     /**
      * Returns a data service context (service data) of this mogram.
      *
@@ -303,6 +307,10 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
      * @return true if is export controlled
      */
     public boolean isExportControlled();
+
+    //public boolean isValid();
+
+    //public void isValid(boolean state);
 
     /**
      *  Returns a signature builder that returns instances of this model.

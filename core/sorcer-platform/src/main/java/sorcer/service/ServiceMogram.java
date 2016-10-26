@@ -14,7 +14,6 @@ import sorcer.core.service.Projection;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.modeling.ServiceModel;
 
 import javax.security.auth.Subject;
 import java.io.Serializable;
@@ -95,6 +94,9 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected boolean isChanged = false;
 
+    // when mogram is changed then isValid == false
+    protected boolean isValid = true;
+
     // indicates that is the parent of another mogram
     protected boolean isSuper = false;
 
@@ -147,6 +149,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     protected MonitoringSession monitorSession;
 
     protected Signature builder;
+
+    //protected boolean isValid = true;
 
     protected transient Provider provider;
 
@@ -669,6 +673,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return isRevaluable;
     }
 
+    /*public boolean isValid() {
+        return isValid;
+    }
+
+    public void isValid(boolean state) {
+        isValid = state;
+    }*/
+
     public void setModeling(boolean isRevaluable) {
         this.isRevaluable = isRevaluable;
     }
@@ -885,6 +897,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         }
         selectedFidelity.select = getProcessSignature();
         return selectedFidelity;
+    }
+
+    public boolean isValid() {
+        return isValid;
+    }
+
+    public void isValid(boolean state) {
+        isValid = state;
     }
 
     @Override
