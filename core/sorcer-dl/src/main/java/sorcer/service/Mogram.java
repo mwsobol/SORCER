@@ -308,10 +308,6 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
      */
     public boolean isExportControlled();
 
-    //public boolean isValid();
-
-    //public void isValid(boolean state);
-
     /**
      *  Returns a signature builder that returns instances of this model.
      *  A inConnector specifies a map of an input context as needed by another collaborating service.

@@ -43,7 +43,9 @@ import sorcer.util.SorcerEnv;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.rmi.MarshalledObject;
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Create a {@link ServiceElement} from a {@link ServiceSignature}.
@@ -54,6 +56,13 @@ public final class ServiceElementFactory  {
     private static final Logger logger = LoggerFactory.getLogger(ServiceElementFactory.class.getName());
     /* The default provider codebase jars */
     private static final List<String> commonDLJars = Arrays.asList("rio-api-"+ RioVersion.VERSION+".jar");
+    private static final Map<String, ServiceElement> resolvedArtifacts = new ConcurrentHashMap<>();
+    private static final BlockingQueue<ResolveRequest> resolverQueue = new LinkedBlockingDeque<>();
+    private static final ExecutorService futureExecutor = Executors.newCachedThreadPool();
+    private static final ExecutorService execService = Executors.newSingleThreadExecutor();
+    static {
+        execService.submit(new ResolverRunner());
+    }
 
     private ServiceElementFactory(){}
 
@@ -86,17 +95,33 @@ public final class ServiceElementFactory  {
                                                                                    ConfigurationException,
                                                                                    ResolverException,
                                                                                    URISyntaxException {
-        String configurationFilePath;
-        if(Artifact.isArtifact(deployment.getConfig())) {
-            logger.info("Resolve "+deployment.getConfig());
-            Resolver resolver = ResolverHelper.getResolver();
-            Artifact artifact = new Artifact(deployment.getConfig());
-            URL configLocation = resolver.getLocation(artifact.getGAV(), artifact.getType());
-            configurationFilePath = new File(configLocation.toURI()).getPath();
+        if (Artifact.isArtifact(deployment.getConfig())) {
+            ServiceElement service = resolvedArtifacts.get(deployment.getConfig());
+            if (service == null) {
+                ResolverFutureTask resolverFutureTask = new ResolverFutureTask();
+                ResolveRequest resolveRequest = new ResolveRequest(deployment.getConfig(),
+                                                                   deployment,
+                                                                   resolverFutureTask);
+                futureExecutor.submit(resolverFutureTask);
+                resolverQueue.offer(resolveRequest);
+                try {
+                    service = resolverFutureTask.call();
+                    return service;
+                } catch (InterruptedException | ClassNotFoundException e) {
+                    throw new ResolverException("Failed to get artifact location", e);
+                }
+            } else {
+                return service;
+            }
         } else {
-            configurationFilePath = deployment.getConfig();
+            String configurationFilePath = deployment.getConfig();
+            return create(deployment, configurationFilePath);
         }
-        logger.info("Loading "+configurationFilePath);
+    }
+
+    private static ServiceElement create(ServiceDeployment deployment,
+                                         String configurationFilePath) throws ConfigurationException, IOException {
+        logger.debug("Loading {}", configurationFilePath);
         Configuration configuration = Configuration.getInstance(configurationFilePath);
         String component = "sorcer.core.provider.ServiceProvider";
 
@@ -236,12 +261,12 @@ public final class ServiceElementFactory  {
         if(serviceDetails.webster==null) {
             if(deployment.getWebsterUrl()==null) {
                 websterUrl = Sorcer.getWebsterUrl();
-                if(logger.isDebugEnabled())
-                    logger.debug("Set code base derived from Sorcer.getWebsterUrl: {}", websterUrl);
+                if(logger.isTraceEnabled())
+                    logger.trace("Set code base derived from Sorcer.getWebsterUrl: {}", websterUrl);
             } else {
                 websterUrl = deployment.getWebsterUrl();
-                if(logger.isDebugEnabled())
-                    logger.debug("Set code base derived from Deployment: {}", websterUrl);
+                if(logger.isTraceEnabled())
+                    logger.trace("Set code base derived from Deployment: {}", websterUrl);
             }
         } else {
             websterUrl = serviceDetails.webster;
@@ -330,7 +355,10 @@ public final class ServiceElementFactory  {
             }
         }
         if(logger.isDebugEnabled())
-            logger.debug("Generated Service Element :"+service);
+            logger.debug("Generated Service Element: {}", service.getName());
+        else if(logger.isTraceEnabled()){
+            logger.trace("Generated Service Element: {}", service);
+        }
         return service;
     }
 
@@ -413,6 +441,66 @@ public final class ServiceElementFactory  {
             }
         }
         return stringBuilder.toString();
+    }
+
+    private static class ResolveRequest {
+        String artifactConfig;
+        ResolverFutureTask resolverFutureTask;
+        ServiceDeployment deployment;
+
+        ResolveRequest(String artifactConfig, ServiceDeployment deployment, ResolverFutureTask resolverFutureTask) {
+            this.artifactConfig = artifactConfig;
+            this.resolverFutureTask = resolverFutureTask;
+            this.deployment = deployment;
+        }
+    }
+
+    private static class ResolverFutureTask implements Callable<ServiceElement> {
+        ServiceElement serviceElement;
+        private CountDownLatch counter = new CountDownLatch(1);
+
+        void setServiceElement(ServiceElement serviceElement) {
+            this.serviceElement = serviceElement;
+            counter.countDown();
+        }
+
+        public ServiceElement call() throws InterruptedException, IOException, ClassNotFoundException {
+            counter.await();
+            return new MarshalledObject<>(serviceElement).get();
+        }
+    }
+
+    private static class ResolverRunner implements Runnable {
+
+        @Override public void run() {
+            try {
+                Resolver resolver = ResolverHelper.getResolver();
+                while (true) {
+                    try {
+                        ResolveRequest resolveRequest = resolverQueue.take();
+                        ServiceElement serviceElement = resolvedArtifacts.get(resolveRequest.artifactConfig);
+                        if(serviceElement==null) {
+                            logger.debug("Resolve {}", resolveRequest.artifactConfig);
+                            Artifact artifact = new Artifact(resolveRequest.artifactConfig);
+                            URL configLocation = resolver.getLocation(artifact.getGAV(), artifact.getType());
+                            String configurationFilePath = new File(configLocation.toURI()).getPath();
+                            serviceElement = create(resolveRequest.deployment, configurationFilePath);
+                            resolvedArtifacts.put(resolveRequest.artifactConfig, serviceElement);
+                        }
+                        resolveRequest.resolverFutureTask.setServiceElement(serviceElement);
+                    } catch (InterruptedException | ResolverException | URISyntaxException | ConfigurationException | IOException e) {
+                        logger.error("Unable to resolve artifact", e);
+                    }
+                }
+            } catch(ResolverException e) {
+                logger.error("Unable to get Resolver", e);
+            }
+
+        }
+    }
+
+    static void clear() {
+        resolvedArtifacts.clear();
     }
 
     private static class ServiceDetails {

@@ -49,9 +49,6 @@ public class SorcerTestRunner extends BlockJUnit4ClassRunner {
         });
         if(System.getSecurityManager()==null)
             System.setSecurityManager(new SecurityManager());
-
-        /* Prime the Accessor, get it setup */
-        Accessor.create();
     }
     private static final Logger logger = LoggerFactory.getLogger(SorcerTestRunner.class.getName());
 
@@ -126,6 +123,10 @@ public class SorcerTestRunner extends BlockJUnit4ClassRunner {
                                    " test bootstrapping short-circuited");
             }
         }
+
+        /* Prime the Accessor, get it setup */
+        Accessor.create();
+
         super.run(notifier);
     }
 
