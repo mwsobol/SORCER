@@ -26,9 +26,7 @@ import net.jini.discovery.LookupDiscoveryManager;
 import net.jini.lookup.ServiceDiscoveryManager;
 import org.rioproject.config.Constants;
 import org.rioproject.deploy.DeployAdmin;
-import org.rioproject.event.RemoteServiceEventListener;
 import org.rioproject.impl.client.JiniClient;
-import org.rioproject.monitor.ProvisionMonitorEvent;
 import sorcer.util.Sorcer;
 
 import java.rmi.RemoteException;
@@ -145,21 +143,6 @@ public class ProvisionMonitorCache {
         }
 
         public void discarded(DiscoveryEvent discoveryEvent) {
-        }
-    }
-
-    static class DeploymentListener implements RemoteServiceEventListener<ProvisionMonitorEvent> {
-
-        @Override public void notify(ProvisionMonitorEvent event) {
-            ProvisionMonitorEvent.Action action = event.getAction();
-            switch (action) {
-                case OPSTRING_DEPLOYED:
-                    break;
-                case OPSTRING_UNDEPLOYED:
-                    break;
-                default:
-
-            }
         }
     }
 
