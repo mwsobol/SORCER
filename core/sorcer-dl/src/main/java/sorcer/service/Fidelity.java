@@ -71,19 +71,20 @@ public class Fidelity<T> implements Arg, net.jini.core.entry.Entry {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Fidelity) {
-			if (select == null) {
-				return path.equals(((Fidelity) obj).getPath())
-						&& name.equals(((Fidelity) obj).getName());
-			} else {
-				return path.equals(((Fidelity) obj).getPath())
-						&& name.equals(((Fidelity) obj).getName())
-						&& select.equals(((Fidelity) obj).getSelect());
-			}
-		} else {
+	public int hashCode() {
+		String id = name + path;
+		int hash = id.length() + 1;
+		return hash * 31 + id.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof Fidelity
+				&& ((Fidelity) object).getName().equals(name)
+				&& ((Fidelity) object).getPath().equals(path))
+			return true;
+		else
 			return false;
-		}
 	}
 
 	@Override
