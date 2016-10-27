@@ -3441,6 +3441,10 @@ public class operator {
 		Fixed() {}
 	}
 
+	public static Configuration configFile(String filename) {
+		return new Configuration(filename);
+	}
+
 	public static PerNode perNode(int number) {
 		return new PerNode(number);
 	}

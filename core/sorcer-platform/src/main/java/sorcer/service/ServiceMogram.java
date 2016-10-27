@@ -1,5 +1,6 @@
 package sorcer.service;
 
+import net.jini.config.*;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
@@ -14,7 +15,6 @@ import sorcer.core.service.Projection;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.modeling.ServiceModel;
 
 import javax.security.auth.Subject;
 import java.io.Serializable;
@@ -29,7 +29,12 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected final static Logger logger = LoggerFactory.getLogger(ServiceMogram.class.getName());
 
-    static final long serialVersionUID = 1L;
+	/** Configuration component name for service mogram. */
+	public static final String COMPONENT = ServiceMogram.class.getName();
+
+	public static final String FI_POOL = "fiPool";
+
+	static final long serialVersionUID = 1L;
 
     protected String name;
 
@@ -116,6 +121,9 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected MorphFidelity serviceMorphFidelity;
 
+	// a map of fidelities to configure this mogram
+	protected Map<Fidelity, ServiceFidelity> fiPool;
+
     protected SorcerPrincipal principal;
 
     // the current fidelity alias, as it is named in 'fidelities'
@@ -150,13 +158,15 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected boolean isValid = true;
 
+	protected String configFilename;
+
     protected transient Provider provider;
 
     protected ServiceMogram() {
         this(null);
     }
 
-    public ServiceMogram(String name) {
+    public ServiceMogram(String name)  {
         if (name == null || name.length() == 0)
             this.name = defaultName + count++;
         else
@@ -944,5 +954,37 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public void setSelectedMetafidelity(ServiceFidelity<ServiceFidelity> metafidelity) {
         selectedMetafidelity = metafidelity;
+    }
+
+	public void setConfigFilename(String configFilename) {
+		this.configFilename = configFilename;
+	}
+
+	public Map<Fidelity, ServiceFidelity> getFiPool() {
+		return fiPool;
+	}
+
+	public void loadFiPool() {
+        if (configFilename == null) {
+			logger.warn("No mogram configuration file available for: {}", name);
+		} else {
+			initConfig(new String[]{configFilename});
+		}
+    }
+
+    public void initConfig(String[] args) {
+        Configuration config;
+        try {
+            config = ConfigurationProvider.getInstance(args, getClass()
+                .getClassLoader());
+
+			fiPool = (Map<Fidelity, ServiceFidelity>) config.getEntry(ServiceMogram.COMPONENT,
+				ServiceMogram.FI_POOL, Map.class);
+        } catch (net.jini.config.ConfigurationException e) {
+			fiPool = null;
+            logger.warn("configuratin failed for: " + configFilename);
+            e.printStackTrace();
+        }
+        logger.debug("config fiPool: " + fiPool);
     }
 }
