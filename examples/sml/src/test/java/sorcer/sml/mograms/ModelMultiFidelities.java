@@ -13,6 +13,7 @@ import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.FiMogram;
+import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.Model;
@@ -26,7 +27,7 @@ import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.ent;
+import static sorcer.po.operator.*;
 
 /**
  * Created by Mike Sobolewski on 10/26/15.
@@ -111,6 +112,47 @@ public class ModelMultiFidelities {
         logger.info("out: " + out);
         assertTrue(get(out, "mFi").equals(100.0));
         assertTrue(get(mod, "result/y").equals(100.0));
+    }
+
+    @Test
+    public void refSigMultiFidelityModel() throws Exception {
+
+        // three entry model
+        Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
+            val("sig1", sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+            val("sig2", sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+
+            ent("mFi", sFi(ref("sig1"), ref("sig2"))),
+            response("mFi", "arg/x1", "arg/x2"));
+
+        Context out = response(mod, fi("mFi", "add"));
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi").equals(100.0));
+        assertTrue(get(mod, "result/y").equals(100.0));
+
+        out = response(mod, fi("mFi", "multiply"));
+        logger.info("out2: " + out);
+        assertTrue(get(out, "mFi").equals(900.0));
+    }
+
+    @Test
+    public void refInvokerMultiFidelityModel() throws Exception {
+
+        // three entry model
+        Model mod = model(inVal("x1", 10.0), inVal("x2", 90.0),
+                val("eval1", invoker("add", "x1 + x2", ents("x1", "x2"))),
+                val("eval2", invoker("multiply", "x1 * x2", ents("x1", "x2"))),
+
+                ent("mFi", eFi(ref("eval1"), ref("eval2"))),
+                response("mFi", "x1", "x2"));
+
+        Context out = response(mod, fi("mFi", "add"));
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi").equals(100.0));
+
+        out = response(mod, fi("mFi", "multiply"));
+        logger.info("out2: " + out);
+        assertTrue(get(out, "mFi").equals(900.0));
     }
 
     @Test

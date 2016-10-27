@@ -29,10 +29,7 @@ import sorcer.core.Name;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.QueueStrategy;
-import sorcer.core.context.model.ent.Proc;
-import sorcer.core.context.model.ent.ProcModel;
-import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.EntryList;
+import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.deploy.ServiceDeployment;
@@ -1508,6 +1505,19 @@ public class operator {
 		return fi;
 	}
 
+	public static ServiceFidelity<Ref> sFi(String name, Ref... references) {
+		ServiceFidelity<Ref> fi = new ServiceFidelity(name, references);
+		fi.setSelect(references[0]);
+		fi.type = ServiceFidelity.Type.REF;
+		return fi;
+	}
+
+	public static ServiceFidelity<Ref> sFi(Ref... references) {
+		ServiceFidelity<Ref> fi = new ServiceFidelity(references);
+		fi.type = ServiceFidelity.Type.REF;
+		return fi;
+	}
+
 	public static Signature sig(String operation, Object object)
 			throws SignatureException {
 		return sig(operation, object, null, null, null);
@@ -1852,7 +1862,7 @@ public class operator {
 		String name = "unknown" + count++;
 		boolean hasEntry = false;
 		boolean evalType = false;
-		boolean parType = false;
+		boolean procType = false;
 		boolean srvType = false;
 		boolean hasExertion = false;
 		boolean hasSignature = false;
@@ -1868,7 +1878,7 @@ public class operator {
 				try {
 					hasEntry = true;
 					if (i instanceof Proc)
-						parType = true;
+						procType = true;
 					else if (i instanceof Srv) {
 						srvType = true;
 					} else if (((Entry) i).asis() instanceof Evaluation) {
@@ -1885,7 +1895,7 @@ public class operator {
 			ServiceModel mo = null;
 			if (srvType) {
 				mo = srvModel(items);
-			} else if (parType) {
+			} else if (procType) {
 				try {
 					return (M) sorcer.po.operator.procModel(name, items);
 				} catch (Exception e) {

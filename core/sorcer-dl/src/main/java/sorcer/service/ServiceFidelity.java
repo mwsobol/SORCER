@@ -35,6 +35,7 @@ package sorcer.service;
  */
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.Name;
+import sorcer.service.modeling.Reference;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -147,7 +148,6 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 		if (select == null && selects.size() > 0) {
 			select = selects.get(0);
 		}
-
 		return select;
 	}
 
@@ -219,6 +219,22 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 	}
 
 	public List<T> getSelects() {
+		return selects;
+	}
+
+	public List getSelects(Context scope) throws ContextException {
+		if (selects.get(0) instanceof Reference) {
+			List<Object> ss = new ArrayList();
+			for (Object s : selects) {
+				try {
+					((Reference)s).setScope(scope);
+					ss.add(((Reference)s).getValue());
+				} catch (Exception e) {
+					throw new ContextException(e);
+				}
+			}
+			return ss;
+		}
 		return selects;
 	}
 

@@ -28,6 +28,7 @@ import sorcer.service.modeling.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 	public Entry(final String path) {
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");
-		_1 = path;
+		this._1 = path;
 	}
 
 	public Entry(final String path, final T value) {
@@ -79,7 +80,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		if (v == null)
 			v = (T)Context.none;
 
-		_1 = path;
+		this._1 = path;
 		if (SdbUtil.isSosURL(v)) {
 			isPersistent = true;
 		}
@@ -340,7 +341,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		this.type = type;
 	}
 
-	public ServiceModel getScope() {
+	public Context getScope() {
 		return scope;
 	}
 

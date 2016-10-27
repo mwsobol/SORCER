@@ -21,6 +21,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.model.ent.Ref;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -243,7 +244,18 @@ public class FiMogram extends ServiceMogram implements Multifidelity<Request> {
 
     @Override
     public Request getSelect() {
-        return (Request) getMultifidelity().getSelect();
+        Request req = null;
+        Object select = getMultifidelity().getSelect();
+        if (select instanceof Ref) {
+            try {
+                req=  (Request) ((Ref) getMultifidelity().getSelect()).getValue();
+            } catch (EvaluationException | RemoteException e) {
+                e.printStackTrace();
+            }
+        } else{
+            req = (Request) getMultifidelity().getSelect();
+        }
+        return req;
     }
 
     @Override

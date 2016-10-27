@@ -338,7 +338,7 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
             }
         }
 
-        List<T> choices = fi.getSelects();
+        List<T> choices = fi.getSelects(this);
         for (T s : choices) {
             if (selected == null && fi.getSelect() != null)
                 return fi.getSelect();

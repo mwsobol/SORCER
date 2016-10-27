@@ -454,6 +454,12 @@ public class operator {
 		return new GroovyInvoker(expression, args);
 	}
 
+	public static ServiceInvoker invoker(String name, String expression, Arg... args) {
+		GroovyInvoker gi = new GroovyInvoker(expression, args);
+		gi.setName(name);
+		return gi;
+	}
+
     public static SysCall sysCall(String name, Context context) throws ContextException {
         return new SysCall(name, context);
     }
@@ -661,6 +667,11 @@ public class operator {
 		Entry<T> entry = ent(path.getName(), value, args);
 		entry.annotation(path.info.toString());
 		return entry;
+	}
+
+	public static <T> Ref<T> ref(String path, Arg... args) {
+		Ref cr = new Ref(path, args);
+		return cr;
 	}
 
 	public static <T> Entry<T> ent(String path, T value, Arg... args) {

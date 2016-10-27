@@ -46,7 +46,7 @@ import java.util.*;
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
 public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
-		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, Serializable {
+		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T> {
 
 	private static final long serialVersionUID = 7495489980319169695L;
 	 
