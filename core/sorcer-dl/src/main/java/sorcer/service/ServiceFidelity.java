@@ -97,12 +97,14 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 
 	public ServiceFidelity(String... selects) {
 		this.name = "";
+		type = Type.NAME;
 		for (String s : selects)
 			this.selects.add((T) new Name(s));
 	}
 
 	public ServiceFidelity(String name, String... selects) {
 		this.name = name;
+		type = Type.NAME;
 		for (String s : selects)
 			this.selects.add((T) new Name(s));
 	}

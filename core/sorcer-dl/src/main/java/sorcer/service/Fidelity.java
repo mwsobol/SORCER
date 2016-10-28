@@ -14,7 +14,7 @@ public class Fidelity<T> implements Fi, Arg, net.jini.core.entry.Entry {
 
 	protected T select;
 
-	public Type type = Type.NAME;
+	public Type type = Type.SELECT;
 
 	public Fidelity() {
 		super();
