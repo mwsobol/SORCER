@@ -17,6 +17,7 @@ package sorcer.core.signature;
 
 import sorcer.core.provider.ProviderName;
 import sorcer.service.Arg;
+import sorcer.service.Fidelity;
 import sorcer.service.ServiceFidelity;
 import sorcer.service.Signature;
 import sorcer.service.modeling.Model;
@@ -28,7 +29,7 @@ public class ModelSignature extends ServiceSignature {
 
 	private Variability var;
 
-	private ServiceFidelity fidelity;
+	private Fidelity fidelity;
 
 	private Signature innerSignature;
 	
@@ -69,10 +70,10 @@ public class ModelSignature extends ServiceSignature {
 		}
 	}
 
-	public ModelSignature(String selector, ServiceFidelity varFidelity,
+	public ModelSignature(String selector, Fidelity fidelity,
 						  Signature targetSignature, Arg... paramters) {
 		this(selector, targetSignature);
-		this.fidelity = varFidelity;
+		this.fidelity = fidelity;
 		for (Arg p : paramters) {
 			if (p instanceof ReturnPath) {
 				this.returnPath = (ReturnPath)p;
@@ -106,7 +107,7 @@ public class ModelSignature extends ServiceSignature {
 	 * 
 	 * @return the fidelity
 	 */
-	public ServiceFidelity getFidelity() {
+	public Fidelity getFidelity() {
 		return fidelity;
 	}
 

@@ -3,17 +3,8 @@ package sorcer.service;
 /**
  * Created by Mike Sobolewski on 6/27/16.
  */
-public class Fidelity<T> implements Arg, net.jini.core.entry.Entry {
+public class Fidelity<T> implements Fi, Arg, net.jini.core.entry.Entry {
     static final long serialVersionUID = 1L;
-
-    public enum Type implements Arg {
-		SELECT, META, NAME, SYS, ENTRY, SIG, REF, CONTEXT, COMPONENT,
-		MORPH, MULTI, VAR, REQUEST, UPDATE, ADD, REPLACE, DELETE;
-
-		public String getName() {
-			return toString();
-		}
-	}
 
 	protected static int count = 0;
 
@@ -70,6 +61,10 @@ public class Fidelity<T> implements Arg, net.jini.core.entry.Entry {
 		return type;
 	}
 
+	public void setType(Type type) {
+		this.type = type;
+	}
+
 	@Override
 	public int hashCode() {
 		String id = name + path;
@@ -81,15 +76,17 @@ public class Fidelity<T> implements Arg, net.jini.core.entry.Entry {
 	public boolean equals(Object object) {
 		if (object instanceof Fidelity
 				&& ((Fidelity) object).getName().equals(name)
-				&& ((Fidelity) object).getPath().equals(path))
+				&& ((Fidelity) object).getPath().equals(path)
+				&& ((Fidelity) object).getType().equals(type)) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 
 	@Override
 	public String toString() {
-		return (path != null ? name + "@" + path : name);
+		return (path != null ? name + "@" + path : name) + ":" + type;
 	}
 
 }

@@ -16,11 +16,14 @@
 package sorcer.util;
 
 import net.jini.discovery.DiscoveryGroupManagement;
+import net.jini.id.Uuid;
 import org.rioproject.net.HostUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.data.DataService;
 import sorcer.service.ConfigurationException;
+import sorcer.service.Fidelity;
+import sorcer.service.ServiceFidelity;
 
 import java.io.File;
 import java.io.FileInputStream;

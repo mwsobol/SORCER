@@ -15,6 +15,8 @@ import sorcer.core.service.Projection;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
+import sorcer.util.FiPool;
+import sorcer.util.SorcerEnv;
 
 import javax.security.auth.Subject;
 import java.io.Serializable;
@@ -28,11 +30,6 @@ import java.util.*;
 public abstract class ServiceMogram implements Mogram, Exec, Serializable, SorcerConstants {
 
     protected final static Logger logger = LoggerFactory.getLogger(ServiceMogram.class.getName());
-
-	/** Configuration component name for service mogram. */
-	public static final String COMPONENT = ServiceMogram.class.getName();
-
-	public static final String FI_POOL = "fiPool";
 
 	static final long serialVersionUID = 1L;
 
@@ -120,9 +117,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     protected ServiceFidelity<Signature> selectedFidelity = new ServiceFidelity(ServiceFidelity.Type.SIG);
 
     protected MorphFidelity serviceMorphFidelity;
-
-	// a map of fidelities to configure this mogram
-	protected Map<Fidelity, ServiceFidelity> fiPool;
 
     protected SorcerPrincipal principal;
 
@@ -960,10 +954,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 		this.configFilename = configFilename;
 	}
 
-	public Map<Fidelity, ServiceFidelity> getFiPool() {
-		return fiPool;
-	}
-
 	public void loadFiPool() {
         if (configFilename == null) {
 			logger.warn("No mogram configuration file available for: {}", name);
@@ -978,13 +968,12 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
             config = ConfigurationProvider.getInstance(args, getClass()
                 .getClassLoader());
 
-			fiPool = (Map<Fidelity, ServiceFidelity>) config.getEntry(ServiceMogram.COMPONENT,
-				ServiceMogram.FI_POOL, Map.class);
+			FiPool.put(mogramId, (Map<Fidelity, ServiceFidelity>) config.getEntry(FiPool.COMPONENT,
+                FiPool.FI_POOL, Map.class));
         } catch (net.jini.config.ConfigurationException e) {
-			fiPool = null;
             logger.warn("configuratin failed for: " + configFilename);
             e.printStackTrace();
         }
-        logger.debug("config fiPool: " + fiPool);
+        logger.debug("config fiPool: " + FiPool.get(mogramId));
     }
 }
