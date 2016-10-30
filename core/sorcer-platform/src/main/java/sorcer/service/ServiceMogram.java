@@ -976,4 +976,11 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         }
         logger.debug("config fiPool: " + FiPool.get(mogramId));
     }
+
+    @Override
+    public Mogram deploy(Signature signature) throws MogramException {
+        // to be implemented in subclasses
+        return this;
+    }
+
 }

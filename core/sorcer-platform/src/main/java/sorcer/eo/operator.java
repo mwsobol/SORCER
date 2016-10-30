@@ -894,6 +894,13 @@ public class operator {
 		return signature;
 	}
 
+	public static SigDeployer deployer(String operation, Class serviceType)
+			throws SignatureException {
+		ObjectSignature builder = (ObjectSignature) sig(operation, serviceType, new Object[]{});
+		SigDeployer dpl = new SigDeployer(builder);
+		return dpl;
+	}
+
 	public static Signature sig(String operation, Class serviceType)
 			throws SignatureException {
 		return sig(operation, serviceType, new Object[]{});
