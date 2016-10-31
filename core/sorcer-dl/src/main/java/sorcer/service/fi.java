@@ -29,9 +29,10 @@ public interface Fi {
     final static int ev =  6;
     final static int gt =  7;
     final static int st =  8;
+    final static int gr =  9;
 
     public enum Type implements Arg {
-        ENTRY, SIG, REF, COMPONENT, MORPH, VAR, EVALUATOR, GETTER, SETTER,
+        ENTRY, SIG, REF, COMPONENT, MORPH, VAR, EVALUATOR, GETTER, SETTER, GRADIENT,
         MULTI, REQUEST, UPDATE, ADD, REPLACE, DELETE, SELECT, META, NAME, SYS, CONTEXT, ;
 
 		static public String name(int fiType) {
