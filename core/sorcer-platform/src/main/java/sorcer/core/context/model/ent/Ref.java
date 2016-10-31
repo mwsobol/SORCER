@@ -20,6 +20,7 @@ import sorcer.service.Arg;
 import sorcer.service.Context;
 import sorcer.service.EvaluationException;
 import sorcer.service.modeling.Reference;
+import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Variability;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -31,11 +32,15 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public class Ref<T> extends Entry<T> implements Reference {
+public class Ref<T> extends Entry<T> implements Reference, SupportComponent {
 
 	private static final long serialVersionUID = 1L;
 
 	private Arg[] args = new Arg[0];
+
+	public Ref() {
+		super();
+	}
 
 	public Ref(final String path, Arg... args) {
 		if(path==null)

@@ -30,6 +30,7 @@ import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ServiceModel;
 import sorcer.eo.operator.Args;
+import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Variability;
 
 import java.net.URL;
@@ -667,6 +668,12 @@ public class operator {
 		Entry<T> entry = ent(path.getName(), value, args);
 		entry.annotation(path.info.toString());
 		return entry;
+	}
+
+	public static <T> Ref<T> ref(SupportComponent component) {
+		Ref cr = new Ref();
+		cr._2 = component;
+		return cr;
 	}
 
 	public static <T> Ref<T> ref(String path, Arg... args) {
