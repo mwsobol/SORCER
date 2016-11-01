@@ -903,8 +903,15 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     @Override
     public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
-        if (fiManager != null)
+        if (fiManager != null) {
+            if (fidelities.length == 1 && fidelities[0] instanceof ServiceFidelity) {
+                List<Fidelity> fiList = ((ServiceFidelity)fidelities[0]).getSelects();
+                Fidelity[] fiArray = new Fidelity[fiList.size()];
+                fiList.toArray(fiArray);
+                fiManager.reconfigure(fiArray);
+            }
             fiManager.reconfigure(fidelities);
+        }
     }
 
     @Override

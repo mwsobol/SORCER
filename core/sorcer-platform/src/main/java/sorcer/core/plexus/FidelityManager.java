@@ -314,6 +314,10 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         return null;
     }
 
+    public void reconfigure(FidelityList fiList) throws ContextException, RemoteException {
+        reconfigure(fiList.toFidelityArray());
+    }
+
     @Override
     public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
         if (fidelities == null || fidelities.length == 0) {
