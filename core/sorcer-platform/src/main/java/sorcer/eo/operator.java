@@ -1380,10 +1380,6 @@ public class operator {
 		return srvFi;
 	}
 
-	public static void reconfigure(Mogram mogram, Fidelity... fidelities) throws RemoteException, ContextException {
-		mogram.getFidelityManager().reconfigure(fidelities);
-	}
-
 	public static void selectFi(Mogram mogram, String selection) {
 		((FiMogram)mogram).selectFidelity(selection);
 	}

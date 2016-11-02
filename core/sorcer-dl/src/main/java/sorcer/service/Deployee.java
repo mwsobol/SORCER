@@ -21,6 +21,6 @@ package sorcer.service;
  */
 public interface Deployee extends Arg {
 
-    public void deploy() throws MogramException;
+    public void deploy() throws MogramException, ConfigurationException;
 
 }

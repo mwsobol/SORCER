@@ -74,14 +74,19 @@ public class SigDeployer implements Deployee {
     }
 
     @Override
-    public void deploy() throws MogramException {
+    public void deploy() throws ConfigurationException {
         if (deployee != null && builder != null) {
             if (deployee instanceof Model) {
-                deployee.deploy(builder);
+                try {
+                    deployee.deploy(builder);
+                } catch (MogramException e) {
+                    throw new ConfigurationException(e);
+                }
             }
         } else {
-            throw new ModelException("Invalid SigDeployer: " + builder);
+            throw new ConfigurationException("Invalid SigDeployer: " + builder);
         }
     }
+
 
 }

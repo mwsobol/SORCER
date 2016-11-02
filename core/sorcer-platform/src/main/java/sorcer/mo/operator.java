@@ -345,6 +345,52 @@ public class operator {
         return paradigm;
     }
 
+    public static Mogram addMetaFi(Mogram mogram, ServiceFidelity<Fidelity>... fidelities) {
+        for ( ServiceFidelity<Fidelity> fi : fidelities) {
+            ((FidelityManager)mogram.getFidelityManager()).put(fi.getName(), fi);
+        }
+        return mogram;
+    }
+
+    public static Mogram reconfigure(Mogram mogram, Fidelity... fidelities) throws ContextException {
+        List<Fidelity> fis = new FidelityList();
+        Fidelity[] fiArray = null;
+        try {
+            for (Fidelity fi : fidelities) {
+                if (fi instanceof ServiceFidelity) {
+                    List<Fidelity> selects = ((ServiceFidelity) fi).getSelects();
+                    fiArray = new Fidelity[selects.size()];
+                    selects.toArray(fiArray);
+                    mogram.getFidelityManager().reconfigure(fiArray);
+                } else if (fi instanceof Fidelity) {
+                    fis.add(fi);
+                }
+            }
+            if (fis.size() > 0) {
+                fiArray = new Fidelity[fis.size()];
+                fis.toArray(fiArray);
+                mogram.getFidelityManager().reconfigure(fiArray);
+            }
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+        return mogram;
+    }
+
+    public static Mogram reconfigure(Mogram model, FidelityList fiList) throws ContextException {
+        try {
+            ((FidelityManager)model.getFidelityManager()).reconfigure(fiList);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+        return model;
+    }
+
+    public static Mogram morph(Mogram model, String... fiNames) throws ContextException {
+        ((FidelityManager)model.getFidelityManager()).morph(fiNames);
+        return model;
+    }
+
     public static Model srvModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
         List<Signature> sigs = new ArrayList<>();

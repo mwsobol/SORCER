@@ -740,6 +740,7 @@ public class operator {
 	public static Tuple2<Fidelity, ServiceFidelity> ent(Fidelity fi, ServiceFidelity srvFi) {
 		Tuple2<Fidelity, ServiceFidelity> assoc =  new Tuple2<>(fi, srvFi);
 		srvFi.setName(fi.getName());
+		srvFi.setPath(fi.getPath());
 		fi.setType(srvFi.getType());
 		return assoc;
 	}

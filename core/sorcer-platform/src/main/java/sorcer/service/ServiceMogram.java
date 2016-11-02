@@ -985,7 +985,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     @Override
-    public Mogram deploy(Signature signature) throws MogramException {
+    public Mogram deploy(Signature signature) throws ConfigurationException {
         // to be implemented in subclasses
         return this;
     }
