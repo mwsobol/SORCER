@@ -223,7 +223,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 	@Override
 	public int hashCode() {
 		int hash = _1.length() + 1;
-		return hash = hash * 31 + _1.hashCode();
+		return hash * 31 + _1.hashCode();
 	}
 
 	@Override
@@ -310,7 +310,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		if (mogram instanceof ProcModel) {
 			if (_2 != null && _2 != Context.none)
 				add((Context)mogram, this);
-			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Name(_1));
+			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Path(_1));
 			out = (Context) ((Model)mogram).getResponse();
 		} else if (mogram instanceof ServiceContext) {
 			if (_2 == null || _2 == Context.none) {

@@ -321,7 +321,7 @@ public class DataModels {
         responseDown(cxt, "x2");
         out = response(cxt);
         assertTrue(get(out, "x1").equals(20.0));
-//        logger.info("response3: " + out);
+        logger.info("response3: " + out);
         assertTrue(out.size() == 1);
     }
 

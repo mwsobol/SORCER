@@ -119,6 +119,26 @@ public class Path implements Arg  {
 		return sa;
 	}
 
+
+	@Override
+	public int hashCode() {
+		int hash = path.length() + 1;
+		return hash * 31 + path.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if ((object instanceof Path)
+			&& ((Path) object).path.equals(path)) {
+//				&&   ((Path) object).info.equals(info)
+//				&& ((Path) object).type.equals(type))
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
 	public static String[] getPathNames(List<Path> paths) {
 		String[] sa = new String[paths.size()];
 		for (int i = 0; i < paths.size(); i++)

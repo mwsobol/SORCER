@@ -423,7 +423,7 @@ public class operator {
 		}
 		if (response != null) {
 			if (response.path() != null) {
-				((ServiceContext) cxt).getMogramStrategy().getResponsePaths().add(new Name(response.path()));
+				((ServiceContext) cxt).getMogramStrategy().getResponsePaths().add(new Path(response.path()));
 			}
 			((ServiceContext) cxt).getMogramStrategy().setResult(response.path(), response.target);
 		}

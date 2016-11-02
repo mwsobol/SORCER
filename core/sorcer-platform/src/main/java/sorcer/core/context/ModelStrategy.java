@@ -11,10 +11,7 @@ import sorcer.util.FileURLHandler;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Mike Sobolewski
@@ -65,7 +62,7 @@ public class ModelStrategy implements MogramStrategy, Serializable {
     protected Exec.State execState = Exec.State.INITIAL;
 
     // reponse paths of the runtime model
-    protected List<Arg> responsePaths = new ArrayList<Arg>();
+    protected List<Path> responsePaths = new ArrayList<Path>();
 
     public ModelStrategy(Mogram service) {
         target = service;
@@ -200,11 +197,23 @@ public class ModelStrategy implements MogramStrategy, Serializable {
         outcome.putValue(path, value);
     }
 
-    public List<Arg> getResponsePaths() {
+    public List<Path> getResponsePaths() {
         return responsePaths;
     }
 
-    public void setResponsePaths(List<Arg> responsePaths) {
+    public void setResponsePaths(String... paths) {
+        List<Path> list = new ArrayList<>();
+        for (String s : paths) {
+            list.add(new Path(s));
+        }
+        this.responsePaths = list;
+    }
+
+    public void setResponsePaths(Path[] responsePaths) {
+        this.responsePaths = Arrays.asList(responsePaths);
+    }
+
+    public void setResponsePaths(List<Path> responsePaths) {
         this.responsePaths = responsePaths;
     }
 

@@ -1601,7 +1601,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return subcntxt;
 	}
 
-	public ServiceContext getMergedSubcontext(ServiceContext intial, List<Arg> paths, Arg... args)
+	public ServiceContext getMergedSubcontext(ServiceContext intial, List<Path> paths, Arg... args)
 			throws ContextException {
 		ServiceContext subcntxt = null;
 		if (intial != null) {
@@ -2990,7 +2990,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return inputs;
 	}
 
-	public Context getResponses(String path, Name... paths) throws ContextException, RemoteException {
+	public Context getResponses(String path, Path... paths) throws ContextException, RemoteException {
 		Context results = getMergedSubcontext(null, Arrays.asList(paths));
 		putValue(path, results);
 		return results;

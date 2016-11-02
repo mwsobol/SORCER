@@ -146,13 +146,19 @@ public class operator {
 
     public static ServiceModel responseUp(ServiceModel model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
-            ((ServiceContext)model).getMogramStrategy().getResponsePaths().add(new Name(path));
+            ((ServiceContext)model).getMogramStrategy().getResponsePaths().add(new Path(path));
+        return model;
+    }
+
+    public static ServiceModel clearResponse(ServiceModel model) throws ContextException {
+        ((ServiceContext) model).getMogramStrategy().getResponsePaths().clear();
         return model;
     }
 
     public static ServiceModel responseDown(ServiceModel model, String... responsePaths) throws ContextException {
-        for (String path : responsePaths)
-            ((ServiceContext)model).getMogramStrategy().getResponsePaths().remove(new Name(path));
+        for (String path : responsePaths) {
+            ((ServiceContext) model).getMogramStrategy().getResponsePaths().remove(new Path(path));
+        }
         return model;
     }
 
@@ -249,18 +255,30 @@ public class operator {
         }
     }
 
+    public static ServiceModel setResponse(ServiceModel model, String... modelPaths) throws ContextException {
+        ((ModelStrategy)((Mogram)model).getMogramStrategy()).setResponsePaths(modelPaths);
+        return model;
+    }
+
+
     public static Context response(ServiceModel model, Object... items) throws ContextException {
         try {
             List<Arg> argl = new ArrayList();
-            List<Arg> paths = null;
+            List<Path> paths = null;
             for (Object item : items) {
-                if (item instanceof Arg) {
+                if (item instanceof Path) {
+                    paths.add((Path) item);
+                } if (item instanceof String) {
+                    paths.add(new Path((String) item));
+                } else if (item instanceof List
+                    && ((List) item).size() > 0
+                    && ((List) item).get(0) instanceof Path) {
+                    paths.addAll((List<Path>) item);
+                } else if (item instanceof Arg) {
                     argl.add((Arg) item);
-                } else if (item instanceof List) {
-                    paths = (List<Arg>) item;
                 }
             }
-            if (paths != null) {
+            if (paths != null && paths.size() > 0) {
                 ((ModelStrategy)((Mogram)model).getMogramStrategy()).setResponsePaths(paths);
             }
             Arg[] args = new Arg[argl.size()];
