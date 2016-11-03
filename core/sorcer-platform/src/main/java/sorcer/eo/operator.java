@@ -1443,6 +1443,16 @@ public class operator {
 		return fi;
 	}
 
+	public static Projection po(String name, Fidelity... fidelities) {
+		return projection(name, fidelities);
+	}
+
+	public static Projection projection(String name, Fidelity... fidelities) {
+		Projection p = new Projection(fidelities);
+		p.setName(name);
+		return p;
+	}
+
 	public static Projection po(Fidelity... fidelities) {
 		return new Projection(fidelities);
 	}
@@ -1450,6 +1460,12 @@ public class operator {
 	// projection of
 	public static Projection po(ServiceFidelity fidelity) {
 		return new Projection(fidelity);
+	}
+
+	public static Projection po(String name, ServiceFidelity fidelity) {
+		Projection p = new Projection(fidelity);
+		p.setName(name);
+		return p;
 	}
 
 	public static FidelityList fis(Fidelity... fidelities) {

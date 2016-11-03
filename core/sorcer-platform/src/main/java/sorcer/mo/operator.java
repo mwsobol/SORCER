@@ -345,7 +345,7 @@ public class operator {
         return paradigm;
     }
 
-    public static Mogram addMetaFi(Mogram mogram, ServiceFidelity<Fidelity>... fidelities) {
+    public static Mogram addProjection(Mogram mogram, ServiceFidelity<Fidelity>... fidelities) {
         for ( ServiceFidelity<Fidelity> fi : fidelities) {
             ((FidelityManager)mogram.getFidelityManager()).put(fi.getName(), fi);
         }
@@ -377,9 +377,13 @@ public class operator {
         return mogram;
     }
 
-    public static Mogram reconfigure(Mogram model, FidelityList fiList) throws ContextException {
+    public static Mogram reconfigure(Mogram model, List fiList) throws ContextException {
         try {
-            ((FidelityManager)model.getFidelityManager()).reconfigure(fiList);
+            if (fiList instanceof FidelityList) {
+                ((FidelityManager) model.getFidelityManager()).reconfigure((FidelityList) fiList);
+            } else {
+                throw new ContextException("A list of fidelities is required for reconfigurartion");
+            }
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
