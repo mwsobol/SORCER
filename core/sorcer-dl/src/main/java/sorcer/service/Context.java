@@ -918,6 +918,10 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 
 	SignatureReturnPath getReturnPath();
 
+	public boolean compareTo(Object context);
+
+	public boolean compareTo(Object context, double delta);
+
 	Context setReturnPath(SignatureReturnPath returnPath);
 
 	public enum Type {

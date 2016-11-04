@@ -3431,6 +3431,31 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return provider.getProviderName();
 	}
 
+	public boolean compareTo(Object object) {
+		return compareTo(object, 0.01);
+	}
+
+	public boolean compareTo(Object object, double delta) {
+		if (object instanceof Context) {
+			Iterator<String> ci = data.keySet().iterator();
+			while (ci.hasNext()) {
+				String path = ci.next();
+				Object y = ((ServiceContext) object).data.get(path);
+				Object x = data.get(path);
+				if (x instanceof Double && y instanceof Double) {
+					if (Math.abs((double) x - (double) y) > delta) {
+						return false;
+					}
+				} else if (!x.equals(y)) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {
 		Context cxt = (Context) Arg.getServiceModel(args);
