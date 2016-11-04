@@ -33,6 +33,8 @@ public class FiPool {
 
 	public static final String FI_POOL = "fiPool";
 
+	public static final String FI_PROJECTIONS = "projections";
+
 	// a map of fidelities to configure mograms of this environment
 	final public static Map<Uuid, Map<Fidelity, ServiceFidelity>> fiPool = new Hashtable<>();
 

@@ -9,6 +9,7 @@ import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ContextSelector;
 import sorcer.core.monitor.MonitoringSession;
+import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.provider.Provider;
 import sorcer.core.service.Projection;
@@ -975,8 +976,21 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
             config = ConfigurationProvider.getInstance(args, getClass()
                 .getClassLoader());
 
-			FiPool.put(mogramId, (Map<Fidelity, ServiceFidelity>) config.getEntry(FiPool.COMPONENT,
-                FiPool.FI_POOL, Map.class));
+            Map[] pools = (Map[]) config.getEntry(FiPool.COMPONENT, FiPool.FI_POOL, Map[].class);
+            Map<Fidelity, ServiceFidelity> pool = new HashMap<>();
+            for (int i=0; i<pools.length; i++) {
+                pool.putAll((Map<? extends Fidelity, ? extends ServiceFidelity>) pools[i]);
+            }
+            FiPool.put(mogramId, pool);
+
+            List[] projections = (List[]) config.getEntry(FiPool.COMPONENT, FiPool.FI_PROJECTIONS, List[].class);
+            Map<String, ServiceFidelity<Fidelity>> metafidelities =
+                ((FidelityManager)getFidelityManager()).getMetafidelities();
+            for(int i=0; i<projections.length; i++ ) {
+                for (Projection po : (List<Projection>) projections[i]) {
+                    metafidelities.put(po.getName(), po);
+                }
+            }
         } catch (net.jini.config.ConfigurationException e) {
             logger.warn("configuratin failed for: " + configFilename);
             e.printStackTrace();
