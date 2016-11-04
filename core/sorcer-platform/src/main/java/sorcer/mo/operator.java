@@ -264,7 +264,7 @@ public class operator {
     public static Context response(ServiceModel model, Object... items) throws ContextException {
         try {
             List<Arg> argl = new ArrayList();
-            List<Path> paths = null;
+            List<Path> paths = new ArrayList();;
             for (Object item : items) {
                 if (item instanceof Path) {
                     paths.add((Path) item);
