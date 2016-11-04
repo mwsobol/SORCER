@@ -17,13 +17,15 @@
 
 package sorcer.service.modeling;
 
+import sorcer.service.Item;
+
 import java.rmi.RemoteException;
 
 /**
  *
  * @author Mike Sobolewski
  */
-public interface Filtration<T> extends EvaluationComponent, SupportComponent {
+public interface Filtration<T> extends Item, EvaluationComponent, SupportComponent {
 
     /**
      * Returns the filtered out value from the given input.

@@ -1519,10 +1519,8 @@ public class DataTable implements ModelTable {
 							}
 						}
 					}
-				} else {
-					if (!dataList.get(i).equals(((DataTable) table).dataList.get(i))) {
-						return false;
-					}
+				} else if (!dataList.get(i).equals(((DataTable) table).dataList.get(i))) {
+					return false;
 				}
 			}
 			return true;
