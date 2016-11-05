@@ -14,8 +14,6 @@ public class Fidelity<T> implements Fi, Arg, net.jini.core.entry.Entry {
 
 	protected T select;
 
-	protected String selector;
-
 	public Type type = Type.SELECT;
 
 	public Fidelity() {
@@ -34,11 +32,11 @@ public class Fidelity<T> implements Fi, Arg, net.jini.core.entry.Entry {
 		this.path = path;
 	}
 
-    public Fidelity(String name, String path, String selector) {
+    public Fidelity(String name, String path, String select) {
         this();
         this.name = name;
         this.path = path;
-        this.selector = selector;
+        this.select = (T) select;
     }
 
 	@Override
@@ -74,17 +72,9 @@ public class Fidelity<T> implements Fi, Arg, net.jini.core.entry.Entry {
 		this.type = type;
 	}
 
-	public String getSelector() {
-		return selector;
-	}
-
-	public void setSelector(String selector) {
-		this.selector = selector;
-	}
-
 	@Override
 	public int hashCode() {
-		String id = name + path + selector;
+		String id = name + path + select;
 		int hash = id.length() + 1;
 		return hash * 31 + id.hashCode();
 	}
@@ -93,8 +83,8 @@ public class Fidelity<T> implements Fi, Arg, net.jini.core.entry.Entry {
 	public boolean equals(Object object) {
 
         Boolean selectorEquality = true;
-       if  (((Fidelity)object).getSelector() != null && selector != null)
-           selectorEquality = ((Fidelity) object).getSelector().equals(selector);
+       if  (((Fidelity)object).getSelect() != null && select != null)
+           selectorEquality = ((Fidelity) object).getSelect().equals(select);
 
 
 		if (object instanceof Fidelity
@@ -112,7 +102,7 @@ public class Fidelity<T> implements Fi, Arg, net.jini.core.entry.Entry {
 	public String toString() {
 		return (path == null ? name :
                 name + "@" + path)
-                + (selector != null ? ":" + selector : "")
+                + (select != null ? ":" + select : "")
                 + (type != null ? ":" + type : "");
 	}
 

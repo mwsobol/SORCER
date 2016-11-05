@@ -741,7 +741,7 @@ public class operator {
 		Tuple2<Fidelity, Fidelity<T>> assoc =  new Tuple2<>(selectFi, srvFi);
 		srvFi.setName(selectFi.getName());
 		srvFi.setPath(selectFi.getPath());
-		srvFi.setSelector(selectFi.getSelector());
+		srvFi.setSelect(selectFi.getSelect());
 		selectFi.setType(srvFi.getType());
 		return assoc;
 	}
