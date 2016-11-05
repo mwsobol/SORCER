@@ -1509,7 +1509,7 @@ public class operator {
 	}
 
 	public static Fidelity fi(String name, String path, String gradient) {
-		Fidelity fi = new Fidelity(name, path);
+		Fidelity fi = new Fidelity(name, path, gradient);
 		fi.type = Fidelity.Type.GRADIENT;
 		return fi;
 	}

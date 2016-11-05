@@ -34,6 +34,13 @@ public class Fidelity<T> implements Fi, Arg, net.jini.core.entry.Entry {
 		this.path = path;
 	}
 
+    public Fidelity(String name, String path, String selector) {
+        this();
+        this.name = name;
+        this.path = path;
+        this.selector = selector;
+    }
+
 	@Override
 	public String getName() {
 		return name;
@@ -103,7 +110,10 @@ public class Fidelity<T> implements Fi, Arg, net.jini.core.entry.Entry {
 
 	@Override
 	public String toString() {
-		return (path != null ? name + "@" + path : name) + ":" + type;
+		return (path == null ? name :
+                name + "@" + path)
+                + (selector != null ? ":" + selector : "")
+                + (type != null ? ":" + type : "");
 	}
 
 }
