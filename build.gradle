@@ -181,7 +181,7 @@ task tests(type: TestReport, dependsOn: "bootSorcer") {
     finalizedBy("terminateSorcer")
 }
 
-task allTests(type: TestReport, dependsOn: "bootSorcerRio") {
+task allTests(type: TestReport, dependsOn: "bootSorcer") {
     description = "Aggregate test runner, runs all tests in the project."
     destinationDir = file("$buildDir/reports/allTests")
     project.subprojects { project ->

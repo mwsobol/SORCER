@@ -36,14 +36,14 @@ public class FiPool {
 	public static final String FI_PROJECTIONS = "projections";
 
 	// a map of fidelities to configure mograms of this environment
-	final public static Map<Uuid, Map<Fidelity, ServiceFidelity>> fiPool = new Hashtable<>();
+	final public static Map<Uuid, Map<Fidelity, Fidelity>> fiPool = new Hashtable<>();
 
 
-	public static Map<Fidelity, ServiceFidelity> get(Uuid mogramId) {
+	public static Map<Fidelity, Fidelity> get(Uuid mogramId) {
 		return fiPool.get(mogramId);
 	}
 
-	public static void put(Uuid mogramId, Map<Fidelity, ServiceFidelity> mogramFis) {
+	public static void put(Uuid mogramId, Map<Fidelity, Fidelity> mogramFis) {
 		fiPool.put(mogramId,mogramFis);
 	}
 

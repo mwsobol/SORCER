@@ -1508,6 +1508,12 @@ public class operator {
 		return fi;
 	}
 
+	public static Fidelity fi(String name, String path, String gradient) {
+		Fidelity fi = new Fidelity(name, path);
+		fi.type = Fidelity.Type.GRADIENT;
+		return fi;
+	}
+
 	public static Fidelity fi(String name, String path) {
 		Fidelity fi = new Fidelity(name, path);
 		fi.type = Fidelity.Type.SELECT;

@@ -737,11 +737,11 @@ public class operator {
 		return srv(sig);
 	}
 
-	public static Tuple2<Fidelity, ServiceFidelity> ent(Fidelity fi, ServiceFidelity srvFi) {
-		Tuple2<Fidelity, ServiceFidelity> assoc =  new Tuple2<>(fi, srvFi);
-		srvFi.setName(fi.getName());
-		srvFi.setPath(fi.getPath());
-		fi.setType(srvFi.getType());
+	public static <T> Tuple2<Fidelity, Fidelity<T>> ent(Fidelity<T> selectFi, Fidelity<T> srvFi) {
+		Tuple2<Fidelity, Fidelity<T>> assoc =  new Tuple2<>(selectFi, srvFi);
+		srvFi.setName(selectFi.getName());
+		srvFi.setPath(selectFi.getPath());
+		selectFi.setType(srvFi.getType());
 		return assoc;
 	}
 
