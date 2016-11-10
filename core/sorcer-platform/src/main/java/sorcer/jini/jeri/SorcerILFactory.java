@@ -21,7 +21,6 @@ import net.jini.core.constraint.MethodConstraints;
 import net.jini.core.constraint.RemoteMethodControl;
 import net.jini.core.transaction.Transaction;
 import net.jini.jeri.BasicILFactory;
-import net.jini.jeri.BasicInvocationDispatcher;
 import net.jini.jeri.InvocationDispatcher;
 import net.jini.jeri.ServerCapabilities;
 import net.jini.security.proxytrust.ProxyTrust;
@@ -30,12 +29,11 @@ import net.jini.security.proxytrust.TrustEquivalence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import sorcer.core.analytics.AnalyticsRecorder;
 import sorcer.core.provider.Modeler;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Modeling;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -71,6 +69,7 @@ public class SorcerILFactory extends BasicILFactory {
      * implementing object.
      */
     protected final Map<Class<?>, Object> serviceBeanMap = new ConcurrentHashMap<>();
+    private AnalyticsRecorder recorder;
 
     /**
      * Listener for monitoring of service bean activity
@@ -93,9 +92,12 @@ public class SorcerILFactory extends BasicILFactory {
      * @param serviceBeans the objects to be exposed as services by the dispatcher of
      *                     this ILFactory
      */
-    public SorcerILFactory(Map<Class<?>, Object> serviceBeans, ClassLoader loader) {
+    public SorcerILFactory(Map<Class<?>, Object> serviceBeans,
+                           ClassLoader loader,
+                           AnalyticsRecorder recorder) {
         super(null, null, loader);
         setServiceBeans(serviceBeans);
+        this.recorder = recorder;
     }
 
     /**
@@ -226,15 +228,15 @@ public class SorcerILFactory extends BasicILFactory {
     /**
      * Our custom dispatcher to be used for exporting SORCER service beans.
      */
-    private class SorcerInvocationDispatcher extends BasicInvocationDispatcher {
+    private class SorcerInvocationDispatcher extends RecordingInvocationDispatcher {
         Logger logger = LoggerFactory.getLogger(SorcerInvocationDispatcher.class);
 
-        public SorcerInvocationDispatcher(Collection methods,
-                                          ServerCapabilities serverCapabilities,
-                                          MethodConstraints serverConstraints,
-                                          Class<?> permissionClass,
-                                          ClassLoader loader) throws ExportException {
-            super(methods, serverCapabilities, serverConstraints, permissionClass, loader);
+        SorcerInvocationDispatcher(Collection methods,
+                                   ServerCapabilities serverCapabilities,
+                                   MethodConstraints serverConstraints,
+                                   Class<?> permissionClass,
+                                   ClassLoader loader) throws ExportException {
+            super(methods, serverCapabilities, serverConstraints, permissionClass, loader, recorder);
             if (logger.isTraceEnabled())
                 logger.trace("Created SorcerInvocationDispatcher");
         }
@@ -243,7 +245,7 @@ public class SorcerILFactory extends BasicILFactory {
         protected Object invoke(Remote impl, Method method, Object[] args, Collection context) throws Throwable {
             try {
                 setupLogging(impl, args);
-                return doInvoke(impl, method, args, context);
+                return super.invoke(impl, method, args, context);
             } catch (Throwable t) {
                 logger.error("Failed", t);
                 throw t;
@@ -274,7 +276,7 @@ public class SorcerILFactory extends BasicILFactory {
             MDC.remove(MDC_PROVIDER_ID);
         }
 
-
+        @Override
         protected Object doInvoke(Remote impl,
                                   Method method,
                                   Object[] args,

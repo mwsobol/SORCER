@@ -51,7 +51,7 @@ class WebsterProv {
         options << "-isDaemon"
         options << Boolean.toString(false)
         options << "-debug"
-        options << Boolean.toString(true)
+        options << Boolean.toString(false)
         return options as String[]
     }
 }

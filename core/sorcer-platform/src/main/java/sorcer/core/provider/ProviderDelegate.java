@@ -31,8 +31,7 @@ import net.jini.core.transaction.server.TransactionManager;
 import net.jini.export.Exporter;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
-import net.jini.jeri.BasicILFactory;
-import net.jini.jeri.BasicJeriExporter;
+import net.jini.jeri.*;
 import net.jini.jeri.tcp.TcpServerEndpoint;
 import net.jini.lease.LeaseRenewalManager;
 import net.jini.lookup.entry.Location;
@@ -46,6 +45,7 @@ import sorcer.container.jeri.AbstractExporterFactory;
 import sorcer.container.jeri.ExporterFactories;
 import sorcer.core.SorcerConstants;
 import sorcer.core.SorcerNotifierProtocol;
+import sorcer.core.analytics.AnalyticsRecorder;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.ProcModel;
@@ -60,6 +60,7 @@ import sorcer.core.proxy.Partnership;
 import sorcer.core.proxy.ProviderProxy;
 import sorcer.core.service.Configurer;
 import sorcer.core.signature.NetSignature;
+import sorcer.jini.jeri.RecordingInvocationDispatcher;
 import sorcer.jini.jeri.SorcerILFactory;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
 import sorcer.jini.lookup.entry.VersionInfo;
@@ -298,6 +299,8 @@ public class ProviderDelegate {
     private boolean shuttingDown = false;
 
 	private RemoteLoggerInstaller remoteLoggerInstaller;
+
+	private AnalyticsRecorder analyticsRecorder;
 
 	/*
 	 * A nested class to hold the state information of the executing thread for
@@ -1287,8 +1290,7 @@ public class ProviderDelegate {
 		}
 	}
 
-	public Context invokeMethod(String selector, Context sc)
-			throws ExertionException {
+	public Context invokeMethod(String selector, Context sc) throws ExertionException {
 		try {
 			Class[] argTypes = new Class[] { sc.getClass() };
 			Object[] args = new Object[] { sc };
@@ -1311,17 +1313,25 @@ public class ProviderDelegate {
 			if(execMethod==null)
 				execMethod = provider.getClass().getMethod(selector, argTypes);
 			Context result;
-			if (isContextual) {
-				result = (ServiceContext) execMethod.invoke(provider, args);
-				// Setting Return Values
-				if (result.getReturnPath() != null) {
-					Object resultValue = result.getValue(((ServiceContext)result).getReturnPath().path);
-					result.setReturnValue(resultValue);
-				} 
-			} else {
-				sc.setReturnValue(execMethod.invoke(provider, args));
-				result = sc;
+			int id = analyticsRecorder.inprocess(selector);
+			try {
+				if (isContextual) {
+					result = (ServiceContext) execMethod.invoke(provider, args);
+					// Setting Return Values
+					if (result.getReturnPath() != null) {
+						Object resultValue = result.getValue(((ServiceContext) result).getReturnPath().path);
+						result.setReturnValue(resultValue);
+					}
+				} else {
+					sc.setReturnValue(execMethod.invoke(provider, args));
+					result = sc;
+				}
+				analyticsRecorder.completed(selector, id);
+			} catch(Exception e) {
+				analyticsRecorder.failed(selector, id);
+				throw e;
 			}
+
 			return result;
 
 		} catch (Exception e) {
@@ -2573,6 +2583,10 @@ public class ProviderDelegate {
 			throw new ProviderException("wrong inner proxy for this provider");
 	}
 
+	AnalyticsRecorder getAnalyticsRecorder() {
+		return analyticsRecorder;
+	}
+
 	/**
 	 * Returns the exporter to use to export this server.
 	 * <p>
@@ -2693,23 +2707,38 @@ public class ProviderDelegate {
             if (exporterFactory == null)
                 exporterFactory = ExporterFactories.EXPORTER;
 
+			analyticsRecorder = new AnalyticsRecorder(getHostName(), getServiceID());
+
 			if (allBeans.size() > 0) {
 				logger.debug("*** all beans by: {} for: \n{}", getProviderName(), allBeans);
 				serviceBeans = allBeans.toArray();
 				initServiceBeans(serviceBeans);
-                SorcerILFactory ilFactory = new SorcerILFactory(serviceComponents, implClassLoader);
+                SorcerILFactory ilFactory = new SorcerILFactory(serviceComponents, implClassLoader, analyticsRecorder);
                 ilFactory.setRemoteLogging(remoteLogging);
                 //ilFactory.setMonitoringBeanHandler(new DefaultMonitoringBeanHandler(config, this));
                 outerExporter = exporterFactory.get(ilFactory);
                 logger.info("{}, {}", outerExporter, ((BasicJeriExporter)outerExporter).getInvocationLayerFactory().getClass().getName());
 			} else {
-				logger.info("*** NO beans used by {}", getProviderName());
+				logger.warn("*** NO beans used by {}", getProviderName());
                 outerExporter = (Exporter) config.getEntry(ServiceProvider.COMPONENT,
                                                            EXPORTER,
                                                            Exporter.class,
                                                            null);
 				if (outerExporter == null) {
-                    outerExporter = exporterFactory.get();
+					InvocationLayerFactory ilF = new BasicILFactory() {
+						@Override
+						protected InvocationDispatcher createInvocationDispatcher(Collection methods,
+																				  Remote impl,
+																				  ServerCapabilities caps) throws ExportException {
+							return new RecordingInvocationDispatcher(methods,
+																	 caps,
+																	 getServerConstraints(),
+																	 getPermissionClass(),
+																	 implClassLoader,
+																	 analyticsRecorder);
+						}
+					};
+					outerExporter = exporterFactory.get(ilF);
 				}
                 logger.info("current exporter: {}", outerExporter.toString());
                 try {
