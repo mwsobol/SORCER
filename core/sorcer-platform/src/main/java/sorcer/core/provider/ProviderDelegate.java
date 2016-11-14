@@ -54,6 +54,8 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.loki.member.LokiMemberUtil;
 import sorcer.core.misc.MsgRef;
 import sorcer.core.monitor.MonitoringSession;
+import sorcer.core.monitoring.MonitorCheck;
+import sorcer.core.monitoring.Monitored;
 import sorcer.core.provider.ServiceProvider.ProxyVerifier;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.proxy.Partnership;
@@ -1313,7 +1315,10 @@ public class ProviderDelegate {
 			if(execMethod==null)
 				execMethod = provider.getClass().getMethod(selector, argTypes);
 			Context result;
-			int id = analyticsRecorder.inprocess(selector);
+            /*boolean monitored = MonitorCheck.monitor(execMethod);
+			int id = 0;
+            if(monitored)*/
+            int id = analyticsRecorder.inprocess(selector);
 			try {
 				if (isContextual) {
 					result = (ServiceContext) execMethod.invoke(provider, args);
@@ -1326,10 +1331,12 @@ public class ProviderDelegate {
 					sc.setReturnValue(execMethod.invoke(provider, args));
 					result = sc;
 				}
-				analyticsRecorder.completed(selector, id);
+                //if(monitored)
+                    analyticsRecorder.completed(selector, id);
 			} catch(Exception e) {
-				analyticsRecorder.failed(selector, id);
-				throw e;
+                //if(monitored)
+                    analyticsRecorder.failed(selector, id);
+                throw e;
 			}
 
 			return result;
@@ -2707,7 +2714,10 @@ public class ProviderDelegate {
             if (exporterFactory == null)
                 exporterFactory = ExporterFactories.EXPORTER;
 
-			analyticsRecorder = new AnalyticsRecorder(getHostName(), getServiceID());
+			analyticsRecorder = new AnalyticsRecorder(getHostName(),
+													  getServiceID(),
+													  getProviderName(),
+													  System.getProperty("user.name"));
 
 			if (allBeans.size() > 0) {
 				logger.debug("*** all beans by: {} for: \n{}", getProviderName(), allBeans);

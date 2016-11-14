@@ -26,7 +26,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Dennis Reedy
  */
 class MethodInvocationRecord {
-    private AtomicInteger numActiveOperations = new AtomicInteger();
+    AtomicInteger numActiveOperations = new AtomicInteger();
+    private AtomicInteger idGenerator = new AtomicInteger();
     private AtomicInteger completed = new AtomicInteger();
     private AtomicInteger failed = new AtomicInteger();
     private final Map<Integer, Long> stopWatch = new ConcurrentHashMap<>();
@@ -40,7 +41,8 @@ class MethodInvocationRecord {
     }
 
     int inprocess() {
-        int id = numActiveOperations.incrementAndGet();
+        int id = idGenerator.incrementAndGet();
+        numActiveOperations.incrementAndGet();
         stopWatch.put(id, System.currentTimeMillis());
         return id;
     }
@@ -56,7 +58,19 @@ class MethodInvocationRecord {
     }
 
     MethodAnalytics create(ServiceID serviceID, String hostName) {
-        return new MethodAnalytics(stopWatch.keySet().toString(),
+        String activeOps = "";
+        synchronized (stopWatch) {
+            if (stopWatch.size() > 0) {
+                StringBuilder b = new StringBuilder();
+                for (Integer i : stopWatch.keySet()) {
+                    if (b.length() > 0)
+                        b.append(", ");
+                    b.append(Integer.toString(i));
+                }
+                activeOps = b.toString();
+            }
+        }
+        return new MethodAnalytics(activeOps,
                                    averageExecTime,
                                    completed.get(),
                                    failed.get(),
@@ -69,11 +83,15 @@ class MethodInvocationRecord {
     }
 
     private void handleCallTime(int id)  {
-        long startTime = stopWatch.remove(id);
-        long callTime = System.currentTimeMillis()-startTime;
-        int totalCalls = totalOperationCalls.incrementAndGet();
-        totalCallTime.addAndGet(callTime);
-        averageExecTime = totalCallTime.get() / totalCalls;
+        if(stopWatch.containsKey(id)) {
+            long startTime = stopWatch.remove(id);
+            long callTime = System.currentTimeMillis() - startTime;
+            totalCallTime.addAndGet(callTime);
+            int totalCalls = totalOperationCalls.incrementAndGet();
+            averageExecTime = totalCallTime.get() / totalCalls;
+        } else {
+            totalOperationCalls.incrementAndGet();
+        }
         numActiveOperations.decrementAndGet();
     }
 

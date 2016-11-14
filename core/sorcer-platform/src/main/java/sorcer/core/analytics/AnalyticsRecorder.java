@@ -23,6 +23,7 @@ import org.rioproject.system.SystemWatchID;
 import org.rioproject.system.measurable.memory.ProcessMemoryUtilization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.monitoring.MonitorAgent;
 
 import java.text.NumberFormat;
 import java.util.HashMap;
@@ -37,11 +38,17 @@ public class AnalyticsRecorder {
     private final Map<String, MethodInvocationRecord> activityMap = new ConcurrentHashMap<>();
     private ServiceID serviceID;
     private String hostName;
+    private String name;
+    private String principal;
+    private Map<String, MonitorAgent> agents = new ConcurrentHashMap<>();
+
     private NumberFormat percentFormatter = NumberFormat.getPercentInstance();
 
-    public AnalyticsRecorder(String hostName, ServiceID serviceID) {
+    public AnalyticsRecorder(String hostName, ServiceID serviceID, String name, String principal) {
         this.hostName = hostName;
         this.serviceID = serviceID;
+        this.name = name;
+        this.principal = principal;
         percentFormatter.setMaximumFractionDigits(3);
     }
 
@@ -62,22 +69,28 @@ public class AnalyticsRecorder {
     }
 
     public int inprocess(String m) {
+        MonitorAgent monitorAgent = get(m);
         MethodInvocationRecord record = getMethodInvocationRecord(m);
-        return record.inprocess();
+        int id = record.inprocess();
+        logger.info("{} num active: {}", m, record.numActiveOperations.get());
+        monitorAgent.inprocess(record.create(serviceID, hostName));
+        return id;
     }
 
     public void completed(String m, int id) {
         MethodInvocationRecord record = getMethodInvocationRecord(m);
-        if(logger.isInfoEnabled())
-            logger.info("ACTIVITY: {}", record);
         record.complete(id);
         activityMap.put(m, record);
+        MonitorAgent monitorAgent = get(m);
+        monitorAgent.inprocess(record.create(serviceID, hostName));
     }
 
     public void failed(String m, int id) {
         MethodInvocationRecord record = getMethodInvocationRecord(m);
         record.failed(id);
         activityMap.put(m, record);
+        MonitorAgent monitorAgent = get(m);
+        monitorAgent.inprocess(record.create(serviceID, hostName));
     }
 
     public SystemAnalytics getSystemAnalytics() {
@@ -98,11 +111,24 @@ public class AnalyticsRecorder {
                    .setProcessMemoryUsed(processMemoryUsed);
     }
 
+    private MonitorAgent get(String m) {
+        MonitorAgent monitorAgent = agents.get(m);
+        if(monitorAgent==null) {
+            monitorAgent = new MonitorAgent();
+            monitorAgent.register(String.format("%s#%s", name, m), principal);
+            agents.put(m, monitorAgent);
+        }
+        return monitorAgent;
+    }
+
     private MethodInvocationRecord getMethodInvocationRecord(String m) {
-        MethodInvocationRecord methodInvocationRecord = activityMap.get(m);
-        if (methodInvocationRecord == null) {
-            methodInvocationRecord = new MethodInvocationRecord(m);
-            activityMap.put(m, methodInvocationRecord);
+        MethodInvocationRecord methodInvocationRecord;
+        synchronized(activityMap) {
+            methodInvocationRecord = activityMap.get(m);
+            if (methodInvocationRecord == null) {
+                methodInvocationRecord = new MethodInvocationRecord(m);
+                activityMap.put(m, methodInvocationRecord);
+            }
         }
         return methodInvocationRecord;
     }

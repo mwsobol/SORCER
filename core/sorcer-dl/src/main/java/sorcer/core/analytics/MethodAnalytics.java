@@ -98,8 +98,9 @@ public class MethodAnalytics implements Serializable {
     }
 
     @Override public String toString() {
-        return String.format("completed: %s, numActiveOps: %s, averageExecTime: %s, " +
+        return String.format("%s, completed: %s, numActiveOps: %s, averageExecTime: %s, " +
                              "totalOperationCalls: %s, activeOperations: %s, totalCallTime: %s",
+                             methodName,
                              getCompleted(),
                              getNumActiveOperations(),
                              getAverageExecTime(),
