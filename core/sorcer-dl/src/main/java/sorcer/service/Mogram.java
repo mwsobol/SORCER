@@ -73,7 +73,7 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
 
     public Signature getProcessSignature();
 
-    public Mogram deploy(Signature signature) throws MogramException, ConfigurationException;
+    public Mogram deploy(List<Signature> builders) throws MogramException, ConfigurationException;
     /**
      * Returns a status of this mogram.
      *

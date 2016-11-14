@@ -408,6 +408,8 @@ public class ObjectSignature extends ServiceSignature {
 				}
 				out = exert(task(this, mog));
 				return out;
+			} else {
+				return exec(task(this));
 			}
 		}
 		return null;

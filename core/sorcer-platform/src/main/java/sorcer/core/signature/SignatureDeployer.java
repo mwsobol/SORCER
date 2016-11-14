@@ -32,37 +32,44 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.List;
 
 import static sorcer.eo.operator.*;
 
-public class SigDeployer implements Deployee {
+public class SignatureDeployer implements Deployee {
 
 	static final long serialVersionUID = 1L;
 
-    private Signature builder;
+    private String name;
+
+    private List<Signature> builders;
 
     private Mogram deployee;
 
-    public SigDeployer(Signature signature) {
-        builder = signature;
+    public SignatureDeployer(Signature builder) {
+        builders.add(builder);
     }
 
-    public SigDeployer(Mogram mogram, Signature signature) {
+    public SignatureDeployer(Signature... builders) {
+        this.builders = Arrays.asList(builders);
+    }
+    public SignatureDeployer(Mogram mogram, Signature signature) {
         deployee = mogram;
-        builder = signature;
+        builders.add(signature);
     }
 
-    public Signature getBuilder() {
-        return builder;
+    public List<Signature> getBuilders() {
+        return builders;
     }
 
-    public void setBuilder(Signature builder) {
-        this.builder = builder;
+    public void setBuilders(List<Signature> builders) {
+        this.builders = builders;
     }
 
     @Override
     public String getName() {
-        return builder.getName();
+        return name;
     }
 
     public Mogram getDeployee() {
@@ -75,16 +82,16 @@ public class SigDeployer implements Deployee {
 
     @Override
     public void deploy() throws ConfigurationException {
-        if (deployee != null && builder != null) {
+        if (deployee != null && builders != null) {
             if (deployee instanceof Model) {
                 try {
-                    deployee.deploy(builder);
+                    deployee.deploy(builders);
                 } catch (MogramException e) {
                     throw new ConfigurationException(e);
                 }
             }
         } else {
-            throw new ConfigurationException("Invalid SigDeployer: " + builder);
+            throw new ConfigurationException("Invalid builders: " + builders);
         }
     }
 

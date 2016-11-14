@@ -739,6 +739,16 @@ public class operator {
 
 	public static <T> Tuple2<Fidelity, Fidelity<T>> ent(Fidelity<T> selectFi, Fidelity<T> srvFi) {
 		Tuple2<Fidelity, Fidelity<T>> assoc =  new Tuple2<>(selectFi, srvFi);
+		if (srvFi.getType().equals(Fi.Type.GRADIENT)) {
+			// if no path set use its name - no multifidelities
+			if (selectFi.getPath().equals("")) {
+				selectFi.setPath(selectFi.getName());
+			}
+			// uses as a select gradient name
+			if (selectFi.getSelect() == null) {
+				selectFi.setSelect(srvFi.getSelect());
+			}
+		}
 		srvFi.setName(selectFi.getName());
 		srvFi.setPath(selectFi.getPath());
 		srvFi.setSelect(selectFi.getSelect());

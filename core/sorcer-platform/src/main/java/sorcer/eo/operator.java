@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.operator.DataEntry;
 import sorcer.co.tuple.*;
-import sorcer.core.Name;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.QueueStrategy;
@@ -894,11 +893,16 @@ public class operator {
 		return signature;
 	}
 
-	public static SigDeployer deployer(String operation, Class serviceType)
+	public static SignatureDeployer deployer(String operation, Class serviceType)
 			throws SignatureException {
 		ObjectSignature builder = (ObjectSignature) sig(operation, serviceType, new Object[]{});
-		SigDeployer dpl = new SigDeployer(builder);
+		SignatureDeployer dpl = new SignatureDeployer(builder);
 		return dpl;
+	}
+
+	public static SignatureDeployer deployer(Signature... builders)
+			throws SignatureException {
+		return new SignatureDeployer(builders);
 	}
 
 	public static Signature sig(String operation, Class serviceType)
@@ -1016,10 +1020,11 @@ public class operator {
 		Provision p = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
 		ServiceType srvType = null;
+		Args args = null;
 		if (items != null) {
 			for (Object o : items) {
 				if (o instanceof ProviderName) {
-					providerName = (ProviderName)o;
+					providerName = (ProviderName) o;
 					if (!(providerName instanceof ServiceName))
 						providerName.setName(Sorcer.getActualName(providerName.getName()));
 				} else if (o instanceof Provision) {
@@ -1038,6 +1043,8 @@ public class operator {
 //                        logger.warn("failed to load type for: {}", srvType.typeName);
 //                        serviceType = Object.class;
 //                    }
+				} else if (o instanceof Args) {
+					args = (Args) o;
 				}
 			}
 		}
@@ -1055,6 +1062,9 @@ public class operator {
             } else {
                 sig = new ObjectSignature(operation, serviceType);
                 sig.setProviderName(providerName);
+				if (args != null) {
+					((ObjectSignature)sig).setArgs(args.args);
+				}
             }
         }
 		((ServiceSignature) sig).setName(operation);
