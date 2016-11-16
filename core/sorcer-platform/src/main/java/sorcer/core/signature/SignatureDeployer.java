@@ -32,6 +32,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,16 +48,13 @@ public class SignatureDeployer implements Deployee {
 
     private Mogram deployee;
 
-    public SignatureDeployer(Signature builder) {
-        builders.add(builder);
-    }
-
     public SignatureDeployer(Signature... builders) {
         this.builders = Arrays.asList(builders);
     }
-    public SignatureDeployer(Mogram mogram, Signature signature) {
+
+    public SignatureDeployer(Mogram mogram, Signature... builders) {
         deployee = mogram;
-        builders.add(signature);
+        this.builders = Arrays.asList(builders);
     }
 
     public List<Signature> getBuilders() {

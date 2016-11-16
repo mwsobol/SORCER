@@ -744,9 +744,14 @@ public class operator {
 			if (selectFi.getPath().equals("")) {
 				selectFi.setPath(selectFi.getName());
 			}
-			// uses as a select gradient name
+			// use a select gradient name if declared
 			if (selectFi.getSelect() == null) {
-				selectFi.setSelect(srvFi.getSelect());
+				if (srvFi.getSelect() != null) {
+					selectFi.setSelect(srvFi.getSelect());
+				} else {
+					selectFi.setSelect((T) selectFi.getName());
+					srvFi.setSelect((T) selectFi.getName());
+				}
 			}
 		}
 		srvFi.setName(selectFi.getName());

@@ -1015,6 +1015,10 @@ public class operator {
 			return ((ObjectSignature) signature).initInstance();
 	}
 
+	public static Object created(Signature signature) throws SignatureException {
+		return instance(signature);
+	}
+
 	public static ServiceModel model(Signature signature) throws SignatureException {
 		Object model = instance(signature);
 		if (!(model instanceof ServiceModel)) {
