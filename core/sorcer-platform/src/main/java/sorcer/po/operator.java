@@ -737,8 +737,8 @@ public class operator {
 		return srv(sig);
 	}
 
-	public static <T> Tuple2<Fidelity, Fidelity<T>> ent(Fidelity<T> selectFi, Fidelity<T> srvFi) {
-		Tuple2<Fidelity, Fidelity<T>> assoc =  new Tuple2<>(selectFi, srvFi);
+	public static <T> Tuple2<Fidelity, Fidelity> ent(Fidelity selectFi, Fidelity srvFi) {
+		Tuple2<Fidelity, Fidelity> assoc =  new Tuple2<>(selectFi, srvFi);
 		if (srvFi.getType().equals(Fi.Type.GRADIENT)) {
 			// if no path set use its name - no multifidelities
 			if (selectFi.getPath().equals("")) {
@@ -756,7 +756,7 @@ public class operator {
 		}
 		srvFi.setName(selectFi.getName());
 		srvFi.setPath(selectFi.getPath());
-		srvFi.setSelect(selectFi.getSelect());
+		srvFi.setSelect((T) selectFi.getSelect());
 		selectFi.setType(srvFi.getType());
 		return assoc;
 	}

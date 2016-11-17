@@ -787,6 +787,14 @@ public class operator {
 		return map;
 	}
 
+	public static <T extends Identifiable> Map<String, T> pool(T... entries) {
+		Map<String, T> map = new HashMap<>();
+		for (T entry : entries) {
+			map.put(entry.getName(), entry);
+		}
+		return map;
+	}
+
 	public static <K, V> Map<K, V> map(Tuple2<K, V>... entries) {
 		Map<K, V> map = new HashMap<K, V>();
 		for (Tuple2<K, V> entry : entries) {

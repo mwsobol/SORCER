@@ -1518,8 +1518,8 @@ public class operator {
 		return fi;
 	}
 
-	public static Fidelity fi(String name, String path, String gradient) {
-		Fidelity fi = new Fidelity(name, path, gradient);
+	public static Fidelity<String> fi(String name, String path, String gradient) {
+		Fidelity<String> fi = new Fidelity(name, path, gradient);
 		fi.type = Fidelity.Type.GRADIENT;
 		return fi;
 	}
