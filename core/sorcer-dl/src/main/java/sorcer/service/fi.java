@@ -55,6 +55,8 @@ public interface Fi {
 			return toString();
 		}
 	}
+
+    public boolean isValid();
 	
 }
 

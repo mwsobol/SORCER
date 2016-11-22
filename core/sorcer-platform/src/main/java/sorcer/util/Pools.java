@@ -17,8 +17,8 @@
 package sorcer.util;
 
 import net.jini.id.Uuid;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Fidelity;
-import sorcer.service.ServiceFidelity;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -26,25 +26,35 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski on 10/28/16.
  */
-public class FiPool {
+public class Pools {
 
 	/** Configuration component name for service mogram. */
-	public static final String COMPONENT = FiPool.class.getName();
+	public static final String COMPONENT = Pools.class.getName();
 
 	public static final String FI_POOL = "fiPool";
 
 	public static final String FI_PROJECTIONS = "projections";
 
 	// a map of fidelities to configure mograms of this environment
-	final public static Map<Uuid, Map<Fidelity, Fidelity>> fiPool = new Hashtable<>();
+	final public static Pool<Uuid, Pool<Fidelity, Fidelity>> fiPool = new Pool<>();
 
+	// a map of entries to configure mograms of this environment
+	final public static Pool<Uuid, Pool<String, Entry<Object>>> entPool = new Pool<>();
 
-	public static Map<Fidelity, Fidelity> get(Uuid mogramId) {
+	public static Pool<Fidelity, Fidelity> getFiPool(Uuid mogramId) {
 		return fiPool.get(mogramId);
 	}
 
-	public static void put(Uuid mogramId, Map<Fidelity, Fidelity> mogramFis) {
-		fiPool.put(mogramId,mogramFis);
+	public static void putFiPool(Uuid mogramId, Pool<Fidelity, Fidelity> mogramFiPool) {
+		fiPool.put(mogramId, mogramFiPool);
+	}
+
+	public static Pool<String, Entry<Object>> getEntPool(Uuid mogramId) {
+		return entPool.get(mogramId);
+	}
+
+	public static void putEntPool(Uuid mogramId, Pool<String, Entry<Object>> mogramEntPool) {
+		entPool.put(mogramId, mogramEntPool);
 	}
 
 }

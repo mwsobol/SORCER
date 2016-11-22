@@ -35,6 +35,7 @@ import sorcer.service.modeling.Variability;
 
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -737,7 +738,12 @@ public class operator {
 		return srv(sig);
 	}
 
-	public static <T> Tuple2<Fidelity, Fidelity> ent(Fidelity selectFi, Fidelity srvFi) {
+	public static <T> Tuple2<Fidelity, Fidelity> ent(Fidelity selectFi, Fidelity srvFi) throws ConfigurationException {
+		if (!srvFi.isValid()) {
+			String msg = "Misconfigured entry fidelity: " + srvFi + " for: " + selectFi;
+			logger.warn(msg);
+//			throw new ConfigurationException("Misconfigured fidelity: " + srvFi + " for: " + selectFi);
+		}
 		Tuple2<Fidelity, Fidelity> assoc =  new Tuple2<>(selectFi, srvFi);
 		if (srvFi.getType().equals(Fi.Type.GRADIENT)) {
 			// if no path set use its name - no multifidelities

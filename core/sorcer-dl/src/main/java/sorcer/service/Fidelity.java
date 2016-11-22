@@ -99,6 +99,12 @@ public class Fidelity<T> implements Fi, Arg, net.jini.core.entry.Entry {
 	}
 
 	@Override
+	public boolean isValid() {
+		//reimplement in subclasses
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		return (path == null ? name :
                 name + "@" + path)

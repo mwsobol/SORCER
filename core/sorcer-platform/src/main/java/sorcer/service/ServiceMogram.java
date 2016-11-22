@@ -16,8 +16,8 @@ import sorcer.core.service.Projection;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.util.FiPool;
-import sorcer.util.SorcerEnv;
+import sorcer.util.Pool;
+import sorcer.util.Pools;
 
 import javax.security.auth.Subject;
 import java.io.Serializable;
@@ -976,14 +976,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
             config = ConfigurationProvider.getInstance(args, getClass()
                 .getClassLoader());
 
-            Map[] pools = (Map[]) config.getEntry(FiPool.COMPONENT, FiPool.FI_POOL, Map[].class);
-            Map<Fidelity, Fidelity> pool = new HashMap<>();
+            Pool[] pools = (Pool[]) config.getEntry(Pools.COMPONENT, Pools.FI_POOL, Map[].class);
+            Pool<Fidelity, Fidelity> pool = new Pool<>();
             for (int i=0; i<pools.length; i++) {
                 pool.putAll((Map<? extends Fidelity, ? extends ServiceFidelity>) pools[i]);
             }
-            FiPool.put(mogramId, pool);
+            Pools.putFiPool(mogramId, pool);
 
-            List[] projections = (List[]) config.getEntry(FiPool.COMPONENT, FiPool.FI_PROJECTIONS, List[].class);
+            List[] projections = (List[]) config.getEntry(Pools.COMPONENT, Pools.FI_PROJECTIONS, List[].class);
             Map<String, ServiceFidelity<Fidelity>> metafidelities =
                 ((FidelityManager)getFidelityManager()).getMetafidelities();
             for(int i=0; i<projections.length; i++ ) {
@@ -995,7 +995,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
             logger.warn("configuratin failed for: " + configFilename);
             e.printStackTrace();
         }
-        logger.debug("config fiPool: " + FiPool.get(mogramId));
+        logger.debug("config fiPool: " + Pools.getFiPool(mogramId));
     }
 
     @Override
