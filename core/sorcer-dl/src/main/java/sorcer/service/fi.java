@@ -20,19 +20,21 @@ package sorcer.service;
 
 public interface Fi {
 
-    final static int e =  0;
-    final static int s =  1;
-    final static int r =  2;
-    final static int c =  3;
-    final static int m =  4;
+    final static int e = 0;
+    final static int s = 1;
+    final static int r = 2;
+    final static int c = 3;
+    final static int m = 4;
     final static int v =  5;
-    final static int ev =  6;
-    final static int gt =  7;
-    final static int st =  8;
-    final static int gr =  9;
+    final static int vFi = 6;
+    final static int ev =  7;
+    final static int gt =  8;
+    final static int st =  9;
+    final static int gr = 10;
+    final static int dVar = 11;
 
     public enum Type implements Arg {
-        ENTRY, SIG, REF, COMPONENT, MORPH, VAR, EVALUATOR, GETTER, SETTER, GRADIENT,
+        ENTRY, SIG, REF, COMPONENT, MORPH, VAR, VAR_FI, EVALUATOR, GETTER, SETTER, GRADIENT, DERIVATIVE,
         MULTI, REQUEST, UPDATE, ADD, REPLACE, DELETE, SELECT, META, NAME, SYS, CONTEXT, ;
 
 		static public String name(int fiType) {

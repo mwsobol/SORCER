@@ -981,7 +981,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
             for (int i=0; i<pools.length; i++) {
                 pool.putAll((Map<? extends Fidelity, ? extends ServiceFidelity>) pools[i]);
             }
-            Pools.putFiPool(mogramId, pool);
+            Pools.putFiPool(this, pool);
 
             List[] projections = (List[]) config.getEntry(Pools.COMPONENT, Pools.FI_PROJECTIONS, List[].class);
             Map<String, ServiceFidelity<Fidelity>> metafidelities =

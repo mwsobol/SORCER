@@ -787,10 +787,36 @@ public class operator {
 		return map;
 	}
 
-	public static <T extends Identifiable> Map<String, T> pool(T... entries) {
-		Map<String, T> map = new HashMap<>();
+	public static <T extends Identifiable> Pool<String, T> pool(Fi.Type type, T... entries) {
+		Pool<String, T> map = new Pool<>();
+		map.setFiType(type);
 		for (T entry : entries) {
 			map.put(entry.getName(), entry);
+		}
+		return map;
+	}
+
+	public static <T extends Identifiable> Pool<String, T> pool(T... entries) {
+		Pool<String, T> map = new Pool<>();
+		for (T entry : entries) {
+			map.put(entry.getName(), entry);
+		}
+		return map;
+	}
+
+	public static <K, V> Pool<K, V> entPool(Fi.Type type, Tuple2<K, V>... entries) {
+		Pool<K, V> map = new Pool<>();
+		map.setFiType(type);
+		for (Tuple2<K, V> entry : entries) {
+			map.put(entry._1, entry._2);
+		}
+		return map;
+	}
+
+	public static <K, V> Pool<K, V> entPool(Tuple2<K, V>... entries) {
+		Pool<K, V> map = new Pool<>();
+		for (Tuple2<K, V> entry : entries) {
+			map.put(entry._1, entry._2);
 		}
 		return map;
 	}
