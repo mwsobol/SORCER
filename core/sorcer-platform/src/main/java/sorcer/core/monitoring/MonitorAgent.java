@@ -119,7 +119,7 @@ public class MonitorAgent {
         update(status, null);
     }
 
-    private void update(Monitor.Status status, MethodAnalytics analytics) {
+    public void update(Monitor.Status status, MethodAnalytics analytics) {
         if(!monitoringEnabled) {
             return;
         }
@@ -129,8 +129,8 @@ public class MonitorAgent {
         }
         try {
             monitorRegistration.getMonitor().update(monitorRegistration, status, analytics);
-            if(logger.isInfoEnabled())
-                logger.info("ACTIVITY: {}", analytics);
+            if(logger.isDebugEnabled())
+                logger.debug("ACTIVITY: {}", analytics);
         } catch (IOException | MonitorException e) {
             logger.error("Unable to update status", e);
         }

@@ -166,6 +166,7 @@ logger("sorcer.core.deploy.ServiceDeployment", WARN)
 logger("sorcer.core.deploy.DeploymentIdFactory", WARN)
 logger("sorcer.data.DataService", ERROR)
 logger("sorcer.util.GenericUtil", WARN)
+logger("sorcer.core.provider.rendezvous", WARN)
 
 /* ==================================================================
  *  SORCER Variable oriented loggers

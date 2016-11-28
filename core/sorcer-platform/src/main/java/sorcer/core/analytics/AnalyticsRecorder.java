@@ -23,6 +23,7 @@ import org.rioproject.system.SystemWatchID;
 import org.rioproject.system.measurable.memory.ProcessMemoryUtilization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.monitoring.Monitor;
 import sorcer.core.monitoring.MonitorAgent;
 
 import java.text.NumberFormat;
@@ -90,7 +91,7 @@ public class AnalyticsRecorder {
         record.failed(id);
         activityMap.put(m, record);
         MonitorAgent monitorAgent = get(m);
-        monitorAgent.inprocess(record.create(serviceID, hostName));
+        monitorAgent.update(Monitor.Status.FAILED, record.create(serviceID, hostName));
     }
 
     public SystemAnalytics getSystemAnalytics() {
