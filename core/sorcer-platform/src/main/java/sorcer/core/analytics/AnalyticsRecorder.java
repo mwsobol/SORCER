@@ -41,7 +41,7 @@ public class AnalyticsRecorder {
     private String hostName;
     private String name;
     private String principal;
-    private Map<String, MonitorAgent> agents = new ConcurrentHashMap<>();
+    private Map<Integer, MonitorAgent> agents = new ConcurrentHashMap<>();
 
     private NumberFormat percentFormatter = NumberFormat.getPercentInstance();
 
@@ -70,9 +70,10 @@ public class AnalyticsRecorder {
     }
 
     public int inprocess(String m) {
-        MonitorAgent monitorAgent = get(m);
+        MonitorAgent monitorAgent = create(m);
         MethodInvocationRecord record = getMethodInvocationRecord(m);
         int id = record.inprocess();
+        agents.put(id, monitorAgent);
         logger.info("{} num active: {}", m, record.numActiveOperations.get());
         monitorAgent.inprocess(record.create(serviceID, hostName));
         return id;
@@ -82,15 +83,15 @@ public class AnalyticsRecorder {
         MethodInvocationRecord record = getMethodInvocationRecord(m);
         record.complete(id);
         activityMap.put(m, record);
-        MonitorAgent monitorAgent = get(m);
-        monitorAgent.inprocess(record.create(serviceID, hostName));
+        MonitorAgent monitorAgent = get(id);
+        monitorAgent.completed(record.create(serviceID, hostName));
     }
 
     public void failed(String m, int id) {
         MethodInvocationRecord record = getMethodInvocationRecord(m);
         record.failed(id);
         activityMap.put(m, record);
-        MonitorAgent monitorAgent = get(m);
+        MonitorAgent monitorAgent = get(id);
         monitorAgent.update(Monitor.Status.FAILED, record.create(serviceID, hostName));
     }
 
@@ -112,12 +113,16 @@ public class AnalyticsRecorder {
                    .setProcessMemoryUsed(processMemoryUsed);
     }
 
-    private MonitorAgent get(String m) {
-        MonitorAgent monitorAgent = agents.get(m);
+    private MonitorAgent create(String m) {
+        MonitorAgent monitorAgent = new MonitorAgent();
+        monitorAgent.register(String.format("%s#%s", name, m), principal);
+        return monitorAgent;
+    }
+
+    private MonitorAgent get(int id) {
+        MonitorAgent monitorAgent = agents.get(id);
         if(monitorAgent==null) {
-            monitorAgent = new MonitorAgent();
-            monitorAgent.register(String.format("%s#%s", name, m), principal);
-            agents.put(m, monitorAgent);
+            logger.error("No MonitorAgent found for {}", id);
         }
         return monitorAgent;
     }

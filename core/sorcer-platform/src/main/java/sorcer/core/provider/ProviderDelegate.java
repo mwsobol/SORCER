@@ -54,8 +54,6 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.loki.member.LokiMemberUtil;
 import sorcer.core.misc.MsgRef;
 import sorcer.core.monitor.MonitoringSession;
-import sorcer.core.monitoring.MonitorCheck;
-import sorcer.core.monitoring.Monitored;
 import sorcer.core.provider.ServiceProvider.ProxyVerifier;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.proxy.Partnership;
@@ -1331,11 +1329,12 @@ public class ProviderDelegate {
 					sc.setReturnValue(execMethod.invoke(provider, args));
 					result = sc;
 				}
-                //if(monitored)
-                    analyticsRecorder.completed(selector, id);
+				if(result.getExceptions().size()>0)
+					analyticsRecorder.failed(selector, id);
+				else
+					analyticsRecorder.completed(selector, id);
 			} catch(Exception e) {
-                //if(monitored)
-                    analyticsRecorder.failed(selector, id);
+				analyticsRecorder.failed(selector, id);
                 throw e;
 			}
 

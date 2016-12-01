@@ -110,6 +110,11 @@ public class MonitorAgent {
         terminate();
     }
 
+    public void completed(MethodAnalytics analytics) {
+        update(Monitor.Status.COMPLETED, analytics);
+        terminate();
+    }
+
     public void failed() {
         update(Monitor.Status.FAILED);
         terminate();
