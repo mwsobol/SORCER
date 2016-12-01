@@ -34,16 +34,19 @@ public class Pools {
 
 	public static final String FI_PROJECTIONS = "projections";
 
-	// a map of fidelities to configure mograms of this environment
+	// a pool of fidelities to configure mograms of this environment
 	final public static Pool<Uuid, Pool<Fidelity, Fidelity>> fiPool = new Pool<>();
 
-	// a map of signatures to configure mograms of this environment
+	// a pool of signatures to configure mograms of this environment
 	final public static Pool<Uuid, Pool<String, Signature>> sigPool = new Pool<>();
 
-	// a map of entries to configure mograms of this environment
+	// a pool of entries to configure mograms of this environment
 	final public static Pool<Uuid, Pool<String, Entry<Object>>> entPool = new Pool<>();
 
-	// a map of entries to configure mograms of this environment
+	// a pool of mograms to configure top-level mograms of this environment
+	final public static Pool<Uuid, Pool<String, Mogram>> mogPool = new Pool<>();
+
+	// a pool of entries to configure mograms of this environment
 	final public static Pool<Uuid, Pool<String, Entry<Object>>> derivativePool = new Pool<>();
 
 	public static Pool<Fidelity, Fidelity> getFiPool(Uuid mogramId) {
@@ -72,6 +75,14 @@ public class Pools {
 
 	public static void putEntPool(Mogram mogram, Pool<String, Entry<Object>>  pool) {
 		entPool.put(mogram.getId(), pool);
+	}
+
+	public static Pool<String, Mogram> getMogPool(Mogram mogram) {
+		return mogPool.get(mogram.getId());
+	}
+
+	public static void putMogPool(Mogram mogram, Pool<String, Mogram>  pool) {
+		mogPool.put(mogram.getId(), pool);
 	}
 
 	public static Pool<String, Entry<Object>> getDerivativePool(Mogram mogram) {
