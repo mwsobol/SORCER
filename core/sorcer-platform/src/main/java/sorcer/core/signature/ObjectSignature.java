@@ -259,7 +259,7 @@ public class ObjectSignature extends ServiceSignature {
 	 */
 	public Object initInstance() throws SignatureException {
 		Object obj = null;
-		Method m;
+		Method m = null;
 
 		try {
 			if(operation.selector!=null) {
@@ -272,14 +272,17 @@ public class ObjectSignature extends ServiceSignature {
 					//skip;
 				}
 			}
-			if (initSelector == null || initSelector.equals("new")) {
+			if ((initSelector == null || initSelector.equals("new")) && args == null) {
 				obj = providerType.newInstance();
 				return obj;
 			}
 
-			if (argTypes != null)
-				m = providerType.getMethod(initSelector, argTypes);
-			else  {
+			if (argTypes != null) {
+				if (initSelector != null)
+					m = providerType.getMethod(initSelector, argTypes);
+				else if (operation.selector != null)
+					m = providerType.getMethod(operation.selector, argTypes);
+			} else  {
 				if (initSelector != null)
 					m = providerType.getMethod(initSelector);
 				else
