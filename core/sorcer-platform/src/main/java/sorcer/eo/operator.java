@@ -2884,7 +2884,7 @@ public class operator {
 		return new Args(args);
 	}
 
-	public static class Args extends Path {
+	public static class Args extends Path implements SupportComponent {
 		private static final long serialVersionUID = 1L;
 
 		public Object[] args = new Object[0];
