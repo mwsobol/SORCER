@@ -272,7 +272,8 @@ public class ObjectSignature extends ServiceSignature {
 					//skip;
 				}
 			}
-			if ((initSelector == null || initSelector.equals("new")) && args == null) {
+//			if ((initSelector == null || initSelector.equals("new")) && args == null) {
+			if (initSelector == null || initSelector.equals("new")) {
 				obj = providerType.newInstance();
 				return obj;
 			}
@@ -290,11 +291,9 @@ public class ObjectSignature extends ServiceSignature {
 			}
 			if (args != null) {
 				obj = m.invoke(obj, args);
-			}
-			else if (argTypes != null && argTypes.length == 1) {
+			} else if (argTypes != null && argTypes.length == 1) {
 				obj = m.invoke(obj, new Object[] { null });
-			}
-			else {
+			} else {
 				obj = m.invoke(obj);
 			}
 		} catch (Exception e) {
