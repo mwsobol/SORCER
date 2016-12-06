@@ -80,12 +80,15 @@ public class MonitorImpl implements Monitor {
         if(!isValid(registration)) {
             throw new MonitorException("Invalid MonitorRegistration for "+registration.getIdentifier());
         }
+        String name = analytics==null?registration.getIdentifier():String.format("%s#%s",
+                                                                                 registration.getIdentifier(),
+                                                                                 analytics.getMethodName());
         eventHandler.fire(new MonitorEvent(monitorProxy,
-                                           registration.getIdentifier(),
+                                           name,
                                            registration.getOwner(),
                                            status,
                                            analytics));
-        if(status==Status.COMPLETED || status==Status.FAILED) {
+        /*if(status==Status.COMPLETED || status==Status.FAILED) {
             for(LeasedResource resource : landlord.getLeasedResources()) {
                 ServiceResource sR = (ServiceResource)resource;
                 MonitorRegistrationResource registrationResource = (MonitorRegistrationResource)sR.getResource();
@@ -96,7 +99,7 @@ public class MonitorImpl implements Monitor {
                     }
                 }
             }
-        }
+        }*/
     }
 
     private boolean isValid(MonitorRegistration registration) {

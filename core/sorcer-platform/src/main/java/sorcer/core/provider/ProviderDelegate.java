@@ -1683,6 +1683,8 @@ public class ProviderDelegate {
         if (remoteLoggerInstaller!=null) {
             remoteLoggerInstaller.destroy();
         }
+        if(analyticsRecorder!=null)
+        	analyticsRecorder.terminate();
 		if (spaceEnabled && spaceHandlingPools != null) {
             for (SpaceTaker st : spaceTakers) {
                 if(st!=null)
@@ -2717,6 +2719,7 @@ public class ProviderDelegate {
 													  getServiceID(),
 													  getProviderName(),
 													  System.getProperty("user.name"));
+
 
 			if (allBeans.size() > 0) {
 				logger.debug("*** all beans by: {} for: \n{}", getProviderName(), allBeans);

@@ -4,6 +4,7 @@ import net.jini.core.event.EventRegistration;
 import net.jini.core.event.RemoteEvent;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
+import net.jini.core.lease.UnknownLeaseException;
 import net.jini.export.Exporter;
 import net.jini.jeri.BasicILFactory;
 import net.jini.jeri.BasicJeriExporter;
@@ -65,7 +66,7 @@ public class MonitorImplTest {
     }
 
     @Test(expected=MonitorException.class)
-    public void testRegistrationSendFailure() throws MonitorException, ExportException {
+    public void testRegistrationSendFailure() throws MonitorException, RemoteException, UnknownLeaseException {
         MonitorRegistration registration = monitor.register("spacely-sprockets",
                                                             System.getProperty("user.name"),
                                                             TimeUnit.MINUTES.toMillis(5));
@@ -78,6 +79,7 @@ public class MonitorImplTest {
         assertNotNull(eventRegistration);
         monitor.update(registration, Monitor.Status.SUBMITTED, null);
         monitor.update(registration, Monitor.Status.COMPLETED, null);
+        registration.getLease().cancel();
         monitor.update(registration, Monitor.Status.SUBMITTED, null);
     }
 

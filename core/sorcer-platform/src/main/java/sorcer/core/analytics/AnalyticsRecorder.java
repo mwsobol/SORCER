@@ -39,18 +39,17 @@ public class AnalyticsRecorder {
     private final Map<String, MethodInvocationRecord> activityMap = new ConcurrentHashMap<>();
     private ServiceID serviceID;
     private String hostName;
-    private String name;
-    private String principal;
-    private Map<Integer, MonitorAgent> agents = new ConcurrentHashMap<>();
+    //private Map<Integer, MonitorAgent> agents = new ConcurrentHashMap<>();
+    private final MonitorAgent monitorAgent;
 
     private NumberFormat percentFormatter = NumberFormat.getPercentInstance();
 
     public AnalyticsRecorder(String hostName, ServiceID serviceID, String name, String principal) {
         this.hostName = hostName;
         this.serviceID = serviceID;
-        this.name = name;
-        this.principal = principal;
         percentFormatter.setMaximumFractionDigits(3);
+        monitorAgent = new MonitorAgent();
+        monitorAgent.register(name, principal);
     }
 
     public Map<String, MethodAnalytics> getMethodAnalytics() {
@@ -70,10 +69,8 @@ public class AnalyticsRecorder {
     }
 
     public int inprocess(String m) {
-        MonitorAgent monitorAgent = create(m);
         MethodInvocationRecord record = getMethodInvocationRecord(m);
         int id = record.inprocess();
-        agents.put(id, monitorAgent);
         logger.info("{} num active: {}", m, record.numActiveOperations.get());
         monitorAgent.inprocess(record.create(serviceID, hostName));
         return id;
@@ -83,7 +80,6 @@ public class AnalyticsRecorder {
         MethodInvocationRecord record = getMethodInvocationRecord(m);
         record.complete(id);
         activityMap.put(m, record);
-        MonitorAgent monitorAgent = get(id);
         monitorAgent.completed(record.create(serviceID, hostName));
     }
 
@@ -91,8 +87,11 @@ public class AnalyticsRecorder {
         MethodInvocationRecord record = getMethodInvocationRecord(m);
         record.failed(id);
         activityMap.put(m, record);
-        MonitorAgent monitorAgent = get(id);
         monitorAgent.update(Monitor.Status.FAILED, record.create(serviceID, hostName));
+    }
+
+    public void terminate() {
+        monitorAgent.terminate();
     }
 
     public SystemAnalytics getSystemAnalytics() {
@@ -113,7 +112,7 @@ public class AnalyticsRecorder {
                    .setProcessMemoryUsed(processMemoryUsed);
     }
 
-    private MonitorAgent create(String m) {
+    /*private MonitorAgent create(String m) {
         MonitorAgent monitorAgent = new MonitorAgent();
         monitorAgent.register(String.format("%s#%s", name, m), principal);
         return monitorAgent;
@@ -125,7 +124,7 @@ public class AnalyticsRecorder {
             logger.error("No MonitorAgent found for {}", id);
         }
         return monitorAgent;
-    }
+    }*/
 
     private MethodInvocationRecord getMethodInvocationRecord(String m) {
         MethodInvocationRecord methodInvocationRecord;
