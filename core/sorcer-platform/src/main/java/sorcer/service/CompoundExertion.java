@@ -153,7 +153,7 @@ abstract public class CompoundExertion extends ServiceExertion {
 	}
 
 	@Override
-	public Object get(String component) throws ServiceException {
+	public Object get(String component) {
 		for (Mogram mog : mograms) {
 			if (mog.getName().equals(component)) {
 				return mog;

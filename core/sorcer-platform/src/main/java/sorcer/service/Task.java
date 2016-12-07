@@ -442,7 +442,7 @@ public class Task extends ServiceExertion {
 	}
 
 	@Override
-	public Object get(String component) throws ServiceException {
+	public Object get(String component) {
 		return getFidelities().get(component);
 	}
 

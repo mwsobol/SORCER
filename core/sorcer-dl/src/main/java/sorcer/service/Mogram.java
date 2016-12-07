@@ -324,7 +324,7 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
 
     public void setBuilder(Signature builder) throws MogramException;
 
-    Object get(String component) throws ServiceException;
+    Object get(String component);
 
     public String describe();
 }

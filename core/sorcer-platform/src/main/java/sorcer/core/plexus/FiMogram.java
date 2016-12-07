@@ -223,7 +223,7 @@ public class FiMogram extends ServiceMogram implements Multifidelity<Request> {
     }
 
     @Override
-    public Object get(String component) throws ServiceException {
+    public Object get(String component) {
         return requestFidelity.getSelect(component);
     }
 
