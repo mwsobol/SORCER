@@ -35,7 +35,7 @@ public interface Fi {
 
     public enum Type implements Arg {
         ENTRY, SIG, REF, COMPONENT, MORPH, VAR, VAR_FI, EVALUATOR, GETTER, SETTER, GRADIENT, DERIVATIVE,
-        MULTI, REQUEST, UPDATE, ADD, REPLACE, DELETE, SELECT, META, NAME, SYS, CONTEXT, ;
+        MULTI, REQUEST, UPDATE, ADD, REPLACE, DELETE, SELECT, META, NAME, SYS, CONTEXT;
 
 		static public String name(int fiType) {
 			for (Type s : Type.values()) {
