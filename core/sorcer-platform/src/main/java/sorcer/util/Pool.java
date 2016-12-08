@@ -17,9 +17,6 @@
 
 package sorcer.util;
 
-import sorcer.service.Fi;
-
-import java.rmi.RemoteException;
 import java.util.Hashtable;
 
 /**
