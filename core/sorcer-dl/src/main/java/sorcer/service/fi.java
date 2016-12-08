@@ -45,7 +45,7 @@ public interface Fi {
 			return null;
 		}
 
-        static public Fi.Type type(int fiType) {
+        static public Type type(int fiType) {
             for (Type s : Type.values()) {
                 if (fiType == s.ordinal())
                     return s;
