@@ -21,7 +21,6 @@ import net.jini.jeri.ServerCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.analytics.AnalyticsRecorder;
-import sorcer.core.monitoring.MonitorCheck;
 
 import java.lang.reflect.Method;
 import java.rmi.Remote;
@@ -47,19 +46,16 @@ public class RecordingInvocationDispatcher extends BasicInvocationDispatcher {
 
     @Override
     protected Object invoke(Remote impl, Method method, Object[] args, Collection context) throws Throwable {
-        boolean monitor = MonitorCheck.monitor(method);
-        int id = 0;
-        if(monitor)
-            id = recorder.inprocess(method.getName());
+        //boolean monitor = MonitorCheck.monitor(method);
+        //if(monitor)
+        int id = recorder.inprocess(method.getName());
         try {
             Object result = doInvoke(impl, method, args, context);
-            if(monitor)
-                recorder.completed(method.getName(), id);
+            recorder.completed(method.getName(), id);
             return result;
         } catch (Throwable t) {
             logger.error("Failed", t);
-            if(monitor)
-                recorder.failed(method.getName(), id);
+            recorder.failed(method.getName(), id);
             throw t;
         }
     }

@@ -16,6 +16,8 @@
 package sorcer.core.analytics;
 
 import net.jini.core.lookup.ServiceID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,6 +37,7 @@ class MethodInvocationRecord {
     private AtomicLong totalCallTime = new AtomicLong();
     private volatile double averageExecTime;
     private final String methodName;
+    static Logger logger = LoggerFactory.getLogger(MethodInvocationRecord.class);
 
     MethodInvocationRecord(String methodName) {
         this.methodName = methodName;
@@ -43,7 +46,7 @@ class MethodInvocationRecord {
     int inprocess() {
         int id = idGenerator.incrementAndGet();
         numActiveOperations.incrementAndGet();
-        stopWatch.put(id, System.currentTimeMillis());
+        stopWatch.put(id, System.nanoTime());
         return id;
     }
 
@@ -54,6 +57,11 @@ class MethodInvocationRecord {
 
     void complete(int id) {
         handleCallTime(id);
+        completed.incrementAndGet();
+    }
+
+    void complete(long startTime) {
+        handleCallTime(startTime);
         completed.incrementAndGet();
     }
 
@@ -82,17 +90,21 @@ class MethodInvocationRecord {
                                    totalOperationCalls.get());
     }
 
+    private void handleCallTime(long startTime) {
+        long callTime = System.nanoTime() - startTime;;
+        totalCallTime.addAndGet(callTime);
+        int totalCalls = totalOperationCalls.incrementAndGet();
+        averageExecTime = totalCallTime.get() / totalCalls;
+        numActiveOperations.decrementAndGet();
+    }
+
     private void handleCallTime(int id)  {
         if(stopWatch.containsKey(id)) {
-            long startTime = stopWatch.remove(id);
-            long callTime = System.currentTimeMillis() - startTime;
-            totalCallTime.addAndGet(callTime);
-            int totalCalls = totalOperationCalls.incrementAndGet();
-            averageExecTime = totalCallTime.get() / totalCalls;
+            handleCallTime(stopWatch.remove(id));
         } else {
+            logger.error("{} id not found: {}", methodName);
             totalOperationCalls.incrementAndGet();
         }
-        numActiveOperations.decrementAndGet();
     }
 
     @Override public String toString() {

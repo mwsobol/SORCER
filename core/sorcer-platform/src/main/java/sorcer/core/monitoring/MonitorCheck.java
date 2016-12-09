@@ -19,7 +19,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
- * Checkfor the {@link Monitored} annotation.
+ * Check for the {@link Monitored} annotation.
  *
  * @author Dennis Reedy
  */

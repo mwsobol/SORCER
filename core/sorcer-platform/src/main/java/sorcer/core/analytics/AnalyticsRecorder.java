@@ -39,7 +39,6 @@ public class AnalyticsRecorder {
     private final Map<String, MethodInvocationRecord> activityMap = new ConcurrentHashMap<>();
     private ServiceID serviceID;
     private String hostName;
-    //private Map<Integer, MonitorAgent> agents = new ConcurrentHashMap<>();
     private final MonitorAgent monitorAgent;
 
     private NumberFormat percentFormatter = NumberFormat.getPercentInstance();
@@ -71,7 +70,8 @@ public class AnalyticsRecorder {
     public int inprocess(String m) {
         MethodInvocationRecord record = getMethodInvocationRecord(m);
         int id = record.inprocess();
-        logger.info("{} num active: {}", m, record.numActiveOperations.get());
+        if(logger.isDebugEnabled())
+            logger.debug("{} num active: {}", m, record.numActiveOperations.get());
         monitorAgent.inprocess(record.create(serviceID, hostName));
         return id;
     }
@@ -82,6 +82,13 @@ public class AnalyticsRecorder {
         activityMap.put(m, record);
         monitorAgent.completed(record.create(serviceID, hostName));
     }
+
+    /*public void completed(String m, long startTime) {
+        MethodInvocationRecord record = getMethodInvocationRecord(m);
+        record.complete(startTime);
+        activityMap.put(m, record);
+        monitorAgent.completed(record.create(serviceID, hostName));
+    }*/
 
     public void failed(String m, int id) {
         MethodInvocationRecord record = getMethodInvocationRecord(m);
@@ -111,20 +118,6 @@ public class AnalyticsRecorder {
                    .setProcessMemoryTotal(processMemoryTotal)
                    .setProcessMemoryUsed(processMemoryUsed);
     }
-
-    /*private MonitorAgent create(String m) {
-        MonitorAgent monitorAgent = new MonitorAgent();
-        monitorAgent.register(String.format("%s#%s", name, m), principal);
-        return monitorAgent;
-    }
-
-    private MonitorAgent get(int id) {
-        MonitorAgent monitorAgent = agents.get(id);
-        if(monitorAgent==null) {
-            logger.error("No MonitorAgent found for {}", id);
-        }
-        return monitorAgent;
-    }*/
 
     private MethodInvocationRecord getMethodInvocationRecord(String m) {
         MethodInvocationRecord methodInvocationRecord;

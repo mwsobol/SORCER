@@ -16,6 +16,9 @@
 package sorcer.core.monitoring;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Dennis Reedy
@@ -23,6 +26,7 @@ import java.io.Serializable;
 public class MonitorEventFilter implements Serializable {
     static final long serialVersionUID = 1L;
     private final String owner;
+    private final List<String> servicesNames = new ArrayList<>();
 
     public MonitorEventFilter() {
         owner = null;
@@ -30,6 +34,12 @@ public class MonitorEventFilter implements Serializable {
 
     public MonitorEventFilter(String owner) {
         this.owner = owner;
+    }
+
+    public MonitorEventFilter(String owner, Collection<String> serviceNames) {
+        this.owner = owner;
+        if(serviceNames!=null)
+            this.servicesNames.addAll(serviceNames);
     }
 
     /**
@@ -41,8 +51,17 @@ public class MonitorEventFilter implements Serializable {
      * @return false if the input object fails the filter; true otherwise.
      */
     public boolean accept(MonitorEvent event) {
-        if(owner==null)
+        if(owner==null && servicesNames.isEmpty())
             return true;
-        return event.getOwner().equals(owner);
+        boolean accept = servicesNames.size()==0;
+        for(String name : servicesNames) {
+            if(name.equals(event.getIdentifier())) {
+                accept = true;
+                break;
+            }
+        }
+        if(owner==null)
+            return accept;
+        return event.getOwner().equals(owner) && accept;
     }
 }

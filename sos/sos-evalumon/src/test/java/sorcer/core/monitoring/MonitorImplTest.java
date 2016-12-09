@@ -16,6 +16,7 @@ import org.rioproject.deploy.ServiceBeanInstantiationException;
 
 import java.rmi.RemoteException;
 import java.rmi.server.ExportException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -73,7 +74,7 @@ public class MonitorImplTest {
         assertNotNull(registration.getMonitor());
         assertNotNull(registration);
         MonitorListener monitorListener = new MonitorListener();
-        EventRegistration eventRegistration = monitor.register(new MonitorEventFilter(System.getProperty("user.name")),
+        EventRegistration eventRegistration = monitor.register(new MonitorEventFilter(),
                                                                monitorListener.getRemoteEventListener(),
                                                                TimeUnit.MINUTES.toMillis(5));
         assertNotNull(eventRegistration);
@@ -81,6 +82,50 @@ public class MonitorImplTest {
         monitor.update(registration, Monitor.Status.COMPLETED, null);
         registration.getLease().cancel();
         monitor.update(registration, Monitor.Status.SUBMITTED, null);
+    }
+
+    @Test
+    public void testRegistrationWithNames() throws MonitorException, ExportException {
+        MonitorRegistration registration = monitor.register("spacely-sprockets",
+                                                            System.getProperty("user.name"),
+                                                            TimeUnit.MINUTES.toMillis(5));
+        assertNotNull(registration.getMonitor());
+        assertNotNull(registration);
+        MonitorListener monitorListener = new MonitorListener();
+        List<String> names = new ArrayList<>();
+        names.add(registration.getIdentifier());
+        EventRegistration eventRegistration = monitor.register(new MonitorEventFilter(null, names),
+                                                               monitorListener.getRemoteEventListener(),
+                                                               TimeUnit.MINUTES.toMillis(5));
+        assertNotNull(eventRegistration);
+        monitor.update(registration, Monitor.Status.SUBMITTED, null);
+        monitor.update(registration, Monitor.Status.COMPLETED, null);
+
+        monitor.update(registration, Monitor.Status.SUBMITTED, null);
+        monitor.update(registration, Monitor.Status.FAILED, null);
+        assertTrue(monitorListener.states.size()==4);
+    }
+
+    @Test
+    public void testRegistrationWithBadNames() throws MonitorException, ExportException {
+        MonitorRegistration registration = monitor.register("spacely-sprockets",
+                                                            System.getProperty("user.name"),
+                                                            TimeUnit.MINUTES.toMillis(5));
+        assertNotNull(registration.getMonitor());
+        assertNotNull(registration);
+        MonitorListener monitorListener = new MonitorListener();
+        List<String> names = new ArrayList<>();
+        names.add(registration.getIdentifier()+"foo");
+        EventRegistration eventRegistration = monitor.register(new MonitorEventFilter(System.getProperty("user.name"), names),
+                                                               monitorListener.getRemoteEventListener(),
+                                                               TimeUnit.MINUTES.toMillis(5));
+        assertNotNull(eventRegistration);
+        monitor.update(registration, Monitor.Status.SUBMITTED, null);
+        monitor.update(registration, Monitor.Status.COMPLETED, null);
+
+        monitor.update(registration, Monitor.Status.SUBMITTED, null);
+        monitor.update(registration, Monitor.Status.FAILED, null);
+        assertTrue(monitorListener.states.size()==0);
     }
 
     //@Test

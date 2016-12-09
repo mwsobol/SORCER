@@ -24,6 +24,7 @@ import net.jini.discovery.DiscoveryEvent;
 import net.jini.discovery.DiscoveryListener;
 import net.jini.discovery.LookupDiscoveryManager;
 import net.jini.id.UuidFactory;
+import net.jini.lease.LeaseRenewalManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.analytics.MethodAnalytics;
@@ -67,9 +68,6 @@ public class MonitorAgent {
                 discoveryManager.addDiscoveryListener(monitorListener);
                 logger.debug("Discovery using groups: {}, locators: {}",
                              discoveryManager.getGroups(), discoveryManager.getLocators());
-                /*for(int i=0; i<Runtime.getRuntime().availableProcessors()/2; i++) {
-                    executor.submit(new MonitorNotificationHandler());
-                }*/
                 executor.submit(new MonitorNotificationHandler());
             } catch (IOException e) {
                 throw new RuntimeException("Could not create instance of DiscoveryManagement", e);
@@ -80,7 +78,7 @@ public class MonitorAgent {
     }
 
     private MonitorRegistration monitorRegistration;
-    //private LeaseRenewalManager leaseManager;
+    private LeaseRenewalManager leaseManager;
 
     public MonitorRegistration register(String identifier, String owner) {
         return register(identifier, owner, Lease.ANY);
@@ -100,7 +98,7 @@ public class MonitorAgent {
         }
         try {
             monitorRegistration = monitor.register(identifier, owner, duration);
-            //leaseManager = new LeaseRenewalManager(monitorRegistration.getLease(), Lease.FOREVER, null);
+            leaseManager = new LeaseRenewalManager(monitorRegistration.getLease(), Lease.FOREVER, null);
         } catch (IOException | MonitorException e) {
             logger.warn("Unable to obtain a MonitorRegistration for {}, {}", identifier, owner, e);
         }
@@ -158,7 +156,7 @@ public class MonitorAgent {
             } catch (UnknownLeaseException | RemoteException e) {
                 logger.warn("Problem cancelling lease", e);
             }
-            //leaseManager.clear();
+            leaseManager.clear();
             updates.add(new Update(monitorRegistration).terminate());
             monitorRegistration = null;
             executor.shutdownNow();
@@ -256,13 +254,13 @@ public class MonitorAgent {
                         updates.add(update);
                         break;
                     }
-                    MonitorRegistration registration = update.registration;
+                    MonitorRegistration monitorRegistration = update.registration;
                     if(logger.isDebugEnabled())
-                        logger.debug("[{}] HANDLE: {} {}", Thread.currentThread().getId(), registration.getIdentifier(), update.status);
+                        logger.debug("[{}] HANDLE: {} {}", Thread.currentThread().getId(), monitorRegistration.getIdentifier(), update.status);
                     try {
-                        registration.getMonitor().update(registration, update.status, update.analytics);
+                        monitorRegistration.getMonitor().update(monitorRegistration, update.status, update.analytics);
                         if(logger.isDebugEnabled())
-                            logger.debug("[{}] HANDLED: {} {}", Thread.currentThread().getId(), registration.getIdentifier(), update.status);
+                            logger.debug("[{}] HANDLED: {} {}", Thread.currentThread().getId(), monitorRegistration.getIdentifier(), update.status);
                     } catch (IOException | MonitorException e) {
                         logger.error("Unable to update status", e);
                     }

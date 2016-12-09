@@ -88,18 +88,6 @@ public class MonitorImpl implements Monitor {
                                            registration.getOwner(),
                                            status,
                                            analytics));
-        /*if(status==Status.COMPLETED || status==Status.FAILED) {
-            for(LeasedResource resource : landlord.getLeasedResources()) {
-                ServiceResource sR = (ServiceResource)resource;
-                MonitorRegistrationResource registrationResource = (MonitorRegistrationResource)sR.getResource();
-                if(registrationResource.uuid.equals(registration.getUuid())) {
-                    if(landlord.remove(resource.getCookie())) {
-                        logger.debug("Removed registration after status {}, num registrations: {}",
-                                     status.name(), landlord.getLeasedResources().length);
-                    }
-                }
-            }
-        }*/
     }
 
     private boolean isValid(MonitorRegistration registration) {
