@@ -167,11 +167,11 @@ logger("sorcer.core.provider.logger", WARN)
 /* ==================================================================
  *  SORCER Variable oriented loggers
  * ==================================================================*/
+logger("sorcer.modeling.vfe.filter.Filter", OFF)
 
 /*
 logger("sorcer.modeling", OFF)
 logger("sorcer.modeling.vfe.Var", OFF)
-logger("sorcer.modeling.vfe.filter.Filter", OFF)
 logger("sorcer.modeling.vfe.filter.BasicFileFilter", OFF)
 logger("sorcer.modeling.vfe.evaluator", OFF)
 logger("sorcer.modeling.vfe.ServiceEvaluator", INFO)
@@ -187,7 +187,7 @@ logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
 logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
 */
 logger("sorcer.modeling.core.context.model.var.ResponseModel", WARN)
-logger("sorcer.modeling.core.context.model.var.ParametricModel", INFO)
+logger("sorcer.modeling.core.context.model.var.ParametricModel", WARN)
 
 /* ==================================================================
  *  SORCER Other specialized loggers
@@ -199,6 +199,6 @@ logger("sorcer.jini.jeri.SorcerILFactory", WARN)
 logger("sorcer.ui.tools", DEBUG)
 logger("sorcer.util", DEBUG)
 
-root(INFO, appenders)
+root(OFF, appenders)
 
 
