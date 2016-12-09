@@ -171,7 +171,7 @@ abstract public class RendezvousBean implements Service, Exerter {
         }
 		catch (Exception e) {
 			logger.debug("exert failed for: " + mogram.getName(), e);
-			throw new ExertionException();
+			throw new ExertionException(e);
 		}
 		return out;
 	}
