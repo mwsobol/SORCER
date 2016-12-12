@@ -295,14 +295,13 @@ public class operator {
 		return contextVal(path, value) ;
 	}
 
-	public static ContextEntry cxtVal(String path, Entry... entries) throws ContextException {
+	public static ContextEntry contextVal(String path, Entry... entries) throws ContextException {
 		Context cxt = context((Object[])entries);
 		return contextVal(path, cxt) ;
 	}
 
-    public static Entry db(Entry entry) {
-		entry.setPersistent(true);
-		return entry;
+	public static ContextEntry cxtVal(String path, Entry... entries) throws ContextException {
+		return contextVal(path, entries);
 	}
 
 	public static Entry in(Entry... entries) {

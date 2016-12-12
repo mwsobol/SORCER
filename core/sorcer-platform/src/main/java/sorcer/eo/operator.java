@@ -2445,10 +2445,6 @@ public class operator {
 		}
 	}
 
-	public static <T> T val(Context<T> context, String path, Arg... args) throws ContextException {
-		return value(context, path, args);
-	}
-
 	public static <T> T value(Context<T> context, String path,
 							  Arg... args) throws ContextException {
 		try {
