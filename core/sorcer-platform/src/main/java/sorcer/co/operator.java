@@ -24,6 +24,7 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.ContextEntry;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.plexus.FiEntry;
@@ -52,6 +53,7 @@ import java.util.*;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
+import static sorcer.eo.operator.context;
 import static sorcer.po.operator.invoker;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -283,6 +285,21 @@ public class operator {
 		return ent;
 	}
 
+	public static ContextEntry contextVal(String path, Context value) {
+		ContextEntry ent = new ContextEntry(path, value);
+		ent.setType(Type.INPUT);
+		return ent;
+	}
+
+	public static ContextEntry cxtVal(String path, Context value) {
+		return contextVal(path, value) ;
+	}
+
+	public static ContextEntry cxtVal(String path, Entry... entries) throws ContextException {
+		Context cxt = context((Object[])entries);
+		return contextVal(path, cxt) ;
+	}
+
     public static Entry db(Entry entry) {
 		entry.setPersistent(true);
 		return entry;
@@ -375,6 +392,10 @@ public class operator {
 		Entry ent = new Entry(path, null);
 		ent.setType(Variability.Type.VAL);
 		return ent;
+	}
+
+	public static Object val(Entry ent, String path) throws ContextException {
+		return  ((ContextEntry)ent).getContextValue(path);
 	}
 
     public static <T> OutputEntry<T> outVal(String path, T value) {
@@ -490,6 +511,11 @@ public class operator {
 		}
 		entry.isValid(false);
 		return entry;
+	}
+
+	public static ContextEntry setValue(Entry entry, String contextPath, Object value) throws ContextException {
+		((ContextEntry)entry).setValue(contextPath, value);
+		return (ContextEntry)entry;
 	}
 
 	public static <S extends Setter> boolean isPersistent(S setter) {

@@ -39,7 +39,7 @@ public class ContextEntry extends Entry<Context> {
 		isValid(false);
 	}
 
-	public Object getValue(String contextPath) throws ContextException {
+	public Object getContextValue(String contextPath) throws ContextException {
 		return _2.getValue(contextPath);
 	}
 }

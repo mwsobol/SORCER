@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.core.context.model.ent.ContextEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -59,6 +60,25 @@ public class Entries {
 		assertEquals(name(asis(x4)), "arg/x3");
         assertTrue(direction((Entry) asis(x4)) == Direction.OUT);
 	}
+
+    @Test
+    public void contextEntry() throws Exception {
+        ContextEntry cxtEnt = cxtVal("context/value", context(val("arg/x1", 100.0), val("arg/x2", 20.0)));
+        assertEquals(100.0, val(cxtEnt, "arg/x1"));
+    }
+
+    @Test
+    public void contextEntry2() throws Exception {
+        ContextEntry cxtEnt = cxtVal("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        assertEquals(100.0, val(cxtEnt, "arg/x1"));
+    }
+
+    @Test
+    public void setValueOfContextEntry() throws Exception {
+        ContextEntry cxtEnt = cxtVal("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        setValue(cxtEnt, "arg/x1", 80.0);
+        assertEquals(80.0, val(cxtEnt, "arg/x1"));
+    }
 
     @Test
     public void entFidelities() throws Exception {

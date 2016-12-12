@@ -21,6 +21,7 @@ import sorcer.core.Name;
 import sorcer.core.context.MapContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.ContextEntry;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
@@ -54,7 +55,7 @@ public class operator {
         return value;
     }
 
-    public static Object setValue(Model model, String entName, Object value)
+    public static Model setValue(Model model, String entName, Object value)
         throws ContextException {
         Object entry = model.asis(entName);
         if (entry == null)
@@ -80,7 +81,18 @@ public class operator {
         }
 
         ((ServiceMogram)model).setIsChanged(true);
-        return value;
+        return model;
+    }
+
+    public static Model setValue(Model model, String entName, String path, Object value)
+        throws ContextException {
+        Object entry = model.asis(entName);
+        if (entry instanceof ContextEntry) {
+            ((ContextEntry) entry).setValue(path, value);
+        } else {
+            throw new ContextException("A ContextEntry is required with: " + path);
+        }
+        return model;
     }
 
     public static Model setValue(Model model, Entry... entries) throws ContextException {
