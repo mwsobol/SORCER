@@ -128,17 +128,6 @@ public class MonitorImplTest {
         assertTrue(monitorListener.states.size()==0);
     }
 
-    //@Test
-    public void stressTest() throws MonitorException {
-        for(int i=0; i<1000; i++) {
-            MonitorRegistration registration = monitor.register("spacely-sprockets",
-                                                                System.getProperty("user.name"),
-                                                                TimeUnit.MINUTES.toMillis(5));
-            assertNotNull(registration.getMonitor());
-            System.out.println("Created ["+(i+1)+"] MonitorRegistrations");
-        }
-    }
-
     class MonitorListener implements RemoteEventListener {
         Exporter exporter;
         RemoteEventListener remoteEventListener;

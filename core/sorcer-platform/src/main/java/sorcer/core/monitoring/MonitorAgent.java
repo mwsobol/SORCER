@@ -90,8 +90,11 @@ public class MonitorAgent {
         }
         if(monitorRegistration!=null)
             return monitorRegistration;
-        waitOnDiscover();
         Monitor monitor = monitorListener.getMonitor();
+        if(monitor==null) {
+            waitOnDiscover();
+            monitor = monitorListener.getMonitor();
+        }
         if(monitor==null) {
             logger.error("No available Monitor");
             return null;
@@ -134,7 +137,11 @@ public class MonitorAgent {
             return;
         }
         if(monitorRegistration==null) {
-            logger.warn("No MonitorRegistration, unable to update status");
+            if(analytics!=null)
+                logger.warn("No MonitorRegistration, unable to update status for method {} {}",
+                            analytics.getMethodName(), status);
+            else
+                logger.warn("No MonitorRegistration, unable to update status {}", status);
             return;
         }
         if(updates.add(new Update(monitorRegistration).status(status).analytics(analytics))) {
@@ -148,18 +155,14 @@ public class MonitorAgent {
     public void terminate() {
         if(!monitoringEnabled)
             return;
-        discoveryManager.removeDiscoveryListener(monitorListener);
         if(monitorRegistration!=null) {
             try {
-                monitorRegistration.getLease().cancel();
-                //leaseManager.cancel(monitorRegistration.getLease());
+                leaseManager.cancel(monitorRegistration.getLease());
             } catch (UnknownLeaseException | RemoteException e) {
-                logger.warn("Problem cancelling lease", e);
+                logger.warn("Problem cancelling lease, benign issue, {}: {}", e.getClass().getName(), e.getMessage());
             }
             leaseManager.clear();
-            updates.add(new Update(monitorRegistration).terminate());
             monitorRegistration = null;
-            executor.shutdownNow();
         }
     }
 
@@ -249,11 +252,11 @@ public class MonitorAgent {
             while(true) {
                 try {
                     Update update = updates.take();
-                    if(update.terminate) {
+                    /*if(update.terminate) {
                         logger.warn("[{}] Terminating MonitorNotificationHandler", Thread.currentThread().getId());
-                        updates.add(update);
+                        //updates.add(update);
                         break;
-                    }
+                    }*/
                     MonitorRegistration monitorRegistration = update.registration;
                     if(logger.isDebugEnabled())
                         logger.debug("[{}] HANDLE: {} {}", Thread.currentThread().getId(), monitorRegistration.getIdentifier(), update.status);
@@ -262,7 +265,12 @@ public class MonitorAgent {
                         if(logger.isDebugEnabled())
                             logger.debug("[{}] HANDLED: {} {}", Thread.currentThread().getId(), monitorRegistration.getIdentifier(), update.status);
                     } catch (IOException | MonitorException e) {
-                        logger.error("Unable to update status", e);
+                        if(update.analytics!=null)
+                            logger.warn("Unable to update status for method {} {}, {}: {}",
+                                        update.analytics.getMethodName(), update.status, e.getClass().getName(), e.getMessage());
+                        else
+                            logger.warn("Unable to update status {}, {}: {}",
+                                        update.status, e.getClass().getName(), e.getMessage());
                     }
                 } catch (InterruptedException e) {
                     logger.error("Interrupted", e);

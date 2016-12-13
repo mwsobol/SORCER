@@ -143,6 +143,17 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
+    service(name: SorcerEnv.getActualName('EvaluMon')) {
+        interfaces {
+            classes 'sorcer.core.monitoring.Monitor'
+            resources appendJars(["rio-proxy-${RioVersion.VERSION}.jar"])
+        }
+        implementation(class: 'sorcer.core.monitoring.MonitorImpl') {
+            resources "sos-evalumon-${Sorcer.sorcerVersion}.jar"
+        }
+        maintain 1
+    }
+
     service(name: SorcerEnv.getActualName("Logger")) {
         interfaces {
             classes 'sorcer.core.provider.RemoteLogger'

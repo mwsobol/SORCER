@@ -1683,9 +1683,7 @@ public class ProviderDelegate {
         if (remoteLoggerInstaller!=null) {
             remoteLoggerInstaller.destroy();
         }
-        if(analyticsRecorder!=null)
-        	analyticsRecorder.terminate();
-		if (spaceEnabled && spaceHandlingPools != null) {
+        if (spaceEnabled && spaceHandlingPools != null) {
             for (SpaceTaker st : spaceTakers) {
                 if(st!=null)
                     st.destroy();

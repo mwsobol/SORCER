@@ -1789,6 +1789,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			unexport(true);
 			if(providerAdmin!=null)
 				providerAdmin.unregister();
+
 			logger.debug("calling destroy on the delegate...");
 			delegate.destroy();
 			logger.debug("DONE calling destroy on the delegate.");

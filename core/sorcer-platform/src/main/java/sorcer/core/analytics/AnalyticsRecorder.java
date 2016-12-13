@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.monitoring.Monitor;
 import sorcer.core.monitoring.MonitorAgent;
+import sorcer.core.monitoring.MonitorRegistration;
 
 import java.text.NumberFormat;
 import java.util.HashMap;
@@ -40,7 +41,9 @@ public class AnalyticsRecorder {
     private ServiceID serviceID;
     private String hostName;
     private final MonitorAgent monitorAgent;
-
+    private MonitorRegistration monitorRegistration;
+    private final String name;
+    private final String principal;
     private NumberFormat percentFormatter = NumberFormat.getPercentInstance();
 
     public AnalyticsRecorder(String hostName, ServiceID serviceID, String name, String principal) {
@@ -48,7 +51,10 @@ public class AnalyticsRecorder {
         this.serviceID = serviceID;
         percentFormatter.setMaximumFractionDigits(3);
         monitorAgent = new MonitorAgent();
-        monitorAgent.register(name, principal);
+        this.name = name;
+        this.principal = principal;
+        monitorRegistration = monitorAgent.register(name, principal);
+        logger.debug("Obtained a MonitorRegistration for {}, principal {}? {}", name, principal, monitorRegistration!=null);
     }
 
     public Map<String, MethodAnalytics> getMethodAnalytics() {
@@ -68,6 +74,7 @@ public class AnalyticsRecorder {
     }
 
     public int inprocess(String m) {
+        checkRegistration();
         MethodInvocationRecord record = getMethodInvocationRecord(m);
         int id = record.inprocess();
         if(logger.isDebugEnabled())
@@ -117,6 +124,23 @@ public class AnalyticsRecorder {
                    .setSystemMemoryUsed(systemMemoryUsed)
                    .setProcessMemoryTotal(processMemoryTotal)
                    .setProcessMemoryUsed(processMemoryUsed);
+    }
+
+    private void checkRegistration() {
+        int waitCount = 0;
+        long timeout = 60;
+        while(monitorRegistration==null && waitCount < timeout) {
+            logger.info("Waiting for a MonitorRegistration for {}, principal {}...", name, principal);
+            monitorRegistration = monitorAgent.register(name, principal);
+            if(monitorRegistration==null) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            waitCount++;
+        }
     }
 
     private MethodInvocationRecord getMethodInvocationRecord(String m) {

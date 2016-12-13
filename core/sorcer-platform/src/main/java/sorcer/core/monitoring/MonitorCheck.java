@@ -15,6 +15,9 @@
  */
 package sorcer.core.monitoring;
 
+import org.slf4j.LoggerFactory;
+import sorcer.core.provider.Provider;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
@@ -34,5 +37,13 @@ public class MonitorCheck {
             }
         }
         return monitor;
+    }
+
+    public static boolean check(Method m) {
+        if (m.getName().equals("destroy") && m.getDeclaringClass().getName().equals(Provider.class.getName())) {
+            LoggerFactory.getLogger(MonitorCheck.class).info("method: {}", m);
+            return false;
+        }
+        return true;
     }
 }

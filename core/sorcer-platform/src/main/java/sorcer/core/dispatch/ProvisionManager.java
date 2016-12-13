@@ -147,7 +147,7 @@ public class ProvisionManager {
                 if(deployment!=null) {
                     deployment.setDeployedNames(deploymentNames);
                 } else {
-                    logger.warn("There was no ServiceDeployment for %s, " +
+                    logger.warn("There was no ServiceDeployment for {}, " +
                                         "try and load all NetSignatures and set deployment names",
                                 exertion.getName());
                     for (Signature netSignature : getNetSignatures()) {
