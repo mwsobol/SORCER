@@ -95,6 +95,23 @@ public class operator {
         return model;
     }
 
+    public static Model setValue(Model model, String entName, Entry... entries)
+            throws ContextException {
+        Object entry = model.asis(entName);
+        if (entry instanceof ContextEntry) {
+            for (Entry e : entries) {
+                try {
+                    ((ContextEntry) entry).setValue(e.getName(), e.get());
+                } catch (RemoteException ex) {
+                    throw new ContextException(ex);
+                }
+            }
+        } else {
+            throw new ContextException("A ContextEntry is required with entries: " + entries);
+        }
+        return model;
+    }
+
     public static Model setValue(Model model, Entry... entries) throws ContextException {
         for(Entry ent :entries) {
             setValue(model, ent.getName(), ent.value());

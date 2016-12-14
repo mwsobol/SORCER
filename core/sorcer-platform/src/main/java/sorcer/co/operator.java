@@ -517,6 +517,17 @@ public class operator {
 		return (ContextEntry)entry;
 	}
 
+	public static ContextEntry setValue(Entry entry, Entry... entries) throws ContextException {
+		for (Entry e :  entries) {
+			try {
+				((ContextEntry) entry).setValue(e.getName(), e.get());
+			} catch (RemoteException ex) {
+				throw new ContextException(ex);
+			}
+		}
+		return (ContextEntry)entry;
+	}
+
 	public static <S extends Setter> boolean isPersistent(S setter) {
 		return setter.isPersistent();
 	}

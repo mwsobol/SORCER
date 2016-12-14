@@ -81,6 +81,14 @@ public class Entries {
     }
 
     @Test
+    public void setValueOfContextEntry2() throws Exception {
+        ContextEntry cxtEnt = cxtVal("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        setValue(cxtEnt, val("arg/x1", 80.0), val("arg/x2", 10.0));
+        assertEquals(80.0, val(cxtEnt, "arg/x1"));
+        assertEquals(10.0, val(cxtEnt, "arg/x2"));
+    }
+
+    @Test
     public void entFidelities() throws Exception {
         Entry mfiEnt = inVal("by", eFi(inVal("by-10", 10.0), inVal("by-20", 20.0)));
 

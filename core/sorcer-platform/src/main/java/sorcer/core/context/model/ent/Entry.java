@@ -100,6 +100,10 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		this.annotation = annotation;
 	}
 
+	public T get() throws EvaluationException, RemoteException {
+		return _2;
+	}
+
 	@Override
 	public T getValue(Arg... args) throws EvaluationException, RemoteException {
 		T val = this._2;
