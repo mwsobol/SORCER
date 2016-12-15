@@ -296,7 +296,11 @@ public class operator {
 	}
 
 	public static ContextEntry contextVal(String path, Entry... entries) throws ContextException {
-		Context cxt = context((Object[])entries);
+		ServiceContext cxt = new ServiceContext();
+		for (Entry e : entries) {
+			cxt.put((String) e._1, e.get());
+		}
+		cxt.isValid(false);
 		return contextVal(path, cxt) ;
 	}
 
@@ -519,11 +523,7 @@ public class operator {
 
 	public static ContextEntry setValue(Entry entry, Entry... entries) throws ContextException {
 		for (Entry e :  entries) {
-			try {
 				((ContextEntry) entry).setValue(e.getName(), e.get());
-			} catch (RemoteException ex) {
-				throw new ContextException(ex);
-			}
 		}
 		return (ContextEntry)entry;
 	}

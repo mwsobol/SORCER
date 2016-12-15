@@ -100,11 +100,7 @@ public class operator {
         Object entry = model.asis(entName);
         if (entry instanceof ContextEntry) {
             for (Entry e : entries) {
-                try {
-                    ((ContextEntry) entry).setValue(e.getName(), e.get());
-                } catch (RemoteException ex) {
-                    throw new ContextException(ex);
-                }
+                ((ContextEntry) entry).setValue(e.getName(), e.get());
             }
         } else {
             throw new ContextException("A ContextEntry is required with entries: " + entries);
