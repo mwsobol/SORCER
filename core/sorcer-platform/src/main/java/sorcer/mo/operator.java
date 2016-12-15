@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static sorcer.co.operator.contextVal;
 import static sorcer.co.operator.instance;
 import static sorcer.eo.operator.context;
 
@@ -98,12 +99,17 @@ public class operator {
     public static Model setValue(Model model, String entName, Entry... entries)
             throws ContextException {
         Object entry = model.asis(entName);
-        if (entry instanceof ContextEntry) {
-            for (Entry e : entries) {
-                ((ContextEntry) entry).setValue(e.getName(), e.get());
+        if (entry != null) {
+            if (entry instanceof Context) {
+                for (Entry e : entries) {
+                    ((Context) entry).putValue(e.getName(), e.get());
+                }
             }
+            ((Context)entry).isValid(false);
         } else {
-            throw new ContextException("A ContextEntry is required with entries: " + entries);
+            ContextEntry ce = contextVal(entName, entries);
+            ((Context)model).putValue(entName, ce.get());
+            ce.get().isValid(false);
         }
         return model;
     }
