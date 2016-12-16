@@ -85,6 +85,8 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	// invocation delegate to
 	Evaluator evaluator;
 
+	private boolean valueIsCurrent = false;
+
 	private boolean isReactive = false;
 
 	// indication that eval has been calculated with recent arguments
@@ -544,6 +546,15 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	@Override
 	public void setParameters(Object... args) {
 		// implemented by subclasses
+	}
+
+	@Override
+	public void setValueIsCurrent(boolean state) {
+		valueIsCurrent = state;
+	}
+
+	public boolean isValueCurrent() {
+		return valueIsCurrent;
 	}
 
 	@Override

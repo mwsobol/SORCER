@@ -19,11 +19,14 @@ package sorcer.core.context.model.ent;
 
 import sorcer.service.Context;
 import sorcer.service.ContextException;
+import sorcer.service.Evaluator;
 
 /**
  * Created by Mike Sobolewski on 12/9/16.
  */
 public class ContextEntry extends Entry<Context> {
+
+	private Evaluator evaluator;
 
 	public ContextEntry(String path) {
 		_1 = path;
@@ -42,4 +45,13 @@ public class ContextEntry extends Entry<Context> {
 	public Object getContextValue(String contextPath) throws ContextException {
 		return _2.getValue(contextPath);
 	}
+
+	public Evaluator getEvaluator() {
+		return evaluator;
+	}
+
+	public void setEvaluator(Evaluator evaluator) {
+		this.evaluator = evaluator;
+	}
+
 }

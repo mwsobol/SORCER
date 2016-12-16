@@ -287,6 +287,7 @@ public class operator {
 
 	public static ContextEntry contextVal(String path, Context value) {
 		ContextEntry ent = new ContextEntry(path, value);
+		ent.isValid(false);
 		ent.setType(Type.INPUT);
 		return ent;
 	}

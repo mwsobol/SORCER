@@ -100,16 +100,13 @@ public class operator {
             throws ContextException {
         Object entry = model.asis(entName);
         if (entry != null) {
-            if (entry instanceof Context) {
+            if (entry instanceof ContextEntry) {
                 for (Entry e : entries) {
-                    ((Context) entry).putValue(e.getName(), e.get());
+                    ((ContextEntry) entry).get().putValue(e.getName(), e.get());
                 }
             }
-            ((Context)entry).isValid(false);
-        } else {
-            ContextEntry ce = contextVal(entName, entries);
-            ((Context)model).putValue(entName, ce.get());
-            ce.get().isValid(false);
+            ((ContextEntry)entry).isValid(false);
+            ((ContextEntry)entry).getEvaluator().setValueIsCurrent(false);
         }
         return model;
     }
