@@ -2912,12 +2912,20 @@ public class operator {
 			return as;
 		}
 
-		public String[] argsToStrings() {
+		public String[] getNameArray() {
 			String[] as = new String[args.length];
 			for (int i = 0; i < args.length; i++) {
 				as[i] = args[i].toString();
 			}
 			return as;
+		}
+
+		public List<String> getNameList() {
+			List<String>  sl = new ArrayList(args.length);
+			for (int i = 0; i < args.length; i++) {
+				sl.set(i, args[i].toString());
+			}
+			return sl;
 		}
 
 		public int size() {

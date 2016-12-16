@@ -35,7 +35,6 @@ import sorcer.service.modeling.Variability;
 
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -479,7 +478,7 @@ public class operator {
     }
 
     public static ServiceInvoker invoker(Args args) {
-        return new CmdInvoker(args.argsToStrings());
+        return new CmdInvoker(args.getNameArray());
     }
     public static IncrementInvoker inc(String path) {
 		return new IntegerIncrementor(path, 1);
@@ -817,13 +816,13 @@ public class operator {
 	}
 
 	public static Srv lambda(String path, Service service, Args args) {
-		Srv srv = new Srv(path, path, service, args.argsToStrings());
+		Srv srv = new Srv(path, path, service, args.getNameArray());
 		srv.setType(Variability.Type.LAMBDA);
 		return srv;
 	}
 
 	public static Srv lambda(String path, Service service, String name, Args args) {
-		Srv srv = new Srv(name, path, service,  args.argsToStrings());
+		Srv srv = new Srv(name, path, service,  args.getNameArray());
 		srv.setType(Variability.Type.LAMBDA);
 		return srv;
 	}
@@ -847,7 +846,7 @@ public class operator {
 	}
 
 	public static <T> Srv lambda(String path, ValueCallable<T> call, Args args) {
-		Srv srv = new Srv(path, call, args.argsToStrings());
+		Srv srv = new Srv(path, call, args.getNameArray());
 		srv.setType(Variability.Type.LAMBDA);
 		return srv;
 	}

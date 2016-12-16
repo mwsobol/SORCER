@@ -976,7 +976,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
             config = ConfigurationProvider.getInstance(args, getClass()
                 .getClassLoader());
 
-            Pool[] pools = (Pool[]) config.getEntry(Pools.COMPONENT, Pools.FI_POOL, Map[].class);
+            Pool[] pools = (Pool[]) config.getEntry(Pools.COMPONENT, Pools.FI_POOL, Pool[].class);
             Pool<Fidelity, Fidelity> pool = new Pool<>();
             for (int i=0; i<pools.length; i++) {
                 pool.putAll((Map<? extends Fidelity, ? extends ServiceFidelity>) pools[i]);
