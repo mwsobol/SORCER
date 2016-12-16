@@ -26,7 +26,7 @@ public class ModelSignature extends ServiceSignature {
 
 	static final long serialVersionUID = 5482425096559139341L;
 
-	private Variability<?> var;
+	private Variability var;
 
 	private ServiceFidelity fidelity;
 

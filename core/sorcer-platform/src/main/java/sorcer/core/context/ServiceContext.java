@@ -128,7 +128,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	public ServiceContext(String name) {
 		super();
-		if (name == null || name.length() == 0) {
+        initContext();
+        if (name == null || name.length() == 0) {
 			this.name = defaultName + count++;
 		} else {
 			this.name = name;
@@ -233,7 +234,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * are component attributes; cxt.tag("arg/x3", "triplet|mike|w|sobol");
 	 * and get tagged eval at arg/x3: cxt.getMarkedValues("triplet|mike|w|sobol"));
 	 */
-	protected void init() {
+    private void initContext() {
 		super.init();
 		data = new ConcurrentHashMap<String, T>();
 		metacontext = new HashMap<String, Map<String, String>>();
@@ -1326,13 +1327,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public boolean isLong(String path) throws ContextException {
 		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
-		boolean is = vc.equals(""+ long.class) || vc.equals(""+ long.class);
+		boolean is = vc.equals(""+ long.class) || vc.equals(""+ Long.class);
 		return is;
 	}
 
 	public boolean isFloat(String path) throws ContextException {
 		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
-		boolean is = vc.equals(""+ float.class) || vc.equals(""+ float.class);
+		boolean is = vc.equals(""+ float.class) || vc.equals(""+ Float.class);
 		return is;
 	}
 
@@ -1600,7 +1601,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return subcntxt;
 	}
 
-	public ServiceContext getMergedSubcontext(ServiceContext intial, List<Name> paths, Arg... args)
+	public ServiceContext getMergedSubcontext(ServiceContext intial, List<Arg> paths, Arg... args)
 			throws ContextException {
 		ServiceContext subcntxt = null;
 		if (intial != null) {
@@ -1610,7 +1611,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 		subcntxt.setModeling(true);
 		Object val = null;
-		for (Name arg : paths) {
+		for (Arg arg : paths) {
 			String path = arg.getName();
 			val = getValue(path, args);
 			if (val instanceof Context) {
@@ -1645,13 +1646,19 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	// TODO in/out/inout marking as defined in the connector
-	public Context updateContextWith(Context connector) throws ContextException {
-		if (connector != null) {
-			Iterator it = ((ServiceContext)connector).entryIterator();
+	public Context updateContextWith(Context context) throws ContextException {
+		boolean isRedundant = false;
+		if (context instanceof MapContext) {
+			isRedundant = ((MapContext) context).isRedundant;
+		}
+		if (context != null) {
+			Iterator it = ((ServiceContext)context).entryIterator();
 			while (it.hasNext()) {
 				Map.Entry e = (Map.Entry) it.next();
 				putInValue((String) e.getKey(), asis((String) e.getValue()));
-				removePath((String) e.getValue());
+				if (!isRedundant) {
+					removePath((String) e.getValue());
+				}
 			}
 		}
 		return this;
@@ -1815,7 +1822,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Map table, attrTable;
 		attrTable = ((ServiceContext) mappedCntxt).metacontext;
 		// note the metacontext contains only singleton attributes
-		// AND the SORCER.CONTEXT_ATTRIBUTES table
+		// AND the SORCER.CONTEXT_ATTRIBUTES dataTable
 		e = attrTable.keySet().iterator();
 		String attr, val, metapath;
 		while (e.hasNext()) {
@@ -2932,13 +2939,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 				mogramStrategy.outcome = this;
 			}
 			result = mogramStrategy.outcome;
-			mogramStrategy.outcome.setModeling(true);
 		}
-		result.setName("Response of model: " + name);
+		mogramStrategy.outcome.setModeling(false);
+		result.setName("Response of " + getClass().getSimpleName() + " " + name);
 		return result;
 	}
 
 	public Object getResult() throws ContextException, RemoteException {
+		mogramStrategy.outcome.setModeling(false);
 		return mogramStrategy.outcome;
 	}
 
@@ -3225,7 +3233,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				signature = sig(subjectPath, subjectValue);
 				return (T) ((Exertion)operator.xrt(name, signature, this).exert(txn, entries)).getContext();
 			} else {
-				// evaluates model outputs - responses
+				// evaluates model outputs - response
 				getResponse(entries);
 				return (T) this;
 			}
@@ -3243,35 +3251,40 @@ public class ServiceContext<T> extends ServiceMogram implements
 	/* (non-Javadoc)
      * @see sorcer.service.Service#exert(sorcer.service.Exertion, net.jini.core.transaction.Transaction)
      */
-	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws TransactionException,
-			MogramException, RemoteException {
-		try {
-			if (mogram instanceof NetTask) {
-				Task task = (NetTask)mogram;
-				Class serviceType = task.getServiceType();
-				 if (Invocation.class.isAssignableFrom(serviceType)) {
-					 Object out = ((Invocation)this).invoke(task.getContext(), args);
-					 handleExertOutput(task, out);
-					 return (T) task;
-				 } else if (Evaluation.class.isAssignableFrom(serviceType)) {
-					 Object out = ((Evaluation)this).getValue(args);
-					 handleExertOutput(task, out);
-					 return (T) task;
-				 }
-			}
-			exertion.getContext().appendContext(this);
-			return (T) exertion.exert(txn);
-		} catch (Exception e) {
-			e.printStackTrace();
-			mogram.getContext().reportException(e);
-			if (e instanceof Exception)
-				mogram.setStatus(FAILED);
-			else
-				mogram.setStatus(ERROR);
+    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws TransactionException,
+            MogramException, RemoteException {
+        try {
+            if (mogram instanceof NetTask) {
+                Task task = (NetTask)mogram;
+                Class serviceType = task.getServiceType();
+                if (provider != null) {
+					Task out = ((ServiceProvider)provider).getDelegate().doTask(task, txn, args);
+					// clear provider execution scope
+					out.getContext().setScope(null);
+					return (T) out;
+                } else if (Invocation.class.isAssignableFrom(serviceType)) {
+                    Object out = ((Invocation)this).invoke(task.getContext(), args);
+                    handleExertOutput(task, out);
+                    return (T) task;
+                } else if (Evaluation.class.isAssignableFrom(serviceType)) {
+                    Object out = ((Evaluation)this).getValue(args);
+                    handleExertOutput(task, out);
+                    return (T) task;
+                }
+            }
+            exertion.getContext().appendContext(this);
+            return (T) exertion.exert(txn);
+        } catch (Exception e) {
+            e.printStackTrace();
+            mogram.getContext().reportException(e);
+            if (e instanceof Exception)
+                mogram.setStatus(FAILED);
+            else
+                mogram.setStatus(ERROR);
 
-			throw new ExertionException(e);
-		}
-	}
+            throw new ExertionException(e);
+        }
+    }
 
 	private void handleExertOutput(Task task, Object result ) throws ContextException {
 		ServiceContext dataContext = (ServiceContext) task.getDataContext();
@@ -3312,7 +3325,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 		if (inpaths != null) {
 			for (Path path : inpaths) {
-				if (path.info != null) {
+				if (path.info != null && path.getType().equals(Path.Type.PATH)) {
 					putInValue(path.getName(), (T) getValue(path.getName()), path.info.toString());
 				} else {
 					putInValue(path.getName(), (T) getValue(path.getName()));
@@ -3322,7 +3335,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 		if (outpaths != null) {
 			for (Path path : outpaths) {
-				if (path.info != null) {
+				if (path.info != null && path.getType().equals(Path.Type.PATH)) {
 					putOutValue(path.getName(), (T) getValue(path.getName()), path.info.toString());
 				} else {
 					putOutValue(path.getName(), (T) getValue(path.getName()));
@@ -3356,10 +3369,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public Collection<T> values() {
 		return data.values();
-	}
-
-	public void clear() {
-		data.clear();
 	}
 
 	public T put(String key, T value) {
@@ -3413,6 +3422,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public Entry<T> getEntry(String path) {
 		return new Entry(path, data.get(path));
+	}
+
+	public String getProviderName() throws RemoteException {
+		if (provider == null)
+			return name;
+		else
+			return provider.getProviderName();
 	}
 
 	@Override

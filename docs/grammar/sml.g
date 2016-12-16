@@ -1,26 +1,62 @@
 grammar sml;
 
 /* <PROVIDER-RULES> */
-srvSignature : prvSignature | opSignature | 'sig' '(' srvSignature ',' signatureOp ')' ;
-prvSignature : 'sig' '(' ( name ',' )? prvSpec ')' ;
-opSignature  : 'sig' '(' ( name ',' )? opSpec ',' prvSpec ')' ;
+srvSignature : prvSignature | opSignature | bldrSignature | 'sig' '(' srvSignature ',' signatureOp ')' ;
 
-prvSpec : (javaType | prvInstance | 'type' '(' srvTypeName ')' (',' 'types' '(' javaType* ')' )? (',' (srvTag | prvTag))? (',' prvDeployment)? ) ;
-opSpec  : selector signatureOp ( ',' dataContext )? (',' srvResult)? (',' 'inConn' '(' mapEntry*')')? (',' 'outConn' '(' mapEntry* ')' )? ;
+prvSignature : 'sig' '(' ( sigName ',' )? prvSpec ')' ;
 
-srvType options { backtrack = true; } : classType | interfaceType ;
+opSignature  : 'sig' '(' (( sigName ',' )? opSpec ',' prvSpec ')' | prvSignature ',' selector ')' | prvSignature ',' opSpec) ')' ;
 
-signatureOp : ('op' '(' selector (',' srvArg*)? ')' | 'op' '(' opSignature ')' ) ;
-access : 'Access.PUSH' | 'Access.PULL' ;
+ntlSignature : 'sig' '(' ( sigName ',' )? 'filePath' '(' (netletFilename | netletArtifact) ')' ')' ;
+
+bldrSignature : 'sig' '('( sigName ',' )? classSelector ','classType ')' ;
+
+prvSpec : (srvType | 'type' '(' srvTypeName ')') (',' matchTypes)? (',' (prvId))? (',' prvDeployment)? | bldrSignature | prvInstance ;
+srvType : classType | interfaceType ;
+opSpec  : (selector | signatureOp) (',' srvResult)? (',' inputConnector)? (',' outputConnector)? ( ',' dataContext )? ;
+matchTypes : 'types' '(' (interfaceType ',')* interfaceType ')' ; 
+inputConnector : 'inConn' '(' (mapEntry ',')* mapEntry ')' ;
+outputConnector : 'outConn' '(' (mapEntry ',')* mapEntry ')' ;
+
+signatureOp : 'op' '(' (selector (',' opArg)* ')' |opSignature) ')' ;
+opArg : accessType | flowType | provisionable | monitorable | waitable | fiManagement | srvShellExec;
+accessType : 'Access.PUSH' | 'Access.PULL' ;
+flowType: 'Flow.PAR' | 'Flow.SEQ' ;
 provisionable : 'Provision.YES' | 'Provision.NO' ;
-prvTag : 'prvName' '(' providerName ')' ;
-srvTag : 'srvName' '(' serviceName (',' 'locators'(locatorName*))? (',' groupName*)? ')' ;
+monitorable : 'Monitor.YES' | 'Monitor.NO' ;
+waitable : 'Wait.YES' | 'Wait.NO' ;
+fiManagement : 'FidelityManagement.YES' | 'FidelityManagement.NO' ;
+srvShellExec : 'Shell.LOCAL' | 'Shell.REMOTE' ;
+prvId : 'srvName' '(' serviceName (',' 'locators' '('(locatorName',')+ ')')? ((',' groupName)+)? ')' | 'prvName' '(' providerName ')' ;
 srvResult : 'result' '(' pathName? (',' inputPaths)? (',' outputPaths)? (',' dataContext)? ')' ;
-prvDeployment : 'deploy' '(' 'implementation' '(' providerClassName ')' 
-               'classpath' '(' jarName* ')' 
-			   'codebase' '(' jarName* 'configuration' '('configName ')' 'maintain' '(' intNumber ')' 'idle' '(' intNumber ')' ')' ;
-inputPaths : 'inPaths' '(' srvPath+ ')' ;
-outputPaths : 'outPaths' '(' srvPath+ ')' ;
+prvDeployment : 'deploy' '(' ('configuration' '('configName ')' | prvCodeSpec) deployOptions ')' ;	
+	
+prvCodeSpec : 'implementation' '(' prvClassName ')' ','prvClasspath ',' prvCodebase ;		   
+prvClasspath : 'classpath' '(' (jarName',')* jarName')';
+prvCodebase : 'codebase' '(' (jarName',')* jarName')';
+deployOptions :	(',''maintain' '(' intNumber ')')? (',''perNode' '(' intNumber ')')? (',''idle' '(' intNumber ')')? ;
+
+inputPaths : 'inPaths' '(' (srvPath',')* srvPath')' ;
+outputPaths : 'outPaths' '(' (srvPath',')* srvPath')' ;
+
+
+/* <MULTIFIDELITY-RULES> */
+
+multiFi : entFidelity | sigFidelity | morphFidelity | reqFidelity | varFidelity | fiMogram ;
+
+entFidelity : 'eFi' '(' (contextEntry',')* contextEntry ')' ;
+
+sigFidelity : 'sFi' '(' fiName ',' (opSignature',')* opSignature ')' ;
+
+morphFidelity : 'mFi' '(' fiName ',' srvMorpher? (srvRequest',')+ srvRequest')' ;
+			
+reqFidelity : 'rFi' '('(fiName',')? (srvRequest',')+ srvRequest ')' ; 
+
+varFidelity : 'vFi' '(' fiName (',' (value | opSignature | contextEntry)
+			| (',' srvRoutine)? ( ',' entGetter)? ( ',' entSetter)?) ')' ;
+			
+srvMorpher: morpherLambdaExpression ;
+
 
 /* <PROVIDER-SERVICES> */
 
@@ -29,60 +65,56 @@ prvInstance : 'prv' '(' srvSignature ')' ;
 
 /* <REQUESTS> */
 
-srvRequest : srvSignature | contextEntry | srvMogram ;
+srvRequest : srvSignature | contextEntry | multiFi | srvMogram ;
 
 
 /* <ENTRIES> */
 
-entType : 'in' | 'out' | 'inout' | 'db' ;
 annotatedPath : 'path' '(' pathName ( ',' pathTag)? ')' ;
-srvPath : pathName | annotatedPath ;
+mapPath : 'map' '(' toPath ',' fromPath ')' ;
+srvPath : pathName | annotatedPath |mapPath ;
+entOp : 'inVal' | 'outVal' | 'inoutVal' | 'dbVal' ;
+dataEntry : entOp '(' srvPath ',' value ')' ;
 
-dataEntry : 'val' '(' srvPath ',' value ')' | 'entTypeVal' '(' srvPath ',' value ')' ;
-
-mapEntry : 'ent' '(' fromPathName ',' toPathName ')' ;
-
-procEntry : ('ent' '(' opSignature ')' | 'ent' '(' pathName ',' srvEvaluator ')' | 'ent' '(' pathName ',' srvInvoker ( ',' srvModel)? ')' | lambdaEntry  ')') ;
-
-lambdaEntry : 'lambda' '(' pathName ',' entrycallableLambdaExpression ')'
-			| 'lambda' '(' pathName ',' serviceLambdaExpression',' srvArgs ')'
-			| 'lambda' '(' pathName ',' callableLambdaExpression',' srvArgs ')'
-			| 'lambda' '(' pathName ',' clientLambdaExpression',' srvArgs ')'
-			| 'lambda' '(' pathName ',' valueCallableLambdaExpression',' srvArgs ')' ;
-
-srvEntry options { backtrack = true; } : 'ent' '(' pathName ',' opSignature ( ',' srvModel)? ( ',' cxtSelector)? ')' 
-			| 'ent' '(' pathName ',' srvRoutine ')' | 'ent' '(' pathName ',' srvMogram ')' ;
-
-cxtSelector : selector '(' (componentName',' )? pathName+ ')' ;
+contextEntry : dataEntry | procEntry | srvEntry | varEntry | fiEntry
+			| entType '(' (pathName ',')? contextEntry ')' ;
+			
+procEntry : ('ent' '(' pathName ',' (srvEvaluator | srvInvoker ( ',' entModel)?) ')' | sigEntry | lambdaEntry) ;
 
 srvRoutine : contextEntry | srvInvoker | srvEvaluator ;
 
-varEntry : 'var' '(' pathName ',' value ')' | 'var' '(' pathName ',' opSignature ')'
-			| 'var' '(' pathName ',' varFidelity+ ')' | 'var' '(' pathName ',' morphFidelity* ')'
-			| 'var' '(' pathName ',' lambdaEvaluator ')' | 'var' '(' pathName ',' varProxy ')' ;
+sigEntry : 'ent' '(' (pathName ',')? opSignature ')' ;
 
-fiEntry : 'ent' '(' pathName',' entFidelity* ')' ;
+mapEntry : 'ent' '(' fromPathName ',' toPathName ')' ;
 
-entFidelity : 'eFi' '(' contextEntry* ')' ;
+lambdaEntry : 'lambda' '(' pathName ',' (entrycallableLambdaExpression
+			| serviceLambdaExpression
+			| callableLambdaExpression
+			| clientLambdaExpression
+			| valueCallableLambdaExpression)(',' srvArgs)? ')' ;
 
-contextEntry : dataEntry | srvEntry | varEntry | fiEntry
-			| entType '(' contextEntry ')' ;
+srvEntry : 'ent' '(' pathName ',' (opSignature  (',' entModel)? (',' cxtSelector)?  
+			| srvRoutine | srvMogram) ')' ;
 
-sigFidelity : 'sFi' '(' fiName ',' opSignature+ ')' ;
+cxtSelector : selector '(' (componentName)? (',' pathName)+ ')' ;
 
-morphFidelity : 'mFi' '(' fiName ',' srvRequest+ ')'
-			| 'mFi' '(' fiName ',' srvMorpher ',' srvRequest+ ')' ;
-			
-srvMorpher: morpherLambdaExpression ;
+varEntry : ('var' '(' (pathName ( ',' (value | opSignature | morphFidelity 
+			| srvRoutine 
+			| varProxy 
+			| contextEntry )
+			|(',' varFidelity)+ ) ')')
+			| entVar | objectiveVar | constraintVar) ;
 
-varFidelity : 'vFi' '(' fiName ',' value ')' | 'vFi' '(' fiName ',' opSignature ')'
-			| 'vFi' '(' fiName ( ',' srvRoutine)? ( ',' entGetter)? ( ',' entSetter)? ')' ;
+fiEntry : 'ent' '(' pathName (entFidelity ',')* entFidelity ')' ;
+
+entType : 'in' | 'out' | 'inout' | 'db' ;
 
 varProxy : 'proxy' '(' pathName ',' opSignature ')' ;
 		
-srvInvoker : 'invoker' '(' javaExpression ',' 'srvArgs' ( ',' dataContext)? ')'
-			| 'invoker' '(' opSignature ')' | srvExertion | 'inc' '(' srvInvoker ',' double | int ')'
-			| 'methodInvoker()'
+srvInvoker : 'invoker' '(' (javaExpression ',' 'srvArgs' ( ',' dataContext)? 
+			| opSignature) ')' | srvExertion | 'inc' '(' srvInvoker ',' double | int ')'
+			| 'methodInvoker(TODO)'
+			| 'cmdInvoker(TODO)'
 			| 'invoker' '('(name',')? valueCallableLambdaExpression ( ',' contextModel)?',' srvArgs ')'
 			| procEntry  | conditionalInvoker ;
 		
@@ -94,37 +126,40 @@ invokeOption : 'opt' '(' srvCondition ',' srvInvoker ')' ;
 srvCondition : 'condition' '(' conditionCallableLambda ')'
 		    |  'condition' '(' conditionExpression ','  parameterName* ')' ;
 
-srvArgs : 'args' '(' argName+ ')' ;
+srvArgs : 'args' '(' (argName ',')* argName ')' ;
 
-dependentVars : 'vars' '(' dependentVarName* ')' ;
+dependentVars : 'vars' '(' (dependentVarName ',')* dependentVarName ')' ;
 srvEvaluator : lambdaEvaluator | entEvaluator | objectImplementingEvaluation ;
 entGetter : objectImplementingGetter ;
 entSetter : objectImplementingSetter ;
 
 /* <MOGRAMS> */
 
-contextModelType : 'entModel' | 'parModel' | 'srvModel' | 'model' | 'mdl' | 'varModel' ;
+contextModelType : 'procModel' | 'srvModel' | 'varModel' | 'model' | 'mdl' ;
 srvExertionType : 'task' | 'block' | 'job' | conditionalExertion | 'exertion' | 'xrt' ;
 conditionalExertionType : 'loop' | 'alt' | 'opt' ;
-srvMogramType : contextModel | srvExertion | 'mogram' | 'mog' ;
+srvMogramType : contextModelType | srvExertionType | 'mogram' | 'mog' ;
 
-srvMogram : dataContext  | contextModel | srvExertion | multiFiMogram | 'mogram' '(' contextModelParameters | srvExertionParamters ')' ;
+srvMogram : dataContext  | contextModel | srvExertion | fiMogram | 'mogram' '(' (contextModelParameters | srvExertionParamters) ')' ;
 
-multiFiMogram : 'multiFiReq' '(' (name',')? morphFidelity ')' | 'multiFiReq' '(' (name',')? srvFidelity ')' ;
+fiMogram : 'fiMog' '(' (name',')? (morphFidelity | reqFidelity) dataContext?')' ;
+
 
 /* <MODELS> */
-srvModel : dataContext | contextModel | varOrientedModel ;
-dataContext : 'context ' '(' (name',')? dataEntry* (',' srvResult)? (',' inputPaths)? (',' outputPaths)? ')' 
-			| 'tag' '(' dataContext',' annotatedPath ')' | 'tagContext' '(' dataContext',' newTagAssociation ')' ;
 
-contextModel : 'contextModelType' '('(name',' )? contextEntry* (',' 'response' '('pathName*')' (',' srvDependency)? )? ')';
+entModel : dataContext | contextModel | structuredVarModel | contextSnapshotResult ;
+
+dataContext : 'context ' '(' (name',')? (dataEntry',')+ (srvResult)? (',' inputPaths)? (',' outputPaths)? ')' 
+			| 'tag' '(' dataContext',' annotatedPath ')' | 'tagAssociation' '(' dataContext',' newTagAssociation ')' ;
+
+contextModel : contextModelType '('(name',' )? (contextEntry',')+ (',' 'response' '('(pathName',')* pathName')')? (',' srvDependency)? ')';
 		
-parTypes : 'types' '('class*')' ;
-parArgs : 'args' '('object*')' ;
-srvDependency : 'dependsOn' '(' 'ent' '('pathName',' 'paths' '('pathName*')'* ')' ;
+parTypes : 'types' '('(srvType',')* srvType')' ;
+parArgs : 'args' '('(object',')* object ')' ;
+srvDependency : 'dependsOn' '(' ('ent' '('pathName',' 'paths' '('(pathName',')* pathName ')')+ ')' ;
 
 /* <TASKS> */
-srvTask : 'task' '('(name',')? (opSignature* | sigFidelity* | morphFidelity)',' dataContext')' ;
+srvTask : 'task' '('(name',')? ((opSignature',')* opSignature | (sigFidelity',')* sigFidelity | morphFidelity) ',' dataContext')' ;
 
 
 /* <EXERTIONS> */
@@ -133,90 +168,78 @@ srvExertion : srvTask | compoundExertion | 'exertion' '(' srvExertionParamters '
 
 compoundExertion : srvJob | srvBlock | conditionalExertion ;
 
-srvJob : 'job' '('(name',')? (opSignature | sigFidelity) ',' dataContext ',' srvMogram* ','
-				contextPipe* (',' exertionStrategy) (',' dependency)? ',' exertionFidelity* ')' ;
+srvJob : 'job' '('(name',')? (opSignature | sigFidelity) ',' dataContext (',' srvMogram)+ jobOptions? ')' ;
+				
+jobOptions : (','contextPipe)* (',' exertionStrategy)? (',' dependency)? (','metaFiSelector)* ;			
 
 srvBlock :	 'block' '('(name',')? (opSignature | sigFidelity)',' (dataContext',')? 
-			srvMogram*',' exertionFidelity* ')' ;
+			(srvMogram',')+ (metaFiSelector',')* metaFiSelector ')' ;
 
 conditionalExertion : 'loop' '('srvCondition',' srvMogram')' 
-			| 'loop' '('min',' max',' (srvCondition',')? srvMogram')' | 'alt' '('srvOption*')' ;
+			| 'loop' '('min',' max',' (srvCondition',')? srvMogram')' | 'alt' '('(srvOption',')* srvOption ')' ;
 
 srvOption : 'opt' '('srvCondition',' srvMogram')' ;
 
-contextPipe : 'pipe' '(' 'outPoint' '('srvCondition',' contextPathName')' ',' 
+contextPipe : 'pipe' '(' 'outPoint' '('srvExertion',' contextPathName')' ',' 
 			'inPoint' '('srvExertion',' contextPathName')' ')' ;
 
-exertionStrategy : 'strategy' '(' (access',')? (flowType',')? (monitorable',')? (provisionable)? ')' ;
-
-flowType: 'Flow.PAR' | 'Flow.SEQ' ;
-
-monitorable : 'Monitor.YES' | 'Monitor.NO' ;
-
-srvFidelity : 'srvFi' '('(fiName',')? srvRequest+')' ; 
+exertionStrategy : 'strategy' '(' (accessType',')? (flowType',')? (monitorable',')? (provisionable)? ')' ;
 
 fiSelector : 'fi' '('pathName',' fiName')' ;
 
-metaFiSelector : 'fi' '('fiName',' fiSelector+ | compFiSelector+')' ;
+metaFiSelector : 'fi''('fiName',' (fiSelector',')* fiSelector ')';
 
-multiFi : entFidelity | sigFi | morphFi | varFidelity | srvFidelity ;
-
-
-/* <ACCESSING-VALUES> */
-
-contextValue : 'value' '('dataContext',' pathName | outputPaths')' 
-			| 'valueAt' '('dataContext',' index')' 
-			| 'valueAt' '('dataContext',' pathTag')' | 'valuesAt' '('dataContext',' pathTag')' ;
-
-srvValue : 'exec' '(' srvRequest',' arg*')' | 
-			'eval' '('contextEntry',' srvArg*')' | 'eval' '('srvModel',' pathName',' srvArg *')' 
-			| 'eval' '('srvExertion',' srvArg*')' | 'returnValue' '('srvMogram')' ; 
-
-srvMogramResult : 'exert' '('srvMogram',' srvArg*')' ;
-
-dataContextResult : 'response' '('srvModel',' srvArg*')' 
-			| 'result' '('srvModel (',' pathName)?')' | 'context' '('srvMogram')' 
-			| 'upcontext' '('compoundExertion')' ;
-
-srvEntryResult : srvValue | 'get' '('srvMogram',' componentName')' ;
-
-srvArg : instanceofArg'.class' | opSignature | dataEntry | srvMogram | fiSelector
-			| compFiSelector | cxtSelector | inputPaths | outputPaths | srvResult ;
+fiList : 'fis''(' (((fiSelector | fiList))',')* (fiSelector | fiList)')' ;
 
 /* <VAR-ORIENTED-MODELING> */
 
-varOrientedModel : responseModeling | parametricModeling | optimizationModeling	| streamingParametricModeling ;
+structuredVarModel : responseModeling | parametricModeling | optimizationModeling | streamingParametricModeling ;
 
 responseModeling : 'responseModel' '('(modelName',' )? 
-					(modelingInstance',' )?  baseVar*',' varRealization*')' ;
+					(modelingInstance',' )?  (basicVars',')+ basicVars ',' varRealizations')' ;
 
 parametricModeling : 'paramericModel' '('(modelName',' )? 
-					(modelingInstance',' )?  baseVar*',' varRealization*','
-					'table' '('varParametricTable',' varResponseTable')' ')' ;
+					(modelingInstance',' )?  (basicVars',')+ basicVars ',' varRealizations ','mdlTable ')' ;
 
-streamingParametricModeling : 'streamingParametricModel' '('(modelName',')?	modelingInstance')' ;
+varRealizations : ((varRealization',')* (varRealization))? ;
 
-optimizationModeling : 'optimizationModel' '(' (modelName',' )? baseVar*',' varRealization*','
-					'objectiveVars' '('objectiveVar+',' 'constraintVars' '('constraintVar+ ')' ')' ;
+mdlTable : 'table' '('mdlParametricTable',' mdlResponseTable')' ;
 
-modelingInstance: 'instance' '('opSignature')' ; 
+streamingParametricModeling : 'streamingParametricModel' '('(modelName',')?	parametricModeling')' ;
 
-varType : 'input' | 'output' | 'linked' | 'constant' ;
+optimizationModeling : 'optimizationModel' '(' (modelName',' )? basicVars* ','
+					mdlObjectiveVars ','  mdlConstraintVars ',' varRealizations ')' ;
 
-baseVar : 'varTypeVars' '('varName+')' | 'varTypeVars' '('varName',' count')' 
-					| 'varTypeVars' '('varName',' from',' to')' | 'var' '('(name',')? srvEntry')' ;
+basicVar : entVar | ('var' '(' (varName',' count 
+					| varName',' from',' to) ')')) ;				
+					
+basicVars : 'varType' '('(basicVar',')* basicVar ')' ;
 
-varParametricTable : 'parametricTable' '('tableURL (',' tableSeparator)?')'  
-					| 'table' '(' 'header' '('varName+')' ',' 'row' '('value+')'+')' ;
+typeVars : 'varType' '('(basicVar',')+ basicVar ')' ;
 
-varResponseTable : 'responseTable' '('tableURL (',' tableSeparator)? ')' ;
+varType : 'inputVars' | 'outputVars' | 'linkedVars' | 'constantVars' ;
 
+mdlObjectiveVars :	'objectiveVars' '('objectiveVar*','objectiveVar ')' ;
+
+mdlConstraintVars :	'constraintVars' '('constraintVar*','constraintVar ')' ;
+
+	
+modelingInstance: 'instance' '('bldrSignature')' ; 
+
+mdlParametricTable : 'parametricTable' '(' (( tableURL | filename) (',' tableSeparator)?  | dataTable | instanceofModelTable'.class')')' ;
+
+dataTable : 'table' '(' 'header' '('(varName ',')* varName')' (',' 'row' '(' ( value ',')* value')')* ')' ;	
+ 
+mdlResponseTable : 'responseTable' '(' (filename |tableURL) (',' tableSeparator)? ')' ;
+ 
+entVar : 'var' '('(varName ',')? contextEntry ')' ;
+ 
 objectiveVar : 'var' '('varName',' outputVarName',' optiTarget ')' ;
 
 optiTarget : 'Target.min' | 'Target.max' ;
 
-constraintVar : 'var' '('varName',' outputVarName',' 'Relation'.relationSuffix ')' ;
-
+constraintVar : 'var' '('varName',' outputVarName',' 'Relation.'relationSuffix ')' ;
+ 	
 relationSuffix: 'lt' | 'lte' | 'eq' | 'gt' | 'gte' ;
 
 varRealization : 'realization' '('varName',' 'fi' '('fiName',' varComponent+')'* ',' 
@@ -236,7 +259,7 @@ mdlOptimizationTask : 'optimizationTask' '('explorerSignature',' optiContext ','
 			
 responseContext : 'modelingContext' '(' (mdlInputs',')? (mdlResponses',')? returnPath? ')';
 
-paramContext : 'modelingContext' '(' varParametricTable',' (varResponseTable',')? (mdlParmeters',')?  (mdlResponses',')?  parStrategy? (',' returnPath)?')'; 
+paramContext : 'modelingContext' '(' mdlParametricTable',' (mdlResponseTable',')? (mdlParmeters',')?  (mdlResponses',')?  parStrategy? (',' returnPath)?')'; 
 
 optiContext : 'modelingContext' '(' mdlInputs (',' returnPath)?')'; 
 	
@@ -246,7 +269,7 @@ mdlResponses : 'responses' '('((varName ',')* varName)')';
 
 returnPath : 'result' '('pathName')';
 
-outTable : 'table' '(' varParametricTable(',' varResponseTable)?')';
+outTable : 'table' '(' mdlParametricTable(',' mdlResponseTable)?')';
 	
 parStrategy : 'parallel' '(' 'queue' '('int')'',' 'pool' '('int')' ')';
 
@@ -262,11 +285,49 @@ optiSig : 'optimizerSig' '('prvSignature')';
 
 explorerSignature : opSignature;
 
+
+/* <ACCESSING-VALUES> */
+
+contextValueResult : ('value' '('dataContext',' ( pathName | outputPaths ) 
+			| 'valueAt' '('dataContext',' index 
+			| ('valueAt' | 'valuesAt') '('dataContext',' pathTag )')' ;
+
+srvValueResult : (('exec' '(' srvRequest | 
+			'eval' '('contextEntry | 'eval' '('entModel',' pathName
+			| 'eval' '('srvExertion )(',' srvArg)* | 'returnValue' '(' srvMogram 
+			| 'get' '(' contextModel ',' pathName)')' ; 
+
+srvMogramResult : 'exert' '('srvMogram (',' srvArg)*')' ;
+
+dataContextResult : ('response' '('entModel (',' srvArg)* 
+			| 'result' '('entModel (',' pathName)? | 'context' '(' srvMogram 
+			| 'upcontext' '('compoundExertion ) ')' ;
+
+srvEexrtionResult : 'get' '('srvExertion',' componentPathName')' ;
+
+contextEntryResult : ('getEntry''('contextModel',' pathName |  'setValue' '(' contextEntry value ) ')' ;
+
+contextModelResult : ('setValue''('contextModel',' pathName',' value 
+	| 'setValue''('contextModel',' (contextEntry ',')* contextEntry 
+	|  'append''('contextModel',' contextModel ) ')' ;
+	
+contextSnapshotResult : ( 'snapshot''(' structuredVarModel ',' responseContext? )')'  ;
+			
+		
+varInformation  : 'varInfo''('varsType (',' varName)*')' ;
+
+varsType : 'INPUTS' | 'CONSTANTS' | 'INVARIANTS' | 'DESIGN' | 'PARAMETERS'
+			| 'ALL_OUTPUTS' | 'OUTPUTS' | 'RESPONSES' | 'LINKED' | 'OBJECTIVES'
+			| 'CONSTRAINTS' | 'WATCHABLE' | 'ALL' | 'NONE' | 'NULL' ;
+
+srvArg : (opSignature | dataEntry | srvMogram | fiSelector | metaFiSelector | cxtSelector
+            | inputPaths | outputPaths | srvResult | opSignature | instanceofArg'.class') ;
+
+
 /*<END>*/
 
 
 /* Concrete labels */
-arg       : name;
 argName   : name;
 classpath : name;
 componentName : name;
@@ -297,11 +358,11 @@ locatorName :	 name ;
 fromPathName : name ;
 toPathName : name ;
 pathName :	 name ;
+componentPathName : name ;	
 pathTag :	 name ;
 newTagAssociation :	 name;
 lambdaEvaluator :	 name;
 contextPathName	:	 name ;
-morphFi :	 name ;
 sigFi :	 name ;
 entEvaluator :	 name;
 objectImplementingEvaluation :	 name;
@@ -309,7 +370,6 @@ objectImplementingEvaluation :	 name;
 evaluatorName :	 name;
 
 compFiSelector : name;
-exertionFidelity : name ;
 
 contextModelParameters : name;
 srvExertionParamters : name;
@@ -328,26 +388,32 @@ callableLambdaExpression      : name;
 clientLambdaExpression        : name;
 valueCallableLambdaExpression : name;
 morpherLambdaExpression       : name;
+instanceofModelTable 	 : name ;
 
-providerClassName : name ;
+filename 	: name ;
+netletFilename	: name ;
+netletArtifact  : name ;
+toPath       	: name ;
+fromPath       	: name ;
+
+prvClassName 	  : name ;
 providerName	  : name ;	
-
+sigName	  	  : name ;	
 selector          : name ;
+classSelector     : name ;
 serviceName       : name ;
-modelName 	      : name ;
-varName 	      : name ;
+modelName 	  : name ;
+varName 	  : name ;
 outputVarName	  : name ;
 srvTypeName       : name ;	 
 value 	          : name ;	
-
-instanceofArg   : javaType ;
-class           : javaType ;
-object          : name ;
-interfaceType 	: classType ;
-classType 	    : javaType;
-javaType        : class_or_package'.class' ;
-class_or_package     : ID ;
-name                 : ID ;
+object 		: name ;
+instanceofArg   : name ;
+class 		: name ;
+interface 	: name;
+classType 	: name'.class' ;
+interfaceType 	: name'.class' ;
+name            : ID ;
 string_literal       : '"'ID'"' ;
 
 ID                   : ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '0'..'9' | '_')* ;

@@ -42,14 +42,14 @@ import sorcer.core.dispatch.ExertionSorter;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MultiFiRequest;
+import sorcer.core.plexus.FiMogram;
 import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.NetletSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.jini.lookup.ProviderID;
-import sorcer.netlet.ScriptExerter;
+import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.Exec.State;
 import sorcer.service.Signature.ReturnPath;
@@ -477,29 +477,6 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 
 	private Exertion callProvider(ServiceExertion exertion, Signature signature, Arg... entries)
 			throws TransactionException, MogramException, RemoteException {
-        String providerName = null;
-        ServiceID providerID = null;
-        try {
-            providerName = ((Provider) provider).getProviderName();
-            providerID = ((Provider) provider).getProviderID();
-        } catch(RemoteException e) {
-            logger.error("Unable to connect to {}", signature, e);
-            if(exertion.isProvisionable()) {
-                try {
-                    logger.info("Attempt self-healing, dynamically provision {}", signature);
-                    ProvisionManager provisionManager = new ProvisionManager(exertion);
-                    provisionManager.deployServices();
-                    provider = (Exerter)Accessor.get().getService(signature);
-                    if(provider!=null)
-                        logger.info("Successfully re-created {}", signature);
-                } catch (Exception e1) {
-                    provider = null;
-                    logger.error("Unable to deploy provider", e1);
-                }
-            } else {
-                provider = null;
-            }
-        }
 		if (provider == null) {
 			logger.warn("* Provider not available for: {}", signature);
 			exertion.setStatus(Exec.FAILED);
@@ -511,9 +488,8 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 		} catch (SignatureException e) {
 			throw new MogramException(e);
 		}
-		;
-		exertion.getControlContext().appendTrace(String.format("shell: %s:%s", providerName, providerID));
-		logger.info("Provider found for: {}\n\t{}", signature, provider);
+		exertion.getControlContext().appendTrace(String.format("service shell for signature: %s", signature));
+		logger.info("Provider found for: {}", signature);
 		if (((Provider) provider).mutualExclusion()) {
 			try {
 				return serviceMutualExclusion((Provider) provider, exertion, transaction);
@@ -906,9 +882,9 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 				return null;
 
 			if (service instanceof NetletSignature) {
-				ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+				ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
 				se.readFile(new File(((NetletSignature)service).getServiceSource()));
-				return evaluate((Mogram)se.parse());
+				return evaluate((Mogram)se.interpret());
 			} else if (service instanceof Exertion) {
 				return eval((Evaluation) service, args);
 			} else if (service instanceof ProcModel) {
@@ -925,18 +901,18 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 					throw new ExertionException("No return path in the context: "
 							+ cxt.getName());
 				}
-			} else if (service instanceof MultiFiRequest) {
+			} else if (service instanceof FiMogram) {
 				Object out = null;
-				MorphFidelity morphFidelity = ((MultiFiRequest)service).getMorphFidelity();
-				ServiceFidelity<Request> sfi = ((MultiFiRequest)service).getServiceFidelity();
+				MorphFidelity morphFidelity = ((FiMogram)service).getMorphFidelity();
+				ServiceFidelity<Request> sfi = ((FiMogram)service).getServiceFidelity();
 				if (sfi == null) {
-					ServiceFidelity fi = ((MultiFiRequest)service).getMorphFidelity().getFidelity();
+					ServiceFidelity fi = ((FiMogram)service).getMorphFidelity().getFidelity();
 					Object select = fi.getSelect();
 					if (select != null) {
 						if (select instanceof Mogram)
 							out = ((Mogram) select).exert(args);
 						else {
-							Context cxt = ((MultiFiRequest)service).getScope();
+							Context cxt = ((FiMogram)service).getScope();
 							if (select instanceof Signature && cxt != null)
 								out = ((Service) select).exec(cxt);
 							else
@@ -944,7 +920,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 						}
 					}
 				}
-				Context cxt = ((MultiFiRequest)service).getScope();
+				Context cxt = ((FiMogram)service).getScope();
 				if (sfi.getSelect() instanceof Signature && cxt != null) {
 					out = sfi.getSelect().exec(cxt);
 				} else {

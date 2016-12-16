@@ -608,7 +608,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		if (result instanceof Context)
 			return (Context)result;
 		else
-			return ((Task)exert(out)).getContext();
+			return exert(out).getContext();
 	}
 
 	public Context exert(Mogram mogram) throws TransactionException,

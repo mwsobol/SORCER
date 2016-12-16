@@ -35,22 +35,22 @@ import java.util.Set;
  *
  * Each projection of the system can be treated as a fidelity selectable
  * at runtime for a group of multiple subsystems available in the metasystem.
- * A fidelity is associated with the result of executing a its own and/or other
+ * A fidelity is associated with the result of executing its own and/or other
  * subsystems and related services. The result of a metasystem is a merged
- * service context of all contexts received foe its current fidelity.
+ * service context of all contexts received from the executed fidelity.
  *
  * Created by Mike Sobolewski
  */
-public class MultiFiRequest extends ServiceMogram {
+public class FiMogram extends ServiceMogram implements Multifidelity<Request> {
 
     protected ServiceFidelity<Request> requestFidelity;
 
     protected MorphFidelity<Request> morphFidelity;
 
-    public MultiFiRequest() {
+    public FiMogram() {
     }
 
-    public MultiFiRequest(String name) throws SignatureException {
+    public FiMogram(String name) throws SignatureException {
         super(name);
     }
 
@@ -59,11 +59,11 @@ public class MultiFiRequest extends ServiceMogram {
         return scope.clearScope();
     }
 
-    public MultiFiRequest(MorphFidelity<Request> fidelity) {
+    public FiMogram(MorphFidelity<Request> fidelity) {
         this(fidelity.getName(), fidelity);
     }
 
-    public MultiFiRequest(String name, MorphFidelity<Request> fidelity)  {
+    public FiMogram(String name, MorphFidelity<Request> fidelity)  {
         super(name);
         morphFidelity = fidelity;
         if (fiManager == null)
@@ -76,17 +76,17 @@ public class MultiFiRequest extends ServiceMogram {
         morphFidelity.addObserver((FidelityManager)fiManager);
     }
 
-    public MultiFiRequest(String name, ServiceFidelity<Request> fidelity) {
+    public FiMogram(String name, ServiceFidelity<Request> fidelity) {
         super(name);
         requestFidelity = fidelity;
     }
 
-    public MultiFiRequest(Context context, MorphFidelity<Request> fidelity)  {
+    public FiMogram(Context context, MorphFidelity<Request> fidelity)  {
         this(context.getName(), fidelity);
         scope = context;
     }
 
-    public MultiFiRequest(Context context, ServiceFidelity<Request> fidelity) {
+    public FiMogram(Context context, ServiceFidelity<Request> fidelity) {
         this(context.getName(), fidelity);
         scope = context;
     }
@@ -224,5 +224,40 @@ public class MultiFiRequest extends ServiceMogram {
     @Override
     public Object get(String component) throws ServiceException {
         return requestFidelity.getSelect(component);
+    }
+
+    private Multifidelity getMultifidelity() {
+        if (morphFidelity != null) {
+            return morphFidelity;
+        } else if (requestFidelity != null) {
+            return requestFidelity;
+        } else {
+            return null;
+        }
+
+    }
+    @Override
+    public String getPath() {
+        return getMultifidelity().getPath();
+    }
+
+    @Override
+    public Request getSelect() {
+        return (Request) getMultifidelity().getSelect();
+    }
+
+    @Override
+    public void setSelect(String name) {
+        getMultifidelity().setSelect(name);
+    }
+
+    @Override
+    public void addSelect(Request fidelity) {
+        getMultifidelity().addSelect(fidelity);
+    }
+
+    @Override
+    public List getSelects() {
+        return  getMultifidelity().getSelects();
     }
 }

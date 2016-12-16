@@ -73,7 +73,7 @@ public class InvokerTest {
 			// y setValue from construtor's context 'in'
 			assertTrue(eval(y).equals(30.0));
 			assertTrue(eval(z).equals(170.0));
-			return (double)eval(x) + (double)eval(y) + (double)eval(pm, "z");
+			return (double)eval(x) + (double)eval(y) + (double)value(pm, "z");
 		}
 	};
 
@@ -90,7 +90,7 @@ public class InvokerTest {
 			SignatureException, ExertionException {
 		Invocation invoker = invoker("lambda",
 				cxt ->  (double) value(cxt, "x") + (double) value(cxt, "y") + 30,
-				context(proc("x", 10.0), proc("y", 20.0)),
+				context(val("x", 10.0), val("y", 20.0)),
 				args("x", "y"));
 		logger.info("invoke eval: " + invoke(invoker));
 		assertEquals(invoke(invoker), 60.0);

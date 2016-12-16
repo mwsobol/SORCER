@@ -65,7 +65,7 @@ public class ModelStrategy implements MogramStrategy, Serializable {
     protected Exec.State execState = Exec.State.INITIAL;
 
     // reponse paths of the runtime model
-    protected List<Name> responsePaths = new ArrayList<Name>();
+    protected List<Arg> responsePaths = new ArrayList<Arg>();
 
     public ModelStrategy(Mogram service) {
         target = service;
@@ -200,11 +200,11 @@ public class ModelStrategy implements MogramStrategy, Serializable {
         outcome.putValue(path, value);
     }
 
-    public List<Name> getResponsePaths() {
+    public List<Arg> getResponsePaths() {
         return responsePaths;
     }
 
-    public void setResponsePaths(List<Name> responsePaths) {
+    public void setResponsePaths(List<Arg> responsePaths) {
         this.responsePaths = responsePaths;
     }
 

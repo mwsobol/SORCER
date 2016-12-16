@@ -28,7 +28,7 @@ import java.util.List;
  *
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class Response extends Table implements ModelResponse {
+public class Response extends DataTable implements ModelResponse {
 
 	private static final long serialVersionUID = 227568394484135275L;
 	
@@ -92,27 +92,27 @@ public class Response extends Table implements ModelResponse {
 	}
 
 	public boolean compareTo(Object table, double delta) {
-		if (dataList.size() != ((Table) table).dataList.size())
+		if (dataList.size() != ((DataTable) table).dataList.size())
 			return false;
 
 		List row = dataList.get(0);
-		if (table instanceof Table) {
+		if (table instanceof DataTable) {
 			if (cellType == Cell.DOUBLE) {
 				for (int i = 0; i < row.size(); i++) {
 					if (row.get(i) instanceof Double) {
 						Object x = row.get(i);
-						Object y = ((Table) table).dataList.get(0).get(i);
+						Object y = ((DataTable) table).dataList.get(0).get(i);
 						if (Math.abs((double) x - (double) y) > delta) {
 							return false;
 						}
 					} else {
-						if (!row.get(i).equals(((Table) table).dataList.get(0).get(i))) {
+						if (!row.get(i).equals(((DataTable) table).dataList.get(0).get(i))) {
 							return false;
 						}
 					}
 				}
 			} else {
-				if (!row.equals(((Table) table).dataList.get(0))) {
+				if (!row.equals(((DataTable) table).dataList.get(0))) {
 					return false;
 				}
 			}

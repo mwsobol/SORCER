@@ -26,7 +26,7 @@ public interface Strategy extends Arg {
 
 	
 	/**
-	 * There are three flow types of {@link FlowType}s that can be associated
+	 * There are three flow types that can be associated
 	 * with exertions control context. Flow type specify the flow of control (
 	 * <code>SEQ</code> (sequential), <code>PAR</code> (parallel), and
 	 * <code>STEP</code> (stepwise)) for all component exertions at the same level.
@@ -127,7 +127,7 @@ public interface Strategy extends Arg {
 		}
 	}
 
-	public enum FidelityMangement implements Arg {
+	public enum FidelityManagement implements Arg {
 		YES, NO;
 
 		@Override

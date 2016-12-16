@@ -6,6 +6,7 @@ import net.jini.core.lookup.ServiceTemplate;
 import net.jini.id.Uuid;
 import net.jini.lookup.entry.Name;
 import net.jini.space.JavaSpace05;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,11 @@ import static sorcer.co.operator.list;
 public class UtilTest {
 
 	private final static Logger logger = LoggerFactory.getLogger(UtilTest.class);
+
+	@BeforeClass
+	public static void init() {
+		Accessor.create();
+	}
 
 	@Test
 	public void getDataServerUrl() throws Exception {
@@ -112,7 +118,7 @@ public class UtilTest {
 		assertEquals(table.get(key1), "String11111");
 		assertEquals(table.get(key2), "String22222");
 
-//		table.cleanup();
+//		dataTable.cleanup();
 		table.close();
 
 		File obf = new File("test.obf");
@@ -138,7 +144,7 @@ public class UtilTest {
 		assertEquals(table.getRow(1), "String11111");
 		assertEquals(table.getRow(2), "String22222");
 
-//		table.cleanup();
+//		dataTable.cleanup();
 		table.close();
 
 		File obf = new File("test.obf");

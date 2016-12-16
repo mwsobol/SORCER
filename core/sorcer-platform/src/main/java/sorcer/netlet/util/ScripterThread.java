@@ -26,15 +26,20 @@ import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.provider.exerter.ServiceShell;
+import sorcer.service.Exertion;
 import sorcer.service.Mogram;
 import sorcer.service.MogramException;
+import sorcer.service.modeling.ServiceModel;
 
 import java.rmi.RemoteException;
 
+import static sorcer.eo.operator.eval;
 import static sorcer.util.StringUtils.tName;
 
-public class ScriptThread extends Thread {
+public class ScripterThread extends Thread {
     private String script;
     private Object result;
     private Object target = null;
@@ -43,14 +48,14 @@ public class ScriptThread extends Thread {
     private NetletClassLoader classLoader;
     private ServiceShell serviceShell;
 
-    private final static Logger logger = LoggerFactory.getLogger(ScriptThread.class
+    private final static Logger logger = LoggerFactory.getLogger(ScripterThread.class
             .getName());
 
-    public ScriptThread(String script, NetletClassLoader classLoader) {
+    public ScripterThread(String script, NetletClassLoader classLoader) {
         this(script, classLoader, true);
     }
 
-    public ScriptThread(String script, NetletClassLoader classLoader, boolean isExerted) {
+    public ScripterThread(String script, NetletClassLoader classLoader, boolean isExerted) {
         super(tName("Script"));
         this.classLoader = classLoader;
         this.isExerted = isExerted;
@@ -62,10 +67,9 @@ public class ScriptThread extends Thread {
 
         gShell = new GroovyShell(classLoader, new Binding(), compilerConfig);
         this.script = script;
-        this.parseScript();
     }
 
-    public void parseScript() {
+    public void evalScript() {
         ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(classLoader);
@@ -78,43 +82,34 @@ public class ScriptThread extends Thread {
     }
 
     public void run() {
+        exert();
+    }
+
+    public void exert() {
         try {
-            if (target == null)
-                parseScript();
-
-            if (target instanceof Mogram) {
-                serviceShell = new ServiceShell((Mogram) target);
-/*
-                    if (((Exertion) target).isProvisionable() && config!=null) {
-                        String configFile;
-                        try {
-                            configFile = (String) config.getEntry(
-                                            "sorcer.tools.shell.NetworkShell",
-                                            "exertionDeploymentConfig", String.class,
-                                            null);
-                            if (configFile != null)
-                                result = esh.exert(new ServiceDeployment(configFile));
-                            else
-                                result = esh.exert();
-                        } catch (ConfigurationException e) {
-                            result = esh.exert();
-                        }
-                    } else
-*/
-                if (isExerted)  {
-                    result = serviceShell.exert();
-                } else {
-                    result = serviceShell.evaluate();
-                }
-
+            if (target == null) {
+                evalScript();
             }
-        }catch (TransactionException e) {
-            e.printStackTrace();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (MogramException e) {
-            e.printStackTrace();
-        }  catch(CompilationFailedException e) {
+
+            if (target instanceof ServiceModel &&  !isExerted) {
+                result = ((ServiceContext)target).getResponse();
+                logger.info(">>>>>>>>>>> model eval result: " + result);
+            } else if (target instanceof Mogram) {
+                serviceShell = new ServiceShell((Mogram) target);
+                if (target instanceof Mogram && isExerted) {
+                    result = serviceShell.exert();
+                    logger.info(">>>>>>>>>>> serviceShell exerted result: " + result);
+                } else{
+                    result = serviceShell.evaluate();
+                    logger.info(">>>>>>>>>>> serviceShell eval result: " + result);
+                }
+            } else if (target instanceof Entry){
+                result = new Entry(((Entry)target).getName(), eval((Entry)target));
+                logger.info(">>>>>>>>>>> eval entry: " + result);
+            } else if (target != null) {
+                logger.info(">>>>>>>>>>> eval result: " + target);
+            }
+        } catch (CompilationFailedException | TransactionException | RemoteException | MogramException e) {
             e.printStackTrace();
         }
     }
@@ -131,6 +126,10 @@ public class ScriptThread extends Thread {
         return serviceShell;
     }
 
+    public boolean isExerted() {
+        return isExerted;
+    }
+
     private static String[] imports = {
             "sorcer.netlet.annotation",
             "sorcer.service",
@@ -140,6 +139,7 @@ public class ScriptThread extends Thread {
             "sorcer.core.provider",
             "sorcer.core.provider.rendezvous",
             "sorcer.core.context.model",
+            "sorcer.util",
             "java.io"
     };
 
@@ -149,13 +149,54 @@ public class ScriptThread extends Thread {
             "sorcer.eo.operator",
             "sorcer.co.operator",
             "sorcer.po.operator",
-            "sorcer.mo.operator"
+            "sorcer.mo.operator",
+            "sorcer.util.exec.ExecUtils",
+            "sorcer.util.StringUtils"
+    };
+
+    private static String[] modelingImports = {
+            "sorcer.netlet.annotation",
+            "sorcer.service",
+            "sorcer.core.exertion",
+            "sorcer.service.modeling",
+            "sorcer.service",
+            "sorcer.core.provider",
+            "sorcer.core.provider.rendezvous",
+            "sorcer.core.context.model",
+            "sorcer.util",
+            "java.io",
+            // var-oriented modeling
+            "sorcer.modeling.core.context.model.var",
+            "sorcer.modeling.vfe",
+            "sorcer.modeling.vfe.evaluator",
+            "sorcer.modeling.vfe.filter",
+            "sorcer.modeling.vfe.persist",
+            "sorcer.modeling.vfe.util"
+    };
+
+    private static String[] modelingStaticImports = {
+            "sorcer.service.Strategy",
+            "sorcer.service.Deployment",
+            "sorcer.co.operator",
+            "sorcer.po.operator",
+            "sorcer.mo.operator",
+            "sorcer.util.exec.ExecUtils",
+            "sorcer.util.StringUtils",
+            // var-oriented modeling
+            "sorcer.modeling.vo.operator"
     };
 
     private ImportCustomizer getImports() {
         ImportCustomizer result = new ImportCustomizer();
-        result.addStarImports(imports);
-        result.addStaticStars(staticImports);
+        try {
+            if (Class.forName("sorcer.modeling.vfe.Var") != null) {
+                result.addStarImports(modelingImports);
+                result.addStaticStars(modelingStaticImports);
+            }
+        } catch (ClassNotFoundException e) {
+            result.addStarImports(imports);
+            result.addStaticStars(staticImports);
+        }
         return result;
     }
 

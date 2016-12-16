@@ -195,7 +195,7 @@ public class ServiceMograms {
 
     @Test
     public void modelWithInnerModel() throws Exception {
-        // get responses from a service model with inner model
+        // get response from a service model with inner model
 
         Model innerModel = model("inner/multiply",
                 operator.ent(sig("inner/multiply/out", "multiply", MultiplierImpl.class,
@@ -228,7 +228,7 @@ public class ServiceMograms {
 
     @Test
     public void localModeler() throws Exception {
-        // get responses from a service model with inner model
+        // get response from a service model with inner model
 
         Model innerMdl = model("inner/multiply",
                 operator.ent(sig("inner/multiply/out", "multiply", MultiplierImpl.class,
@@ -264,7 +264,7 @@ public class ServiceMograms {
 
     @Test
     public void remoteModeler() throws Exception {
-        // get responses from a service model with inner model
+        // get response from a service model with inner model
 
         Model innerMdl = model("inner/multiply",
                 operator.ent(sig("inner/multiply/out", "multiply", Multiplier.class,

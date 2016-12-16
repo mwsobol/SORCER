@@ -24,9 +24,15 @@ public class Path implements Arg  {
 
 	private static final long serialVersionUID = 1L;
 
+	public enum Type {
+		PATH, MAP, ENT
+	}
+
 	public String path = null;
 
 	public Object info = null;
+
+	private Type type = Type.PATH;
 
 	public Path() {
 	}
@@ -35,9 +41,14 @@ public class Path implements Arg  {
 		this.path = path;
 	}
 
-	public Path(String path, Object info) {
+	public Path(String path, Object info, Type type) {
 		this.path = path;
 		this.info = info;
+		this.type = type;
+	}
+
+	public Path(String path, Object info) {
+		this(path, info, Type.PATH);
 	}
 
 	public String path() {
@@ -94,6 +105,10 @@ public class Path implements Arg  {
 		}
 
 		return pal;
+	}
+
+	public Type getType() {
+		return type;
 	}
 
 	public static String[] getPathNames(Path[] paths) {

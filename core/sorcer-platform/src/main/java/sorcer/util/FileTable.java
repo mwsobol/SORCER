@@ -18,7 +18,9 @@ package sorcer.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.provider.Provider;
+import sorcer.core.context.ServiceContext;
+import sorcer.service.Context;
+import sorcer.service.ContextException;
 import sorcer.service.Identity;
 import sorcer.service.Signature;
 
@@ -71,14 +73,22 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	protected boolean lazy;
 
-	protected Table.Cell cellType;
+	protected DataTable.Cell cellType;
 
 	protected static int count = 0;
 
-	public FileTable(String fileName) throws IOException {
-		name = fileName;
-		this.fileName = fileName;
-
+	public FileTable(String parent, String child) throws IOException {
+		if (child == null) {
+			throw new NullPointerException();
+		}
+		String tableName = null;
+		if (parent != null) {
+			tableName = parent + File.separator + child;
+		} else {
+			tableName = child;
+		}
+		name = child;
+		this.fileName = tableName;
 		ofl = new ObjectFile(fileName +".obf");
 		ifl = new ObjectFile(fileName +"-index.obf");
 
@@ -89,6 +99,10 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 		Thread t = new Thread(this);
 		t.setDaemon(true);
 		t.start();
+	}
+
+	public FileTable(String fileName) throws IOException {
+		this(null, fileName);
 	}
 
 	public synchronized final void close() throws  IOException {
@@ -184,7 +198,8 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	}
 
 	public static class ObjectFile {
-		RandomAccessFile dataFile;
+
+        RandomAccessFile dataFile;
 
 		public ObjectFile(String fileName) throws IOException {
 			dataFile = new RandomAccessFile(fileName, "rw");
@@ -281,11 +296,15 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 		public void close() throws IOException {
 			dataFile.close();
 		}
+
+        public RandomAccessFile getDataFile() {
+            return dataFile;
+        }
 	}
 
 	/**
 	 * <p>
-	 * Returns the output file for this table.
+	 * Returns the output file for this dataTable.
 	 * </p>
 	 *
 	 * @return the inputFile
@@ -296,7 +315,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output file for this table.
+	 * Sets the output file for this dataTable.
 	 * </p>
 	 *
 	 * @param inputFile
@@ -308,7 +327,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Returns the output file for this table.
+	 * Returns the output file for this dataTable.
 	 * </p>
 	 *
 	 * @return the outputFile
@@ -319,7 +338,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output file for this table.
+	 * Sets the output file for this dataTable.
 	 * </p>
 	 *
 	 * @param outputFile
@@ -331,7 +350,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output URL for this table.
+	 * Sets the output URL for this dataTable.
 	 * </p>
 	 *
 	 * @return the outputURL
@@ -342,7 +361,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output URL for this table.
+	 * Sets the output URL for this dataTable.
 	 * </p>
 	 *
 	 * @param outputURL
@@ -354,7 +373,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the input URL for this table.
+	 * Sets the input URL for this dataTable.
 	 * </p>
 	 *
 	 * @return the inputURL
@@ -365,7 +384,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the input URL for this table.
+	 * Sets the input URL for this dataTable.
 	 * </p>
 	 *
 	 * @param inputURL
@@ -401,7 +420,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Returns the input delimiter for this table.
+	 * Returns the input delimiter for this dataTable.
 	 * </p>
 	 *
 	 * @return the inDelimiter
@@ -412,7 +431,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the input delimiter for this table.
+	 * Sets the input delimiter for this dataTable.
 	 * </p>
 	 *
 	 * @param inDelimiter
@@ -424,7 +443,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Returns the output delimiter for this table.
+	 * Returns the output delimiter for this dataTable.
 	 * </p>
 	 *
 	 * @return the outDelimiter
@@ -435,7 +454,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	/**
 	 * <p>
-	 * Sets the output delimiter for this table.
+	 * Sets the output delimiter for this dataTable.
 	 * </p>
 	 *
 	 * @param outDelimiter
@@ -524,7 +543,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	}
 
 	/**
-	 * Returns the key of last recorded entry in this data table.
+	 * Returns the key of last recorded entry in this data dataTable.
 	 *
 	 * @return the last Entry
 	 */
@@ -534,9 +553,9 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 
 	/**
-	 * Returns the last recorded eval in this data table.
+	 * Returns the last recorded eval in this data dataTable.
 	 *
-	 * @return the last table entry
+	 * @return the last dataTable entry
 	 */
 	public V getLastValue() throws IOException {
 		return get(lastKey);
@@ -554,7 +573,7 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	}
 
 	/**
-	 * Returns the number of rows in this data table.
+	 * Returns the number of rows in this data dataTable.
 	 *
 	 * @return the number of rows in the model
 	 */
@@ -567,6 +586,29 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 
 	public ConcurrentHashMap<K, Long> getTable() {
 		return table;
+	}
+
+	public Context getFileContext() throws ContextException {
+		ServiceContext sc = new ServiceContext(this.getName());
+
+        sc.putValue("object/file/name", fileName +".obf");
+        sc.putValue("index/file/name", fileName +"-index.obf");
+
+		sc.putValue("input/file/name", inputFileName);
+		sc.putValue("input/table/URL", inputTableURL);
+
+		sc.putValue("output/file/name", outputFileName);
+		sc.putValue("output/table/URL", outputTableURL);
+		sc.putValue("input/table/delimiter", inputTableDelimiter);
+
+		return sc;
+	}
+
+	public void delete() {
+		File obf = new File(fileName +".obf");
+		File iobf = new File(fileName +"-index.obf");
+		obf.delete();
+		iobf.delete();
 	}
 
 	@Override

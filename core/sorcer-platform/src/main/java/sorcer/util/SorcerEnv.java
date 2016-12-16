@@ -1018,7 +1018,7 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * All database table names start with this schema prefix.
+	 * All database dataTable names start with this schema prefix.
 	 * 
 	 * @return
 	 */

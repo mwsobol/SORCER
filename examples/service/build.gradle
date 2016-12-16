@@ -77,6 +77,7 @@ dependencies {
     compile project(':sorcer-lib')
     compile project(':sos-db-prv')
     testCompile project(':sorcer-test')
+    testCompile project(':sos-shell')
     testRuntime libs.slf4j
     testRuntime libs.logback
 }

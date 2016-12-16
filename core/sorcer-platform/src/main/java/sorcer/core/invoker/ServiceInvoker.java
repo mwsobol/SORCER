@@ -371,7 +371,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 				return value;
 			else {
 				if (lambda != null) {
-					   value = (T) lambda.call((Context)invokeContext);
+					   value = (T) lambda.call(invokeContext);
 				} else if (evaluator != null)
 					value = (T) invokeEvaluator(entries);
 				else

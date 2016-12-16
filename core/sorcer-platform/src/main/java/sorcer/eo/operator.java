@@ -49,7 +49,7 @@ import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.requestor.ServiceRequestor;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.*;
-import sorcer.netlet.ScriptExerter;
+import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
@@ -69,7 +69,8 @@ import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.*;
 
-import static sorcer.co.operator.rasis;
+import static sorcer.co.operator.path;
+import static sorcer.co.operator.*;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.srv;
 
@@ -92,20 +93,6 @@ public class operator {
 		return  new ServiceRequestor(requestorType, args);
 	}
 
-	public static String path(List<String> attributes) {
-		if (attributes.size() == 0)
-			return null;
-		if (attributes.size() > 1) {
-			StringBuilder spr = new StringBuilder();
-			for (int i = 0; i < attributes.size() - 1; i++) {
-				spr.append(attributes.get(i)).append(SorcerConstants.CPS);
-			}
-			spr.append(attributes.get(attributes.size() - 1));
-			return spr.toString();
-		}
-		return attributes.get(0);
-	}
-
 	public static Object revalue(Context evaluation, String path,
 								 Arg... entries) throws ContextException {
 		Object obj = value(evaluation, path, entries);
@@ -118,8 +105,7 @@ public class operator {
 	public static Object revalue(Object object, String path,
 								 Arg... entries) throws ContextException {
 		Object obj = null;
-		if (object instanceof Evaluation || object instanceof Context) {
-			obj = eval((Evaluation) object, path, entries);
+		if (object instanceof Evaluation) {
 			obj = eval((Evaluation) obj, entries);
 		} else if (object instanceof Context) {
 			obj = value((Context) object, path, entries);
@@ -146,14 +132,6 @@ public class operator {
 			obj = object;
 		}
 		return obj;
-	}
-
-	public static Path path(String path) {
-		return new Path(path);
-	}
-
-	public static Path path(String path, Object info) {
-		return new Path(path, info);
 	}
 
 	public static String attPath(String... attributes) {
@@ -205,7 +183,7 @@ public class operator {
 	}
 
 	public static Context upcxt(Exertion mogram) throws ContextException {
-		return upcontext(mogram);
+		return snapshot(mogram);
 	}
 
 	public static Context upcontext(Mogram mogram) throws ContextException {
@@ -213,6 +191,10 @@ public class operator {
 			return mogram.getContext();
 		else
 			return  mogram.getDataContext();
+	}
+
+	public static Context snapshot(Exertion mogram) throws ContextException {
+		return upcontext(mogram);
 	}
 
 	public static Context taskContext(String path, Exertion service) throws ContextException {
@@ -264,7 +246,7 @@ public class operator {
 		List<MapContext> connList = new ArrayList<MapContext>();
 		Strategy.Access accessType = null;
 		Strategy.Flow flowType = null;
-		Strategy.FidelityMangement fm = null;
+		Strategy.FidelityManagement fm = null;
 		FidelityManager fiManager = null;
 		Projection projection = null;
 		if (entries[0] instanceof Exertion) {
@@ -347,15 +329,15 @@ public class operator {
 				customContextClass = (Class) o;
 			} else if (o instanceof Strategy.Access) {
 				accessType = (Strategy.Access)o;
-			} else if (o instanceof Strategy.Access) {
+			} else if (o instanceof Strategy.Flow) {
 				flowType = (Strategy.Flow)o;
-			} else if (o instanceof Strategy.FidelityMangement) {
-				fm = (Strategy.FidelityMangement)o;
+			} else if (o instanceof Strategy.FidelityManagement) {
+				fm = (Strategy.FidelityManagement)o;
 			} else if (o instanceof FidelityManager) {
 				fiManager = ((FidelityManager)o);
 			} else if (o instanceof Projection) {
 				projection = ((Projection)o);
-			} else if (o.equals(Strategy.Flow.EXPLICIT)) {
+			} else if (Strategy.Flow.EXPLICIT.equals(o)) {
 				autoDeps = false;
 			} else if (o instanceof Out) {
 				outPaths = (Out)o;
@@ -498,7 +480,7 @@ public class operator {
 			throw new ContextException(e);
 		}
 
-		if (cxt.getFidelityManager() == null && fm == Strategy.FidelityMangement.YES) {
+		if (cxt.getFidelityManager() == null && fm == Strategy.FidelityManagement.YES) {
 			((ServiceContext)cxt).setFidelityManager(new FidelityManager(cxt));
 			setupFiManager(cxt);
 		} else if (fiManager != null) {
@@ -896,9 +878,6 @@ public class operator {
 		return signature.getServiceType();
 	}
 
-	public static String selector(Signature signature) {
-		return signature.getSelector();
-	}
 
 	public static ContextSelector selector(String componentName, List<Path> paths) {
 		ContextSelector cs = new ContextSelector(Path.getNameList(paths));
@@ -955,10 +934,8 @@ public class operator {
 		}
 	}
 
-	public static Signature sig(String operation, Signature signature) throws SignatureException {
-		((ServiceSignature)signature).setSelector(operation);
-		((ServiceSignature)signature).setName(operation);
-		return signature;
+	public static String selector(Signature signature) {
+		return signature.getSelector();
 	}
 
 	public static Signature sig(String operation, Object provider, Object... args) throws SignatureException {
@@ -1018,6 +995,11 @@ public class operator {
 	public static Signature sig(Class classType, Object... items) throws SignatureException {
 		ServiceType serviceType = new ServiceType(classType);
 		return sig(serviceType, items);
+	}
+
+	public static Signature sig(Signature signature, String operation) throws SignatureException {
+		((ServiceSignature)signature).setSelector(operation);
+		return signature;
 	}
 
 	public static Signature sig(Signature signature, Operation operation) throws SignatureException {
@@ -1115,6 +1097,8 @@ public class operator {
 					((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
 				} else if (o instanceof Version && sig instanceof NetSignature) {
 					((NetSignature) sig).setVersion(((Version) o).getName());
+				} else if (o instanceof ServiceSignature && sig instanceof ObjectSignature) {
+					((ObjectSignature) sig).setTargetSignature(((ServiceSignature) o));
 				} else if (o instanceof ServiceContext
 						// not applied to connectors in Signatures
 						&& o.getClass() != MapContext.class) {
@@ -1145,8 +1129,8 @@ public class operator {
 				sop.flowType = (Strategy.Flow) arg;
 			} else if (arg instanceof Strategy.Monitor) {
 				sop.toMonitor = (Strategy.Monitor) arg;
-			} else if (arg instanceof Strategy.FidelityMangement) {
-				sop.toManageFi = (Strategy.FidelityMangement) arg;
+			} else if (arg instanceof Strategy.FidelityManagement) {
+				sop.toManageFi = (Strategy.FidelityManagement) arg;
 			} else if (arg instanceof Strategy.Wait) {
 				sop.toWait = (Strategy.Wait) arg;
 			} else if (arg instanceof Strategy.Shell) {
@@ -1184,6 +1168,10 @@ public class operator {
 
 	public static String property(String property) {
 		return System.getProperty(property);
+	}
+
+	public static String property(String property, String value) {
+		return System.setProperty(property, value);
 	}
 
 	public static String home() {
@@ -1375,13 +1363,13 @@ public class operator {
 		return morphFi;
 	}
 
-	public static ServiceFidelity<Request> srvFi(Request... services) {
+	public static ServiceFidelity<Request> rFi(Request... services) {
 		ServiceFidelity<Request> srvFi = new ServiceFidelity(services);
 		srvFi.type = ServiceFidelity.Type.REQUEST;
 		return srvFi;
 	}
 
-	public static ServiceFidelity<Request> srvFi(String name, Request... services) {
+	public static ServiceFidelity<Request> rFi(String name, Request... services) {
 		ServiceFidelity<Request> srvFi = new ServiceFidelity(services);
 		srvFi.setPath(name);
 		srvFi.type = ServiceFidelity.Type.REQUEST;
@@ -1393,35 +1381,35 @@ public class operator {
 	}
 
 	public static void selectFi(Mogram mogram, String selection) {
-		((MultiFiRequest)mogram).selectFidelity(selection);
+		((FiMogram)mogram).selectFidelity(selection);
 	}
 
-	public static MultiFiRequest multiFiReq(ServiceFidelity<Request> fidelity) {
-		return new MultiFiRequest(fidelity.getName(), fidelity);
+	public static FiMogram fiMog(ServiceFidelity<Request> fidelity) {
+		return new FiMogram(fidelity.getName(), fidelity);
 	}
-	public static MultiFiRequest multiFiReq(MorphFidelity<Request> fidelity) {
-		return new MultiFiRequest(fidelity.getName(), fidelity);
-	}
-
-	public static MultiFiRequest multiFiReq(String name, ServiceFidelity<Request> fidelity) {
-		return new MultiFiRequest(name, fidelity);
-	}
-	public static MultiFiRequest multiFiReq(String name, MorphFidelity<Request> fidelity) {
-		return new MultiFiRequest(name, fidelity);
+	public static FiMogram fiMog(MorphFidelity<Request> fidelity) {
+		return new FiMogram(fidelity.getName(), fidelity);
 	}
 
-	public static MultiFiRequest multiFiReq(ServiceFidelity<Request> fidelity, Context context) {
-		return new MultiFiRequest(context, fidelity);
+	public static FiMogram fiMog(String name, ServiceFidelity<Request> fidelity) {
+		return new FiMogram(name, fidelity);
+	}
+	public static FiMogram fiMog(String name, MorphFidelity<Request> fidelity) {
+		return new FiMogram(name, fidelity);
 	}
 
-	public static MultiFiRequest multiFiReq(String name, MorphFidelity<Request> fidelity, Context context) {
-		MultiFiRequest mfr = new MultiFiRequest(context, fidelity);
+	public static FiMogram fiMog(ServiceFidelity<Request> fidelity, Context context) {
+		return new FiMogram(context, fidelity);
+	}
+
+	public static FiMogram fiMog(String name, MorphFidelity<Request> fidelity, Context context) {
+		FiMogram mfr = new FiMogram(context, fidelity);
 		mfr.setName(fidelity.getName());
 		return mfr;
 	}
 
-	public static MultiFiRequest multiFiReq(MorphFidelity<Request> fidelity, Context context) {
-		MultiFiRequest mfr = new MultiFiRequest(context, fidelity);
+	public static FiMogram fiMog(MorphFidelity<Request> fidelity, Context context) {
+		FiMogram mfr = new FiMogram(context, fidelity);
 		mfr.setName(fidelity.getName());
 		return mfr;
 	}
@@ -1434,6 +1422,12 @@ public class operator {
 	public static ServiceFidelity<Signature> sFi(Signature... signatures) {
 		ServiceFidelity<Signature> fi = new ServiceFidelity(signatures);
 		fi.type = ServiceFidelity.Type.SIG;
+		return fi;
+	}
+
+	public static ServiceFidelity<Entry> eFi(String fiName, Entry... entries) {
+		ServiceFidelity<Entry> fi = new ServiceFidelity(fiName, entries);
+		fi.type = ServiceFidelity.Type.ENTRY;
 		return fi;
 	}
 
@@ -1492,7 +1486,7 @@ public class operator {
 		return fi;
 	}
 
-	public static ServiceFidelity<Path> srvFi(String name, String path) {
+	public static ServiceFidelity<Path> rFi(String name, String path) {
 		ServiceFidelity<Path> fi = new ServiceFidelity(name, path(path));
 		fi.setPath(path);
 		fi.setSelect(path);
@@ -1514,12 +1508,12 @@ public class operator {
 		return fi;
 	}
 
-	public static ObjectSignature sig(String operation, Object object)
+	public static Signature sig(String operation, Object object)
 			throws SignatureException {
 		return sig(operation, object, null, null, null);
 	}
 
-	public static ObjectSignature sig(String operation, Object object,
+	public static Signature sig(String operation, Object object,
 									  Class[] types, Object... args) throws SignatureException {
 		if (args == null || args.length == 0)
 			return sig(operation, object, (String) null, types);
@@ -1558,10 +1552,15 @@ public class operator {
 		}
 	}
 
-	public static ObjectSignature sig(String selector, Object object, String initSelector,
+	public static Signature sig(String selector, Object object, String initSelector,
 									  Class[] types, Object[] args) throws SignatureException {
 		try {
-			return new ObjectSignature(selector, object, initSelector, types, args);
+			if (object instanceof NetSignature) {
+				((NetSignature)object).setSelector(selector);
+				return (Signature)object;
+			} else {
+				return new ObjectSignature(selector, object, initSelector, types, args);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SignatureException(e);
@@ -1733,7 +1732,7 @@ public class operator {
 		}
 
 		FidelityManager fiManager = null;
-		Strategy.FidelityMangement fm = null;
+		Strategy.FidelityManagement fm = null;
 		Access access = null;
 		Flow flow = null;
 		List<ServiceFidelity> fis = new ArrayList<>();
@@ -1750,8 +1749,8 @@ public class operator {
 				mFi = (MorphFidelity) o;
 			} else if (o instanceof ServiceFidelity) {
 				fis.add(((ServiceFidelity) o));
-			} else if (o instanceof Strategy.FidelityMangement) {
-				fm = (Strategy.FidelityMangement) o;
+			} else if (o instanceof Strategy.FidelityManagement) {
+				fm = (Strategy.FidelityManagement) o;
 			}
 		}
 
@@ -1809,7 +1808,7 @@ public class operator {
 			task.setSelectedFidelity(first);
 		}
 
-		if (fm == Strategy.FidelityMangement.YES && task.getFidelityManager() == null
+		if (fm == Strategy.FidelityManagement.YES && task.getFidelityManager() == null
 				|| mFi != null) {
 			fiManager = new FidelityManager(task);
 			task.setFidelityManager(fiManager);
@@ -1921,9 +1920,9 @@ public class operator {
 			String source = ((NetletSignature)items[0]).getServiceSource();
 			if(source != null) {
 				try {
-					ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+					ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
 					se.readFile(new File(source));
-					return (M)se.parse();
+					return (M)se.interpret();
 				} catch (Throwable e) {
 					throw new MogramException(e);
 				}
@@ -2003,7 +2002,7 @@ public class operator {
 		List<Exertion> exertions = new ArrayList();
 		List<Pipe> pipes = new ArrayList();
 		FidelityManager fiManager = null;
-		Strategy.FidelityMangement fm = null;
+		Strategy.FidelityManagement fm = null;
 		List<ServiceFidelity> fis = new ArrayList<>();
 		MorphFidelity mFi = null;
 		List<ServiceFidelity<ServiceFidelity>> metaFis = new ArrayList();
@@ -2036,8 +2035,8 @@ public class operator {
 				} else {
 					fis.add(((ServiceFidelity) elems[i]));
 				}
-			} else if (elems[i] instanceof Strategy.FidelityMangement) {
-				fm = (Strategy.FidelityMangement) elems[i];
+			} else if (elems[i] instanceof Strategy.FidelityManagement) {
+				fm = (Strategy.FidelityManagement) elems[i];
 			}
 		}
 		Job job = null;
@@ -2116,7 +2115,7 @@ public class operator {
 			job.setSelectedMetafidelity(first);
 		}
 
-		if (fm == Strategy.FidelityMangement.YES && job.getFidelityManager() == null
+		if (fm == Strategy.FidelityManagement.YES && job.getFidelityManager() == null
 				|| mFi != null) {
 			fiManager = new FidelityManager(job);
 			job.setFidelityManager(fiManager);
@@ -2334,16 +2333,20 @@ public class operator {
 		}
 	}
 
-	public static <T> T value(Context<T> context, Arg... args)
-			throws ContextException {
-		try {
-			synchronized (context) {
-				return (T) ((ServiceContext)context).getValue(args);
-			}
-		} catch (Exception e) {
-			throw new ContextException(e);
-		}
-	}
+    public static <T> T v(Context<T> context, String path, Arg... args) throws ContextException {
+        return value(context, path, args);
+    }
+
+    public static <T> T value(Context<T> context, Arg... args)
+            throws ContextException {
+        try {
+            synchronized (context) {
+                return (T) ((ServiceContext)context).getValue(args);
+            }
+        } catch (Exception e) {
+            throw new ContextException(e);
+        }
+    }
 
 	public static Object execItem(Item item, Arg... args) throws ServiceException {
 		try {
@@ -2360,7 +2363,11 @@ public class operator {
 				if (evaluation instanceof Exertion) {
 					return (T) exec(evaluation, args);
 				} else if (evaluation instanceof Entry){
-					return evaluation.getValue(args);
+					if (evaluation.asis() instanceof ServiceContext) {
+						return (T) ((ServiceContext)evaluation.asis()).getValue(((Entry)evaluation).path());
+					} else {
+						return evaluation.getValue(args);
+					}
 				} else if (evaluation instanceof Incrementor){
 					return ((Incrementor<T>) evaluation).next();
 				} else {
@@ -2381,10 +2388,10 @@ public class operator {
 		}
 	}
 
-	public static <T> T v(Context<T> context, String path,
-							  Arg... args) throws ContextException {
+	public static <T> T val(Context<T> context, String path, Arg... args) throws ContextException {
 		return value(context, path, args);
 	}
+
 	public static <T> T value(Context<T> context, String path,
 							  Arg... args) throws ContextException {
 		try {
@@ -2400,32 +2407,28 @@ public class operator {
 		}
 	}
 
-	public static <T> T eval(Evaluation<T> evaluation, String evalSelector,
+	public static Object eval(Exertion exertion, String evalSelector,
 							 Arg... args) throws EvaluationException {
-		if (evaluation instanceof Exertion) {
 			try {
-				((ServiceContext)((Exertion) evaluation).getDataContext())
-						.setReturnPath(new ReturnPath(evalSelector));
-				return (T) exec((Exertion) evaluation, args);
+				exertion.getDataContext().setReturnPath(new ReturnPath(evalSelector));
+				return exec(exertion, args);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new EvaluationException(e);
 			}
 		}
-		return null;
-	}
 
 	/**
 	 * Assigns the tag for this context, for example "triplet|one|two|three" is a
 	 * tag (relation) named 'triplet' as a product of three "places" one, two, three.
 	 *
 	 * @param context
-	 * @param tag
+	 * @param association
 	 * @throws ContextException
 	 */
-	public static Context tagContext(Context context, String tag)
+	public static Context tagAssociation(Context context, String association)
 			throws ContextException {
-		context.setAttribute(tag);
+		context.setAttribute(association);
 		return context;
 	}
 
@@ -2518,8 +2521,12 @@ public class operator {
 		try {
 			if (service instanceof Entry || service instanceof Signature ) {
 				return service.exec(args);
-			} else if (service instanceof Context || service instanceof MultiFiRequest) {
-				return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
+			} else if (service instanceof Context || service instanceof FiMogram) {
+				if (service instanceof Model) {
+					return ((Model)service).getResponse(args);
+				} else {
+					return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
+				}
 			} else if (service instanceof Exertion) {
 				return new ServiceShell().evaluate((Mogram) service, args);
 			} else if (service instanceof Evaluation) {
@@ -2699,11 +2706,19 @@ public class operator {
 	}
 
 	public static Flow flow(Entry entry) throws EvaluationException {
-		return ((Strategy) eval(entry)).getFlowType();
+		try {
+			return ((Strategy) entry.getValue()).getFlowType();
+		} catch (RemoteException e) {
+			throw new EvaluationException(e);
+		}
 	}
 
 	public static Access access(Entry entry) throws EvaluationException {
-		return ((Strategy) eval(entry)).getAccessType();
+		try {
+			return ((Strategy) entry.getValue()).getAccessType();
+		} catch (RemoteException e) {
+			throw new EvaluationException(e);
+		}
 	}
 
 	public static Flow flow(Strategy strategy) {
@@ -3011,9 +3026,9 @@ public class operator {
 			String source = ((NetletSignature)signature).getServiceSource();
 			if(source != null) {
 				try {
-					ScriptExerter se = new ScriptExerter(System.out, null, Sorcer.getWebsterUrl(), true);
+					ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
 					se.readFile(new File(source));
-					return se.parse();
+					return se.interpret();
 				} catch (Throwable e) {
 					throw new SignatureException(e);
 				}
@@ -3021,9 +3036,11 @@ public class operator {
 		}
 		Object target = null;
 		Object provider = null;
+		Signature targetSignatue = null;
 		Class<?> providerType = signature.getServiceType();
 		if (signature.getClass() == ObjectSignature.class) {
 			target = ((ObjectSignature) signature).getTarget();
+			targetSignatue = ((ObjectSignature) signature).getTargetSignature();
 		}
 		try {
 			if (signature.getClass() == NetSignature.class) {
@@ -3035,6 +3052,9 @@ public class operator {
 			} else if (signature.getClass() == ObjectSignature.class) {
 				if (target != null) {
 					provider = target;
+				} else if (targetSignatue != null) {
+					provider = instance(targetSignatue);
+					((ObjectSignature)signature).setTarget(provider);
 				} else if (Provider.class.isAssignableFrom(providerType)) {
 					provider = providerType.newInstance();
 				} else {

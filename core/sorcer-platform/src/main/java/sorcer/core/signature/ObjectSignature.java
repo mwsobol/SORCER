@@ -43,6 +43,8 @@ public class ObjectSignature extends ServiceSignature {
 
 	private Object target;
 
+	private Signature targetSignature;
+
 	// list of initialization arguments for the constructor
 	private Object[] args;
 
@@ -82,11 +84,12 @@ public class ObjectSignature extends ServiceSignature {
 			IllegalAccessException {
 		this();
 		if (object instanceof Class) {
-			this.serviceType.providerType = (Class<?>)object;
-			this.providerType = (Class<?>)object;
+			this.serviceType.providerType = (Class<?>) object;
+			this.providerType = (Class<?>) object;
+		} else if (object instanceof Signature) {
+			targetSignature = (Signature)object;
 		} else {
 			target = object;
-//			this.providerType = object.getClass();
 		}
 
 		setSelector(selector);
@@ -225,6 +228,14 @@ public class ObjectSignature extends ServiceSignature {
 		logger.debug(">>>>>>>>>>> instantiated: \n" + obj + "\n by signature: "
 				+ this);
 		return obj;
+	}
+
+	public Signature getTargetSignature() {
+		return targetSignature;
+	}
+
+	public void setTargetSignature(Signature targetSignature) {
+		this.targetSignature = targetSignature;
 	}
 
 	public Object newInstance(Object[] args) throws SignatureException {

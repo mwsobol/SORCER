@@ -32,6 +32,8 @@ public class QueueStrategy implements Serializable {
 
 	private Signature builder;
 
+	private boolean isRebuilt = true;
+
 	// multiple thread pools
 	private List<Pool> pools = new ArrayList<Pool>();
 
@@ -105,6 +107,14 @@ public class QueueStrategy implements Serializable {
 
 	public void setPools(List<Pool> pools) {
 		this.pools = pools;
+	}
+
+	public boolean isRebuilt() {
+		return isRebuilt;
+	}
+
+	public void setRebuilt(boolean rebuilt) {
+		isRebuilt = rebuilt;
 	}
 
 	public String toString() {

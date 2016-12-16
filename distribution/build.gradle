@@ -218,6 +218,7 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
                 include "configs/versions.properties"
                 include "configs/opstrings/**"
                 include "configs/sorcer-logging.groovy"
+                include "configs/sorcer-logging-short.groovy"
                 include "configs/sorcer.logging"
                 include "configs/standalone.sorcer.env"
 				include "configs/startup-prv.config"
@@ -362,8 +363,8 @@ publishing {
         }
     }
     repositories {
-        //maven { url "http://$enclaveRepo" }
-        maven { url "file:///Users/dreedy/dev/src/projects/mstc/TEMP"}
+        maven { url "http://$enclaveRepo" }
+//        maven { url "file:///Users/dreedy/dev/src/projects/mstc/TEMP"}
     }
 }
 

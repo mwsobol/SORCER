@@ -190,7 +190,7 @@ public class ProviderDelegate {
 
 	private ThreadGroup namedGroup, interfaceGroup;
 
-	private int workerCount = 10;
+	private int workerCount = Runtime.getRuntime().availableProcessors()/2;
 
 	private int[] workerPerInterfaceCount = new int[0];
 
@@ -508,9 +508,9 @@ public class ProviderDelegate {
 		}
 
         try {
-            workerCount = (Integer) jconfig.getEntry(ServiceProvider.COMPONENT,
-                                                     WORKER_COUNT, int.class, 10);
-        } catch (Exception e) {
+			workerCount = (Integer) jconfig.getEntry(ServiceProvider.COMPONENT,
+													 WORKER_COUNT, int.class, Runtime.getRuntime().availableProcessors()/2);
+		} catch (Exception e) {
             logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, WORKER_COUNT, e);
         }
 
@@ -867,6 +867,7 @@ public class ProviderDelegate {
 					}
 					confirmExec(task);
 					task.stopExecTime();
+					task.setService(null);
 					logger.info("provider name = {}\nreturning task; transaction = {}", provider.getDescription(), transaction);
 					return task;
 				} else {
@@ -2639,7 +2640,8 @@ public class ProviderDelegate {
 			if (beans.length > 0) {
 				logger.debug("*** service beans by {}\nfor: {}", getProviderName(), Arrays.toString(beans));
                 for (Object bean : beans) {
-                    allBeans.add(bean);
+					initBean(bean);
+					allBeans.add(bean);
                     exports.put(bean, this);
                 }
 			}
@@ -2654,6 +2656,7 @@ public class ProviderDelegate {
             if (dataBeans.length > 0) {
 				logger.debug("*** data service beans by {}\nfor: {}", getProviderName(), Arrays.toString(dataBeans));
                 for (Object dataBean : dataBeans) {
+                    initBean(dataBean);
                     allBeans.add(dataBean);
                     exports.put(dataBean, this);
                 }
@@ -2818,12 +2821,12 @@ public class ProviderDelegate {
 		return bean;
 	}
 
-	private Object initBean(Object serviceBean) {
+	private Object initBean(Object serviceBean) throws RemoteException {
 		try {
 			// Configure the bean
 			Configurer configurer = new Configurer();
 			configurer.preProcess((ServiceProvider)this.getProvider(), serviceBean);
-			//
+			// Initialize its servive provider
 			Method m = serviceBean.getClass().getMethod(
 					"init", new Class[] { Provider.class });
 			m.invoke(serviceBean, new Object[] { provider });
@@ -2833,7 +2836,7 @@ public class ProviderDelegate {
 		}
 		exports.put(serviceBean, this);
 		logger.debug(">>>>>>>>>>> exported service bean: \n" + serviceBean
-				+ "\n by provider: " + provider);
+				+ "\n by provider: " + provider.getProviderName());
 		return serviceBean;
 	}
 

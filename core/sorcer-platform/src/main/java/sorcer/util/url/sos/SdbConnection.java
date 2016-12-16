@@ -34,7 +34,7 @@ import java.net.URLConnection;
  *
  * sdb URL = sos://serviceInfo/providerName#objectType=Uuid
  * 
- * objectType = context, exertion, table, var, varModel, object
+ * objectType = context, exertion, dataTable, var, varModel, object
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class SdbConnection extends URLConnection {

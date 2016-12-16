@@ -55,9 +55,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     protected final static Logger logger = LoggerFactory.getLogger(ServiceExertion.class.getName());
 
-    // The service provider for this job service bean
-    protected ServiceProvider provider;
-
     protected ServiceContext dataContext;
 
     /**
@@ -95,13 +92,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     /*
-   *  Initialization for a service bean of this type
-   */
-    public void init(Provider provider) {
-        this.provider = (ServiceProvider)provider;
-    }
-
-    /*
      * (non-Javadoc)
      *
      * @see sorcer.service.Service#service(sorcer.service.Mogram)
@@ -126,9 +116,15 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             if (mogram instanceof Exertion) {
                 ServiceExertion exertion = (ServiceExertion) mogram;
                 Class serviceType = exertion.getServiceType();
-                if (Invocation.class.isAssignableFrom(serviceType)) {
+                if (provider != null) {
+                    Task out = ((ServiceProvider)provider).getDelegate().doTask((Task) exertion, txn, args);
+                    // clear provider execution scope
+                    out.getContext().setScope(null);
+                    return (T) out;
+                } else if (Invocation.class.isAssignableFrom(serviceType)) {
                     Object out = this.invoke(exertion.getContext(), args);
                     handleExertOutput(exertion, out);
+                    exertion.setService(null);
                     return (T) exertion;
                 } else if (Evaluation.class.isAssignableFrom(serviceType)) {
                     Object out = this.getValue(args);
@@ -294,7 +290,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             e.printStackTrace();
             throw new ExertionException(e);
         }
-
         ServiceShell se = new ServiceShell(this);
         return se.exert(entries);
     }
@@ -340,11 +335,6 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     public void setFlow(Flow type) {
         controlContext.setFlowType(type);
-    }
-
-    public void setService(Service provider) {
-        NetSignature ps = (NetSignature) getProcessSignature();
-        ps.setProvider(provider);
     }
 
     public Service getService() throws SignatureException {
@@ -839,20 +829,12 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return this;
     }
 
-    public Object getValue(Arg... entries) throws EvaluationException,
-            RemoteException {
-       if (provider == null) {
-           return evaluate(entries);
-       } else {
-           return ((Evaluation)provider).getValue(entries);
-       }
-    }
     /*
      * (non-Javadoc)
      *
      * @see sorcer.service.Evaluation#getValue()
      */
-    public Object evaluate(Arg... entries) throws EvaluationException,
+    public Object getValue(Arg... entries) throws EvaluationException,
             RemoteException {
         Context cxt = null;
         try {
@@ -865,6 +847,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             } else {
                 cxt = evaluatedExertion.getContext();
             }
+            ((ServiceMogram)cxt).provider = null;
 
             if (rp != null) {
                 if (rp.path == null)

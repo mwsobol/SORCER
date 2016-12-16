@@ -332,8 +332,8 @@ public class AdminView {
 	 * 
 	 * final LifeCycleTableModel model=new LifeCycleTableModel(list);
 	 * 
-	 * JTable table=new JTable(model); p.add(new
-	 * JScrollPane(table),BorderLayout.CENTER);
+	 * JTable dataTable=new JTable(model); p.add(new
+	 * JScrollPane(dataTable),BorderLayout.CENTER);
 	 * 
 	 * JPanel ctrls=new JPanel(); JButton destroy=new JButton("Destroy");
 	 * 

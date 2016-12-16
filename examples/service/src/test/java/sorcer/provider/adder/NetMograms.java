@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
@@ -98,7 +97,7 @@ public class NetMograms {
 		// three entry model
 		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
 				ent(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
-				response("add", "arg/x1", "arg/x2"));
+				sorcer.mo.operator.response("add", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);
 

@@ -65,6 +65,22 @@ public class Signatures {
 	}
 
 	@Test
+	public void referencingBuilderSignature() throws Exception {
+
+//		Signature s = sig("getTime", sig("new", Date.class));
+		Signature s = sig("getTime", sig(Date.class));
+
+		// get service provider - a given object
+		Object prv = provider(s);
+		logger.info("provider of s: " + prv);
+		assertTrue(prv instanceof Date);
+
+//		logger.info("getTime: " + exec(xrt("gt", s)));
+		assertTrue(exec(xrt("gt", s)) instanceof Long);
+
+	}
+
+	@Test
 	public void referencingClassWithConstructor() throws Exception {
 
 		Signature s = sig("getTime", Date.class);
@@ -218,13 +234,34 @@ public class Signatures {
 	}
 
 	@Test
-	public void providerVsOperationSignatures() throws Exception {
+	public void operationSinatureWithBuilder() throws Exception {
 
 		Signature localProviderSig = sig(AdderImpl.class);
 		Object prv = provider(localProviderSig);
 		assertTrue(prv instanceof AdderImpl);
 
 		Signature localProviderOperationSig = sig("add", localProviderSig);
+
+		// request the local service
+		Service as = task("as", localProviderOperationSig,
+				context("add",
+						inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0),
+						result("result/y")));
+
+		assertEquals(100.0, exec(as));
+
+	}
+
+
+	@Test
+	public void localOperationSinature() throws Exception {
+
+		Signature localProviderSig = sig(AdderImpl.class);
+		Object prv = provider(localProviderSig);
+		assertTrue(prv instanceof AdderImpl);
+
+		Signature localProviderOperationSig = sig(localProviderSig, "add");
 
 		// request the local service
 		Service as = task("as", localProviderOperationSig,
@@ -252,16 +289,16 @@ public class Signatures {
 	}
 
 	@Test
-	public void providerVsOperationRemoteSignatures() throws Exception {
+	public void remoteOperationSinature() throws Exception {
 
 		Signature remoteProviderSig = sig(Adder.class);
 		Object prv = provider(remoteProviderSig);
 		assertTrue(prv instanceof Adder);
 
-		Signature remoteProviderOperationSig = sig("add", remoteProviderSig);
+		Signature remoteOperationSig = sig(remoteProviderSig, "add");
 
 		// request the remote service
-		Service as = task("as", remoteProviderOperationSig,
+		Service as = task("as", remoteOperationSig,
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
@@ -287,7 +324,7 @@ public class Signatures {
 
 	@Test
 	public void signatureWithSrvName() throws Exception  {
-		String group = System.getProperty("user.name");
+		String group = property("user.name");
 
 		Task t5 = task("t5", sig("add", Adder.class,
 				types(Service.class, Provider.class),
@@ -301,7 +338,7 @@ public class Signatures {
 
 	@Test
 	public void signatureWithProviderName() throws Exception  {
-		String group = System.getProperty("user.name");
+		String group = property("user.name");
 
 		Task t5 = task("t5", sig(type("sorcer.arithmetic.provider.Adder"), op("add"),
 				types(Service.class, Provider.class),
@@ -358,14 +395,14 @@ public class Signatures {
 	@Test
 	public void execNetletSignature() throws Exception {
 		String netlet = "src/main/netlets/ha-job-local.ntl";
-		assertEquals(exec(sig(file(netlet))), 400.00);
+		assertEquals(exec(sig(filePath(netlet))), 400.00);
 	}
 
 	@Test
 	public void netletSignatureProvider() throws Exception {
 		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
 
-		Service srv = (Service)provider(sig(file(netlet)));
+		Service srv = (Service)provider(sig(filePath(netlet)));
 //		logger.info("job service: " + exec(srv));
 		assertTrue(exec(srv).equals(400.0));
 	}
@@ -373,7 +410,7 @@ public class Signatures {
 	@Test
 	public void execMogramWithNetletSignature() throws Exception {
 		String netlet = "src/main/netlets/ha-job-local.ntl";
-		assertEquals(exec(mog(sig(file(netlet)))), 400.00);
+		assertEquals(exec(mog(sig(filePath(netlet)))), 400.00);
 	}
 
 	@Test
@@ -438,6 +475,8 @@ public class Signatures {
 
 		logger.info("task context: " + context(task));
 
+		// the input context used by provides as-is
+		// but ouput context from provider remapped
 		assertEquals(20.0, value(context(task), "arg/x1"));
 		assertEquals(80.0, value(context(task), "arg/x2"));
 		assertEquals(100.0, value(context(task), "result/y"));
@@ -452,8 +491,7 @@ public class Signatures {
 				inVal("y2", 80.0),
 				result("result/y"));
 
-		Context inc = inConn(
-				inVal("arg/x1", "y1"),
+		Context inc = inConn(inVal("arg/x1", "y1"),
 				inVal("arg/x2", "y2"));
 
 		Signature ps = sig("add", Adder.class, prvName("Adder"), inc);
@@ -467,6 +505,7 @@ public class Signatures {
 
 		logger.info("input context: " + context(task));
 
+		// input context for provider remapped as then is returned as-is
 		assertEquals(20.0, value(context(task), "arg/x1"));
 		assertEquals(80.0, value(context(task), "arg/x2"));
 		assertEquals(100.0, value(context(task), "result/y"));

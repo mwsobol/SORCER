@@ -11,8 +11,8 @@ import sorcer.co.operator;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.exertmonitor.SessionDatabaseRunner;
 import sorcer.service.*;
+import sorcer.util.DataTable;
 import sorcer.util.ModelTable;
-import sorcer.util.Table;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -279,9 +279,9 @@ public class SorcerDatabaseRunner {
      */
 	private void addTables() throws EvaluationException {
 		StoredValueSet<ModelTable> tableSet = views.getTableSet();
-        	tableSet.add((new Table()));
-        	tableSet.add(new Table());
-        	tableSet.add(new Table());
+        	tableSet.add((new DataTable()));
+        	tableSet.add(new DataTable());
+        	tableSet.add(new DataTable());
     }
 	
 	private Task getTask() throws ExertionException, SignatureException, ContextException {
@@ -352,7 +352,7 @@ public class SorcerDatabaseRunner {
 		
 	
 	 /**
-     * Get the table names returned by an iterator of entity eval objects.
+     * Get the dataTable names returned by an iterator of entity eval objects.
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
      */

@@ -110,7 +110,7 @@ public class SdbUtil {
 	 * @param uuid
 	 *            {@link Uuid}
 	 * @param type
-	 *            one of: exertion, context, var, table, varModel, object
+	 *            one of: exertion, context, var, dataTable, varModel, object
 	 * @return retrieval {@link Context}
 	 * @throws ContextException
 	 */

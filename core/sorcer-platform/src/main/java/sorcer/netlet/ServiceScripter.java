@@ -10,7 +10,8 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.netlet.util.NetletClassLoader;
 import sorcer.netlet.util.ScriptExertException;
-import sorcer.netlet.util.ScriptThread;
+import sorcer.netlet.util.ScripterThread;
+import sorcer.service.Exertion;
 
 import java.io.File;
 import java.io.FileReader;
@@ -23,15 +24,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Sorcer Script Exerter - this class handles parsing an ntl (Netlet) script and executing it or returning its
+ * Sorcer Netlet Scripter - this class handles parsing an ntl (Netlet) script and executing it or returning its
  * content as an object
  * <p/>
- * User: prubach
+ * User: prubach & Mile Sobolewski
  * Date: 02.07.13
  */
-public class ScriptExerter {
+public class ServiceScripter {
 
-    private final static Logger logger = LoggerFactory.getLogger(ScriptExerter.class
+    private final static Logger logger = LoggerFactory.getLogger(ServiceScripter.class
             .getName());
 
 
@@ -47,7 +48,7 @@ public class ScriptExerter {
 
     private Object result;
 
-    private ScriptThread scriptThread;
+    private ScripterThread scripterThread;
 
     private ServiceShell serviceShell;
 
@@ -55,11 +56,11 @@ public class ScriptExerter {
 
     private Configuration config;
 
-    private boolean isExerted = true;
+    private boolean isExertable = true;
 
     private boolean debug = false;
 
-    public ScriptExerter() {
+    public ServiceScripter() {
         this(null, null, null, false);
     }
 
@@ -69,15 +70,15 @@ public class ScriptExerter {
 
     static {
         try {
-            defaultCodebase = new URL[]{
-                    new URL("artifact:org.rioproject/rio-api/" + RioVersion.VERSION),
+            defaultCodebase = new URL[] {
+                new URL("artifact:org.rioproject/rio-api/" + RioVersion.VERSION)
             };
         } catch (MalformedURLException e) {
             throw new ExceptionInInitializerError(e);
         }
     }
 
-    public ScriptExerter(PrintStream out, ClassLoader classLoader, String websterStrUrl, boolean debug) {
+    public ServiceScripter(PrintStream out, ClassLoader classLoader, String websterStrUrl, boolean debug) {
         this.out = out;
         if (out==null) this.out = System.out;
         this.debug = debug;
@@ -86,37 +87,45 @@ public class ScriptExerter {
         this.websterStrUrl = websterStrUrl;
     }
 
-    public ScriptExerter(File scriptFile) throws IOException {
+    public ServiceScripter(File scriptFile) throws IOException {
         this(scriptFile, null, null, null);
     }
 
-    public ScriptExerter(File scriptFile, PrintStream out, ClassLoader classLoader, String websterStrUrl) throws IOException {
+    public ServiceScripter(File scriptFile, PrintStream out, ClassLoader classLoader, String websterStrUrl) throws IOException {
         this(out, classLoader, websterStrUrl, false);
         script = IOUtils.toString(new FileReader(scriptFile));
     }
 
-    public ScriptExerter(String script, PrintStream out, ClassLoader classLoader, String websterStrUrl) throws IOException {
+    public ServiceScripter(String script, PrintStream out, ClassLoader classLoader, String websterStrUrl) throws IOException {
         this(out, classLoader, websterStrUrl, false);
         this.script = script;
     }
 
     public Object execute() throws Throwable {
-        if (scriptThread != null) {
-            scriptThread.run();
-            result = scriptThread.getResult();
+        if (scripterThread != null) {
+            if (target == null) {
+                scripterThread.evalScript();
+            }
+            scripterThread.exert();
+            result = scripterThread.getResult();
             return result;
         }
-        throw new ScriptExertException("You must first call parse() before calling exert() ");
+        throw new ScriptExertException("You must first call evaluate() before calling exert() ");
     }
 
-    public Object parse() throws Throwable {
-
+    public Object interpret() throws Throwable {
         try {
-            if (out!=null && debug) out.println("creating scriptThread..."+ (System.currentTimeMillis()-startTime)+"ms");
-            scriptThread = new ScriptThread(script, classLoader, isExerted);
+            if (out!=null && debug) out.println("creating scripterThread..."+ (System.currentTimeMillis()-startTime)+"ms");
+            scripterThread = new ScripterThread(script, classLoader, isExertable);
+            scripterThread.evalScript();
             if (out!=null && debug) out.println("get target..." + (System.currentTimeMillis()-startTime)+"ms");
-            this.target = scriptThread.getTarget();
-            this.serviceShell = scriptThread.getServiceShell();
+            this.target = scripterThread.getTarget();
+            if (target instanceof Exertion) {
+                isExertable = true;
+            } else {
+                isExertable = false;
+            }
+            this.serviceShell = scripterThread.getServiceShell();
             return target;
         }
         // Parse Groovy errors and replace line numbers to adjust according to show the actual line number with an error
@@ -153,7 +162,7 @@ public class ScriptExerter {
     }
 
     public void setIsExerted(boolean isExerted) {
-        this.isExerted = isExerted;
+        this.isExertable = isExerted;
     }
 
     public Object getTarget() {
@@ -162,6 +171,10 @@ public class ScriptExerter {
 
     public Object getResult() {
         return result;
+    }
+
+    public boolean isExertable() {
+        return isExertable;
     }
 
     public ServiceShell getServiceShell() {

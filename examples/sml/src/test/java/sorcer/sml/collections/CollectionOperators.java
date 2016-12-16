@@ -18,7 +18,7 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.util.Runner;
-import sorcer.util.Table;
+import sorcer.util.DataTable;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -45,7 +45,6 @@ import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.*;
 
-
 /**
  * @author Mike Sobolewski
  */
@@ -60,19 +59,21 @@ public class CollectionOperators {
 	public void tuplesOfTypedObjects() throws Exception {
 
 
-		Tuple1 t1 = tuple("Mike");
+		Tuple1 t1 = t("Mike");
 
-		Entry ent = proc("Mike", "Sobolewski");
+		Tuple2 ent = kv("Mike", "Sobolewski");
 
-		Tuple2<String, String> t2 = tuple("Mike", "Sobolewski");
+		Tuple2 t2 = t("Mike", "Sobolewski");
 
-		Tuple3 t3 = tuple("Mike", "Sobolewski", "SORCER");
+        Tuple2 x2 = x("Mike", "Sobolewski");
 
-		Tuple4<String, String, String, Integer> t4 = tuple("Mike", "Sobolewski", "SORCER", 2014);
+		Tuple3 t3 = t("Mike", "Sobolewski", "SORCER");
 
-		Tuple5 t5 = tuple("Mike", "Sobolewski", "SORCER", 2014, "AFRL/WPAFB");
+		Tuple4<String, String, String, Integer> t4 = t("Mike", "Sobolewski", "SORCER", 2014);
 
-		Tuple6 t6 = tuple("Mike", "Sobolewski", "SORCER", 2010, "TTU", "AFRL/WPAFB");
+		Tuple5 t5 = t("Mike", "Sobolewski", "SORCER", 2014, "AFRL/WPAFB");
+
+		Tuple6 t6 = t("Mike", "Sobolewski", "SORCER", 2010, "TTU", "AFRL/WPAFB");
 
 
 		assertTrue(ent instanceof Tuple2);
@@ -133,33 +134,33 @@ public class CollectionOperators {
 	public void genericSetOperator() throws Exception {
 
 		// the setValue operator creates instances of java.util.Set
-		Set<Serializable> s = set("name", "Mike", "name", "Ray", tuple("height", 174));
+		Set<Serializable> s = set("name", "Mike", "name", "Ray", t("height", 174));
 		assertEquals(s.size(), 4);
-		assertEquals(tuple("height", 174)._1, "height");
-		assertEquals((int)tuple("height", 174)._2, 174);
+		assertEquals(t("height", 174)._1, "height");
+		assertEquals((int) t("height", 174)._2, 174);
 
-		assertTrue(s.contains(tuple("height", 174)));
+		assertTrue(s.contains(t("height", 174)));
 
 	}
 
 	@Test
 	public void tableOperator() throws Exception {
 
-		Table t = table(
+		DataTable t = dataTable(
 				row(1.1, 1.2, 1.3, 1.4, 1.5),
 				row(2.1, 2.2, 2.3, 2.4, 2.5),
 				row(3.1, 3.2, 3.3, 3.4, 3.5));
 
 		columnNames(t, list("x1", "x2", "x3", "x4", "x5"));
 		rowNames(t, list("f1", "f2", "f3"));
-		//logger.info("table: " + table);
+		//logger.info("dataTable: " + dataTable);
 		assertEquals(rowSize(t), 3);
 		assertEquals(columnSize(t), 5);
 
 		assertEquals(rowNames(t), list("f1", "f2", "f3"));
 		assertEquals(columnNames(t), list("x1", "x2", "x3", "x4", "x5"));
-		assertEquals(rowMap(t, "f2"), map(proc("x1", 2.1), proc("x2", 2.2),
-				proc("x3", 2.3), proc("x4", 2.4), proc("x5",2.5)));
+		assertEquals(rowMap(t, "f2"), map(kv("x1", 2.1), kv("x2", 2.2),
+				kv("x3", 2.3), kv("x4", 2.4), kv("x5",2.5)));
 		assertEquals(value(t, "f2", "x2"), 2.2);
 		assertEquals(value(t, 1, 1), 2.2);
 
@@ -221,7 +222,7 @@ public class CollectionOperators {
 		assertTrue(asis(de) instanceof URL);
 
 		// create an entry
-		Entry<Double> e = proc("x1", 10.0);
+		Entry<Double> e = ent("x1", 10.0);
 		assertTrue(eval(e).equals(10.0));
 		assertTrue(asis(e).equals(10.0));
 		assertFalse(asis(e) instanceof URL);
@@ -246,14 +247,29 @@ public class CollectionOperators {
 	}
 
 	@Test
-	public void parOperator() throws Exception {
+	public void entOperator() throws Exception {
 
-		Proc add = proc("add", invoker("x + y", args("x", "y")));
-		Context<Double> cxt = context(proc("x", 10.0), proc("y", 20.0));
-		logger.info("proc eval: " + eval(add, cxt));
+		Entry add = ent("add", invoker("x + y", args("x", "y")));
+		Context<Double> cxt = context(ent("x", 10.0), ent("y", 20.0));
+		logger.info("eval: " + eval(add, cxt));
 		assertTrue(eval(add, cxt).equals(30.0));
 
-		cxt = context(proc("x", 20.0), proc("y", 30.0));
+		cxt = context(ent("x", 20.0), ent("y", 30.0));
+		add = ent("add", invoker("x + y", args("x", "y")), cxt);
+		logger.info("proc eval: " + eval(add));
+		assertTrue(eval(add).equals(50.0));
+
+	}
+
+	@Test
+	public void procValEntOperator() throws Exception {
+
+		Proc add = proc("add", invoker("x + y", args("x", "y")));
+		Context<Double> cxt = context(val("x", 10.0), val("y", 20.0));
+		logger.info("eval: " + eval(add, cxt));
+		assertTrue(eval(add, cxt).equals(30.0));
+
+		cxt = context(ent("x", 20.0), ent("y", 30.0));
 		add = proc("add", invoker("x + y", args("x", "y")), cxt);
 		logger.info("proc eval: " + eval(add));
 		assertTrue(eval(add).equals(50.0));
@@ -263,9 +279,9 @@ public class CollectionOperators {
 	@Test
 	public void dbParOperator() throws Exception {
 
-		// persist values (arguments) of args
-		Proc dbp1 = persistent(proc("design/in", 25.0));
-		Proc dbp2 = dbPar("url/sobol", "http://sorcersoft.org/sobol");
+		// persist values of args
+		Entry dbp1 = persistent(ent("design/in", 25.0));
+        Entry dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
@@ -277,32 +293,32 @@ public class CollectionOperators {
 		assertTrue(asis(dbp2) instanceof URL);
 
 		// store args, not their arguments) in the data store
-		URL p1Url = store(proc("design/in", 30.0));
-		URL p2Url = store(proc("url/sorcer", "http://sorcersoft.org"));
+		URL p1Url = store(val("design/in", 30.0));
+		URL p2Url = store(val("url/sorcer", "http://sorcersoft.org"));
 
-		assertEquals(eval((Proc) content(p1Url)), 30.0);
-		assertEquals(eval((Proc)content(p2Url)), "http://sorcersoft.org");
+		assertEquals(eval((Entry) content(p1Url)), 30.0);
+		assertEquals(eval((Entry)content(p2Url)), "http://sorcersoft.org");
 
 	}
 
 	@Test
 	public void mapOperator() throws Exception {
 
-		Map<Object, Object> map1 = dictionary(proc("name", "Mike"), proc("height", 174.0));
+		Map<Object, Object> map1 = dictionary(kv("name", "Mike"), kv("height", 174.0));
 
-		Map<String, Double> map2 = map(proc("length", 248.0), proc("screen/width", 27.0), proc("screen/height", 12.0));
+		Map<String, Double> map2 = map(kv("length", 248.0), kv("screen/width", 27.0), kv("screen/height", 12.0));
 
 		// keys and values of args
-		assertEquals(key(proc("name", "Mike")), "name");
-		assertEquals(eval(proc("name", "Mike")), "Mike");
+		assertEquals(key(kv("name", "Mike")), "name");
+		assertEquals(eval(kv("name", "Mike")), "Mike");
 		// when using namespaces use path for the name of context (map) variables
-		assertEquals(path(proc("screen/height", 12.0)), "screen/height");
+		assertEquals(path(kv("screen/height", 12.0)), "screen/height");
 
 		assertEquals(keyValue(map1, "name"), "Mike");
 		assertEquals(keyValue(map1, "height"), 174.0);
 
-		assertTrue(key(proc("width", 2.0)).equals("width"));
-		assertTrue(eval(proc("width", 2.0)).equals(2.0));
+		assertTrue(key(kv("width", 2.0)).equals("width"));
+		assertTrue(eval(kv("width", 2.0)).equals(2.0));
 
 		assertEquals(keyValue(map1, "name"), "Mike");
 		assertEquals(keyValue(map1, "height"), 174.0);
@@ -360,7 +376,7 @@ public class CollectionOperators {
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 
 		// aliasing args, args are always reactive
-		put(cxt, ent("arg/x6", proc("overwrite", 40.0)));
+		put(cxt, ent("arg/x6", ent("overwrite", 40.0)));
 		assertTrue(value(cxt, "arg/x6").equals(40.0));
 
 		logger.info("x1: " + value(cxt, "arg/x1"));
@@ -372,7 +388,7 @@ public class CollectionOperators {
 	}
 
 	@Test
-	public void parModeling() throws Exception {
+	public void procModeling() throws Exception {
 
 		Model pm = model("proc-model", proc("John/weight", 180.0));
 		add(pm, ent("x", 10.0), ent("y", 20.0));
@@ -473,9 +489,9 @@ public class CollectionOperators {
 			}
 		};
 
-		r.exec(proc("x", "Hello"));
+		r.exec(ent("x", "Hello"));
 
-		run(r, proc("x", "Hello"));
+		run(r, ent("x", "Hello"));
 
 	}
 }

@@ -109,7 +109,6 @@ if (System.getProperty("org.rioproject.service")!=null) {
  *  Rio Loggers
  * ==================================================================*/
 logger("org.rioproject.cybernode", DEBUG)
-logger("org.rioproject.cybernode.loader", DEBUG)
 logger("org.rioproject.config", INFO)
 logger("org.rioproject.resources.servicecore", INFO)
 logger("org.rioproject.system", DEBUG)
@@ -129,10 +128,6 @@ logger("org.rioproject.monitor.service.managers.FixedServiceManager", INFO)
 logger("org.rioproject.resolver.aether", OFF)
 
 logger("org.rioproject.rmi.ResolvingLoader", OFF)
-
-logger("org.rioproject.gnostic", INFO)
-logger("org.rioproject.gnostic.drools", INFO)
-logger("org.rioproject.gnostic.service.DroolsCEPManager", INFO)
 logger("org.rioproject.config.GroovyConfig", INFO)
 
 logger("net.jini.discovery.LookupDiscovery", OFF)
@@ -142,14 +137,11 @@ logger("org.rioproject.resolver.aether.util.ConsoleRepositoryListener", WARN)
 /* ==================================================================
  *  SORCER Loggers
  * ==================================================================*/
-
 logger("sorcer.util.ProviderAccessor", WARN)
 logger("sorcer.core.provider.cataloger.ServiceCataloger", WARN)
 logger("sorcer.core.provider.exerter.ServiceShell", INFO)
 logger("sorcer.provider.boot", INFO)
 logger("sorcer.core.provider.ServiceProvider", INFO)
-//logger("sorcer.core.provider.rendezvous.RendezvousBean", ALL)
-//logger("sorcer.core.provider.rendezvous.ServiceModeler", ALL)
 logger("sorcer.core.provider.ControlFlowManager", WARN)
 logger("sorcer.core.provider.ProviderDelegate", INFO)
 logger("sorcer.tools.shell.NetworkShell", WARN)
@@ -168,25 +160,6 @@ logger("sorcer.core.provider.logger", WARN)
 /* ==================================================================
  *  SORCER Variable oriented loggers
  * ==================================================================*/
-
-/*
-logger("sorcer.modeling", OFF)
-logger("sorcer.modeling.vfe.Var", OFF)
-logger("sorcer.modeling.vfe.filter.Filter", OFF)
-logger("sorcer.modeling.vfe.filter.BasicFileFilter", OFF)
-logger("sorcer.modeling.vfe.evaluator", OFF)
-logger("sorcer.modeling.vfe.ServiceEvaluator", INFO)
-logger("sorcer.core.context.model", TRACE)
-logger("sorcer.core.context.model.var", TRACE)
-logger("sorcer.core.context.model.explore", TRACE)
-logger("sorcer.core.context.model.opti", TRACE)
-logger("sorcer.core.context.model.explore.Explorer", TRACE)
-logger("sorcer.core.context.model.explore.ExploreDispatcher", TRACE)
-logger("sorcer.core.context.model.explore.ModelManager", TRACE)
-logger("sorcer.core.context.model.opti", TRACE)
-logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
-logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
-*/
 logger("sorcer.modeling.core.context.model.var.ResponseModel", WARN)
 logger("sorcer.modeling.core.context.model.var.ParametricModel", WARN)
 logger("sorcer.util.Table", WARN)

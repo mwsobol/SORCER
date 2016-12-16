@@ -96,6 +96,7 @@ public class ObjectTask extends Task {
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
 			ReturnPath rt = (ReturnPath) getProcessSignature().getReturnPath();
+			dataContext.updateContextWith(os.getInConnector());
 			if (rt != null && rt.inPaths != null)
 				dataContext.updateInOutPaths(rt.inPaths, rt.outPaths);
 			else
