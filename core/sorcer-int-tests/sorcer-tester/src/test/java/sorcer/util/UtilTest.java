@@ -6,6 +6,7 @@ import net.jini.core.lookup.ServiceTemplate;
 import net.jini.id.Uuid;
 import net.jini.lookup.entry.Name;
 import net.jini.space.JavaSpace05;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,11 @@ import static sorcer.co.operator.list;
 public class UtilTest {
 
 	private final static Logger logger = LoggerFactory.getLogger(UtilTest.class);
+
+	@BeforeClass
+	public static void init() {
+		Accessor.create();
+	}
 
 	@Test
 	public void getDataServerUrl() throws Exception {
