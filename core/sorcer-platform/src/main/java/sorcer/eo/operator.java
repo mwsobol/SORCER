@@ -2923,7 +2923,7 @@ public class operator {
 		public List<String> getNameList() {
 			List<String>  sl = new ArrayList(args.length);
 			for (int i = 0; i < args.length; i++) {
-				sl.set(i, args[i].toString());
+				sl.add(args[i].toString());
 			}
 			return sl;
 		}
