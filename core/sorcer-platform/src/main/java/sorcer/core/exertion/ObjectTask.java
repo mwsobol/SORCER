@@ -111,7 +111,16 @@ public class ObjectTask extends Task {
 			Object result = null;
 			if (evaluator == null) {
 				// create a provider of this object signature
-				Object prv = provider(os);
+				Object prv = null;
+				if (os.getInitSelector() == null) {
+					if (os.getTargetSignature() != null) {
+						prv = ((ObjectSignature)os.getTargetSignature()).getProviderType().newInstance();
+					} else {
+						prv = os.getProviderType().newInstance();
+					}
+				} else {
+					prv = provider(os);
+				}
 				Object target = os.getTarget();
 				if (target != null) {
 					if (target instanceof Method) {

@@ -272,8 +272,7 @@ public class ObjectSignature extends ServiceSignature {
 					//skip;
 				}
 			}
-//			if ((initSelector == null || initSelector.equals("new")) && args == null) {
-			if (initSelector == null || initSelector.equals("new")) {
+			if ((initSelector == null || initSelector.equals("new")) && args == null) {
 				obj = providerType.newInstance();
 				return obj;
 			}
