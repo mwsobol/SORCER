@@ -18,7 +18,7 @@
 package sorcer.service;
 
 
-public interface Fi {
+public interface FiI {
 
     final static int e = 0;
     final static int s = 1;
