@@ -34,6 +34,8 @@ include 'sos-db-prv'
 project(":sos-db-prv").projectDir = file("sos/sos-db-prv")
 include 'sos-caller'
 project(":sos-caller").projectDir = file("sos/sos-caller")
+include 'sos-evalumon'
+project(":sos-evalumon").projectDir = file("sos/sos-evalumon")
 include 'sos-exertmonitor'
 project(":sos-exertmonitor").projectDir = file("sos/sos-exertmonitor")
 include 'sos-logger'

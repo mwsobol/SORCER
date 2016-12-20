@@ -21,6 +21,7 @@ import net.jini.admin.Administrable;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceID;
 import org.slf4j.Logger;
+import sorcer.core.analytics.AnalyticsProducer;
 import sorcer.service.Monitorable;
 import sorcer.service.Service;
 
@@ -38,7 +39,7 @@ import java.util.Properties;
  * @see Monitorable
  * @see Remote
  */
-public interface Provider extends Service, Exerter, Monitorable, Administrable, Remote {
+public interface Provider extends Service, Exerter, Monitorable, AnalyticsProducer, Administrable, Remote {
 
 	public ServiceID getProviderID() throws RemoteException;
 

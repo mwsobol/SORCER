@@ -130,6 +130,9 @@ task gatherDeps() {
                 File docs = new File("$distDir-${version}/rio-${rioVersion}/docs")
                 if(docs.exists())
                     docs.deleteDir()
+                File hyperic = new File("$distDir-${version}/rio-${rioVersion}/lib/hyperic")
+                if(hyperic.exists())
+                    hyperic.deleteDir()
             } else {
                 if (file.path.contains("jini") || file.path.contains("river"))
                     dest = "lib/river"
@@ -162,19 +165,20 @@ def filterDeps(project, prefix, dest) {
 
 
 task createDistribution(dependsOn: [":sorcer-boot:install",
-                              ":sorcer-lib:install",
-                              ":sorcer-ui:install",
-                              ":sorcer-test:install",
-                              ":sos-cataloger:install",
-                              ":sos-caller:install",
-                              ":sos-db-prv:install",
-                              ":sos-exertmonitor:install",
-                              ":sos-logger:install",
-                              ":ssb:install",
-                              ":webster:install",
-                              ":sos-shell:install",
-                              //":sorcer-resolving-loader:install",
-                              gatherDeps]) {
+                                    ":sorcer-lib:install",
+                                    ":sorcer-ui:install",
+                                    ":sorcer-test:install",
+                                    ":sos-cataloger:install",
+                                    ":sos-caller:install",
+                                    ":sos-db-prv:install",
+                                    ":sos-evalumon:install",
+                                    ":sos-exertmonitor:install",
+                                    ":sos-logger:install",
+                                    ":ssb:install",
+                                    ":webster:install",
+                                    ":sos-shell:install",
+                                    //":sorcer-resolving-loader:install",
+                                    gatherDeps]) {
     description 'Creates a Sorcer distribution'
     doLast {
         File sorcerLibDir = file("$distDir-${version}/lib/sorcer/lib")

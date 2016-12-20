@@ -85,7 +85,8 @@ deployment(name: "Sorcer OS") {
         maintain 1
     }
 
-    service(name: SorcerEnv.getActualSpaceName(), fork:getForkMode()) {
+    //service(name: SorcerEnv.getActualSpaceName(), fork:getForkMode()) {
+    service(name: SorcerEnv.getActualSpaceName(), fork:"yes", jvmArgs: "-Xmx16G") {
         interfaces {
             classes 'net.jini.space.JavaSpace05'
             resources "blitz-dl-${Sorcer.blitzVersion}.jar", "blitzui-${Sorcer.blitzVersion}.jar"
@@ -139,6 +140,17 @@ deployment(name: "Sorcer OS") {
                       "sorcer-lib-${Sorcer.sorcerVersion}.jar"
         }
         configuration new File("${Sorcer.sorcerHome}/bin/sorcer/exertmonitor/configs/exertmonitor-prv.config").text
+        maintain 1
+    }
+
+    service(name: SorcerEnv.getActualName('EvaluMon')) {
+        interfaces {
+            classes 'sorcer.core.monitoring.Monitor'
+            resources appendJars(["rio-proxy-${RioVersion.VERSION}.jar"])
+        }
+        implementation(class: 'sorcer.core.monitoring.MonitorImpl') {
+            resources "sos-evalumon-${Sorcer.sorcerVersion}.jar"
+        }
         maintain 1
     }
 

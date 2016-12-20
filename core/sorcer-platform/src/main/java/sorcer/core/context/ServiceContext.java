@@ -1327,13 +1327,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public boolean isLong(String path) throws ContextException {
 		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
-		boolean is = vc.equals(""+ long.class) || vc.equals(""+ long.class);
+		boolean is = vc.equals(""+ long.class) || vc.equals(""+ Long.class);
 		return is;
 	}
 
 	public boolean isFloat(String path) throws ContextException {
 		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
-		boolean is = vc.equals(""+ float.class) || vc.equals(""+ float.class);
+		boolean is = vc.equals(""+ float.class) || vc.equals(""+ Float.class);
 		return is;
 	}
 

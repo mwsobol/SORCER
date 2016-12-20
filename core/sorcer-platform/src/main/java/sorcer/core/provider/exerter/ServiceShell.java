@@ -116,7 +116,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 								} catch (SignatureException e) {
 									e.printStackTrace();
 								}
-								logger.warn("No avaialble proxy for {} ", signature);
+								logger.warn("No available proxy for {}", signature);
 								return Context.none;
 							} else
 								return Accessor.get().getService(signature);
@@ -424,7 +424,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
                 // check proxy cache and ping with a provider name
 				try {
 					provider = proxies.get(signature);
-					((Provider)provider).getProviderName();
+					//((Provider)provider).getProviderName();
 				} catch(Exception e) {
 					proxies.refresh(signature);
 					provider = proxies.get(signature);
