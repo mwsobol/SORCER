@@ -60,6 +60,7 @@
             <sysproperty key="rio.log.dir" value="${sorcer.home}/logs"/>
             <sysproperty key="org.rioproject.service" value="sorcer"/>
 			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
+			<sysproperty key="monitoring.enabled" value="false" />
 			<sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
 			<sysproperty key="java.net.preferIPv4Stack" value="true" />
 			<sysproperty key="java.security.policy" value="${sorcer.home}/policy/sorcer.policy" />

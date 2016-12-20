@@ -252,11 +252,6 @@ public class MonitorAgent {
             while(true) {
                 try {
                     Update update = updates.take();
-                    /*if(update.terminate) {
-                        logger.warn("[{}] Terminating MonitorNotificationHandler", Thread.currentThread().getId());
-                        //updates.add(update);
-                        break;
-                    }*/
                     MonitorRegistration monitorRegistration = update.registration;
                     if(logger.isDebugEnabled())
                         logger.debug("[{}] HANDLE: {} {}", Thread.currentThread().getId(), monitorRegistration.getIdentifier(), update.status);
