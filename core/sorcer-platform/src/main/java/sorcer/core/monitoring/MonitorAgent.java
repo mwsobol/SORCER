@@ -35,10 +35,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 /**
  * @author Dennis Reedy
@@ -46,11 +43,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class MonitorAgent {
     private static final LookupDiscoveryManager discoveryManager;
     private static final Logger logger = LoggerFactory.getLogger(MonitorAgent.class);
-    private static final boolean monitoringEnabled =
-        Boolean.parseBoolean(System.getProperty("monitoring.enabled", "true"));
+    private static boolean monitoringEnabled = Boolean.parseBoolean(System.getProperty("monitoring.enabled", "true"));
     private static MonitorListener monitorListener;
     private final static ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-    private final static BlockingQueue<Update> updates = new LinkedBlockingQueue<>();
+    private final static BlockingQueue<Request> requests = new LinkedBlockingQueue<>();
+    private final static CountDownLatch discoveryLatch = new CountDownLatch(1);
     static {
         if(monitoringEnabled) {
             try {
@@ -80,31 +77,22 @@ public class MonitorAgent {
     private MonitorRegistration monitorRegistration;
     private LeaseRenewalManager leaseManager;
 
-    public MonitorRegistration register(String identifier, String owner) {
-        return register(identifier, owner, Lease.ANY);
+    public void register(String identifier, String owner) {
+        register(identifier, owner, Lease.ANY);
     }
 
-    public MonitorRegistration register(String identifier, String owner, long duration) {
+    public void register(String identifier, String owner, long duration) {
         if(!monitoringEnabled) {
-            return new MonitorRegistration(null, UuidFactory.generate(), identifier, owner, null);
+            monitorRegistration = new MonitorRegistration(null, UuidFactory.generate(), identifier, owner, null);
+            return;
         }
-        if(monitorRegistration!=null)
-            return monitorRegistration;
-        Monitor monitor = monitorListener.getMonitor();
-        if(monitor==null) {
-            waitOnDiscover();
-            monitor = monitorListener.getMonitor();
-        }
-        if(monitor==null) {
-            logger.error("No available Monitor");
-            return null;
-        }
-        try {
-            monitorRegistration = monitor.register(identifier, owner, duration);
-            leaseManager = new LeaseRenewalManager(monitorRegistration.getLease(), Lease.FOREVER, null);
-        } catch (IOException | MonitorException e) {
-            logger.warn("Unable to obtain a MonitorRegistration for {}, {}", identifier, owner, e);
-        }
+        requests.add(new Request(new RegistrationRequest()
+                                     .identifier(identifier)
+                                     .owner(owner)
+                                     .duration(duration).listener(new MonitorRegistrationNotifier())));
+    }
+
+    public MonitorRegistration getMonitorRegistration() {
         return monitorRegistration;
     }
 
@@ -137,14 +125,17 @@ public class MonitorAgent {
             return;
         }
         if(monitorRegistration==null) {
-            if(analytics!=null)
-                logger.warn("No MonitorRegistration, unable to update status for method {} {}",
-                            analytics.getMethodName(), status);
-            else
-                logger.warn("No MonitorRegistration, unable to update status {}", status);
+            if(analytics!=null) {
+                if (logger.isDebugEnabled())
+                    logger.debug("No MonitorRegistration, unable to update status for method {} {}",
+                                 analytics.getMethodName(), status);
+            } else {
+                if (logger.isDebugEnabled())
+                    logger.debug("No MonitorRegistration, unable to update status {}", status);
+            }
             return;
         }
-        if(updates.add(new Update(monitorRegistration).status(status).analytics(analytics))) {
+        if(requests.add(new Request(new Update(copy()).status(status).analytics(analytics)))) {
             if (logger.isDebugEnabled())
                 logger.debug("ADDED: {} {}", monitorRegistration.getIdentifier(), status);
         } else {
@@ -166,26 +157,32 @@ public class MonitorAgent {
         }
     }
 
-    private void waitOnDiscover() {
-        int waitCount = 0;
-        long timeout = 60;
-        while(monitorListener.isDiscovering() && waitCount < timeout) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    private class MonitorRegistrationNotifier implements MonitorRegistrationListener {
+
+        @Override public void notify(MonitorRegistration registration) {
+            monitorRegistration = registration;
+            leaseManager = new LeaseRenewalManager(monitorRegistration.getLease(), Lease.FOREVER, null);
+            logger.info("Successful registration to a Monitor for {}, {}",
+                        monitorRegistration.getIdentifier(), monitorRegistration.getOwner());
+        }
+
+        @Override public void failed(String identifier, String owner, Exception e) {
+            monitorRegistration = new MonitorRegistration(null, UuidFactory.generate(), identifier, owner, null);
+            monitoringEnabled = false;
+            requests.clear();
+            if(e!=null) {
+                logger.warn("Unable to obtain a MonitorRegistration for {}, {}, setting monitoringEnabled to false",
+                            identifier, owner, e);
+            } else {
+                logger.warn("Unable to obtain a MonitorRegistration for {}, {}, setting monitoringEnabled to false, {}",
+                            identifier, owner, monitorRegistration);
             }
-            waitCount++;
         }
     }
 
     private static class MonitorListener implements DiscoveryListener {
         private final List<ServiceRegistrar> lookups = new ArrayList<>();
         private final ServiceTemplate template = new ServiceTemplate(null, new Class[]{Monitor.class}, null);
-
-        boolean isDiscovering() {
-            return lookups.isEmpty();
-        }
 
         Monitor getMonitor() {
             Monitor monitor = null;
@@ -206,6 +203,7 @@ public class MonitorAgent {
         @Override public void discovered(DiscoveryEvent discoveryEvent) {
             logger.debug("Discovered {} Lookup(s)", discoveryEvent.getRegistrars().length);
             Collections.addAll(lookups, discoveryEvent.getRegistrars());
+            discoveryLatch.countDown();
         }
 
         @Override public void discarded(DiscoveryEvent discoveryEvent) {
@@ -214,18 +212,37 @@ public class MonitorAgent {
         }
     }
 
+    private class RegistrationRequest {
+        String identifier;
+        String owner;
+        long duration;
+        MonitorRegistrationListener registrationListener;
+
+        RegistrationRequest identifier(String identifier) {
+            this.identifier = identifier;
+            return this;
+        }
+        RegistrationRequest owner(String owner) {
+            this.owner = owner;
+            return this;
+        }
+        RegistrationRequest duration(long duration) {
+            this.duration = duration;
+            return this;
+        }
+        RegistrationRequest listener(MonitorRegistrationListener registrationListener) {
+            this.registrationListener = registrationListener;
+            return this;
+        }
+    }
+
     private class Update {
         Monitor.Status status;
         MethodAnalytics analytics;
         MonitorRegistration registration;
-        boolean terminate;
 
         Update(MonitorRegistration registration) {
-            this.registration = new MonitorRegistration(registration.getLease(),
-                                                        registration.getUuid(),
-                                                        registration.getIdentifier(),
-                                                        registration.getOwner(),
-                                                        registration.getMonitor());
+            this.registration = registration;
         }
 
         Update status(Monitor.Status status) {
@@ -237,11 +254,26 @@ public class MonitorAgent {
             this.analytics = analytics;
             return this;
         }
+    }
 
+    private MonitorRegistration copy() {
+        return new MonitorRegistration(monitorRegistration.getLease(),
+                                       monitorRegistration.getUuid(),
+                                       monitorRegistration.getIdentifier(),
+                                       monitorRegistration.getOwner(),
+                                       monitorRegistration.getMonitor());
+    }
 
-        Update terminate() {
-            terminate = true;
-            return this;
+    private class Request {
+        Update update;
+        RegistrationRequest registrationRequest;
+
+        Request(Update update) {
+            this.update = update;
+        }
+
+        Request(RegistrationRequest registrationRequest) {
+            this.registrationRequest = registrationRequest;
         }
     }
 
@@ -251,21 +283,49 @@ public class MonitorAgent {
             logger.debug("[{}] Started MonitorNotificationHandler", Thread.currentThread().getId());
             while(true) {
                 try {
-                    Update update = updates.take();
-                    MonitorRegistration monitorRegistration = update.registration;
-                    if(logger.isDebugEnabled())
-                        logger.debug("[{}] HANDLE: {} {}", Thread.currentThread().getId(), monitorRegistration.getIdentifier(), update.status);
-                    try {
-                        monitorRegistration.getMonitor().update(monitorRegistration, update.status, update.analytics);
-                        if(logger.isDebugEnabled())
-                            logger.debug("[{}] HANDLED: {} {}", Thread.currentThread().getId(), monitorRegistration.getIdentifier(), update.status);
-                    } catch (IOException | MonitorException e) {
-                        if(update.analytics!=null)
-                            logger.warn("Unable to update status for method {} {}, {}: {}",
-                                        update.analytics.getMethodName(), update.status, e.getClass().getName(), e.getMessage());
-                        else
-                            logger.warn("Unable to update status {}, {}: {}",
-                                        update.status, e.getClass().getName(), e.getMessage());
+                    Request request = requests.take();
+                    if(request.registrationRequest!=null) {
+                        RegistrationRequest r = request.registrationRequest;
+                        if (logger.isDebugEnabled())
+                            logger.debug("Processing registration request for {}, {}", r.identifier, r.owner);
+                        try {
+                            long timeout = Long.parseLong(System.getProperty("monitor.discovery.timeout", "3"));
+                            if(timeout>0)
+                                discoveryLatch.await(timeout, TimeUnit.SECONDS);
+                            Monitor monitor = monitorListener.getMonitor();
+                            if(monitor==null) {
+                                if(r.registrationListener!=null)
+                                    r.registrationListener.failed(r.identifier, r.owner, null);
+                            } else {
+                                MonitorRegistration monitorRegistration = monitor.register(r.identifier, r.owner, r.duration);
+                                if (r.registrationListener != null)
+                                    r.registrationListener.notify(monitorRegistration);
+                            }
+                        } catch (IOException | MonitorException e) {
+                            if(r.registrationListener!=null)
+                                r.registrationListener.failed(r.identifier, r.owner, e);
+                        }
+                    } else {
+                        Update update = request.update;
+                        MonitorRegistration monitorRegistration = update.registration;
+                        if (logger.isDebugEnabled())
+                            logger.debug("HANDLE: {} {}", monitorRegistration.getIdentifier(), update.status);
+                        try {
+                            monitorRegistration.getMonitor().update(monitorRegistration, update.status, update.analytics);
+                            if (logger.isDebugEnabled())
+                                logger.debug("HANDLED: {} {}", monitorRegistration.getIdentifier(), update.status);
+                        } catch (IOException | MonitorException e) {
+                            if (update.analytics != null) {
+                                logger.warn("Unable to update status for method {} {}, {}: {}",
+                                            update.analytics.getMethodName(),
+                                            update.status,
+                                            e.getClass().getName(),
+                                            e.getMessage());
+                            } else {
+                                logger.warn("Unable to update status {}, {}: {}",
+                                            update.status, e.getClass().getName(), e.getMessage());
+                            }
+                        }
                     }
                 } catch (InterruptedException e) {
                     logger.error("Interrupted", e);

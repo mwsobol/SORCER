@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
  * @author Dennis Reedy
  */
 public class MonitorImplTest {
-    static MonitorImpl monitor;
+    private static MonitorImpl monitor;
 
     @BeforeClass
     public static void create() throws ServiceBeanInstantiationException {
