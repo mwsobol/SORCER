@@ -1506,7 +1506,7 @@ public class operator {
 		return new FiEntry(index, fiList);
 	}
 
-	public static Fidelity fi(String name, String path, Fix.Type type) {
+	public static Fidelity fi(String name, String path, Fi.Type type) {
 		Fidelity fi = new Fidelity(name, path);
 		fi.type = type;
 		return fi;
@@ -1514,7 +1514,7 @@ public class operator {
 
 	public static Fidelity fi(String name, String path, int type) {
 		Fidelity fi = new Fidelity(name, path);
-		fi.type = Fix.Type.type(type);
+		fi.type = Fi.Type.type(type);
 		return fi;
 	}
 
