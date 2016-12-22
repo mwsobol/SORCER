@@ -17,7 +17,7 @@
 
 package sorcer.util;
 
-import sorcer.service.Fi;
+import sorcer.service.Fix;
 
 import java.util.Hashtable;
 
@@ -27,7 +27,7 @@ import java.util.Hashtable;
  */
 public class Pool<K,V> extends Hashtable<K,V> {
 
-	private Fi.Type fiType = Fi.Type.SELECT;
+	private Fix.Type fiType = Fix.Type.SELECT;
 	/**
 	 * Constructs a new, empty hashtable with the specified initial capacity
 	 * and default load factor (0.75).
@@ -49,11 +49,11 @@ public class Pool<K,V> extends Hashtable<K,V> {
 	}
 
 
-	public Fi.Type getFiType() {
+	public Fix.Type getFiType() {
 		return fiType;
 	}
 
-	public void setFiType(Fi.Type fiType) {
+	public void setFiType(Fix.Type fiType) {
 		this.fiType = fiType;
 	}
 

@@ -53,7 +53,6 @@ import java.util.*;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
-import static sorcer.eo.operator.context;
 import static sorcer.po.operator.invoker;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -824,7 +823,7 @@ public class operator {
 		return map;
 	}
 
-	public static <T extends Identifiable> Pool<String, T> pool(Fi.Type type, T... entries) {
+	public static <T extends Identifiable> Pool<String, T> pool(Fix.Type type, T... entries) {
 		Pool<String, T> map = new Pool<>();
 		map.setFiType(type);
 		for (T entry : entries) {
@@ -841,7 +840,7 @@ public class operator {
 		return map;
 	}
 
-	public static <K, V> Pool<K, V> entPool(Fi.Type type, Tuple2<K, V>... entries) {
+	public static <K, V> Pool<K, V> entPool(Fix.Type type, Tuple2<K, V>... entries) {
 		Pool<K, V> map = new Pool<>();
 		map.setFiType(type);
 		for (Tuple2<K, V> entry : entries) {

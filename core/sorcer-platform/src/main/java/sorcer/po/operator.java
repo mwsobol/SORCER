@@ -744,7 +744,7 @@ public class operator {
 //			throw new ConfigurationException("Misconfigured fidelity: " + srvFi + " for: " + selectFi);
 		}
 		Tuple2<Fidelity, Fidelity> assoc =  new Tuple2<>(selectFi, srvFi);
-		if (srvFi.getType().equals(Fi.Type.GRADIENT)) {
+		if (srvFi.getType().equals(Fix.Type.GRADIENT)) {
 			// if no path set use its name - no multifidelities
 			if (selectFi.getPath().equals("")) {
 				selectFi.setPath(selectFi.getName());
