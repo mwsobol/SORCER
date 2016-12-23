@@ -279,10 +279,10 @@ public class MonitorAgent {
                                        monitorRegistration.getMonitor());
     }
 
-    private static Monitor getMonitor() {
+    private static Monitor getMonitor(long timeout) {
         Monitor monitor = null;
         int count = 0;
-        while(monitor == null && count < 10){
+        while(monitor == null && count < (timeout*2)){
             monitor = monitorListener.getMonitor();
             if(monitor==null) {
                 try {
@@ -321,10 +321,9 @@ public class MonitorAgent {
                         if (logger.isDebugEnabled())
                             logger.debug("Processing registration request for {}, {}", r.identifier, r.owner);
                         try {
-                            long timeout = Long.parseLong(System.getProperty("monitor.discovery.timeout", "3"));
-                            if(timeout>0)
-                                discoveryLatch.await(timeout, TimeUnit.SECONDS);
-                            Monitor monitor = getMonitor();
+                            long timeout = Long.parseLong(System.getProperty("monitor.discovery.timeout", "5"));
+                            discoveryLatch.await(timeout, TimeUnit.SECONDS);
+                            Monitor monitor = getMonitor(timeout);
                             if(monitor==null) {
                                 if(r.registrationListener!=null)
                                     r.registrationListener.failed(r.identifier, r.owner, null);
