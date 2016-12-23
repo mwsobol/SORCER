@@ -91,8 +91,12 @@ public class MonitorEventHandler {
     }
 
     public void fire(MonitorEvent monitorEvent) {
-        if(resourceMgr.getServiceResources().length==0)
+        if(resourceMgr.getServiceResources().length==0) {
+            if(logger.isDebugEnabled())
+                logger.debug("There are no leased registrations, cancel sending {} {}, status: {}",
+                             monitorEvent.getIdentifier(), monitorEvent.getOwner(), monitorEvent.getStatus().name());
             return;
+        }
 		if(logger.isDebugEnabled())
             logger.debug("Fire a MonitorEvent, num registrations: {}", getRegistrantCount());
         for(ServiceResource sr : resourceMgr.getServiceResources()) {

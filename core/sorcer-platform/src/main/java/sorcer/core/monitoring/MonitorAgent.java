@@ -48,6 +48,7 @@ public class MonitorAgent {
     private final static ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private final static BlockingQueue<Request> requests = new LinkedBlockingQueue<>();
     private final static CountDownLatch discoveryLatch = new CountDownLatch(1);
+    private final List<Request> pendingUpdateRequests = new ArrayList<>();
     static {
         if(monitoringEnabled) {
             try {
@@ -124,20 +125,22 @@ public class MonitorAgent {
         if(!monitoringEnabled) {
             return;
         }
+        Request request = new Request(new UpdateRequest(copyRegistration()).status(status).analytics(analytics));
         if(monitorRegistration==null) {
+            pendingUpdateRequests.add(request);
             if(analytics!=null) {
                 if (logger.isDebugEnabled())
-                    logger.debug("No MonitorRegistration, unable to update status for method {} {}",
+                    logger.debug("No MonitorRegistration, queued update status for method {} {}",
                                  analytics.getMethodName(), status);
             } else {
                 if (logger.isDebugEnabled())
-                    logger.debug("No MonitorRegistration, unable to update status {}", status);
+                    logger.debug("No MonitorRegistration, queued update status {}", status);
             }
             return;
         }
-        if(requests.add(new Request(new Update(copy()).status(status).analytics(analytics)))) {
-            if (logger.isDebugEnabled())
-                logger.debug("ADDED: {} {}", monitorRegistration.getIdentifier(), status);
+        if(requests.add(request)) {
+            if (logger.isTraceEnabled())
+                logger.trace("ADDED: {} {}", monitorRegistration.getIdentifier(), status);
         } else {
             logger.warn("FAILED ADDING: {}", analytics);
         }
@@ -162,14 +165,24 @@ public class MonitorAgent {
         @Override public void notify(MonitorRegistration registration) {
             monitorRegistration = registration;
             leaseManager = new LeaseRenewalManager(monitorRegistration.getLease(), Lease.FOREVER, null);
-            logger.info("Successful registration to a Monitor for {}, {}",
-                        monitorRegistration.getIdentifier(), monitorRegistration.getOwner());
+            for(Request r : pendingUpdateRequests) {
+                r.updateRequest.registration = copyRegistration();
+                if (logger.isDebugEnabled())
+                    logger.debug("Posted {} {} {}",
+                                 monitorRegistration.getIdentifier(), monitorRegistration.getOwner(), r.updateRequest.status);
+                requests.add(r);
+            }
+            pendingUpdateRequests.clear();
+            if(logger.isDebugEnabled())
+                logger.debug("Successful registration to a Monitor for {}, {}",
+                             monitorRegistration.getIdentifier(), monitorRegistration.getOwner());
         }
 
         @Override public void failed(String identifier, String owner, Exception e) {
             monitorRegistration = new MonitorRegistration(null, UuidFactory.generate(), identifier, owner, null);
             monitoringEnabled = false;
             requests.clear();
+            pendingUpdateRequests.clear();
             if(e!=null) {
                 logger.warn("Unable to obtain a MonitorRegistration for {}, {}, setting monitoringEnabled to false",
                             identifier, owner, e);
@@ -236,27 +249,29 @@ public class MonitorAgent {
         }
     }
 
-    private class Update {
+    private class UpdateRequest {
         Monitor.Status status;
         MethodAnalytics analytics;
         MonitorRegistration registration;
 
-        Update(MonitorRegistration registration) {
+        UpdateRequest(MonitorRegistration registration) {
             this.registration = registration;
         }
 
-        Update status(Monitor.Status status) {
+        UpdateRequest status(Monitor.Status status) {
             this.status = status;
             return this;
         }
 
-        Update analytics(MethodAnalytics analytics) {
+        UpdateRequest analytics(MethodAnalytics analytics) {
             this.analytics = analytics;
             return this;
         }
     }
 
-    private MonitorRegistration copy() {
+    private MonitorRegistration copyRegistration() {
+        if(monitorRegistration==null)
+            return null;
         return new MonitorRegistration(monitorRegistration.getLease(),
                                        monitorRegistration.getUuid(),
                                        monitorRegistration.getIdentifier(),
@@ -264,12 +279,29 @@ public class MonitorAgent {
                                        monitorRegistration.getMonitor());
     }
 
+    private static Monitor getMonitor() {
+        Monitor monitor = null;
+        int count = 0;
+        while(monitor == null && count < 10){
+            monitor = monitorListener.getMonitor();
+            if(monitor==null) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    logger.warn("Monitor wait interrupted");
+                }
+                count++;
+            }
+        }
+        return monitor;
+    }
+
     private class Request {
-        Update update;
+        UpdateRequest updateRequest;
         RegistrationRequest registrationRequest;
 
-        Request(Update update) {
-            this.update = update;
+        Request(UpdateRequest updateRequest) {
+            this.updateRequest = updateRequest;
         }
 
         Request(RegistrationRequest registrationRequest) {
@@ -292,7 +324,7 @@ public class MonitorAgent {
                             long timeout = Long.parseLong(System.getProperty("monitor.discovery.timeout", "3"));
                             if(timeout>0)
                                 discoveryLatch.await(timeout, TimeUnit.SECONDS);
-                            Monitor monitor = monitorListener.getMonitor();
+                            Monitor monitor = getMonitor();
                             if(monitor==null) {
                                 if(r.registrationListener!=null)
                                     r.registrationListener.failed(r.identifier, r.owner, null);
@@ -306,24 +338,24 @@ public class MonitorAgent {
                                 r.registrationListener.failed(r.identifier, r.owner, e);
                         }
                     } else {
-                        Update update = request.update;
-                        MonitorRegistration monitorRegistration = update.registration;
-                        if (logger.isDebugEnabled())
-                            logger.debug("HANDLE: {} {}", monitorRegistration.getIdentifier(), update.status);
+                        UpdateRequest updateRequest = request.updateRequest;
+                        MonitorRegistration monitorRegistration = updateRequest.registration;
+                        if (logger.isTraceEnabled())
+                            logger.trace("HANDLE: {} {}", monitorRegistration.getIdentifier(), updateRequest.status);
                         try {
-                            monitorRegistration.getMonitor().update(monitorRegistration, update.status, update.analytics);
-                            if (logger.isDebugEnabled())
-                                logger.debug("HANDLED: {} {}", monitorRegistration.getIdentifier(), update.status);
+                            monitorRegistration.getMonitor().update(monitorRegistration, updateRequest.status, updateRequest.analytics);
+                            if (logger.isTraceEnabled())
+                                logger.trace("HANDLED: {} {}", monitorRegistration.getIdentifier(), updateRequest.status);
                         } catch (IOException | MonitorException e) {
-                            if (update.analytics != null) {
+                            if (updateRequest.analytics != null) {
                                 logger.warn("Unable to update status for method {} {}, {}: {}",
-                                            update.analytics.getMethodName(),
-                                            update.status,
+                                            updateRequest.analytics.getMethodName(),
+                                            updateRequest.status,
                                             e.getClass().getName(),
                                             e.getMessage());
                             } else {
                                 logger.warn("Unable to update status {}, {}: {}",
-                                            update.status, e.getClass().getName(), e.getMessage());
+                                            updateRequest.status, e.getClass().getName(), e.getMessage());
                             }
                         }
                     }
