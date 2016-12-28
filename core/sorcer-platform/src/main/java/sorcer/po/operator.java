@@ -761,7 +761,7 @@ public class operator {
 		}
 		srvFi.setName(selectFi.getName());
 		srvFi.setPath(selectFi.getPath());
-		srvFi.setSelect((T) selectFi.getSelect());
+//		srvFi.setSelect((T) selectFi.getSelect());
 		selectFi.setType(srvFi.getType());
 		return assoc;
 	}

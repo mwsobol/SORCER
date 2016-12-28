@@ -82,9 +82,12 @@ public class Fidelity<T> implements Fi, Arg, net.jini.core.entry.Entry {
 	@Override
 	public boolean equals(Object object) {
 
-        Boolean selectorEquality = true;
-       if  (((Fidelity)object).getSelect() != null && select != null)
-           selectorEquality = ((Fidelity) object).getSelect().equals(select);
+		if(object == this) {
+			return true;
+		}
+		Boolean selectorEquality = true;
+		if  (((Fidelity)object).getSelect() != null && select != null)
+			selectorEquality = ((Fidelity) object).getSelect().equals(select);
 
 
 		if (object instanceof Fidelity
