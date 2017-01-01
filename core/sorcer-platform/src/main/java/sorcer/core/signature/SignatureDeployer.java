@@ -17,26 +17,11 @@
 
 package sorcer.core.signature;
 
-import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sorcer.core.exertion.ObjectTask;
-import sorcer.core.invoker.MethodInvoker;
-import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Modeling;
+import sorcer.service.modeling.ServiceModel;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static sorcer.eo.operator.*;
 
 public class SignatureDeployer implements Deployee {
 
@@ -81,7 +66,7 @@ public class SignatureDeployer implements Deployee {
     @Override
     public void deploy() throws ConfigurationException {
         if (deployee != null && builders != null) {
-            if (deployee instanceof Model) {
+            if (deployee instanceof ServiceModel) {
                 try {
                     deployee.deploy(builders);
                 } catch (MogramException e) {

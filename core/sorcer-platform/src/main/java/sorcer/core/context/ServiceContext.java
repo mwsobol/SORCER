@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.InputEntry;
 import sorcer.co.tuple.OutputEntry;
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.Name;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.ent.Proc;
@@ -43,8 +42,8 @@ import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Signature.ReturnPath;
-import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
 import sorcer.util.ObjectCloner;
 import sorcer.util.SorcerUtil;
@@ -268,8 +267,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
-	public Model newInstance() throws SignatureException {
-		return (Model) sorcer.co.operator.instance(builder);
+	public ServiceModel newInstance() throws SignatureException {
+		return (ServiceModel) sorcer.co.operator.instance(builder);
 	}
 
 	public Context clearReturnPath() throws ContextException {
@@ -1664,7 +1663,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
-	public Context updateEntries(ServiceModel context) throws ContextException {
+	public Context updateEntries(Model context) throws ContextException {
 		if (context != null) {
 			List<String> inpaths = ((ServiceContext) context).getInPaths();
 			List<String> outpaths = ((ServiceContext) context).getOutPaths();
@@ -2786,7 +2785,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public ServiceModel add(Identifiable... objects) throws ContextException, RemoteException {
+	public Model add(Identifiable... objects) throws ContextException, RemoteException {
 		boolean changed = false;
 		for (Identifiable obj : objects) {
 			if (obj instanceof Entry) {

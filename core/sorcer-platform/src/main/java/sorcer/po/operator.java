@@ -146,11 +146,11 @@ public class operator {
 		return srv(null, item);
 	}
 
-	public static Srv srv(String name, String path, Model model) {
+	public static Srv srv(String name, String path, ServiceModel model) {
 		return new Srv(path, model, name);
 	}
 
-	public static Srv srv(String name, String path, Model model, Variability.Type type) {
+	public static Srv srv(String name, String path, ServiceModel model, Variability.Type type) {
 		return new Srv(path, model, name, type);
 	}
 
@@ -633,7 +633,7 @@ public class operator {
 		return new ExecPath(name, invoker);
 	}
 
-	public static ServiceModel scope(Proc procEntry) {
+	public static Model scope(Proc procEntry) {
 		return procEntry.getScope();
 	}
 
@@ -646,7 +646,7 @@ public class operator {
 			return null;
 	}
 
-	public static Entry ent(Model model, String path) throws ContextException {
+	public static Entry ent(ServiceModel model, String path) throws ContextException {
         return new Entry(path, model.asis(path));
     }
 

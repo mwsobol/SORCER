@@ -11,7 +11,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.model.ent.ContextEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.util.GenericUtil;
 
 import java.rmi.RemoteException;
@@ -249,7 +249,7 @@ public class Entries {
 	@Test
 	public void getConditionalValueParModel() throws Exception {
 
-		Model mdl = model(
+		ServiceModel mdl = model(
 			proc("x1", 10.0), proc("x2", 20.0),
 			proc("y1", alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
 				opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
@@ -272,7 +272,7 @@ public class Entries {
     @Test
     public void getConditionalValueBlockSrvModel() throws Exception {
 
-        Model mdl = model(
+        ServiceModel mdl = model(
             proc("x1", 10.0), proc("x2", 20.0),
             srv("y1", block(alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
                     opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))))));
@@ -299,7 +299,7 @@ public class Entries {
 	@Test
 	public void getConditionalLoopSrvModel() throws Exception {
 
-		Model mdl = model(
+		ServiceModel mdl = model(
 			proc("x1", 10.0), proc("x2", 20.0), proc("x3", 40.0),
 			proc("y1",
 				loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),

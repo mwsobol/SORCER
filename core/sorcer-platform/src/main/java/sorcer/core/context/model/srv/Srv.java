@@ -11,8 +11,8 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
-import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Variability;
 
 import java.io.Serializable;
@@ -94,7 +94,7 @@ public class Srv extends Entry<Object> implements Variability<Object>,
         this.type = type;
     }
 
-    public Srv(String name, Model model, String path) {
+    public Srv(String name, ServiceModel model, String path) {
         super(path, model);
         this.name = name;
         type = Variability.Type.SRV;
@@ -257,7 +257,7 @@ public class Srv extends Entry<Object> implements Variability<Object>,
 
     @Override
     public Object exec(Arg... args) throws ServiceException, RemoteException {
-        ServiceModel mod = Arg.getServiceModel(args);
+        Model mod = Arg.getServiceModel(args);
         if (mod != null) {
             if (mod instanceof SrvModel && _2 instanceof ValueCallable) {
                 return ((ValueCallable) _2).call((Context) mod);

@@ -17,7 +17,7 @@ package sorcer.core.context;
 
 import sorcer.service.Signature;
 import sorcer.service.Task;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 
 /**
  *  * The SORCER model task extending the basic task implementation {@link Task}.
@@ -30,7 +30,7 @@ public class TaskModel  {
 
 	protected Signature builder;
 
-	protected Model model;
+	protected ServiceModel model;
 
 	protected ContextSelection modelSelector;
 
@@ -38,11 +38,11 @@ public class TaskModel  {
 		// do nathing
 	}
 
-	public TaskModel(Model model) {
+	public TaskModel(ServiceModel model) {
 		  this(model, null);
 	}
 
-	public TaskModel(Model model, ContextSelection modelSelector) {
+	public TaskModel(ServiceModel model, ContextSelection modelSelector) {
 		this.model = model;
 		this.modelSelector = modelSelector;
 	}
@@ -56,11 +56,11 @@ public class TaskModel  {
 		this.modelSelector = modelSelector;
 	}
 
-	public Model getModel() {
+	public ServiceModel getModel() {
 		return model;
 	}
 
-	public void setModel(Model model) {
+	public void setModel(ServiceModel model) {
 		this.model = model;
 	}
 

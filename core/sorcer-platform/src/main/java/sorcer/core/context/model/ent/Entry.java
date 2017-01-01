@@ -20,7 +20,6 @@ package sorcer.core.context.model.ent;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.Name;
 import sorcer.core.context.ContextSelection;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
@@ -28,7 +27,6 @@ import sorcer.service.modeling.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
-import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -315,7 +313,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 			if (_2 != null && _2 != Context.none)
 				add((Context)mogram, this);
 			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Path(_1));
-			out = (Context) ((Model)mogram).getResponse();
+			out = (Context) ((ServiceModel)mogram).getResponse();
 		} else if (mogram instanceof ServiceContext) {
 			if (_2 == null || _2 == Context.none) {
 				out.putValue(_1, ((Context)mogram).getValue(_1));
@@ -363,7 +361,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 
 	@Override
 	public Object exec(Arg... args) throws ServiceException, RemoteException {
-		ServiceModel cxt = Arg.getServiceModel(args);
+		Model cxt = Arg.getServiceModel(args);
 		if (cxt != null) {
 			// entry substitution
 			((ServiceContext)cxt).putValue(_1, _2);

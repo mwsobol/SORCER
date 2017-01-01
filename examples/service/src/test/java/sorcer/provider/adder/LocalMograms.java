@@ -6,12 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Proc;
-import sorcer.core.exertion.ObjectTask;
 import sorcer.provider.adder.impl.AdderImpl;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -95,7 +92,7 @@ public class LocalMograms {
 	public void evalauteLocalModel() throws Exception {
 
 		// three entry model
-		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
+		ServiceModel mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
 				ent(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
 				sorcer.mo.operator.response("add", "arg/x1", "arg/x2"));
 

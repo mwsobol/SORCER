@@ -32,7 +32,7 @@ import sorcer.core.provider.Cataloger;
 import sorcer.core.provider.Provider;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -163,7 +163,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
             return Mograms.isSpaceSingleton(job) || Mograms.isSpaceSequential(job);
         } else if(mogram instanceof Block)
             return Mograms.isSpaceBlock((Block)mogram);
-        else  if(mogram instanceof Model) {
+        else  if(mogram instanceof ServiceModel) {
             MogramStrategy ms = mogram.getMogramStrategy();
             return ms.getAccessType() == Strategy.Access.PULL &&  ms.getFlowType() == Strategy.Flow.SEQ;
         }

@@ -22,7 +22,7 @@ import sorcer.core.exertion.ObjectTask;
 import sorcer.service.Context;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.ModelingTask;
 
 /**
@@ -63,7 +63,7 @@ public class ModelerObjectTask extends ObjectTask implements ModelingTask {
 		this.taskModel = taskModel;
 	}
 
-	public Model getModel() {
+	public ServiceModel getModel() {
 		return taskModel.getModel();
 	}
 

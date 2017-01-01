@@ -58,7 +58,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ProcModel extends PositionalContext<Object> implements Model, Invocation<Object>,
+public class ProcModel extends PositionalContext<Object> implements ServiceModel, Invocation<Object>,
 		Mappable<Object>, Contexter<Object>, EntModeling {
 
     private static final long serialVersionUID = -6932730998474298653L;
@@ -251,7 +251,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 	}
 
 	@Override
-	public ServiceModel add(Identifiable... objects) throws ContextException, RemoteException {
+	public Model add(Identifiable... objects) throws ContextException, RemoteException {
 		Proc p = null;
 		boolean changed = false;
 		for (Identifiable obj : objects) {

@@ -18,12 +18,10 @@
 package sorcer.service;
 
 import sorcer.core.Name;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.Model;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Any named configuration parameter value in particular a free variable.
@@ -33,10 +31,10 @@ public interface Arg extends Serializable {
 	
 	public String getName();
 
-	public static ServiceModel getServiceModel(Arg[] args) {
+	public static Model getServiceModel(Arg[] args) {
 		  for (Arg arg : args) {
-			  if (arg instanceof ServiceModel)
-			   return (ServiceModel)arg;
+			  if (arg instanceof Model)
+			   return (Model)arg;
 		  }
 		return null;
 	}

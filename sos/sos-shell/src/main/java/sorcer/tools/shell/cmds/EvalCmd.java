@@ -22,7 +22,6 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.Contexts;
-import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.node.ContextNode;
@@ -31,7 +30,6 @@ import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.core.provider.logger.RemoteLoggerListener;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ServiceModel;
 import sorcer.tools.shell.INetworkShell;
 import sorcer.tools.shell.NetworkShell;
@@ -172,7 +170,7 @@ public class EvalCmd extends ShellCmd {
 //		out.println(">>>>>>>>>>> ServiceScripter.interpret result: " + target);
 		if (target == null) {
 			return;
-		} else if (!(target instanceof Model ||
+		} else if (!(target instanceof ServiceModel ||
 				target instanceof Exertion ||
 				target instanceof Proc)) {
 			out.println("\n---> EVALUATION RESULT --->");
@@ -208,8 +206,8 @@ public class EvalCmd extends ShellCmd {
 				out.println("\n---> EVALUATION RESULT --->");
 				if (result instanceof Exertion) {
 					out.println(((Mogram) result).getContext());
-				} else if (result instanceof Model) {
-					out.println(((Model) result).getResult());
+				} else if (result instanceof ServiceModel) {
+					out.println(((ServiceModel) result).getResult());
 				} else {
 					out.println(result);
 				}
@@ -244,15 +242,15 @@ public class EvalCmd extends ShellCmd {
 					}
 				} else {
 					out.println("\n---> MODEL RESPONSE --->");
-					if (target instanceof Model) {
-						out.println(((Model) result).getResult());
+					if (target instanceof ServiceModel) {
+						out.println(((ServiceModel) result).getResult());
 					} else {
 						out.println(result);
 					}
 				}
 				if (ifMogramControl) {
 					out.println("\n---> OUTPUT STRATEGY --->");
-					out.println(((Model) out).getMogramStrategy());
+					out.println(((ServiceModel) out).getMogramStrategy());
 				}
 			} else {
 				out.println("\n---> EVALUATION RESULT --->");

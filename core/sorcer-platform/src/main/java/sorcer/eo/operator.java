@@ -633,17 +633,17 @@ public class operator {
 		}
 	}
 
-	public Context rm(Model model, String path) {
+	public Context rm(ServiceModel model, String path) {
 		return remove(model, path);
 	}
 
-	public Context remove(Model model, String path) {
+	public Context remove(ServiceModel model, String path) {
 		ServiceContext context = (ServiceContext) model;
 		context.getData().remove(path);
 		return context;
 	}
 
-	public static Context add(Model model, Identifiable... objects) throws ContextException, RemoteException {
+	public static Context add(ServiceModel model, Identifiable... objects) throws ContextException, RemoteException {
 		return add((Context) model, objects);
 	}
 
@@ -743,7 +743,7 @@ public class operator {
 		return context;
 	}
 
-	public static Context put(Model model, Identifiable... objects)
+	public static Context put(ServiceModel model, Identifiable... objects)
 			throws RemoteException, ContextException {
 		return put((Context) model, objects);
 	}
@@ -1901,11 +1901,11 @@ public class operator {
 		return task;
 	}
 
-	public static <M extends ServiceModel> M mdl(Object... items) throws ContextException, SortingException {
+	public static <M extends Model> M mdl(Object... items) throws ContextException, SortingException {
 		return model(items);
 	}
 
-	public static <M extends ServiceModel> M model(Object... items) throws ContextException, SortingException {
+	public static <M extends Model> M model(Object... items) throws ContextException, SortingException {
 		String name = "unknown" + count++;
 		boolean hasEntry = false;
 		boolean evalType = false;
@@ -1939,7 +1939,7 @@ public class operator {
 			}
 		}
 		if ((hasEntry || hasSignature && hasEntry) && !hasExertion) {
-			ServiceModel mo = null;
+			Model mo = null;
 			if (srvType) {
 				mo = srvModel(items);
 			} else if (procType) {
@@ -2316,7 +2316,7 @@ public class operator {
 //			}
 		} else if (mogram instanceof Exertion) {
 			obj = (((Exertion) mogram).getContext()).asis(path);
-		} else if (mogram instanceof Model) {
+		} else if (mogram instanceof ServiceModel) {
 			obj =  rasis((ServiceContext) mogram, path);
 		}
 		return obj;
@@ -2375,7 +2375,7 @@ public class operator {
 		return service.exert(mogram, txn, entries);
 	}
 
-	public static Object eval(Model model, Arg... args)
+	public static Object eval(ServiceModel model, Arg... args)
 			throws ContextException {
 		try {
 			synchronized (model) {
@@ -2436,7 +2436,7 @@ public class operator {
 		}
 	}
 
-	public static Object eval(Model model, String evalSelector,
+	public static Object eval(ServiceModel model, String evalSelector,
 							  Arg... args) throws ContextException {
 		try {
 			return model.getValue(evalSelector, args);
@@ -2575,8 +2575,8 @@ public class operator {
 			if (service instanceof Entry || service instanceof Signature ) {
 				return service.exec(args);
 			} else if (service instanceof Context || service instanceof FiMogram) {
-				if (service instanceof Model) {
-					return ((Model)service).getResponse(args);
+				if (service instanceof ServiceModel) {
+					return ((ServiceModel)service).getResponse(args);
 				} else {
 					return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
 				}
@@ -2585,14 +2585,14 @@ public class operator {
 			} else if (service instanceof Evaluation) {
 				return ((Evaluation) service).getValue(args);
 			} else if (service instanceof Modeling) {
-				ServiceModel cxt = Arg.getServiceModel(args);
+				Model cxt = Arg.getServiceModel(args);
 				if (cxt != null) {
 					return ((Modeling) service).evaluate((ServiceContext)cxt);
 				} else {
 					((Context)service).substitute(args);
 					((Modeling) service).evaluate();
 				}
-				return ((Model)service).getResult();
+				return ((ServiceModel)service).getResult();
 			}else {
 				return service.exec(args);
 			}

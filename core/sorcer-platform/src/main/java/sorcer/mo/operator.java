@@ -17,7 +17,6 @@
 
 package sorcer.mo;
 
-import sorcer.core.Name;
 import sorcer.core.context.MapContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
@@ -33,8 +32,8 @@ import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
@@ -56,7 +55,7 @@ public class operator {
         return value;
     }
 
-    public static Model setValue(Model model, String entName, Object value)
+    public static ServiceModel setValue(ServiceModel model, String entName, Object value)
         throws ContextException {
         Object entry = model.asis(entName);
         if (entry == null)
@@ -85,7 +84,7 @@ public class operator {
         return model;
     }
 
-    public static Model setValue(Model model, String entName, String path, Object value)
+    public static ServiceModel setValue(ServiceModel model, String entName, String path, Object value)
         throws ContextException {
         Object entry = model.asis(entName);
         if (entry instanceof ContextEntry) {
@@ -96,7 +95,7 @@ public class operator {
         return model;
     }
 
-    public static Model setValue(Model model, String entName, Entry... entries)
+    public static ServiceModel setValue(ServiceModel model, String entName, Entry... entries)
             throws ContextException {
         Object entry = model.asis(entName);
         if (entry != null) {
@@ -111,7 +110,7 @@ public class operator {
         return model;
     }
 
-    public static Model setValue(Model model, Entry... entries) throws ContextException {
+    public static ServiceModel setValue(ServiceModel model, Entry... entries) throws ContextException {
         for(Entry ent :entries) {
             setValue(model, ent.getName(), ent.value());
         }
@@ -153,44 +152,44 @@ public class operator {
         return (ProcModel) context(dest);
     }
 
-    public static Model inConn(Model model, Context inConnector) {
+    public static ServiceModel inConn(ServiceModel model, Context inConnector) {
         ((ServiceContext)model).getMogramStrategy().setInConnector(inConnector);
         if (inConnector instanceof MapContext)
             ((MapContext)inConnector).direction =  MapContext.Direction.IN;
         return model;
     }
 
-    public static Model outConn(Model model, Context outConnector) {
+    public static ServiceModel outConn(ServiceModel model, Context outConnector) {
         ((ServiceContext) model).getMogramStrategy().setOutConnector(outConnector);
         if (outConnector instanceof MapContext)
             ((MapContext)outConnector).direction = MapContext.Direction.OUT;
         return model;
     }
 
-    public static Model responseClear(Model model) throws ContextException {
+    public static ServiceModel responseClear(ServiceModel model) throws ContextException {
             ((ServiceContext)model).getMogramStrategy().getResponsePaths().clear();
         return model;
     }
 
-    public static ServiceModel responseUp(ServiceModel model, String... responsePaths) throws ContextException {
+    public static Model responseUp(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
             ((ServiceContext)model).getMogramStrategy().getResponsePaths().add(new Path(path));
         return model;
     }
 
-    public static ServiceModel clearResponse(ServiceModel model) throws ContextException {
+    public static Model clearResponse(Model model) throws ContextException {
         ((ServiceContext) model).getMogramStrategy().getResponsePaths().clear();
         return model;
     }
 
-    public static ServiceModel responseDown(ServiceModel model, String... responsePaths) throws ContextException {
+    public static Model responseDown(Model model, String... responsePaths) throws ContextException {
         for (String path : responsePaths) {
             ((ServiceContext) model).getMogramStrategy().getResponsePaths().remove(new Path(path));
         }
         return model;
     }
 
-    public static Entry ent(String path, ServiceModel model) {
+    public static Entry ent(String path, Model model) {
         return new Entry(path, model);
     }
 
@@ -210,15 +209,15 @@ public class operator {
         }
     }
 
-    public static Context result(ServiceModel model) throws ContextException {
+    public static Context result(Model model) throws ContextException {
         return ((ServiceContext)model).getMogramStrategy().getOutcome();
     }
 
-    public static Object result(ServiceModel model, String path) throws ContextException {
+    public static Object result(Model model, String path) throws ContextException {
         return ((ServiceContext)model).getMogramStrategy().getOutcome().asis(path);
     }
 
-    public static Object get(ServiceModel model, String path) throws ContextException {
+    public static Object get(Model model, String path) throws ContextException {
         return ((ServiceContext)((ServiceContext)model).getMogramStrategy().getOutcome()).get(path);
     }
 
@@ -227,11 +226,11 @@ public class operator {
         return model;
     }
 
-    public static Context ins(ServiceModel model) throws ContextException {
+    public static Context ins(Model model) throws ContextException {
         return inputs(model);
     }
 
-    public static Context allInputs(ServiceModel model) throws ContextException {
+    public static Context allInputs(Model model) throws ContextException {
         try {
             return model.getAllInputs();
         } catch (RemoteException e) {
@@ -239,7 +238,7 @@ public class operator {
         }
     }
 
-    public static Context inputs(ServiceModel model) throws ContextException {
+    public static Context inputs(Model model) throws ContextException {
         try {
             return model.getInputs();
         } catch (RemoteException e) {
@@ -247,11 +246,11 @@ public class operator {
         }
     }
 
-    public static Context outs(ServiceModel model) throws ContextException {
+    public static Context outs(Model model) throws ContextException {
         return outputs(model);
     }
 
-    public static Context outputs(ServiceModel model) throws ContextException {
+    public static Context outputs(Model model) throws ContextException {
         try {
             return model.getOutputs();
         } catch (RemoteException e) {
@@ -259,11 +258,11 @@ public class operator {
         }
     }
 
-    public static Object resp(ServiceModel model, String path) throws ContextException {
+    public static Object resp(Model model, String path) throws ContextException {
         return response(model, path);
     }
 
-    public static Object response(ServiceModel model, String path) throws ContextException {
+    public static Object response(Model model, String path) throws ContextException {
         try {
             return ((ServiceContext)model).getResponseAt(path);
         } catch (RemoteException e) {
@@ -271,25 +270,25 @@ public class operator {
         }
     }
 
-    public static Context resp(ServiceModel model) throws ContextException {
+    public static Context resp(Model model) throws ContextException {
         return response(model);
     }
 
     public static Context response(Signature signature, Arg... args) throws ContextException {
         try {
-            return (Context) ((ServiceModel)instance(signature)).getResponse(args);
+            return (Context) ((Model)instance(signature)).getResponse(args);
         } catch (RemoteException | SignatureException e) {
             throw new ContextException(e);
         }
     }
 
-    public static ServiceModel setResponse(ServiceModel model, String... modelPaths) throws ContextException {
+    public static Model setResponse(Model model, String... modelPaths) throws ContextException {
         ((ModelStrategy)((Mogram)model).getMogramStrategy()).setResponsePaths(modelPaths);
         return model;
     }
 
 
-    public static Context response(ServiceModel model, Object... items) throws ContextException {
+    public static Context response(Model model, Object... items) throws ContextException {
         try {
             List<Arg> argl = new ArrayList();
             List<Path> paths = new ArrayList();;
@@ -317,7 +316,7 @@ public class operator {
         }
     }
 
-    public static void traced(Model model, boolean isTraced) throws ContextException {
+    public static void traced(ServiceModel model, boolean isTraced) throws ContextException {
         ((FidelityManager)model.getFidelityManager()).setTraced(isTraced);
     }
 
@@ -423,7 +422,7 @@ public class operator {
         return model;
     }
 
-    public static Model srvModel(Object... items) throws ContextException {
+    public static ServiceModel srvModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
         List<Signature> sigs = new ArrayList<>();
         Fidelity responsePaths = null;
@@ -436,7 +435,7 @@ public class operator {
                 sigs.add((Signature)item);
             } else if (item instanceof sorcer.eo.operator.Complement) {
                 complement = (sorcer.eo.operator.Complement)item;
-            } else if (item instanceof Model) {
+            } else if (item instanceof ServiceModel) {
                 model = ((SrvModel)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
@@ -488,7 +487,7 @@ public class operator {
         Object[] dest = new Object[items.length+1];
         System.arraycopy(items,  0, dest,  1, items.length);
         dest[0] = model;
-        return (Model)context(dest);
+        return (ServiceModel)context(dest);
     }
 
     public static void run(sorcer.util.Runner runner, Arg... args) throws SignatureException, MogramException {

@@ -34,8 +34,8 @@ import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Variability;
 import sorcer.service.modeling.Variability.Type;
 import sorcer.util.*;
@@ -53,7 +53,6 @@ import java.util.*;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
-import static sorcer.eo.operator.context;
 import static sorcer.po.operator.invoker;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -631,7 +630,7 @@ public class operator {
 		return collection.size();
 	}
 
-	public static int size(Model model) {
+	public static int size(ServiceModel model) {
 		return ((ServiceContext)model).size();
 	}
 
@@ -903,7 +902,7 @@ public class operator {
 			return (T)o;
 	}
 
-	public static <T> T asis(Model model, String path)
+	public static <T> T asis(ServiceModel model, String path)
 			throws ContextException {
 		return  ((ServiceContext<T>)model).asis(path);
 	}
@@ -913,8 +912,8 @@ public class operator {
         return  mappable.asis(path);
     }
 
-    public static Copier copier(ServiceModel fromContext, Arg[] fromEntries,
-								ServiceModel toContext, Arg[] toEntries) throws EvaluationException {
+    public static Copier copier(Model fromContext, Arg[] fromEntries,
+								Model toContext, Arg[] toEntries) throws EvaluationException {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
@@ -942,7 +941,7 @@ public class operator {
 			parModel.getData().remove(path);
 	}
 
-	public static Model dependsOn(Model model, Entry... entries) {
+	public static ServiceModel dependsOn(ServiceModel model, Entry... entries) {
         Map<String, List<Path>> dm = ((ServiceContext)model).getMogramStrategy().getDependentPaths();
         String path = null;
         Object dependentPaths = null;
@@ -957,7 +956,7 @@ public class operator {
 		return model;
     }
 
-    public static Map<String, List<Path>> dependencies(Model model) {
+    public static Map<String, List<Path>> dependencies(ServiceModel model) {
          return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
     
@@ -1090,15 +1089,15 @@ public class operator {
 		return instance(signature);
 	}
 
-	public static ServiceModel model(Signature signature) throws SignatureException {
+	public static Model model(Signature signature) throws SignatureException {
 		Object model = instance(signature);
-		if (!(model instanceof ServiceModel)) {
-			throw new SignatureException("Signature does not specify te ServiceModel: " + signature);
+		if (!(model instanceof Model)) {
+			throw new SignatureException("Signature does not specify te Model: " + signature);
 		}
-		if (model instanceof Model) {
-			((Model)model).setBuilder(signature);
+		if (model instanceof ServiceModel) {
+			((ServiceModel)model).setBuilder(signature);
 		}
-		return (ServiceModel) model;
+		return (Model) model;
 	}
 
 	public static URL url(String urlName) throws MalformedURLException {

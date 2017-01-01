@@ -1,9 +1,13 @@
 package sorcer.service;
 
+import net.jini.core.transaction.TransactionException;
+
+import java.rmi.RemoteException;
+
 /**
  * Created by Mike Sobolewski on 6/27/16.
  */
-public class Fidelity<T> implements Fi, Arg, net.jini.core.entry.Entry {
+public class Fidelity<T> implements Fi, Item, net.jini.core.entry.Entry {
     static final long serialVersionUID = 1L;
 
 	protected static int count = 0;
@@ -115,4 +119,12 @@ public class Fidelity<T> implements Fi, Arg, net.jini.core.entry.Entry {
                 + (type != null ? ":" + type : "");
 	}
 
+    @Override
+    public Object exec(Arg... args) throws ServiceException, RemoteException, TransactionException {
+        if (select instanceof Request) {
+            return ((Request)select).exec(args);
+        } else {
+            return select;
+        }
+    }
 }

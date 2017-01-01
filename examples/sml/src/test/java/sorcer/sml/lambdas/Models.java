@@ -12,7 +12,7 @@ import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.po.operator;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ServiceModel;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
@@ -35,7 +35,7 @@ public class Models {
 	@Test
 	public void lambdaModel() throws Exception {
 
-		Model mdl = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+		ServiceModel mdl = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
 				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
 				operator.lambda("add", (Context<Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
@@ -56,7 +56,7 @@ public class Models {
 	@Test
 	public void settingLambdaModel() throws Exception {
 
-		Model mdl = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+		ServiceModel mdl = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
 				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
 				operator.lambda("add", (Context<Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
@@ -78,7 +78,7 @@ public class Models {
 	public void lazyLambdaModel() throws Exception {
 		// evaluate multiply only once
 
-		Model mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+		ServiceModel mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
 				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
 				operator.ent("multiply/done", false),
 				operator.lambda("add", (Context<Double> model) ->
@@ -124,7 +124,7 @@ public class Models {
 	public void dynamicLambdaModel() throws Exception {
 		// change scope at runtime for a selected entry ("multiply") in the model
 
-		Model mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+		ServiceModel mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
 				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
 				operator.lambda("add", (Context <Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
@@ -155,7 +155,7 @@ public class Models {
 	@Test
 	public void lambdaModelWithReturnPath() throws Exception {
 
-		Model mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+		ServiceModel mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
 				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
 				operator.ent("arg/x1", 30.0), operator.ent("arg/x2", 90.0),
 				operator.lambda("add", (Context <Double> model) ->
@@ -192,7 +192,7 @@ public class Models {
 			return operator.ent("out", out);
 		};
 
-		Model mo = model(
+		ServiceModel mo = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
@@ -236,7 +236,7 @@ public class Models {
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("multiply/result")));
 
-		Model mo = model(
+		ServiceModel mo = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
@@ -348,7 +348,7 @@ public class Models {
                 result("result/y2", inPaths("arg/x1", "arg/x2")));
 
         // three entry multifidelity model with morphers
-        Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
+        ServiceModel mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 operator.ent("mFi1", mFi(mFi1Morpher, add, multiply)),
                 operator.ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),
                 operator.ent("mFi3", mFi(average, divide, multiply)),
