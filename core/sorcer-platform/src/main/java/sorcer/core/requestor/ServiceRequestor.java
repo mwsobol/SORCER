@@ -49,6 +49,7 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 	/** Logger for logging information about this instance */
 	protected static final Logger logger = LoggerFactory.getLogger(ServiceRequestor.class.getName());
 
+    protected String name;
 	protected Properties props;
 	static protected Class target;
 	static protected String[] args;
@@ -356,4 +357,9 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 		}
 
 	}
+
+    @Override
+    public String getName() {
+        return name;
+    }
 }

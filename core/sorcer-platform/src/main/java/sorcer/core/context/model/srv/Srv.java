@@ -25,7 +25,7 @@ import static sorcer.eo.operator.task;
 /**
  * Created by Mike Sobolewski on 4/14/15.
  */
-public class Srv extends Entry<Object> implements Variability<Object>, Arg,
+public class Srv extends Entry<Object> implements Variability<Object>,
         Comparable<Object>, Reactive<Object>, Serializable {
 
     private static Logger logger = LoggerFactory.getLogger(Srv.class.getName());

@@ -66,7 +66,7 @@ import java.util.List;
  * of the context.
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ServiceInvoker<T> extends Observable implements Identifiable, Scopable, Evaluator<T>, Invocation<T>, Reactive<T>, Observer, Serializable {
+public class ServiceInvoker<T> extends Observable implements  Invocation<T>, Identifiable, Scopable, Evaluator<T>, Reactive<T>, Observer, Serializable {
 
 	private static final long serialVersionUID = -2007501128660915681L;
 	

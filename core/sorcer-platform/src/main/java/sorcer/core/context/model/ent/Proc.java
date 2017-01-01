@@ -453,7 +453,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	 */
 	@Override
 	public Class getValueType() {
-		return null;
+		return _2.getClass();
 	}
 
 	/* (non-Javadoc)
