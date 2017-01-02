@@ -1391,35 +1391,35 @@ public class operator {
 	}
 
 	public static void selectFi(Mogram mogram, String selection) {
-		((FiMogram)mogram).selectFidelity(selection);
+		((MultiFiMogram)mogram).selectFidelity(selection);
 	}
 
-	public static FiMogram fiMog(ServiceFidelity<Request> fidelity) {
-		return new FiMogram(fidelity.getName(), fidelity);
+	public static MultiFiMogram fiMog(ServiceFidelity<Request> fidelity) {
+		return new MultiFiMogram(fidelity.getName(), fidelity);
 	}
-	public static FiMogram fiMog(MorphFidelity<Request> fidelity) {
-		return new FiMogram(fidelity.getName(), fidelity);
-	}
-
-	public static FiMogram fiMog(String name, ServiceFidelity<Request> fidelity) {
-		return new FiMogram(name, fidelity);
-	}
-	public static FiMogram fiMog(String name, MorphFidelity<Request> fidelity) {
-		return new FiMogram(name, fidelity);
+	public static MultiFiMogram fiMog(MorphFidelity<Request> fidelity) {
+		return new MultiFiMogram(fidelity.getName(), fidelity);
 	}
 
-	public static FiMogram fiMog(ServiceFidelity<Request> fidelity, Context context) {
-		return new FiMogram(context, fidelity);
+	public static MultiFiMogram fiMog(String name, ServiceFidelity<Request> fidelity) {
+		return new MultiFiMogram(name, fidelity);
+	}
+	public static MultiFiMogram fiMog(String name, MorphFidelity<Request> fidelity) {
+		return new MultiFiMogram(name, fidelity);
 	}
 
-	public static FiMogram fiMog(String name, MorphFidelity<Request> fidelity, Context context) {
-		FiMogram mfr = new FiMogram(context, fidelity);
+	public static MultiFiMogram fiMog(ServiceFidelity<Request> fidelity, Context context) {
+		return new MultiFiMogram(context, fidelity);
+	}
+
+	public static MultiFiMogram fiMog(String name, MorphFidelity<Request> fidelity, Context context) {
+		MultiFiMogram mfr = new MultiFiMogram(context, fidelity);
 		mfr.setName(fidelity.getName());
 		return mfr;
 	}
 
-	public static FiMogram fiMog(MorphFidelity<Request> fidelity, Context context) {
-		FiMogram mfr = new FiMogram(context, fidelity);
+	public static MultiFiMogram fiMog(MorphFidelity<Request> fidelity, Context context) {
+		MultiFiMogram mfr = new MultiFiMogram(context, fidelity);
 		mfr.setName(fidelity.getName());
 		return mfr;
 	}
@@ -2574,7 +2574,7 @@ public class operator {
 		try {
 			if (service instanceof Entry || service instanceof Signature ) {
 				return service.exec(args);
-			} else if (service instanceof Context || service instanceof FiMogram) {
+			} else if (service instanceof Context || service instanceof MultiFiMogram) {
 				if (service instanceof ServiceModel) {
 					return ((ServiceModel)service).getResponse(args);
 				} else {

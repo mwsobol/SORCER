@@ -28,7 +28,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.FiMogram;
+import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
@@ -197,8 +197,8 @@ public class SrvModel extends ProcModel implements ServiceModel, Invocation<Obje
                     if (rp != null && rp.path != null)
                         putValue(((Srv) val).getReturnPath().path, obj);
                     return obj;
-                }  else if (val2 instanceof FiMogram) {
-                    Object out = ((FiMogram)val2).exert(args);
+                }  else if (val2 instanceof MultiFiMogram) {
+                    Object out = ((MultiFiMogram)val2).exert(args);
                     Context cxt = null;
                     if (out instanceof Exertion) {
                         cxt = ((Exertion) out).getContext();

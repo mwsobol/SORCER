@@ -20,6 +20,7 @@ import sorcer.service.Arg;
 import sorcer.service.Fidelity;
 import sorcer.service.ServiceFidelity;
 import sorcer.service.Signature;
+import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Variability;
 
@@ -33,7 +34,7 @@ public class ModelSignature extends ServiceSignature {
 
 	private Signature innerSignature;
 	
-	private ServiceModel model;
+	private Model model;
 
 	public ModelSignature(String selector, Class serviceType, String providerName, Arg... parameters) {
 		super(selector, selector);
@@ -49,7 +50,7 @@ public class ModelSignature extends ServiceSignature {
 		}
 	}
 
-	public ModelSignature(String selector, ServiceModel model) {
+	public ModelSignature(String selector, Model model) {
 		super(selector, selector);
 		this.model = model;
 	}
@@ -123,7 +124,7 @@ public class ModelSignature extends ServiceSignature {
 		this.fidelity = fidelity;
 	}
 
-	public ServiceModel getModel() {
+	public Model getModel() {
 		return model;
 	}
 	

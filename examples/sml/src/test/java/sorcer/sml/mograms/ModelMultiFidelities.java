@@ -12,7 +12,7 @@ import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
-import sorcer.core.plexus.FiMogram;
+import sorcer.core.plexus.MultiFiMogram;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.ServiceModel;
@@ -407,7 +407,7 @@ public class ModelMultiFidelities {
         Entry e2 = ent("x2", 6.0);
         Entry e3 = ent("x3", 7.0);
 
-        FiMogram mfs = fiMog("args", rFi(e1, e2, e3));
+        MultiFiMogram mfs = fiMog("args", rFi(e1, e2, e3));
 
         Object out = exec(mfs);
         logger.info("out: " + out);
@@ -439,7 +439,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        FiMogram mfs = fiMog(mFi(morpher, e1, e2, e3));
+        MultiFiMogram mfs = fiMog(mFi(morpher, e1, e2, e3));
 
         Object out = exec(mfs);
         logger.info("out: " + out);
@@ -458,7 +458,7 @@ public class ModelMultiFidelities {
         Signature ms = sig("multiply", MultiplierImpl.class);
         Signature as = sig("add", AdderImpl.class);
 
-        FiMogram mfs = fiMog(rFi(ms, as), cxt);
+        MultiFiMogram mfs = fiMog(rFi(ms, as), cxt);
 
         Context out = (Context) exec(mfs);
         logger.info("out: " + out);
@@ -486,7 +486,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        FiMogram mfs = fiMog(mFi("sigFi", morpher, ms, as), cxt);
+        MultiFiMogram mfs = fiMog(mFi("sigFi", morpher, ms, as), cxt);
 
         Context out = (Context) exec(mfs);
         logger.info("out: " + out);
@@ -512,7 +512,7 @@ public class ModelMultiFidelities {
                         outVal("result/y")));
 
 
-        FiMogram mfs = fiMog(mFi("takFi", t5, t4));
+        MultiFiMogram mfs = fiMog(mFi("takFi", t5, t4));
         Mogram mog = exert(mfs);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(100.0));
@@ -548,7 +548,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        FiMogram mfs = fiMog(mFi(morpher, t5, t4));
+        MultiFiMogram mfs = fiMog(mFi(morpher, t5, t4));
         Mogram mog = exert(mfs);
         logger.info("out: " + context(mog));
         assertTrue(value(context(mog), "result/y").equals(100.0));

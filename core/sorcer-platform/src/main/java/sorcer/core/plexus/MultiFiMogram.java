@@ -42,16 +42,16 @@ import java.util.Set;
  *
  * Created by Mike Sobolewski
  */
-public class FiMogram extends ServiceMogram implements Multifidelity<Request> {
+public class MultiFiMogram extends ServiceMogram implements Multifidelity<Request> {
 
     protected ServiceFidelity<Request> requestFidelity;
 
     protected MorphFidelity<Request> morphFidelity;
 
-    public FiMogram() {
+    public MultiFiMogram() {
     }
 
-    public FiMogram(String name) throws SignatureException {
+    public MultiFiMogram(String name) throws SignatureException {
         super(name);
     }
 
@@ -60,11 +60,11 @@ public class FiMogram extends ServiceMogram implements Multifidelity<Request> {
         return scope.clearScope();
     }
 
-    public FiMogram(MorphFidelity<Request> fidelity) {
+    public MultiFiMogram(MorphFidelity<Request> fidelity) {
         this(fidelity.getName(), fidelity);
     }
 
-    public FiMogram(String name, MorphFidelity<Request> fidelity)  {
+    public MultiFiMogram(String name, MorphFidelity<Request> fidelity)  {
         super(name);
         morphFidelity = fidelity;
         if (fiManager == null)
@@ -77,17 +77,17 @@ public class FiMogram extends ServiceMogram implements Multifidelity<Request> {
         morphFidelity.addObserver((FidelityManager)fiManager);
     }
 
-    public FiMogram(String name, ServiceFidelity<Request> fidelity) {
+    public MultiFiMogram(String name, ServiceFidelity<Request> fidelity) {
         super(name);
         requestFidelity = fidelity;
     }
 
-    public FiMogram(Context context, MorphFidelity<Request> fidelity)  {
+    public MultiFiMogram(Context context, MorphFidelity<Request> fidelity)  {
         this(context.getName(), fidelity);
         scope = context;
     }
 
-    public FiMogram(Context context, ServiceFidelity<Request> fidelity) {
+    public MultiFiMogram(Context context, ServiceFidelity<Request> fidelity) {
         this(context.getName(), fidelity);
         scope = context;
     }
