@@ -643,7 +643,7 @@ public class operator {
 		return context;
 	}
 
-	public static Context add(ServiceModel model, Identifiable... objects) throws ContextException, RemoteException {
+	public static Context add(Model model, Identifiable... objects) throws ContextException, RemoteException {
 		return add((Context) model, objects);
 	}
 

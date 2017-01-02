@@ -15,6 +15,7 @@ import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.po.operator;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ServiceModel;
 
 import static org.junit.Assert.assertEquals;
@@ -62,7 +63,7 @@ public class ArithmeticMograms {
 	public void dynamicLambdaModel() throws Exception {
 		// change scope at runtime for a selected entry ("multiply") in the model
 
-		ServiceModel mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+		Model mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
 				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
 				operator.lambda("add", (Context <Double> model) ->
 						value(model, "add/x1") + value(model, "add/x2")),

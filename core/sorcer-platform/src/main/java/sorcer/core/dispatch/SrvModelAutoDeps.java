@@ -31,6 +31,7 @@ import sorcer.core.dispatch.graph.DirectedGraphRenderer;
 import sorcer.core.dispatch.graph.GraphNodeRenderer;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 
 import java.util.*;
 
@@ -145,7 +146,7 @@ public class SrvModelAutoDeps {
                     }
                 }
                 if (paths.size()>0) {
-                    operator.dependsOn(srvModel, dep(entryName, paths(paths.toArray())));
+                    operator.dependsOn((Model)srvModel, dep(entryName, paths(paths.toArray())));
                     String topNode = entryName;
                     if (entryToResultMap.containsKey(entryName))
                         topNode = entryToResultMap.get(entryName);

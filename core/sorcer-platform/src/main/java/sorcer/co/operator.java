@@ -902,7 +902,7 @@ public class operator {
 			return (T)o;
 	}
 
-	public static <T> T asis(ServiceModel model, String path)
+	public static <T> T asis(Model model, String path)
 			throws ContextException {
 		return  ((ServiceContext<T>)model).asis(path);
 	}
@@ -941,7 +941,11 @@ public class operator {
 			parModel.getData().remove(path);
 	}
 
-	public static ServiceModel dependsOn(ServiceModel model, Entry... entries) {
+	public static Model dependsOn(ServiceModel model, Entry... entries) {
+		return dependsOn(model, entries);
+	}
+
+	public static Model dependsOn(Model model, Entry... entries) {
         Map<String, List<Path>> dm = ((ServiceContext)model).getMogramStrategy().getDependentPaths();
         String path = null;
         Object dependentPaths = null;
@@ -956,7 +960,7 @@ public class operator {
 		return model;
     }
 
-    public static Map<String, List<Path>> dependencies(ServiceModel model) {
+    public static Map<String, List<Path>> dependencies(Model model) {
          return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
     

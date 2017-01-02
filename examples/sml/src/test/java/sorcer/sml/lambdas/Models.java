@@ -12,6 +12,7 @@ import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.po.operator;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ServiceModel;
 
 import static org.junit.Assert.assertTrue;
@@ -124,7 +125,7 @@ public class Models {
 	public void dynamicLambdaModel() throws Exception {
 		// change scope at runtime for a selected entry ("multiply") in the model
 
-		ServiceModel mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+		Model mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
 				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
 				operator.lambda("add", (Context <Double> model) ->
 						v(model, "add/x1") + v(model, "add/x2")),
@@ -155,7 +156,7 @@ public class Models {
 	@Test
 	public void lambdaModelWithReturnPath() throws Exception {
 
-		ServiceModel mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+		Model mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
 				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
 				operator.ent("arg/x1", 30.0), operator.ent("arg/x2", 90.0),
 				operator.lambda("add", (Context <Double> model) ->
@@ -236,7 +237,7 @@ public class Models {
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("multiply/result")));
 
-		ServiceModel mo = model(
+		Model mo = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",

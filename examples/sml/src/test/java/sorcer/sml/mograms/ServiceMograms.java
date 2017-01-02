@@ -20,6 +20,7 @@ import sorcer.service.Context;
 import sorcer.service.Job;
 import sorcer.service.Strategy.Flow;
 import sorcer.service.Task;
+import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ServiceModel;
 
 import static org.junit.Assert.assertTrue;
@@ -265,12 +266,12 @@ public class ServiceMograms {
     public void remoteModeler() throws Exception {
         // get response from a service model with inner model
 
-        ServiceModel innerMdl = model("inner/multiply",
+        Model innerMdl = model("inner/multiply",
                 ent(sig("inner/multiply/out", "multiply", Multiplier.class,
                         result("multiply/out", inPaths("arg/x1", "arg/x2")))),
                 response("inner/multiply/out"));
 
-        ServiceModel outerMdl = model(
+        Model outerMdl = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", Multiplier.class, result("multiply/out",
