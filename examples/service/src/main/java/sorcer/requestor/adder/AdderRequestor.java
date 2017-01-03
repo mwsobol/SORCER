@@ -4,7 +4,7 @@ import sorcer.core.requestor.ServiceRequestor;
 import sorcer.mo.operator;
 import sorcer.provider.adder.Adder;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 
 import java.io.File;
 
@@ -50,7 +50,7 @@ public class AdderRequestor extends ServiceRequestor {
                         result("out/y")));
     }
 
-    private ServiceModel createModel() throws Exception {
+    private ContextModel createModel() throws Exception {
         Double v1 = new Double(getProperty("arg/x1"));
         Double v2 = new Double(getProperty("arg/x2"));
 

@@ -633,11 +633,11 @@ public class operator {
 		}
 	}
 
-	public Context rm(ServiceModel model, String path) {
+	public Context rm(ContextModel model, String path) {
 		return remove(model, path);
 	}
 
-	public Context remove(ServiceModel model, String path) {
+	public Context remove(ContextModel model, String path) {
 		ServiceContext context = (ServiceContext) model;
 		context.getData().remove(path);
 		return context;
@@ -743,7 +743,7 @@ public class operator {
 		return context;
 	}
 
-	public static Context put(ServiceModel model, Identifiable... objects)
+	public static Context put(ContextModel model, Identifiable... objects)
 			throws RemoteException, ContextException {
 		return put((Context) model, objects);
 	}
@@ -2316,7 +2316,7 @@ public class operator {
 //			}
 		} else if (mogram instanceof Exertion) {
 			obj = (((Exertion) mogram).getContext()).asis(path);
-		} else if (mogram instanceof ServiceModel) {
+		} else if (mogram instanceof ContextModel) {
 			obj =  rasis((ServiceContext) mogram, path);
 		}
 		return obj;
@@ -2375,7 +2375,7 @@ public class operator {
 		return service.exert(mogram, txn, entries);
 	}
 
-	public static Object eval(ServiceModel model, Arg... args)
+	public static Object eval(ContextModel model, Arg... args)
 			throws ContextException {
 		try {
 			synchronized (model) {
@@ -2436,7 +2436,7 @@ public class operator {
 		}
 	}
 
-	public static Object eval(ServiceModel model, String evalSelector,
+	public static Object eval(ContextModel model, String evalSelector,
 							  Arg... args) throws ContextException {
 		try {
 			return model.getValue(evalSelector, args);
@@ -2575,8 +2575,8 @@ public class operator {
 			if (service instanceof Entry || service instanceof Signature ) {
 				return service.exec(args);
 			} else if (service instanceof Context || service instanceof MultiFiMogram) {
-				if (service instanceof ServiceModel) {
-					return ((ServiceModel)service).getResponse(args);
+				if (service instanceof ContextModel) {
+					return ((ContextModel)service).getResponse(args);
 				} else {
 					return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
 				}
@@ -2592,7 +2592,7 @@ public class operator {
 					((Context)service).substitute(args);
 					((Modeling) service).evaluate();
 				}
-				return ((ServiceModel)service).getResult();
+				return ((ContextModel)service).getResult();
 			}else {
 				return service.exec(args);
 			}

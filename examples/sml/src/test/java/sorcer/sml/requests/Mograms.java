@@ -12,7 +12,7 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.po.operator;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -39,7 +39,7 @@ public class Mograms {
     @Test
     public void evaluateModel() throws Exception  {
 
-        ServiceModel context = model(ent("x1", 20.0), ent("x2", 80.0),
+        ContextModel context = model(ent("x1", 20.0), ent("x2", 80.0),
                 ent("result/y", invoker("x1 + x2", operator.ents("x1", "x2"))));
 
         // declare response paths
@@ -57,7 +57,7 @@ public class Mograms {
     @Test
     public void modelInsOutsRsp() throws Exception  {
 
-        ServiceModel context = model(inVal("x1", 20.0), inVal("x2", 80.0),
+        ContextModel context = model(inVal("x1", 20.0), inVal("x2", 80.0),
                 outVal("result/y", invoker("x1 + x2", operator.ents("x1", "x2"))));
 
         Context inputs = inputs(context);
@@ -84,11 +84,11 @@ public class Mograms {
     @Test
     public void exertModel() throws Exception  {
 
-        ServiceModel model = model(sig("add", AdderImpl.class),
+        ContextModel model = model(sig("add", AdderImpl.class),
                 inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
                 outVal("result/y"));
 
-        ServiceModel out = exert(model);
+        ContextModel out = exert(model);
         assertEquals(6, size(out));
 
         logger.info("out : " + out);
@@ -103,7 +103,7 @@ public class Mograms {
     @Test
     public void exertSrvModel() throws Exception  {
 
-        ServiceModel m = model(
+        ContextModel m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",

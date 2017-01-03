@@ -34,7 +34,7 @@ import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Variability;
 import sorcer.service.Signature.ReturnPath;
 
@@ -54,7 +54,7 @@ import static sorcer.eo.operator.*;
  *   
  * Created by Mike Sobolewski on 1/29/15.
  */
-public class SrvModel extends ProcModel implements ServiceModel, Invocation<Object> {
+public class SrvModel extends ProcModel implements ContextModel, Invocation<Object> {
     private static final Logger logger = LoggerFactory.getLogger(SrvModel.class);
 
     public static SrvModel instance(Signature builder) throws SignatureException {
@@ -318,8 +318,8 @@ public class SrvModel extends ProcModel implements ServiceModel, Invocation<Obje
                 ((Srv) get(path)).setSrvValue(outCxt);
                 return outCxt;
             }
-        } else if (out instanceof ServiceModel) {
-            Context outCxt = (Context) ((ServiceModel)out).getResponse(entries);
+        } else if (out instanceof ContextModel) {
+            Context outCxt = (Context) ((ContextModel)out).getResponse(entries);
             append(outCxt);
             return outCxt;
         }

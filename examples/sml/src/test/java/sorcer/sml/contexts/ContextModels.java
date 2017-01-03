@@ -15,7 +15,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.po.operator;
 import sorcer.service.Context;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -42,7 +42,7 @@ public class ContextModels {
 
 		// use procModel to create an ProcModel the same way as a regular context
 		// or convert any context to procModel(<context>)
-		ServiceModel mdl = procModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
+		ContextModel mdl = procModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
 				val("arg/x3", 3.0), val("arg/x4", 4.0), val("arg/x5", 5.0));
 
 		add(mdl, ent("arg/x6", 6.0));
@@ -65,7 +65,7 @@ public class ContextModels {
 	@Test
 	public void modelingTarget() throws Exception {
 
-		ServiceModel mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+		ContextModel mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
 		add(mdl, ent("invoke", invoker("x1 + x3", operator.ents("x1", "x3"))));
@@ -89,13 +89,13 @@ public class ContextModels {
 	@Test
 	public void modelDependencies() throws Exception {
 
-		ServiceModel mdl1 = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+		ContextModel mdl1 = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 		add(mdl1, ent("y1", invoker("x1 + x3", operator.ents("x1", "x3"))));
 		add(mdl1, ent("y2", invoker("x4 * x5", operator.ents("x1", "x3"))));
 
 		// mdl2 depends on values y1 and y2 calculated in cxt1
-		ServiceModel mdl2 = procModel(ent("arg/y3", 8.0), ent("arg/y4", 9.0), ent("arg/y5", 10.0));
+		ContextModel mdl2 = procModel(ent("arg/y3", 8.0), ent("arg/y4", 9.0), ent("arg/y5", 10.0));
 		add(mdl2, ent("invoke", invoker("y1 + y2 + y4 + y5", operator.ents("y1", "y2", "y4", "y5"))));
 		responseUp(mdl2, "invoke");
 
@@ -110,7 +110,7 @@ public class ContextModels {
 
 	@Test
 	public void evaluateMultiEntryResponseModel() throws Exception {
-		ServiceModel mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+		ContextModel mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
 		add(mdl, ent("add", invoker("x1 + x3", operator.ents("x1", "x3"))));
@@ -130,7 +130,7 @@ public class ContextModels {
 	@Test
 	public void exertEntModel() throws Exception {
 
-		ServiceModel mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+		ContextModel mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
 		add(mdl, ent("add", invoker("x1 + x3", operator.ents("x1", "x3"))));
@@ -141,7 +141,7 @@ public class ContextModels {
 		responseUp(mdl, "add", "multiply");
 
 		// exert the model
-		ServiceModel model = exert(mdl);
+		ContextModel model = exert(mdl);
 		Context result = response(model);
 
 		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));

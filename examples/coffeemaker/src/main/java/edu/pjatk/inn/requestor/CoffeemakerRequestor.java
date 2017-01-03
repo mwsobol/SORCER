@@ -6,7 +6,6 @@ import sorcer.core.requestor.ServiceRequestor;
 import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ServiceModel;
 
 import java.io.File;
 

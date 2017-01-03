@@ -23,6 +23,6 @@ package sorcer.service.modeling;
  */
 public interface ModelingTask {
 
-    public ServiceModel getModel();
+    public ContextModel getModel();
 
 }

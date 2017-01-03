@@ -15,7 +15,6 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ServiceModel;
 
 import static edu.pjatk.inn.coffeemaker.impl.Recipe.getRecipe;
 import static org.junit.Assert.assertEquals;

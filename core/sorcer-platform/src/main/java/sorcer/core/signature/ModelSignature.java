@@ -21,7 +21,7 @@ import sorcer.service.Fidelity;
 import sorcer.service.ServiceFidelity;
 import sorcer.service.Signature;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Variability;
 
 public class ModelSignature extends ServiceSignature {
@@ -128,7 +128,7 @@ public class ModelSignature extends ServiceSignature {
 		return model;
 	}
 	
-	public void setModel(ServiceModel model) {
+	public void setModel(ContextModel model) {
 		this.model = model;
 	}
 	

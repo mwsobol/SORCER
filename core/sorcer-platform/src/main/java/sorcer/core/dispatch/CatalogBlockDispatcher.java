@@ -34,7 +34,7 @@ import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
@@ -96,8 +96,8 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             Condition.cleanupScripts(result);
             if (result instanceof ConditionalMogram) {
                 Mogram target = ((ConditionalMogram)result).getTarget();
-                if (target instanceof ServiceModel) {
-                    xrt.getContext().append((Context)((ServiceModel)target).getResult());
+                if (target instanceof ContextModel) {
+                    xrt.getContext().append((Context)((ContextModel)target).getResult());
                 }
             }
             //TODO Not very nice

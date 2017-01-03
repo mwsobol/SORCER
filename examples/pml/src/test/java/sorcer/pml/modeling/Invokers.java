@@ -18,7 +18,7 @@ import sorcer.core.invoker.OptInvoker;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -83,7 +83,7 @@ public class Invokers {
 	@Test
 	public void lambdaInvoker() throws Exception {
 
-		ServiceModel mo = model(val("x", 10.0), val("y", 20.0),
+		ContextModel mo = model(val("x", 10.0), val("y", 20.0),
 				proc(invoker("lambda",
 					(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
 					args("x", "y"))));

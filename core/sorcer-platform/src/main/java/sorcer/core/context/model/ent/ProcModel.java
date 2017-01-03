@@ -22,7 +22,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;
 import sorcer.service.Signature.ReturnPath;
@@ -58,7 +58,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ProcModel extends PositionalContext<Object> implements ServiceModel, Invocation<Object>,
+public class ProcModel extends PositionalContext<Object> implements ContextModel, Invocation<Object>,
 		Mappable<Object>, Contexter<Object>, EntModeling {
 
     private static final long serialVersionUID = -6932730998474298653L;

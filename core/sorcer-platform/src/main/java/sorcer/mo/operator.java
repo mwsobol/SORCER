@@ -33,7 +33,7 @@ import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
@@ -55,7 +55,7 @@ public class operator {
         return value;
     }
 
-    public static ServiceModel setValue(ServiceModel model, String entName, Object value)
+    public static ContextModel setValue(ContextModel model, String entName, Object value)
         throws ContextException {
         Object entry = model.asis(entName);
         if (entry == null)
@@ -84,7 +84,7 @@ public class operator {
         return model;
     }
 
-    public static ServiceModel setValue(ServiceModel model, String entName, String path, Object value)
+    public static ContextModel setValue(ContextModel model, String entName, String path, Object value)
         throws ContextException {
         Object entry = model.asis(entName);
         if (entry instanceof ContextEntry) {
@@ -95,7 +95,7 @@ public class operator {
         return model;
     }
 
-    public static ServiceModel setValue(ServiceModel model, String entName, Entry... entries)
+    public static ContextModel setValue(ContextModel model, String entName, Entry... entries)
             throws ContextException {
         Object entry = model.asis(entName);
         if (entry != null) {
@@ -110,7 +110,7 @@ public class operator {
         return model;
     }
 
-    public static ServiceModel setValue(ServiceModel model, Entry... entries) throws ContextException {
+    public static ContextModel setValue(ContextModel model, Entry... entries) throws ContextException {
         for(Entry ent :entries) {
             setValue(model, ent.getName(), ent.value());
         }
@@ -152,21 +152,21 @@ public class operator {
         return (ProcModel) context(dest);
     }
 
-    public static ServiceModel inConn(ServiceModel model, Context inConnector) {
+    public static ContextModel inConn(ContextModel model, Context inConnector) {
         ((ServiceContext)model).getMogramStrategy().setInConnector(inConnector);
         if (inConnector instanceof MapContext)
             ((MapContext)inConnector).direction =  MapContext.Direction.IN;
         return model;
     }
 
-    public static ServiceModel outConn(ServiceModel model, Context outConnector) {
+    public static ContextModel outConn(ContextModel model, Context outConnector) {
         ((ServiceContext) model).getMogramStrategy().setOutConnector(outConnector);
         if (outConnector instanceof MapContext)
             ((MapContext)outConnector).direction = MapContext.Direction.OUT;
         return model;
     }
 
-    public static ServiceModel responseClear(ServiceModel model) throws ContextException {
+    public static ContextModel responseClear(ContextModel model) throws ContextException {
             ((ServiceContext)model).getMogramStrategy().getResponsePaths().clear();
         return model;
     }
@@ -316,7 +316,7 @@ public class operator {
         }
     }
 
-    public static void traced(ServiceModel model, boolean isTraced) throws ContextException {
+    public static void traced(ContextModel model, boolean isTraced) throws ContextException {
         ((FidelityManager)model.getFidelityManager()).setTraced(isTraced);
     }
 
@@ -422,7 +422,7 @@ public class operator {
         return model;
     }
 
-    public static ServiceModel srvModel(Object... items) throws ContextException {
+    public static ContextModel srvModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
         List<Signature> sigs = new ArrayList<>();
         Fidelity responsePaths = null;
@@ -435,7 +435,7 @@ public class operator {
                 sigs.add((Signature)item);
             } else if (item instanceof sorcer.eo.operator.Complement) {
                 complement = (sorcer.eo.operator.Complement)item;
-            } else if (item instanceof ServiceModel) {
+            } else if (item instanceof ContextModel) {
                 model = ((SrvModel)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
@@ -487,7 +487,7 @@ public class operator {
         Object[] dest = new Object[items.length+1];
         System.arraycopy(items,  0, dest,  1, items.length);
         dest[0] = model;
-        return (ServiceModel)context(dest);
+        return (ContextModel)context(dest);
     }
 
     public static void run(sorcer.util.Runner runner, Arg... args) throws SignatureException, MogramException {

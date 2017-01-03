@@ -28,7 +28,7 @@ import sorcer.core.provider.RemoteLogger;
 import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.core.provider.logger.RemoteLoggerListener;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.tools.webster.InternalWebster;
 import sorcer.tools.webster.Webster;
 import sorcer.util.Sorcer;
@@ -179,7 +179,7 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 				if (mogram != null && mogram instanceof Exertion)
 					logger.info(">>>>>>>>>> Input context: \n" + ((Exertion) mogram).getContext());
 				else {
-					logger.info(">>>>>>>>>> Inputs: \n" + ((ServiceModel) mogram).getInputs());
+					logger.info(">>>>>>>>>> Inputs: \n" + ((ContextModel) mogram).getInputs());
 				}
 
 				// Starting RemoteLoggerListener
@@ -228,7 +228,7 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 				if (mogram instanceof Exertion) {
 					logger.info("<<<<<<<<<< Ouput context: \n" + ((Exertion) mogram).getContext());
 				} else {
-					logger.info("<<<<<<<<<< Response: \n" + ((ServiceModel) mogram).getResponse());
+					logger.info("<<<<<<<<<< Response: \n" + ((ContextModel) mogram).getResponse());
 				}
 			}
 			if (listener != null) listener.destroy();

@@ -42,7 +42,7 @@ import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Signature.ReturnPath;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
 import sorcer.util.ObjectCloner;
@@ -267,8 +267,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
-	public ServiceModel newInstance() throws SignatureException {
-		return (ServiceModel) sorcer.co.operator.instance(builder);
+	public ContextModel newInstance() throws SignatureException {
+		return (ContextModel) sorcer.co.operator.instance(builder);
 	}
 
 	public Context clearReturnPath() throws ContextException {

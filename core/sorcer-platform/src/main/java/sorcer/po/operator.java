@@ -28,7 +28,7 @@ import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.eo.operator.Args;
 import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Variability;
@@ -146,11 +146,11 @@ public class operator {
 		return srv(null, item);
 	}
 
-	public static Srv srv(String name, String path, ServiceModel model) {
+	public static Srv srv(String name, String path, ContextModel model) {
 		return new Srv(path, model, name);
 	}
 
-	public static Srv srv(String name, String path, ServiceModel model, Variability.Type type) {
+	public static Srv srv(String name, String path, ContextModel model, Variability.Type type) {
 		return new Srv(path, model, name, type);
 	}
 
@@ -646,7 +646,7 @@ public class operator {
 			return null;
 	}
 
-	public static Entry ent(ServiceModel model, String path) throws ContextException {
+	public static Entry ent(ContextModel model, String path) throws ContextException {
         return new Entry(path, model.asis(path));
     }
 

@@ -35,7 +35,7 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Variability;
 import sorcer.service.modeling.Variability.Type;
 import sorcer.util.*;
@@ -630,7 +630,7 @@ public class operator {
 		return collection.size();
 	}
 
-	public static int size(ServiceModel model) {
+	public static int size(ContextModel model) {
 		return ((ServiceContext)model).size();
 	}
 
@@ -941,7 +941,7 @@ public class operator {
 			parModel.getData().remove(path);
 	}
 
-	public static Model dependsOn(ServiceModel model, Entry... entries) {
+	public static Model dependsOn(ContextModel model, Entry... entries) {
 		return dependsOn(model, entries);
 	}
 
@@ -1098,8 +1098,8 @@ public class operator {
 		if (!(model instanceof Model)) {
 			throw new SignatureException("Signature does not specify te Model: " + signature);
 		}
-		if (model instanceof ServiceModel) {
-			((ServiceModel)model).setBuilder(signature);
+		if (model instanceof ContextModel) {
+			((ContextModel)model).setBuilder(signature);
 		}
 		return (Model) model;
 	}

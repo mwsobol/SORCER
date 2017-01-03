@@ -30,7 +30,7 @@ import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.core.provider.logger.RemoteLoggerListener;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.tools.shell.INetworkShell;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
@@ -170,7 +170,7 @@ public class EvalCmd extends ShellCmd {
 //		out.println(">>>>>>>>>>> ServiceScripter.interpret result: " + target);
 		if (target == null) {
 			return;
-		} else if (!(target instanceof ServiceModel ||
+		} else if (!(target instanceof ContextModel ||
 				target instanceof Exertion ||
 				target instanceof Proc)) {
 			out.println("\n---> EVALUATION RESULT --->");
@@ -206,8 +206,8 @@ public class EvalCmd extends ShellCmd {
 				out.println("\n---> EVALUATION RESULT --->");
 				if (result instanceof Exertion) {
 					out.println(((Mogram) result).getContext());
-				} else if (result instanceof ServiceModel) {
-					out.println(((ServiceModel) result).getResult());
+				} else if (result instanceof ContextModel) {
+					out.println(((ContextModel) result).getResult());
 				} else {
 					out.println(result);
 				}
@@ -242,15 +242,15 @@ public class EvalCmd extends ShellCmd {
 					}
 				} else {
 					out.println("\n---> MODEL RESPONSE --->");
-					if (target instanceof ServiceModel) {
-						out.println(((ServiceModel) result).getResult());
+					if (target instanceof ContextModel) {
+						out.println(((ContextModel) result).getResult());
 					} else {
 						out.println(result);
 					}
 				}
 				if (ifMogramControl) {
 					out.println("\n---> OUTPUT STRATEGY --->");
-					out.println(((ServiceModel) out).getMogramStrategy());
+					out.println(((ContextModel) out).getMogramStrategy());
 				}
 			} else {
 				out.println("\n---> EVALUATION RESULT --->");

@@ -25,7 +25,7 @@ import sorcer.service.*;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
 
-public interface Modeling extends ServiceModel {
+public interface Modeling extends ContextModel {
 
 	public EventRegistration register(long eventID, MarshalledObject handback,
 			RemoteEventListener toInform, long leaseLenght)

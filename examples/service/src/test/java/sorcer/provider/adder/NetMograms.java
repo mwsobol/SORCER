@@ -9,7 +9,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -95,7 +95,7 @@ public class NetMograms {
 	public void evalauteRemoteModel() throws Exception {
 
 		// three entry model
-		ServiceModel mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
+		ContextModel mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
 				ent(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
 				sorcer.mo.operator.response("add", "arg/x1", "arg/x2"));
 

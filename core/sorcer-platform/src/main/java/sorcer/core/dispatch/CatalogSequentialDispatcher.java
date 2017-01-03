@@ -23,7 +23,7 @@ import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.exertion.Mograms;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -89,7 +89,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                     previous = se.getContext();
                 } else if (mogram instanceof ProcModel) {
                     ((ProcModel)mogram).updateEntries(xrt.getContext());
-                    xrt.getDataContext().append((Context) ((ServiceModel) mogram).getResponse());
+                    xrt.getDataContext().append((Context) ((ContextModel) mogram).getResponse());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

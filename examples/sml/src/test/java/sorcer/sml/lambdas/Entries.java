@@ -8,7 +8,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.util.GenericUtil;
 
 import static java.lang.Math.pow;
@@ -42,7 +42,7 @@ Entries {
         assertEquals(10.3125, eval(y1));
 
         // the model itself as a free variable of the lambda y2
-        ServiceModel mo = model(ent("x1", 10.0), ent("x2", 20.0),
+        ContextModel mo = model(ent("x1", 10.0), ent("x2", 20.0),
                 lambda("y2", (Context<Double> cxt) ->
                         value(cxt, "x1") + value(cxt, "x2")));
 
@@ -73,7 +73,7 @@ Entries {
                 return ent("cmd/out", out.getOut());
         };
 
-        ServiceModel m = model(
+        ContextModel m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
@@ -95,7 +95,7 @@ Entries {
     @Test
     public void entryAsLambdaInvoker() throws Exception {
 
-        ServiceModel mo = model(ent("x", 10.0), ent("y", 20.0),
+        ContextModel mo = model(ent("x", 10.0), ent("y", 20.0),
                 proc(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
                         + value(cxt, "y")
                         + 30, args("x", "y"))));
@@ -107,7 +107,7 @@ Entries {
     public void lambdaService() throws Exception  {
 
         // an entry as a Service lambda
-        ServiceModel mo = model(ent("x", 10.0), ent("y", 20.0),
+        ContextModel mo = model(ent("x", 10.0), ent("y", 20.0),
                 lambda("s1", (Arg[] args) -> {
                     setArgValue(args, "x",  Arg.getValue(args, "y"));
                     return exec(Arg.getEntry(args, "x")); },
@@ -120,7 +120,7 @@ Entries {
     @Test
     public void lambdaClient() throws Exception {
         // args as ValueCallable and  Requestor lambdas
-        ServiceModel mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
+        ContextModel mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
                 lambda("multiply", (Context<Double> model) ->
                         value(model, "multiply/x1") * value(model, "multiply/x2")),
                 lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {

@@ -16,7 +16,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.util.Runner;
 import sorcer.util.DataTable;
 
@@ -390,7 +390,7 @@ public class CollectionOperators {
 	@Test
 	public void procModeling() throws Exception {
 
-		ServiceModel pm = model("proc-model", proc("John/weight", 180.0));
+		ContextModel pm = model("proc-model", proc("John/weight", 180.0));
 		add(pm, ent("x", 10.0), ent("y", 20.0));
 		add(pm, invoker("add", "x + y", args("x", "y")));
 

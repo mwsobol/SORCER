@@ -313,7 +313,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 			if (_2 != null && _2 != Context.none)
 				add((Context)mogram, this);
 			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Path(_1));
-			out = (Context) ((ServiceModel)mogram).getResponse();
+			out = (Context) ((ContextModel)mogram).getResponse();
 		} else if (mogram instanceof ServiceContext) {
 			if (_2 == null || _2 == Context.none) {
 				out.putValue(_1, ((Context)mogram).getValue(_1));

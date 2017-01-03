@@ -27,7 +27,7 @@ import sorcer.core.exertion.ObjectBlock;
 import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.*;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.ModelingTask;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerUtil;
@@ -158,7 +158,7 @@ abstract public class RendezvousBean implements Service, Exerter {
 					(provider != null ? provider.getProviderName() + " " : "")
 					+ this.getClass().getName());
             if (mogram instanceof ObjectJob || mogram instanceof ObjectBlock
-					|| mogram instanceof ServiceModel || mogram instanceof ModelingTask) {
+					|| mogram instanceof ContextModel || mogram instanceof ModelingTask) {
 				logger.info("{} is a local exertion", mogram.getName());
 				out = localExert(mogram, transaction, args);
 			} else {

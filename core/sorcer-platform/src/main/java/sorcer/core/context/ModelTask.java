@@ -20,7 +20,7 @@ import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.FilterException;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 
 import java.rmi.RemoteException;
 
@@ -56,7 +56,7 @@ public class ModelTask extends Task {
 			SignatureException, RemoteException {
 		try {
 			if (model != null) {
-				model = ((ServiceModel) model).exert(txn, args);
+				model = ((ContextModel) model).exert(txn, args);
 			} else {
 				super.doTask(args);
 			}
