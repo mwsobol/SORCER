@@ -1,5 +1,6 @@
 package sorcer.service;
 
+import net.jini.config.*;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
@@ -8,13 +9,15 @@ import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ContextSelector;
 import sorcer.core.monitor.MonitoringSession;
+import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.provider.Provider;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.util.Pool;
+import sorcer.util.Pools;
 
 import javax.security.auth.Subject;
 import java.io.Serializable;
@@ -29,7 +32,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected final static Logger logger = LoggerFactory.getLogger(ServiceMogram.class.getName());
 
-    static final long serialVersionUID = 1L;
+	static final long serialVersionUID = 1L;
 
     protected String name;
 
@@ -150,13 +153,15 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected boolean isValid = true;
 
+	protected String configFilename;
+
     protected transient Provider provider;
 
     protected ServiceMogram() {
         this(null);
     }
 
-    public ServiceMogram(String name) {
+    public ServiceMogram(String name)  {
         if (name == null || name.length() == 0)
             this.name = defaultName + count++;
         else
@@ -899,8 +904,15 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     @Override
     public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
-        if (fiManager != null)
+        if (fiManager != null) {
+            if (fidelities.length == 1 && fidelities[0] instanceof ServiceFidelity) {
+                List<Fidelity> fiList = ((ServiceFidelity)fidelities[0]).getSelects();
+                Fidelity[] fiArray = new Fidelity[fiList.size()];
+                fiList.toArray(fiArray);
+                fiManager.reconfigure(fiArray);
+            }
             fiManager.reconfigure(fidelities);
+        }
     }
 
     @Override
@@ -945,4 +957,51 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     public void setSelectedMetafidelity(ServiceFidelity<ServiceFidelity> metafidelity) {
         selectedMetafidelity = metafidelity;
     }
+
+	public void setConfigFilename(String configFilename) {
+		this.configFilename = configFilename;
+	}
+
+	public void loadFiPool() {
+        if (configFilename == null) {
+			logger.warn("No mogram configuration file available for: {}", name);
+		} else {
+			initConfig(new String[]{configFilename});
+		}
+    }
+
+    public void initConfig(String[] args) {
+        Configuration config;
+        try {
+            config = ConfigurationProvider.getInstance(args, getClass()
+                .getClassLoader());
+
+            Pool[] pools = (Pool[]) config.getEntry(Pools.COMPONENT, Pools.FI_POOL, Pool[].class);
+            Pool<Fidelity, Fidelity> pool = new Pool<>();
+            for (int i=0; i<pools.length; i++) {
+                pool.putAll((Map<? extends Fidelity, ? extends ServiceFidelity>) pools[i]);
+            }
+            Pools.putFiPool(this, pool);
+
+            List[] projections = (List[]) config.getEntry(Pools.COMPONENT, Pools.FI_PROJECTIONS, List[].class);
+            Map<String, ServiceFidelity<Fidelity>> metafidelities =
+                ((FidelityManager)getFidelityManager()).getMetafidelities();
+            for(int i=0; i<projections.length; i++ ) {
+                for (Projection po : (List<Projection>) projections[i]) {
+                    metafidelities.put(po.getName(), po);
+                }
+            }
+        } catch (net.jini.config.ConfigurationException e) {
+            logger.warn("configuratin failed for: " + configFilename);
+            e.printStackTrace();
+        }
+        logger.debug("config fiPool: " + Pools.getFiPool(mogramId));
+    }
+
+    @Override
+    public Mogram deploy(List<Signature> builders) throws ConfigurationException {
+        // to be implemented in subclasses
+        return this;
+    }
+
 }

@@ -1,19 +1,14 @@
 package sorcer.service;
 
+import net.jini.core.transaction.TransactionException;
+
+import java.rmi.RemoteException;
+
 /**
  * Created by Mike Sobolewski on 6/27/16.
  */
-public class Fidelity<T> implements Arg, net.jini.core.entry.Entry {
+public class Fidelity<T> implements Fi, Item, net.jini.core.entry.Entry {
     static final long serialVersionUID = 1L;
-
-    public enum Type implements Arg {
-		SELECT, META, NAME, SYS, ENTRY, SIG, CONTEXT, COMPONENT,
-		MORPH, MULTI, VAR, REQUEST, UPDATE, ADD, REPLACE, DELETE;
-
-		public String getName() {
-			return toString();
-		}
-	}
 
 	protected static int count = 0;
 
@@ -23,7 +18,7 @@ public class Fidelity<T> implements Arg, net.jini.core.entry.Entry {
 
 	protected T select;
 
-	public Type type = Type.NAME;
+	public Type type = Type.SELECT;
 
 	public Fidelity() {
 		super();
@@ -40,6 +35,13 @@ public class Fidelity<T> implements Arg, net.jini.core.entry.Entry {
 		this.name = name;
 		this.path = path;
 	}
+
+    public Fidelity(String name, String path, String select) {
+        this();
+        this.name = name;
+        this.path = path;
+        this.select = (T) select;
+    }
 
 	@Override
 	public String getName() {
@@ -70,25 +72,59 @@ public class Fidelity<T> implements Arg, net.jini.core.entry.Entry {
 		return type;
 	}
 
+	public void setType(Type type) {
+		this.type = type;
+	}
+
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Fidelity) {
-			if (select == null) {
-				return path.equals(((Fidelity) obj).getPath())
-						&& name.equals(((Fidelity) obj).getName());
-			} else {
-				return path.equals(((Fidelity) obj).getPath())
-						&& name.equals(((Fidelity) obj).getName())
-						&& select.equals(((Fidelity) obj).getSelect());
-			}
+	public int hashCode() {
+		String id = name + path + select;
+		int hash = id.length() + 1;
+		return hash * 31 + id.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object object) {
+
+		if(object == this) {
+			return true;
+		}
+		Boolean selectorEquality = true;
+		if  (((Fidelity)object).getSelect() != null && select != null)
+			selectorEquality = ((Fidelity) object).getSelect().equals(select);
+
+
+		if (object instanceof Fidelity
+				&& ((Fidelity) object).getName().equals(name)
+				&& ((Fidelity) object).getPath().equals(path)
+				&& selectorEquality
+				&& ((Fidelity) object).getType().equals(type)) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 
 	@Override
-	public String toString() {
-		return (path != null ? name + "@" + path : name);
+	public boolean isValid() {
+		//reimplement in subclasses
+		return true;
 	}
 
+	@Override
+	public String toString() {
+		return (path == null ? name :
+                name + "@" + path)
+                + (select != null ? ":" + select : "")
+                + (type != null ? ":" + type : "");
+	}
+
+    @Override
+    public Object exec(Arg... args) throws ServiceException, RemoteException, TransactionException {
+        if (select instanceof Request) {
+            return ((Request)select).exec(args);
+        } else {
+            return select;
+        }
+    }
 }

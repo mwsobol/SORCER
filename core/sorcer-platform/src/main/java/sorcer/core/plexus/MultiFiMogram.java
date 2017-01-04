@@ -21,6 +21,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.model.ent.Ref;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -41,16 +42,16 @@ import java.util.Set;
  *
  * Created by Mike Sobolewski
  */
-public class FiMogram extends ServiceMogram implements Multifidelity<Request> {
+public class MultiFiMogram extends ServiceMogram implements Multifidelity<Request> {
 
     protected ServiceFidelity<Request> requestFidelity;
 
     protected MorphFidelity<Request> morphFidelity;
 
-    public FiMogram() {
+    public MultiFiMogram() {
     }
 
-    public FiMogram(String name) throws SignatureException {
+    public MultiFiMogram(String name) throws SignatureException {
         super(name);
     }
 
@@ -59,34 +60,34 @@ public class FiMogram extends ServiceMogram implements Multifidelity<Request> {
         return scope.clearScope();
     }
 
-    public FiMogram(MorphFidelity<Request> fidelity) {
+    public MultiFiMogram(MorphFidelity<Request> fidelity) {
         this(fidelity.getName(), fidelity);
     }
 
-    public FiMogram(String name, MorphFidelity<Request> fidelity)  {
+    public MultiFiMogram(String name, MorphFidelity<Request> fidelity)  {
         super(name);
         morphFidelity = fidelity;
         if (fiManager == null)
             fiManager = new FidelityManager(name);
 
-        ((FidelityManager)fiManager).init(morphFidelity.getFidelity());
+        ((FidelityManager)fiManager).add(morphFidelity.getFidelity());
         ((FidelityManager)fiManager).setMogram(this);
         ((FidelityManager)fiManager).addMorphedFidelity(morphFidelity.getName(), morphFidelity);
         ((FidelityManager)fiManager).addFidelity(morphFidelity.getName(), morphFidelity.getFidelity());
         morphFidelity.addObserver((FidelityManager)fiManager);
     }
 
-    public FiMogram(String name, ServiceFidelity<Request> fidelity) {
+    public MultiFiMogram(String name, ServiceFidelity<Request> fidelity) {
         super(name);
         requestFidelity = fidelity;
     }
 
-    public FiMogram(Context context, MorphFidelity<Request> fidelity)  {
+    public MultiFiMogram(Context context, MorphFidelity<Request> fidelity)  {
         this(context.getName(), fidelity);
         scope = context;
     }
 
-    public FiMogram(Context context, ServiceFidelity<Request> fidelity) {
+    public MultiFiMogram(Context context, ServiceFidelity<Request> fidelity) {
         this(context.getName(), fidelity);
         scope = context;
     }
@@ -222,7 +223,7 @@ public class FiMogram extends ServiceMogram implements Multifidelity<Request> {
     }
 
     @Override
-    public Object get(String component) throws ServiceException {
+    public Object get(String component) {
         return requestFidelity.getSelect(component);
     }
 
@@ -243,7 +244,18 @@ public class FiMogram extends ServiceMogram implements Multifidelity<Request> {
 
     @Override
     public Request getSelect() {
-        return (Request) getMultifidelity().getSelect();
+        Request req = null;
+        Object select = getMultifidelity().getSelect();
+        if (select instanceof Ref) {
+            try {
+                req=  (Request) ((Ref) getMultifidelity().getSelect()).getValue();
+            } catch (EvaluationException | RemoteException e) {
+                e.printStackTrace();
+            }
+        } else{
+            req = (Request) getMultifidelity().getSelect();
+        }
+        return req;
     }
 
     @Override

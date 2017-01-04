@@ -21,7 +21,7 @@ package sorcer.service;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.Model;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -75,7 +75,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
+public interface Context<T> extends Model, Dependency, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
 
 	/** parameter (proc) */
 	final static String PATH_PAR = "proc";
@@ -312,7 +312,7 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 
 	public Context append(Context context) throws ContextException;
 
-	public Context<T> updateEntries(ServiceModel context) throws ContextException;
+	public Context<T> updateEntries(Model context) throws ContextException;
 	/**
 	 * Returns this context within its cuureent scope.
 	 *
@@ -917,6 +917,10 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 	public int size();
 
 	SignatureReturnPath getReturnPath();
+
+	public boolean compareTo(Object context);
+
+	public boolean compareTo(Object context, double delta);
 
 	Context setReturnPath(SignatureReturnPath returnPath);
 

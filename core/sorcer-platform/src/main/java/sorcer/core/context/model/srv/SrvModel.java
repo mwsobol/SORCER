@@ -28,13 +28,13 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.FiMogram;
+import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Variability;
 import sorcer.service.Signature.ReturnPath;
 
@@ -44,7 +44,7 @@ import java.util.*;
 import static sorcer.eo.operator.*;
 
 /**
- * A ServiceModel is a schematic description or representation of something, especially a system, 
+ * A Model is a schematic description or representation of something, especially a system,
  * phenomenon, or service, that accounts for its properties and is used to study its characteristics.
  * Properties of a service model are represented by path of Context with values that depend
  * on other properties and can be evaluated as specified by ths model. Evaluations of the service 
@@ -54,7 +54,7 @@ import static sorcer.eo.operator.*;
  *   
  * Created by Mike Sobolewski on 1/29/15.
  */
-public class SrvModel extends ProcModel implements Model, Invocation<Object> {
+public class SrvModel extends ProcModel implements ContextModel, Invocation<Object> {
     private static final Logger logger = LoggerFactory.getLogger(SrvModel.class);
 
     public static SrvModel instance(Signature builder) throws SignatureException {
@@ -197,8 +197,8 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
                     if (rp != null && rp.path != null)
                         putValue(((Srv) val).getReturnPath().path, obj);
                     return obj;
-                }  else if (val2 instanceof FiMogram) {
-                    Object out = ((FiMogram)val2).exert(args);
+                }  else if (val2 instanceof MultiFiMogram) {
+                    Object out = ((MultiFiMogram)val2).exert(args);
                     Context cxt = null;
                     if (out instanceof Exertion) {
                         cxt = ((Exertion) out).getContext();
@@ -318,8 +318,8 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
                 ((Srv) get(path)).setSrvValue(outCxt);
                 return outCxt;
             }
-        } else if (out instanceof Model) {
-            Context outCxt = (Context) ((Model)out).getResponse(entries);
+        } else if (out instanceof ContextModel) {
+            Context outCxt = (Context) ((ContextModel)out).getResponse(entries);
             append(outCxt);
             return outCxt;
         }
@@ -338,7 +338,7 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
             }
         }
 
-        List<T> choices = fi.getSelects();
+        List<T> choices = fi.getSelects(this);
         for (T s : choices) {
             if (selected == null && fi.getSelect() != null)
                 return fi.getSelect();

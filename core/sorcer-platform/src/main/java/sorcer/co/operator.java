@@ -24,6 +24,7 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.ContextEntry;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.plexus.FiEntry;
@@ -33,8 +34,8 @@ import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Variability;
 import sorcer.service.modeling.Variability.Type;
 import sorcer.util.*;
@@ -283,9 +284,28 @@ public class operator {
 		return ent;
 	}
 
-    public static Entry db(Entry entry) {
-		entry.setPersistent(true);
-		return entry;
+	public static ContextEntry contextVal(String path, Context value) {
+		ContextEntry ent = new ContextEntry(path, value);
+		ent.isValid(false);
+		ent.setType(Type.INPUT);
+		return ent;
+	}
+
+	public static ContextEntry cxtVal(String path, Context value) {
+		return contextVal(path, value) ;
+	}
+
+	public static ContextEntry contextVal(String path, Entry... entries) throws ContextException {
+		ServiceContext cxt = new ServiceContext();
+		for (Entry e : entries) {
+			cxt.put((String) e._1, e.get());
+		}
+		cxt.isValid(false);
+		return contextVal(path, cxt) ;
+	}
+
+	public static ContextEntry cxtVal(String path, Entry... entries) throws ContextException {
+		return contextVal(path, entries);
 	}
 
 	public static Entry in(Entry... entries) {
@@ -375,6 +395,10 @@ public class operator {
 		Entry ent = new Entry(path, null);
 		ent.setType(Variability.Type.VAL);
 		return ent;
+	}
+
+	public static Object val(Entry ent, String path) throws ContextException {
+		return  ((ContextEntry)ent).getContextValue(path);
 	}
 
     public static <T> OutputEntry<T> outVal(String path, T value) {
@@ -492,6 +516,18 @@ public class operator {
 		return entry;
 	}
 
+	public static ContextEntry setValue(Entry entry, String contextPath, Object value) throws ContextException {
+		((ContextEntry)entry).setValue(contextPath, value);
+		return (ContextEntry)entry;
+	}
+
+	public static ContextEntry setValue(Entry entry, Entry... entries) throws ContextException {
+		for (Entry e :  entries) {
+				((ContextEntry) entry).setValue(e.getName(), e.get());
+		}
+		return (ContextEntry)entry;
+	}
+
 	public static <S extends Setter> boolean isPersistent(S setter) {
 		return setter.isPersistent();
 	}
@@ -594,7 +630,7 @@ public class operator {
 		return collection.size();
 	}
 
-	public static int size(Model model) {
+	public static int size(ContextModel model) {
 		return ((ServiceContext)model).size();
 	}
 
@@ -787,6 +823,40 @@ public class operator {
 		return map;
 	}
 
+	public static <T extends Identifiable> Pool<String, T> pool(Fi.Type type, T... entries) {
+		Pool<String, T> map = new Pool<>();
+		map.setFiType(type);
+		for (T entry : entries) {
+			map.put(entry.getName(), entry);
+		}
+		return map;
+	}
+
+	public static <T extends Identifiable> Pool<String, T> pool(T... entries) {
+		Pool<String, T> map = new Pool<>();
+		for (T entry : entries) {
+			map.put(entry.getName(), entry);
+		}
+		return map;
+	}
+
+	public static <K, V> Pool<K, V> entPool(Fi.Type type, Tuple2<K, V>... entries) {
+		Pool<K, V> map = new Pool<>();
+		map.setFiType(type);
+		for (Tuple2<K, V> entry : entries) {
+			map.put(entry._1, entry._2);
+		}
+		return map;
+	}
+
+	public static <K, V> Pool<K, V> entPool(Tuple2<K, V>... entries) {
+		Pool<K, V> map = new Pool<>();
+		for (Tuple2<K, V> entry : entries) {
+			map.put(entry._1, entry._2);
+		}
+		return map;
+	}
+
 	public static <K, V> Map<K, V> map(Tuple2<K, V>... entries) {
 		Map<K, V> map = new HashMap<K, V>();
 		for (Tuple2<K, V> entry : entries) {
@@ -842,8 +912,8 @@ public class operator {
         return  mappable.asis(path);
     }
 
-    public static Copier copier(ServiceModel fromContext, Arg[] fromEntries,
-								ServiceModel toContext, Arg[] toEntries) throws EvaluationException {
+    public static Copier copier(Model fromContext, Arg[] fromEntries,
+								Model toContext, Arg[] toEntries) throws EvaluationException {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
@@ -869,6 +939,10 @@ public class operator {
 			throws RemoteException, ContextException {
 		for (String path : paths)
 			parModel.getData().remove(path);
+	}
+
+	public static Model dependsOn(ContextModel model, Entry... entries) {
+		return dependsOn(model, entries);
 	}
 
 	public static Model dependsOn(Model model, Entry... entries) {
@@ -1015,15 +1089,19 @@ public class operator {
 			return ((ObjectSignature) signature).initInstance();
 	}
 
-	public static ServiceModel model(Signature signature) throws SignatureException {
+	public static Object created(Signature signature) throws SignatureException {
+		return instance(signature);
+	}
+
+	public static Model model(Signature signature) throws SignatureException {
 		Object model = instance(signature);
-		if (!(model instanceof ServiceModel)) {
-			throw new SignatureException("Signature does not specify te ServiceModel: " + signature);
+		if (!(model instanceof Model)) {
+			throw new SignatureException("Signature does not specify te Model: " + signature);
 		}
-		if (model instanceof Model) {
-			((Model)model).setBuilder(signature);
+		if (model instanceof ContextModel) {
+			((ContextModel)model).setBuilder(signature);
 		}
-		return (ServiceModel) model;
+		return (Model) model;
 	}
 
 	public static URL url(String urlName) throws MalformedURLException {

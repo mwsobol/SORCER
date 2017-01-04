@@ -42,7 +42,7 @@ import sorcer.core.dispatch.ExertionSorter;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.FiMogram;
+import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.NetletSignature;
@@ -54,7 +54,7 @@ import sorcer.service.*;
 import sorcer.service.Exec.State;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.ProviderLocator;
 import sorcer.util.Sorcer;
@@ -206,7 +206,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 					return (T) out;
 				}
 			} else {
-				((Model)mogram).getResponse();
+				((ContextModel)mogram).getResponse();
 				return (T) mogram;
 			}
 		} catch (ContextException e) {
@@ -690,7 +690,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 				throw new ExertionException(e);
 			}
 		} else {
-			return ((Model)mogram).getResponse();
+			return ((ContextModel)mogram).getResponse();
 		}
 	}
 
@@ -888,31 +888,31 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 			} else if (service instanceof Exertion) {
 				return eval((Evaluation) service, args);
 			} else if (service instanceof ProcModel) {
-				((Model)service).getResponse(args);
+				((ContextModel)service).getResponse(args);
 			} else if (service instanceof Context) {
 				ServiceContext cxt = (ServiceContext)service;
 				cxt.substitute(args);
 				ReturnPath returnPath = cxt.getReturnPath();
 				if (cxt instanceof ProcModel) {
-					return ((Model)service).getResponse(args);
+					return ((ContextModel)service).getResponse(args);
 				} else if (returnPath != null){
 					return cxt.getValue(returnPath.path, args);
 				} else {
 					throw new ExertionException("No return path in the context: "
 							+ cxt.getName());
 				}
-			} else if (service instanceof FiMogram) {
+			} else if (service instanceof MultiFiMogram) {
 				Object out = null;
-				MorphFidelity morphFidelity = ((FiMogram)service).getMorphFidelity();
-				ServiceFidelity<Request> sfi = ((FiMogram)service).getServiceFidelity();
+				MorphFidelity morphFidelity = ((MultiFiMogram)service).getMorphFidelity();
+				ServiceFidelity<Request> sfi = ((MultiFiMogram)service).getServiceFidelity();
 				if (sfi == null) {
-					ServiceFidelity fi = ((FiMogram)service).getMorphFidelity().getFidelity();
+					ServiceFidelity fi = ((MultiFiMogram)service).getMorphFidelity().getFidelity();
 					Object select = fi.getSelect();
 					if (select != null) {
 						if (select instanceof Mogram)
 							out = ((Mogram) select).exert(args);
 						else {
-							Context cxt = ((FiMogram)service).getScope();
+							Context cxt = ((MultiFiMogram)service).getScope();
 							if (select instanceof Signature && cxt != null)
 								out = ((Service) select).exec(cxt);
 							else
@@ -920,7 +920,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 						}
 					}
 				}
-				Context cxt = ((FiMogram)service).getScope();
+				Context cxt = ((MultiFiMogram)service).getScope();
 				if (sfi.getSelect() instanceof Signature && cxt != null) {
 					out = sfi.getSelect().exec(cxt);
 				} else {

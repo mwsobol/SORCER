@@ -17,10 +17,6 @@
 
 package sorcer.service;
 
-import sorcer.service.modeling.ServiceModel;
-
-import java.rmi.RemoteException;
-
 /**
  * @author Mike Sobolewski
  */

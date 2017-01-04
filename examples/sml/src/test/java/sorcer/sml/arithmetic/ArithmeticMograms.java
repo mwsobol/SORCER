@@ -16,6 +16,7 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ContextModel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -40,7 +41,7 @@ public class ArithmeticMograms {
 	public void lambdaEntryModel() throws Exception {
 		// all model args as functions - Java lambda expressions
 
-		Model mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+		ContextModel mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
 				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
 				operator.lambda("add", (Context <Double> model) ->
 						value(model, "add/x1") + value(model, "add/x2"), args("add/x1", "add/x2")),
@@ -100,7 +101,7 @@ public class ArithmeticMograms {
 	@Test
 	public void lambdaModelWithReturnPath() throws Exception {
 
-		Model mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
+		ContextModel mo = model(operator.ent("multiply/x1", 10.0), operator.ent("multiply/x2", 50.0),
 				operator.ent("add/x1", 20.0), operator.ent("add/x2", 80.0),
 				operator.ent("arg/x1", 30.0), operator.ent("arg/x2", 90.0),
 				operator.lambda("add", (Context <Double> model) ->
@@ -127,7 +128,7 @@ public class ArithmeticMograms {
 	public void sigLocalModel() throws Exception {
 		// get response from a local service model and resolve dependencies
 
-		Model m = model(
+		ContextModel m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
@@ -149,7 +150,7 @@ public class ArithmeticMograms {
 	public void sigRemoteModel() throws Exception {
 		// get response from a remote service model and resolve dependencies
 
-		Model m = model(
+		ContextModel m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				operator.ent(sig("multiply", Multiplier.class, result("multiply/out",
@@ -171,7 +172,7 @@ public class ArithmeticMograms {
 	public void sigMixedModel() throws Exception {
 		// get response from a remote service model and resolve dependencies
 
-		Model m = model(
+		ContextModel m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				operator.ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
@@ -373,7 +374,7 @@ public class ArithmeticMograms {
                 result("result/y2", inPaths("arg/x1", "arg/x2")));
 
         // multifidelity model with morphers
-        Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
+        ContextModel mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 operator.ent("mFi1", mFi(mFi1Morpher, add, multiply)),
                 operator.ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),
                 operator.ent("mFi3", mFi(average, divide, multiply)),

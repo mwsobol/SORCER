@@ -148,7 +148,7 @@ public class EvaluationTask extends Task {
 			if (getProcessSignature().getReturnPath() != null)
 				dataContext.setReturnPath(getProcessSignature().getReturnPath());
 			dataContext.setReturnValue(result);
-			if (evaluator instanceof Scopable) {
+			if (evaluator instanceof Scopable && ((ServiceContext)(((Scopable)evaluator).getScope())) != null) {
 				((ServiceContext)(((Scopable)evaluator).getScope())).putValue(dataContext.getReturnPath().path, result);
 			}
 			if (evaluator instanceof Srv && dataContext.getScope() != null)

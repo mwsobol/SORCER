@@ -34,8 +34,6 @@ import sorcer.core.provider.Modeler;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Modeling;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

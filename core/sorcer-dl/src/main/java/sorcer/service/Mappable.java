@@ -18,8 +18,6 @@
 package sorcer.service;
 
 
-import sorcer.service.modeling.Model;
-
 /**
  * Implicit Maps such that a path indicates internal structure of composition
  * with the last inner component indicated by the path. Contexts, Exertions,

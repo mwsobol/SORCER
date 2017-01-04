@@ -178,7 +178,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
        // implement is subclasses
     }
 
-    public void init(ServiceFidelity<Fidelity> fidelity) {
+    public void add(ServiceFidelity<Fidelity> fidelity) {
         put(fidelity.getName(), fidelity);
     }
 
@@ -241,6 +241,11 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
                             morphFidelities.get(name).setMorpherSelect(path);
                         }
                         fiEnt.getValue().setSelect(path);
+                    } else if (fiEnt.getKey().equals(path)) {
+                        if (morphFidelities.get(path) != null) {
+                            morphFidelities.get(path).setMorpherSelect(path);
+                        }
+                        fiEnt.getValue().setSelect(name);
                     }
                 }
             }
@@ -312,6 +317,10 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
             }
         }
         return null;
+    }
+
+    public void reconfigure(FidelityList fiList) throws ContextException, RemoteException {
+        reconfigure(fiList.toFidelityArray());
     }
 
     @Override

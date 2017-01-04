@@ -12,10 +12,10 @@ import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
-import sorcer.core.plexus.FiMogram;
+import sorcer.core.plexus.MultiFiMogram;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ContextModel;
 
 import java.rmi.RemoteException;
 
@@ -26,7 +26,7 @@ import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.ent;
+import static sorcer.po.operator.*;
 
 /**
  * Created by Mike Sobolewski on 10/26/15.
@@ -41,7 +41,7 @@ public class ModelMultiFidelities {
     public void sigMultiFidelityModel() throws Exception {
 
         // three entry model
-        Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
+        ContextModel mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
                 ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
@@ -56,7 +56,7 @@ public class ModelMultiFidelities {
     public void entMultiFidelityModel() throws Exception {
 
         // three entry model
-        Model mdl = model(
+        ContextModel mdl = model(
                 ent("arg/x1", eFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
                 ent("arg/x2", eFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
                 ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
@@ -78,7 +78,7 @@ public class ModelMultiFidelities {
     public void entMultiFidelityModeWithFM() throws Exception {
 
         // three entry model
-        Model mdl = model(
+        ContextModel mdl = model(
                 ent("arg/x1", eFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
                 ent("arg/x2", eFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
                 ent("sFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
@@ -102,7 +102,7 @@ public class ModelMultiFidelities {
     public void sigMultiFidelityModel2() throws Exception {
 
         // three entry model
-        Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
+        ContextModel mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
                 ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
@@ -111,6 +111,47 @@ public class ModelMultiFidelities {
         logger.info("out: " + out);
         assertTrue(get(out, "mFi").equals(100.0));
         assertTrue(get(mod, "result/y").equals(100.0));
+    }
+
+    @Test
+    public void refSigMultiFidelityModel() throws Exception {
+
+        // three entry model
+        ContextModel mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
+            val("sig1", sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+            val("sig2", sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+
+            ent("mFi", sFi(ref("sig1"), ref("sig2"))),
+            response("mFi", "arg/x1", "arg/x2"));
+
+        Context out = response(mod, fi("mFi", "add"));
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi").equals(100.0));
+        assertTrue(get(mod, "result/y").equals(100.0));
+
+        out = response(mod, fi("mFi", "multiply"));
+        logger.info("out2: " + out);
+        assertTrue(get(out, "mFi").equals(900.0));
+    }
+
+    @Test
+    public void refInvokerMultiFidelityModel() throws Exception {
+
+        // three entry model
+        ContextModel mod = model(inVal("x1", 10.0), inVal("x2", 90.0),
+                val("eval1", invoker("add", "x1 + x2", ents("x1", "x2"))),
+                val("eval2", invoker("multiply", "x1 * x2", ents("x1", "x2"))),
+
+                ent("mFi", eFi(ref("eval1"), ref("eval2"))),
+                response("mFi", "x1", "x2"));
+
+        Context out = response(mod, fi("mFi", "add"));
+        logger.info("out: " + out);
+        assertTrue(get(out, "mFi").equals(100.0));
+
+        out = response(mod, fi("mFi", "multiply"));
+        logger.info("out2: " + out);
+        assertTrue(get(out, "mFi").equals(900.0));
     }
 
     @Test
@@ -153,7 +194,7 @@ public class ModelMultiFidelities {
                 result("result/y2", inPaths("arg/x1", "arg/x2")));
 
         // three entry multifidelity model
-        Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
+        ContextModel mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 ent("mFi1", mFi(add, multiply)),
                 ent("mFi2", mFi(average, divide, subtract)),
                 ent("mFi3", mFi(average, divide, multiply)),
@@ -211,7 +252,7 @@ public class ModelMultiFidelities {
                 result("result/y2", inPaths("arg/x1", "arg/x2")));
 
         // three entry multifidelity model
-        Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
+        ContextModel mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 ent("mFi1", mFi(add, multiply)),
                 ent("mFi2", mFi(average, divide, subtract)),
                 ent("mFi3", mFi(average, divide, multiply)),
@@ -271,7 +312,7 @@ public class ModelMultiFidelities {
         Entry averageEnt = ent(sig("average", AveragerImpl.class,
                 result("result/y2", inPaths("arg/x1", "arg/x2"))));
 
-        Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
+        ContextModel mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 addEnt, multiplyEnt, divideEnt, averageEnt,
                 ent("mFi1", mFi(addEnt, multiplyEnt)),
                 ent("mFi2", mFi(averageEnt, divideEnt, subtractEnt)),
@@ -336,7 +377,7 @@ public class ModelMultiFidelities {
                 result("result/y2", inPaths("arg/x1", "arg/x2")));
 
         // three entry multifidelity model with morphers
-        Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
+        ContextModel mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
 				ent("arg/y1", eFi(inVal("arg/y1/fi1", 10.0), inVal("arg/y1/fi2", 11.0))),
 				ent("arg/y2", eFi(inVal("arg/y2/fi1", 90.0), inVal("arg/y2/fi2", 91.0))),
                 ent("mFi1", mFi(morpher1, add, multiply)),
@@ -366,7 +407,7 @@ public class ModelMultiFidelities {
         Entry e2 = ent("x2", 6.0);
         Entry e3 = ent("x3", 7.0);
 
-        FiMogram mfs = fiMog("args", rFi(e1, e2, e3));
+        MultiFiMogram mfs = fiMog("args", rFi(e1, e2, e3));
 
         Object out = exec(mfs);
         logger.info("out: " + out);
@@ -398,7 +439,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        FiMogram mfs = fiMog(mFi(morpher, e1, e2, e3));
+        MultiFiMogram mfs = fiMog(mFi(morpher, e1, e2, e3));
 
         Object out = exec(mfs);
         logger.info("out: " + out);
@@ -417,7 +458,7 @@ public class ModelMultiFidelities {
         Signature ms = sig("multiply", MultiplierImpl.class);
         Signature as = sig("add", AdderImpl.class);
 
-        FiMogram mfs = fiMog(rFi(ms, as), cxt);
+        MultiFiMogram mfs = fiMog(rFi(ms, as), cxt);
 
         Context out = (Context) exec(mfs);
         logger.info("out: " + out);
@@ -445,7 +486,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        FiMogram mfs = fiMog(mFi("sigFi", morpher, ms, as), cxt);
+        MultiFiMogram mfs = fiMog(mFi("sigFi", morpher, ms, as), cxt);
 
         Context out = (Context) exec(mfs);
         logger.info("out: " + out);
@@ -471,7 +512,7 @@ public class ModelMultiFidelities {
                         outVal("result/y")));
 
 
-        FiMogram mfs = fiMog(mFi("takFi", t5, t4));
+        MultiFiMogram mfs = fiMog(mFi("takFi", t5, t4));
         Mogram mog = exert(mfs);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(100.0));
@@ -507,7 +548,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        FiMogram mfs = fiMog(mFi(morpher, t5, t4));
+        MultiFiMogram mfs = fiMog(mFi(morpher, t5, t4));
         Mogram mog = exert(mfs);
         logger.info("out: " + context(mog));
         assertTrue(value(context(mog), "result/y").equals(100.0));
@@ -517,7 +558,7 @@ public class ModelMultiFidelities {
         assertTrue(value(context(mog), "result/y").equals(500.0));
     }
 
-    public Model getMorphingModel() throws Exception {
+    public ContextModel getMorphingModel() throws Exception {
 
         Signature add = sig("add", AdderImpl.class,
                 result("y1", inPaths("arg/x1", "arg/x2")));
@@ -593,7 +634,7 @@ public class ModelMultiFidelities {
         ServiceFidelity<Fidelity> fi5 = fi("sysFi5", fi("mFi4", "t4"));
 
         // four entry multifidelity model with morphers
-        Model mdl = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
+        ContextModel mdl = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 ent("mFi1", mFi(morpher1, add, multiply)),
                 ent("mFi2", mFi(eFi(ent("ph2", morpher2), ent("ph4", morpher4)), average, divide, subtract)),
                 ent("mFi3", mFi(average, divide, multiply)),
@@ -607,7 +648,7 @@ public class ModelMultiFidelities {
 
     @Test
     public void morphingFidelities() throws Exception {
-        Model mdl = getMorphingModel();
+        ContextModel mdl = getMorphingModel();
         traced(mdl, true);
         Context out = response(mdl);
 
@@ -641,7 +682,7 @@ public class ModelMultiFidelities {
 
     @Test
     public void morphingFidelitiesLoop() throws Exception {
-        Model mdl = getMorphingModel();
+        ContextModel mdl = getMorphingModel();
 
         Block mdlBlock = block(
                 loop(condition(cxt -> (double) value(cxt, "mFi4") < 950.0), mdl));

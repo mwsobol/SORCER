@@ -25,11 +25,12 @@ import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.*;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.FiMogram;
+import sorcer.core.plexus.MultiFiMogram;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.eo.operator.Args;
+import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Variability;
 
 import java.net.URL;
@@ -145,11 +146,11 @@ public class operator {
 		return srv(null, item);
 	}
 
-	public static Srv srv(String name, String path, Model model) {
+	public static Srv srv(String name, String path, ContextModel model) {
 		return new Srv(path, model, name);
 	}
 
-	public static Srv srv(String name, String path, Model model, Variability.Type type) {
+	public static Srv srv(String name, String path, ContextModel model, Variability.Type type) {
 		return new Srv(path, model, name, type);
 	}
 
@@ -454,6 +455,12 @@ public class operator {
 		return new GroovyInvoker(expression, args);
 	}
 
+	public static ServiceInvoker invoker(String name, String expression, Arg... args) {
+		GroovyInvoker gi = new GroovyInvoker(expression, args);
+		gi.setName(name);
+		return gi;
+	}
+
     public static SysCall sysCall(String name, Context context) throws ContextException {
         return new SysCall(name, context);
     }
@@ -471,7 +478,7 @@ public class operator {
     }
 
     public static ServiceInvoker invoker(Args args) {
-        return new CmdInvoker(args.argsToStrings());
+        return new CmdInvoker(args.getNameArray());
     }
     public static IncrementInvoker inc(String path) {
 		return new IntegerIncrementor(path, 1);
@@ -626,7 +633,7 @@ public class operator {
 		return new ExecPath(name, invoker);
 	}
 
-	public static ServiceModel scope(Proc procEntry) {
+	public static Model scope(Proc procEntry) {
 		return procEntry.getScope();
 	}
 
@@ -639,7 +646,7 @@ public class operator {
 			return null;
 	}
 
-	public static Entry ent(Model model, String path) throws ContextException {
+	public static Entry ent(ContextModel model, String path) throws ContextException {
         return new Entry(path, model.asis(path));
     }
 
@@ -663,6 +670,17 @@ public class operator {
 		return entry;
 	}
 
+	public static <T> Ref<T> ref(SupportComponent component) {
+		Ref cr = new Ref();
+		cr._2 = component;
+		return cr;
+	}
+
+	public static <T> Ref<T> ref(String path, Arg... args) {
+		Ref cr = new Ref(path, args);
+		return cr;
+	}
+
 	public static <T> Entry<T> ent(String path, T value, Arg... args) {
 		Entry<T> entry = null;
 		if (value instanceof Invocation || value instanceof Evaluation) {
@@ -676,9 +694,9 @@ public class operator {
 			entry = (Entry<T>) srv(path, (Identifiable)value, cxt, args);
 		} else if (value instanceof ServiceFidelity) {
 			entry = (Entry<T>) new Srv(path, value);
-		} else if (value instanceof FiMogram) {
+		} else if (value instanceof MultiFiMogram) {
 			try {
-				((FiMogram)value).setUnifiedName(path);
+				((MultiFiMogram)value).setUnifiedName(path);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
@@ -717,6 +735,35 @@ public class operator {
 
 	public static Srv ent(Signature sig) {
 		return srv(sig);
+	}
+
+	public static <T> Tuple2<Fidelity, Fidelity> ent(Fidelity selectFi, Fidelity srvFi) throws ConfigurationException {
+		if (!srvFi.isValid()) {
+			String msg = "Misconfigured entry fidelity: " + srvFi + " for: " + selectFi;
+			logger.warn(msg);
+//			throw new ConfigurationException("Misconfigured fidelity: " + srvFi + " for: " + selectFi);
+		}
+		Tuple2<Fidelity, Fidelity> assoc =  new Tuple2<>(selectFi, srvFi);
+		if (srvFi.getType().equals(Fi.Type.GRADIENT)) {
+			// if no path set use its name - no multifidelities
+			if (selectFi.getPath().equals("")) {
+				selectFi.setPath(selectFi.getName());
+			}
+			// use a select gradient name if declared
+			if (selectFi.getSelect() == null) {
+				if (srvFi.getSelect() != null) {
+					selectFi.setSelect(srvFi.getSelect());
+				} else {
+					selectFi.setSelect((T) selectFi.getName());
+					srvFi.setSelect((T) selectFi.getName());
+				}
+			}
+		}
+		srvFi.setName(selectFi.getName());
+		srvFi.setPath(selectFi.getPath());
+//		srvFi.setSelect((T) selectFi.getSelect());
+		selectFi.setType(srvFi.getType());
+		return assoc;
 	}
 
 	public static Entry ent(String path) {
@@ -769,13 +816,13 @@ public class operator {
 	}
 
 	public static Srv lambda(String path, Service service, Args args) {
-		Srv srv = new Srv(path, path, service, args.argsToStrings());
+		Srv srv = new Srv(path, path, service, args.getNameArray());
 		srv.setType(Variability.Type.LAMBDA);
 		return srv;
 	}
 
 	public static Srv lambda(String path, Service service, String name, Args args) {
-		Srv srv = new Srv(name, path, service,  args.argsToStrings());
+		Srv srv = new Srv(name, path, service,  args.getNameArray());
 		srv.setType(Variability.Type.LAMBDA);
 		return srv;
 	}
@@ -799,7 +846,7 @@ public class operator {
 	}
 
 	public static <T> Srv lambda(String path, ValueCallable<T> call, Args args) {
-		Srv srv = new Srv(path, call, args.argsToStrings());
+		Srv srv = new Srv(path, call, args.getNameArray());
 		srv.setType(Variability.Type.LAMBDA);
 		return srv;
 	}

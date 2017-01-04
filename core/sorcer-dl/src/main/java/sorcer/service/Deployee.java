@@ -1,7 +1,7 @@
 /*
- * Copyright 2010 the original author or authors.
- * Copyright 2010 SorcerSoft.org.
- *  
+ * Copyright 2016 the original author or authors.
+ * Copyright 2016 SorcerSoft.org.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,15 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package sorcer.service.modeling;
-
+package sorcer.service;
 
 /**
- * @author Mike Sobolewski
+ * Created by Mike Sobolewski on 5/16/16.
  */
-public interface ModelingTask {
+public interface Deployee extends Arg {
 
-    public ContextModel getModel();
+    public void deploy() throws MogramException, ConfigurationException;
 
 }

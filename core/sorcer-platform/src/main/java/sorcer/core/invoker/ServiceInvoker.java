@@ -66,7 +66,7 @@ import java.util.List;
  * of the context.
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ServiceInvoker<T> extends Observable implements Identifiable, Scopable, Evaluator<T>, Invocation<T>, Reactive<T>, Observer, Serializable {
+public class ServiceInvoker<T> extends Observable implements  Invocation<T>, Identifiable, Scopable, Evaluator<T>, Reactive<T>, Observer, Serializable {
 
 	private static final long serialVersionUID = -2007501128660915681L;
 	
@@ -84,6 +84,8 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		
 	// invocation delegate to
 	Evaluator evaluator;
+
+	private boolean valueIsCurrent = false;
 
 	private boolean isReactive = false;
 
@@ -544,6 +546,15 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	@Override
 	public void setParameters(Object... args) {
 		// implemented by subclasses
+	}
+
+	@Override
+	public void setValueIsCurrent(boolean state) {
+		valueIsCurrent = state;
+	}
+
+	public boolean isValueCurrent() {
+		return valueIsCurrent;
 	}
 
 	@Override

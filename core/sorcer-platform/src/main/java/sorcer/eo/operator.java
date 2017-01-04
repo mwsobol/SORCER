@@ -25,14 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.operator.DataEntry;
 import sorcer.co.tuple.*;
-import sorcer.core.Name;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.QueueStrategy;
-import sorcer.core.context.model.ent.Proc;
-import sorcer.core.context.model.ent.ProcModel;
-import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.EntryList;
+import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.deploy.ServiceDeployment;
@@ -426,7 +422,7 @@ public class operator {
 		}
 		if (response != null) {
 			if (response.path() != null) {
-				((ServiceContext) cxt).getMogramStrategy().getResponsePaths().add(new Name(response.path()));
+				((ServiceContext) cxt).getMogramStrategy().getResponsePaths().add(new Path(response.path()));
 			}
 			((ServiceContext) cxt).getMogramStrategy().setResult(response.path(), response.target);
 		}
@@ -637,11 +633,11 @@ public class operator {
 		}
 	}
 
-	public Context rm(Model model, String path) {
+	public Context rm(ContextModel model, String path) {
 		return remove(model, path);
 	}
 
-	public Context remove(Model model, String path) {
+	public Context remove(ContextModel model, String path) {
 		ServiceContext context = (ServiceContext) model;
 		context.getData().remove(path);
 		return context;
@@ -747,7 +743,7 @@ public class operator {
 		return context;
 	}
 
-	public static Context put(Model model, Identifiable... objects)
+	public static Context put(ContextModel model, Identifiable... objects)
 			throws RemoteException, ContextException {
 		return put((Context) model, objects);
 	}
@@ -897,6 +893,18 @@ public class operator {
 		return signature;
 	}
 
+	public static SignatureDeployer deployer(String operation, Class serviceType)
+			throws SignatureException {
+		ObjectSignature builder = (ObjectSignature) sig(operation, serviceType, new Object[]{});
+		SignatureDeployer dpl = new SignatureDeployer(builder);
+		return dpl;
+	}
+
+	public static SignatureDeployer deployer(Signature... builders)
+			throws SignatureException {
+		return new SignatureDeployer(builders);
+	}
+
 	public static Signature sig(String operation, Class serviceType)
 			throws SignatureException {
 		return sig(operation, serviceType, new Object[]{});
@@ -1012,10 +1020,11 @@ public class operator {
 		Provision p = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
 		ServiceType srvType = null;
+		Args args = null;
 		if (items != null) {
 			for (Object o : items) {
 				if (o instanceof ProviderName) {
-					providerName = (ProviderName)o;
+					providerName = (ProviderName) o;
 					if (!(providerName instanceof ServiceName))
 						providerName.setName(Sorcer.getActualName(providerName.getName()));
 				} else if (o instanceof Provision) {
@@ -1034,6 +1043,8 @@ public class operator {
 //                        logger.warn("failed to load type for: {}", srvType.typeName);
 //                        serviceType = Object.class;
 //                    }
+				} else if (o instanceof Args) {
+					args = (Args) o;
 				}
 			}
 		}
@@ -1051,6 +1062,9 @@ public class operator {
             } else {
                 sig = new ObjectSignature(operation, serviceType);
                 sig.setProviderName(providerName);
+				if (args != null) {
+					((ObjectSignature)sig).setArgs(args.args);
+				}
             }
         }
 		((ServiceSignature) sig).setName(operation);
@@ -1376,40 +1390,36 @@ public class operator {
 		return srvFi;
 	}
 
-	public static void reconfigure(Mogram mogram, Fidelity... fidelities) throws RemoteException, ContextException {
-		mogram.getFidelityManager().reconfigure(fidelities);
-	}
-
 	public static void selectFi(Mogram mogram, String selection) {
-		((FiMogram)mogram).selectFidelity(selection);
+		((MultiFiMogram)mogram).selectFidelity(selection);
 	}
 
-	public static FiMogram fiMog(ServiceFidelity<Request> fidelity) {
-		return new FiMogram(fidelity.getName(), fidelity);
+	public static MultiFiMogram fiMog(ServiceFidelity<Request> fidelity) {
+		return new MultiFiMogram(fidelity.getName(), fidelity);
 	}
-	public static FiMogram fiMog(MorphFidelity<Request> fidelity) {
-		return new FiMogram(fidelity.getName(), fidelity);
-	}
-
-	public static FiMogram fiMog(String name, ServiceFidelity<Request> fidelity) {
-		return new FiMogram(name, fidelity);
-	}
-	public static FiMogram fiMog(String name, MorphFidelity<Request> fidelity) {
-		return new FiMogram(name, fidelity);
+	public static MultiFiMogram fiMog(MorphFidelity<Request> fidelity) {
+		return new MultiFiMogram(fidelity.getName(), fidelity);
 	}
 
-	public static FiMogram fiMog(ServiceFidelity<Request> fidelity, Context context) {
-		return new FiMogram(context, fidelity);
+	public static MultiFiMogram fiMog(String name, ServiceFidelity<Request> fidelity) {
+		return new MultiFiMogram(name, fidelity);
+	}
+	public static MultiFiMogram fiMog(String name, MorphFidelity<Request> fidelity) {
+		return new MultiFiMogram(name, fidelity);
 	}
 
-	public static FiMogram fiMog(String name, MorphFidelity<Request> fidelity, Context context) {
-		FiMogram mfr = new FiMogram(context, fidelity);
+	public static MultiFiMogram fiMog(ServiceFidelity<Request> fidelity, Context context) {
+		return new MultiFiMogram(context, fidelity);
+	}
+
+	public static MultiFiMogram fiMog(String name, MorphFidelity<Request> fidelity, Context context) {
+		MultiFiMogram mfr = new MultiFiMogram(context, fidelity);
 		mfr.setName(fidelity.getName());
 		return mfr;
 	}
 
-	public static FiMogram fiMog(MorphFidelity<Request> fidelity, Context context) {
-		FiMogram mfr = new FiMogram(context, fidelity);
+	public static MultiFiMogram fiMog(MorphFidelity<Request> fidelity, Context context) {
+		MultiFiMogram mfr = new MultiFiMogram(context, fidelity);
 		mfr.setName(fidelity.getName());
 		return mfr;
 	}
@@ -1443,6 +1453,16 @@ public class operator {
 		return fi;
 	}
 
+	public static Projection po(String name, Fidelity... fidelities) {
+		return projection(name, fidelities);
+	}
+
+	public static Projection projection(String name, Fidelity... fidelities) {
+		Projection p = new Projection(fidelities);
+		p.setName(name);
+		return p;
+	}
+
 	public static Projection po(Fidelity... fidelities) {
 		return new Projection(fidelities);
 	}
@@ -1450,6 +1470,12 @@ public class operator {
 	// projection of
 	public static Projection po(ServiceFidelity fidelity) {
 		return new Projection(fidelity);
+	}
+
+	public static Projection po(String name, ServiceFidelity fidelity) {
+		Projection p = new Projection(fidelity);
+		p.setName(name);
+		return p;
 	}
 
 	public static FidelityList fis(Fidelity... fidelities) {
@@ -1480,6 +1506,24 @@ public class operator {
 		return new FiEntry(index, fiList);
 	}
 
+	public static Fidelity fi(String name, String path, Fi.Type type) {
+		Fidelity fi = new Fidelity(name, path);
+		fi.type = type;
+		return fi;
+	}
+
+	public static Fidelity fi(String name, String path, int type) {
+		Fidelity fi = new Fidelity(name, path);
+		fi.type = Fi.Type.type(type);
+		return fi;
+	}
+
+	public static Fidelity<String> fi(String name, String path, String gradient) {
+		Fidelity<String> fi = new Fidelity(name, path, gradient);
+		fi.type = Fidelity.Type.GRADIENT;
+		return fi;
+	}
+
 	public static Fidelity fi(String name, String path) {
 		Fidelity fi = new Fidelity(name, path);
 		fi.type = Fidelity.Type.SELECT;
@@ -1505,6 +1549,19 @@ public class operator {
 		ServiceFidelity<Signature> fi = new ServiceFidelity(name, signatures);
 		fi.setSelect(signatures[0]);
 		fi.type = ServiceFidelity.Type.SIG;
+		return fi;
+	}
+
+	public static ServiceFidelity<Ref> sFi(String name, Ref... references) {
+		ServiceFidelity<Ref> fi = new ServiceFidelity(name, references);
+		fi.setSelect(references[0]);
+		fi.type = ServiceFidelity.Type.REF;
+		return fi;
+	}
+
+	public static ServiceFidelity<Ref> sFi(Ref... references) {
+		ServiceFidelity<Ref> fi = new ServiceFidelity(references);
+		fi.type = ServiceFidelity.Type.REF;
 		return fi;
 	}
 
@@ -1844,15 +1901,15 @@ public class operator {
 		return task;
 	}
 
-	public static <M extends ServiceModel> M mdl(Object... items) throws ContextException, SortingException {
+	public static <M extends Model> M mdl(Object... items) throws ContextException, SortingException {
 		return model(items);
 	}
 
-	public static <M extends ServiceModel> M model(Object... items) throws ContextException, SortingException {
+	public static <M extends Model> M model(Object... items) throws ContextException, SortingException {
 		String name = "unknown" + count++;
 		boolean hasEntry = false;
 		boolean evalType = false;
-		boolean parType = false;
+		boolean procType = false;
 		boolean srvType = false;
 		boolean hasExertion = false;
 		boolean hasSignature = false;
@@ -1868,7 +1925,7 @@ public class operator {
 				try {
 					hasEntry = true;
 					if (i instanceof Proc)
-						parType = true;
+						procType = true;
 					else if (i instanceof Srv) {
 						srvType = true;
 					} else if (((Entry) i).asis() instanceof Evaluation) {
@@ -1882,10 +1939,10 @@ public class operator {
 			}
 		}
 		if ((hasEntry || hasSignature && hasEntry) && !hasExertion) {
-			ServiceModel mo = null;
+			Model mo = null;
 			if (srvType) {
 				mo = srvModel(items);
-			} else if (parType) {
+			} else if (procType) {
 				try {
 					return (M) sorcer.po.operator.procModel(name, items);
 				} catch (Exception e) {
@@ -2259,7 +2316,7 @@ public class operator {
 //			}
 		} else if (mogram instanceof Exertion) {
 			obj = (((Exertion) mogram).getContext()).asis(path);
-		} else if (mogram instanceof Model) {
+		} else if (mogram instanceof ContextModel) {
 			obj =  rasis((ServiceContext) mogram, path);
 		}
 		return obj;
@@ -2318,7 +2375,7 @@ public class operator {
 		return service.exert(mogram, txn, entries);
 	}
 
-	public static Object eval(Model model, Arg... args)
+	public static Object eval(ContextModel model, Arg... args)
 			throws ContextException {
 		try {
 			synchronized (model) {
@@ -2379,17 +2436,13 @@ public class operator {
 		}
 	}
 
-	public static Object eval(Model model, String evalSelector,
+	public static Object eval(ContextModel model, String evalSelector,
 							  Arg... args) throws ContextException {
 		try {
 			return model.getValue(evalSelector, args);
 		} catch (RemoteException e) {
 			throw new ContextException(e);
 		}
-	}
-
-	public static <T> T val(Context<T> context, String path, Arg... args) throws ContextException {
-		return value(context, path, args);
 	}
 
 	public static <T> T value(Context<T> context, String path,
@@ -2521,9 +2574,9 @@ public class operator {
 		try {
 			if (service instanceof Entry || service instanceof Signature ) {
 				return service.exec(args);
-			} else if (service instanceof Context || service instanceof FiMogram) {
-				if (service instanceof Model) {
-					return ((Model)service).getResponse(args);
+			} else if (service instanceof Context || service instanceof MultiFiMogram) {
+				if (service instanceof ContextModel) {
+					return ((ContextModel)service).getResponse(args);
 				} else {
 					return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
 				}
@@ -2532,14 +2585,14 @@ public class operator {
 			} else if (service instanceof Evaluation) {
 				return ((Evaluation) service).getValue(args);
 			} else if (service instanceof Modeling) {
-				ServiceModel cxt = Arg.getServiceModel(args);
+				Model cxt = Arg.getServiceModel(args);
 				if (cxt != null) {
 					return ((Modeling) service).evaluate((ServiceContext)cxt);
 				} else {
 					((Context)service).substitute(args);
 					((Modeling) service).evaluate();
 				}
-				return ((Model)service).getResult();
+				return ((ContextModel)service).getResult();
 			}else {
 				return service.exec(args);
 			}
@@ -2827,7 +2880,7 @@ public class operator {
 		return new Args(args);
 	}
 
-	public static class Args extends Path {
+	public static class Args extends Path implements SupportComponent {
 		private static final long serialVersionUID = 1L;
 
 		public Object[] args = new Object[0];
@@ -2859,12 +2912,20 @@ public class operator {
 			return as;
 		}
 
-		public String[] argsToStrings() {
+		public String[] getNameArray() {
 			String[] as = new String[args.length];
 			for (int i = 0; i < args.length; i++) {
 				as[i] = args[i].toString();
 			}
 			return as;
+		}
+
+		public List<String> getNameList() {
+			List<String>  sl = new ArrayList(args.length);
+			for (int i = 0; i < args.length; i++) {
+				sl.add(args[i].toString());
+			}
+			return sl;
 		}
 
 		public int size() {
@@ -3429,6 +3490,10 @@ public class operator {
 
 	static class Fixed {
 		Fixed() {}
+	}
+
+	public static Configuration configFile(String filename) {
+		return new Configuration(filename);
 	}
 
 	public static PerNode perNode(int number) {

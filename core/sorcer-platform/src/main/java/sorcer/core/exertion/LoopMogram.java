@@ -21,7 +21,7 @@ import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
@@ -127,7 +127,7 @@ public class LoopMogram extends ConditionalMogram {
 				}
 				return this;
 			} else if (condition != null && max - min == 0) {
-				if (target instanceof Model) {
+				if (target instanceof ContextModel) {
 					Context cxt = condition.getConditionalContext();
 					condition.setConditionalContext((Context) target);
 					if (cxt != null && cxt.size() > 0) {

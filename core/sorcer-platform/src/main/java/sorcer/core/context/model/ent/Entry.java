@@ -20,7 +20,6 @@ package sorcer.core.context.model.ent;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.Name;
 import sorcer.core.context.ContextSelection;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
@@ -39,7 +38,7 @@ import static sorcer.eo.operator.add;
  * @author Mike Sobolewski
  */
 public class
-Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, EvaluationComponent, SupportComponent, Setter, Reactive<T> {
+Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, EvaluationComponent, SupportComponent, Scopable, Setter, Reactive<T> {
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
@@ -69,7 +68,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 	public Entry(final String path) {
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");
-		_1 = path;
+		this._1 = path;
 	}
 
 	public Entry(final String path, final T value) {
@@ -79,7 +78,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		if (v == null)
 			v = (T)Context.none;
 
-		_1 = path;
+		this._1 = path;
 		if (SdbUtil.isSosURL(v)) {
 			isPersistent = true;
 		}
@@ -97,6 +96,10 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 	public Entry(final String path, final T value, final String annotation) {
 		this(path, value);
 		this.annotation = annotation;
+	}
+
+	public T get() {
+		return _2;
 	}
 
 	@Override
@@ -222,7 +225,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 	@Override
 	public int hashCode() {
 		int hash = _1.length() + 1;
-		return hash = hash * 31 + _1.hashCode();
+		return hash * 31 + _1.hashCode();
 	}
 
 	@Override
@@ -309,8 +312,8 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		if (mogram instanceof ProcModel) {
 			if (_2 != null && _2 != Context.none)
 				add((Context)mogram, this);
-			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Name(_1));
-			out = (Context) ((Model)mogram).getResponse();
+			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Path(_1));
+			out = (Context) ((ContextModel)mogram).getResponse();
 		} else if (mogram instanceof ServiceContext) {
 			if (_2 == null || _2 == Context.none) {
 				out.putValue(_1, ((Context)mogram).getValue(_1));
@@ -340,7 +343,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		this.type = type;
 	}
 
-	public ServiceModel getScope() {
+	public Context getScope() {
 		return scope;
 	}
 
@@ -358,7 +361,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 
 	@Override
 	public Object exec(Arg... args) throws ServiceException, RemoteException {
-		ServiceModel cxt = Arg.getServiceModel(args);
+		Model cxt = Arg.getServiceModel(args);
 		if (cxt != null) {
 			// entry substitution
 			((ServiceContext)cxt).putValue(_1, _2);

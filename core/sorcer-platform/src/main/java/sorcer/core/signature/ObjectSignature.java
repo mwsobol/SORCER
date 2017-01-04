@@ -259,7 +259,7 @@ public class ObjectSignature extends ServiceSignature {
 	 */
 	public Object initInstance() throws SignatureException {
 		Object obj = null;
-		Method m;
+		Method m = null;
 
 		try {
 			if(operation.selector!=null) {
@@ -272,14 +272,17 @@ public class ObjectSignature extends ServiceSignature {
 					//skip;
 				}
 			}
-			if (initSelector == null || initSelector.equals("new")) {
+			if ((initSelector == null || initSelector.equals("new")) && args == null) {
 				obj = providerType.newInstance();
 				return obj;
 			}
 
-			if (argTypes != null)
-				m = providerType.getMethod(initSelector, argTypes);
-			else  {
+			if (argTypes != null) {
+				if (initSelector != null)
+					m = providerType.getMethod(initSelector, argTypes);
+				else if (operation.selector != null)
+					m = providerType.getMethod(operation.selector, argTypes);
+			} else  {
 				if (initSelector != null)
 					m = providerType.getMethod(initSelector);
 				else
@@ -287,11 +290,9 @@ public class ObjectSignature extends ServiceSignature {
 			}
 			if (args != null) {
 				obj = m.invoke(obj, args);
-			}
-			else if (argTypes != null && argTypes.length == 1) {
+			} else if (argTypes != null && argTypes.length == 1) {
 				obj = m.invoke(obj, new Object[] { null });
-			}
-			else {
+			} else {
 				obj = m.invoke(obj);
 			}
 		} catch (Exception e) {
@@ -390,16 +391,16 @@ public class ObjectSignature extends ServiceSignature {
 		if (mog == null && returnPath != null) {
 			mog = returnPath.getDataContext();
 		}
+		Context out = null;
 		if (mog != null) {
 			if (serviceType.providerType == ServiceShell.class) {
 				ServiceShell shell = new ServiceShell(mog);
-				return context(shell.exert(args));
+				out = context(shell.exert(args));
 			} else if (mog instanceof Context) {
-				argTypes = new Class[] { Context.class };
-				Context out = null;
+				argTypes = new Class[]{Context.class};
 				ReturnPath rp = returnPath;
 				if (rp == null) {
-					rp = (ReturnPath)((Context) mog).getReturnPath();;
+					rp = (ReturnPath) ((Context) mog).getReturnPath();
 				}
 				if (rp != null && rp.path != null) {
 					((Context) mog).setReturnPath(rp);
@@ -407,10 +408,11 @@ public class ObjectSignature extends ServiceSignature {
 					return out.getValue(rp.path);
 				}
 				out = exert(task(this, mog));
-				return out;
 			}
+		} else {
+				out = exert(task(this));
 		}
-		return null;
+		return out;
 	}
 
 	public String toString() {

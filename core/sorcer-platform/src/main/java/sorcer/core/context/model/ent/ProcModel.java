@@ -22,7 +22,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;
 import sorcer.service.Signature.ReturnPath;
@@ -58,7 +58,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ProcModel extends PositionalContext<Object> implements Model, Invocation<Object>,
+public class ProcModel extends PositionalContext<Object> implements ContextModel, Invocation<Object>,
 		Mappable<Object>, Contexter<Object>, EntModeling {
 
     private static final long serialVersionUID = -6932730998474298653L;
@@ -251,14 +251,14 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 	}
 
 	@Override
-	public ServiceModel add(Identifiable... objects) throws ContextException, RemoteException {
+	public Model add(Identifiable... objects) throws ContextException, RemoteException {
 		Proc p = null;
 		boolean changed = false;
 		for (Identifiable obj : objects) {
 			String pn = obj.getName();
 			if (obj instanceof Proc) {
 				p = (Proc) obj;
-			} else if (obj instanceof Variability) {
+			} else if (obj instanceof Variability || obj instanceof ContextEntry) {
 				putValue(pn, obj);
 			} else if (obj instanceof Entry) {
 				putValue(pn, ((Entry)obj).asis());

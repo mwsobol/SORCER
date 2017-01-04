@@ -20,6 +20,8 @@ package sorcer.core.signature;
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import net.jini.id.Uuid;
+import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import sorcer.core.SorcerConstants;
 import sorcer.core.deploy.ServiceDeployment;
@@ -70,6 +72,9 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	// "providerName"
 	protected ProviderName providerName = new ProviderName(ANY);
 
+	protected Uuid signatureId;
+
+	// service ID associated wuth this signature
 	private ServiceID serviceID;
 
 	/** signature operation */
@@ -85,6 +90,9 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	/** preprocess, process, postprocess, append context */
 	protected Type execType = Type.PROC;
+
+	// true if is sharesd by multiple evalators associated with this signature
+	protected boolean isReused = false;
 
 	/** indicates whether this method is being processed by the exert method */
 	protected boolean isActive = true;
@@ -120,21 +128,25 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	protected ServiceDeployment deployment;
 
 	public ServiceSignature() {
+		signatureId = UuidFactory.generate();
 		providerName = new ServiceName(ANY);
 	}
 
 	public ServiceSignature(String selector) {
+		signatureId = UuidFactory.generate();
 		this.operation.selector = selector;
 		name = selector;
 	}
 
 	public ServiceSignature(String name, String selector) {
+		signatureId = UuidFactory.generate();
 		this.name = name;
 		this.operation.selector = selector;
 	}
 
     public ServiceSignature(String selector, ServiceType serviceType, ProviderName providerName) {
-        this.name = selector;
+		signatureId = UuidFactory.generate();
+		this.name = selector;
         this.operation.selector = selector;
         this.serviceType = serviceType;
         this.providerName =  providerName;
@@ -481,7 +493,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	@Override
 	public Object getId() {
-		return operation.selector;
+		return signatureId;
 	}
 
 	public String getName() {
@@ -638,6 +650,14 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	public void setOutConnector(Context outConnector) {
 		this.outConnector = outConnector;
+	}
+
+	public boolean isReused() {
+		return isReused;
+	}
+
+	public void setReused(boolean reused) {
+		isReused = reused;
 	}
 
 	public boolean isModelerSignature() {

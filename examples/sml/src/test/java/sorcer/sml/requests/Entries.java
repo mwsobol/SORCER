@@ -8,9 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.core.context.model.ent.ContextEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ContextModel;
 import sorcer.util.GenericUtil;
 
 import java.rmi.RemoteException;
@@ -59,6 +60,33 @@ public class Entries {
 		assertEquals(name(asis(x4)), "arg/x3");
         assertTrue(direction((Entry) asis(x4)) == Direction.OUT);
 	}
+
+    @Test
+    public void contextEntry() throws Exception {
+        ContextEntry cxtEnt = cxtVal("context/value", context(val("arg/x1", 100.0), val("arg/x2", 20.0)));
+        assertEquals(100.0, val(cxtEnt, "arg/x1"));
+    }
+
+    @Test
+    public void contextEntry2() throws Exception {
+        ContextEntry cxtEnt = cxtVal("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        assertEquals(100.0, val(cxtEnt, "arg/x1"));
+    }
+
+    @Test
+    public void setValueOfContextEntry() throws Exception {
+        ContextEntry cxtEnt = cxtVal("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        setValue(cxtEnt, "arg/x1", 80.0);
+        assertEquals(80.0, val(cxtEnt, "arg/x1"));
+    }
+
+    @Test
+    public void setValueOfContextEntry2() throws Exception {
+        ContextEntry cxtEnt = cxtVal("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        setValue(cxtEnt, val("arg/x1", 80.0), val("arg/x2", 10.0));
+        assertEquals(80.0, val(cxtEnt, "arg/x1"));
+        assertEquals(10.0, val(cxtEnt, "arg/x2"));
+    }
 
     @Test
     public void entFidelities() throws Exception {
@@ -221,7 +249,7 @@ public class Entries {
 	@Test
 	public void getConditionalValueParModel() throws Exception {
 
-		Model mdl = model(
+		ContextModel mdl = model(
 			proc("x1", 10.0), proc("x2", 20.0),
 			proc("y1", alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
 				opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
@@ -244,7 +272,7 @@ public class Entries {
     @Test
     public void getConditionalValueBlockSrvModel() throws Exception {
 
-        Model mdl = model(
+        ContextModel mdl = model(
             proc("x1", 10.0), proc("x2", 20.0),
             srv("y1", block(alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
                     opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))))));
@@ -271,7 +299,7 @@ public class Entries {
 	@Test
 	public void getConditionalLoopSrvModel() throws Exception {
 
-		Model mdl = model(
+		ContextModel mdl = model(
 			proc("x1", 10.0), proc("x2", 20.0), proc("x3", 40.0),
 			proc("y1",
 				loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),
