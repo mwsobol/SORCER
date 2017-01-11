@@ -150,7 +150,13 @@ public interface Context<T> extends Model, Dependency, Mappable<T>, Serializable
 
 	final static String SERVICE_CONTEXT = "cxt";
 
-	final static String PAR_MODEL = "Par Model";
+	final static String SRV_MODEL = "Service Model";
+
+	final static String PROC_MODEL = "Procedural Model";
+
+	final static String PAR_MODEL = "Parametric Model";
+
+	final static String DATA_MODEL = "Data Model";
 
 	/** EMPTY LEAF NODE i.e. node with no data and not empty string */
 	final static String EMPTY_LEAF = ":Empty";

@@ -58,8 +58,8 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ProcModel extends PositionalContext<Object> implements ContextModel, Invocation<Object>,
-		Mappable<Object>, Contexter<Object>, EntModeling {
+public class ProcModel extends DataModel<Object> implements ContextModel, Invocation<Object>,
+		Mappable<Object>, Contexter<Object> {
 
     private static final long serialVersionUID = -6932730998474298653L;
 
@@ -70,12 +70,11 @@ public class ProcModel extends PositionalContext<Object> implements ContextModel
 	}
 
     public ProcModel() {
-        super();
-        name = PAR_MODEL;
-        setSubject("proc/model", new Date());
+		super();
+		name = PROC_MODEL;
+		setSubject("proc/model", new Date());
 		isRevaluable = true;
-
-    }
+	}
 
     public ProcModel(String name) {
         super(name);
@@ -89,7 +88,7 @@ public class ProcModel extends PositionalContext<Object> implements ContextModel
 
     public ProcModel(Context context) throws RemoteException, ContextException {
         super(context);
-        name = PAR_MODEL;
+        name = PROC_MODEL;
         setSubject("proc/model", new Date());
 		isRevaluable = true;
 	}

@@ -233,7 +233,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * are component attributes; cxt.tag("arg/x3", "triplet|mike|w|sobol");
 	 * and get tagged eval at arg/x3: cxt.getMarkedValues("triplet|mike|w|sobol"));
 	 */
-    private void initContext() {
+    protected void initContext() {
 		super.init();
 		data = new ConcurrentHashMap<String, T>();
 		metacontext = new HashMap<String, Map<String, String>>();

@@ -65,25 +65,26 @@ public class SrvModel extends ProcModel implements ContextModel, Invocation<Obje
 
     public SrvModel() {
         super();
-        isRevaluable = true;
+        name = SRV_MODEL;
         setSignature();
+        setSubject("srv/model", new Date());
+        isRevaluable = true;
     }
 
     public SrvModel(String name) {
         super(name);
-        isRevaluable = true;
         setSignature();
+        setSubject("srv/model", new Date());
+        isRevaluable = true;
     }
 
     public SrvModel(Signature signature) {
-        super();
-//        setSignature(signature.getName(), signature);
+        this();
         addSignature(signature);
     }
 
     public SrvModel(String name, Signature signature) {
         this(name);
-//        setSignature(signature.getName(), signature);
         addSignature(signature);
     }
 
