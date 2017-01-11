@@ -24,16 +24,16 @@ import sorcer.service.*;
 
 import java.util.Date;
 
-public class DataModel<T> extends PositionalContext<T> {
+public class DataContext<T> extends PositionalContext<T> {
 
-    public DataModel() {
+    public DataContext() {
         super();
         name = DATA_MODEL;
         setSubject("data/model", new Date());
         isRevaluable = false;
     }
 
-    public DataModel(String name) {
+    public DataContext(String name) {
         super();
         initContext();
         if (name == null || name.length() == 0) {
@@ -46,24 +46,24 @@ public class DataModel<T> extends PositionalContext<T> {
         creationDate = new Date();
     }
 
-    public DataModel(String name, Signature builder) {
+    public DataContext(String name, Signature builder) {
         this(name);
         this.builder = builder;
     }
 
-    public DataModel(String subjectPath, Object subjectValue) {
+    public DataContext(String subjectPath, Object subjectValue) {
         this(subjectPath);
         this.subjectPath = subjectPath;
         this.subjectValue = subjectValue;
     }
 
-    public DataModel(String name, String subjectPath, Object subjectValue) {
+    public DataContext(String name, String subjectPath, Object subjectValue) {
         this(name);
         this.subjectPath = subjectPath;
         this.subjectValue = subjectValue;
     }
 
-    public DataModel(Context<T> context) throws ContextException {
+    public DataContext(Context<T> context) throws ContextException {
         super(context);
     }
     /**
