@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.provider.ServiceTasker;
 import sorcer.service.Deployment;
 import sorcer.service.Strategy.Provision;
-import sorcer.util.Sorcer;
 
 import java.io.File;
 import java.io.Serializable;
@@ -56,7 +55,7 @@ public class ServiceDeployment implements Serializable, Deployment {
     private String serviceType;
     private String providerName;
     private String impl = ServiceTasker.class.getName();
-    private String websterUrl = Sorcer.getWebsterUrl();
+    private String websterUrl;
     private String config;
     private String architecture;
     private final Set<String> operatingSystems = new HashSet<>();
@@ -183,9 +182,6 @@ public class ServiceDeployment implements Serializable, Deployment {
     }
 
     public void setCodebaseJars(final String[] dls) {
-        for (int i = 0; i < dls.length; i++)
-            if (!dls[i].startsWith("file://") || !dls[i].startsWith("http://"))
-                dls[i] = websterUrl + File.separatorChar + dls[i];
         this.codebaseJars = dls;
     }
 
