@@ -102,7 +102,7 @@ class MethodInvocationRecord {
         if(stopWatch.containsKey(id)) {
             handleCallTime(stopWatch.remove(id));
         } else {
-            logger.error("{} id not found: {}", methodName);
+            logger.error("{} id not found: {}", id, methodName);
             totalOperationCalls.incrementAndGet();
         }
     }
