@@ -37,6 +37,7 @@
     </target>
 
     <target name="start-rio-service" description="Declaration to start a Rio service">
+        <property name="serialFilter" value="org.rioproject.**;net.jini.**;com.sun.**"/>
         <java classname="org.rioproject.start.ServiceStarter" fork="yes" spawn="yes">
             <env key="SORCER_HOME" value="${sorcer.home}"/>
             <classpath>
@@ -57,7 +58,7 @@
             <jvmarg value="-XX:+CMSClassUnloadingEnabled"/>
             <jvmarg value="-XX:MaxPermSize=256m"/>
         	<jvmarg value="-Xms512m"/>
-        	<jvmarg value="-Xmx1024m"/>
+            <jvmarg value="-Xmx1024m"/>
             <sysproperty key="fork.mode" value="${fork.mode}" />
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
             <sysproperty key="java.security.policy" value="${rio.home}/policy/policy.all" />
@@ -76,6 +77,9 @@
             <sysproperty key="plexus.version" value="${plexus.version}"/>
             <sysproperty key="commonsio.version" value="${commonsio.version}" />
             <sysproperty key="org.rioproject.exec.monitor.reap.interval" value="1"/>
+            <sysproperty key="jdk.serialFilter" value="${serialFilter}"/>
+            <sysproperty key="sun.rmi.registry.registryFilter" value="${serialFilter}"/>
+            <sysproperty key="sun.rmi.transport.dgcFilter" value="${serialFilter}"/>
             <arg value="${rio.home}/config/start-${service}.groovy"/>
         </java>
     </target>
