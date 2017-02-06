@@ -4,6 +4,7 @@ version = sorcerVersion
 dependencies {
     compile "net.jini:jsk-platform:${riverVersion}",
             "org.rioproject:rio-api:${rioVersion}",
+            "org.rioproject:rio-proxy:${rioVersion}",
             "org.slf4j:slf4j-api:${slf4jVersion}",
             "ch.qos.logback:logback-classic:${logbackVersion}"
 
@@ -14,6 +15,8 @@ jar {
         include "org/rioproject/entry/ComputeResourceInfo.class"
         include "org/rioproject/entry/OperationalStringEntry.class"
         include "org/rioproject/entry/ServiceInfo.class"
+        include "org/rioproject/proxy/admin/ConstrainableServiceAdminProxy.class"
+        include "org/rioproject/proxy/admin/ServiceAdminProxy.class"
     }
     manifest {
         attributes("Implementation-Title": "SORCER Exported Classes", "Implementation-Version": version)
