@@ -158,6 +158,15 @@ public class Webster implements Runnable {
         initialize(roots);
     }
 
+    public Webster(int port, String roots, String tempDir, int minThreads, int maxThreads) throws IOException {
+        this.port = port;
+        this.tempDir  = tempDir;
+        this.minThreads = minThreads;
+        this.maxThreads = maxThreads;
+        isDaemon = true;
+        initialize(roots);
+    }
+
     /**
      * Create a new Webster
      *
