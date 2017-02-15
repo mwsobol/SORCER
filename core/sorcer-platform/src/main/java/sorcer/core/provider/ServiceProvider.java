@@ -41,7 +41,7 @@ import net.jini.lookup.ui.factory.JFrameFactory;
 import net.jini.security.TrustVerifier;
 import net.jini.security.proxytrust.ServerProxyTrust;
 import net.jini.security.proxytrust.TrustEquivalence;
-import org.rioproject.admin.ServiceActivityProvider;
+//import org.rioproject.admin.ServiceActivityProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -159,7 +159,8 @@ import static sorcer.util.StringUtils.tName;
  * @author Mike Sobolewski
  */
 public class ServiceProvider implements Identifiable, Provider, ServiceIDListener,
-		ReferentUuid, ProxyAccessor, ServerProxyTrust, RemoteMethodControl, ServiceActivityProvider,
+//		ReferentUuid, ProxyAccessor, ServerProxyTrust, RemoteMethodControl, ServiceActivityProvider,
+		ReferentUuid, ProxyAccessor, ServerProxyTrust, RemoteMethodControl,
 		LifeCycle, Partner, Partnership, SorcerConstants, AdministratableProvider, ScratchManager {
 	// RemoteMethodControl is needed to enable Proxy Constraints
 
@@ -575,7 +576,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return true;
 	}
 
-	@Override
+//	@Override
 	public boolean isActive() throws IOException {
 		return isBusy();
 	}
