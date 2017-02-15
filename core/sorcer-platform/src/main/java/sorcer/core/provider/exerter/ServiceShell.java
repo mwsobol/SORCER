@@ -206,7 +206,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 					return (T) out;
 				}
 			} else {
-				((ContextModel)mogram).getResponse();
+				((Context)mogram).getResponse();
 				return (T) mogram;
 			}
 		} catch (ContextException e) {
