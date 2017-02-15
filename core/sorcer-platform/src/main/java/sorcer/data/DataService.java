@@ -50,8 +50,8 @@ public class DataService implements FileURLHandler {
     private static final Logger logger = LoggerFactory.getLogger(DataService.class.getName());
     public static final String DATA_DIR = "sorcer.data.dir";
     public static final String DATA_URL = "sorcer.data.url";
-    private int minThreads = 1;
-    private int maxThreads = 10;
+    private int minThreads = Webster.DEFAULT_MIN_THREADS;
+    private int maxThreads = Webster.DEFAULT_MAX_THREADS;
 
     /**
      * Get the DataService that is bound to the platform code server.

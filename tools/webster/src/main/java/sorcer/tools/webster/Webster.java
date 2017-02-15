@@ -52,8 +52,8 @@ public class Webster implements Runnable {
     static final String BASE_COMPONENT = "sorcer.tools";
     public static final String CODESERVER = BASE_COMPONENT + ".codeserver";
 
-    static final int DEFAULT_MIN_THREADS = 1;
-    static final int DEFAULT_MAX_THREADS = 10;
+    public static final int DEFAULT_MIN_THREADS = 1;
+    public static final int DEFAULT_MAX_THREADS = 10;
     private ServerSocket ss;
     private int port;
     private volatile boolean run = true;
