@@ -24,7 +24,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 7/26/16.
  */
-public interface Model extends Mogram {
+public interface Model extends Mogram, Dependency {
 
 	/**
 	 * Returns the context of all responses of this model with a provided configuration.

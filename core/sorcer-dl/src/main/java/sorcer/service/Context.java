@@ -75,7 +75,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends Model, Dependency, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
+public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
 
 	/** parameter (proc) */
 	final static String PATH_PAR = "proc";

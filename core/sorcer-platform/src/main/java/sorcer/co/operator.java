@@ -941,10 +941,6 @@ public class operator {
 			parModel.getData().remove(path);
 	}
 
-	public static Model dependsOn(ContextModel model, Entry... entries) {
-		return dependsOn(model, entries);
-	}
-
 	public static Model dependsOn(Model model, Entry... entries) {
         Map<String, List<Path>> dm = ((ServiceContext)model).getMogramStrategy().getDependentPaths();
         String path = null;
