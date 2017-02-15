@@ -37,6 +37,7 @@
     </target>
 
     <target name="start-rio-service" description="Declaration to start a Rio service">
+        <property name="serialFilter" value="org.rioproject.**;net.jini.**;com.sun.**"/>
         <java classname="org.rioproject.start.ServiceStarter" fork="yes" spawn="yes">
             <env key="SORCER_HOME" value="${sorcer.home}"/>
             <classpath>
@@ -57,13 +58,15 @@
             <jvmarg value="-XX:+CMSClassUnloadingEnabled"/>
             <jvmarg value="-XX:MaxPermSize=256m"/>
         	<jvmarg value="-Xms512m"/>
-        	<jvmarg value="-Xmx1024m"/>
+            <jvmarg value="-Xmx1024m"/>
             <sysproperty key="fork.mode" value="${fork.mode}" />
             <sysproperty key="java.rmi.server.useCodebaseOnly" value="false" />
             <sysproperty key="java.security.policy" value="${rio.home}/policy/policy.all" />
             <sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
             <sysproperty key="logback.configurationFile" value="${sorcer.home}/configs/sorcer-logging.groovy"/>
             <sysproperty key="java.protocol.handler.pkgs" value="net.jini.url|sorcer.util.url|org.rioproject.url" />
+            <!--<sysproperty key="org.rioproject.env" value="${rio.home}/config/${hostname}/rio.env"/>-->
+            <sysproperty key="org.rioproject.env" value="${rio.home}/config/rio.env"/>
             <sysproperty key="rio.home" value="${rio.home}"/>
             <sysproperty key="rio.log.dir" value="${sorcer.home}/logs"/>
             <sysproperty key="org.rioproject.service" value="${service}"/>
@@ -75,6 +78,9 @@
             <sysproperty key="plexus.version" value="${plexus.version}"/>
             <sysproperty key="commonsio.version" value="${commonsio.version}" />
             <sysproperty key="org.rioproject.exec.monitor.reap.interval" value="1"/>
+            <sysproperty key="jdk.serialFilter" value="${serialFilter}"/>
+            <sysproperty key="sun.rmi.registry.registryFilter" value="${serialFilter}"/>
+            <sysproperty key="sun.rmi.transport.dgcFilter" value="${serialFilter}"/>
             <arg value="${rio.home}/config/start-${service}.groovy"/>
         </java>
     </target>

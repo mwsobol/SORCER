@@ -49,20 +49,13 @@ import java.util.concurrent.*;
 public class ProvisionManager {
 	private static final Logger logger = LoggerFactory.getLogger(ProvisionManager.class.getName());
 	private final Exertion exertion;
-    private final List<String> deploymentNames = new ArrayList<String>();
-    private final Map<ServiceDeployment.Unique, List<OperationalString>> deployments;
+    private final List<String> deploymentNames = new ArrayList<>();
     private final ProvisionMonitorCache provisionMonitorCache;
 	private volatile DeployAdmin deployAdmin;
+    private Map<ServiceDeployment.Unique, List<OperationalString>> deployments;
 
 	public ProvisionManager(final Exertion exertion) throws DispatcherException {
 		this.exertion = exertion;
-        try {
-            deployments = OperationalStringFactory.create(exertion);
-        } catch (Exception e) {
-            throw new DispatcherException(String.format("While trying to create deployment for exertion %s",
-                                                        exertion.getName()),
-                                          e);
-        }
         provisionMonitorCache = ProvisionMonitorCache.getInstance();
 	}
 
@@ -72,14 +65,14 @@ public class ProvisionManager {
 
     private synchronized void doGetDeployAdmin() throws RemoteException {
         if(deployAdmin==null) {
-            logger.info("Discover a DeployAdmin reference using {} ...", getDiscoveryInfo());
+            logger.debug("Discover a DeployAdmin reference using {} ...", getDiscoveryInfo());
             deployAdmin = provisionMonitorCache.getDeployAdmin();
-            logger.info("Obtained a DeployAdmin reference");
+            logger.debug("Obtained a DeployAdmin reference");
         }
     }
 
     public List<String> getDeploymentNames() {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         names.addAll(deploymentNames);
         return names;
     }
@@ -88,15 +81,14 @@ public class ProvisionManager {
         if(!deployServices()) {
             return false;
         }
-
-        List<Callable<Boolean>> tasks = new ArrayList<Callable<Boolean>>();
+        List<Callable<Boolean>> tasks = new ArrayList<>();
         for (Map.Entry<ServiceDeployment.Unique, List<OperationalString>> entry : deployments.entrySet()) {
             for(OperationalString deployment : entry.getValue()) {
                 tasks.add(new DeploymentFutureTask(deployment));
             }
         }
         final ExecutorService pool = Executors.newFixedThreadPool(tasks.size());
-        final ExecutorCompletionService<Boolean> completionService = new ExecutorCompletionService<Boolean>(pool);
+        final ExecutorCompletionService<Boolean> completionService = new ExecutorCompletionService<>(pool);
         for(Callable<Boolean> task : tasks) {
             completionService.submit(task);
         }
@@ -114,6 +106,7 @@ public class ProvisionManager {
     }
 
     public boolean deployServices() throws DispatcherException {
+        deployments = createDeployments();
         if(deployments.isEmpty()) {
             return false;
         }
@@ -154,7 +147,7 @@ public class ProvisionManager {
                 if(deployment!=null) {
                     deployment.setDeployedNames(deploymentNames);
                 } else {
-                    logger.warn("There was no ServiceDeployment for %s, " +
+                    logger.warn("There was no ServiceDeployment for {}, " +
                                         "try and load all NetSignatures and set deployment names",
                                 exertion.getName());
                     for (Signature netSignature : getNetSignatures()) {
@@ -185,7 +178,7 @@ public class ProvisionManager {
             logger.warn("Unable to undeploy, there is no known DeployAdmin ");
             return;
         }
-        List<String> removals = new ArrayList<String>();
+        List<String> removals = new ArrayList<>();
         for(String deploymentName : deploymentNames) {
             try {
                 deployAdmin.undeploy(deploymentName);
@@ -200,6 +193,17 @@ public class ProvisionManager {
         for(String remove : removals) {
             deploymentNames.remove(remove);
         }
+    }
+    private Map<ServiceDeployment.Unique, List<OperationalString>> createDeployments() throws DispatcherException {
+        Map<ServiceDeployment.Unique, List<OperationalString>> deployments;
+        try {
+            deployments = OperationalStringFactory.create(exertion);
+        } catch (Exception e) {
+            throw new DispatcherException(String.format("While trying to create deployment for exertion %s",
+                                                        exertion.getName()),
+                                          e);
+        }
+        return deployments;
     }
 
     private String createDeploymentName(final String baseName, OperationalStringManager... managers) throws RemoteException {
@@ -228,7 +232,7 @@ public class ProvisionManager {
     }
 
     private Iterable<Signature> getNetSignatures() {
-        List<Signature> signatures = new ArrayList<Signature>();
+        List<Signature> signatures = new ArrayList<>();
         if(exertion instanceof ServiceExertion) {
             ServiceExertion serviceExertion = (ServiceExertion)exertion;
             signatures.addAll(serviceExertion.getAllNetTaskSignatures());
@@ -236,7 +240,7 @@ public class ProvisionManager {
         return signatures;
     }
 
-    class DeploymentFutureTask implements Callable<Boolean> {
+    private class DeploymentFutureTask implements Callable<Boolean> {
         final OperationalString deployment;
 
         DeploymentFutureTask(final OperationalString deployment) {
@@ -252,7 +256,7 @@ public class ProvisionManager {
                     } catch (OperationalStringException ignore) {}
                     Thread.sleep(500);
                 }
-                Map<ServiceElement, Integer> deploy = new HashMap<ServiceElement, Integer>();
+                Map<ServiceElement, Integer> deploy = new HashMap<>();
                 int total = 0;
                 for (ServiceElement elem: deployment.getServices()) {
                     deploy.put(elem, 0);
@@ -260,7 +264,7 @@ public class ProvisionManager {
                 }
                 int deployed = 0;
                 int counter = 0;
-                List<String> deployedServices = new ArrayList<String>();
+                List<String> deployedServices = new ArrayList<>();
                 while (deployed < total) {
                     counter++;
                     deployed = 0;

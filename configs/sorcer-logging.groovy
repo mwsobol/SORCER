@@ -42,15 +42,15 @@ def checkEndsWithFileSeparator(String s) {
 
 /*
  * Naming pattern for the output file:
- *
- * a) The output file is placed in the directory defined by the "rio.log.dir" System property
- * b) With a name based on the "org.rioproject.service" System property.
- * c) The return value from ManagementFactory.getRuntimeMXBean().getName(). This value is expected to have the
- * following format: pid@hostname. If the return includes the @hostname, the @hostname is stripped off.
  */
 def getLogLocationAndName() {
+    String s = InetAddress.getLocalHost().getHostName()
+    int ndx = s.indexOf(".")
+    String hostName = s.substring(0, ndx)
     String logDir = checkEndsWithFileSeparator(System.getProperty("rio.log.dir"))
-    return "$logDir${System.getProperty("org.rioproject.service")}"
+    String name = "${System.getProperty("org.rioproject.service")}-${hostName}"
+    System.setProperty("org.rioproject.service", name)
+    return "$logDir${name}"
 }
 
 def appenders = []
@@ -109,9 +109,11 @@ if (System.getProperty("org.rioproject.service")!=null) {
  *  Rio Loggers
  * ==================================================================*/
 logger("org.rioproject.cybernode", DEBUG)
+logger("org.rioproject.cybernode.service.ServiceBeanExecutorImpl", ERROR)
 logger("org.rioproject.config", INFO)
 logger("org.rioproject.resources.servicecore", INFO)
 logger("org.rioproject.system", DEBUG)
+logger("org.rioproject.impl.opstring.OpStringUtil", DEBUG)
 logger("org.rioproject.impl.container.ServiceBeanLoader", INFO)
 logger("org.rioproject.system.measurable", INFO)
 logger("org.rioproject.impl.servicebean", INFO)
@@ -122,10 +124,11 @@ logger("org.rioproject.monitor.sbi", DEBUG)
 logger("org.rioproject.monitor.provision", DEBUG)
 logger("org.rioproject.monitor.selector", OFF)
 logger("org.rioproject.monitor.services", DEBUG)
-logger("org.rioproject.monitor.DeploymentVerifier", INFO)
+logger("org.rioproject.monitor.DeploymentVerifier", TRACE)
 logger("org.rioproject.monitor.InstantiatorResource", INFO)
 logger("org.rioproject.monitor.service.managers.FixedServiceManager", INFO)
 logger("org.rioproject.resolver.aether", OFF)
+logger("org.rioproject.impl.util.FileUtils", WARN)
 
 logger("org.rioproject.rmi.ResolvingLoader", OFF)
 logger("org.rioproject.config.GroovyConfig", INFO)
@@ -138,24 +141,32 @@ logger("org.rioproject.resolver.aether.util.ConsoleRepositoryListener", WARN)
  *  SORCER Loggers
  * ==================================================================*/
 logger("sorcer.util.ProviderAccessor", WARN)
+logger("sorcer.util.ServiceAccessor", WARN)
+logger("sorcer.util.SorcerEnv", WARN)
 logger("sorcer.core.provider.cataloger.ServiceCataloger", WARN)
-logger("sorcer.core.provider.exerter.ServiceShell", INFO)
+logger("sorcer.core.provider.exerter.ServiceShell", WARN)
 logger("sorcer.provider.boot", INFO)
 logger("sorcer.core.provider.ServiceProvider", INFO)
 logger("sorcer.core.provider.ControlFlowManager", WARN)
-logger("sorcer.core.provider.ProviderDelegate", INFO)
+logger("sorcer.core.provider.ProviderDelegate", WARN)
 logger("sorcer.tools.shell.NetworkShell", WARN)
 logger("sorcer.core.provider.exertmonitor.ExertMonitor", WARN)
 logger("sorcer.core.provider.SpaceTaker", WARN)
 logger("sorcer.core.provider.exertmonitor", TRACE)
 logger("sorcer.core.monitor", TRACE)
-logger("sorcer.core.dispatch", INFO)
+logger("sorcer.core.dispatch", WARN)
 logger("sorcer.core.dispatch.ExertionSorter", WARN)
 logger("sorcer.rio.rmi", WARN)
 logger("sorcer.service.Accessor", WARN)
 logger("sorcer.core.provider.exerter", WARN)
 logger("sorcer.platform.logger", WARN)
 logger("sorcer.core.provider.logger", WARN)
+logger("sorcer.core.deploy", DEBUG)
+logger("sorcer.core.deploy.ServiceDeployment", WARN)
+logger("sorcer.core.deploy.DeploymentIdFactory", WARN)
+logger("sorcer.data.DataService", ERROR)
+logger("sorcer.util.GenericUtil", WARN)
+logger("sorcer.core.provider.rendezvous", WARN)
 
 /* ==================================================================
  *  SORCER Variable oriented loggers
@@ -163,15 +174,22 @@ logger("sorcer.core.provider.logger", WARN)
 logger("sorcer.modeling.core.context.model.var.ResponseModel", WARN)
 logger("sorcer.modeling.core.context.model.var.ParametricModel", WARN)
 logger("sorcer.util.Table", WARN)
+logger("sorcer.modeling.vfe.evaluator", WARN)
+logger("sorcer.modeling.vfe.filter", WARN)
+logger("sorcer.modeling.vfe.persist", WARN)	
 /* ==================================================================
  *  SORCER Other specialized loggers
  * ==================================================================*/
 logger("sorcer.core.context.eval", OFF)
 logger("sorcer.core.context", TRACE)
-logger("sorcer.jini.jeri.SorcerILFactory", WARN)
+logger("sorcer.jini.jeri.SorcerILFactory", INFO)
 
 logger("sorcer.ui.tools", DEBUG)
 logger("sorcer.util", DEBUG)
+
+logger("mil.afrl.mstc", WARN)
+logger("mil.afrl.mstc.products", ERROR)
+logger("sorcer.core.monitoring", INFO)
 
 root(INFO, appenders)
 

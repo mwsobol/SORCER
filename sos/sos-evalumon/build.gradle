@@ -1,0 +1,65 @@
+/*
+ * Distribution Statement
+ *
+ * This computer software has been developed under sponsorship of the United States Air Force Research Lab. Any further
+ * distribution or use by anyone or any data contained therein, unless otherwise specifically provided for,
+ * is prohibited without the written approval of AFRL/RQVC-MSTC, 2210 8th Street Bldg 146, Room 218, WPAFB, OH  45433
+ *
+ * Disclaimer
+ *
+ * This material was prepared as an account of work sponsored by an agency of the United States Government. Neither
+ * the United States Government nor the United States Air Force, nor any of their employees, makes any warranty,
+ * express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness
+ * of any information, apparatus, product, or process disclosed, or represents that its use would not infringe privately
+ * owned rights.
+ */
+
+version = sorcerVersion
+
+dependencies {
+	compile project(":sorcer-dl")
+	compile "org.rioproject:rio-lib:${rioVersion}"
+	testCompile "org.sorcer:sorcer-test:${sorcerVersion}"
+	testCompile ("org.rioproject:rio-test:${rioVersion}") {
+		exclude group: "org.junit"
+		exclude group: "junit"
+	}
+}
+
+jar {
+    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+        include "sorcer/core/modeling/monitoring/**"
+    }
+    dependsOn('sourcesJar')
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+publishing {
+	publications {
+		impl(MavenPublication) {
+			groupId group
+			/*artifactId 'monitor-service'*/
+			version version
+
+			from components.java
+		}
+	}
+	repositories {
+		maven { url "http://$enclaveRepo" }
+	}
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
+    }
+    dependsOn([install])
+}
