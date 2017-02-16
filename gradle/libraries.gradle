@@ -22,7 +22,7 @@ ext {
 	sorcerVersion = version
 
 	groovyVersion = "2.3.8"
-	rioVersion = "5.6.2"
+	rioVersion = "5.6.3"
 	riverVersion = "2.2.2"
 	slf4jVersion = "1.7.12"
 	blitzVersion = "2.1.7"

@@ -1395,11 +1395,7 @@ public class SorcerEnv extends SOS {
 	}
 
     public static InetAddress getLocalHost() throws UnknownHostException {
-        String hostnameProp = System.getProperty(JavaSystemProperties.RMI_SERVER_HOSTNAME);
-        if (hostnameProp != null && !hostnameProp.isEmpty())
-            return InetAddress.getByName(hostnameProp);
-        else
-            return HostUtil.getInetAddress();
+		return HostUtil.getInetAddressFromProperty(JavaSystemProperties.RMI_SERVER_HOSTNAME);
     }
 
 	/**
