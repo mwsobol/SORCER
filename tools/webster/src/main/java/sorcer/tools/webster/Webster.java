@@ -52,8 +52,8 @@ public class Webster implements Runnable {
     static final String BASE_COMPONENT = "sorcer.tools";
     public static final String CODESERVER = BASE_COMPONENT + ".codeserver";
 
-    static final int DEFAULT_MIN_THREADS = 1;
-    static final int DEFAULT_MAX_THREADS = 10;
+    public static final int DEFAULT_MIN_THREADS = 1;
+    public static final int DEFAULT_MAX_THREADS = 10;
     private ServerSocket ss;
     private int port;
     private volatile boolean run = true;
@@ -154,6 +154,15 @@ public class Webster implements Runnable {
     public Webster(int port, String roots, String tempDir) throws IOException {
         this.port = port;
         this.tempDir  = tempDir;
+        isDaemon = true;
+        initialize(roots);
+    }
+
+    public Webster(int port, String roots, String tempDir, int minThreads, int maxThreads) throws IOException {
+        this.port = port;
+        this.tempDir  = tempDir;
+        this.minThreads = minThreads;
+        this.maxThreads = maxThreads;
         isDaemon = true;
         initialize(roots);
     }
