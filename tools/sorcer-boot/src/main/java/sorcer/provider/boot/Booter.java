@@ -191,11 +191,7 @@ public class Booter implements SorcerConstants {
 	}
 
 	public static InetAddress getLocalHost() throws UnknownHostException {
-		String hostnameProp = getProperty(JavaSystemProperties.RMI_SERVER_HOSTNAME);
-		if (hostnameProp != null && !hostnameProp.isEmpty())
-			return InetAddress.getByName(hostnameProp);
-		else
-			return HostUtil.getInetAddress();
+		return HostUtil.getInetAddressFromProperty(JavaSystemProperties.RMI_SERVER_HOSTNAME);
 	}
 
 	/**
