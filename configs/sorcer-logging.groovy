@@ -46,7 +46,11 @@ def checkEndsWithFileSeparator(String s) {
 def getLogLocationAndName() {
     String s = InetAddress.getLocalHost().getHostName()
     int ndx = s.indexOf(".")
-    String hostName = s.substring(0, ndx)
+    String hostName
+    if(ndx>0)
+        hostName = s.substring(0, ndx)
+    else
+        hostName = s
     String logDir = checkEndsWithFileSeparator(System.getProperty("rio.log.dir"))
     String name = "${System.getProperty("org.rioproject.service")}-${hostName}"
     System.setProperty("org.rioproject.service", name)
