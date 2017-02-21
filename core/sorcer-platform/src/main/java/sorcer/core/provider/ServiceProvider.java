@@ -575,7 +575,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return true;
 	}
 
-	@Override
+//	@Override
 	public boolean isActive() throws IOException {
 		return isBusy();
 	}
@@ -1281,8 +1281,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				   + "\ntotal service op calls = " + numCalls + " "
 				   + "\nnumber of service op calls running = "	+ numThreads + " "
 				   + "\nservice op call ids running = " + threadIds + " "
-		           + "\naverage exec time = " + avgExecTime;
-		return msg;
+		           + "\naverage exec time [s]       = " + avgExecTime;
+        return msg;
 	}
 
 	public synchronized String doThreadMonitor(String serviceIdString) {
