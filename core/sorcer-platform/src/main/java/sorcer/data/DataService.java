@@ -50,8 +50,6 @@ public class DataService implements FileURLHandler {
     private static final Logger logger = LoggerFactory.getLogger(DataService.class.getName());
     public static final String DATA_DIR = "sorcer.data.dir";
     public static final String DATA_URL = "sorcer.data.url";
-    private int minThreads = Webster.DEFAULT_MIN_THREADS;
-    private int maxThreads = Webster.DEFAULT_MAX_THREADS;
 
     /**
      * Get the DataService that is bound to the platform code server.
@@ -113,14 +111,6 @@ public class DataService implements FileURLHandler {
         this.roots = adjusted.toArray(new String[adjusted.size()]);
     }
 
-    public void setMinThreads(int minThreads) {
-        this.minThreads = minThreads;
-    }
-
-    public void setMaxThreads(int maxThreads) {
-        this.maxThreads = maxThreads;
-    }
-
     /**
      * Start the data service if it has not been started yet.
      *
@@ -135,7 +125,7 @@ public class DataService implements FileURLHandler {
                 websterRoots.append(root);
             }
             try {
-                websterRef.set(new Webster(port, websterRoots.toString(), getDataDir(), minThreads, maxThreads));
+                websterRef.set(new Webster(port, websterRoots.toString(), getDataDir()));
                 port = websterRef.get().getPort();
                 address = websterRef.get().getAddress();
                 logger.info(String.format("Started data service on: %s:%d\n%s",
