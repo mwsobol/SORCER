@@ -211,6 +211,9 @@ public class DataService implements FileURLHandler {
         if(relativePath==null)
             throw new IllegalArgumentException("The provided path ["+path+"], is not navigable " +
                     "from existing roots "+ Arrays.toString(roots));
+
+        if (!relativePath.startsWith("/")) relativePath = "/" + relativePath;
+
         URL url =  new URL(String.format("http://%s:%d%s", address, port, relativePath));
         if(verify) {
             IOException notAvailable = verify(url);
