@@ -20,7 +20,7 @@ int ndx = ref.lastIndexOf("/")
 String branch = ref.substring(ndx+1).trim()
 String branchRef = branch.equals("master")?"":"-$branch"
 
-version = "6.0.18$branchRef"
+version = "6.0.19$branchRef"
 
 apply plugin: 'idea'
 idea {
@@ -181,7 +181,7 @@ task tests(type: TestReport, dependsOn: "bootSorcer") {
     finalizedBy("terminateSorcer")
 }
 
-task allTests(type: TestReport, dependsOn: "bootSorcer") {
+task allTests(type: TestReport, dependsOn: "bootSorcerRio") {
     description = "Aggregate test runner, runs all tests in the project."
     destinationDir = file("$buildDir/reports/allTests")
     project.subprojects { project ->
