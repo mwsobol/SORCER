@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.rioproject.RioVersion
-
 /*
  * This file is used to configure the org.rioproject.resolver.Resolver, defining
  * the resolver jar file name as well as the remote Maven repositories that the
@@ -32,7 +30,7 @@ String address = InetAddress.getLocalHost().getHostAddress()
 boolean onEnclave = (hostName.endsWith("wpafb.af.mil") || address.startsWith("10.131"))
 	
 resolver {
-    jar = "${rioHome()}/lib/resolver/resolver-aether-${RioVersion.VERSION}.jar"
+    jar = "${rioHome()}/lib/resolver/resolver-aether-<%rio.version%>.jar"
 
     repositories {
         if (onEnclave) {
