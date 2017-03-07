@@ -1265,7 +1265,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				   + "\ntotal service op calls      = " + numCalls + " "
 				   + "\nservice op calls running    = "	+ numThreads + " "
 				   + "\nservice op call ids running = " + threadIds + " "
-		           + "\naverage exec time           = " + avgExecTime;
+		           + "\naverage exec time [s]       = " + avgExecTime;
         return msg;
 	}
 
