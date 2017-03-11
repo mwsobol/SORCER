@@ -205,7 +205,7 @@ public class operator {
 	}
 
 	public static Entry procFi(Proc procEntry) {
-		Entry fi = new Entry(procEntry.getSelectedFidelity(), procEntry.getFidelities()
+		Entry fi = new Entry(procEntry.getSelectedFidelity().getName(), procEntry.getFidelities()
 				.get(procEntry.getSelectedFidelity()));
 		return fi;
 	}

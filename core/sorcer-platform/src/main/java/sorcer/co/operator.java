@@ -23,6 +23,7 @@ import sorcer.co.tuple.*;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
+import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.ContextEntry;
 import sorcer.core.context.model.ent.Proc;
@@ -356,9 +357,23 @@ public class operator {
 		return new DependencyEntry(path, Arrays.asList(paths));
 	}
 
+	public static DependencyEntry dep(String path, Fidelity fi, Path... paths) {
+		DependencyEntry de = new DependencyEntry(path, Arrays.asList(paths));
+		de.annotation(fi);
+		de.setType(Variability.Type.FIDELITY);
+        return de;
+	}
+
 	public static DependencyEntry dep(String path, List<Path> paths) {
 		return new DependencyEntry(path, paths);
 	}
+
+    public static DependencyEntry dep(String path,  Fidelity fi, List<Path> paths) {
+        DependencyEntry de = new DependencyEntry(path, paths);
+        de.annotation(fi);
+        de.setType(Variability.Type.FIDELITY);
+        return de;
+    }
 
 	public static DependencyEntry[] deps(DependencyEntry... dependencies) {
 		return dependencies;
@@ -941,29 +956,51 @@ public class operator {
 			parModel.getData().remove(path);
 	}
 
-	public static Model dependsOn(Model model, Entry... entries) {
-        Map<String, List<Path>> dm = ((ServiceContext)model).getMogramStrategy().getDependentPaths();
-        String path = null;
-        Object dependentPaths = null;
-        for (Entry e : entries) {
-            dependentPaths = e.value();
-            if (dependentPaths instanceof List) {
-                path = e.getName();
-                dependentPaths =  e.value();
-                dm.put(path, (List<Path>) dependentPaths);
-            }
-        }
-		return model;
-    }
+//	public static Model dependsOn(Model model,  Entry... entries) {
+//        Map<String, List<DependencyEntry>> dm = ((ServiceContext)model).getMogramStrategy().getDependentPaths();
+//        String path = null;
+//        Object dependentPaths = null;
+//        if (entries.length > 0 && entries[0] instanceof DependencyEntry)
+//        for (Entry e : entries) {
+//            dependentPaths = e.value();
+//            if (dependentPaths instanceof List) {
+//                path = e.getName();
+//                dependentPaths =  e.value();
+//				if (dm.get(path) != null) {
+//					((List)dm.get(path)).add(e);
+//				} else {
+//					List<DependencyEntry> del = new ArrayList();
+//					del.add((DependencyEntry)e);
+//                	dm.put(path, del);
+//				}
+//            }
+//        }
+//
+//		return model;
+//    }
 
-    public static Map<String, List<Path>> dependencies(Model model) {
+    public static Map<String, List<DependencyEntry>> dependencies(Model model) {
          return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
-    
+
     public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
         for (Evaluation d : dependers)
-            	dependee.getDependers().add(d);
-        
+            dependee.getDependers().add(d);
+        if (dependee instanceof Model && dependers.length > 0 && dependers[0] instanceof DependencyEntry) {
+            Map<String, List<DependencyEntry>> dm = ((ModelStrategy)((Model) dependee).getMogramStrategy()).getDependentPaths();
+            String path = null;
+            for (Evaluation e : dependers) {
+                path = e.getName();
+                if (dm.get(path) != null) {
+                    ((List) dm.get(path)).add(e);
+                } else {
+                    List<DependencyEntry> del = new ArrayList();
+                    del.add((DependencyEntry)e);
+                    dm.put(path, del);
+                }
+            }
+        }
+
         return dependee;
     }
 

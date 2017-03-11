@@ -3,11 +3,13 @@ package sorcer.service;
 import net.jini.core.transaction.TransactionException;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Mike Sobolewski on 6/27/16.
  */
-public class Fidelity<T> implements Fi, Item, net.jini.core.entry.Entry {
+public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.Entry {
     static final long serialVersionUID = 1L;
 
 	protected static int count = 0;
@@ -19,6 +21,9 @@ public class Fidelity<T> implements Fi, Item, net.jini.core.entry.Entry {
 	protected T select;
 
 	public Type type = Type.SELECT;
+
+	// dependency management for this Fidelity
+	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
 	public Fidelity() {
 		super();
@@ -127,4 +132,17 @@ public class Fidelity<T> implements Fi, Item, net.jini.core.entry.Entry {
             return select;
         }
     }
+
+	@Override
+	public void addDependers(Evaluation... dependers) {
+		if (this.dependers == null)
+			this.dependers = new ArrayList<Evaluation>();
+		for (Evaluation depender : dependers)
+			this.dependers.add(depender);
+	}
+
+	@Override
+	public List<Evaluation> getDependers() {
+		return dependers;
+	}
 }

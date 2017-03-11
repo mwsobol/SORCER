@@ -2799,6 +2799,17 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 		return this;
 	}
+	
+	public Entry entry(String path) {
+		Object obj = null;
+		if (path != null) {
+			obj = data.get(path);
+		}
+		if (obj instanceof Entry) {
+			return (Entry)obj;
+		} else
+			return null;
+	}
 
 	@Override
 	public T get(String path) {

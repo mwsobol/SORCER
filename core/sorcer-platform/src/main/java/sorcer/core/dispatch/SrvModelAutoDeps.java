@@ -36,6 +36,7 @@ import sorcer.service.modeling.Model;
 import java.util.*;
 
 import static sorcer.co.operator.dep;
+import static sorcer.co.operator.dependsOn;
 import static sorcer.po.operator.ent;
 import static sorcer.co.operator.paths;
 
@@ -58,7 +59,7 @@ public class SrvModelAutoDeps {
     /**
      * Construct the SrvModelAutoDeps
      */
-    public SrvModelAutoDeps(SrvModel srvModel) throws SortingException {
+    public SrvModelAutoDeps(SrvModel srvModel) throws SortingException, ContextException {
 
         dag = new DAG();
         entryMap = new HashMap();
@@ -126,7 +127,7 @@ public class SrvModelAutoDeps {
      * @throws CycleDetectedException
      * @throws ContextException
      */
-    private void addDependsOn(SrvModel srvModel, List<String> sortedEntries) {
+    private void addDependsOn(SrvModel srvModel, List<String> sortedEntries) throws ContextException {
         for (String entryName : sortedEntries) {
             // Only those that are args in the srvModel
             if (!srvModel.getData().keySet().contains(entryName)) continue;
@@ -146,7 +147,7 @@ public class SrvModelAutoDeps {
                     }
                 }
                 if (paths.size()>0) {
-                    operator.dependsOn((Model)srvModel, dep(entryName, paths(paths.toArray())));
+                    dependsOn((Dependency)srvModel, dep(entryName, paths(paths.toArray())));
                     String topNode = entryName;
                     if (entryToResultMap.containsKey(entryName))
                         topNode = entryToResultMap.get(entryName);

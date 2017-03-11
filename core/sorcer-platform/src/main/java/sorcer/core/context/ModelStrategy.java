@@ -2,6 +2,7 @@ package sorcer.core.context;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import sorcer.co.tuple.DependencyEntry;
 import sorcer.core.Name;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
@@ -49,7 +50,7 @@ public class ModelStrategy implements MogramStrategy, Serializable {
     // mapping from paths of this context to input paths of requestors
     protected Context outConnector;
 
-    protected Map<String, List<Path>> dependentPaths;
+    protected Map<String, List<DependencyEntry>> dependentPaths;
 
     protected ServiceFidelity<Arg> selectedFidelity;
 
@@ -140,9 +141,9 @@ public class ModelStrategy implements MogramStrategy, Serializable {
         return getExceptions();
     }
 
-    public Map<String, List<Path>> getDependentPaths() {
+    public Map<String, List<DependencyEntry>> getDependentPaths() {
         if (dependentPaths == null) {
-            dependentPaths = new HashMap<String, List<Path>>();
+            dependentPaths = new HashMap<String, List<DependencyEntry>>();
         }
         return dependentPaths;
     }

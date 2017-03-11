@@ -22,6 +22,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.co.tuple.DependencyEntry;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
@@ -365,13 +366,30 @@ public class SrvModel extends ProcModel implements ContextModel, Invocation<Obje
     }
 
     protected void execDependencies(String path, Arg... args) throws ContextException {
-        Map<String, List<Path>> dpm = mogramStrategy.getDependentPaths();
-        List<Path> dpl = dpm.get(path);
-        if (dpl != null && dpl.size() > 0) {
-            for (Path p : dpl) {
-                getValue(p.path, args);
+        Map<String, List<DependencyEntry>> dpm = mogramStrategy.getDependentPaths();
+        if (dpm != null && dpm.get(path) != null) {
+            List<DependencyEntry> del = dpm.get(path);
+            Entry entry = entry(path);
+            if (del != null && del.size() > 0) {
+                for (DependencyEntry de : del) {
+                    if (de.getType().equals(Variability.Type.FIDELITY)
+                            && ((Entry) entry).getSelectedFidelity().getName().equals(((Fidelity) de.annotation()).getName())) {
+                        List<Path> dpl = de._2;
+                        if (dpl != null && dpl.size() > 0) {
+                            for (Path p : dpl) {
+                                getValue(p.path, args);
+                            }
+                        }
+                    } else if (!de.getType().equals(Variability.Type.FIDELITY)) {
+                        List<Path> dpl = de._2;
+                        if (dpl != null && dpl.size() > 0) {
+                            for (Path p : dpl) {
+                                getValue(p.path, args);
+                            }
+                        }
+                    }
+                }
             }
-
         }
     }
 

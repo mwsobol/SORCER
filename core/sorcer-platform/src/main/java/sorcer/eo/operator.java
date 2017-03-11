@@ -439,13 +439,18 @@ public class operator {
 			}
 		}
 		if (depList.size() > 0) {
-			Map<String, List<Path>> dm = ((ServiceContext) cxt).getMogramStrategy().getDependentPaths();
+			Map<String, List<DependencyEntry>> dm = ((ServiceContext) cxt).getMogramStrategy().getDependentPaths();
 			String path = null;
-			List<Path> dependentPaths = null;
+			List<DependencyEntry> dependentPaths = null;
 			for (DependencyEntry e : depList) {
 				path = e.getName();
-				dependentPaths = e.value();
-				dm.put(path, dependentPaths);
+				if (dm.get(path) != null) {
+					((List)dm.get(path)).add(e);
+				} else {
+					List<DependencyEntry> del = new ArrayList();
+					del.add(e);
+					dm.put(path, del);
+				}
 			}
 		}
 		if (outPaths instanceof Out) {
@@ -2448,7 +2453,7 @@ public class operator {
 	public static <T> T value(Context<T> context, String path,
 							  Arg... args) throws ContextException {
 		try {
-			Object val = ((Context) context).getValue(path, args);
+			Object val = ((ServiceContext) context).getValue(path, args);
 			if (SdbUtil.isSosURL(val)) {
 				return (T) ((URL) val).getContent();
 			} else {

@@ -44,6 +44,7 @@ import java.util.List;
 import static sorcer.co.operator.contextVal;
 import static sorcer.co.operator.instance;
 import static sorcer.eo.operator.context;
+import static sorcer.po.operator.ent;
 
 /**
  * Created by Mike Sobolewski on 4/26/15.
@@ -494,7 +495,7 @@ public class operator {
         runner.exec(args);
     }
 
-    public static String printDeps(Mogram model) throws SortingException {
+    public static String printDeps(Mogram model) throws SortingException, ContextException {
         return new SrvModelAutoDeps((SrvModel)model).printDeps();
     }
 

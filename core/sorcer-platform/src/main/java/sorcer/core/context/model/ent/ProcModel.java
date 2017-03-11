@@ -375,7 +375,20 @@ public class ProcModel extends DataContext<Object> implements ContextModel, Invo
 	public void setContextChanged(boolean contextChanged) {
 		this.isChanged = contextChanged;
 	}
-	
+
+	@Override
+	public Entry entry(String path) {
+		Object entry = null;
+		if (path != null) {
+			entry = data.get(path);
+		}
+		if (entry instanceof Entry) {
+			return (Entry)entry;
+		} else {
+			return null;
+		}
+	}
+
 	public Variability getVar(String name) throws ContextException {
 		String key;
 		Object val = null;

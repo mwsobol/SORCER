@@ -63,7 +63,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	// Sorcer Mappable: Context, Exertion, or Var args
 	protected Mappable mappable;
 
-	protected String selectedFidelity;
+	protected Fidelity selectedFidelity;
 
 	// proc fidelities for this proc
 	protected Map<String, Object> fidelities;
@@ -93,7 +93,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 			}
 
 			Entry first = ((EntryList) argument).get(0);
-			selectedFidelity = first.getName();
+			selectedFidelity = new Fidelity(first.getName());
 			value = (T) first;
 		} else if (argument instanceof Evaluation || argument instanceof Invocation) {
 			if (argument instanceof ConditionalInvocation) {
@@ -233,7 +233,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 			if (selectedFidelity != null) {
 				Object obj = fidelities.get(selectedFidelity);
 				if (!isFidelityValid(obj)) {
-					obj = scope.asis(selectedFidelity);
+					obj = scope.asis(selectedFidelity.getName());
 				}
 				value = (T)obj;
 			}
@@ -342,7 +342,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 
 					}
 				} else if (p instanceof ServiceFidelity && fidelities != null) {
-					selectedFidelity = p.getName();
+					selectedFidelity = new Fidelity(p.getName());
 				} else if (p instanceof Context) {
 					if (scope == null)
 						scope = (Context) p;
@@ -565,11 +565,12 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		return fidelities;
 	}
 
-	public String getSelectedFidelity() {
+	@Override
+	public Fidelity getSelectedFidelity() {
 		return selectedFidelity;
 	}
 
-	public void setSelectedFidelity(String selectedFidelity) {
+	public void setSelectedFidelity(Fidelity selectedFidelity) {
 		this.selectedFidelity = selectedFidelity;
 	}
 	
