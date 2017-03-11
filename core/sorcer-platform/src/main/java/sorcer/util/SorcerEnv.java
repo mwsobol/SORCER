@@ -16,14 +16,11 @@
 package sorcer.util;
 
 import net.jini.discovery.DiscoveryGroupManagement;
-import net.jini.id.Uuid;
 import org.rioproject.net.HostUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.data.DataService;
 import sorcer.service.ConfigurationException;
-import sorcer.service.Fidelity;
-import sorcer.service.ServiceFidelity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -1395,13 +1392,9 @@ public class SorcerEnv extends SOS {
 		return getLocalHost().getCanonicalHostName();
 	}
 
-    public static InetAddress getLocalHost() throws UnknownHostException {
-        String hostnameProp = System.getProperty(JavaSystemProperties.RMI_SERVER_HOSTNAME);
-        if (hostnameProp != null && !hostnameProp.isEmpty())
-            return InetAddress.getByName(hostnameProp);
-        else
-            return HostUtil.getInetAddress();
-    }
+	public static InetAddress getLocalHost() throws UnknownHostException {
+		return HostUtil.getInetAddressFromProperty(JavaSystemProperties.RMI_SERVER_HOSTNAME);
+	}
 
 	/**
 	 * Return the SORCER environment properties loaded by default from the
