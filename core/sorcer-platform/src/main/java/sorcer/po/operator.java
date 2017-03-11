@@ -192,23 +192,17 @@ public class operator {
 		return parameter;
 	}
 
-	public static EntryList procFi(String name, Entry... entries) {
-		return new EntryList(name, entries);
-	}
+    public static Fidelity pFi(String name) {
+        Fidelity fi =  new Fidelity(name);
+        fi.setType(Fi.Type.PROC);
+        return fi;
+    }
 
-	public static EntryList procFi(Entry... entries) {
-		return new EntryList(entries);
-	}
-
-	public static ServiceFidelity<Arg> procFi(String name) {
-		return new ServiceFidelity(name);
-	}
-
-	public static Entry procFi(Proc procEntry) {
-		Entry fi = new Entry(procEntry.getSelectedFidelity().getName(), procEntry.getFidelities()
-				.get(procEntry.getSelectedFidelity()));
-		return fi;
-	}
+    public static ServiceFidelity<Proc> pFi(Entry... entries) {
+        ServiceFidelity<Proc> fi = new ServiceFidelity(entries);
+        fi.type = ServiceFidelity.Type.PROC;
+        return fi;
+    }
 
 	public static ProcModel procModel(String name, Object... objects)
 			throws RemoteException, ContextException {

@@ -373,7 +373,7 @@ public class SrvModel extends ProcModel implements ContextModel, Invocation<Obje
             if (del != null && del.size() > 0) {
                 for (DependencyEntry de : del) {
                     if (de.getType().equals(Variability.Type.FIDELITY)
-                            && ((Entry) entry).getSelectedFidelity().getName().equals(((Fidelity) de.annotation()).getName())) {
+                            && ((Fidelity)entry.getSelectedFidelity()).getName().equals(((Fidelity) de.annotation()).getName())) {
                         List<Path> dpl = de._2;
                         if (dpl != null && dpl.size() > 0) {
                             for (Path p : dpl) {

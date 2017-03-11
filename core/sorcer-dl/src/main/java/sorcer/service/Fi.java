@@ -34,7 +34,7 @@ public interface Fi {
     final static int dVar = 11;
 
     public enum Type implements Arg {
-        ENTRY, SIG, REF, COMPONENT, MORPH, VAR, VAR_FI, EVALUATOR, GETTER, SETTER, GRADIENT, DERIVATIVE,
+        ENTRY, SIG, REF, COMPONENT, MORPH, VAR, VAR_FI, PROC, EVALUATOR, GETTER, SETTER, GRADIENT, DERIVATIVE,
         MULTI, REQUEST, UPDATE, ADD, REPLACE, DELETE, SELECT, META, NAME, SYS, CONTEXT;
 
 		static public String name(int fiType) {

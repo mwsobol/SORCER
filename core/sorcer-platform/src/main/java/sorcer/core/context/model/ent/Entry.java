@@ -371,7 +371,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		}
 	}
 
-	public Fidelity getSelectedFidelity() {
+	public Object getSelectedFidelity() {
 		return null;
 	}
 
