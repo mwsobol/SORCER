@@ -194,6 +194,7 @@ logger("sorcer.util", DEBUG)
 logger("mil.afrl.mstc", WARN)
 logger("mil.afrl.mstc.products", ERROR)
 logger("sorcer.core.monitoring", INFO)
+logger("sorcer.core.monitoring", INFO)
 
 root(INFO, appenders)
 
