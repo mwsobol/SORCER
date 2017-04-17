@@ -4337,7 +4337,7 @@ class StreamGobbler extends Thread {
 		this.is = is;
 		this.type = type;
 		this.displayStreamOutput = displayStreamOutput;
-		logPw = new PrintWriter(new FileOutputStream(logFile));
+		logPw = new PrintWriter(new FileOutputStream(logFile, true));
 		this.dir = dir;
 	}
 	
