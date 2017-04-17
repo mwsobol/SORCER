@@ -68,7 +68,9 @@ import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.rmi.NoSuchObjectException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -77,6 +79,8 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import static sorcer.util.StringUtils.tName;
 
@@ -2024,4 +2028,125 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	private final int SLEEP_TIME = 250;
 
+	protected void copyDirectoryFromJarResource(String resourceDirRef, File destinationDir) throws IOException, URISyntaxException {
+
+		// example
+		// resourceDirRef="bin/win"
+		// destinationDir=new File("C:/temp")
+		//
+		// result is to copy bin/win from jar resources to c:/temp
+		// C:/temp/win
+		//
+
+		if (!(destinationDir.exists())) destinationDir.mkdirs();
+
+//        doLog("0. resourceDirRef = " + resourceDirRef);
+//        doLog("destinationDir = " + destinationDir);
+
+		// strip first '/' if included
+		if (resourceDirRef.substring(0,0).equals("/"))resourceDirRef = resourceDirRef.substring(1);
+		// strip last '/' if included
+		int l0 = resourceDirRef.length();
+		if (resourceDirRef.substring(l0,l0).equals("/"))resourceDirRef = resourceDirRef.substring(0,l0 - 1);
+//        doLog("1. resourceDirRef = " + resourceDirRef);
+
+		// get resource directory name to copy
+		String resourceDirectoryName = resourceDirRef;
+		l0 = resourceDirectoryName.lastIndexOf("/");
+		if (l0 != -1) resourceDirectoryName = resourceDirectoryName.substring(l0 + 1);
+//        doLog("resourceDirectoryName = " + resourceDirectoryName);
+
+
+		// destination directory on disk
+		File newDestDir = new File(destinationDir, resourceDirectoryName);
+//        doLog("newDestDir = " + newDestDir);
+
+
+		String[] files = getResourceListing(this.getClass(), resourceDirRef);
+		for (String resourceItem:files) {
+
+//            doLog("resourceItem = " + resourceItem);
+
+			String resourceItemMinusDirRef = resourceItem.substring(resourceDirRef.length());
+//            doLog("resourceItemMinusDirRef = " + resourceItemMinusDirRef);
+
+			File destFile = new File(newDestDir.getAbsolutePath() + "/" +  resourceItemMinusDirRef);
+//            doLog("destFile = " + destFile.getAbsolutePath());
+
+			copyFileFromJarResource(resourceItem, destFile);
+			destFile.setExecutable(true);
+			destFile.setReadable(true);
+		}
+	}
+
+	protected void copyFileFromJarResource(String resourceFileRef, File destination) throws IOException {
+		if (destination.exists()) destination.delete();
+		destination.getParentFile().mkdirs();
+		destination.createNewFile();
+
+		ClassLoader ex = Thread.currentThread().getContextClassLoader();
+//        doLog("trying to load file from jar resource: " + resourceFileRef);
+//        doLog("classLoader ex = " + ex);
+		URL resourceURL = ex.getResource(resourceFileRef);
+		InputStream is = null;
+		if(resourceURL != null) {
+//            doLog("Loaded from " + resourceURL.toExternalForm());
+			is = resourceURL.openStream();
+//            doLog("* Loading properties using: " + is);
+			GenericUtil.redirectInputStream2File(is, destination);
+		} else {
+			throw new IOException("**error: file not found in jar resource. resourceFileRef = " + resourceFileRef);
+		}
+	}
+
+	protected String[] getResourceListing(Class clazz, String path) throws URISyntaxException, IOException {
+		URL dirURL = clazz.getClassLoader().getResource(path);
+		//doLog("$$$$$$$$$$$$$$$$$$$$$$$$$ dirURL = " + dirURL);
+		if (dirURL != null && dirURL.getProtocol().equals("file")) {
+                /* A file path: easy enough */
+			return new File(dirURL.toURI()).list();
+		}
+
+		if (dirURL == null) {
+                /*
+                 * In case of a jar file, we can't actually find a directory.
+                 * Have to assume the same jar as clazz.
+                 */
+			String me = clazz.getName().replace(".", "/") + ".class";
+			dirURL = clazz.getClassLoader().getResource(me);
+		}
+
+		if (dirURL.getProtocol().equals("jar")) {
+			//doLog("&&&&&&&&&&&&&&&&&&&&&&&&&&&&& here");
+                /* A JAR path */
+			int beginIndex = 5;
+			if (GenericUtil.isWindows()) beginIndex++;
+
+			String jarPath = dirURL.getPath().substring(beginIndex, dirURL.getPath().indexOf("!")); //strip out only the JAR file
+			// doLog("jarPath=" + jarPath);
+			JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+			Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
+			Set<String> result = new HashSet<String>(); //avoid duplicates in case it is a subdirectory
+			while (entries.hasMoreElements()) {
+				String name = entries.nextElement().getName();
+				//doLog("name = " + name);
+				if (name.startsWith(path)) { //filter according to the path
+					//doLog("** matched name = " + name);
+					if (name.endsWith("/")) continue;
+					String entry = name;
+//                    String entry = name.substring(path.length());
+//                    doLog("entry = " + entry);
+//                    int checkSubdir = entry.indexOf("/");
+//                    if (checkSubdir >= 0) {
+//                        // if it is a subdirectory, we just return the directory name
+//                        entry = entry.substring(0, checkSubdir);
+//                    }
+					result.add(entry);
+				}
+			}
+			return result.toArray(new String[result.size()]);
+		}
+
+		throw new UnsupportedOperationException("Cannot list files for URL " + dirURL);
+	}
 }
