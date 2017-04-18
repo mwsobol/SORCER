@@ -83,46 +83,46 @@ public class MogramDispatcherFactory implements DispatcherFactory {
             if(mogram instanceof Job)
                 mogram = new ExertionSorter((Job)mogram).getSortedJob();
 
-			if ( mogram instanceof Block && Mograms.isCatalogBlock((Exertion)mogram)) {
-				logger.info("Running Catalog Block Dispatcher...");
+            if ( mogram instanceof Block && Mograms.isCatalogBlock((Exertion)mogram)) {
+                logger.info("Running Catalog Block Dispatcher...");
                 dispatcher = new CatalogBlockDispatcher((Block)mogram,
-						                                  sharedContexts,
-						                                  isSpawned,
-						                                  provider,
-                         provisionManager);
-			} else if (isSpaceSequential(mogram)) {
-				logger.info("Running Space Sequential Dispatcher...");
-				dispatcher = new SpaceSequentialDispatcher((Exertion)mogram,
-						                                  sharedContexts,
-						                                  isSpawned,
-						                                  loki,
-						                                  provider,
-                        provisionManager);
-			}
+                                                        sharedContexts,
+                                                        isSpawned,
+                                                        provider,
+                                                        provisionManager);
+            } else if (isSpaceSequential(mogram)) {
+                logger.info("Running Space Sequential Dispatcher...");
+                dispatcher = new SpaceSequentialDispatcher((Exertion)mogram,
+                                                           sharedContexts,
+                                                           isSpawned,
+                                                           loki,
+                                                           provider,
+                                                           provisionManager);
+            }
             if (dispatcher==null && mogram instanceof Job) {
                 Job job = (Job) mogram;
                 if (Mograms.isSpaceParallel(job)) {
                     logger.info("Running Space Parallel Dispatcher...");
                     dispatcher = new SpaceParallelDispatcher(job,
-                            sharedContexts,
-                            isSpawned,
-                            loki,
-                            provider,
-                            provisionManager);
+                                                             sharedContexts,
+                                                             isSpawned,
+                                                             loki,
+                                                             provider,
+                                                             provisionManager);
                 } else if (Mograms.isCatalogParallel(job)) {
                     logger.info("Running Catalog Parallel Dispatcher...");
                     dispatcher = new CatalogParallelDispatcher(job,
-                            sharedContexts,
-                            isSpawned,
-                            provider,
-                            provisionManager);
+                                                               sharedContexts,
+                                                               isSpawned,
+                                                               provider,
+                                                               provisionManager);
                 } else if (Mograms.isCatalogSequential(job)) {
                     logger.info("Running Catalog Sequential Dispatcher...");
                     dispatcher = new CatalogSequentialDispatcher(job,
-                            sharedContexts,
-                            isSpawned,
-                            provider,
-                            provisionManager);
+                                                                 sharedContexts,
+                                                                 isSpawned,
+                                                                 provider,
+                                                                 provisionManager);
                 }
             }
             assert dispatcher != null;

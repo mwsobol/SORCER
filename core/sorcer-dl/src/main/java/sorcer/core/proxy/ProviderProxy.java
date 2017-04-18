@@ -156,9 +156,11 @@ public class ProviderProxy implements Serializable {
 				// for smart proxies add Administrable
 				if (!proxy.getClass().isInterface())
 					list.add(Administrable.class);
+
 				// used by Rio provisioning
 				if (!list.contains(ServiceActivityProvider.class))
 					list.add(ServiceActivityProvider.class);
+
 				if (list.contains(Provider.class)) {
 					list.remove(AdministratableProvider.class);
 				}
@@ -200,7 +202,6 @@ public class ProviderProxy implements Serializable {
                 // this block is for debugging, can be deleted
                 // do not report broken network connection on destruction or getAdmin after the service is
 				// undeployed by Rio
-//				e.printStackTrace();
 				logger.warn("Caught while invoking {}", selector, e);
                 if (!selector.equals("getAdmin"))
 					logger.warn("proxy method: {} for args: {}", m, Arrays.toString(args), e);

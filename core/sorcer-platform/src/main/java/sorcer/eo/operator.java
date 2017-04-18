@@ -325,7 +325,7 @@ public class operator {
 				customContextClass = (Class) o;
 			} else if (o instanceof Strategy.Access) {
 				accessType = (Strategy.Access)o;
-			} else if (o instanceof Strategy.Access) {
+			} else if (o instanceof Strategy.Flow) {
 				flowType = (Strategy.Flow)o;
 			} else if (o instanceof Strategy.FidelityManagement) {
 				fm = (Strategy.FidelityManagement)o;
@@ -333,7 +333,7 @@ public class operator {
 				fiManager = ((FidelityManager)o);
 			} else if (o instanceof Projection) {
 				projection = ((Projection)o);
-			} else if (o.equals(Strategy.Flow.EXPLICIT)) {
+			} else if (Strategy.Flow.EXPLICIT.equals(o)) {
 				autoDeps = false;
 			} else if (o instanceof Out) {
 				outPaths = (Out)o;

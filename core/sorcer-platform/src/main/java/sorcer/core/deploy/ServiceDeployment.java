@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.provider.ServiceTasker;
 import sorcer.service.Deployment;
 import sorcer.service.Strategy.Provision;
-import sorcer.util.Sorcer;
 
 import java.io.File;
 import java.io.Serializable;
@@ -56,21 +55,21 @@ public class ServiceDeployment implements Serializable, Deployment {
     private String serviceType;
     private String providerName;
     private String impl = ServiceTasker.class.getName();
-    private String websterUrl = Sorcer.getWebsterUrl();
+    private String websterUrl;
     private String config;
     private String architecture;
-    private final Set<String> operatingSystems = new HashSet<String>();
-    private final Set<String> ips = new HashSet<String>();
-    private final Set<String> excludeIps = new HashSet<String>();
+    private final Set<String> operatingSystems = new HashSet<>();
+    private final Set<String> ips = new HashSet<>();
+    private final Set<String> excludeIps = new HashSet<>();
 
     /* An idle time for un-provisioning, eval is in minutes */
-    public static final int DEFAULT_IDLE_TIME = 1;
+    public static final int DEFAULT_IDLE_TIME = 5;
     private int idle = DEFAULT_IDLE_TIME;
     private Strategy strategy = Strategy.DYNAMIC;
 
     private Boolean fork;
     private String jvmArgs;
-    private final List<String> deployedNames = new ArrayList<String>();
+    private final List<String> deployedNames = new ArrayList<>();
     private static final Logger logger = LoggerFactory.getLogger(ServiceDeployment.class.getName());
 
     public ServiceDeployment() {
@@ -87,12 +86,12 @@ public class ServiceDeployment implements Serializable, Deployment {
             Artifact temp = new Artifact(config);
             String classifier = temp.getClassifier();
             if(classifier==null || !classifier.equals("deploy")) {
-                logger.info("Setting classifier to \"deploy\" for "+temp.getGAV());
+                logger.debug("Setting classifier to \"deploy\" for {}", temp.getGAV());
                 classifier = "deploy";
             }
             String type = temp.getType();
             if(type==null || !type.equals("config")) {
-                logger.info("Setting type to \"config\" for "+temp.getGAV());
+                logger.debug("Setting type to \"config\" for {}", temp.getGAV());
                 type = "config";
             }
             this.config = new Artifact(temp.getGroupId(),
@@ -183,9 +182,6 @@ public class ServiceDeployment implements Serializable, Deployment {
     }
 
     public void setCodebaseJars(final String[] dls) {
-        for (int i = 0; i < dls.length; i++)
-            if (!dls[i].startsWith("file://") || !dls[i].startsWith("http://"))
-                dls[i] = websterUrl + File.separatorChar + dls[i];
         this.codebaseJars = dls;
     }
 

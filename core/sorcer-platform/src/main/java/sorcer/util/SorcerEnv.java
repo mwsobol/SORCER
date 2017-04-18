@@ -794,6 +794,8 @@ public class SorcerEnv extends SOS {
 	 * @return and array of strings as locator URLs
 	 */
 	public static String[] getLookupLocators() {
+		if(props==null)
+			return new String[] {};
 		String locs = props.getProperty(P_LOCATORS, System.getProperty(P_LOCATORS));
 		return (locs != null && locs.length() != 0) ? toArray(locs) : new String[] {};
 	}

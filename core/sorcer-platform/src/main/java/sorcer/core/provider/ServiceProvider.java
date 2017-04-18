@@ -46,6 +46,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import sorcer.core.SorcerConstants;
+import sorcer.core.analytics.MethodAnalytics;
+import sorcer.core.analytics.SystemAnalytics;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetTask;
@@ -66,16 +68,14 @@ import sorcer.util.url.sos.SdbURLStreamHandlerFactory;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import java.io.*;
-import java.net.Inet4Address;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.security.*;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static sorcer.util.StringUtils.tName;
@@ -575,7 +575,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return true;
 	}
 
-	@Override
+//	@Override
 	public boolean isActive() throws IOException {
 		return isBusy();
 	}
@@ -1248,6 +1248,18 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return delegate.mutualExclusion;
 	}
 
+	@Override public Map<String, MethodAnalytics> getMethodAnalytics() {
+		return delegate.getAnalyticsRecorder().getMethodAnalytics();
+	}
+
+	@Override public MethodAnalytics getMethodAnalytics(String name) {
+		return delegate.getAnalyticsRecorder().getMethodAnalytics(name);
+	}
+
+	@Override public SystemAnalytics getSystemAnalytics() {
+		return delegate.getAnalyticsRecorder().getSystemAnalytics();
+	}
+
 	protected synchronized void doTimeKeeping(double callTimeSec) {
 		totalCallTime += callTimeSec;
 		avgExecTime = totalCallTime / numCalls;
@@ -1258,25 +1270,19 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	// fields for thread metrics
 	//
 	private int numThreads = 0;
-	private ArrayList<String> threadIds = new ArrayList<String>();
+	private List<String> threadIds = new ArrayList<>();
 	private int numCalls = 0;
 	private double avgExecTime = 0;
 	private double totalCallTime = 0;
 
 	public synchronized String getThreadStatus() {
-
-		String host = "unknown";
-		try {
-			host = Inet4Address.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
+		String host = delegate.getHostAddress();
 		String msg = "host = " + host + " "
 				   + "\ntotal service op calls = " + numCalls + " "
 				   + "\nnumber of service op calls running = "	+ numThreads + " "
 				   + "\nservice op call ids running = " + threadIds + " "
-		           + "\naverage exec time = " + avgExecTime;
-		return msg;
+		           + "\naverage exec time [s]       = " + avgExecTime;
+        return msg;
 	}
 
 	public synchronized String doThreadMonitor(String serviceIdString) {
@@ -1783,6 +1789,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			unexport(true);
 			if(providerAdmin!=null)
 				providerAdmin.unregister();
+
 			logger.debug("calling destroy on the delegate...");
 			delegate.destroy();
 			logger.debug("DONE calling destroy on the delegate.");

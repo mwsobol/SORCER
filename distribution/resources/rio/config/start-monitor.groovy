@@ -38,6 +38,13 @@ class StartMonitorConfig {
         return configArgs as String[]
     }
 
+    void sorcerData() {
+        String user = System.properties['user.name']
+        String tmpDir = System.getenv("TMPDIR")==null?System.properties['java.io.tmpdir']:System.getenv("TMPDIR")
+        File sorcerDataDir = new File("${tmpDir}/sorcer-${user}/data")
+        sorcerDataDir.mkdirs()
+    }
+
     ServiceDescriptor[] getServiceDescriptors() {
         ServiceDescriptorUtil.checkForLoopback()
         String m2Repo = Repository.getLocalRepository().absolutePath
@@ -60,6 +67,7 @@ class StartMonitorConfig {
                 websterRoots << ';'
                 websterRoots << root
             }
+            sorcerData()
         }
         String policyFile = rioHome+'/policy/policy.all'
 

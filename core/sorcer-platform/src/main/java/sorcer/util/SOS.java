@@ -21,26 +21,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.jar.Attributes;
+import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 public class SOS {
-	/**
-	 * General database prefix for the SORCER database schema.
-	 */
-	protected static String dbPrefix = "SOS";
-	protected static String sepChar = ".";
+    /**
+     * General database prefix for the SORCER database schema.
+     */
+    protected static String dbPrefix = "SOS";
+    protected static String sepChar = ".";
 
-	/** Port for a code sever (webster) */
-	protected static int port = 0;
+    /** Port for a code sever (webster) */
+    protected static int port = 0;
 
-	/**
-	 * Default name 'sorcer.env' for a file defining global environment
-	 * properties.
-	 */
-	public static String SORCER_ENV_FILENAME = "sorcer.env";
+    /**
+     * Default name 'sorcer.env' for a file defining global environment
+     * properties.
+     */
+    public static String SORCER_ENV_FILENAME = "sorcer.env";
 
     /**
      * Default name 'data.formats' for a file defining service context node
@@ -48,55 +47,52 @@ public class SOS {
      */
     protected static String CONTEXT_DATA_FORMATS = "data.formats";
 
-	/**
-	 * Default name 'provider.properties' for a file defining provider
-	 * properties.
-	 */
-	public static String PROVIDER_PROPERTIES_FILENAME = "provider.properties";
+    /**
+     * Default name 'provider.properties' for a file defining provider
+     * properties.
+     */
+    public static String PROVIDER_PROPERTIES_FILENAME = "provider.properties";
 
-	/**
-	 * Default name 'servid.per' for a file storing a service registration ID.
-	 */
-	protected static String serviceIdFilename = "servid.per";
+    /**
+     * Default name 'servid.per' for a file storing a service registration ID.
+     */
+    protected static String serviceIdFilename = "servid.per";
 
     private static String sorcerVersion;
 
     private static final Logger logger = LoggerFactory.getLogger(SOS.class.getName());
 
-	/**
-	 * <p>
-	 * Return the current version of the SORCER system.
-	 * </p>
-	 */
-	public static String getSorcerVersion() {
-		 if(sorcerVersion==null) {
-             Class clazz = SOS.class;
-             String className = clazz.getSimpleName() + ".class";
-             String classPath = clazz.getResource(className).toString();
+    /**
+     * <p>
+     * Return the current version of the SORCER system.
+     * </p>
+     */
+    public static String getSorcerVersion() {
+        if(sorcerVersion==null) {
+            Class clazz = SOS.class;
+            String className = clazz.getSimpleName() + ".class";
+            String classPath = clazz.getResource(className).toString();
              /* Make sure we are loaded from a JAR */
-             if (classPath.startsWith("jar")) {
-                 /* Replace the class name with the MANIFEST */
-                 String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) +
-                                       "/META-INF/MANIFEST.MF";
-                 logger.info("Loading " + manifestPath);
-                 try {
-                     URL url = new URL(manifestPath);
-                     Manifest manifest = new Manifest(url.openStream());
-                     Attributes attrs = manifest.getMainAttributes();
-                     sorcerVersion = attrs.getValue("Implementation-Version");
-                     logger.info("sorcerVersion: " + sorcerVersion);
-                 } catch (IOException e) {
-                     throw new RuntimeException("Unable to read MANIFEST", e);
-                 }
-             }
-         }
+            if (classPath.startsWith("jar:file:")) {
+                String jarPath =  classPath.substring("jar:file:".length(), classPath.lastIndexOf("!"));
+                try {
+                    JarFile jarFile = new JarFile(jarPath);
+                    Manifest manifest = jarFile.getManifest();
+                    Attributes attrs = manifest.getMainAttributes();
+                    sorcerVersion = attrs.getValue("Implementation-Version");
+                    logger.info("sorcerVersion: {}", sorcerVersion);
+                } catch (Exception e) {
+                    logger.warn("Unable to read MANIFEST {}: {}", e.getClass().getName(), e.getMessage());
+                }
+            }
+        }
         return sorcerVersion==null?"unknown":sorcerVersion;
-	}
-	
+    }
+
     public static String deriveSorcerHome() {
         String sorcerHome = null;
-		getSorcerVersion();
-		if(sorcerVersion!=null) {
+        getSorcerVersion();
+        if(sorcerVersion!=null) {
             Class clazz = SOS.class;
             String className = clazz.getSimpleName() + ".class";
             String classPath = clazz.getResource(className).toString();
@@ -105,14 +101,14 @@ public class SOS {
                 String path = classPath.substring("jar:".length(), classPath.lastIndexOf("!"));
                 logger.info("Loading " + path);
                 File sorcerPlatformJar = new File(path);
-    	        File directory = sorcerPlatformJar.getParentFile();
-		        while(directory!=null && !directory.getName().endsWith(sorcerVersion)) {
-		        	directory = directory.getParentFile();
-		        }
-				sorcerHome = directory!=null?directory.getPath():null;
-		        logger.info("SORCER_HOME: "+sorcerHome);
+                File directory = sorcerPlatformJar.getParentFile();
+                while(directory!=null && !directory.getName().endsWith(sorcerVersion)) {
+                    directory = directory.getParentFile();
+                }
+                sorcerHome = directory!=null?directory.getPath():null;
+                logger.info("SORCER_HOME: "+sorcerHome);
             }
-	    }
+        }
         return sorcerHome;
     }
 
