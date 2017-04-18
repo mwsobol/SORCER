@@ -348,7 +348,28 @@ public class GenericUtil {
 	 */
 	public static void download(URL sourceUrl, File destinationFile)
 			throws IOException {
-		writeUrlToFile(sourceUrl, destinationFile);
+
+		int maxTries = 10;
+		int tryNum = 0;
+		boolean isSuccessful = false;
+
+		while (!isSuccessful && tryNum++ < maxTries) {
+			try {
+				writeUrlToFile(sourceUrl, destinationFile);
+				isSuccessful = true;
+			} catch (Exception e) {
+				isSuccessful = false;
+				logger.warn("download failed, trying again: url = " + sourceUrl + "; destination = "
+						+ destinationFile + "; exception = " + e.toString());
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+		if (!isSuccessful) throw new IOException("download failed; url = " + sourceUrl + "; destination = "
+				+ destinationFile);
 	}
 
 	/**
@@ -687,6 +708,18 @@ public class GenericUtil {
 	 */
 	public static Vector<String> getFileContents(File file)
 			throws FileNotFoundException {
+
+		int tryNum = 0;
+		int maxTries = 10;
+		while(!file.exists() && tryNum++ < maxTries) {
+			logger.warn("trying to read file and it does not exist, will try again in 0.5 sec; file = " + file);
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 		Vector<String> fileContents = null;
 		// Check if file exist
 		if (file.exists()) {
@@ -704,9 +737,9 @@ public class GenericUtil {
 			fin.close();
 		} else {
 			// File not found
-			System.out
-					.printf("getFileContents:\nFile, %s, does not exist. Returning a NULL vector of strings\n",
-							file.getAbsolutePath());
+			logger.error("getFileContents:\nFile, %s, does not exist.\n",
+					file.getAbsolutePath());
+			throw new FileNotFoundException(file.getAbsolutePath() + " does not exist.");
 		}
 		return fileContents;
 	}
@@ -4304,7 +4337,7 @@ class StreamGobbler extends Thread {
 		this.is = is;
 		this.type = type;
 		this.displayStreamOutput = displayStreamOutput;
-		logPw = new PrintWriter(new FileOutputStream(logFile));
+		logPw = new PrintWriter(new FileOutputStream(logFile, true));
 		this.dir = dir;
 	}
 	
