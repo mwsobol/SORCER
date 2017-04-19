@@ -63,26 +63,26 @@ public class Entries {
 
     @Test
     public void contextEntry() throws Exception {
-        ContextEntry cxtEnt = cxtVal("context/value", context(val("arg/x1", 100.0), val("arg/x2", 20.0)));
+        ContextEntry cxtEnt = cxtEnt("context/value", context(val("arg/x1", 100.0), val("arg/x2", 20.0)));
         assertEquals(100.0, val(cxtEnt, "arg/x1"));
     }
 
     @Test
     public void contextEntry2() throws Exception {
-        ContextEntry cxtEnt = cxtVal("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        ContextEntry cxtEnt = cxtEnt("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
         assertEquals(100.0, val(cxtEnt, "arg/x1"));
     }
 
     @Test
     public void setValueOfContextEntry() throws Exception {
-        ContextEntry cxtEnt = cxtVal("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        ContextEntry cxtEnt = cxtEnt("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
         setValue(cxtEnt, "arg/x1", 80.0);
         assertEquals(80.0, val(cxtEnt, "arg/x1"));
     }
 
     @Test
     public void setValueOfContextEntry2() throws Exception {
-        ContextEntry cxtEnt = cxtVal("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        ContextEntry cxtEnt = cxtEnt("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
         setValue(cxtEnt, val("arg/x1", 80.0), val("arg/x2", 10.0));
         assertEquals(80.0, val(cxtEnt, "arg/x1"));
         assertEquals(10.0, val(cxtEnt, "arg/x2"));

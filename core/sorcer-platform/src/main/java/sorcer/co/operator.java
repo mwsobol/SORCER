@@ -285,28 +285,28 @@ public class operator {
 		return ent;
 	}
 
-	public static ContextEntry contextVal(String path, Context value) {
+	public static ContextEntry contextEnt(String path, Context value) {
 		ContextEntry ent = new ContextEntry(path, value);
 		ent.isValid(false);
 		ent.setType(Type.INPUT);
 		return ent;
 	}
 
-	public static ContextEntry cxtVal(String path, Context value) {
-		return contextVal(path, value) ;
+	public static ContextEntry cxtEnt(String path, Context value) {
+		return contextEnt(path, value) ;
 	}
 
-	public static ContextEntry contextVal(String path, Entry... entries) throws ContextException {
+	public static ContextEntry contextEnt(String path, Entry... entries) throws ContextException {
 		ServiceContext cxt = new ServiceContext();
 		for (Entry e : entries) {
 			cxt.put((String) e._1, e.get());
 		}
 		cxt.isValid(false);
-		return contextVal(path, cxt) ;
+		return contextEnt(path, cxt) ;
 	}
 
-	public static ContextEntry cxtVal(String path, Entry... entries) throws ContextException {
-		return contextVal(path, entries);
+	public static ContextEntry cxtEnt(String path, Entry... entries) throws ContextException {
+		return contextEnt(path, entries);
 	}
 
 	public static Entry in(Entry... entries) {

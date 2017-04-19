@@ -41,10 +41,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static sorcer.co.operator.contextVal;
 import static sorcer.co.operator.instance;
 import static sorcer.eo.operator.context;
-import static sorcer.po.operator.ent;
 
 /**
  * Created by Mike Sobolewski on 4/26/15.
