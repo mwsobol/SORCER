@@ -22,6 +22,7 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.ContextEntry;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
@@ -551,6 +552,11 @@ public class ServiceInvoker<T> extends Observable implements  Invocation<T>, Ide
 	@Override
 	public void setValueIsCurrent(boolean state) {
 		valueIsCurrent = state;
+	}
+
+	@Override
+	public void update(ContextEntry... entries) throws ContextException {
+		// implement in subclasses
 	}
 
 	public boolean isValueCurrent() {

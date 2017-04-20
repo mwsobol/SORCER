@@ -489,6 +489,10 @@ public class operator {
         return (ContextModel)context(dest);
     }
 
+    public static void update(ProcModel model, ContextEntry... entries) throws SignatureException, MogramException {
+        model.update(entries);
+    }
+
     public static void run(sorcer.util.Runner runner, Arg... args) throws SignatureException, MogramException {
         runner.exec(args);
     }

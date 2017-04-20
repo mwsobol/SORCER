@@ -48,5 +48,5 @@ public interface  Evaluation <T> extends Substitutable, Item, EvaluationComponen
 	 * @throws RemoteException
 	 */
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException;
-	
+
 }

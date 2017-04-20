@@ -485,6 +485,10 @@ public class ProcModel extends DataContext<Object> implements ContextModel, Invo
 		return this;
 	}
 
+	public void update(ContextEntry... entries) throws ContextException {
+		// implement in subclasses
+	}
+
 	@Override
 	public String toString() {
 		return this.getClass().getName() + ":" + getName() + "\nkeys: " + keySet()

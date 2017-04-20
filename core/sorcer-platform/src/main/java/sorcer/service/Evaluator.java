@@ -17,6 +17,8 @@
 
 package sorcer.service;
 
+import sorcer.core.context.model.ent.ContextEntry;
+
 import java.rmi.RemoteException;
 
 
@@ -47,5 +49,7 @@ public interface  Evaluator <T> extends Evaluation<T> {
 	public void setParameters(Object... args);
 
 	public void setValueIsCurrent(boolean state);
-	
+
+	public void update(ContextEntry... entries) throws ContextException;
+
 }
