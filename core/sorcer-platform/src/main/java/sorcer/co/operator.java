@@ -742,6 +742,10 @@ public class operator {
 		return out;
 	}
 
+	public static OutType out(Type type) {
+		return new OutType(type);
+	}
+
 	public static FilterId fId(String id) {
 		return filterId(id);
 	}

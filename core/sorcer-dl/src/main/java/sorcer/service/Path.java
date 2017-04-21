@@ -25,14 +25,14 @@ public class Path implements Arg  {
 	private static final long serialVersionUID = 1L;
 
 	public enum Type {
-		PATH, MAP, ENT
+		PATH, MAP, ENT, CONTEXT, ARRAY, OUT
 	}
 
 	public String path = null;
 
 	public Object info = null;
 
-	private Type type = Type.PATH;
+	protected Type type = Type.PATH;
 
 	public Path() {
 	}
