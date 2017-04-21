@@ -742,6 +742,22 @@ public class operator {
 		return out;
 	}
 
+	public static FilterId fId(String id) {
+		return filterId(id);
+	}
+
+	public static FilterId filtId(String id) {
+		return filterId(id);
+	}
+
+	public static FilterId filterId(String id) {
+		return fId(id, null);
+	}
+
+	public static FilterId fId(String id, Object info) {
+		return new FilterId(id, info);
+	}
+
 	public static DataTable fiColumnName(DataTable table, String name) {
 		table.setFiColumnName(name);
 		return table;
