@@ -58,25 +58,18 @@ public class CollectionOperators {
 	@Test
 	public void tuplesOfTypedObjects() throws Exception {
 
+        Tuple2 t2 = x("Mike", "Sobolewski");
 
-		Tuple1 t1 = t("Mike");
+		Tuple3 t3 = x("Mike", "Sobolewski", "SORCER");
 
-		Tuple2 ent = kv("Mike", "Sobolewski");
+		Tuple4<String, String, String, Integer> t4 = x("Mike", "Sobolewski", "SORCER", 2014);
 
-		Tuple2 t2 = t("Mike", "Sobolewski");
+		Tuple5 t5 = x("Mike", "Sobolewski", "SORCER", 2014, "AFRL/WPAFB");
 
-        Tuple2 x2 = x("Mike", "Sobolewski");
-
-		Tuple3 t3 = t("Mike", "Sobolewski", "SORCER");
-
-		Tuple4<String, String, String, Integer> t4 = t("Mike", "Sobolewski", "SORCER", 2014);
-
-		Tuple5 t5 = t("Mike", "Sobolewski", "SORCER", 2014, "AFRL/WPAFB");
-
-		Tuple6 t6 = t("Mike", "Sobolewski", "SORCER", 2010, "TTU", "AFRL/WPAFB");
+		Tuple6 t6 = x("Mike", "Sobolewski", "SORCER", 2010, "TTU", "AFRL/WPAFB");
 
 
-		assertTrue(ent instanceof Tuple2);
+		assertTrue(t2 instanceof Tuple2);
 
 		// no casting required
 		String last = t4._2;
@@ -85,7 +78,7 @@ public class CollectionOperators {
 		// casting required
 		String first = (String)t5._1;
 
-		assertEquals(t1._1, t2._1);
+		assertEquals(t2._1, t2._1);
 		assertEquals(t2._2, t3._2);
 		assertEquals(t3._3, t4._3);
 		assertEquals(t4._4, t5._4);
@@ -134,12 +127,12 @@ public class CollectionOperators {
 	public void genericSetOperator() throws Exception {
 
 		// the setValue operator creates instances of java.util.Set
-		Set<Serializable> s = set("name", "Mike", "name", "Ray", t("height", 174));
+		Set<Serializable> s = set("name", "Mike", "name", "Ray", x("height", 174));
 		assertEquals(s.size(), 4);
-		assertEquals(t("height", 174)._1, "height");
-		assertEquals((int) t("height", 174)._2, 174);
+		assertEquals(x("height", 174)._1, "height");
+		assertEquals((int) x("height", 174)._2, 174);
 
-		assertTrue(s.contains(t("height", 174)));
+		assertTrue(s.contains(x("height", 174)));
 
 	}
 
@@ -159,8 +152,8 @@ public class CollectionOperators {
 
 		assertEquals(rowNames(t), list("f1", "f2", "f3"));
 		assertEquals(columnNames(t), list("x1", "x2", "x3", "x4", "x5"));
-		assertEquals(rowMap(t, "f2"), map(kv("x1", 2.1), kv("x2", 2.2),
-				kv("x3", 2.3), kv("x4", 2.4), kv("x5",2.5)));
+		assertEquals(rowMap(t, "f2"), map(x("x1", 2.1), x("x2", 2.2),
+				x("x3", 2.3), x("x4", 2.4), x("x5",2.5)));
 		assertEquals(value(t, "f2", "x2"), 2.2);
 		assertEquals(value(t, 1, 1), 2.2);
 
@@ -304,21 +297,21 @@ public class CollectionOperators {
 	@Test
 	public void mapOperator() throws Exception {
 
-		Map<Object, Object> map1 = dictionary(kv("name", "Mike"), kv("height", 174.0));
+		Map<Object, Object> map1 = dictionary(x("name", "Mike"), x("height", 174.0));
 
-		Map<String, Double> map2 = map(kv("length", 248.0), kv("screen/width", 27.0), kv("screen/height", 12.0));
+		Map<String, Double> map2 = map(x("length", 248.0), x("screen/width", 27.0), x("screen/height", 12.0));
 
 		// keys and values of args
-		assertEquals(key(kv("name", "Mike")), "name");
-		assertEquals(eval(kv("name", "Mike")), "Mike");
+		assertEquals(key(x("name", "Mike")), "name");
+		assertEquals(eval(x("name", "Mike")), "Mike");
 		// when using namespaces use path for the name of context (map) variables
-		assertEquals(path(kv("screen/height", 12.0)), "screen/height");
+		assertEquals(path(x("screen/height", 12.0)), "screen/height");
 
 		assertEquals(keyValue(map1, "name"), "Mike");
 		assertEquals(keyValue(map1, "height"), 174.0);
 
-		assertTrue(key(kv("width", 2.0)).equals("width"));
-		assertTrue(eval(kv("width", 2.0)).equals(2.0));
+		assertTrue(key(x("width", 2.0)).equals("width"));
+		assertTrue(eval(x("width", 2.0)).equals(2.0));
 
 		assertEquals(keyValue(map1, "name"), "Mike");
 		assertEquals(keyValue(map1, "height"), 174.0);

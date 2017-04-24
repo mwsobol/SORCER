@@ -65,19 +65,7 @@ public class operator {
 		return new Tuple1<T1>( x1 );
 	}
 
-	public static <T1> Tuple1<T1> t(T1 x1 ){
-		return new Tuple1<T1>( x1 );
-	}
-
 	public static <T1,T2> Tuple2<T1,T2> x(T1 x1, T2 x2 ){
-		return new Tuple2<T1,T2>( x1, x2 );
-	}
-
-	public static <T1,T2> Tuple2<T1,T2> t(T1 x1, T2 x2 ){
-		return new Tuple2<T1,T2>( x1, x2 );
-	}
-
-	public static <T1,T2> Tuple2<T1,T2> kv(T1 x1, T2 x2 ){
 		return new Tuple2<T1,T2>( x1, x2 );
 	}
 
@@ -85,15 +73,7 @@ public class operator {
 		return new Tuple3<T1,T2,T3>( x1, x2, x3 );
 	}
 
-	public static <T1,T2,T3> Tuple3<T1,T2,T3> t(T1 x1, T2 x2, T3 x3 ){
-		return new Tuple3<T1,T2,T3>( x1, x2, x3 );
-	}
-
 	public static <T1,T2,T3,T4> Tuple4<T1,T2,T3,T4> x(T1 x1, T2 x2, T3 x3, T4 x4 ){
-		return new Tuple4<T1,T2,T3,T4>( x1, x2, x3, x4 );
-	}
-
-	public static <T1,T2,T3,T4> Tuple4<T1,T2,T3,T4> t(T1 x1, T2 x2, T3 x3, T4 x4 ){
 		return new Tuple4<T1,T2,T3,T4>( x1, x2, x3, x4 );
 	}
 
@@ -285,18 +265,18 @@ public class operator {
 		return ent;
 	}
 
-	public static ContextEntry contextEnt(String path, Context value) {
-		ContextEntry ent = new ContextEntry(path, value);
+	public static ContextEntry contextEnt(Object path, Context value) {
+		ContextEntry ent = new ContextEntry(path.toString(), value);
 		ent.isValid(false);
 		ent.setType(Type.INPUT);
 		return ent;
 	}
 
-	public static ContextEntry cxtEnt(String path, Context value) {
+	public static ContextEntry cxtEnt(Object path, Context value) {
 		return contextEnt(path, value) ;
 	}
 
-	public static ContextEntry contextEnt(String path, Entry... entries) throws ContextException {
+	public static ContextEntry contextEnt(Object path, Entry... entries) throws ContextException {
 		ServiceContext cxt = new ServiceContext();
 		for (Entry e : entries) {
 			cxt.put((String) e._1, e.get());
@@ -305,7 +285,7 @@ public class operator {
 		return contextEnt(path, cxt) ;
 	}
 
-	public static ContextEntry cxtEnt(String path, Entry... entries) throws ContextException {
+	public static ContextEntry cxtEnt(Object path, Entry... entries) throws ContextException {
 		return contextEnt(path, entries);
 	}
 
