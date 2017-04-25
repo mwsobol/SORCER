@@ -20,7 +20,7 @@ package sorcer.mo;
 import sorcer.core.context.MapContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.ContextEntry;
+import sorcer.core.context.model.ent.Setup;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
@@ -86,10 +86,10 @@ public class operator {
     public static ContextModel setValue(ContextModel model, String entName, String path, Object value)
         throws ContextException {
         Object entry = model.asis(entName);
-        if (entry instanceof ContextEntry) {
-            ((ContextEntry) entry).setValue(path, value);
+        if (entry instanceof Setup) {
+            ((Setup) entry).setValue(path, value);
         } else {
-            throw new ContextException("A ContextEntry is required with: " + path);
+            throw new ContextException("A Setup is required with: " + path);
         }
         return model;
     }
@@ -98,13 +98,13 @@ public class operator {
             throws ContextException {
         Object entry = model.asis(entName);
         if (entry != null) {
-            if (entry instanceof ContextEntry) {
+            if (entry instanceof Setup) {
                 for (Entry e : entries) {
-                    ((ContextEntry) entry).get().putValue(e.getName(), e.get());
+                    ((Setup) entry).get().putValue(e.getName(), e.get());
                 }
             }
-            ((ContextEntry)entry).isValid(false);
-            ((ContextEntry)entry).getEvaluator().setValueIsCurrent(false);
+            ((Setup)entry).isValid(false);
+            ((Setup)entry).getEvaluator().setValueIsCurrent(false);
         }
         return model;
     }
@@ -489,7 +489,7 @@ public class operator {
         return (ContextModel)context(dest);
     }
 
-    public static void update(ProcModel model, ContextEntry... entries) throws SignatureException, MogramException {
+    public static void update(ProcModel model, Setup... entries) throws SignatureException, MogramException {
         model.update(entries);
     }
 

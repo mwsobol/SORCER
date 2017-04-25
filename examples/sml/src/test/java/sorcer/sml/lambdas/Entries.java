@@ -34,6 +34,18 @@ Entries {
 	private final static Logger logger = LoggerFactory.getLogger(Entries.class);
 
     @Test
+    public void lambdaValue() throws Exception {
+
+        // a context value provided by a lambda expression with no change to the context
+        Context cxt = context(ent("x1", 10.0), ent("x2", 20.0),
+                lambda("x3", ((Context<Double> context) -> ent("x5", value(context, "x2") + 100.0))));
+
+        logger.info("x3: " + value(cxt, "x3"));
+        assertEquals(120.0, value(cxt, "x3"));
+
+    }
+
+    @Test
     public void lambdaEntries() throws Exception {
 
         // no free variables

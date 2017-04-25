@@ -24,15 +24,15 @@ import sorcer.service.Evaluator;
 /**
  * Created by Mike Sobolewski on 12/9/16.
  */
-public class ContextEntry extends Entry<Context> {
+public class Setup extends Entry<Context> {
 
 	private Evaluator evaluator;
 
-	public ContextEntry(String path) {
+	public Setup(String path) {
 		_1 = path;
 	}
 
-	public ContextEntry(String path, Context context) {
+	public Setup(String path, Context context) {
 		_1 = path;
 		_2 = context;
 	}

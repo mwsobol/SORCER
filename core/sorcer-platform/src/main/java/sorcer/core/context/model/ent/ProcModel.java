@@ -256,7 +256,7 @@ public class ProcModel extends DataContext<Object> implements ContextModel, Invo
 			String pn = obj.getName();
 			if (obj instanceof Proc) {
 				p = (Proc) obj;
-			} else if (obj instanceof Variability || obj instanceof ContextEntry) {
+			} else if (obj instanceof Variability || obj instanceof Setup) {
 				putValue(pn, obj);
 			} else if (obj instanceof Entry) {
 				putValue(pn, ((Entry)obj).asis());
@@ -485,7 +485,7 @@ public class ProcModel extends DataContext<Object> implements ContextModel, Invo
 		return this;
 	}
 
-	public void update(ContextEntry... entries) throws ContextException {
+	public void update(Setup... entries) throws ContextException {
 		// implement in subclasses
 	}
 

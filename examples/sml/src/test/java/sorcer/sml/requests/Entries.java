@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.core.context.model.ent.ContextEntry;
+import sorcer.core.context.model.ent.Setup;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.service.modeling.ContextModel;
@@ -62,27 +62,27 @@ public class Entries {
 	}
 
     @Test
-    public void contextEntry() throws Exception {
-        ContextEntry cxtEnt = cxtEnt("context/value", context(val("arg/x1", 100.0), val("arg/x2", 20.0)));
+    public void setup1() throws Exception {
+        Setup cxtEnt = setup("context/value", context(val("arg/x1", 100.0), val("arg/x2", 20.0)));
         assertEquals(100.0, val(cxtEnt, "arg/x1"));
     }
 
     @Test
-    public void contextEntry2() throws Exception {
-        ContextEntry cxtEnt = cxtEnt("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+    public void setup2() throws Exception {
+        Setup cxtEnt = setup("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
         assertEquals(100.0, val(cxtEnt, "arg/x1"));
     }
 
     @Test
-    public void setValueOfContextEntry() throws Exception {
-        ContextEntry cxtEnt = cxtEnt("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+    public void setValueOfSetup1() throws Exception {
+        Setup cxtEnt = setup("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
         setValue(cxtEnt, "arg/x1", 80.0);
         assertEquals(80.0, val(cxtEnt, "arg/x1"));
     }
 
     @Test
-    public void setValueOfContextEntry2() throws Exception {
-        ContextEntry cxtEnt = cxtEnt("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+    public void setValueOfSetup2() throws Exception {
+        Setup cxtEnt = setup("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
         setValue(cxtEnt, val("arg/x1", 80.0), val("arg/x2", 10.0));
         assertEquals(80.0, val(cxtEnt, "arg/x1"));
         assertEquals(10.0, val(cxtEnt, "arg/x2"));

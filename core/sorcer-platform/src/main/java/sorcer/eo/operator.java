@@ -2454,6 +2454,10 @@ public class operator {
 							  Arg... args) throws ContextException {
 		try {
 			Object val = ((ServiceContext) context).getValue(path, args);
+			if (val instanceof Srv && ((Srv)val).asis() instanceof  EntryCollable) {
+				Entry entry = ((EntryCollable)((Srv)val).asis()).call(context);
+                return (T) entry.asis();
+			}
 			if (SdbUtil.isSosURL(val)) {
 				return (T) ((URL) val).getContent();
 			} else {

@@ -25,7 +25,7 @@ import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.ContextEntry;
+import sorcer.core.context.model.ent.Setup;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.plexus.FiEntry;
@@ -265,30 +265,22 @@ public class operator {
 		return ent;
 	}
 
-	public static ContextEntry contextEnt(Object path, Context value) {
-		ContextEntry ent = new ContextEntry(path.toString(), value);
+	public static Setup setup(Object path, Context value) {
+		Setup ent = new Setup(path.toString(), value);
 		ent.isValid(false);
 		ent.setType(Type.INPUT);
 		return ent;
 	}
 
-	public static ContextEntry cxtEnt(Object path, Context value) {
-		return contextEnt(path, value) ;
-	}
-
-	public static ContextEntry contextEnt(Object path, Entry... entries) throws ContextException {
+	public static Setup setup(Object path, Entry... entries) throws ContextException {
 		ServiceContext cxt = new ServiceContext();
 		for (Entry e : entries) {
 			cxt.put((String) e._1, e.get());
 		}
 		cxt.isValid(false);
-		return contextEnt(path, cxt) ;
+		return setup(path, cxt) ;
 	}
-
-	public static ContextEntry cxtEnt(Object path, Entry... entries) throws ContextException {
-		return contextEnt(path, entries);
-	}
-
+	
 	public static Entry in(Entry... entries) {
 		for (Entry  entry : entries) {
 			entry.setType(Type.INPUT);
@@ -393,7 +385,7 @@ public class operator {
 	}
 
 	public static Object val(Entry ent, String path) throws ContextException {
-		return  ((ContextEntry)ent).getContextValue(path);
+		return  ((Setup)ent).getContextValue(path);
 	}
 
     public static <T> OutputEntry<T> outVal(String path, T value) {
@@ -511,16 +503,16 @@ public class operator {
 		return entry;
 	}
 
-	public static ContextEntry setValue(Entry entry, String contextPath, Object value) throws ContextException {
-		((ContextEntry)entry).setValue(contextPath, value);
-		return (ContextEntry)entry;
+	public static Setup setValue(Entry entry, String contextPath, Object value) throws ContextException {
+		((Setup)entry).setValue(contextPath, value);
+		return (Setup)entry;
 	}
 
-	public static ContextEntry setValue(Entry entry, Entry... entries) throws ContextException {
+	public static Setup setValue(Entry entry, Entry... entries) throws ContextException {
 		for (Entry e :  entries) {
-				((ContextEntry) entry).setValue(e.getName(), e.get());
+				((Setup) entry).setValue(e.getName(), e.get());
 		}
-		return (ContextEntry)entry;
+		return (Setup)entry;
 	}
 
 	public static <S extends Setter> boolean isPersistent(S setter) {
