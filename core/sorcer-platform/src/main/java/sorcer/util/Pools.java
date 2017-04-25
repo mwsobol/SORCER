@@ -18,9 +18,12 @@ package sorcer.util;
 
 import net.jini.id.Uuid;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Setup;
 import sorcer.service.Fidelity;
 import sorcer.service.Mogram;
 import sorcer.service.Signature;
+
+import java.util.List;
 
 /**
  * Created by Mike Sobolewski on 10/28/16.
@@ -48,6 +51,9 @@ public class Pools {
 
 	// a pool of entries to configure mograms of this environment
 	final public static Pool<Uuid, Pool<String, Entry<Object>>> derivativePool = new Pool<>();
+
+	// a pool of setup configurations  for mograms of this environment
+	final public static Pool<Uuid, Pool<String, List<Setup>>> configPool = new Pool<>();
 
 	public static Pool<Fidelity, Fidelity> getFiPool(Uuid mogramId) {
 		return fiPool.get(mogramId);
@@ -92,4 +98,13 @@ public class Pools {
 	public static void putDerivativePool(Mogram mogram, Pool<String, Entry<Object>> pool) {
 		derivativePool.put(mogram.getId(), pool);
 	}
+
+	public static Pool<String, List<Setup>> getConfigPool(Mogram mogram) {
+		return configPool.get(mogram.getId());
+	}
+
+	public static void putConfigPool(Mogram mogram, Pool<String, List<Setup>>  pool) {
+		configPool.put(mogram.getId(), pool);
+	}
+
 }

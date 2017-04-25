@@ -25,6 +25,7 @@ import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Config;
 import sorcer.core.context.model.ent.Setup;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Entry;
@@ -265,6 +266,13 @@ public class operator {
 		return ent;
 	}
 
+	public static Config config(Object path, Setup... entries) {
+		Config ent = new Config(path.toString(), entries);
+		ent.isValid(false);
+		ent.setType(Type.CONFIG);
+		return ent;
+	}
+
 	public static Setup setup(Object path, Context value) {
 		Setup ent = new Setup(path.toString(), value);
 		ent.isValid(false);
@@ -273,12 +281,16 @@ public class operator {
 	}
 
 	public static Setup setup(Object path, Entry... entries) throws ContextException {
-		ServiceContext cxt = new ServiceContext();
-		for (Entry e : entries) {
-			cxt.put((String) e._1, e.get());
+		if (entries != null && entries.length > 0) {
+			ServiceContext cxt = new ServiceContext();
+			for (Entry e : entries) {
+				cxt.put((String) e._1, e.get());
+			}
+			cxt.isValid(false);
+			return new Setup(path.toString(), cxt);
+		} else {
+			return new Setup(path.toString(), null);
 		}
-		cxt.isValid(false);
-		return setup(path, cxt) ;
 	}
 	
 	public static Entry in(Entry... entries) {

@@ -21,37 +21,40 @@ import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Evaluator;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
- * Created by Mike Sobolewski on 12/9/16.
+ * Created by Mike Sobolewski on 04/25/17.
  */
-public class Setup extends Entry<Context> {
+public class Config extends Entry<List<Setup>> {
 
-	private Evaluator evaluator;
-
-	public Setup(String path) {
+	public Config(String path) {
 		_1 = path;
 	}
 
-	public Setup(String path, Context context) {
+	public Config(String path, List<Setup> setups) {
 		_1 = path;
-		_2 = context;
+		_2 = setups;
 	}
 
-	public void setValue(String path, Object value) throws ContextException {
-		_2.putValue(path, value);
+	public Config(String path, Setup[] setups) {
+		_1 = path;
+		_2 = Arrays.asList(setups);
+	}
+
+	public void add(Setup setup) throws ContextException {
+		_2.add(setup);
 		isValid(false);
 	}
 
-	public Object getContextValue(String path) throws ContextException {
-		return _2.getValue(path);
-	}
-
-	public Evaluator getEvaluator() {
-		return evaluator;
-	}
-
-	public void setEvaluator(Evaluator evaluator) {
-		this.evaluator = evaluator;
+	public Object remove(String name) throws ContextException {
+		for (Setup s : _2) {
+			if (s.getName().equals(name)) {
+				_2.remove(s);
+			}
+		}
+		return _2.remove(name);
 	}
 
 }
