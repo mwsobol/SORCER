@@ -35,6 +35,8 @@ import java.util.Arrays;
 public class NetTask extends ObjectTask implements Invocation<Object> {
 
 	private static final long serialVersionUID = -6741189881780105534L;
+    public Integer bondCaseId;
+    public String bondUserName;
 
 	public NetTask() {
 		// do nothing
@@ -150,4 +152,9 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 			throw new MogramException(e);
 		}
 	}
+
+    public String toString() {
+        String s = "bondCaseId = " + bondCaseId + "; bondUserName = " + bondUserName + super.toString();
+        return s;
+    }
 }
