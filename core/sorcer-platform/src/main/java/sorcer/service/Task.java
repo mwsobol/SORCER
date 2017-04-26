@@ -61,6 +61,8 @@ public class Task extends ServiceExertion {
 	private boolean isContinous = false;
 
 	protected Task delegate;
+
+	public String bondCaseId, bondUserName;
 	
 	public Task() {
 		super("task-" + count++);
@@ -223,7 +225,9 @@ public class Task extends ServiceExertion {
 				"\n=== START PRINTING TASK ===\nExertion Description: "
 						+ getClass().getName() + ":" + name);
 		sb.append("\n\tstatus: ").append(getStatus());
-		sb.append(", task ID=");
+		sb.append(", bondCaseId = " + bondCaseId);
+		sb.append(", bondUserName = " + bondUserName);
+		sb.append(", task ID = ");
 		sb.append(getId());
 		sb.append(", description: ");
 		sb.append(description);
