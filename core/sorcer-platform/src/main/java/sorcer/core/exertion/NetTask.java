@@ -35,7 +35,7 @@ import java.util.Arrays;
 public class NetTask extends ObjectTask implements Invocation<Object> {
 
 	private static final long serialVersionUID = -6741189881780105534L;
-    public Integer bondCaseId;
+    public String bondCaseId;
     public String bondUserName;
 
 	public NetTask() {
