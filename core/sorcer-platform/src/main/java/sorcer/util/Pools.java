@@ -17,13 +17,12 @@
 package sorcer.util;
 
 import net.jini.id.Uuid;
+import sorcer.core.context.model.ent.Config;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Setup;
-import sorcer.service.Fidelity;
-import sorcer.service.Mogram;
-import sorcer.service.Signature;
+import sorcer.service.*;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Mike Sobolewski on 10/28/16.
@@ -53,7 +52,7 @@ public class Pools {
 	final public static Pool<Uuid, Pool<String, Entry<Object>>> derivativePool = new Pool<>();
 
 	// a pool of setup configurations  for mograms of this environment
-	final public static Pool<Uuid, Pool<String, List<Setup>>> configPool = new Pool<>();
+	final public static Pool<Uuid, Pool<String, Config>> configPool = new Pool<>();
 
 	public static Pool<Fidelity, Fidelity> getFiPool(Uuid mogramId) {
 		return fiPool.get(mogramId);
@@ -99,12 +98,35 @@ public class Pools {
 		derivativePool.put(mogram.getId(), pool);
 	}
 
-	public static Pool<String, List<Setup>> getConfigPool(Mogram mogram) {
+	public static Pool<String, Config> getConfigPool(Mogram mogram) {
 		return configPool.get(mogram.getId());
 	}
 
-	public static void putConfigPool(Mogram mogram, Pool<String, List<Setup>>  pool) {
-		configPool.put(mogram.getId(), pool);
+	public static void putConfigPool(Mogram mogram, Pool<String, Config>  pool) throws ContextException {
+		Pool<String, Config> extended = expendConfigPool(pool);
+		configPool.put(mogram.getId(), extended);
 	}
 
+	private static Pool<String, Config> expendConfigPool(Pool<String, Config>  pool) throws ContextException {
+		Config config = null;
+		Iterator<Map.Entry<String, Config>> i = pool.entrySet().iterator();
+		Map.Entry<String, Config> entry;
+		List<String> removedKeys = new ArrayList<>();
+		List<String> expandedKeys = new ArrayList<>();
+		while (i.hasNext()) {
+			entry = i.next();
+			config = entry.getValue();
+			for (Setup s : config._2) {
+				if (s._2 == null) {
+					removedKeys.add(s._1);
+					expandedKeys.add(entry.getKey());
+				}
+			}
+		}
+		for (int j = 0; j < removedKeys.size(); j++) {
+			pool.get(expandedKeys.get(j)).addAll(pool.get(removedKeys.get(j))._2);
+			pool.get(expandedKeys.get(j)).remove(removedKeys.get(j));
+		}
+		return pool;
+	}
 }

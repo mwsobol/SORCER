@@ -21,6 +21,7 @@ import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Evaluator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,21 +41,32 @@ public class Config extends Entry<List<Setup>> {
 
 	public Config(String path, Setup[] setups) {
 		_1 = path;
-		_2 = Arrays.asList(setups);
+		_2 = new ArrayList(setups.length);
+		for (Setup s :setups) {
+			_2.add(s);
+		}
 	}
+
 
 	public void add(Setup setup) throws ContextException {
 		_2.add(setup);
 		isValid(false);
 	}
 
-	public Object remove(String name) throws ContextException {
+	public void addAll(List<Setup> list) throws ContextException {
+		_2.addAll(list);
+		isValid(false);
+	}
+
+	public Setup remove(String name) throws ContextException {
+		Setup deleted = null;
 		for (Setup s : _2) {
 			if (s.getName().equals(name)) {
-				_2.remove(s);
+				deleted = s;
 			}
 		}
-		return _2.remove(name);
+		_2.remove(deleted);
+		return deleted;
 	}
 
 }

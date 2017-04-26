@@ -230,12 +230,20 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 
 	@Override
 	public boolean equals(Object object) {
-		if ((object instanceof Entry<?>
-				&& ((Entry<?>) object)._1.equals(_1)
-				&&   ((Entry<?>) object)._2.equals(_2)))
-			return true;
-		else
-			return false;
+		if (object instanceof Entry) {
+			if (_2 != null && ((Entry) object)._2 == null) {
+				return false;
+			} else if (_2 == null && ((Entry) object)._2 != null) {
+				return false;
+			} else if (((Entry) object)._1.equals(_1)
+					&& ((Entry) object)._2 == _2) {
+				return true;
+			} else if (((Entry) object)._1.equals(_1)
+					&& ((Entry) object)._2.equals(_2)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isValid() {
