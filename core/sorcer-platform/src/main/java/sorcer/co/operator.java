@@ -273,23 +273,40 @@ public class operator {
 		return ent;
 	}
 
-	public static Setup setup(Object path, Context value) {
-		Setup ent = new Setup(path.toString(), value);
+	public static Setup setup(Object aspect, Context value) {
+		Setup ent = new Setup(aspect.toString(), value);
 		ent.isValid(false);
 		ent.setType(Type.INPUT);
 		return ent;
 	}
 
-	public static Setup setup(Object path, Entry... entries) throws ContextException {
+	public static Setup setup(Object aspect, Entry... entries) throws ContextException {
+		return setup(aspect, null, null, entries);
+	}
+
+	public static Setup setup(Object aspect, String entryName, Entry... entries) throws ContextException {
+		return setup(aspect, entryName, null, entries);
+	}
+
+	public static Setup setup(Object aspect, String entryName, String fiName, Entry... entries) throws ContextException {
 		if (entries != null && entries.length > 0) {
-			ServiceContext cxt = new ServiceContext();
+			ServiceContext cxt;
+			if (entryName == null)
+				cxt = new ServiceContext(aspect.toString());
+			else
+				cxt = new ServiceContext(entryName);
+
+			if (fiName != null) {
+				cxt.setSubjectPath(fiName);
+			}
+
 			for (Entry e : entries) {
 				cxt.put((String) e._1, e.get());
 			}
 			cxt.isValid(false);
-			return new Setup(path.toString(), cxt);
+			return new Setup(aspect.toString(), cxt);
 		} else {
-			return new Setup(path.toString(), null);
+			return new Setup(aspect.toString(), null);
 		}
 	}
 	

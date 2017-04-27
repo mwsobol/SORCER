@@ -47,6 +47,9 @@ public class Config extends Entry<List<Setup>> {
 		}
 	}
 
+	public List<Setup> getSetups() {
+		return _2;
+	}
 
 	public void add(Setup setup) throws ContextException {
 		_2.add(setup);

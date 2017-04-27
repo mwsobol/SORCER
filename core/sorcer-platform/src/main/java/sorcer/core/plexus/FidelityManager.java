@@ -241,11 +241,13 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
                             morphFidelities.get(name).setMorpherSelect(path);
                         }
                         fiEnt.getValue().setSelect(path);
+                        mogram.applyFidelity(name);
                     } else if (fiEnt.getKey().equals(path)) {
                         if (morphFidelities.get(path) != null) {
                             morphFidelities.get(path).setMorpherSelect(path);
                         }
                         fiEnt.getValue().setSelect(name);
+                        mogram.applyFidelity(path);
                     }
                 }
             }

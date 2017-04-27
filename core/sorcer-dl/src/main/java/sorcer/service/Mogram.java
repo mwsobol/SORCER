@@ -320,6 +320,8 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
      */
     public Signature getBuilder(Arg... args) throws MogramException;
 
+    public void applyFidelity(String name);
+
     public MogramStrategy getMogramStrategy();
 
     public void setBuilder(Signature builder) throws MogramException;

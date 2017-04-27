@@ -2527,6 +2527,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return subjectPath;
 	}
 
+	public void setSubjectPath(String path) {
+		subjectPath = path;
+	}
+
 	/** {@inheritDoc} */
 	public Object getSubjectValue() {
 		return subjectValue;

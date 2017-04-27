@@ -665,6 +665,11 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
     abstract public Mogram clearScope() throws MogramException;
 
+    @Override
+    public void applyFidelity(String name) {
+        // implement in subclasses
+    }
+
     /**
      * <p>
      * Returns <code>true</code> if this context is for modeling, otherwise
