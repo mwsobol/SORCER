@@ -287,7 +287,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	protected void setScratchManager(final ScratchManager scratchManager) {
         if(scratchManager!=null) {
             this.scratchManager = scratchManager;
-            logger.info("Set ScratchManager with {}", this.scratchManager.getClass().getName());
+            logger.debug("Set ScratchManager with {}", this.scratchManager.getClass().getName());
         } else {
             logger.warn("Attempt to set null ScratchManager avoided");
         }
