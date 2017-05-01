@@ -2729,11 +2729,19 @@ public class GenericUtil {
 	 * @throws IOException
 	 */
 	public static void writeUrlToFile(URL inputUrl, File localInputFile)
-			throws IOException {
-		InputStream is = inputUrl.openStream();
-		redirectInputStream2File(is, localInputFile);
+			throws Exception {
+        InputStream is = null;
+        try {
+            is = inputUrl.openStream();
+            redirectInputStream2File(is, localInputFile);
+        } catch (Exception e) {
+            if (is != null) is.close();
+            throw(e);
+        } finally {
+            if (is != null) is.close();
+        }
 	}
-	
+
 	/**
 	 * Downloads url directory to target directory (url directory will be 
 	 * subdirectory of target directory); example:
