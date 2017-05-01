@@ -1660,16 +1660,31 @@ public class GenericUtil {
 	 * @throws IOException
 	 */
 	public static void redirectInputStream2File(InputStream is, File file)
-			throws IOException {		
-		int bufferSize = 4096;
-		FileOutputStream fos = new FileOutputStream(file);
-		byte[] buffer = new byte[bufferSize];
-		int bytesRead;
-		while ((bytesRead = is.read(buffer)) != -1) { // EOF
-			fos.write(buffer, 0, bytesRead);
-		}
-		fos.close();
-		is.close();
+			throws IOException {
+        FileOutputStream fos = new FileOutputStream(file);
+        try {
+            int bufferSize = 4096;
+//            FileOutputStream fos = new FileOutputStream(file);
+            byte[] buffer = new byte[bufferSize];
+            int bytesRead;
+
+            while ((bytesRead = is.read(buffer)) != -1) { // EOF
+                fos.write(buffer, 0, bytesRead);
+            }
+            fos.close();
+            is.close();
+        } catch (IOException e) {
+            throw(e);
+        } finally {
+            if (fos != null) {
+                fos.close();
+                fos = null;
+            }
+            if (is != null) {
+                is.close();
+                is = null;
+            }
+        }
 	}
 //	private static Vector<String> getJobControlWrapperScript(File childScriptFile) {
 //		return getJobControlWrapperScript(childScriptFile, null, 999);
@@ -2707,10 +2722,12 @@ public class GenericUtil {
             is = inputUrl.openStream();
             redirectInputStream2File(is, localInputFile);
         } catch (Exception e) {
-            if (is != null) is.close();
             throw(e);
         } finally {
-            if (is != null) is.close();
+            if (is != null) {
+                is.close();
+                is = null;
+            }
         }
 	}
 	
