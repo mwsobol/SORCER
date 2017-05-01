@@ -348,7 +348,12 @@ public class GenericUtil {
 	 */
 	public static void download(URL sourceUrl, File destinationFile)
 			throws IOException {
-		writeUrlToFile(sourceUrl, destinationFile);
+        try {
+            writeUrlToFile(sourceUrl, destinationFile);
+        } catch (Exception e) {
+            if (e instanceof IOException) throw ((IOException)e);
+            throw new IOException("problem downloading " + sourceUrl + " to " + destinationFile + "; exception = " + e);
+        }
 	}
 
 	/**
@@ -2696,9 +2701,17 @@ public class GenericUtil {
 	 * @throws IOException
 	 */
 	public static void writeUrlToFile(URL inputUrl, File localInputFile)
-			throws IOException {
-		InputStream is = inputUrl.openStream();
-		redirectInputStream2File(is, localInputFile);
+			throws Exception {
+        InputStream is = null;
+        try {
+            is = inputUrl.openStream();
+            redirectInputStream2File(is, localInputFile);
+        } catch (Exception e) {
+            if (is != null) is.close();
+            throw(e);
+        } finally {
+            if (is != null) is.close();
+        }
 	}
 	
 	/**
