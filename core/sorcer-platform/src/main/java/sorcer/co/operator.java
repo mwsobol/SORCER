@@ -157,6 +157,14 @@ public class operator {
 		return elems;
 	}
 
+	public static double[] vector(double... elems) {
+		return elems;
+	}
+
+	public static int[] vector(int... elems) {
+		return elems;
+	}
+
 	public static Object[] objects(Object... elems) {
 		return elems;
 	}
@@ -533,13 +541,13 @@ public class operator {
 	}
 
 	public static Setup setValue(Entry entry, String contextPath, Object value) throws ContextException {
-		((Setup)entry).setValue(contextPath, value);
+		((Setup)entry).setEntry(contextPath, value);
 		return (Setup)entry;
 	}
 
 	public static Setup setValue(Entry entry, Entry... entries) throws ContextException {
 		for (Entry e :  entries) {
-				((Setup) entry).setValue(e.getName(), e.get());
+				((Setup) entry).setEntry(e.getName(), e.get());
 		}
 		return (Setup)entry;
 	}

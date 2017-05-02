@@ -20,6 +20,7 @@ package sorcer.core.context.model.ent;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Evaluator;
+import sorcer.service.SetterException;
 
 /**
  * Created by Mike Sobolewski on 12/9/16.
@@ -37,8 +38,17 @@ public class Setup extends Entry<Context> {
 		_2 = context;
 	}
 
-	public void setValue(String path, Object value) throws ContextException {
-		_2.putValue(path, value);
+	public void setValue(Context value) {
+		_2 = value;
+		isValid(false);
+	}
+
+	public void setEntry(String path, Object value) throws SetterException {
+		try {
+			_2.putValue(path, value);
+		} catch (ContextException e) {
+			throw new SetterException(e);
+		}
 		isValid(false);
 	}
 

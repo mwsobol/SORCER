@@ -87,7 +87,7 @@ public class operator {
         throws ContextException {
         Object entry = model.asis(entName);
         if (entry instanceof Setup) {
-            ((Setup) entry).setValue(path, value);
+            ((Setup) entry).setEntry(path, value);
         } else {
             throw new ContextException("A Setup is required with: " + path);
         }

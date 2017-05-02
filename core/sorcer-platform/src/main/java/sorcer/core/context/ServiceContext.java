@@ -3438,6 +3438,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return new Entry(path, data.get(path));
 	}
 
+	public String getSingletonPath() throws ContextException {
+		if (data.size() == 1) {
+			return getPaths().get(0);
+		}
+		return null;
+	}
+
 	public String getProviderName() throws RemoteException {
 		if (provider == null)
 			return name;
