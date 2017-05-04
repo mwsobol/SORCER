@@ -19,10 +19,7 @@ package sorcer.core.signature;
 
 import net.jini.core.transaction.TransactionException;
 import sorcer.netlet.ServiceScripter;
-import sorcer.service.Arg;
-import sorcer.service.Mogram;
-import sorcer.service.MogramException;
-import sorcer.service.Path;
+import sorcer.service.*;
 import sorcer.util.Sorcer;
 
 import java.io.File;
@@ -62,7 +59,7 @@ public class NetletSignature extends ServiceSignature {
         try {
             ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
             se.readFile(new File(serviceSource.getName()));
-            return sorcer.eo.operator.exec((Mogram)se.interpret());
+            return sorcer.eo.operator.exec((Service)se.interpret());
         } catch (Throwable throwable) {
             throw new MogramException(throwable);
         }

@@ -16,10 +16,12 @@
  */
 package sorcer.co;
 
+import net.jini.core.transaction.TransactionException;
 import org.rioproject.resolver.Artifact;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.resolver.ResolverHelper;
 import sorcer.co.tuple.*;
+import sorcer.core.Name;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
@@ -58,7 +60,7 @@ import java.util.concurrent.Callable;
 import static sorcer.po.operator.invoker;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class operator {
+public class operator extends sorcer.operator {
 
 	private static int count = 0;
 

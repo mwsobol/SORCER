@@ -76,12 +76,15 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 		requestor.postprocess();
 	}
 
-	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
 		prepareToRun();
 		requestor.preprocess(Arg.asStrings(args));
 		try {
-			if (requestor.jobberName != null) {
+			if (args.length == 1 && args[0] instanceof Signature) {
+				// requestor services
+				Signature rs = (Signature) args[0];
+				return rs.exec(rs);
+			} else if (requestor.jobberName != null) {
 				Arg[] ext = new Arg[args.length+1];
 				System.arraycopy(args,  0, ext,  1, args.length);
 				ext[0] = prvName(requestor.jobberName);
@@ -357,8 +360,7 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 		}
 
 	}
-
-    @Override
+	
     public String getName() {
         return name;
     }

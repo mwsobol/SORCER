@@ -20,7 +20,7 @@ package sorcer.core.requestor;
 import net.jini.core.transaction.Transaction;
 import sorcer.service.*;
 
-public interface Requestor extends Request, Client {
+public interface Requestor extends Service, Client {
 
 	public Mogram getMogram(String... args) throws MogramException;
 
@@ -29,7 +29,7 @@ public interface Requestor extends Request, Client {
 	public void preprocess(String... args) throws MogramException, ContextException;
 
 	public void process(String... args) throws MogramException, ContextException;
-	
+
 	public void postprocess(String... args) throws MogramException, ContextException;
 
 }

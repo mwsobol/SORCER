@@ -44,7 +44,7 @@ import static sorcer.eo.operator.context;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class operator {
+public class operator extends sorcer.operator {
 
 	private static final Logger logger = LoggerFactory.getLogger(operator.class.getName());
 

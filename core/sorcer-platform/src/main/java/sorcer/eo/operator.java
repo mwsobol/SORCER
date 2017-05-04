@@ -75,7 +75,7 @@ import static sorcer.po.operator.srv;
  *
  * @author Mike Sobolewski
  */
-public class operator {
+public class operator extends sorcer.operator {
 
 	protected static int count = 0;
 
