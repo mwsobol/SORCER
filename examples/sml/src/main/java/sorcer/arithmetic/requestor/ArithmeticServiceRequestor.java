@@ -14,14 +14,16 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.requestor.ServiceRequestor;
 import sorcer.service.*;
 
+import java.io.IOException;
+
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 
 public class ArithmeticServiceRequestor extends ServiceRequestor {
 
 	/* (non-Javadoc)
-	 * @see sorcer.core.requestor.ServiceRequestor#getMogram(java.lang.String[])
-	 */
+         * @see sorcer.core.requestor.ServiceRequestor#getMogram(java.lang.String[])
+         */
 	@Override
 	public Mogram getMogram(String... args) throws MogramException {
 

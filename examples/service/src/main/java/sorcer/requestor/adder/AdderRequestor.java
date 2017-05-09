@@ -35,7 +35,7 @@ public class AdderRequestor extends ServiceRequestor {
             } else if (option.equals("exertion")) {
                 return createExertion();
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new MogramException(e);
         }
         return null;
