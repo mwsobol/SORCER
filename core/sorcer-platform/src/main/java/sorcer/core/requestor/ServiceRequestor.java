@@ -27,16 +27,16 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.provider.RemoteLogger;
 import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.core.provider.logger.RemoteLoggerListener;
+import sorcer.netlet.ServiceScripter;
+import sorcer.netlet.util.NetletClassLoader;
+import sorcer.netlet.util.ScripterThread;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.tools.webster.InternalWebster;
 import sorcer.tools.webster.Webster;
 import sorcer.util.Sorcer;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.rmi.RemoteException;
 import java.util.*;
 
@@ -236,17 +236,18 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 		}
 	}
 
-	public Object evaluate(File scriptFile) throws IOException {
-		shell = new GroovyShell();
-		Object obj = null;
-		try {
-			obj = shell.evaluate(scriptFile);
-		} catch (CompilationFailedException e) {
-			logger.warn("evaluate", e);
+	public Object evaluate(File scriptFile) throws Throwable {
+		ServiceScripter serviceScripter = null;
+		if (scriptFile.exists()) {
+			serviceScripter = new ServiceScripter(scriptFile, getClass().getClassLoader());
+		} else {
+			logger.warn("Missing script input filename: " + scriptFile.getAbsolutePath());;
 		}
-		return obj;
+		Object outObject = serviceScripter.interpret();
+
+		return outObject;
 	}
-	
+
 	public Transaction getTransaction() {
 		return null;
 	}

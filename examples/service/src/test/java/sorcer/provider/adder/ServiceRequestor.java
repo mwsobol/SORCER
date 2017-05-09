@@ -31,6 +31,8 @@ public class ServiceRequestor {
 //		Context cxt = (Context) req.exec();
 
 		sorcer.core.requestor.ServiceRequestor req = requestor(AdderRequestor.class, "exertion");
+//		sorcer.core.requestor.ServiceRequestor req = requestor(AdderRequestor.class, "netlet");
+
 		Context cxt = (Context) exec(req);
 
 		logger.info("out context: " + cxt);
@@ -39,7 +41,7 @@ public class ServiceRequestor {
 		logger.info("context @ out/y: " + value(cxt, "out/y"));
 
 		// get a single context argument
-		assertEquals(200.0, value(cxt, "out/y"));
+		assertEquals(300.0, value(cxt, "out/y"));
 
 
 		ModelTable dataTable = dataTable(header("x1", "x2"),
