@@ -60,6 +60,16 @@ public class Copier implements Evaluation<Context> {
 	}
 
 	@Override
+	public Context getScope() {
+		return fromContext;
+	}
+
+	@Override
+	public void setScope(Context context) {
+		fromContext = context;
+	}
+
+	@Override
 	public void substitute(Arg... entries) throws SetterException {
         ((ServiceContext)toContext).substitute(entries);
 	}

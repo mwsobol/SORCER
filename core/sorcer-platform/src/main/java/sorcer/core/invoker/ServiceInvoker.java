@@ -452,7 +452,7 @@ public class ServiceInvoker<T> extends Observable implements  Invocation<T>, Ide
 	 * @see sorcer.service.Scopable#setScope(java.lang.Object)
 	 */
 	@Override
-	public void setScope(Context scope) throws ContextException {
+	public void setScope(Context scope) {
 		invokeContext = scope;
 	}
 	

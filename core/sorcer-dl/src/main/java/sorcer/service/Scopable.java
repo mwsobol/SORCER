@@ -24,6 +24,6 @@ public interface Scopable {
 
 	public Context getScope();
 	
-	public void setScope(Context scope) throws ContextException;
+	public void setScope(Context scope);
 
 }

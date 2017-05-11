@@ -61,7 +61,7 @@ import java.util.Map;
 
 	private String name;
 
-	protected Context<?> conditionalContext;
+	protected Context conditionalContext;
 
 	protected String evaluationPath;
 
@@ -226,7 +226,17 @@ import java.util.Map;
 		}
 	}
 
-    @Override
+	@Override
+	public Context getScope() {
+		return conditionalContext;
+	}
+
+	@Override
+	public void setScope(Context scope) {
+		conditionalContext = scope;
+	}
+
+	@Override
     public void substitute(Arg... entries)
 			throws SetterException {
         ((ServiceContext)conditionalContext).substitute(entries);

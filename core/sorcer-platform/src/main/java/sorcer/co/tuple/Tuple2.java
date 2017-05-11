@@ -118,6 +118,16 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 		return this._2;
 	}
 
+	@Override
+	public Context getScope() {
+		return null;
+	}
+
+	@Override
+	public void setScope(Context scope) {
+		// do nothing
+	}
+
 	/* (non-Javadoc)
 	 * @see sorcer.service.Setter#setValue(java.lang.Object)
 	 */

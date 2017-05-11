@@ -62,12 +62,9 @@ public class operator extends sorcer.operator {
 
 	public static Proc proc(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
 		Proc p = new Proc(identifiable.getName(), identifiable);
-		if (identifiable instanceof Scopable)
-			try {
-				((Scopable)identifiable).setScope(context);
-			} catch (ContextException e) {
-				throw new EvaluationException(e);
-			}
+		if (identifiable instanceof Scopable) {
+			((Scopable) identifiable).setScope(context);
+		}
 		p.setScope(context);
 		return p;
 	}
