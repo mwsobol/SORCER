@@ -26,6 +26,7 @@ import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.inputs;
 import static sorcer.mo.operator.returnPath;
 import static sorcer.po.operator.ent;
+import static sorcer.po.operator.inoutVal;
 
 /**
  * @author Mike Sobolewski
@@ -93,7 +94,7 @@ public class DataModels {
         assertTrue(path(out).equals("arg/y"));
         assertTrue(eval(out).equals(20.0));
 
-        Entry<Double> inout = operator.inoutVal("arg/z", 30.0);
+        Entry<Double> inout = inoutVal("arg/z", 30.0);
         assertTrue(path(inout).equals("arg/z"));
         assertTrue(eval(inout).equals(30.0));
 
@@ -110,7 +111,7 @@ public class DataModels {
         add(cxt, ent("arg/x6", 1.6));
         add(cxt, outVal("out/y1", 1.7));
         add(cxt, outVal("out/y2", 1.8));
-        add(cxt, operator.inoutVal("proc/z", 1.9));
+        add(cxt, inoutVal("proc/z", 1.9));
 
         assertTrue(cxt instanceof Context);
 
@@ -126,8 +127,8 @@ public class DataModels {
         assertEquals(select(cxt, 2, 4, 5), list(1.2, 1.4, 1.5));
 
         // get input and output contexts
-        List<String> allInputs = list("arg/x1", "arg/x2", "arg/x3", "arg/x4", "arg/x5", "proc/z");
-        List<String> inputs = list("arg/x1", "arg/x2", "arg/x3", "arg/x4", "arg/x5");
+        List<String> allInputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5", "proc/z");
+        List<String> inputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5");
         List<String> outputs = list("out/y1", "out/y2", "proc/z");
 
         assertTrue(allInputs.equals(paths(allInputs(cxt))));
@@ -135,10 +136,10 @@ public class DataModels {
         assertTrue(outputs.equals(paths(outputs(cxt))));
 
         // return all values of inEntries
-        assertEquals(inCotextValues(cxt), list(1.5, 1.4, 1.3, 1.2, 1.1));
+        assertEquals(inCotextValues(cxt), list(1.5, 1.4, 1.3, 1.2));
 
         // return all paths of inEntries
-        assertEquals(inContextPaths(cxt), list("arg/x5", "arg/x4", "arg/x3", "arg/x2", "arg/x1"));
+        assertEquals(inContextPaths(cxt), list("arg/x5", "arg/x4", "arg/x3", "arg/x2"));
 
         // return all values of outEntries
         assertEquals(outContextValues(cxt), list(1.8, 1.7, 1.9));
