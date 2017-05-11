@@ -266,13 +266,13 @@ public class operator extends sorcer.operator {
 	public static <T> Entry<T> val(Path path, T value) {
 		Entry ent = new Entry<T>(path.path, value);
 		ent.annotation(path.info.toString());
-		ent.setType(Type.INPUT);
+		ent.setType(Type.CONSTANT);
 		return ent;
 	}
 
 	public static <T> Entry<T> val(String path, T value) {
 		Entry ent = new Entry<T>(path, value);
-		ent.setType(Type.INPUT);
+		ent.setType(Type.CONSTANT);
 		return ent;
 	}
 
