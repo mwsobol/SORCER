@@ -60,6 +60,11 @@ public class Copier implements Evaluation<Context> {
 	}
 
 	@Override
+	public void setNegative(boolean negative) {
+		// do nothing
+	}
+
+	@Override
 	public Context getScope() {
 		return fromContext;
 	}

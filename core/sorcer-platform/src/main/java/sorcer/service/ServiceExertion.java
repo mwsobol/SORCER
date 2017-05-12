@@ -1072,4 +1072,9 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         }
         return info.toString();
     }
+
+    @Override
+    public void setNegative(boolean negative) {
+        // do nothing
+    }
 }

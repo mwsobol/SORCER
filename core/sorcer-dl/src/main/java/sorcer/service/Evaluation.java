@@ -49,4 +49,7 @@ public interface  Evaluation <T> extends Substitutable, Scopable, Item, Evaluati
 	 */
 	public T getValue(Arg... entries) throws EvaluationException, RemoteException;
 
+
+	public void setNegative(boolean negative);
+
 }

@@ -89,6 +89,11 @@ public class operator extends sorcer.operator {
 		return  new ServiceRequestor(requestorType, args);
 	}
 
+	public static Evaluation neg(Evaluation evaluation) {
+		evaluation.setNegative(true);
+		return evaluation;
+	}
+
 	public static Object revalue(Context evaluation, String path,
 								 Arg... entries) throws ContextException {
 		Object obj = value(evaluation, path, entries);

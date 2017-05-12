@@ -52,4 +52,5 @@ public interface  Evaluator <T> extends Evaluation<T> {
 
 	public void update(Setup... entries) throws ContextException;
 
+	public void setNegative(boolean negative);
 }

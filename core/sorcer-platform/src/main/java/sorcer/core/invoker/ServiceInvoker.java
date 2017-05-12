@@ -82,7 +82,9 @@ public class ServiceInvoker<T> extends Observable implements  Invocation<T>, Ide
 
 	//the cached eval
 	protected T value;
-		
+
+	protected boolean negative;
+
 	// invocation delegate to
 	Evaluator evaluator;
 
@@ -393,7 +395,7 @@ public class ServiceInvoker<T> extends Observable implements  Invocation<T>, Ide
 		try {
 			init(this.args);
 			if (lambda != null) {
-				return lambda.call((Context)invokeContext);
+				return lambda.call(invokeContext);
 			} else if (evaluator != null) {
 				evaluator.addArgs(this.args);
 				return evaluator.getValue(entries);
@@ -557,6 +559,15 @@ public class ServiceInvoker<T> extends Observable implements  Invocation<T>, Ide
 	@Override
 	public void update(Setup... entries) throws ContextException {
 		// implement in subclasses
+	}
+
+	public boolean isNegative() {
+		return negative;
+	}
+
+	@Override
+	public void setNegative(boolean negative) {
+		this.negative = negative;
 	}
 
 	public boolean isValueCurrent() {

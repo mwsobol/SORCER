@@ -119,6 +119,11 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 	}
 
 	@Override
+	public void setNegative(boolean negative) {
+		// do nothing
+	}
+
+	@Override
 	public Context getScope() {
 		return null;
 	}

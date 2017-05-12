@@ -43,6 +43,8 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 
 	public int index;
 
+	protected boolean negative;
+
 	protected Object annotation;
 
 	protected Class valClass;
@@ -152,12 +154,17 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		}
         if (contextSelector != null) {
             try {
-                return (T) contextSelector.doSelect(val);
+                val = (T) contextSelector.doSelect(val);
             } catch (ContextException e) {
                 throw new EvaluationException(e);
             }
-        } else
-            return val;
+        }
+		if (val instanceof Number && negative) {
+			Number result = (Number) val;
+			Double rd = result.doubleValue() * -1;
+			val = (T) rd;
+		}
+		return val;
 	}
 
 	@Override
@@ -377,6 +384,14 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		} else {
 			return _2;
 		}
+	}
+
+	public boolean isNegative() {
+		return negative;
+	}
+
+	public void setNegative(boolean negative) {
+		this.negative = negative;
 	}
 
 	public Object getSelectedFidelity() {
