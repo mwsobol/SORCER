@@ -2446,10 +2446,10 @@ public class operator extends sorcer.operator {
 		}
 	}
 
-	public static Object eval(ContextModel model, String evalSelector,
+	public static Object eval(ContextModel model, String selector,
 							  Arg... args) throws ContextException {
 		try {
-			return model.getValue(evalSelector, args);
+			return model.getValue(selector, args);
 		} catch (RemoteException e) {
 			throw new ContextException(e);
 		}
@@ -2474,10 +2474,10 @@ public class operator extends sorcer.operator {
 		}
 	}
 
-	public static Object eval(Exertion exertion, String evalSelector,
+	public static Object eval(Exertion exertion, String selector,
 							 Arg... args) throws EvaluationException {
 			try {
-				exertion.getDataContext().setReturnPath(new ReturnPath(evalSelector));
+				exertion.getDataContext().setReturnPath(new ReturnPath(selector));
 				return exec(exertion, args);
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -27,10 +27,7 @@ import sorcer.core.context.Copier;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Config;
-import sorcer.core.context.model.ent.Setup;
-import sorcer.core.context.model.ent.Proc;
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.*;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
@@ -94,6 +91,13 @@ public class operator extends sorcer.operator {
 
 	public static <T1,T2,T3,T4,T5,T6> Tuple6<T1,T2,T3,T4,T5,T6> t(T1 x1, T2 x2, T3 x3, T4 x4, T5 x5, T6 x6 ){
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
+	}
+
+	public static Tie tie(String discipline, String var) {
+		return new Tie(discipline, var);
+	}
+	public static Coupling cplg(Tie from, Tie to) {
+		return new Coupling(from, to);
 	}
 
 	public static <T> List<T> inCotextValues(Context<T> context) throws ContextException {
