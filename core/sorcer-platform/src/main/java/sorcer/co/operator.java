@@ -1124,6 +1124,10 @@ public class operator extends sorcer.operator {
 		return signature.build(context);
 	}
 
+	public static <T> T replicate(ServiceMogram mogram) throws SignatureException {
+		return mogram.getInstance();
+	}
+
 	/**
 	 * Returns an instance by constructor method initialization or by
 	 * instance/class method initialization.

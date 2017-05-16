@@ -1014,6 +1014,17 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         logger.debug("config fiPool: " + Pools.getFiPool(mogramId));
     }
 
+    public <T> T getInstance() throws SignatureException {
+        if (builder != null) {
+            ServiceMogram mogram = (ServiceMogram) sorcer.co.operator.instance(builder);
+            Class<T> clazz;
+            clazz = (Class<T>) mogram.getClass();
+            return (T) clazz.cast(mogram);
+        } else {
+            throw new SignatureException("No mogram builder available");
+        }
+    }
+
     @Override
     public Mogram deploy(List<Signature> builders) throws ConfigurationException {
         // to be implemented in subclasses
