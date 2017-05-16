@@ -1124,7 +1124,7 @@ public class operator extends sorcer.operator {
 		return signature.build(context);
 	}
 
-	public static <T> T replicate(ServiceMogram mogram) throws SignatureException {
+	public static <T> T build(ServiceMogram mogram) throws SignatureException {
 		return mogram.getInstance();
 	}
 
