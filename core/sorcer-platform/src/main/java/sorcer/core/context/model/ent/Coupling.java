@@ -26,15 +26,15 @@ public class Coupling extends Tuple2<Tie, Tie> {
     @Override
     public boolean equals(Object object) {
         if (object instanceof Coupling) {
-            if (_2._2 != null && ((Coupling) object)._2._2 == null) {
+            if (_2 != null && ((Coupling) object)._2 == null) {
                 return false;
-            } else if (_2._2 == null && ((Coupling) object)._2._2 != null) {
+            } else if (_2 == null && ((Coupling) object)._2 != null) {
                 return false;
-            } else if (((Coupling) object)._1._2.equals(_1._1)
-                    && ((Coupling) object)._2._2 == _2._2) {
+            } else if (((Coupling) object)._1.equals(_1)
+                    && ((Coupling) object)._2 == _2) {
                 return true;
-            } else if (((Coupling) object)._1._1.equals(_1._1)
-                    && ((Coupling) object)._2._2.equals(_2._2)) {
+            } else if (((Coupling) object)._1.equals(_1)
+                    && ((Coupling) object)._2.equals(_2)) {
                 return true;
             }
         }

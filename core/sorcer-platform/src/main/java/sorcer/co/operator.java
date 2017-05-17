@@ -96,11 +96,20 @@ public class operator extends sorcer.operator {
 	public static Tie tie(String discipline, String var) {
 		return new Tie(discipline, var);
 	}
-	public static Coupling cplg(Tie from, Tie to) {
+
+    public static Tie tie(String discipline) {
+        return new Tie(discipline, null);
+    }
+
+    public static Coupling cplg(String fromDiscipline, String toDiscipline,  String var) {
+        return new Coupling(tie(fromDiscipline, var), tie(toDiscipline));
+    }
+
+    public static Coupling cplg(Tie from, Tie to) {
 		return new Coupling(from, to);
 	}
 
-	public static <T> List<T> inCotextValues(Context<T> context) throws ContextException {
+    public static <T> List<T> inCotextValues(Context<T> context) throws ContextException {
 		return ((ServiceContext)context).getInValues();
 	}
 

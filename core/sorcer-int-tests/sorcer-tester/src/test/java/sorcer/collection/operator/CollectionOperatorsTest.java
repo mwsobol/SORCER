@@ -81,7 +81,7 @@ public class CollectionOperatorsTest {
 	@Test
 	public void bagOperatorTest() throws EvaluationException {
 		// the bag operator creates instances of java.util.Set
-		Set<Object> set = bag("name", "Mike", "name", "Ray", (Object) ent("height", 174));
+		Set<Object> set = bag("name", "Mike", "name", "Ray", ent("height", 174));
 		assertEquals(set.size(), 4);
 		assertEquals(ent("height", 174), ent("height", 174));
 		assertTrue(set.contains(ent("height", 174)));
