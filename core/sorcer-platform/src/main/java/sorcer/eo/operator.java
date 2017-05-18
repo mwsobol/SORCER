@@ -2385,21 +2385,6 @@ public class operator extends sorcer.operator {
 		return service.exert(mogram, txn, entries);
 	}
 
-	public static Object eval(ContextModel model, Arg... args)
-			throws ContextException {
-		try {
-			synchronized (model) {
-				if (model instanceof ProcModel) {
-					return ((ProcModel) model).getValue(args);
-				} else {
-					return ((ServiceContext) model).getValue(args);
-				}
-			}
-		} catch (Exception e) {
-			throw new ContextException(e);
-		}
-	}
-
     public static <T> T v(Context<T> context, String path, Arg... args) throws ContextException {
         return value(context, path, args);
     }

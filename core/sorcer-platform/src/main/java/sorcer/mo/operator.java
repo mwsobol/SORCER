@@ -49,6 +49,26 @@ import static sorcer.eo.operator.context;
  */
 public class operator {
 
+    public static Context eval(ContextModel model, Context context)
+            throws ContextException, RemoteException {
+        return model.evaluate(context);
+    }
+
+    public static Object eval(ContextModel model, Arg... args)
+            throws ContextException {
+        try {
+            synchronized (model) {
+                if (model instanceof ProcModel) {
+                    return ((ProcModel) model).getValue(args);
+                } else {
+                    return ((ServiceContext) model).getValue(args);
+                }
+            }
+        } catch (Exception e) {
+            throw new ContextException(e);
+        }
+    }
+
     public static <T> T putValue(Context<T> context, String path, T value) throws ContextException {
         context.putValue(path, value);
         return value;
