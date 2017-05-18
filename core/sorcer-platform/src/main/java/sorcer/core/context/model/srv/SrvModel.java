@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.DependencyEntry;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
+import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.ServiceInvoker;
@@ -366,7 +367,7 @@ public class SrvModel extends ProcModel implements ContextModel, Invocation<Obje
     }
 
     protected void execDependencies(String path, Arg... args) throws ContextException {
-        Map<String, List<DependencyEntry>> dpm = mogramStrategy.getDependentPaths();
+        Map<String, List<DependencyEntry>> dpm = ((ModelStrategy)mogramStrategy).getDependentPaths();
         if (dpm != null && dpm.get(path) != null) {
             List<DependencyEntry> del = dpm.get(path);
             Entry entry = entry(path);

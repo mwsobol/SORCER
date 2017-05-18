@@ -17,6 +17,7 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.core.context.Contexts;
+import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
@@ -108,9 +109,9 @@ public class ProcModel extends DataContext<Object> implements ContextModel, Invo
 				ReturnPath rp = Arg.getReturnPath(args);
 				if (rp != null)
 					val = getReturnValue(rp);
-				else if (mogramStrategy.getResponsePaths() != null
-						&& mogramStrategy.getResponsePaths().size() == 1) {
-					val = asis(mogramStrategy.getResponsePaths().get(0).getName());
+				else if (((ModelStrategy)mogramStrategy).getResponsePaths() != null
+						&& ((ModelStrategy)mogramStrategy).getResponsePaths().size() == 1) {
+					val = asis(((ModelStrategy)mogramStrategy).getResponsePaths().get(0).getName());
 				} else {
 					val = super.getValue(path, args);
 				}
@@ -128,9 +129,10 @@ public class ProcModel extends DataContext<Object> implements ContextModel, Invo
 				return ((Evaluation) val).getValue(args);
 			}   if (val instanceof ServiceFidelity) {
 				return new Entry(path, val).getValue(args);
-			} else if (path == null && val == null && mogramStrategy.getResponsePaths() != null) {
-				if (mogramStrategy.getResponsePaths().size() == 1)
-					return getValue(mogramStrategy.getResponsePaths().get(0).getName(), args);
+			} else if (path == null && val == null
+					&& ((ModelStrategy)mogramStrategy).getResponsePaths() != null) {
+				if (((ModelStrategy)mogramStrategy).getResponsePaths().size() == 1)
+					return getValue(((ModelStrategy)mogramStrategy).getResponsePaths().get(0).getName(), args);
 				else
 					return getResponse();
 			} else {

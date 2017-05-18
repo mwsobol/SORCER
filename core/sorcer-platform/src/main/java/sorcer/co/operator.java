@@ -1000,53 +1000,37 @@ public class operator extends sorcer.operator {
 			parModel.getData().remove(path);
 	}
 
-//	public static Model dependsOn(Model model,  Entry... entries) {
-//        Map<String, List<DependencyEntry>> dm = ((ServiceContext)model).getMogramStrategy().getDependentPaths();
-//        String path = null;
-//        Object dependentPaths = null;
-//        if (entries.length > 0 && entries[0] instanceof DependencyEntry)
-//        for (Entry e : entries) {
-//            dependentPaths = e.value();
-//            if (dependentPaths instanceof List) {
-//                path = e.getName();
-//                dependentPaths =  e.value();
-//				if (dm.get(path) != null) {
-//					((List)dm.get(path)).add(e);
-//				} else {
-//					List<DependencyEntry> del = new ArrayList();
-//					del.add((DependencyEntry)e);
-//                	dm.put(path, del);
-//				}
-//            }
-//        }
-//
-//		return model;
-//    }
-
     public static Map<String, List<DependencyEntry>> dependencies(Model model) {
          return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
 
-    public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
-        for (Evaluation d : dependers)
-            dependee.getDependers().add(d);
-        if (dependee instanceof Model && dependers.length > 0 && dependers[0] instanceof DependencyEntry) {
-            Map<String, List<DependencyEntry>> dm = ((ModelStrategy)((Model) dependee).getMogramStrategy()).getDependentPaths();
-            String path = null;
-            for (Evaluation e : dependers) {
-                path = e.getName();
-                if (dm.get(path) != null) {
-                    ((List) dm.get(path)).add(e);
-                } else {
-                    List<DependencyEntry> del = new ArrayList();
-                    del.add((DependencyEntry)e);
-                    dm.put(path, del);
-                }
+	public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
+        String path = null;
+		for (Evaluation d : dependers) {
+            path = d.getName();
+            if (path != null && path.equals("self")) {
+                ((Entry)d)._1 = (((Model) dependee).getName());
             }
-        }
-
-        return dependee;
-    }
+			if (!dependee.getDependers().contains(d))
+				dependee.getDependers().add(d);
+		}
+		if (dependee instanceof Model && dependers.length > 0 && dependers[0] instanceof DependencyEntry) {
+			Map<String, List<DependencyEntry>> dm = ((ModelStrategy)((Model) dependee).getMogramStrategy()).getDependentPaths();
+			for (Evaluation e : dependers) {
+				path = e.getName();
+				if (dm.get(path) != null) {
+                    if (!dm.get(path).contains(e)) {
+                        ((List) dm.get(path)).add(e);
+                    }
+				} else {
+					List<DependencyEntry> del = new ArrayList();
+					del.add((DependencyEntry)e);
+					dm.put(path, del);
+				}
+			}
+		}
+		return dependee;
+	}
 
 	public static Dependency dependsOn(Dependency dependee, Context scope, Evaluation... dependers)
 			throws ContextException {
