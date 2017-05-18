@@ -38,16 +38,6 @@ public interface ContextModel extends Model {
     public Object getResult() throws ContextException, RemoteException;
 
     /**
-     * Returns a requested evaluation context with a provided input context.
-     *
-     * @param inputContext a context for this evaluation
-     * @return the result context of this evaluation
-     * @throws ContextException
-     * @throws RemoteException
-     */
-    public Context evaluate(Context inputContext) throws ContextException, RemoteException;
-
-    /**
      * Sets a buider of this model to be used for replication when needed.
      *
      * @param signature

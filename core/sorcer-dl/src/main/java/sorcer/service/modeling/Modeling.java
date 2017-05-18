@@ -52,9 +52,6 @@ public interface Modeling extends ContextModel {
 	public void evaluate(ServiceFidelity... fidelities)
 			throws EvaluationException, RemoteException;
 
-	public Context evaluate(Context modelContext)
-			throws EvaluationException, RemoteException;
-
 	/**
 	 * Returns a value at the path.
 	 *

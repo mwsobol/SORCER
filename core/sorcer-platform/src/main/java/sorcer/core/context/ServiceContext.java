@@ -2968,17 +2968,15 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return ((ModelStrategy)mogramStrategy).outcome;
 	}
 
-
-	public Context evaluate(Context inputContext) throws ContextException, RemoteException {
-		Object args = inputContext.getValue(argsPath);
-		if (args != null && args != Context.none)
+	public Context evaluate(Context inputContext, Arg... args) throws ContextException, RemoteException {
+		Object pars = inputContext.getValue(argsPath);
+		if (pars != null && args != Context.none)
 			substitute((Arg[])args);
-		Context inputs = ((ServiceContext)inputContext).getInputs();
+		Context inputs = inputContext.getInputs();
 		this.append(inputs);
 		getResponse();
 		return this;
 	}
-
 
 	public Context getInputs() throws ContextException, RemoteException {
 		List<String> paths = Contexts.getInPaths(this);
@@ -2988,7 +2986,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 		return inputs;
 	}
-
 
 	public Context getAllInputs() throws ContextException, RemoteException {
 		List<String> paths = Contexts.getAllInPaths(this);

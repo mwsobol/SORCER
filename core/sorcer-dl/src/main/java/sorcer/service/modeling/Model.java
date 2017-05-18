@@ -26,6 +26,16 @@ import java.rmi.RemoteException;
  */
 public interface Model extends Mogram, Dependency {
 
+    /**
+     * Returns a requested evaluation context with a provided input context and arguments.
+     *
+     * @param inputContext a context for this evaluation
+     * @return the result context of this evaluation
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Context evaluate(Context inputContext, Arg... args) throws ContextException, RemoteException;
+
 	/**
 	 * Returns the context of all responses of this model with a provided configuration.
 	 *
@@ -110,5 +120,4 @@ public interface Model extends Mogram, Dependency {
 
 	public Model add(Identifiable... objects) throws ContextException,
 			RemoteException;
-
 }
