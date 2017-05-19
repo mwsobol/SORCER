@@ -49,6 +49,15 @@ import static sorcer.eo.operator.context;
  */
 public class operator {
 
+    public static Object eval(ContextModel model, String selector,
+                              Arg... args) throws ContextException {
+        try {
+            return model.getValue(selector, args);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+    }
+
     public static Context eval(ContextModel model, Context context)
             throws ContextException, RemoteException {
         return model.evaluate(context);
@@ -67,6 +76,18 @@ public class operator {
         } catch (Exception e) {
             throw new ContextException(e);
         }
+    }
+
+    public static ServiceFidelity<Model> mdlFi(Model... models) {
+        ServiceFidelity<Model> fi = new ServiceFidelity(models);
+        fi.type = ServiceFidelity.Type.MODEL;
+        return fi;
+    }
+
+    public static ServiceFidelity<Model> mdlFi(String fiName, Model... models) {
+        ServiceFidelity<Model> fi = new ServiceFidelity(fiName, models);
+        fi.type = ServiceFidelity.Type.MODEL;
+        return fi;
     }
 
     public static <T> T putValue(Context<T> context, String path, T value) throws ContextException {

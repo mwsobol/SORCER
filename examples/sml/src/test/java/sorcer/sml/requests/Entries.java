@@ -23,7 +23,7 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.value;
-import static sorcer.mo.operator.putValue;
+import static sorcer.mo.operator.*;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.loop;
 import static sorcer.service.Signature.Direction;

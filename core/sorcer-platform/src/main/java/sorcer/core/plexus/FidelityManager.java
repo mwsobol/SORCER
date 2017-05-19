@@ -296,7 +296,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         if (fidelities.size() == 1 && fiNames.length == 1) {
             ServiceFidelity fi = fidelities.get(name);
             if (fi == null) {
-                fi = selectFidelity(fiNames[0]);
+                fi = getFidelity(fiNames[0]);
             }
             fi.setSelect(fiNames[0]);
             if (isTraced) {
@@ -308,10 +308,14 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
 
-    private ServiceFidelity selectFidelity(String name) {
+    private ServiceFidelity getFidelity(String name) {
         ServiceFidelity fi = fidelities.get(name);
         if (fi == null) {
-            ServiceFidelity sf = fidelities.get(0);
+            // get unknown fidelity
+            Set<String> keys = fidelities.keySet();
+            Iterator<String> i = keys.iterator();
+            String key = i.next();
+            ServiceFidelity sf = fidelities.get(key);
             List<ServiceFidelity> sfl = sf.getSelects();
             for (ServiceFidelity f : sfl) {
                 if (f.getName().equals(name))

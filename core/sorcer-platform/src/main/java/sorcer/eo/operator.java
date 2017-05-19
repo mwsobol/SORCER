@@ -2431,15 +2431,6 @@ public class operator extends sorcer.operator {
 		}
 	}
 
-	public static Object eval(ContextModel model, String selector,
-							  Arg... args) throws ContextException {
-		try {
-			return model.getValue(selector, args);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
-	}
-
 	public static <T> T value(Context<T> context, String path,
 							  Arg... args) throws ContextException {
 		try {
