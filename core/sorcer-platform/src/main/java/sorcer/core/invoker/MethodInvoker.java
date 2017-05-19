@@ -369,7 +369,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 //		 logger.info("paramTypes: " + SorcerUtil.arrayToString(paramTypes));
 //		 logger.info("context: " + context);
 		if (context != null) {
-			if (paramTypes.length == 2) {
+			if (paramTypes != null && paramTypes.length == 2) {
 				params = new Object[] { context, pars};
 			} else {
                 paramTypes = new Class[]{Context.class};
