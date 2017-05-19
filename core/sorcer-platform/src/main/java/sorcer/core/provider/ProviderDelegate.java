@@ -71,6 +71,8 @@ import sorcer.security.sign.TaskAuditor;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.jobber.JobberAccessor;
+import sorcer.service.modeling.Model;
+import sorcer.service.modeling.Modeling;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.*;
@@ -997,6 +999,9 @@ public class ProviderDelegate {
 				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof ProcModel)) {
 					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
 					isContextual = true;
+				} else if (selector.equals("evaluate") && impl instanceof Model) {
+					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
+					isContextual = true;
 				} else if (selector.equals("exert") && impl instanceof ServiceShell) {
 					m = impl.getClass().getMethod(selector, Mogram.class, Arg[].class);
 					isContextual = false;
@@ -1062,6 +1067,8 @@ public class ProviderDelegate {
 				task.getControlContext().getExceptions().addAll(((Exertion) obj).getExceptions());
 				task.getTrace().addAll(((Exertion) obj).getTrace());
 			}
+		} else if (impl instanceof Model && selector.equals("evaluate")) {
+			result = (Context) m.invoke(impl, new Object[] { pars[0], args });
 		} else {
 			logger.debug("getProviderName: {} invoking: {}" + getProviderName(), m);
 			logger.debug("imp: {} args: {}" + impl, Arrays.toString(pars));

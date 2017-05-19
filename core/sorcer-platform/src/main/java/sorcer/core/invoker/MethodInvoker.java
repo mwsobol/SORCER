@@ -54,6 +54,8 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 
 	private Object[] params;
 
+	private Arg[] pars = new Arg[0];
+
 	private Context context;
 
 	transient private Method m;
@@ -367,8 +369,12 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 //		 logger.info("paramTypes: " + SorcerUtil.arrayToString(paramTypes));
 //		 logger.info("context: " + context);
 		if (context != null) {
-			paramTypes = new Class[] { Context.class };
-			params = new Object[] { context };
+			if (paramTypes.length == 2) {
+				params = new Object[] { context, pars};
+			} else {
+                paramTypes = new Class[]{Context.class};
+                params = new Object[]{context};
+            }
 			return params;
 		} else if (params != null) {
 			try {

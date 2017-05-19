@@ -133,7 +133,11 @@ public class ObjectTask extends Task {
 					evaluator = new MethodInvoker(prv, os.getSelector());
 				}
 			}
-			evaluator.setParameterTypes(new Class[] { Context.class });
+			if (os.getSelector().equals("evaluate") || os.getSelector().equals("explore")) {
+				evaluator.setParameterTypes(new Class[]{Context.class, Arg[].class});
+			} else {
+				evaluator.setParameterTypes(new Class[]{Context.class});
+			}
 			if (os.getReturnPath() != null)
 				dataContext.setReturnPath(os.getReturnPath());
 
@@ -143,7 +147,6 @@ public class ObjectTask extends Task {
 					// provider
 					if (dataContext != null) {
 						evaluator.setContext(dataContext);
-						evaluator.setParameterTypes(new Class[] { Context.class });
 					}
 				} else if (dataContext.getArgsPath() != null) {
 					evaluator.setArgs(getParameterTypes(), (Object[]) getArgs());
