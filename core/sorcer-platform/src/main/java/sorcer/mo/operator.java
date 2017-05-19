@@ -229,10 +229,6 @@ public class operator {
         return model;
     }
 
-    public static Entry ent(String path, Model model) {
-        return new Entry(path, model);
-    }
-
     public static Entry result(Entry entry) throws ContextException {
         try {
             Entry out = null;

@@ -672,7 +672,11 @@ public class operator extends sorcer.operator {
 		return cr;
 	}
 
-	public static <T> Entry<T> ent(String path, T value, Arg... args) {
+//    public static Entry ent(String path, Model model) {
+//        return new Entry(path, model);
+//    }
+
+    public static <T> Entry<T> ent(String path, T value, Arg... args) {
 		Entry<T> entry = null;
 		if (value instanceof Invocation || value instanceof Evaluation) {
 			entry = new Proc<T>(path, value);
@@ -682,7 +686,11 @@ public class operator extends sorcer.operator {
 			if (mog instanceof Context) {
 				cxt = (Context)mog;
 			}
-			entry = (Entry<T>) srv(path, (Identifiable)value, cxt, args);
+			if (cxt != null) {
+				entry = (Entry<T>) srv(path, (Identifiable) value, cxt, args);
+			} else {
+				entry =  (Entry<T>) srv(path, (Identifiable) value, null, args);
+			}
 		} else if (value instanceof ServiceFidelity) {
 			entry = (Entry<T>) new Srv(path, value);
 		} else if (value instanceof MultiFiMogram) {
@@ -698,6 +706,8 @@ public class operator extends sorcer.operator {
 			entry = (Entry<T>) new Srv(path, value);
 		} else if (value instanceof Service) {
 			entry = (Entry<T>) new Proc(path, value);
+		} else if (value.getClass() == Tuple2.class) {
+			return new Entry(path, value);
 		} else {
 			entry = new Entry<T>(path, value);
 		}
