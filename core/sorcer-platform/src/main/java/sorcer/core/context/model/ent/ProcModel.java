@@ -99,7 +99,7 @@ public class ProcModel extends DataContext<Object> implements ContextModel, Invo
         add(objects);
     }
 
-	public Object getValue(String path, Arg... args) throws EvaluationException {
+	public Object getValue(String path, Arg... args) throws EvaluationException, ContextException {
 		try {
 			append(args);
 			Object val = null;

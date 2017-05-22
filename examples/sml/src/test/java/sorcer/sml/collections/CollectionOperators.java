@@ -41,7 +41,6 @@ import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.print;
 import static sorcer.eo.operator.put;
-import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.*;
 

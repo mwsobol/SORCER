@@ -2843,6 +2843,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
+	public Object getEvalValue(String path) throws ContextException {
+		// reimplement in subclasses
+		return getValue(path);
+	}
+
 	public T getValue(String path, Arg... entries)
 			throws ContextException {
 		// first managed dependencies
@@ -3477,6 +3482,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return false;
 		}
 	}
+
+	@Override
+	public Context getDomain(String name) throws ContextException {
+        Object domain = data.get(name);
+        if (domain instanceof Context) {
+            return (Context) domain;
+        }
+        throw new ContextException("no such domain: " + name);
+	}
+
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {

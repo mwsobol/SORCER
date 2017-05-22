@@ -18,7 +18,6 @@ import static sorcer.co.operator.*;
 import static sorcer.co.operator.persistent;
 import static sorcer.eo.operator.add;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.value;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
 import static sorcer.mo.operator.*;

@@ -22,7 +22,6 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.result;
 import static sorcer.po.operator.ent;

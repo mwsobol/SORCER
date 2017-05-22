@@ -119,17 +119,18 @@ public class SrvModel extends ProcModel implements ContextModel, Invocation<Obje
         return true;
     }
 
-    public Object getValue(String path, Arg... args) throws EvaluationException {
+    @Override
+    public Object getValue(String path, Arg... args) throws ContextException {
         return getSrvValue(path, args);
     }
 
     // calls from VarModels to call Srv args of Vars
-    public Object getSrvValue(String path, Srv srv, Arg... args) throws EvaluationException {
+    public Object getSrvValue(String path, Srv srv, Arg... args) throws ContextException {
         try {
             putValue(path, srv);
         } catch (ContextException e) {
             data.remove(path);
-            return new EvaluationException(e);
+            throw e;
         }
         Object out = getSrvValue(path, args);
         data.remove(path);

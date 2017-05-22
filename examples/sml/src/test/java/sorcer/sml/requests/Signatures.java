@@ -23,7 +23,6 @@ import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.inConn;
 import static sorcer.mo.operator.outConn;
 

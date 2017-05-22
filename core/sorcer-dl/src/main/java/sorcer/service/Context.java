@@ -922,6 +922,8 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 
 	public int size();
 
+	Context getDomain(String name) throws ContextException;
+
 	SignatureReturnPath getReturnPath();
 
 	public boolean compareTo(Object context);

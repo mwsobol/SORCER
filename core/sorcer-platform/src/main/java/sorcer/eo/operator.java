@@ -2385,21 +2385,6 @@ public class operator extends sorcer.operator {
 		return service.exert(mogram, txn, entries);
 	}
 
-    public static <T> T v(Context<T> context, String path, Arg... args) throws ContextException {
-        return value(context, path, args);
-    }
-
-    public static <T> T value(Context<T> context, Arg... args)
-            throws ContextException {
-        try {
-            synchronized (context) {
-                return (T) ((ServiceContext)context).getValue(args);
-            }
-        } catch (Exception e) {
-            throw new ContextException(e);
-        }
-    }
-
 	public static Object execItem(Item item, Arg... args) throws ServiceException {
 		try {
 			return item.exec(args);
@@ -2428,25 +2413,6 @@ public class operator extends sorcer.operator {
 			}
 		} catch (Exception e) {
 			throw new EvaluationException(e);
-		}
-	}
-
-	public static <T> T value(Context<T> context, String path,
-							  Arg... args) throws ContextException {
-		try {
-			Object val = ((ServiceContext) context).getValue(path, args);
-			if (val instanceof Srv && ((Srv)val).asis() instanceof  EntryCollable) {
-				Entry entry = ((EntryCollable)((Srv)val).asis()).call(context);
-                return (T) entry.asis();
-			}
-			if (SdbUtil.isSosURL(val)) {
-				return (T) ((URL) val).getContent();
-			} else {
-				return (T)val;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new ContextException(e);
 		}
 	}
 

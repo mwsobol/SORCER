@@ -23,11 +23,9 @@ import org.rioproject.resolver.ResolverHelper;
 import sorcer.co.tuple.*;
 import sorcer.core.Name;
 import sorcer.core.SorcerConstants;
-import sorcer.core.context.Copier;
-import sorcer.core.context.ListContext;
-import sorcer.core.context.ModelStrategy;
-import sorcer.core.context.ServiceContext;
+import sorcer.core.context.*;
 import sorcer.core.context.model.ent.*;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
@@ -280,6 +278,13 @@ public class operator extends sorcer.operator {
 		Entry ent = new Entry<T>(path.path, value);
 		ent.annotation(path.info.toString());
 		ent.setType(Type.CONSTANT);
+		return ent;
+	}
+
+	public static <T> Entry<T> val(String domain, String path, T value) {
+		Entry ent = new Entry<T>(path, value);
+		ent.annotation(domain);
+		ent.setType(Type.DOMAIN_CONSTANT);
 		return ent;
 	}
 
@@ -864,6 +869,48 @@ public class operator extends sorcer.operator {
 	public static Object value(DataTable table, int row, int column) {
 		return table.getValueAt(row, column);
 	}
+
+    public static Object value(Context context, String domain, String path) throws ContextException {
+		if (((ServiceContext)context).getType().equals(Type.EVALUATED)) {
+			return ((ServiceContext)context.getDomain(domain)).getEvalValue(path);
+		} else {
+			return context.getDomain(domain).getValue(path);
+		}
+    }
+
+    public static <T> T value(Context<T> context, String path,
+                              Arg... args) throws ContextException {
+        try {
+            Object val = ((ServiceContext) context).getValue(path, args);
+            if (val instanceof Srv && ((Srv)val).asis() instanceof  EntryCollable) {
+                Entry entry = ((EntryCollable)((Srv)val).asis()).call(context);
+                return (T) entry.asis();
+            }
+            if (SdbUtil.isSosURL(val)) {
+                return (T) ((URL) val).getContent();
+            } else {
+                return (T)val;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ContextException(e);
+        }
+    }
+
+    public static <T> T v(Context<T> context, String path, Arg... args) throws ContextException {
+        return value(context, path, args);
+    }
+
+    public static <T> T value(Context<T> context, Arg... args)
+            throws ContextException {
+        try {
+            synchronized (context) {
+                return (T) ((ServiceContext)context).getValue(args);
+            }
+        } catch (Exception e) {
+            throw new ContextException(e);
+        }
+    }
 
 	public static <T extends Object> ListContext<T> listContext(T... elems)
 			throws ContextException {

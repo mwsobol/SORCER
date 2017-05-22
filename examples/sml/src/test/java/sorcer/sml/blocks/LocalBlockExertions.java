@@ -20,6 +20,7 @@ import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.inVal;
+import static sorcer.co.operator.value;
 import static sorcer.eo.operator.alt;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.loop;
@@ -53,7 +54,6 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		Block result = exert(block);
 		assertEquals(value(context(result), "block/result"), 400.00);
-
 	}
 
 	@Test
