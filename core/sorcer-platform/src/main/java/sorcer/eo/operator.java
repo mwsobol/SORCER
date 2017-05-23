@@ -2625,7 +2625,7 @@ public class operator extends sorcer.operator {
 		return new ReturnPath(path, Direction.OUT, type, paths);
 	}
 
-	protected static String getUnknown() {
+	public static String getUnknown() {
 		return "unknown" + count++;
 	}
 
