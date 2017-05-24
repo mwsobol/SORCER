@@ -17,7 +17,6 @@ import java.util.Date;
 import static org.junit.Assert.*;
 import static sorcer.co.operator.inVal;
 import static sorcer.co.operator.instance;
-import static sorcer.co.operator.value;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.inConn;
 import static sorcer.mo.operator.outConn;

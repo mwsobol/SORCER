@@ -16,7 +16,7 @@ import sorcer.util.Sorcer;
 import java.net.URL;
 import java.rmi.RemoteException;
 
-import static sorcer.co.operator.value;
+import static sorcer.eo.operator.value;
 
 public class AdderProvider extends ServiceTasker implements RemoteAdder {
 	private Arithmometer arithmometer = new Arithmometer();
