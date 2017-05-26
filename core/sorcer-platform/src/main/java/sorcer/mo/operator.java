@@ -35,6 +35,7 @@ import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ContextModel;
 import sorcer.service.Signature.ReturnPath;
+import sorcer.service.modeling.Variability;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -75,6 +76,14 @@ public class operator {
             }
         } catch (Exception e) {
             throw new ContextException(e);
+        }
+    }
+
+    public static Object eval(Context context, String domain, String path) throws ContextException {
+        if (((ServiceContext)context).getType().equals(Variability.Type.EVALUATED)) {
+            return ((ServiceContext)context.getDomain(domain)).getEvalValue(path);
+        } else {
+            return context.getDomain(domain).getValue(path);
         }
     }
 

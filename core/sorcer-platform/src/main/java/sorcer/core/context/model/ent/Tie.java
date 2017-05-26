@@ -7,9 +7,28 @@ import sorcer.co.tuple.Tuple2;
  */
 public class Tie extends Tuple2<String, String> {
 
-    public Tie(String domain, String item) {
-        _2 = item;
+    public Tie(String domain, String entry) {
         _1 = domain;
+        _2 = entry;
+    }
+
+    public String domain() {
+        return _1;
+    }
+
+    public String entry() {
+        return _2;
+    }
+
+
+    public String domain(String domain) {
+        _1 = domain;
+        return _1;
+    }
+
+    public String entry(String entry) {
+        _2 = entry;
+        return _2;
     }
 
     @Override

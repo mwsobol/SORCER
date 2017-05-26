@@ -12,6 +12,24 @@ public class Coupling extends Tuple2<Tie, Tie> {
         _2 = to;
     }
 
+    public Tie from() {
+        return _1;
+    }
+
+    public Tie to() {
+        return _2;
+    }
+
+    public Tie from(Tie from) {
+        _1 = from;
+        return _1;
+    }
+
+    public Tie to(Tie to) {
+        _2 = to;
+        return _2;
+    }
+
     @Override
     public String toString() {
         return "[" + _1 + "->" + _2 + "]";
