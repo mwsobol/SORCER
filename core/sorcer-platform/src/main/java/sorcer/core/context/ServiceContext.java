@@ -94,7 +94,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected ServiceExertion exertion;
 	protected String currentPrefix;
 	protected boolean isFinalized = false;
-	protected Variability.Type type = Variability.Type.SELF;
+	protected Variability.Type type = Variability.Type.CONTEXT;
 	Signature.Direction direction = Signature.Direction.INOUT;
 
 	/**
