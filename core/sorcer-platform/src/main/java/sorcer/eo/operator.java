@@ -2396,7 +2396,7 @@ public class operator extends sorcer.operator {
 	public static <T> T value(Context<T> context, String path,
 							  Arg... args) throws ContextException {
 		try {
-			if (((ServiceContext)context).getType().equals(Variability.Type.RESPONSE)) {
+			if (((ServiceContext)context).getType().equals(Variability.Type.MADO)) {
 				return (T)((ServiceContext)context).getEvalValue(path);
 			}
 			Object val = ((ServiceContext) context).getValue(path, args);
@@ -2431,7 +2431,7 @@ public class operator extends sorcer.operator {
 	}
 
 	    public static Object value(Context context, String domain, String path) throws ContextException {
-        if (((ServiceContext)context).getType().equals(Variability.Type.RESPONSE)) {
+        if (((ServiceContext)context).getType().equals(Variability.Type.MADO)) {
             return ((ServiceContext)context.getDomain(domain)).getEvalValue(path);
         } else {
             return context.getDomain(domain).getValue(path);
