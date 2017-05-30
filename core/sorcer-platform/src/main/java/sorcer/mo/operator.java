@@ -61,6 +61,9 @@ public class operator {
 
     public static Context eval(ContextModel model, Context context)
             throws ContextException, RemoteException {
+        if (context.get(Context.INIT_PATH) != null) {
+            ((ServiceContext)model).put(Context.INIT_PATH, context.get(Context.INIT_PATH));
+        }
         Context rc = model.evaluate(context);
         return rc;
     }
