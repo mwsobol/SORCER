@@ -274,10 +274,16 @@ public class operator extends sorcer.operator {
 		return new Path(path, info, Path.Type.MAP);
 	}
 
-	public static <T> Entry<T> val(Path path, T value) {
-		Entry ent = new Entry<T>(path.path, value);
-		ent.annotation(path.info.toString());
-		ent.setType(Type.CONSTANT);
+	public static <T> Entry<T> init(String domain, String path, T value) {
+		Entry ent = new Entry<T>(path, value);
+		ent.annotation(domain);
+		ent.setType(Type.DOMAIN_INIT);
+		return ent;
+	}
+
+	public static <T> Entry<T> init(String path, T value) {
+		Entry ent = new Entry<T>(path, value);
+		ent.setType(Type.INIT);
 		return ent;
 	}
 
@@ -285,6 +291,13 @@ public class operator extends sorcer.operator {
 		Entry ent = new Entry<T>(path, value);
 		ent.annotation(domain);
 		ent.setType(Type.DOMAIN_CONSTANT);
+		return ent;
+	}
+
+	public static <T> Entry<T> val(Path path, T value) {
+		Entry ent = new Entry<T>(path.path, value);
+		ent.annotation(path.info.toString());
+		ent.setType(Type.CONSTANT);
 		return ent;
 	}
 

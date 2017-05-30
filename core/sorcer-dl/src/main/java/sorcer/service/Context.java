@@ -175,6 +175,10 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 
 	final static String JOB_FEEDBACK = "job" + SorcerConstants.CPS + "feedback";
 
+	// Domain Specific Initialization Path
+	final static String INIT_PATH = "initialization"
+			+ SorcerConstants.CPS + "data";
+
 	// Domain Specific Data Path
 	final static String DSD_PATH = "domain" + SorcerConstants.CPS + "specific"
 			+ SorcerConstants.CPS + "data";

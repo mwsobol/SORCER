@@ -62,7 +62,6 @@ public class operator {
     public static Context eval(ContextModel model, Context context)
             throws ContextException, RemoteException {
         Context rc = model.evaluate(context);
-        ((ServiceContext)rc).setType(Variability.Type.EXECUTED);
         return rc;
     }
 
