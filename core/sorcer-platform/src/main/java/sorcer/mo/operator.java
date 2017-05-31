@@ -61,9 +61,6 @@ public class operator {
 
     public static Context eval(ContextModel model, Context context)
             throws ContextException, RemoteException {
-        if (context.get(Context.INIT_PATH) != null) {
-            ((ServiceContext)model).put(Context.INIT_PATH, context.get(Context.INIT_PATH));
-        }
         Context rc = model.evaluate(context);
         return rc;
     }
@@ -82,22 +79,6 @@ public class operator {
             throw new ContextException(e);
         }
     }
-
-//    public static Object eval(Context context, String domain, String path) throws ContextException {
-//        if (((ServiceContext)context).getType().equals(Variability.Type.EVALUATED)) {
-//            return context.getDomain(domain).getValue(path);
-//        } else {
-//            return context.getDomain(domain).getValue(path);
-//        }
-//    }
-
-//    public static Object eval(Context context, String path) throws ContextException {
-//        if (((ServiceContext)context).getType().equals(Variability.Type.EVALUATED)) {
-//            return ((ServiceContext)context).getEvalValue(path);
-//        } else {
-//            return context.getValue(path);
-//        }
-//    }
 
     public static ServiceFidelity<Model> mdlFi(Model... models) {
         ServiceFidelity<Model> fi = new ServiceFidelity(models);
