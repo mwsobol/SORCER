@@ -36,7 +36,7 @@ public interface Variability<T> extends Identifiable, Evaluation<T>, Setter, Per
 	 * particular type can be retrieved as a functional collection, e.g.,
 	 * DESIGN, RESPONSE, DERIVATIVE or GRADIENT. Selected types can be used to
 	 * define the nature of the variable (to the clients) by grouping them in in
-	 * a list of types called kinds - addKind(Type). FUNDMENTAL - if scalar has
+	 * a list of types called kinds - addKind(Type). FUNDAMENTAL - if scalar has
 	 * meaning to the client
 	 */
 	public enum Type {
