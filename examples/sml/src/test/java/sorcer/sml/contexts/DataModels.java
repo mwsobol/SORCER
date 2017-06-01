@@ -325,4 +325,13 @@ public class DataModels {
         assertTrue(out.size() == 1);
     }
 
+
+    @Test
+    public void contextfromEntryList() throws Exception {
+
+        Context cxt = context(list(inVal("x1", 20.0d), inVal("x2", 40.0d)));
+        assertTrue(get(cxt, "x1").equals(20.0));
+        assertTrue(get(cxt, "x2").equals(40.0));
+    }
+
 }

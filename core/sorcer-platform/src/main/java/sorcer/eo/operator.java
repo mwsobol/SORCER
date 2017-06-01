@@ -68,6 +68,7 @@ import java.util.*;
 import static sorcer.co.operator.path;
 import static sorcer.co.operator.*;
 import static sorcer.mo.operator.*;
+import static sorcer.po.operator.ent;
 import static sorcer.po.operator.srv;
 
 /**
@@ -241,6 +242,8 @@ public class operator extends sorcer.operator {
 			return (Context) entries[0];
 		} else if (entries.length == 1 && entries[0] instanceof Mogram) {
 			return ((Mogram)entries[0]).getContext();
+		} else if (entries.length == 1 && entries[0] instanceof List) {
+			return contextFromList((List) entries[0]);
 		}
 
 		Context cxt = null;
@@ -498,6 +501,18 @@ public class operator extends sorcer.operator {
 		if (projection != null)
 			((ServiceMogram)cxt).setProjection(projection);
 
+		return cxt;
+	}
+
+	public static Context contextFromList(List<Entry> entries) throws ContextException {
+		ServiceContext cxt = new ServiceContext();
+		for (Object i : entries) {
+			try {
+				cxt.put(((Entry)i)._1.toString(), ((Entry)i).getValue());
+			} catch (RemoteException e) {
+				throw new ContextException(e);
+			}
+		}
 		return cxt;
 	}
 
