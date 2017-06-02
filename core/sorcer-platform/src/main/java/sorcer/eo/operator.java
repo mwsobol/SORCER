@@ -502,7 +502,7 @@ public class operator extends sorcer.operator {
 			((ServiceMogram)cxt).setProjection(projection);
 
 		return cxt;
-	}
+	}do
 
 	public static Context contextFromList(List<Entry> entries) throws ContextException {
 		ServiceContext cxt = new ServiceContext();
