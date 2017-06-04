@@ -60,8 +60,13 @@ public class operator {
     }
 
     public static Context eval(ContextModel model, Context context)
-            throws ContextException, RemoteException {
-        Context rc = model.evaluate(context);
+            throws ContextException {
+        Context rc = null;
+        try {
+            rc = model.evaluate(context);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
         return rc;
     }
 

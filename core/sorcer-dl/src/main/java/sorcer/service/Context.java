@@ -178,6 +178,8 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 	// Domain Specific Initialization Path
 	final static String INIT_PATH = "model" + SorcerConstants.CPS + "initialization"
 			+ SorcerConstants.CPS + "data";
+	final static String MDA_PATH = "model" + SorcerConstants.CPS + "mda"
+			+ SorcerConstants.CPS + "component";
 
 	// Domain Specific Data Path
 	final static String DSD_PATH = "domain" + SorcerConstants.CPS + "specific"

@@ -282,4 +282,8 @@ public class ModelStrategy implements MogramStrategy, Serializable {
         return execState;
     }
 
+    public void setExecState(Exec.State state) {
+        execState = state;
+    }
+
 }
