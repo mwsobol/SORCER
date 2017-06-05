@@ -10,7 +10,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.tuple.*;
-import sorcer.core.Name;
+import sorcer.core.Tag;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.ProcModel;
@@ -469,7 +469,7 @@ public class CollectionOperators {
 	public void callClosure() throws Exception {
 		// invoke run using Lambda expression
 		run(args -> System.out.println("Closing with: " + args[0].getName()),
-				new Name("Hello"));
+				new Tag("Hello"));
 
 		// invoke run using  Lambda object matched to interface
 		Runner r = args -> {

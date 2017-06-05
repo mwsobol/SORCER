@@ -17,8 +17,6 @@ package sorcer.service;
  * limitations under the License.
  */
 
-import sorcer.core.Name;
-
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;

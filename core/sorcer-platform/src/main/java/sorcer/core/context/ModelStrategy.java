@@ -3,7 +3,6 @@ package sorcer.core.context;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.DependencyEntry;
-import sorcer.core.Name;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;

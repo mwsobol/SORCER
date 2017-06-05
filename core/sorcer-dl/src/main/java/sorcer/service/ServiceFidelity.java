@@ -18,7 +18,7 @@
 package sorcer.service;
 
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.Name;
+import sorcer.core.Tag;
 import sorcer.service.modeling.Reference;
 
 import java.rmi.RemoteException;
@@ -83,14 +83,14 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 		this.name = "";
 		type = Type.NAME;
 		for (String s : selects)
-			this.selects.add((T) new Name(s));
+			this.selects.add((T) new Tag(s));
 	}
 
 	public ServiceFidelity(String name, String... selects) {
 		this.name = name;
 		type = Type.NAME;
 		for (String s : selects)
-			this.selects.add((T) new Name(s));
+			this.selects.add((T) new Tag(s));
 	}
 
 	public ServiceFidelity(String name, T... selects) {

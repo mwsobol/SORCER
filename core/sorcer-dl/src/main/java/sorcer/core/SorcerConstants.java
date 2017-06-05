@@ -565,7 +565,7 @@ public interface SorcerConstants {
 	static public final String CONTEXT_RESULT = "ctx";
 
 	// Serach criteria names fro context, jobs & tasks
-	static public String OBJECT_NAME = "Name";
+	static public String OBJECT_NAME = "Tag";
 
 	static public String OBJECT_SCOPE = "ScopeCode";
 

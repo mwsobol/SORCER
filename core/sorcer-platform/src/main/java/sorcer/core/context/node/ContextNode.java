@@ -202,13 +202,13 @@ public class ContextNode implements Serializable {
 		StringBuffer result = new StringBuffer();
 
 		if (!isEmpty())
-			result.append("Name : ").append(name).append("\n").append(
+			result.append("Tag : ").append(name).append("\n").append(
 					"Value : ").append(data).append("\n")
 					.append("Transient : ").append(
 							isTransient() ? "True" : "False").append("\n")
 					.append("IO Type : ").append(da);
 		else
-			result.append("Name : ").append(name).append(
+			result.append("Tag : ").append(name).append(
 					ServiceContext.EMPTY_LEAF);
 		return result.toString();
 	}
@@ -991,10 +991,10 @@ public class ContextNode implements Serializable {
 		Method setMethod = null;
 		try {
 			if (paramTypes[0] == null) {
-				// System.out.println("Method Name is"+setMethodName);
+				// System.out.println("Method Tag is"+setMethodName);
 				setMethod = cl.getMethod(setMethodName, (Class[]) null);
 			} else {
-				// System.out.println("Method Name is"+setMethodName);
+				// System.out.println("Method Tag is"+setMethodName);
 				// System.out.println("cls0 = "+paramTypes[0]);
 				// System.out.println("cls1 = "+paramTypes[1]);
 				setMethod = cl.getMethod(setMethodName, paramTypes);
@@ -1311,7 +1311,7 @@ public class ContextNode implements Serializable {
 
 	public String getContent() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("Name: " + name).append("\n").append("Data: " + data).append(
+		sb.append("Tag: " + name).append("\n").append("Data: " + data).append(
 				"\n").append("I/O Type: " + da).append("\n").append(
 				"isTran: " + isTransient).append("\n");
 		return sb.toString();

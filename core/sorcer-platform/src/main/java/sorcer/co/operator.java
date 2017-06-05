@@ -16,16 +16,14 @@
  */
 package sorcer.co;
 
-import net.jini.core.transaction.TransactionException;
 import org.rioproject.resolver.Artifact;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.resolver.ResolverHelper;
 import sorcer.co.tuple.*;
-import sorcer.core.Name;
+import sorcer.core.Tag;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.ent.*;
-import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
@@ -1187,7 +1185,35 @@ public class operator extends sorcer.operator {
 		return (Model) model;
 	}
 
+	public static Mogram instance(Mogram mogram, Arg... args) throws SignatureException, MogramException {
+		Signature builder = mogram.getBuilder(args);
+		if (builder == null) {
+			throw new SignatureException("No signature builder for: " + mogram.getName());
+		}
+		Mogram mog = (Mogram) sorcer.co.operator.instance(builder);
+		mog.setBuilder(builder);
+		Tag name = (Arg.getName(args));
+		if (name != null)
+			mog.setName(name.getName());
+		return mog;
+	}
+
+	public static Tag tag(Object object) {
+		return new Tag(object.toString());
+	}
+
+	public static String name(Object identifiable) {
+		if (identifiable instanceof Identifiable) {
+			return ((Identifiable) identifiable).getName();
+		} else if (identifiable instanceof Arg) {
+			return ((Arg) identifiable).getName();
+		} else {
+			return identifiable.toString();
+		}
+	}
+
 	public static URL url(String urlName) throws MalformedURLException {
 		return new URL(urlName);
 	}
+
 }

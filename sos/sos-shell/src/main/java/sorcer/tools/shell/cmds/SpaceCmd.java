@@ -397,7 +397,7 @@ public class SpaceCmd extends ShellCmd {
 		Entry[] attributeSets = item.attributeSets;
 		for (int i = 0; i < attributeSets.length; i++) {
 			if (attributeSets[i] instanceof Name) {
-				out.println("Name: " + ((Name) attributeSets[i]).name);
+				out.println("Tag: " + ((Name) attributeSets[i]).name);
 				return;
 			}
 		}

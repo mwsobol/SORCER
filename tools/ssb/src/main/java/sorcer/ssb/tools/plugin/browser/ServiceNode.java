@@ -151,7 +151,7 @@ public class ServiceNode{
 		
 	}
 	private String getName(Entry [] atts){
-		//make sure we use the Name.name attribute in preference
+		//make sure we use the Tag.name attribute in preference
 		for(int i=0;atts!=null && i<atts.length;i++){
 			if(atts[i] instanceof Name){
 				String name=((Name)atts[i]).name;

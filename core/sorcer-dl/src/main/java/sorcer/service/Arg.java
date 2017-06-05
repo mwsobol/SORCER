@@ -17,7 +17,7 @@
 
 package sorcer.service;
 
-import sorcer.core.Name;
+import sorcer.core.Tag;
 import sorcer.service.modeling.Model;
 
 import java.io.Serializable;
@@ -102,10 +102,10 @@ public interface Arg extends Serializable {
 		return null;
 	}
 
-	public static Name getName(Arg[] args) {
+	public static Tag getName(Arg[] args) {
 		for (Arg arg : args) {
-			if (arg instanceof Name)
-				return (Name)arg;
+			if (arg instanceof Tag)
+				return (Tag)arg;
 		}
 		return null;
 	}

@@ -853,15 +853,6 @@ public class operator extends sorcer.operator {
 		return names;
 	}
 
-	public static String name(Object identifiable) {
-		if (identifiable instanceof Identifiable)
-			return ((Identifiable) identifiable).getName();
-		else if (identifiable instanceof Arg)
-			return ((Arg) identifiable).getName();
-		else
-			return "";
-	}
-
 	public static List<String> names(Identifiable... array) {
 		List<String> names = new ArrayList<String>(array.length);
 		for (Identifiable i : array) {

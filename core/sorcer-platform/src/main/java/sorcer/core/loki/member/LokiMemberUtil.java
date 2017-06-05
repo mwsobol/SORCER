@@ -56,7 +56,7 @@ public class LokiMemberUtil {
 	private String myName;
 	/** Group sequence identifier */
 	private String groupSeqId;
-	/** Group Name */
+	/** Group Tag */
 	private String groupName;
 	
 	/** debug switch */
@@ -731,7 +731,7 @@ public class LokiMemberUtil {
 		+ "\n\tIs Encrypted = " + ee.isEncrypted
 		+ "\n\tIs Job = " + ee.isJob
 		+ "\n\tParentID = " + ee.parentID
-		+ "\n\tProvider Name = " + ee.providerName
+		+ "\n\tProvider Tag = " + ee.providerName
 		+ "\n\tProvider Subject = " + ee.providerSubject
 		+ "\n\tService Type = " + ee.serviceType
 		+ "\n\tState = " + ee.state;

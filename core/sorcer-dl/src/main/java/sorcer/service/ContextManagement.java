@@ -50,7 +50,7 @@ public interface ContextManagement extends Remote {
 	 * @param interfaceName
 	 *            String of the interface name the method is defined on
 	 * @param methodName
-	 *            Name of the method the context is saved as
+	 *            Tag of the method the context is saved as
 	 * @return Context representing the methodName
 	 * @throws RemoteException
 	 */
@@ -63,7 +63,7 @@ public interface ContextManagement extends Remote {
 	 * @param interfaceName
 	 *            String of the interface name the method is defined on
 	 * @param methodName
-	 *            Name of the method the context is saved as
+	 *            Tag of the method the context is saved as
 	 * @return String representing the methodName
 	 * @throws RemoteException
 	 */
@@ -77,7 +77,7 @@ public interface ContextManagement extends Remote {
 	 * @param interfaceName
 	 *            String of the interface name the method is defined on
 	 * @param methodName
-	 *            Name of the method the context is saved as
+	 *            Tag of the method the context is saved as
 	 * @param theContext
 	 *            Context to be saved
 	 * @return Boolean indicating if the context was stored properly

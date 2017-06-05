@@ -180,7 +180,7 @@ public class ProviderLocator {
 	 * @param serviceClass
 	 *            The class object representing the interface of the service
 	 * @param serviceName
-	 *            The Name attribute of the service
+	 *            The Tag attribute of the service
 	 * @throws IOException
 	 * @throws InterruptedException
 	 * @return

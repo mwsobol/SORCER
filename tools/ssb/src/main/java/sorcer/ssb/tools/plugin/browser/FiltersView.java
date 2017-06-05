@@ -131,7 +131,7 @@ public class FiltersView extends JPanel{
 		
 		_lookupLocators.setText(locText);
 		
-		String nameText="//   Type in the Name attributes of the services\n"+
+		String nameText="//   Type in the Tag attributes of the services\n"+
 		"//   that you want to filter on for example\n"+
 		"//   My JavaSpace\n"+
 		"//   Peters JavaSpace\n\n"+

@@ -210,7 +210,7 @@ public class LookupCmd extends ShellCmd {
 			myAttrib[0] = new Name(attr);
 		}
 		if (idx >= 0)
-			out.println("Performing lookup on lookup service # " + idx + " Name=\""
+			out.println("Performing lookup on lookup service # " + idx + " Tag=\""
 				+ attr + "\":");
 		try {
 			ServiceTemplate myTmpl = null;
@@ -265,7 +265,7 @@ public class LookupCmd extends ShellCmd {
 		Entry[] attributeSets = item.attributeSets;
 		for (int i = 0; i < attributeSets.length; i++) {
 			if (attributeSets[i] instanceof Name) {
-				out.println(ansi().render("Name: @|green " +((Name) attributeSets[i]).name + "|@"));
+				out.println(ansi().render("Tag: @|green " +((Name) attributeSets[i]).name + "|@"));
 				return;
 			}
 		}

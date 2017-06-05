@@ -665,7 +665,7 @@ public class SorcerEnv extends SOS {
 
 	/**
 	 * Returns the properties. Implementers can use this method instead of the
-	 * access methods to cache the environment and optimize performance. Name of
+	 * access methods to cache the environment and optimize performance. Tag of
 	 * properties are defined in sorcer.util.SORCER.java
 	 * 
 	 * @return the props

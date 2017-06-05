@@ -126,7 +126,7 @@ public class UIFrameFactory implements JFrameFactory, Serializable {
 			logger.info("help url: " + helpURL);
 			JEditorPane htmlView = new JEditorPane(helpURL);
 			htmlView.setEditable(false);
-			// set the AccessibleContext Name for this view
+			// set the AccessibleContext Tag for this view
 			// so the SORCER browser will display it
 			JScrollPane sp = new JScrollPane(htmlView);
 			sp.getAccessibleContext().setAccessibleName(accessibleName);

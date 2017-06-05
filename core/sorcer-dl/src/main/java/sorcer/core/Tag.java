@@ -24,11 +24,11 @@ import java.io.Serializable;
 /**
  * Created by Mike Sobolewski
  */
-public class Name implements Arg, Serializable, Comparable {
+public class Tag implements Arg, Serializable, Comparable {
     
     private String name;
 
-    public Name(Object name) {
+    public Tag(Object name) {
         this.name = name.toString();
     }
 
@@ -39,8 +39,8 @@ public class Name implements Arg, Serializable, Comparable {
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof Name)
-            return this.name.equals(((Name)object).getName());
+        if (object instanceof Tag)
+            return this.name.equals(((Tag)object).getName());
         else
             return false;
     }
@@ -60,8 +60,8 @@ public class Name implements Arg, Serializable, Comparable {
     public int compareTo(Object o) {
         if (o == null)
             throw new NullPointerException();
-        if (o instanceof Name)
-            return name.compareTo(((Name)o).getName());
+        if (o instanceof Tag)
+            return name.compareTo(((Tag)o).getName());
         else
             return -1;
     }
