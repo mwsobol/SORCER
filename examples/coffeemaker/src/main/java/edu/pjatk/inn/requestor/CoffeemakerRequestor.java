@@ -8,6 +8,7 @@ import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
 import java.io.File;
+import java.io.IOException;
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
@@ -37,7 +38,7 @@ public class CoffeemakerRequestor extends ServiceRequestor {
             } else if (option.equals("exertion")) {
                 return createExertion();
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new MogramException(e);
         }
         return null;

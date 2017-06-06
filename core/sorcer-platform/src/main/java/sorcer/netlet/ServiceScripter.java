@@ -91,6 +91,10 @@ public class ServiceScripter {
         this(scriptFile, null, null, null);
     }
 
+    public ServiceScripter(File scriptFile, ClassLoader classLoader) throws IOException {
+        this(scriptFile, null, classLoader, null);
+    }
+
     public ServiceScripter(File scriptFile, PrintStream out, ClassLoader classLoader, String websterStrUrl) throws IOException {
         this(out, classLoader, websterStrUrl, false);
         script = IOUtils.toString(new FileReader(scriptFile));

@@ -22,6 +22,6 @@ import sorcer.provider.adder.Adder
     Double v2 = 200.0;
 
     task(sig("add", Adder.class),
-        context(inEnt("arg/x1", v1), inEnt("arg/x2", v2), result("out/y")));
+        context(inVal("arg/x1", v1), inVal("arg/x2", v2), result("out/y")));
 
 
