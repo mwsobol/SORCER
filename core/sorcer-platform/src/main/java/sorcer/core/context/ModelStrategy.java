@@ -59,7 +59,7 @@ public class ModelStrategy implements MogramStrategy, Serializable {
     // evaluated model response args
     protected Context outcome;
 
-    protected Exec.State execState = Exec.State.INITIAL;
+    protected Exec.State execState = Exec.State.NULL;
 
     // reponse paths of the runtime model
     protected List<Path> responsePaths = new ArrayList<Path>();
