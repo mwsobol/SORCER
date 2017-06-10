@@ -275,13 +275,13 @@ public class operator extends sorcer.operator {
 	public static <T> Entry<T> init(String domain, String path, T value) {
 		Entry ent = new Entry<T>(path, value);
 		ent.annotation(domain);
-		ent.setType(Type.DOMAIN_INIT);
+		ent.setType(Type.DOMAIN_PRED);
 		return ent;
 	}
 
 	public static <T> Entry<T> init(String path, T value) {
 		Entry ent = new Entry<T>(path, value);
-		ent.setType(Type.INIT);
+		ent.setType(Type.PRED);
 		return ent;
 	}
 
