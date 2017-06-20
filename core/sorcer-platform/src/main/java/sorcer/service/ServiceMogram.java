@@ -9,6 +9,7 @@ import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ContextSelector;
 import sorcer.core.context.ModelStrategy;
+import sorcer.core.context.model.ent.Coupling;
 import sorcer.core.context.model.ent.MdaEntry;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.FidelityManager;
@@ -77,6 +78,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     protected MogramStrategy mogramStrategy;
 
     protected ServiceFidelity<MdaEntry> mdaFi;
+
+    protected List<Coupling> couplings;
 
     protected ContextSelector contextSelector;
     /**
@@ -1027,6 +1030,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         } else {
             throw new SignatureException("No mogram builder available");
         }
+    }
+
+    public List<Coupling> getCouplings() {
+        return couplings;
+    }
+
+    public void setCouplings(List<Coupling> couplings) {
+        this.couplings = couplings;
     }
 
     public ServiceFidelity<MdaEntry> setMdaFi(Context context) {
