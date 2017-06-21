@@ -1073,7 +1073,10 @@ public class DataTable implements ModelTable {
 		if (cns != null && cns.size() > 0)
 			sb.append(cns);
 		if (dataList != null && dataList.size() > 0) {
-			sb.append("\nfirst 100 rows: " + dataList.size());
+			int rowCount = dataList.size();
+			if (rowCount > 100) {
+				sb.append("\nfirst 100 rows: " + dataList.size());
+			}
 			// print up to 100 rows only
 			int rc = 100;
 			if (dataList.size() < 100) {
@@ -1087,8 +1090,10 @@ public class DataTable implements ModelTable {
 					sb.append("\n").append(dataList.get(i));
 				}
 			}
+			if (rowCount > 100) {
+				sb.append("\n...\ntotal row count: " + dataList.size());
+			}
 		}
-		sb.append("\n...\ntotal row count: " + dataList.size());
 		sb.append("\n");
 		describe(sb);
 		return sb.toString();
