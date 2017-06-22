@@ -1068,7 +1068,7 @@ public class DataTable implements ModelTable {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(getClass().getName() + ": " + name +"\n");
+		StringBuilder sb = new StringBuilder("\n" + getClass().getName() + ": " + name +"\n");
 		List<String> cns = getColumnNames();
 		if (cns != null && cns.size() > 0)
 			sb.append(cns);
@@ -1092,9 +1092,9 @@ public class DataTable implements ModelTable {
 			}
 			if (rowCount > 100) {
 				sb.append("\n...\ntotal row count: " + dataList.size());
+                sb.append("\n");
 			}
 		}
-		sb.append("\n");
 		describe(sb);
 		return sb.toString();
 	}
@@ -1119,12 +1119,16 @@ public class DataTable implements ModelTable {
 	 * @return a dataTable in/out sources description
 	 */
 	public String describe(StringBuilder sb) {
-		sb.append("parametric dataTable: " + (inputFileName != null ? inputFileName : "")
-				+ (inputTableURL != null ? inputTableURL : "" ));
-		sb.append("|").append(inputTableDelimiter != null ? "`" +  inputTableDelimiter + "`": "");
-		sb.append("\nresponse dataTable: " + (outputFileName != null ? outputFileName : "" )
-				+ (outputTableURL != null ? outputTableURL : ""));
-		sb.append("|").append(outputTableDelimiter != null ? "`" + outputTableDelimiter + "`" : "");
+		if (inputFileName != null || inputTableURL != null) {
+			sb.append("input file: " + (inputFileName != null ? inputFileName : "")
+					+ (inputTableURL != null ? inputTableURL : ""));
+			sb.append("|").append(inputTableDelimiter != null ? "`" + inputTableDelimiter + "`" : "");
+		}
+		if (outputFileName != null || outputTableURL != null) {
+			sb.append("\noutput file: " + (outputFileName != null ? outputFileName : "")
+					+ (outputTableURL != null ? outputTableURL : ""));
+			sb.append("|").append(outputTableDelimiter != null ? "`" + outputTableDelimiter + "`" : "");
+		}
 		//sb.append("dataTable responses: ").append(responseNames);
 		return sb.toString();
 	}
