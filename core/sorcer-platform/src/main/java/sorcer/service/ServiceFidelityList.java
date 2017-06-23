@@ -82,7 +82,7 @@ public class ServiceFidelityList extends ArrayList<ServiceFidelity> implements A
 	public static ServiceFidelityList selectFidelities(Arg[] entries) {
 		ServiceFidelityList out = new ServiceFidelityList();
 		for (Arg a : entries) {
-			if (a instanceof ServiceFidelity && ((ServiceFidelity)a).type == ServiceFidelity.Type.SELECT) {
+			if (a instanceof ServiceFidelity && ((ServiceFidelity)a).fiType == ServiceFidelity.Type.SELECT) {
 				out.add((ServiceFidelity)a);
 			} else if (a instanceof ServiceFidelityList) {
 				out.addAll((ServiceFidelityList)a);

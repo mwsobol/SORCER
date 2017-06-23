@@ -386,31 +386,35 @@ public class ObjectSignature extends ServiceSignature {
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+	public Object exec(Arg... args) throws MogramException, RemoteException {
 		Mogram mog = Arg.getMogram(args);
 		if (mog == null && returnPath != null) {
 			mog = returnPath.getDataContext();
 		}
 		Context out = null;
-		if (mog != null) {
-			if (serviceType.providerType == ServiceShell.class) {
-				ServiceShell shell = new ServiceShell(mog);
-				out = context(shell.exert(args));
-			} else if (mog instanceof Context) {
-				argTypes = new Class[]{Context.class};
-				ReturnPath rp = returnPath;
-				if (rp == null) {
-					rp = (ReturnPath) ((Context) mog).getReturnPath();
-				}
-				if (rp != null && rp.path != null) {
-					((Context) mog).setReturnPath(rp);
+		try {
+			if (mog != null) {
+				if (serviceType.providerType == ServiceShell.class) {
+					ServiceShell shell = new ServiceShell(mog);
+					out = context(shell.exert(args));
+				} else if (mog instanceof Context) {
+					argTypes = new Class[]{Context.class};
+					ReturnPath rp = returnPath;
+					if (rp == null) {
+						rp = (ReturnPath) ((Context) mog).getReturnPath();
+					}
+					if (rp != null && rp.path != null) {
+						((Context) mog).setReturnPath(rp);
+						out = exert(task(this, mog));
+						return out.getValue(rp.path);
+					}
 					out = exert(task(this, mog));
-					return out.getValue(rp.path);
 				}
-				out = exert(task(this, mog));
-			}
-		} else {
+			} else {
 				out = exert(task(this));
+			}
+		} catch (TransactionException e) {
+			e.printStackTrace();
 		}
 		return out;
 	}

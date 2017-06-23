@@ -336,7 +336,7 @@ import java.util.Map;
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+	public Object exec(Arg... args) throws MogramException, RemoteException {
 		Context cxt = (Context) Arg.getServiceModel(args);
 		if (cxt != null) {
 			conditionalContext = cxt;

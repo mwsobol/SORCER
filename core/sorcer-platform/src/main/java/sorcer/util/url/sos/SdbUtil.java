@@ -243,7 +243,7 @@ public class SdbUtil {
 							operator.inVal(StorageManagement.object_deleted, url),
 							result(StorageManagement.object_url)));
 		} catch (ClassNotFoundException e) {
-			throw new SignatureException("No such service type: "
+			throw new SignatureException("No such service fiType: "
 					+ serviceTypeName, e);
 		}
 		return (URL) eval(objectStoreTask);

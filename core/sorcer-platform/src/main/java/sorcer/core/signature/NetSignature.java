@@ -389,7 +389,7 @@ public class NetSignature extends ObjectSignature {
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+	public Object exec(Arg... args) throws MogramException, RemoteException {
 		Exertion mog = Arg.getExertion(args);
 		Context cxt = (Context) Arg.getServiceModel(args);
 		if (cxt == null && returnPath != null) {

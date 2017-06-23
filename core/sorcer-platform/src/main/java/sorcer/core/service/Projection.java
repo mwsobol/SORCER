@@ -32,7 +32,7 @@ import java.util.List;
 public class Projection extends ServiceFidelity<Fidelity> {
 
 	public Projection(Fidelity fidelity) {
-		this.name = fidelity.getName();
+		this.fiName = fidelity.getName();
 		this.path = fidelity.getPath();
 	}
 
@@ -47,13 +47,13 @@ public class Projection extends ServiceFidelity<Fidelity> {
     }
 
 	public Projection(ServiceFidelity fidelity) {
-		this.name = fidelity.getName();
+		this.fiName = fidelity.getName();
 		this.path = fidelity.getPath();
 		for (Object fi : fidelity.getSelects()) {
 			if (fi.getClass() == Fidelity.class) {
 				this.selects.add((Fidelity) fi);
 			} else if (fi instanceof ServiceFidelity
-					&& ((ServiceFidelity)fi).getType().equals(Type.META)) {
+					&& ((ServiceFidelity)fi).getFiType().equals(Type.META)) {
 				this.selects.add(new Projection((ServiceFidelity)fi));
 			}
 		}
@@ -68,7 +68,7 @@ public class Projection extends ServiceFidelity<Fidelity> {
 	}
 
 	public List<Fidelity> getFidelities(String nodeName) {
-		if (name.equals(nodeName)) {
+		if (fiName.equals(nodeName)) {
 			return selectFidelities();
 		} else {
 			for (Object fi : selects) {
@@ -88,7 +88,7 @@ public class Projection extends ServiceFidelity<Fidelity> {
 
 	@Override
 	public String getName() {
-		return name;
+		return fiName;
 	}
 
 	@Override
@@ -156,7 +156,7 @@ public class Projection extends ServiceFidelity<Fidelity> {
 				out.addAll(((Projection) a).getAllFidelities());
 			} else if (a instanceof FidelityList) {
 				out.addAll((FidelityList) a);
-			} else if (a instanceof Fidelity && ((Fidelity)a).type == Fidelity.Type.SELECT) {
+			} else if (a instanceof Fidelity && ((Fidelity)a).fiType == Fidelity.Type.SELECT) {
 				out.add((Fidelity)a);
 			}
 		}

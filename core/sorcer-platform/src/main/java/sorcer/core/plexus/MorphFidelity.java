@@ -133,7 +133,7 @@ public class MorphFidelity<T extends Arg> extends Observable implements
     }
 
     @Override
-    public Object exec(Arg... args) throws ServiceException, RemoteException, TransactionException {
+    public Object exec(Arg... args) throws ServiceException, RemoteException {
         if (fidelity.getSelect() instanceof Service) {
             return ((Service)fidelity.getSelect()).exec(args);
         } else return fidelity.getSelect();

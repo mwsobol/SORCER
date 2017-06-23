@@ -28,7 +28,7 @@ public class CoffeemakerRequestor extends ServiceRequestor {
         } else if (this.args != null) {
             option = this.args[0];
         } else {
-            throw new MogramException("wrong arguments for: ExertRequestor type, mogram type");
+            throw new MogramException("wrong arguments for: ExertRequestor fiType, mogram fiType");
         }
         try {
             if (option.equals("netlet")) {

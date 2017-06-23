@@ -257,7 +257,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 					+ INTERFACE + APS + SELECTOR);
 			// operand positioning (OOP) for operators by index
 			setCompositeAttribute(OPP + APS + DIRECTION + APS + INDEX);
-			// the variable node type relationship (var name and its type) in
+			// the variable node fiType relationship (var name and its fiType) in
 			// Analysis Models: vnt|var|vt
 			setCompositeAttribute(VAR_NODE_TYPE + APS + VAR + APS + VT);
 			dbUrl = "sos://sorcer.service.DatabaseStorer";
@@ -2487,7 +2487,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public String getNodeType(Object obj) throws ContextException {
 		// deprecated. If this object appears in the context more
 		// than once, there is no guarantee that the correct context
-		// type will be returned. Best not to have an orphaned
+		// fiType will be returned. Best not to have an orphaned
 		// object.
 		String path = getPath(obj);
 		if (path == null)
@@ -2580,7 +2580,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				if (initValue.equals(val)) {
 					if (initValue.getClass() != val.getClass())
 						throw new ContextException(
-								"The type of initial and new eval does not mach: "
+								"The fiType of initial and new eval does not mach: "
 										+ initValue.getClass() + ":"
 										+ val.getClass());
 //					logger.info("init val = " + initValue + " swapping from "

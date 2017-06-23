@@ -35,7 +35,6 @@ import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ContextModel;
 import sorcer.service.Signature.ReturnPath;
-import sorcer.service.modeling.Variability;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -87,13 +86,13 @@ public class operator {
 
     public static ServiceFidelity<Model> mdlFi(Model... models) {
         ServiceFidelity<Model> fi = new ServiceFidelity(models);
-        fi.type = ServiceFidelity.Type.MODEL;
+        fi.fiType = ServiceFidelity.Type.MODEL;
         return fi;
     }
 
     public static ServiceFidelity<Model> mdlFi(String fiName, Model... models) {
         ServiceFidelity<Model> fi = new ServiceFidelity(fiName, models);
-        fi.type = ServiceFidelity.Type.MODEL;
+        fi.fiType = ServiceFidelity.Type.MODEL;
         return fi;
     }
 
@@ -485,7 +484,7 @@ public class operator {
             } else if (item instanceof Srv && ((Entry)item)._2 instanceof MorphFidelity) {
                 morphFiEnts.add((Srv)item);
             } else if (item instanceof Fidelity) {
-                if (((Fidelity) item).getType().equals(Fidelity.Type.META)) {
+                if (((Fidelity) item).getFiType().equals(Fidelity.Type.META)) {
                     metaFis.add((ServiceFidelity<Fidelity>) item);
                 } else {
                     responsePaths = ((Fidelity) item);

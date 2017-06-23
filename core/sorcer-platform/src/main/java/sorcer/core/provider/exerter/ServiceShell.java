@@ -431,7 +431,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 				}
 				if (provider == null) {
 					String message =
-							String.format("Provider name: [%s], type: %s not found, make sure it is running and there is " +
+							String.format("Provider name: [%s], fiType: %s not found, make sure it is running and there is " +
 											"an available lookup service with correct discovery settings",
 									signature.getProviderName(), signature.getServiceType().getName());
 					logger.error(message);
@@ -555,9 +555,9 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 	}
 
 	/**
-	 * Depending on provider access type correct inconsistent signatures for
+	 * Depending on provider access fiType correct inconsistent signatures for
 	 * composite mograms only. Tasks go either to its provider directly or
-	 * Spacer depending on their provider access type (PUSH or PULL).
+	 * Spacer depending on their provider access fiType (PUSH or PULL).
 	 *
 	 * @return the corrected signature
 	 */
@@ -940,7 +940,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 	}
 
 	@Override
-	public Context exec(Service service, Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException {
+	public Context exec(Service service, Context context, Arg[] args) throws ServiceException, RemoteException {
 		Arg[] extArgs = new Arg[args.length+1];
 		Arrays.copyOf(args, args.length+1);
 		extArgs[args.length] = context;
@@ -954,7 +954,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+	public Object exec(Arg... args) throws MogramException, RemoteException {
 		return evaluate(args);
 	}
 }

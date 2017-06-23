@@ -174,7 +174,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 	/**
-	 * Returns a provider of <code>Variability</code> type.
+	 * Returns a provider of <code>Variability</code> fiType.
 	 *
 	 * @return Variability of this service provider
 	 */
@@ -689,7 +689,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+	public Object exec(Arg... args) throws MogramException, RemoteException {
 	    throw new MogramException("Signature service exec should be implementd in subclasses");
 	}
 

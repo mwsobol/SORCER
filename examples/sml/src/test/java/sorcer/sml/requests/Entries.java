@@ -130,7 +130,7 @@ public class Entries {
         }
 
         @Override
-        public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+        public Object exec(Arg... args) throws MogramException, RemoteException {
             return invoke((Context)Arg.getServiceModel(args), args);
         }
 

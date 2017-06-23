@@ -38,7 +38,7 @@ public class SchemaEntry implements Serializable {
     }
 
     public SchemaEntry(Class type, String path, Direction direction, boolean required, String tag, String description, boolean result, String[] returnArgPaths) {
-        if (type == null) throw new IllegalArgumentException("type is null");
+        if (type == null) throw new IllegalArgumentException("fiType is null");
         if (path == null && tag == null) throw new IllegalArgumentException("path is null and no tags");
         if (direction == null) throw new IllegalArgumentException("direction is null");
         this.type = type;

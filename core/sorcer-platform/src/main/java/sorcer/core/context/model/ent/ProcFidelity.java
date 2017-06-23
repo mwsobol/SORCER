@@ -27,7 +27,7 @@ public class ProcFidelity extends Fidelity<String> implements Serializable, Arg 
 	static final long serialVersionUID = 1L;
 
     public ProcFidelity(String name) {
-		type = Type.PROC;
+		fiType = Type.PROC;
         select = name;
     }
 

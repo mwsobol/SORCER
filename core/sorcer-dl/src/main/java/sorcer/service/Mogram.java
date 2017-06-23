@@ -39,7 +39,7 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
     /**
      * Exerts this mogram by the assigned service provider if it is set. If a service
      * provider is not set then at runtime it bounds to any available provider
-     * that matches this mogram's signature of the <code>PROCESS</code> type.
+     * that matches this mogram's signature of the <code>PROCESS</code> fiType.
      * Service exertions and models are instances of mograms.
      *
      * @param txn

@@ -51,7 +51,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 
 	protected Variability.Type type = Variability.Type.VAL;
 
-	// its arguments are always evaluated if active (either Evaluataion or Invocation type)
+	// its arguments are always evaluated if active (either Evaluataion or Invocation fiType)
 	protected boolean isReactive = false;
 
 	// when context of this entry is changed then isValid == false

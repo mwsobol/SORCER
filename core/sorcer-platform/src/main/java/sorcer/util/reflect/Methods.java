@@ -27,11 +27,11 @@ import java.util.List;
  */
 public class Methods {
     /**
-     * Find and return the first method annotated with given annotation type.
+     * Find and return the first method annotated with given annotation fiType.
      * Methods are searched first in the current class, then  in the superclasses.
      *
      * @param type Class which is searched for the annotated methods
-     * @param anno annotation type
+     * @param anno annotation fiType
      */
     public static Method findFirst(Class<?> type, Class<? extends Annotation> anno) {
         for (Method method : type.getDeclaredMethods()) {

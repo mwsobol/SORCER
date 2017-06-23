@@ -152,7 +152,7 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	public Signature getProcessSignature();
 
 	/**
-	 * Returns a flow type for this exertion execution. A flow type indicates if
+	 * Returns a flow fiType for this exertion execution. A flow fiType indicates if
 	 * this exertion can be executed sequentially, in parallel, or concurrently
 	 * with other component exertions within this exertion. The concurrent
 	 * execution requires all mapped inputs in the exertion context to be

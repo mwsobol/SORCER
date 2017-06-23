@@ -51,8 +51,8 @@ SORCER installation file.
 		<!--<langpack iso3="fra"/>-->
 	</locale>
 
-	<native type="izpack" name="ShellLink.dll"/>
-	<native type="izpack" name="ShellLink_x64.dll"/>
+	<native fiType="izpack" name="ShellLink.dll"/>
+	<native fiType="izpack" name="ShellLink_x64.dll"/>
 
 	<!-- 
 	The resources section.

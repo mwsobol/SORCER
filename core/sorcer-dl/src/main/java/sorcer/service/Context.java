@@ -103,10 +103,10 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 	/** context nameID (cid) */
 	final static String CONTEXT_ID = "cid";
 
-	/** SORCER type (ft) */
+	/** SORCER fiType (ft) */
 	final static String DATA_NODE_TYPE = "dnt";
 
-	/** SORCER type */
+	/** SORCER fiType */
 	final static String VAR_NODE_TYPE = "vnt";
 
 	final static String APPLICATION = "appl";
@@ -130,7 +130,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 	/** a variable mark */
 	final static String VAR = "var";
 
-	/** a type variable type */
+	/** a fiType variable fiType */
 	final static String VT = "vt";
 
 	/** directional attribute values */
@@ -504,7 +504,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 	/**
 	 * Returns boolean value designating if <code>attributeName</code> is an
 	 * attribute in the top-level context. Does not descend into linked
-	 * contexts. Is true if attribute is singleton or metaattribute type.
+	 * contexts. Is true if attribute is singleton or metaattribute fiType.
 	 *
 	 * @see #isLocalSingletonAttribute
 	 * @see #isLocalMetaattribute
@@ -845,7 +845,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 	 * descend into linked contexts to retrieve attributes (see
 	 * {@link #getAttributes} which does look in linked contexts).
 	 *
-	 * @return List of singleton attributes (all of type
+	 * @return List of singleton attributes (all of fiType
 	 *         <code>String</code>)
 	 * @see #getAttributes
 	 */
@@ -856,7 +856,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 	 * contexts to retrieve underlying singleton attributes (see
 	 * {@link #getAttributes} which does not look in linked contexts).
 	 *
-	 * @return List of meta attributes (all of type <code>String</code>)
+	 * @return List of meta attributes (all of fiType <code>String</code>)
 	 * @throws ContextException
 	 * @see #getAttributes
 	 */
@@ -868,7 +868,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 	 *
 	 * @param path
 	 *            the location in the context
-	 * @return List of meta associations (of type <code>String</code>)
+	 * @return List of meta associations (of fiType <code>String</code>)
 	 * @throws ContextException
 	 */
 	public List<String> metaassociations(String path) throws ContextException;
@@ -876,7 +876,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 	/**
 	 * Returns all locally defined attributes in this context (metacontext).
 	 *
-	 * @return Set of local attributes (all of type <code>String</code>)
+	 * @return Set of local attributes (all of fiType <code>String</code>)
 	 * @see #getAttributes
 	 */
 	public Set<String> localAttributes();
@@ -886,7 +886,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 	 * descend into linked contexts to retrieve meta attributes (see
 	 * {@link #compositeAttributes} which does look in linked contexts).
 	 *
-	 * @return List of meta attributes (all of type <code>String</code>)
+	 * @return List of meta attributes (all of fiType <code>String</code>)
 	 * @see #compositeAttributes
 	 */
 	public List<String> localCompositeAttributes();
@@ -897,7 +897,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 	 * {@link #localCompositeAttributes} which does not look in linked
 	 * contexts).
 	 *
-	 * @return List of meta attributes (all of type <code>String</code>)
+	 * @return List of meta attributes (all of fiType <code>String</code>)
 	 * @throws ContextException
 	 * @see #getAttributes
 	 */
@@ -909,7 +909,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 	 * {@link #localCompositeAttributes} or {@link #getAttributes} which do not
 	 * look in linked contexts).
 	 *
-	 * @return List of attributes (all of type <code>String</code>)
+	 * @return List of attributes (all of fiType <code>String</code>)
 	 * @throws ContextException
 	 */
 	public List<String> getAttributes() throws ContextException;
@@ -919,7 +919,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 	 *
 	 * @param path
 	 *            the location in the context
-	 * @return List of attributes (all of type <code>String</code>)
+	 * @return List of attributes (all of fiType <code>String</code>)
 	 * @throws ContextException
 	 */
 	public List<String> getAttributes(String path) throws ContextException;

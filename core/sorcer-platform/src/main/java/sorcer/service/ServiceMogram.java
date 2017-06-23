@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ContextSelector;
-import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.model.ent.Coupling;
 import sorcer.core.context.model.ent.MdaEntry;
 import sorcer.core.monitor.MonitoringSession;
@@ -843,11 +842,11 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         ServiceFidelity fi = null;
         if (entries != null && entries.length > 0) {
             for (Arg a : entries)
-                if (a instanceof Fidelity && ((Fidelity) a).type == Fidelity.Type.SELECT) {
+                if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.SELECT) {
                     fi = selectFidelity(a.getName());
-                } else if (a instanceof Fidelity && ((Fidelity) a).type == Fidelity.Type.COMPONENT) {
+                } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.COMPONENT) {
                     fi = selectComponentFidelity((Fidelity) a);
-                } else if (a instanceof ServiceFidelity && ((ServiceFidelity) a).type == ServiceFidelity.Type.META) {
+                } else if (a instanceof ServiceFidelity && ((ServiceFidelity) a).fiType == ServiceFidelity.Type.META) {
                     fi = selectCompositeFidelity((ServiceFidelity) a);
                 }
         }
@@ -865,10 +864,10 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         }
         if (option != null && option instanceof ServiceFidelity) {
             ServiceFidelity sf = (ServiceFidelity) option;
-            if (sf.type == ServiceFidelity.Type.SIG) {
+            if (sf.fiType == ServiceFidelity.Type.SIG) {
                 selectedFidelity = (ServiceFidelity<Signature>) sf;
                 serviceFidelitySelector = selector;
-            } else if (sf.type == ServiceFidelity.Type.META) {
+            } else if (sf.fiType == ServiceFidelity.Type.META) {
                 selectCompositeFidelity(sf);
             }
         } else if (option instanceof Signature) {
@@ -892,10 +891,10 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     public ServiceFidelity selectCompositeFidelity(ServiceFidelity fidelity) {
-        if (fidelity.type == ServiceFidelity.Type.META) {
+        if (fidelity.fiType == ServiceFidelity.Type.META) {
             for (Object obj : fidelity.selects) {
                 if (obj instanceof ServiceFidelity) {
-                    if (((ServiceFidelity) obj).type == ServiceFidelity.Type.COMPONENT)
+                    if (((ServiceFidelity) obj).fiType == ServiceFidelity.Type.COMPONENT)
                         selectComponentFidelity((ServiceFidelity) obj);
                     else
                         selectFidelity(((ServiceFidelity) obj).getName());
@@ -1047,7 +1046,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
                if (mdaComponent instanceof MdaEntry) {
                    mdaFi = new ServiceFidelity((MdaEntry) mdaComponent);
                } else if (mdaComponent instanceof ServiceFidelity
-                       && ((ServiceFidelity) mdaComponent).getType().equals(Fi.Type.MDA)) {
+                       && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
                    mdaFi = (ServiceFidelity) mdaComponent;
                }
            }

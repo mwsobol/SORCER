@@ -35,7 +35,7 @@ public class operator implements Request {
 	}
 
 	@Override
-	public Object exec(Arg... args) throws ServiceException, RemoteException, TransactionException {
+	public Object exec(Arg... args) throws ServiceException, RemoteException {
 
 		if (args.length == 1 && args[0] instanceof Signature) {
 			// requestor services

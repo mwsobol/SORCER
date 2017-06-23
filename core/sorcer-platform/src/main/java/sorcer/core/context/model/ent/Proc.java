@@ -425,7 +425,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.vfe.Variability#getType()
+	 * @see sorcer.vfe.Variability#getFiType()
 	 */
 	@Override
 	public Type getType() {

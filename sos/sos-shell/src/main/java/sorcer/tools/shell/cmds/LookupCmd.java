@@ -50,7 +50,7 @@ public class LookupCmd extends ShellCmd {
 		NOT_LOADED_MSG = "***command not loaded due to conflict";
 
 		COMMAND_USAGE = "lup  [-s | -p | <service index> | -v | -x] | --d <service index>" 
-				+ "\n\t\t\t  | ( -p | -s ) [-n <name attribute eval>] [-i <service type name>] ";
+				+ "\n\t\t\t  | ( -p | -s ) [-n <name attribute eval>] [-i <service fiType name>] ";
 
 		COMMAND_HELP = "Performs lookup on a default lookup service (disco <registrar index>);"
 			+ "\n  -s   show all services registered with the default lookup service" 
@@ -59,7 +59,7 @@ public class LookupCmd extends ShellCmd {
 			+ "\n  -v   show the selected provider"
 			+ "\n  -x   clear the selected provider"
 			+ "\n  -n   show service based on the name attribute eval"
-			+ "\n  -t   show services based on the type name"
+			+ "\n  -t   show services based on the fiType name"
 			+ "\n  --d <service index>	  destroy the <provider index> provider";
 
 	}

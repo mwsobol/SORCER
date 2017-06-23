@@ -19,7 +19,7 @@ package sorcer.core.dispatch.graph;
 import java.util.Collection;
 
 /**
- * A directed graph with nodes of type N. Each node has a collection of values of type V.
+ * A directed graph with nodes of fiType N. Each node has a collection of values of fiType V.
  */
 public interface DirectedGraph<N, V> {
     void getNodeValues(N node, Collection<? super V> values, Collection<? super N> connectedNodes);

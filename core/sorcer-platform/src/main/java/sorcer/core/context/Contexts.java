@@ -404,7 +404,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/**
-	 * Sets context type as input for a path
+	 * Sets context fiType as input for a path
 	 */
 	public static Context markIn(Context cntxt, String path)
 			throws ContextException {
@@ -413,7 +413,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/**
-	 * Sets context type as out for a path
+	 * Sets context fiType as out for a path
 	 */
 	public static Context markOut(Context cntxt, String path)
 			throws ContextException {
@@ -422,7 +422,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/**
-	 * Sets context type as inout for a path
+	 * Sets context fiType as inout for a path
 	 */
 	public static Context markInout(Context cntxt, String path)
 			throws ContextException {
@@ -1362,7 +1362,7 @@ public class Contexts implements SorcerConstants {
 	 * 
 	 * @param context
 	 *            a servcie context
-	 * @return Enumeration of associations (of type <code>String</code>)
+	 * @return Enumeration of associations (of fiType <code>String</code>)
 	 * @throws ContextException
 	 */
 	public static List<String> getAssociations(Context context)
@@ -1404,7 +1404,7 @@ public class Contexts implements SorcerConstants {
 	 *            a service context
 	 * @param key
 	 *            the location in the context
-	 * @return Enumeration of associations (of type <code>String</code>)
+	 * @return Enumeration of associations (of fiType <code>String</code>)
 	 * @throws ContextException
 	 */
 	public static List<String> getAssociations(Context context, String key)

@@ -17,7 +17,6 @@
 
 package sorcer.service;
 
-import net.jini.core.transaction.TransactionException;
 import sorcer.core.Tag;
 import sorcer.service.modeling.Reference;
 
@@ -37,34 +36,34 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 
 	public ServiceFidelity() {
 		super();
-		name = "fidelity" + count++;
+		fiName = "fidelity" + count++;
 	}
 
 	public ServiceFidelity(Type type) {
 		this();
-		this.type = type;
+		this.fiType = type;
 	}
 	public ServiceFidelity(String name) {
-		this.name = name;
+		this.fiName = name;
 	}
 
 	public ServiceFidelity(String name, String path) {
-		this.name = name;
+		this.fiName = name;
 		this.path = path;
 	}
 
 	public ServiceFidelity(Arg name) {
-		this.name = name.getName();
+		this.fiName = name.getName();
 	}
 
 	public ServiceFidelity(Fidelity<T> fi) {
-		this.name = fi.getName();
+		this.fiName = fi.getName();
 		this.path = fi.getPath();
 		this.select = fi.getSelect();
 	}
 
 	public ServiceFidelity(T[] selects) {
-		name = "fidelity" + count++;
+		fiName = "fidelity" + count++;
 		for (T s : selects)
 			this.selects.add(s);
 		select =  selects[0];
@@ -80,21 +79,21 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 	}
 
 	public ServiceFidelity(String... selects) {
-		this.name = "";
-		type = Type.NAME;
+		this.fiName = "";
+		fiType = Type.NAME;
 		for (String s : selects)
 			this.selects.add((T) new Tag(s));
 	}
 
 	public ServiceFidelity(String name, String... selects) {
-		this.name = name;
-		type = Type.NAME;
+		this.fiName = name;
+		fiType = Type.NAME;
 		for (String s : selects)
 			this.selects.add((T) new Tag(s));
 	}
 
 	public ServiceFidelity(String name, T... selects) {
-		this.name = name;
+		this.fiName = name;
 		for (T s : selects)
 			this.selects.add(s);
 	}
@@ -103,30 +102,30 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 		for (T s : fidelity.selects)
 			selects.add(s);
 		this.path = fidelity.path;
-		this.type = fidelity.type;
-		if (fidelity.name != null)
-			this.name = fidelity.name;
+		this.fiType = fidelity.fiType;
+		if (fidelity.fiName != null)
+			this.fiName = fidelity.fiName;
 		else
-			this.name = "fidelity" + count++;
+			this.fiName = "fidelity" + count++;
 	}
 
 	public ServiceFidelity(String name, ServiceFidelity<T> fidelity) {
 		for (T s : fidelity.selects)
 			selects.add(s);
 		this.path = fidelity.path;
-		this.type = fidelity.type;
-		this.name = name;
+		this.fiType = fidelity.fiType;
+		this.fiName = name;
 	}
 
 	public ServiceFidelity(String name, List<T> selectors) {
 		for (T s : selectors)
 			selects.add(s);
-		this.name = name;
+		this.fiName = name;
 	}
 
 	public ServiceFidelity(String name, T selector) {
 		selects.add(selector);
-		this.name = name;
+		this.fiName = name;
 	}
 
 	public T getSelect() {
@@ -171,7 +170,7 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 	}
 
 	@Override
-	public Object exec(Arg... args) throws ServiceException, RemoteException, TransactionException {
+	public Object exec(Arg... args) throws ServiceException, RemoteException {
 		if (select instanceof Service) {
 			return ((Service)select).exec(args);
 		} else return select;
@@ -180,7 +179,7 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 	@Override
 	public boolean equals(Object obj) {
 		if ((obj instanceof ServiceFidelity) &&
-				name.equals(((ServiceFidelity)obj).getName()) &&
+				fiName.equals(((ServiceFidelity)obj).getName()) &&
 				path.equals(((ServiceFidelity)obj).getPath())) {
 			return true;
 		} else {
@@ -271,7 +270,7 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 	
 	@Override
 	public String toString() {
-		return (path != null ? name + "@" + path : name )
+		return (path != null ? fiName + "@" + path : fiName )
 				+ (selects != null && selects.size() > 0 ? ":" + selects : "");
 	}
 

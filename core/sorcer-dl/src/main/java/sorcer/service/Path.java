@@ -131,7 +131,7 @@ public class Path implements Arg  {
 		if ((object instanceof Path)
 			&& ((Path) object).path.equals(path)) {
 //				&&   ((Path) object).info.equals(info)
-//				&& ((Path) object).type.equals(type))
+//				&& ((Path) object).fiType.equals(fiType))
 			return true;
 		} else {
 			return false;

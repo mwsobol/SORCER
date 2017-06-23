@@ -31,13 +31,13 @@ import java.util.Arrays;
 /**
  * A service <code>Signature</code> is an indirect behavioral feature of
  * {@link Exertion}s that declares a service that can be performed by instances
- * of {@link Service}s. It contains a service type and a selector of operation
- * of that service type (interface). Its implicit parameter and return value is
+ * of {@link Service}s. It contains a service fiType and a selector of operation
+ * of that service fiType (interface). Its implicit parameter and return value is
  * a service {@link Context}. Thus, the explicit signature of service-oriented
- * operations is defined by the same {@link Context} type for any exertion
+ * operations is defined by the same {@link Context} fiType for any exertion
  * parameter and return value . A signature may include a collection of optional
- * attributes describing a preferred {@link Service} with a given service type.
- * Also a signature can carry own implementation when its type is implemented
+ * attributes describing a preferred {@link Service} with a given service fiType.
+ * Also a signature can carry own implementation when its fiType is implemented
  * with the provided codebase.
  * <p>
  * In other words, a service signature is a specification of a service that can
@@ -88,7 +88,7 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 	public Object getProvider() throws SignatureException;
 
 	/**
-	 * Returns a provider of <code>Variability</code> type.
+	 * Returns a provider of <code>Variability</code> fiType.
 	 *
 	 * @return Variability of this service provider
 	 */
@@ -97,7 +97,7 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 	public void setProviderName(ProviderName providerName);
 
 	/**
-	 * Returns a service type name of this signature.
+	 * Returns a service fiType name of this signature.
 	 *
 	 * @return name of service interface
 	 */
@@ -139,7 +139,7 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 	public SignatureReturnPath getReturnPath();
 
 	/**
-	 * Assigns a service type name of this signature.
+	 * Assigns a service fiType name of this signature.
 	 *
 	 * @return name of service interface
 	 * @param serviceType
@@ -148,9 +148,9 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 	public void setServiceType(Class<?> serviceType);
 
 	/**
-	 * Returns a signature type of this signature.
+	 * Returns a signature fiType of this signature.
 	 *
-	 * @return a type of this signature
+	 * @return a fiType of this signature
 	 */
 	public Type getType();
 
@@ -163,10 +163,10 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 	public Context getInConnector();
 
 	/**
-	 * Assigns a signature <code>type</code> for this service signature.
+	 * Assigns a signature <code>fiType</code> for this service signature.
 	 *
 	 * @param type
-	 *            a signature type
+	 *            a signature fiType
 	 */
 	public Signature setType(Signature.Type type);
 

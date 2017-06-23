@@ -585,7 +585,7 @@ public class ContextNode implements Serializable {
 								argObjects[tCount] = obj;
 							} else {
 								// try to construct an object of the appropriate
-								// type based on the argV class type
+								// fiType based on the argV class fiType
 								// System.out.println("\n**************** type
 								// is "+type);
 								// System.out.println("\nClass******** is "+

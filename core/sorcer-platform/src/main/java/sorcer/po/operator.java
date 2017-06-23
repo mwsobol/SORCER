@@ -191,13 +191,13 @@ public class operator extends sorcer.operator {
 
     public static Fidelity pFi(String name) {
         Fidelity fi =  new Fidelity(name);
-        fi.setType(Fi.Type.PROC);
+        fi.setFiType(Fi.Type.PROC);
         return fi;
     }
 
     public static ServiceFidelity<Proc> pFi(Entry... entries) {
         ServiceFidelity<Proc> fi = new ServiceFidelity(entries);
-        fi.type = ServiceFidelity.Type.PROC;
+        fi.fiType = ServiceFidelity.Type.PROC;
         return fi;
     }
 
@@ -745,7 +745,7 @@ public class operator extends sorcer.operator {
 //			throw new ConfigurationException("Misconfigured fidelity: " + srvFi + " for: " + selectFi);
 		}
 		Tuple2<Fidelity, Fidelity> assoc =  new Tuple2<>(selectFi, srvFi);
-		if (srvFi.getType().equals(Fi.Type.GRADIENT)) {
+		if (srvFi.getFiType().equals(Fi.Type.GRADIENT)) {
 			// if no path set use its name - no multifidelities
 			if (selectFi.getPath().equals("")) {
 				selectFi.setPath(selectFi.getName());
@@ -763,7 +763,7 @@ public class operator extends sorcer.operator {
 		srvFi.setName(selectFi.getName());
 		srvFi.setPath(selectFi.getPath());
 //		srvFi.setSelect((T) selectFi.getSelect());
-		selectFi.setType(srvFi.getType());
+		selectFi.setFiType(srvFi.getFiType());
 		return assoc;
 	}
 

@@ -23,7 +23,7 @@ import java.rmi.RemoteException;
  * Represents a function that accepts any numcer of arguments
  * to produces a result as a <code>Service</code>.
  *
- * @param <T> the type of the result of the function
+ * @param <T> the fiType of the result of the function
  *
  * Created by Mike Sobolewski on 11/21/15.
  */

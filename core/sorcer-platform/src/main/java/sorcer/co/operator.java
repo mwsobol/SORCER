@@ -97,7 +97,7 @@ public class operator extends sorcer.operator {
         return new Tie(discipline, null);
     }
 
-    public static Coupling cplg(String fromDiscipline, String toDiscipline,  String var) {
+    public static Coupling cplg( String var, String fromDiscipline, String toDiscipline) {
         return new Coupling(tie(fromDiscipline, var), tie(toDiscipline, var));
     }
 

@@ -76,7 +76,7 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 		requestor.postprocess();
 	}
 
-	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+	public Object exec(Arg... args) throws MogramException, RemoteException {
 		prepareToRun();
 		requestor.preprocess(Arg.asStrings(args));
 		try {

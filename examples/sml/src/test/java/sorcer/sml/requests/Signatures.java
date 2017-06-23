@@ -88,7 +88,7 @@ public class Signatures {
 		Object prv = provider(s);
 		logger.info("provider of s: " + prv);
 		logger.info("selector of s: " + selector(s));
-		logger.info("service type of s: " + type(s));
+		logger.info("service fiType of s: " + type(s));
 		assertTrue(prv instanceof Date);
 //		logger.info("time: " + exec(xrt("time", s)));
 		assertTrue(exec(xrt("time", s)) instanceof Long);

@@ -1056,7 +1056,7 @@ public class operator extends sorcer.operator {
 //                            serviceType = srvType.getProviderType();
 //                        }
 //                    } catch (SignatureException se) {
-//                        logger.warn("failed to load type for: {}", srvType.typeName);
+//                        logger.warn("failed to load fiType for: {}", srvType.typeName);
 //                        serviceType = Object.class;
 //                    }
 				} else if (o instanceof Args) {
@@ -1346,7 +1346,7 @@ public class operator extends sorcer.operator {
 
 	public static ServiceFidelity<Fidelity> fi(String name, Fidelity... selectors) {
 		ServiceFidelity<Fidelity> fi = new ServiceFidelity(name, selectors);
-		fi.type = ServiceFidelity.Type.META;
+		fi.fiType = ServiceFidelity.Type.META;
 		return fi;
 	}
 
@@ -1395,14 +1395,14 @@ public class operator extends sorcer.operator {
 
 	public static ServiceFidelity<Request> rFi(Request... services) {
 		ServiceFidelity<Request> srvFi = new ServiceFidelity(services);
-		srvFi.type = ServiceFidelity.Type.REQUEST;
+		srvFi.fiType = ServiceFidelity.Type.REQUEST;
 		return srvFi;
 	}
 
 	public static ServiceFidelity<Request> rFi(String name, Request... services) {
 		ServiceFidelity<Request> srvFi = new ServiceFidelity(services);
 		srvFi.setPath(name);
-		srvFi.type = ServiceFidelity.Type.REQUEST;
+		srvFi.fiType = ServiceFidelity.Type.REQUEST;
 		return srvFi;
 	}
 
@@ -1447,25 +1447,25 @@ public class operator extends sorcer.operator {
 
 	public static ServiceFidelity<Signature> sFi(Signature... signatures) {
 		ServiceFidelity<Signature> fi = new ServiceFidelity(signatures);
-		fi.type = ServiceFidelity.Type.SIG;
+		fi.fiType = ServiceFidelity.Type.SIG;
 		return fi;
 	}
 
 	public static ServiceFidelity<Entry> eFi(String fiName, Entry... entries) {
 		ServiceFidelity<Entry> fi = new ServiceFidelity(fiName, entries);
-		fi.type = ServiceFidelity.Type.ENTRY;
+		fi.fiType = ServiceFidelity.Type.ENTRY;
 		return fi;
 	}
 
 	public static ServiceFidelity<Entry> eFi(Entry... entries) {
 		ServiceFidelity<Entry> fi = new ServiceFidelity(entries);
-		fi.type = ServiceFidelity.Type.ENTRY;
+		fi.fiType = ServiceFidelity.Type.ENTRY;
 		return fi;
 	}
 
 	public static Fidelity fi(String name) {
 		Fidelity fi = new Fidelity(name);
-		fi.type = ServiceFidelity.Type.SELECT;
+		fi.fiType = ServiceFidelity.Type.SELECT;
 		return fi;
 	}
 
@@ -1524,25 +1524,25 @@ public class operator extends sorcer.operator {
 
 	public static Fidelity fi(String name, String path, Fi.Type type) {
 		Fidelity fi = new Fidelity(name, path);
-		fi.type = type;
+		fi.fiType = type;
 		return fi;
 	}
 
 	public static Fidelity fi(String name, String path, int type) {
 		Fidelity fi = new Fidelity(name, path);
-		fi.type = Fi.Type.type(type);
+		fi.fiType = Fi.Type.type(type);
 		return fi;
 	}
 
 	public static Fidelity<String> fi(String name, String path, String gradient) {
 		Fidelity<String> fi = new Fidelity(name, path, gradient);
-		fi.type = Fidelity.Type.GRADIENT;
+		fi.fiType = Fidelity.Type.GRADIENT;
 		return fi;
 	}
 
 	public static Fidelity fi(String name, String path) {
 		Fidelity fi = new Fidelity(name, path);
-		fi.type = Fidelity.Type.SELECT;
+		fi.fiType = Fidelity.Type.SELECT;
 		return fi;
 	}
 
@@ -1550,34 +1550,34 @@ public class operator extends sorcer.operator {
 		ServiceFidelity<Path> fi = new ServiceFidelity(name, path(path));
 		fi.setPath(path);
 		fi.setSelect(path);
-		fi.type = ServiceFidelity.Type.SELECT;
+		fi.fiType = ServiceFidelity.Type.SELECT;
 		return fi;
 	}
 
 	public static Fidelity<String> mFi(String name, String path) {
 		Fidelity<String> fi = new Fidelity(name);
 		fi.setPath(path);
-		fi.type = ServiceFidelity.Type.MORPH;
+		fi.fiType = ServiceFidelity.Type.MORPH;
 		return fi;
 	}
 
 	public static ServiceFidelity<Signature> sFi(String name, Signature... signatures) {
 		ServiceFidelity<Signature> fi = new ServiceFidelity(name, signatures);
 		fi.setSelect(signatures[0]);
-		fi.type = ServiceFidelity.Type.SIG;
+		fi.fiType = ServiceFidelity.Type.SIG;
 		return fi;
 	}
 
 	public static ServiceFidelity<Ref> sFi(String name, Ref... references) {
 		ServiceFidelity<Ref> fi = new ServiceFidelity(name, references);
 		fi.setSelect(references[0]);
-		fi.type = ServiceFidelity.Type.REF;
+		fi.fiType = ServiceFidelity.Type.REF;
 		return fi;
 	}
 
 	public static ServiceFidelity<Ref> sFi(Ref... references) {
 		ServiceFidelity<Ref> fi = new ServiceFidelity(references);
-		fi.type = ServiceFidelity.Type.REF;
+		fi.fiType = ServiceFidelity.Type.REF;
 		return fi;
 	}
 
@@ -2103,7 +2103,7 @@ public class operator extends sorcer.operator {
 			} else if (elems[i] instanceof MorphFidelity) {
 				mFi = (MorphFidelity) elems[i];
 			} else if (elems[i] instanceof ServiceFidelity) {
-				if (((ServiceFidelity) elems[i]).getType().equals(ServiceFidelity.Type.META)) {
+				if (((ServiceFidelity) elems[i]).getFiType().equals(ServiceFidelity.Type.META)) {
 					metaFis.add((ServiceFidelity<ServiceFidelity>) elems[i]);
 				} else {
 					fis.add(((ServiceFidelity) elems[i]));
@@ -2288,7 +2288,7 @@ public class operator extends sorcer.operator {
 		} else {
 			throw new EvaluationException(
 					"asis eval can only be determined for objects of the "
-							+ Evaluation.class + " type");
+							+ Evaluation.class + " fiType");
 		}
 	}
 
@@ -2394,7 +2394,7 @@ public class operator extends sorcer.operator {
 	public static Object execItem(Item item, Arg... args) throws ServiceException {
 		try {
 			return item.exec(args);
-		} catch (RemoteException | TransactionException e) {
+		} catch (RemoteException e) {
 			throw new ServiceException(e);
 		}
 	}
@@ -3066,7 +3066,7 @@ public class operator extends sorcer.operator {
 		ServiceTemplate st = new ServiceTemplate(null, new Class[] { signature.getServiceType() }, null);
 		ServiceItem[] sis = Accessor.get().getServiceItems(st, null);
 		if (sis == null)
-			throw new SignatureException("No available providers of type: "
+			throw new SignatureException("No available providers of fiType: "
 					+ signature.getServiceType().getName());
 		List<Provider> servers = new ArrayList<Provider>(sis.length);
 		for (ServiceItem si : sis) {

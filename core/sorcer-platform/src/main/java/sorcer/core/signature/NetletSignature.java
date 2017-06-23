@@ -55,7 +55,7 @@ public class NetletSignature extends ServiceSignature {
 
 
     @Override
-    public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+    public Object exec(Arg... args) throws MogramException, RemoteException {
         try {
             ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
             se.readFile(new File(serviceSource.getName()));

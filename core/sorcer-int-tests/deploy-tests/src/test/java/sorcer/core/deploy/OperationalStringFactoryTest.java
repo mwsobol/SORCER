@@ -175,7 +175,7 @@ public class OperationalStringFactoryTest {
                 assertTrue(s.getPlanned()==1);
             }
             sb.append("\t").append(s.getName()).append("\n\t\t")
-                .append("type: ").append(s.getProvisionType().name())
+                .append("fiType: ").append(s.getProvisionType().name())
                 .append("\n\t\t")
                 .append("planned: ").append(s.getPlanned())
                 .append("\n\t\t")

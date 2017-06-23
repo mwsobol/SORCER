@@ -42,7 +42,7 @@ public @interface ConfigEntry {
     boolean required() default false;
 
     /**
-     * Declare type of configuration entry. Void means the default, type of property or field
+     * Declare fiType of configuration entry. Void means the default, fiType of property or field
      */
     Class type() default Void.class;
 

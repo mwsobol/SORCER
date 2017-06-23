@@ -1,7 +1,5 @@
 package sorcer.service;
 
-import net.jini.core.transaction.TransactionException;
-
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,47 +12,47 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
 
 	protected static int count = 0;
 
-	protected String name;
+	protected String fiName;
 
 	protected String path = "";
 
 	protected T select;
 
-	public Type type = Type.SELECT;
+	public Type fiType = Type.SELECT;
 
 	// dependency management for this Fidelity
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
 	public Fidelity() {
 		super();
-		name = "fidelity" + count++;
+		fiName = "fidelity" + count++;
 	}
 
 	public Fidelity(String name) {
 		this();
-		this.name = name;
+		this.fiName = name;
 	}
 
 	public Fidelity(String name, String path) {
 		this();
-		this.name = name;
+		this.fiName = name;
 		this.path = path;
 	}
 
     public Fidelity(String name, String path, String select) {
         this();
-        this.name = name;
+        this.fiName = name;
         this.path = path;
         this.select = (T) select;
     }
 
 	@Override
 	public String getName() {
-		return name;
+		return fiName;
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.fiName = name;
 	}
 
 	public T getSelect() {
@@ -73,17 +71,17 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
 		this.select = select;
 	}
 
-	public Type getType() {
-		return type;
+	public Type getFiType() {
+		return fiType;
 	}
 
-	public void setType(Type type) {
-		this.type = type;
+	public void setFiType(Type fiType) {
+		this.fiType = fiType;
 	}
 
 	@Override
 	public int hashCode() {
-		String id = name + path + select;
+		String id = fiName + path + select;
 		int hash = id.length() + 1;
 		return hash * 31 + id.hashCode();
 	}
@@ -100,10 +98,10 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
 
 
 		if (object instanceof Fidelity
-				&& ((Fidelity) object).getName().equals(name)
+				&& ((Fidelity) object).getName().equals(fiName)
 				&& ((Fidelity) object).getPath().equals(path)
 				&& selectorEquality
-				&& ((Fidelity) object).getType().equals(type)) {
+				&& ((Fidelity) object).getFiType().equals(fiType)) {
 			return true;
 		} else {
 			return false;
@@ -118,14 +116,14 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
 
 	@Override
 	public String toString() {
-		return (path == null ? name :
-                name + "@" + path)
+		return (path == null ? fiName :
+				fiName + "@" + path)
                 + (select != null ? ":" + select : "")
-                + (type != null ? ":" + type : "");
+                + (fiType != null ? ":" + fiType : "");
 	}
 
     @Override
-    public Object exec(Arg... args) throws ServiceException, RemoteException, TransactionException {
+    public Object exec(Arg... args) throws ServiceException, RemoteException {
         if (select instanceof Request) {
             return ((Request)select).exec(args);
         } else {
