@@ -344,7 +344,7 @@ public class DataTable implements ModelTable {
 	}
 
 	/**
-	 * Adds a row to the end of the model. The new row will contain
+	 * Adds a row to the end of the list of rows. The new row will contain
 	 * <code>null</code> values unless <code>rowData</code> is specified.
 	 * Notification of the row being added will be generated.
 	 * 
@@ -356,7 +356,7 @@ public class DataTable implements ModelTable {
 	}
 
 	/**
-	 * Adds a row to the end of the model. The new row will contain
+	 * Adds a row to the end of the list of rows. The new row will contain
 	 * <code>null</code> values unless <code>rowData</code> is specified.
 	 * Notification of the row being added will be generated.
 	 * 
@@ -368,7 +368,20 @@ public class DataTable implements ModelTable {
 	}
 
 	/**
-	 * Inserts a row at <code>row</code> in the model. The new row will contain
+	 * Adds a row of doubles to the end of the list of rows.
+	 *
+	 * @param rowData
+	 *            optional data of the row being added
+	 */
+	public void addRow(double[] rowData) {
+		List<Double> doa = new ArrayList<>();
+		for(double d : rowData) {
+			doa.add(d);
+		}
+		addRow(doa);
+	}
+	/**
+	 * Inserts a row at <code>row</code> in the list of rows. The new row will contain
 	 * <code>null</code> values unless <code>rowData</code> is specified.
 	 * Notification of the row being added will be generated.
 	 * 
