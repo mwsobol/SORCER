@@ -76,6 +76,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected MogramStrategy mogramStrategy;
 
+    protected Differentiator differentiator;
+
     protected ServiceFidelity<MdaEntry> mdaFi;
 
     protected List<Coupling> couplings;
@@ -1053,6 +1055,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
            }
        }
        return mdaFi;
+    }
+
+    public Differentiator getDifferentiator() {
+        return differentiator;
+    }
+
+    public void setDifferentiator(Differentiator mogramDifferentiator) {
+        this.differentiator = mogramDifferentiator;
     }
 
     @Override
