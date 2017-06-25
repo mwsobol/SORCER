@@ -1044,7 +1044,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
            Object mdaComponent = context.get(Context.MDA_PATH);
            if (mdaComponent != null) {
                if (mdaComponent instanceof MdaEntry) {
-                   mdaFi = new ServiceFidelity((MdaEntry) mdaComponent);
+                   mdaFi = new ServiceFidelity(((MdaEntry)mdaComponent).getName());
+                   mdaFi.addSelect((MdaEntry) mdaComponent);
                } else if (mdaComponent instanceof ServiceFidelity
                        && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
                    mdaFi = (ServiceFidelity) mdaComponent;

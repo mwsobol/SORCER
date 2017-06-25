@@ -449,6 +449,12 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
             }
             return providerType;
         }
+
+		@Override
+		public String toString() {
+			return providerType.getSimpleName()
+					+ (matchTypes != null ? ":" + Arrays.toString(matchTypes) : "");
+		}
 	}
 
 	public static class ReturnPath<T> implements SignatureReturnPath, Serializable, Arg {

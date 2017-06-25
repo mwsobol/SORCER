@@ -162,6 +162,8 @@ public class ObjectTask extends Task {
 					} else if (rp.outPaths != null && rp.outPaths.length > 0) {
 						Context out = dataContext.getDirectionalSubcontext(rp.outPaths);
 						dataContext.setReturnValue(out);
+					} else {
+						dataContext = (ServiceContext)result;
 					}
 				} else if (dataContext.getScope() != null) {
 					dataContext.getScope().append((Context)result);
