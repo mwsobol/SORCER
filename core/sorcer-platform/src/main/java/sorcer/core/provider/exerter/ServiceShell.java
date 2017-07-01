@@ -424,6 +424,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
                 // check proxy cache and ping with a provider name
 				try {
 					provider = proxies.get(signature);
+					// check if cached proxy is still alive
 					((Provider)provider).getProviderName();
 				} catch(Exception e) {
 					proxies.refresh(signature);
