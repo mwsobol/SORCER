@@ -37,7 +37,7 @@
     </target>
 
     <target name="start-rio-service" description="Declaration to start a Rio service">
-        <property name="serialFilter" value="org.rioproject.**;net.jini.**;com.sun.**"/>
+        <property name="serialFilter" value="&quot;org.rioproject.**;net.jini.**;com.sun.**&quot;"/>
         <java classname="org.rioproject.start.ServiceStarter" fork="yes" spawn="yes">
             <env key="SORCER_HOME" value="${sorcer.home}"/>
             <classpath>

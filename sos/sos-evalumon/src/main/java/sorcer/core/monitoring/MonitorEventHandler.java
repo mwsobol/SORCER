@@ -47,7 +47,7 @@ public class MonitorEventHandler {
     private ProxyPreparer listenerPreparer = new BasicProxyPreparer();
     private static Logger logger = LoggerFactory.getLogger(MonitorEventHandler.class);
 
-    public MonitorEventHandler(Configuration config) throws IOException {
+    MonitorEventHandler(Configuration config) throws IOException {
         resourceMgr = new LeasedListManager();
         landlord = new LandlordLessor(config);
         landlord.addLeaseListener(resourceMgr);
@@ -73,10 +73,10 @@ public class MonitorEventHandler {
      *
      * @throws LeaseDeniedException If the lease manager denies the lease
      */
-    public EventRegistration register(Object eventSource,
-                                      RemoteEventListener listener,
-                                      MonitorEventFilter eventFilter,
-                                      long duration) throws LeaseDeniedException, RemoteException {
+    EventRegistration register(Object eventSource,
+                               RemoteEventListener listener,
+                               MonitorEventFilter eventFilter,
+                               long duration) throws LeaseDeniedException, RemoteException {
         RemoteEventListener preparedListener = (RemoteEventListener)listenerPreparer.prepareProxy(listener);
         EventRegistrationResource resource = new EventRegistrationResource(preparedListener, eventFilter);
         ServiceResource sr = new ServiceResource(resource);
@@ -90,7 +90,7 @@ public class MonitorEventHandler {
         return (registration);
     }
 
-    public void fire(MonitorEvent monitorEvent) {
+    void fire(MonitorEvent monitorEvent) {
         if(resourceMgr.getServiceResources().length==0) {
             if(logger.isDebugEnabled())
                 logger.debug("There are no leased registrations, cancel sending {} {}, status: {}",
@@ -128,12 +128,13 @@ public class MonitorEventHandler {
      * be cancelled , and if any watches have been created those watches will be
      * destroyed
      */
+    @SuppressWarnings("unused")
     public void terminate() {
         landlord.removeAll();
         landlord.stop(true);
     }
 
-    int getRegistrantCount() {
+    private int getRegistrantCount() {
         return (landlord.total());
     }
 
@@ -143,7 +144,7 @@ public class MonitorEventHandler {
      * impossible to forge an ID and so we don't have
      * to remember/restore a counter cross restarts.
      */
-    static long nextID() {
+    private static long nextID() {
         return idGen.nextLong();
     }
 
@@ -157,16 +158,16 @@ public class MonitorEventHandler {
         private MonitorEventFilter eventFilter;
         private AtomicLong sequenceNumber = new AtomicLong(0);
 
-        public EventRegistrationResource(RemoteEventListener listener,
+        EventRegistrationResource(RemoteEventListener listener,
                                          MonitorEventFilter eventFilter) {
             this.listener = listener;
             this.eventFilter = eventFilter;
         }
-        public RemoteEventListener getListener() {
+        RemoteEventListener getListener() {
             return (listener);
         }
 
-        public MonitorEventFilter getEventFilter() {
+        MonitorEventFilter getEventFilter() {
             return eventFilter;
         }
     }

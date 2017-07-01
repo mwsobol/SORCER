@@ -1845,8 +1845,8 @@ public class GenericUtil {
 		//script.add("echo \"waiting for $SCRIPT_PID...\" >> " + wrapperLog);
 		script.add("echo \"waiting for background processes...\"");
 		script.add("echo \"waiting for background processes...\" >> " + wrapperLog);
-		script.add("wait");
-//		script.add("wait $SCRIPT_PID");
+//		script.add("wait");
+		script.add("wait $SCRIPT_PID");
 		script.add("EXIT_CODE=$?");
 		
 		script.add("echo \"done waiting, setting exit code from background process = $EXIT_CODE\"");

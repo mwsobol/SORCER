@@ -287,6 +287,13 @@ task createDistribution(dependsOn: [":sorcer-boot:install",
         copy {
             from("${projectDir.path}/resources/rio")
             into "${distDir}-${version}/rio-${rioVersion}"
+            eachFile {
+                if(it.name=="resolverConfig.groovy") {
+                    /*it.expand(rioVersion: rioVersion)*/
+                    filter { it.replace('<%rio.version%>', "${rioVersion}") }
+                }
+            }
+            /*filter { it.replace('<%rio.version%>', "${rioVersion}") }*/
         }
 
         /* Copy icons to bin/icons */
