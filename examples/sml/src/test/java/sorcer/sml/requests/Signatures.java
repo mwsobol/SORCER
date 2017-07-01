@@ -188,7 +188,7 @@ public class Signatures {
 	}
 
 	@Test
-	public void localArgSigService() throws Exception {
+	public void localSigServiceWithArg() throws Exception {
 
 		// request the local service
 		Signature ss = sig("add", AdderImpl.class);
