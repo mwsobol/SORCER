@@ -452,7 +452,7 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 
 		@Override
 		public String toString() {
-			return providerType.getSimpleName()
+			return (providerType != null ? providerType.getSimpleName() : "null")
 					+ (matchTypes != null ? ":" + Arrays.toString(matchTypes) : "");
 		}
 	}

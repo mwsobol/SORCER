@@ -82,9 +82,6 @@ public class ServiceSignature implements Signature, SorcerConstants {
 
 	protected ServiceType serviceType = new ServiceType();
 
-	// implementation of the service interface
-	protected Class<?> providerType;
-
 	// associated exertion only if needed
 	protected Exertion exertion;
 
@@ -230,7 +227,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	}
 
 	public void setProviderType(Class<?> providerType) {
-		this.providerType = providerType;
+		this.serviceType.providerType = providerType;
 	}
 
 	public void setOwnerId(String oid) {
@@ -385,7 +382,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		if (serviceType.providerType.isInterface())
 			methods = serviceType.providerType.getMethods();
 		else
-			methods = providerType.getMethods();
+			methods = serviceType.providerType.getMethods();
 
 		for (Method m : methods) {
 			if (m.getName().equals(operation.selector)) {

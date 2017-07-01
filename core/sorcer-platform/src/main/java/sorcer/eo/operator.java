@@ -993,9 +993,16 @@ public class operator extends sorcer.operator {
 	}
 
 	public static Signature sig(ServiceType serviceType, Object... items) throws SignatureException {
-		if (items == null || items.length == 0)
-			return defaultSig(serviceType.providerType);
-
+		if (items == null || items.length == 0) {
+            if (serviceType.providerType != null) {
+                return defaultSig(serviceType.providerType);
+            } else if (serviceType.typeName != null) {
+                ObjectSignature os = new ObjectSignature();
+                os.setServiceType(serviceType);
+                os.getServiceType();
+                return os;
+            }
+        }
 		String operation = null;
 		for (Object item : items) {
 			if (item instanceof String) {

@@ -424,7 +424,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
                 // check proxy cache and ping with a provider name
 				try {
 					provider = proxies.get(signature);
-					//((Provider)provider).getProviderName();
+					((Provider)provider).getProviderName();
 				} catch(Exception e) {
 					proxies.refresh(signature);
 					provider = proxies.get(signature);
@@ -490,13 +490,13 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 		}
 		exertion.getControlContext().appendTrace(String.format("service shell for signature: %s", signature));
 		logger.info("Provider found for: {}", signature);
-		if (((Provider) provider).mutualExclusion()) {
-			try {
-				return serviceMutualExclusion((Provider) provider, exertion, transaction);
-			} catch (SignatureException e) {
-				throw new MogramException(e);
-			}
-		} else {
+//		if (((Provider) provider).mutualExclusion()) {
+//			try {
+//				return serviceMutualExclusion((Provider) provider, exertion, transaction);
+//			} catch (SignatureException e) {
+//				throw new MogramException(e);
+//			}
+//		} else {
 			// test exertion for serialization
 //			try{
 //				ObjectLogger.persist("exertionfiles.srl", exertion);
@@ -521,7 +521,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 				result = exertion;
 			}
 			return result;
-		}
+//		}
 	}
 
 	private Exertion serviceMutualExclusion(Provider provider,

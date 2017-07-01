@@ -55,7 +55,7 @@ public class ObjectSignature extends ServiceSignature {
 	private static Logger logger = LoggerFactory.getLogger(ObjectSignature.class);
 
 	public ObjectSignature() {
-		this.providerType = Object.class;
+		this.serviceType.providerType = Object.class;
 	}
 
 	public ObjectSignature(ServiceSignature signature) throws SignatureException {
@@ -63,7 +63,7 @@ public class ObjectSignature extends ServiceSignature {
         this.operation = signature.operation;
         this.providerName =  signature.providerName;
         this.serviceType = signature.serviceType;
-        this.providerType = signature.providerType;
+        this.serviceType.providerType = signature.serviceType.providerType;
         this.returnPath = signature.returnPath;
 	}
 
@@ -85,7 +85,6 @@ public class ObjectSignature extends ServiceSignature {
 		this();
 		if (object instanceof Class) {
 			this.serviceType.providerType = (Class<?>) object;
-			this.providerType = (Class<?>) object;
 		} else if (object instanceof Signature) {
 			targetSignature = (Signature)object;
 		} else {
@@ -102,7 +101,6 @@ public class ObjectSignature extends ServiceSignature {
 
 	public ObjectSignature(String selector, Class<?> providerClass) {
 		this.serviceType.providerType = providerClass;
-		this.providerType = providerClass;
 		setSelector(selector);
 	}
 
@@ -140,8 +138,8 @@ public class ObjectSignature extends ServiceSignature {
 	 *
 	 * @return the providerClass
 	 */
-	public Class<?> getProviderType() {
-		return providerType;
+	public Class getProviderType() {
+		return serviceType.providerType;
 	}
 
 	/**
@@ -150,7 +148,7 @@ public class ObjectSignature extends ServiceSignature {
 	 * </p>
 	 */
 	public void setProviderType(Class<?> providerType) {
-		this.providerType = providerType;
+		this.serviceType.providerType = providerType;
 	}
 
 	/**
@@ -264,7 +262,7 @@ public class ObjectSignature extends ServiceSignature {
 		try {
 			if(operation.selector!=null) {
 				try {
-					Method selectorMethod = providerType.getDeclaredMethod(operation.selector, argTypes);
+					Method selectorMethod = serviceType.providerType.getDeclaredMethod(operation.selector, argTypes);
 					if(Modifier.isStatic(selectorMethod.getModifiers())) {
 						return  selectorMethod.invoke(null, args);
 					}
@@ -273,20 +271,20 @@ public class ObjectSignature extends ServiceSignature {
 				}
 			}
 			if ((initSelector == null || initSelector.equals("new")) && args == null) {
-				obj = providerType.newInstance();
+				obj = serviceType.providerType.newInstance();
 				return obj;
 			}
 
 			if (argTypes != null) {
 				if (initSelector != null)
-					m = providerType.getMethod(initSelector, argTypes);
+					m = serviceType.providerType.getMethod(initSelector, argTypes);
 				else if (operation.selector != null)
-					m = providerType.getMethod(operation.selector, argTypes);
+					m = serviceType.providerType.getMethod(operation.selector, argTypes);
 			} else  {
 				if (initSelector != null)
-					m = providerType.getMethod(initSelector);
+					m = serviceType.providerType.getMethod(initSelector);
 				else
-					m = providerType.getMethod(operation.selector);
+					m = serviceType.providerType.getMethod(operation.selector);
 			}
 			if (args != null) {
 				obj = m.invoke(obj, args);
@@ -299,7 +297,7 @@ public class ObjectSignature extends ServiceSignature {
 			logger.error("initInstance failed", e);
 			try {
 				// check if that is SORCER service bean signature
-				m = providerType.getMethod(operation.selector, Context.class);
+				m = serviceType.providerType.getMethod(operation.selector, Context.class);
 				if (m.getReturnType() == Context.class)
 					return obj;
 				else
@@ -421,7 +419,7 @@ public class ObjectSignature extends ServiceSignature {
 
 	public String toString() {
 		return this.getClass() + ";" + execType + ";"
-				+ (providerType == null ? "" : providerType + ";") + operation.selector
+				+ (serviceType.providerType == null ? "" : serviceType.providerType + ";") + operation.selector
 				+ (prefix !=null ? "#" + prefix : "")
 				+ (returnPath != null ? ";"  + "result " + returnPath : "");
 	}

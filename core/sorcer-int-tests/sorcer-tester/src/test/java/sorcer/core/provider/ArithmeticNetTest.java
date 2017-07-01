@@ -340,12 +340,13 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Mogram f5 = task("f5",
 				sig("add", Adder.class),
 				context("add", inVal("arg/x1", 20.0),
-						inVal("arg/x2", 80.0), outVal("result/y", null)),
+						inVal("arg/x2", 80.0), outVal("result/y")),
 				strategy(Monitor.NO, Wait.YES));
 
 		Exerter shell = (Exerter) provider(sig(RemoteServiceShell.class));
-
-		Mogram out = shell.exert(f5, null);
+		//local shell
+//		Exerter shell = new ServiceShell();
+		Mogram out = exert(shell, f5);
 		assertTrue(get(out, "result/y").equals(100.00));
 	}
 

@@ -1249,7 +1249,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
 	@Override
 	public boolean mutualExclusion() {
-		return delegate.mutualExclusion;
+		if (delegate != null) {
+			return delegate.mutualExclusion;
+		} else {
+			return false;
+		}
 	}
 
 	@Override public Map<String, MethodAnalytics> getMethodAnalytics() {

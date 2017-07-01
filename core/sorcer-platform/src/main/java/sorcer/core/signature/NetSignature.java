@@ -75,10 +75,9 @@ public class NetSignature extends ObjectSignature {
 
 	public NetSignature(ServiceSignature signature) throws SignatureException {
 		this.name = signature.name;
-		this.operation.selector = signature.operation.selector;
+		this.operation = signature.operation;
 		this.providerName =  signature.providerName;
 		this.serviceType = signature.serviceType;
-		this.providerType = signature.providerType;
 		this.deployment = signature.deployment;
 		this.returnPath = signature.returnPath;
 	}

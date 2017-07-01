@@ -208,7 +208,7 @@ public class ProviderDelegate {
 
 	protected sorcer.core.provider.Provider provider;
 
-	protected boolean mutualExclusion = true;
+	protected boolean mutualExclusion = false;
 
 	// all exported services with corresponding exporter
 	// <Remote, Exporter> or <service bean, service provider>
