@@ -481,7 +481,6 @@ public class Signatures {
 		assertEquals(100.0, value(context(task), "result/y"));
 	}
 
-
 	@Test
 	public void remoteSigInConnector() throws Exception {
 
