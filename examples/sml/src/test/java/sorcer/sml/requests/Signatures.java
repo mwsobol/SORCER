@@ -36,12 +36,18 @@ public class Signatures {
 	private final static Logger logger = LoggerFactory.getLogger(Signatures.class);
 
 	@Test
-	public void newInstance() throws Exception {
+	public void instantiationWithSignature() throws Exception {
 
 		// Object orientation
 		Signature s = sig("new", Date.class);
 		// create a new instance
 		Object obj = instance(s);
+		logger.info("provider of s: " + obj);
+		assertTrue(obj instanceof Date);
+
+		s = sig(Date.class);
+		// create a new instance
+		obj = instance(s);
 		logger.info("provider of s: " + obj);
 		assertTrue(obj instanceof Date);
 

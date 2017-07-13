@@ -1004,14 +1004,27 @@ public class operator extends sorcer.operator {
             }
         }
 		String operation = null;
+		Args args = null;
+        ParTypes parTypes = null;
 		for (Object item : items) {
 			if (item instanceof String) {
 				operation = (String) item;
 			} else if (item instanceof Operation) {
 				operation = ((Operation)item).selector;
-			}
+			} else if (item instanceof Args) {
+                args = (Args)item;
+            } else if (item instanceof ParTypes) {
+                parTypes = (ParTypes)item;
+            }
 		}
-		if (operation == null) {
+        if (args != null && parTypes != null) {
+            ObjectSignature os = new ObjectSignature();
+            os.setServiceType(serviceType);
+            os.getServiceType();
+            os.setArgs(args.args);
+            os.setParameterTypes(parTypes.parameterTypes);
+            return os;
+        } else if (operation == null) {
 			return sig("?", serviceType.providerType, items);
 		} else {
 			Object[] dest = new Object[items.length+2];
