@@ -245,7 +245,7 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 	}
 
 	public enum Kind implements Arg {
-		TASKER, JOBBER, SPACER, DISPATCHER, OPTIMIZER, EXPLORER, MODEL, MODEL_MANAGER;
+		TASKER, JOBBER, SPACER, DISPATCHER, OPTIMIZER, EXPLORER, SOLVER, MODEL, MODEL_MANAGER;
 
 		/* (non-Javadoc)
 		 * @see sorcer.service.Arg#getName()
