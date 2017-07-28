@@ -3277,8 +3277,8 @@ public class operator extends sorcer.operator {
 		return signature;
 	}
 
-	public static Signature optiSolverSig(Signature signature) {
-		((ServiceSignature)signature).addRank(Kind.SOLVER, Kind.OPTIMIZER);
+	public static Signature solverSig(Signature signature) {
+		((ServiceSignature)signature).addRank(Kind.SOLVER);
 		return signature;
 	}
 
