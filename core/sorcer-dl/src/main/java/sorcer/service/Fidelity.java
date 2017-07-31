@@ -16,6 +16,8 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
 
 	protected String path = "";
 
+	protected String option = "";
+
 	protected T select;
 
 	public Type fiType = Type.SELECT;
@@ -137,6 +139,14 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
 			this.dependers = new ArrayList<Evaluation>();
 		for (Evaluation depender : dependers)
 			this.dependers.add(depender);
+	}
+
+	public String getOption() {
+		return option;
+	}
+
+	public void setOption(String option) {
+		this.option = option;
 	}
 
 	@Override
