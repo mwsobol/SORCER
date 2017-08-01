@@ -20,7 +20,6 @@ package sorcer.mo;
 import sorcer.core.context.MapContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Setup;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
@@ -147,11 +146,11 @@ public class operator {
         if (entry != null) {
             if (entry instanceof Setup) {
                 for (Entry e : entries) {
-                    ((Setup) entry).get().putValue(e.getName(), e.get());
+                    ((Setup) entry).getContext().putValue(e.getName(), e.get());
                 }
             }
             ((Setup)entry).isValid(false);
-            ((Setup)entry).getEvaluator().setValueIsCurrent(false);
+//            ((Setup)entry).getEvaluation().setValueIsCurrent(false);
         }
         return model;
     }
@@ -460,7 +459,12 @@ public class operator {
     }
 
     public static Mogram morph(Mogram model, String... fiNames) throws ContextException {
-        ((FidelityManager)model.getFidelityManager()).morph(fiNames);
+//        ((FidelityManager)model.getFidelityManager()).morph(fiNames);
+        try {
+            model.morph(fiNames);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
         return model;
     }
 

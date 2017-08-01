@@ -315,7 +315,7 @@ public class operator extends sorcer.operator {
 	public static Setup setup(Object aspect, Context value) {
 		Setup ent = new Setup(aspect.toString(), value);
 		ent.isValid(false);
-		ent.setType(Type.INPUT);
+//		ent.setType(Type.INPUT);
 		return ent;
 	}
 
@@ -452,8 +452,8 @@ public class operator extends sorcer.operator {
 		return ent;
 	}
 
-	public static Object val(Entry ent, String path) throws ContextException {
-		return  ((Setup)ent).getContextValue(path);
+	public static Object val(Setup ent, String path) throws ContextException {
+		return  ent.getContextValue(path);
 	}
 
     public static <T> OutputEntry<T> outVal(String path, T value) {
@@ -571,16 +571,16 @@ public class operator extends sorcer.operator {
 		return entry;
 	}
 
-	public static Setup setValue(Entry entry, String contextPath, Object value) throws ContextException {
-		((Setup)entry).setEntry(contextPath, value);
-		return (Setup)entry;
+	public static Setup setValue(Setup entry, String contextPath, Object value) throws ContextException {
+		entry.setEntry(contextPath, value);
+		return entry;
 	}
 
-	public static Setup setValue(Entry entry, Entry... entries) throws ContextException {
+	public static Setup setValue(Setup entry, Entry... entries) throws ContextException {
 		for (Entry e :  entries) {
-				((Setup) entry).setEntry(e.getName(), e.get());
+				entry.setEntry(e.getName(), e.get());
 		}
-		return (Setup)entry;
+		return entry;
 	}
 
 	public static <S extends Setter> boolean isPersistent(S setter) {

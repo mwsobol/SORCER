@@ -15,37 +15,44 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.ent;
+package sorcer.service;
 
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Evaluator;
-import sorcer.service.SetterException;
+import java.io.Serializable;
 
 /**
  * Created by Mike Sobolewski on 12/9/16.
  */
-public class Setup extends Entry<Context> {
+public class Setup implements Serializable {
 
-	private Evaluator evaluator;
+	private String path;
+	private Context context;
+	private boolean isValid = true;
 
 	public Setup(String path) {
-		_1 = path;
+		this.path = path;
 	}
 
 	public Setup(String path, Context context) {
-		_1 = path;
-		_2 = context;
+		this.path = path;
+		this.context = context;
+	}
+
+	public String getName() {
+		return path;
+	}
+
+	public Context getContext() {
+		return context;
 	}
 
 	public void setValue(Context value) {
-		_2 = value;
+		context = value;
 		isValid(false);
 	}
 
 	public void setEntry(String path, Object value) throws SetterException {
 		try {
-			_2.putValue(path, value);
+			context.putValue(path, value);
 		} catch (ContextException e) {
 			throw new SetterException(e);
 		}
@@ -53,15 +60,15 @@ public class Setup extends Entry<Context> {
 	}
 
 	public Object getContextValue(String path) throws ContextException {
-		return _2.getValue(path);
+		return context.getValue(path);
 	}
 
-	public Evaluator getEvaluator() {
-		return evaluator;
+	public boolean isValid() {
+		return isValid;
 	}
 
-	public void setEvaluator(Evaluator evaluator) {
-		this.evaluator = evaluator;
+	public void isValid(boolean state) {
+		isValid = state;
 	}
 
 }

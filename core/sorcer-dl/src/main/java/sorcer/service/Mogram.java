@@ -288,18 +288,25 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
     public Context getDataContext() throws ContextException;
 
     /**
-     * Reconfigure this model with given fudelities.
+     * Reconfigure this mogram with given fudelities.
      *
      * @param fidelities
      */
     public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException;
 
     /**
-     * Reconfigure this model with given names of metafidelities.
+     * Reconfigure this mmogramodel with given names of metafidelities.
      *
      * @param metaFiNames
      */
-    public void morph(String... metaFiNames) throws RemoteException;
+    public void morph(String... metaFiNames) throws ContextException, RemoteException;
+
+    /**
+     * Update this mogram with given setup context entries.
+     *
+     * @param contextEntries
+     */
+    public void update(Setup... contextEntries) throws ContextException, RemoteException;
 
     /**
      * Check if this context is export controlled, accessible to principals from

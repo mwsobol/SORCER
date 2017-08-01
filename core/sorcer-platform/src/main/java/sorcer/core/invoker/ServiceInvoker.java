@@ -22,7 +22,6 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Setup;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;

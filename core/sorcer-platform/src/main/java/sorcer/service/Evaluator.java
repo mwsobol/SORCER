@@ -17,8 +17,6 @@
 
 package sorcer.service;
 
-import sorcer.core.context.model.ent.Setup;
-
 import java.rmi.RemoteException;
 
 

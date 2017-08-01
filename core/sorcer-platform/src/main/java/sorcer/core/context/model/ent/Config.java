@@ -20,6 +20,7 @@ package sorcer.core.context.model.ent;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.Evaluator;
+import sorcer.service.Setup;
 
 import java.util.ArrayList;
 import java.util.Arrays;

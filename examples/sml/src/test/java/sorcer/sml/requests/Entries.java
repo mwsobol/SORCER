@@ -1,6 +1,5 @@
 package sorcer.sml.requests;
 
-import net.jini.core.transaction.TransactionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -8,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.core.context.model.ent.Setup;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.service.modeling.ContextModel;

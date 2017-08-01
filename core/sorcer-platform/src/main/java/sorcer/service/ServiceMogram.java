@@ -1071,4 +1071,9 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return this;
     }
 
+    @Override
+    public void update(Setup... contextEntries) throws ContextException, RemoteException {
+        // implement in subclasses
+    }
+
 }
