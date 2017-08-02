@@ -940,9 +940,12 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     @Override
-    public void morph(String... metaFiNames) throws RemoteException {
-        if (fiManager != null)
+    public void morph(String... metaFiNames) throws ContextException, RemoteException {
+        if (fiManager != null) {
             fiManager.morph(metaFiNames);
+        } else {
+            throw new ContextException("No fiManager available in " + this.getClass().getName());
+        }
     }
 
     public void removeSignature(int index) {

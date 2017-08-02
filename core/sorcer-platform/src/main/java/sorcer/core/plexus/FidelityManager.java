@@ -275,7 +275,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
     @Override
-    public FidelityList getDefaultFidelities() throws ContextException, RemoteException {
+    public FidelityList getDefaultFidelities() throws RemoteException {
         FidelityList fl = new FidelityList();
 		Iterator<Map.Entry<String, ServiceFidelity<T>>> it = fidelities.entrySet().iterator();
 		while (it.hasNext()) {

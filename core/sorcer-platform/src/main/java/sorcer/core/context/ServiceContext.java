@@ -2713,11 +2713,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public void update(Setup... contextEntries) throws ContextException, RemoteException {
-		// ipmlement is sublasses
-	}
-
-	@Override
 	public String describe() {
 		return toString();
 	}
