@@ -71,4 +71,9 @@ public class Setup implements Serializable {
 		isValid = state;
 	}
 
+	@Override
+	public String toString () {
+		return path+":"+context;
+	}
+
 }
