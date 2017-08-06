@@ -34,7 +34,7 @@ public class ModelSignature extends ServiceSignature {
 
 	private Signature innerSignature;
 	
-	private Domain model;
+	private Model model;
 
 	public ModelSignature(String selector, Class serviceType, String providerName, Arg... parameters) {
 		super(selector, selector);
@@ -50,7 +50,7 @@ public class ModelSignature extends ServiceSignature {
 		}
 	}
 
-	public ModelSignature(String selector, Domain model) {
+	public ModelSignature(String selector, Model model) {
 		super(selector, selector);
 		this.model = model;
 	}
@@ -124,7 +124,7 @@ public class ModelSignature extends ServiceSignature {
 		this.fidelity = fidelity;
 	}
 
-	public Domain getModel() {
+	public Model getModel() {
 		return model;
 	}
 	

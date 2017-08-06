@@ -33,7 +33,7 @@ public class ModelTask extends Task {
 	
 	private static final long serialVersionUID = 1L;
 	
-	protected Domain model;
+	protected Model model;
 
 	protected ContextSelector contextFilter;
 
@@ -88,7 +88,7 @@ public class ModelTask extends Task {
 		return model;
 	}
 	
-	public void setModel(Domain model) {
+	public void setModel(Model model) {
 		this.model = model;
 	}
 
