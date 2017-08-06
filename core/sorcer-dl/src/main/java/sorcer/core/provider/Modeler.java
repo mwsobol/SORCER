@@ -18,12 +18,12 @@
 package sorcer.core.provider;
 
 import sorcer.service.Service;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.Model;
 
 import java.rmi.Remote;
 
 /**
- * A service coordinating a {@link ContextModel} execution by creating a
+ * A service coordinating a {@link Model} execution by creating a
  * runtime federation of all needed service providers to execute all requested
  * entries (variables) of the received model.
  *

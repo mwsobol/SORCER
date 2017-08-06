@@ -26,7 +26,7 @@ import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.Modeler;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.Model;
 
 import java.rmi.RemoteException;
 
@@ -48,7 +48,7 @@ public class ServiceModeler extends RendezvousBean implements Modeler {
             throws TransactionException, ExertionException, RemoteException {
         setServiceID(mogram);
         Mogram result = null;
-        ContextModel model = null;
+        Model model = null;
         Signature builder = null;
         ContextSelection contextSelector = null;
         Context dataContext = null;
@@ -74,10 +74,10 @@ public class ServiceModeler extends RendezvousBean implements Modeler {
 
             dataContext =  mogram.getDataContext();
 
-            if (dataContext instanceof ContextModel) {
+            if (dataContext instanceof Model) {
                 result = ((ServiceContext)dataContext).getResponse(args);
                 if (builder != null) {
-                    model = (ContextModel) ((ObjectSignature)builder).newInstance();
+                    model = (Model) ((ObjectSignature)builder).newInstance();
                 }
                 if (model != null) {
                     model.substitute(result);

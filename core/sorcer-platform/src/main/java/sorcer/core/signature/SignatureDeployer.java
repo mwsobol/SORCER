@@ -18,7 +18,7 @@
 package sorcer.core.signature;
 
 import sorcer.service.*;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.Model;
 
 import java.util.Arrays;
 import java.util.List;
@@ -66,7 +66,7 @@ public class SignatureDeployer implements Deployee {
     @Override
     public void deploy() throws ConfigurationException {
         if (deployee != null && builders != null) {
-            if (deployee instanceof ContextModel) {
+            if (deployee instanceof Model) {
                 try {
                     deployee.deploy(builders);
                 } catch (MogramException e) {

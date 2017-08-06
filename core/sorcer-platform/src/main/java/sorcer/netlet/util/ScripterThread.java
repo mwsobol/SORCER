@@ -31,7 +31,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.Mogram;
 import sorcer.service.MogramException;
-import sorcer.service.modeling.Model;
+import sorcer.service.Domain;
 
 import java.rmi.RemoteException;
 
@@ -90,7 +90,7 @@ public class ScripterThread extends Thread {
                 evalScript();
             }
 
-            if (target instanceof Model &&  !isExerted) {
+            if (target instanceof Domain &&  !isExerted) {
                 result = ((ServiceContext)target).getResponse();
                 logger.info(">>>>>>>>>>> model eval result: " + result);
             } else if (target instanceof Mogram) {

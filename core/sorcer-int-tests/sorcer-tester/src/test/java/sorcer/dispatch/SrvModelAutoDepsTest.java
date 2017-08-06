@@ -8,7 +8,7 @@ import sorcer.arithmetic.tester.provider.impl.DividerImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.service.Context;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
@@ -28,7 +28,7 @@ public class SrvModelAutoDepsTest {
 
     @Test
     public void sigLocalModel() throws Exception {
-        ContextModel m = model(
+        Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 inVal("addfinal/x1", 1000.0),
@@ -52,7 +52,7 @@ public class SrvModelAutoDepsTest {
 
     @Test
     public void sigLocalComplexModel() throws Exception {
-        ContextModel m = model(
+        Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 inVal("addfinal/x1", 1000.0), inVal("divider/out"),

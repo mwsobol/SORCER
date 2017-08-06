@@ -21,8 +21,8 @@ import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
+import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;
 import sorcer.service.Signature.ReturnPath;
@@ -58,7 +58,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ProcModel extends DataContext<Object> implements ContextModel, Invocation<Object>,
+public class ProcModel extends DataContext<Object> implements Model, Invocation<Object>,
 		Mappable<Object>, Contexter<Object> {
 
     private static final long serialVersionUID = -6932730998474298653L;
@@ -251,7 +251,7 @@ public class ProcModel extends DataContext<Object> implements ContextModel, Invo
 	}
 
 	@Override
-	public Model add(Identifiable... objects) throws ContextException, RemoteException {
+	public Domain add(Identifiable... objects) throws ContextException, RemoteException {
 		Proc p = null;
 		boolean changed = false;
 		for (Identifiable obj : objects) {

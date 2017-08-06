@@ -514,7 +514,7 @@ public interface SorcerConstants {
 
 	static final int TABLE_NAME = 1;
 
-	// Model aspects
+	// Domain aspects
 	static final int MODIFY_LEAFNODE = 0;
 
 	static final int ADD_LEAFNODE = 1;

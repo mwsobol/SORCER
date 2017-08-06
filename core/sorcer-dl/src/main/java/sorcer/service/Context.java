@@ -21,8 +21,6 @@ package sorcer.service;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 
-import sorcer.service.modeling.Model;
-
 import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -75,7 +73,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
+public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
 
 	/** parameter (proc) */
 	final static String PATH_PAR = "proc";
@@ -150,13 +148,13 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 
 	final static String SERVICE_CONTEXT = "cxt";
 
-	final static String SRV_MODEL = "Service Model";
+	final static String SRV_MODEL = "Service Domain";
 
-	final static String PROC_MODEL = "Procedural Model";
+	final static String PROC_MODEL = "Procedural Domain";
 
-	final static String PAR_MODEL = "Parametric Model";
+	final static String PAR_MODEL = "Parametric Domain";
 
-	final static String DATA_MODEL = "Data Model";
+	final static String DATA_MODEL = "Data Domain";
 
 	/** EMPTY LEAF NODE i.e. node with no data and not empty string */
 	final static String EMPTY_LEAF = ":Empty";
@@ -175,7 +173,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 
 	final static String JOB_FEEDBACK = "job" + SorcerConstants.CPS + "feedback";
 
-	// Model Predictio Data Path
+	// Domain Predictio Data Path
 	final static String PRED_PATH = "model" + SorcerConstants.CPS + "prediction"
 			+ SorcerConstants.CPS + "data";
 	final static String MDA_PATH = "model" + SorcerConstants.CPS + "mda"
@@ -324,7 +322,7 @@ public interface Context<T> extends Model, Mappable<T>, Serializable, Contexter<
 
 	public Context append(Context context) throws ContextException;
 
-	public Context<T> updateEntries(Model context) throws ContextException;
+	public Context<T> updateEntries(Domain context) throws ContextException;
 	/**
 	 * Returns this context within its cuureent scope.
 	 *

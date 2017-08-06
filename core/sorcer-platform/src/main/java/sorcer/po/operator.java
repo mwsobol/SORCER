@@ -27,8 +27,8 @@ import sorcer.core.invoker.*;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.service.*;
+import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ContextModel;
 import sorcer.eo.operator.Args;
 import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Variability;
@@ -143,11 +143,11 @@ public class operator extends sorcer.operator {
 		return srv(null, item);
 	}
 
-	public static Srv srv(String name, String path, ContextModel model) {
+	public static Srv srv(String name, String path, Model model) {
 		return new Srv(path, model, name);
 	}
 
-	public static Srv srv(String name, String path, ContextModel model, Variability.Type type) {
+	public static Srv srv(String name, String path, Model model, Variability.Type type) {
 		return new Srv(path, model, name, type);
 	}
 
@@ -624,7 +624,7 @@ public class operator extends sorcer.operator {
 		return new ExecPath(name, invoker);
 	}
 
-	public static Model scope(Proc procEntry) {
+	public static Domain scope(Proc procEntry) {
 		return procEntry.getScope();
 	}
 
@@ -637,7 +637,7 @@ public class operator extends sorcer.operator {
 			return null;
 	}
 
-	public static Entry ent(ContextModel model, String path) throws ContextException {
+	public static Entry ent(Model model, String path) throws ContextException {
         return new Entry(path, model.asis(path));
     }
 
@@ -672,7 +672,7 @@ public class operator extends sorcer.operator {
 		return cr;
 	}
 
-//    public static Entry ent(String path, Model model) {
+//    public static Entry ent(String path, Domain model) {
 //        return new Entry(path, model);
 //    }
 

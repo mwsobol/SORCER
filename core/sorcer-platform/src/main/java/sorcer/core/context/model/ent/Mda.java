@@ -19,7 +19,6 @@ package sorcer.core.context.model.ent;
 
 import sorcer.service.Context;
 import sorcer.service.ContextException;
-import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Model;
 
 /**
@@ -28,6 +27,6 @@ import sorcer.service.modeling.Model;
 
 public interface Mda {
 
-    public void analyze(ContextModel model, Context context) throws ContextException;
+    public void analyze(Model model, Context context) throws ContextException;
 
 }

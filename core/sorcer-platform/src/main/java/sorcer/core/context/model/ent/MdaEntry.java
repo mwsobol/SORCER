@@ -19,8 +19,8 @@ package sorcer.core.context.model.ent;
 
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
-import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Model;
+import sorcer.service.Domain;
 import sorcer.service.modeling.Variability;
 
 /**
@@ -30,7 +30,7 @@ public class MdaEntry extends Entry<Mda> implements Mda {
 
     private String name;
 
-    private Model model;
+    private Domain model;
 
     private Signature signature;
 
@@ -62,7 +62,7 @@ public class MdaEntry extends Entry<Mda> implements Mda {
     }
 
     @Override
-    public void analyze(ContextModel model, Context context) throws EvaluationException {
+    public void analyze(Model model, Context context) throws EvaluationException {
         try {
             if (_2 != null && _2 instanceof Mda) {
                 _2.analyze(model, context);

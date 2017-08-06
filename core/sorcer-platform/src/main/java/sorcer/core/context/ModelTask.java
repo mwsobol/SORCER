@@ -19,8 +19,8 @@ import net.jini.core.transaction.Transaction;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.FilterException;
+import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ContextModel;
 
 import java.rmi.RemoteException;
 
@@ -33,7 +33,7 @@ public class ModelTask extends Task {
 	
 	private static final long serialVersionUID = 1L;
 	
-	protected Model model;
+	protected Domain model;
 
 	protected ContextSelector contextFilter;
 
@@ -56,7 +56,7 @@ public class ModelTask extends Task {
 			SignatureException, RemoteException {
 		try {
 			if (model != null) {
-				model = ((ContextModel) model).exert(txn, args);
+				model = ((Model) model).exert(txn, args);
 			} else {
 				super.doTask(args);
 			}
@@ -84,11 +84,11 @@ public class ModelTask extends Task {
 			return signature.initInstance();
 	}
 	
-	public Model getModel() {
+	public Domain getModel() {
 		return model;
 	}
 	
-	public void setModel(Model model) {
+	public void setModel(Domain model) {
 		this.model = model;
 	}
 

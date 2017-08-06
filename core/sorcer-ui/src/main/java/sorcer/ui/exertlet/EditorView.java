@@ -29,7 +29,7 @@ import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.core.provider.logger.RemoteLoggerListener;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.Model;
 import sorcer.ui.util.JIconButton;
 import sorcer.ui.util.TextAreaPrintStream;
 import sorcer.ui.util.WindowUtilities;
@@ -512,9 +512,9 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 		boolean done = false;
 		Mogram out = null;
-		if (mogram instanceof ContextModel) {
+		if (mogram instanceof Model) {
 			try {
-				out = (Context) ((ContextModel)mogram).getResponse();
+				out = (Context) ((Model)mogram).getResponse();
 			} catch (Exception e) {
 				throw new MogramException(e);
 			}

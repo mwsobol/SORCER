@@ -31,8 +31,8 @@ import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
+import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ContextModel;
 import sorcer.service.modeling.Variability;
 import sorcer.service.modeling.Variability.Type;
 import sorcer.util.*;
@@ -685,7 +685,7 @@ public class operator extends sorcer.operator {
 		return collection.size();
 	}
 
-	public static int size(ContextModel model) {
+	public static int size(Model model) {
 		return ((ServiceContext)model).size();
 	}
 
@@ -977,7 +977,7 @@ public class operator extends sorcer.operator {
 			return (T)o;
 	}
 
-	public static <T> T asis(Model model, String path)
+	public static <T> T asis(Domain model, String path)
 			throws ContextException {
 		return  ((ServiceContext<T>)model).asis(path);
 	}
@@ -987,8 +987,8 @@ public class operator extends sorcer.operator {
         return  mappable.asis(path);
     }
 
-    public static Copier copier(Model fromContext, Arg[] fromEntries,
-								Model toContext, Arg[] toEntries) throws EvaluationException {
+    public static Copier copier(Domain fromContext, Arg[] fromEntries,
+                                Domain toContext, Arg[] toEntries) throws EvaluationException {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
@@ -1016,7 +1016,7 @@ public class operator extends sorcer.operator {
 			parModel.getData().remove(path);
 	}
 
-    public static Map<String, List<DependencyEntry>> dependencies(Model model) {
+    public static Map<String, List<DependencyEntry>> dependencies(Domain model) {
          return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
 
@@ -1025,13 +1025,13 @@ public class operator extends sorcer.operator {
 		for (Evaluation d : dependers) {
             path = d.getName();
             if (path != null && path.equals("self")) {
-                ((Entry)d)._1 = (((Model) dependee).getName());
+                ((Entry)d)._1 = (((Domain) dependee).getName());
             }
 			if (!dependee.getDependers().contains(d))
 				dependee.getDependers().add(d);
 		}
-		if (dependee instanceof Model && dependers.length > 0 && dependers[0] instanceof DependencyEntry) {
-			Map<String, List<DependencyEntry>> dm = ((ModelStrategy)((Model) dependee).getMogramStrategy()).getDependentPaths();
+		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof DependencyEntry) {
+			Map<String, List<DependencyEntry>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
 			for (Evaluation e : dependers) {
 				path = e.getName();
 				if (dm.get(path) != null) {
@@ -1174,15 +1174,15 @@ public class operator extends sorcer.operator {
 		return instance(signature);
 	}
 
-	public static Model model(Signature signature) throws SignatureException {
+	public static Domain model(Signature signature) throws SignatureException {
 		Object model = instance(signature);
-		if (!(model instanceof Model)) {
-			throw new SignatureException("Signature does not specify te Model: " + signature);
+		if (!(model instanceof Domain)) {
+			throw new SignatureException("Signature does not specify te Domain: " + signature);
 		}
-		if (model instanceof ContextModel) {
-			((ContextModel)model).setBuilder(signature);
+		if (model instanceof Model) {
+			((Model)model).setBuilder(signature);
 		}
-		return (Model) model;
+		return (Domain) model;
 	}
 
 	public static Mogram instance(Mogram mogram, Arg... args) throws SignatureException, MogramException {

@@ -5,10 +5,9 @@ import edu.pjatk.inn.coffeemaker.Delivery;
 import sorcer.core.requestor.ServiceRequestor;
 import sorcer.po.operator;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
+import sorcer.service.Domain;
 
 import java.io.File;
-import java.io.IOException;
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
@@ -73,11 +72,11 @@ public class CoffeemakerRequestor extends ServiceRequestor {
         return drinkCoffee;
     }
 
-    private Model createModel() throws Exception {
+    private Domain createModel() throws Exception {
         exert(getRecipeTask());
 
         // order espresso with delivery
-        Model mdl = srvModel(
+        Domain mdl = srvModel(
             val("recipe/name", "espresso"),
             val("paid$", 120),
             val("location", "PJATK"),

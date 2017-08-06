@@ -74,7 +74,7 @@ public class ProcModels {
 	public void createParModel() throws Exception {
 
 		ProcModel model = procModel(
-				"Hello Arithmetic Model #1",
+				"Hello Arithmetic Domain #1",
 				// inputs
 				ent("x1"), ent("x2"), proc("x3", 20.0),
 				proc("x4", 80.0),

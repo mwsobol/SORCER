@@ -20,7 +20,6 @@ package sorcer.core.requestor;
 import groovy.lang.GroovyShell;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import org.codehaus.groovy.control.CompilationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
@@ -28,10 +27,8 @@ import sorcer.core.provider.RemoteLogger;
 import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.core.provider.logger.RemoteLoggerListener;
 import sorcer.netlet.ServiceScripter;
-import sorcer.netlet.util.NetletClassLoader;
-import sorcer.netlet.util.ScripterThread;
 import sorcer.service.*;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.Model;
 import sorcer.tools.webster.InternalWebster;
 import sorcer.tools.webster.Webster;
 import sorcer.util.Sorcer;
@@ -182,7 +179,7 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 				if (mogram != null && mogram instanceof Exertion)
 					logger.info(">>>>>>>>>> Input context: \n" + ((Exertion) mogram).getContext());
 				else {
-					logger.info(">>>>>>>>>> Inputs: \n" + ((ContextModel) mogram).getInputs());
+					logger.info(">>>>>>>>>> Inputs: \n" + ((Model) mogram).getInputs());
 				}
 
 				// Starting RemoteLoggerListener
@@ -231,7 +228,7 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 				if (mogram instanceof Exertion) {
 					logger.info("<<<<<<<<<< Ouput context: \n" + ((Exertion) mogram).getContext());
 				} else {
-					logger.info("<<<<<<<<<< Response: \n" + ((ContextModel) mogram).getResponse());
+					logger.info("<<<<<<<<<< Response: \n" + ((Model) mogram).getResponse());
 				}
 			}
 			if (listener != null) listener.destroy();

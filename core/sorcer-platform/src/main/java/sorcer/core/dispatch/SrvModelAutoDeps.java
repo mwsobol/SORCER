@@ -21,7 +21,6 @@ import org.codehaus.plexus.util.dag.CycleDetectedException;
 import org.codehaus.plexus.util.dag.DAG;
 import org.codehaus.plexus.util.dag.TopologicalSorter;
 import org.codehaus.plexus.util.dag.Vertex;
-import sorcer.co.operator;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.srv.Srv;
@@ -31,7 +30,6 @@ import sorcer.core.dispatch.graph.DirectedGraphRenderer;
 import sorcer.core.dispatch.graph.GraphNodeRenderer;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
 
 import java.util.*;
 

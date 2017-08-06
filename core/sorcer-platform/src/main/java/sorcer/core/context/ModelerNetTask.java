@@ -21,7 +21,7 @@ import sorcer.core.exertion.NetTask;
 import sorcer.service.Context;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ModelingTask;
 
 /**
@@ -70,7 +70,7 @@ public class ModelerNetTask extends NetTask implements ModelingTask {
 		this.taskModel = taskModel;
 	}
 
-	public ContextModel getModel() {
+	public Model getModel() {
 		return taskModel.getModel();
 	}
 

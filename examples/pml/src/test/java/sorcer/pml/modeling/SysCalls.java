@@ -13,7 +13,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.SysCaller;
 import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.Model;
 import sorcer.util.Sorcer;
 import sorcer.util.exec.ExecUtils.CmdResult;
 
@@ -162,7 +162,7 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-		ContextModel sm = srvModel(proc("x", 10.0), ent("y"),
+		Model sm = srvModel(proc("x", 10.0), ent("y"),
 				proc("multiply", invoker("x * y", args("x", "y"))),
 				proc("add", invoker("x + y", args("x", "y"))),
 				srv("volume", sig("exec", SysCaller.class,
@@ -200,7 +200,7 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-		ContextModel sm = srvModel(proc("x", 10.0), ent("y"),
+		Model sm = srvModel(proc("x", 10.0), ent("y"),
 				proc("multiply", invoker("x * y", args("x", "y"))),
 				proc("add", invoker("x + y", args("x", "y"))),
 				srv("volume", sig("exec", SysCaller.class,

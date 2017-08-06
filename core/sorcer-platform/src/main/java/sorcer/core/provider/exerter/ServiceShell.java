@@ -54,7 +54,7 @@ import sorcer.service.*;
 import sorcer.service.Exec.State;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.Model;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.ProviderLocator;
 import sorcer.util.Sorcer;
@@ -691,7 +691,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 				throw new ExertionException(e);
 			}
 		} else {
-			return ((ContextModel)mogram).getResponse();
+			return ((Model)mogram).getResponse();
 		}
 	}
 
@@ -889,13 +889,13 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 			} else if (service instanceof Exertion) {
 				return eval((Evaluation) service, args);
 			} else if (service instanceof ProcModel) {
-				((ContextModel)service).getResponse(args);
+				((Model)service).getResponse(args);
 			} else if (service instanceof Context) {
 				ServiceContext cxt = (ServiceContext)service;
 				cxt.substitute(args);
 				ReturnPath returnPath = cxt.getReturnPath();
 				if (cxt instanceof ProcModel) {
-					return ((ContextModel)service).getResponse(args);
+					return ((Model)service).getResponse(args);
 				} else if (returnPath != null){
 					return cxt.getValue(returnPath.path, args);
 				} else {

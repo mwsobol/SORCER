@@ -18,7 +18,6 @@
 package sorcer.service;
 
 import sorcer.core.Tag;
-import sorcer.service.modeling.Model;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -31,10 +30,10 @@ public interface Arg extends Serializable {
 	
 	public String getName();
 
-	public static Model getServiceModel(Arg[] args) {
+	public static Domain getServiceModel(Arg[] args) {
 		  for (Arg arg : args) {
-			  if (arg instanceof Model)
-			   return (Model)arg;
+			  if (arg instanceof Domain)
+			   return (Domain)arg;
 		  }
 		return null;
 	}

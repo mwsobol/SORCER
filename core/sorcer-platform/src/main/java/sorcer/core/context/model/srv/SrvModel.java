@@ -36,7 +36,7 @@ import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.service.*;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
 import sorcer.service.Signature.ReturnPath;
 
@@ -46,7 +46,7 @@ import java.util.*;
 import static sorcer.eo.operator.*;
 
 /**
- * A Model is a schematic description or representation of something, especially a system,
+ * A Domain is a schematic description or representation of something, especially a system,
  * phenomenon, or service, that accounts for its properties and is used to study its characteristics.
  * Properties of a service model are represented by path of Context with values that depend
  * on other properties and can be evaluated as specified by ths model. Evaluations of the service 
@@ -56,7 +56,7 @@ import static sorcer.eo.operator.*;
  *   
  * Created by Mike Sobolewski on 1/29/15.
  */
-public class SrvModel extends ProcModel implements ContextModel, Invocation<Object> {
+public class SrvModel extends ProcModel implements Model, Invocation<Object> {
     private static final Logger logger = LoggerFactory.getLogger(SrvModel.class);
 
     public static SrvModel instance(Signature builder) throws SignatureException {
@@ -322,8 +322,8 @@ public class SrvModel extends ProcModel implements ContextModel, Invocation<Obje
                 ((Srv) get(path)).setSrvValue(outCxt);
                 return outCxt;
             }
-        } else if (out instanceof ContextModel) {
-            Context outCxt = (Context) ((ContextModel)out).getResponse(entries);
+        } else if (out instanceof Model) {
+            Context outCxt = (Context) ((Model)out).getResponse(entries);
             append(outCxt);
             return outCxt;
         }

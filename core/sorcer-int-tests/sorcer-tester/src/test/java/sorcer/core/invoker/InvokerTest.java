@@ -15,9 +15,8 @@ import sorcer.arithmetic.tester.volume.Volume;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.eo.operator;
 import sorcer.service.*;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.Model;
 import sorcer.util.Sorcer;
 import sorcer.util.exec.ExecUtils.CmdResult;
 
@@ -139,7 +138,7 @@ public class InvokerTest {
 	@Test
 	public void lambdaInvokerTest2() throws Exception {
 
-		ContextModel mo = model(proc("x", 10.0), proc("y", 20.0),
+		Model mo = model(proc("x", 10.0), proc("y", 20.0),
 				proc(invoker("lambda", cxt -> (double) value(cxt, "x")
 									+ (double) value(cxt, "y")
 									+ 30)));
@@ -153,7 +152,7 @@ public class InvokerTest {
 
 		Context scope = context(proc("x1", 20.0), proc("y1", 40.0));
 
-		ContextModel mo = model(proc("x", 10.0), proc("y", 20.0),
+		Model mo = model(proc("x", 10.0), proc("y", 20.0),
 			proc(invoker("lambda", (cxt) -> {
 						return (double) value(cxt, "x")
 								+ (double) value(cxt, "y")

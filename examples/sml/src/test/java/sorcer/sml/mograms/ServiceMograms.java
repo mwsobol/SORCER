@@ -20,8 +20,8 @@ import sorcer.service.Context;
 import sorcer.service.Job;
 import sorcer.service.Strategy.Flow;
 import sorcer.service.Task;
+import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ContextModel;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
@@ -69,7 +69,7 @@ public class ServiceMograms {
         // out connector from model
         Context modelOutConnector = outConn(inVal("y1", "add"), inVal("y2", "multiply"), inVal("y3", "subtract"));
 
-        ContextModel model = model(
+        Model model = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
@@ -102,14 +102,14 @@ public class ServiceMograms {
 
         IncrementerImpl incrementer = new IncrementerImpl(100.0);
 
-        ContextModel model = model(
+        Model model = model(
                 inVal("by", 10.0),
                 ent(sig("increment", incrementer, result("out",
                         inPaths("by")))));
 
         responseUp(model, "increment", "out");
 
-        ContextModel exerted = exert(model);
+        Model exerted = exert(model);
         logger.info("out context: " + exerted);
         assertTrue(eval(exerted, "out").equals(110.0));
 
@@ -125,13 +125,13 @@ public class ServiceMograms {
 
         IncrementerImpl incrementer = new IncrementerImpl(100.0);
 
-        ContextModel mdl = model(
+        Model mdl = model(
                 inVal("by", eFi(inVal("by-10", 10.0), inVal("by-20", 20.0))), inVal("out", 0.0),
                 ent(sig("increment", incrementer, result("out", inPaths("by", "template")))),
                 ent("multiply", invoker("add * out", ents("add", "out"))));
 
         responseUp(mdl, "increment", "out", "multiply", "by");
-//        Model exerted = exert(model);
+//        Domain exerted = exert(model);
 //        logger.info("out context: " + exerted);
 //        assertTrue(eval(exerted, "out").equals(110.0));
 
@@ -168,7 +168,7 @@ public class ServiceMograms {
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
                         result("multiply/result")));
 
-        ContextModel m = model(
+        Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
@@ -196,12 +196,12 @@ public class ServiceMograms {
     public void modelWithInnerModel() throws Exception {
         // get response from a service model with inner model
 
-        ContextModel innerModel = model("inner/multiply",
+        Model innerModel = model("inner/multiply",
                 ent(sig("inner/multiply/out", "multiply", MultiplierImpl.class,
                         result("multiply/out", inPaths("arg/x1", "arg/x2")))),
                 response("inner/multiply/out"));
 
-        ContextModel outerModel = model(
+        Model outerModel = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
@@ -229,12 +229,12 @@ public class ServiceMograms {
     public void localModeler() throws Exception {
         // get response from a service model with inner model
 
-        ContextModel innerMdl = model("inner/multiply",
+        Model innerMdl = model("inner/multiply",
                 ent(sig("inner/multiply/out", "multiply", MultiplierImpl.class,
                         result("multiply/out", inPaths("arg/x1", "arg/x2")))),
                 response("inner/multiply/out"));
 
-        ContextModel outerMdl = model(
+        Model outerMdl = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
@@ -265,12 +265,12 @@ public class ServiceMograms {
     public void remoteModeler() throws Exception {
         // get response from a service model with inner model
 
-        Model innerMdl = model("inner/multiply",
+        Domain innerMdl = model("inner/multiply",
                 ent(sig("inner/multiply/out", "multiply", Multiplier.class,
                         result("multiply/out", inPaths("arg/x1", "arg/x2")))),
                 response("inner/multiply/out"));
 
-        Model outerMdl = model(
+        Domain outerMdl = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", Multiplier.class, result("multiply/out",

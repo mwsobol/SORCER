@@ -32,7 +32,7 @@ import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;
-import sorcer.service.modeling.ContextModel;
+import sorcer.service.modeling.Model;
 
 import javax.security.auth.Subject;
 import java.lang.reflect.Array;
@@ -250,9 +250,9 @@ abstract public class ExertDispatcher implements Dispatcher {
                     logger.debug("Added exertion shared context: " + ctx);
                 }
             }
-        } else if (mo instanceof ContextModel) {
+        } else if (mo instanceof Model) {
             try {
-                sharedContexts.add((Context) ((ContextModel)mo).getResponse());
+                sharedContexts.add((Context) ((Model)mo).getResponse());
                 logger.debug("Added model shared context: " + mo);
             } catch (RemoteException e) {
                 throw new ContextException(e);
