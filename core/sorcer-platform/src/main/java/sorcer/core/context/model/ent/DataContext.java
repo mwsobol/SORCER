@@ -77,7 +77,7 @@ public class DataContext<T> extends PositionalContext<T> {
      */
     @Override
     public T getValue(String path, Arg... args) throws ContextException {
-        return get(path);
+        return data.get(path);
     }
 
     @Override
