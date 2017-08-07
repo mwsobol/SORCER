@@ -2779,6 +2779,8 @@ public class operator extends sorcer.operator {
 				cc.setOpti((Opti) o);
 			} else if (o instanceof Exec.State) {
 				cc.setExecState((Exec.State) o);
+			} else if (o instanceof Entry) {
+				cc.put(((Entry)o).getName(), ((Entry)o).get());
 			}
 		}
 		cc.setSignatures(sl);
