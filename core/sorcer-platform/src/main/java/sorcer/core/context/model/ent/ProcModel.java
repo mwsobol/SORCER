@@ -18,6 +18,7 @@ package sorcer.core.context.model.ent;
 
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ModelStrategy;
+import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
@@ -58,7 +59,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ProcModel extends DataContext<Object> implements Model, Invocation<Object>,
+public class ProcModel extends PositionalContext<Object> implements Model, Invocation<Object>,
 		Mappable<Object>, Contexter<Object> {
 
     private static final long serialVersionUID = -6932730998474298653L;

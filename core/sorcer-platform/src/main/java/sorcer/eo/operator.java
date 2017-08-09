@@ -2422,18 +2422,20 @@ public class operator extends sorcer.operator {
 	public static <T> T value(Context<T> context, String path,
 							  Arg... args) throws ContextException {
 		try {
-			if (((ServiceContext)context).getType().equals(Variability.Type.MADO)) {
-				return (T)((ServiceContext)context).getEvalValue(path);
+			Object val = context.get(path);
+		    if (context instanceof DataContext) {
+		    	return (T) val;
 			}
-			Object val = ((ServiceContext) context).getValue(path, args);
-			if (val instanceof Srv && ((Srv)val).asis() instanceof  EntryCollable) {
-				Entry entry = ((EntryCollable)((Srv)val).asis()).call(context);
-				return (T) entry.asis();
-			}
+			val = ((ServiceContext) context).getValue(path, args);
 			if (SdbUtil.isSosURL(val)) {
 				return (T) ((URL) val).getContent();
+			} else if (((ServiceContext)context).getType().equals(Variability.Type.MADO)) {
+				return (T)((ServiceContext)context).getEvalValue(path);
+			} else if (val instanceof Srv && ((Srv)val).asis() instanceof  EntryCollable) {
+				Entry entry = ((EntryCollable)((Srv)val).asis()).call(context);
+				return (T) entry.asis();
 			} else {
-				return (T)val;
+				return (T) val;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2456,7 +2458,7 @@ public class operator extends sorcer.operator {
 		}
 	}
 
-	    public static Object value(Context context, String domain, String path) throws ContextException {
+	public static Object value(Context context, String domain, String path) throws ContextException {
         if (((ServiceContext)context).getType().equals(Variability.Type.MADO)) {
             return ((ServiceContext)context.getDomain(domain)).getEvalValue(path);
         } else {
