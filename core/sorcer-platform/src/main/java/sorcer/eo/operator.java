@@ -3281,6 +3281,11 @@ public class operator extends sorcer.operator {
 		return signature;
 	}
 
+	public static Signature driverSig(Signature signature) {
+		((ServiceSignature)signature).addRank(Kind.DRIVER);
+		return signature;
+	}
+
 	public static Signature solverSig(Signature signature) {
 		((ServiceSignature)signature).addRank(Kind.SOLVER);
 		return signature;
