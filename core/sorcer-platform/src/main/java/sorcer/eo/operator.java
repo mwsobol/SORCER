@@ -1005,6 +1005,7 @@ public class operator extends sorcer.operator {
         }
 		String operation = null;
 		Args args = null;
+		Strategy.Provision provision = Provision.NO;
         ParTypes parTypes = null;
 		for (Object item : items) {
 			if (item instanceof String) {
@@ -1015,23 +1016,30 @@ public class operator extends sorcer.operator {
                 args = (Args)item;
             } else if (item instanceof ParTypes) {
                 parTypes = (ParTypes)item;
-            }
+            } else if (item instanceof Provision) {
+				provision = (Provision)item;
+			}
 		}
+		ServiceSignature signature = null;
         if (args != null && parTypes != null) {
             ObjectSignature os = new ObjectSignature();
             os.setServiceType(serviceType);
             os.getServiceType();
             os.setArgs(args.args);
             os.setParameterTypes(parTypes.parameterTypes);
-            return os;
+            os.setProvisionable(provision);
+			return os;
         } else if (operation == null) {
-			return sig("?", serviceType.providerType, items);
+			signature = (ServiceSignature) sig("?", serviceType.providerType, items);
+			signature.setProvisionable(provision);
+			return signature;
 		} else {
 			Object[] dest = new Object[items.length+2];
 			System.arraycopy(items,  0, dest,  2, items.length);
 			dest[0] = operation;
             dest[1] = serviceType;
-			ServiceSignature signature = (ServiceSignature) sig(operation, serviceType.providerType, dest);
+			signature = (ServiceSignature) sig(operation, serviceType.providerType, dest);
+			signature.setProvisionable(provision);
 			return signature;
 		}
 	}
