@@ -14,6 +14,7 @@ import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.provider.Provider;
+import sorcer.core.provider.ServiceProvider;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -782,7 +783,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     /**
-     * Initialization by a service provider when used as as a service bean.
+     * Initialization by a service provider (container)
+     * when this mogram is used as as a service bean.
      */
     public void init(Provider provider) {
         this.provider = provider;

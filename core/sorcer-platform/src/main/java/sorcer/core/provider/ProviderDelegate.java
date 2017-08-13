@@ -2196,7 +2196,7 @@ public class ProviderDelegate {
                     // properties
                     Sorcer.updateFromProperties(props);
                 }
-//					logger.debug("*** loaded provider properties: /configs/" + filename + ":\n"
+//				logger.info("*** loaded provider properties: /configs/" + filename + ":\n"
 //							+ GenericUtil.getPropertiesString(props));
             } catch (Exception ex) {
                 logger.warn("Not able to load provider's properties: " + filename, ex);
