@@ -19,6 +19,7 @@ import sorcer.core.service.Projection;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
+import sorcer.util.GenericUtil;
 import sorcer.util.Pool;
 import sorcer.util.Pools;
 
@@ -788,6 +789,9 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
      */
     public void init(Provider provider) {
         this.provider = provider;
+        logger.info("*** provider init properties:\n"
+                + GenericUtil.getPropertiesString(((ServiceProvider)provider).getProviderProperties()));
+        System.getProperties().putAll(((ServiceProvider)provider).getProviderProperties());
     }
 
     public void setBuilder(Signature builder) {
