@@ -543,7 +543,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 				|| isProvisionable == Provision.TRUE) {
 			this.operation.isProvisionable = true;
 		} else {
-			this.operation.isProvisionable = true;
+			this.operation.isProvisionable = false;
 		}
 	}
 
