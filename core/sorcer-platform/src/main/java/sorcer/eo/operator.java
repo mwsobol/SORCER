@@ -1574,6 +1574,20 @@ public class operator extends sorcer.operator {
 		return fi;
 	}
 
+	public static Fidelity soaFi(String name, String path) {
+		Fidelity fi = new Fidelity(name, path);
+		fi.fiType = Fidelity.Type.SOA;
+		return fi;
+	}
+
+	public static Fidelity fi(String name, String path, Fidelity subFi) {
+		Fidelity fi = new Fidelity(name, path);
+		fi.fiType = Fidelity.Type.SELECT;
+		fi.setSelect(subFi);
+		return fi;
+	}
+
+
 	public static ServiceFidelity<Path> rFi(String name, String path) {
 		ServiceFidelity<Path> fi = new ServiceFidelity(name, path(path));
 		fi.setPath(path);
