@@ -36,15 +36,6 @@ import static sorcer.mo.operator.outConn;
 public class Signatures {
 	private final static Logger logger = LoggerFactory.getLogger(Signatures.class);
 
-
-	@Test
-	public void signature() throws Exception {
-		Signature s = sig(Modeling.class, Strategy.Provision.YES, prvName("SA Optimizer"),
-				deploy(configuration("mil.afrl.mstc.open:saopti:config:"+"1111")));
-		logger.info("ZZZZZZZZZZZ: " + s.toString());
-	}
-	@Test
-
 	public void instantiationWithSignature() throws Exception {
 
 		// Object orientation
