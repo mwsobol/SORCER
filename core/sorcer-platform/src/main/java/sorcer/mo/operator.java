@@ -25,6 +25,8 @@ import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.dispatch.DispatcherException;
+import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.plexus.FidelityManager;
@@ -41,6 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static sorcer.co.operator.instance;
+import static sorcer.co.operator.list;
 import static sorcer.eo.operator.context;
 
 /**
@@ -552,4 +555,8 @@ public class operator {
         return new SrvModelAutoDeps((SrvModel)model).printDeps();
     }
 
+    public static boolean provision(Signature... signatures) throws  DispatcherException {
+        ProvisionManager provisionManager = new ProvisionManager(Arrays.asList(signatures));
+        return provisionManager.deployServices();
+    }
 }

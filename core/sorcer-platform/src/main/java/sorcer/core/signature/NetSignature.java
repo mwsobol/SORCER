@@ -381,10 +381,12 @@ public class NetSignature extends ObjectSignature {
 	}
 
 	public String toString() {
-		return this.getClass() + ":" + providerName + ";" + execType + ";"
-				+ serviceType + ";" + operation.selector
-					+ (prefix !=null ? "#" + prefix : "") 
-					+ (returnPath != null ? ";"  + "result " + returnPath : "");
+		return this.getClass().getSimpleName() + ":" + providerName + ":"
+				+ serviceType + "." + operation.selector
+				+ (prefix != null ? "#" + prefix : "")
+				+ (returnPath != null ? "; result: " + returnPath : "")
+				+ ("; provisionable: " + operation.isProvisionable)
+				+ ("; config: " + deployment.getConfig());
 	}
 
 	@Override
