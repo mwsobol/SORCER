@@ -221,7 +221,8 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         return sessions;
     }
 
-    public void morph(String... fiNames) {
+    @Override
+    public void morph(String... fiNames)  throws EvaluationException {
         for (String fiName : fiNames) {
             ServiceFidelity<Fidelity> mFi = metafidelities.get(fiName);
             List<Fidelity> fis = mFi.getSelects();
@@ -330,7 +331,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
     @Override
-    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
+    public void reconfigure(Fidelity... fidelities) throws EvaluationException, RemoteException {
         if (fidelities == null || fidelities.length == 0) {
             return;
         }
