@@ -394,8 +394,12 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		this.negative = negative;
 	}
 
+	public ServiceFidelity getServiceFidelity() {
+		return (ServiceFidelity)_2;
+	}
+
 	public Object getSelectedFidelity() {
-		return null;
+		return getServiceFidelity().getSelect();
 	}
 
 	public ArgSet getArgs() {

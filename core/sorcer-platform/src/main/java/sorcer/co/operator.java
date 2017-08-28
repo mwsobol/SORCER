@@ -397,6 +397,10 @@ public class operator extends sorcer.operator {
 		return new DependencyEntry(path, Arrays.asList(paths));
 	}
 
+	public static DependencyEntry dep(Conditional condition, String path, Path... paths) {
+		return new DependencyEntry(condition, path, Arrays.asList(paths));
+	}
+
 	public static DependencyEntry dep(String path, Fidelity fi, Path... paths) {
 		DependencyEntry de = new DependencyEntry(path, Arrays.asList(paths));
 		de.annotation(fi);
@@ -404,16 +408,33 @@ public class operator extends sorcer.operator {
         return de;
 	}
 
+	public static DependencyEntry dep(Conditional condition, String path, Fidelity fi, Path... paths) {
+		DependencyEntry de = new DependencyEntry(condition, path, Arrays.asList(paths));
+		de.annotation(fi);
+		de.setType(Variability.Type.FIDELITY);
+		return de;
+	}
+
+	public static DependencyEntry dep(Conditional condition, String path, List<Path> paths) {
+		return new DependencyEntry(condition, path, paths);
+	}
+
 	public static DependencyEntry dep(String path, List<Path> paths) {
 		return new DependencyEntry(path, paths);
 	}
 
-    public static DependencyEntry dep(String path,  Fidelity fi, List<Path> paths) {
-        DependencyEntry de = new DependencyEntry(path, paths);
-        de.annotation(fi);
-        de.setType(Variability.Type.FIDELITY);
-        return de;
-    }
+	public static DependencyEntry dep(Conditional condition, String path,  Fidelity fi, List<Path> paths) {
+		DependencyEntry de = dep(path, fi, paths);
+		de.setCondition(condition);
+		return de;
+	}
+
+	public static DependencyEntry dep(String path,  Fidelity fi, List<Path> paths) {
+		DependencyEntry de = new DependencyEntry(path, paths);
+		de.annotation(fi);
+		de.setType(Variability.Type.FIDELITY);
+		return de;
+	}
 
 	public static DependencyEntry[] deps(DependencyEntry... dependencies) {
 		return dependencies;

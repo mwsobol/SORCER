@@ -374,22 +374,29 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             Entry entry = entry(path);
             if (del != null && del.size() > 0) {
                 for (DependencyEntry de : del) {
-                    if (de.getType().equals(Variability.Type.FIDELITY)
-                            && ((Fidelity)entry.getSelectedFidelity()).getName().equals(((Fidelity) de.annotation()).getName())) {
-                        List<Path> dpl = de._2;
-                        if (dpl != null && dpl.size() > 0) {
-                            for (Path p : dpl) {
-                                getValue(p.path, args);
+                    List<Path> dpl = de._2;
+                    if (de.getType().equals(Variability.Type.FIDELITY)) {
+                        if (((Fidelity) de.annotation()).getOption().equals("IF")) {
+                            if (((Fidelity) entry.getSelectedFidelity()).getName().equals(((Fidelity) de.annotation()).getName())) {
+                                // apply only to matched fidelity
+                                if (dpl != null && dpl.size() > 0) {
+                                    for (Path p : dpl) {
+                                        getValue(p.path, args);
+                                    }
+                                }
                             }
-                        }
-                    } else if (!de.getType().equals(Variability.Type.FIDELITY)) {
-                        List<Path> dpl = de._2;
-                        if (dpl != null && dpl.size() > 0) {
-                            for (Path p : dpl) {
-                                getValue(p.path, args);
-                            }
+                            continue;
+                        } else {
+                            // first select the requested fidelity
+                            entry.getServiceFidelity().setSelect(((Fidelity) de.annotation()).getName());
                         }
                     }
+                    if (dpl != null && dpl.size() > 0) {
+                        for (Path p : dpl) {
+                            getValue(p.path, args);
+                        }
+                    }
+
                 }
             }
         }

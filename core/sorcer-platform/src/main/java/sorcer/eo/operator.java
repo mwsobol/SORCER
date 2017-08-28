@@ -1497,6 +1497,13 @@ public class operator extends sorcer.operator {
 		return fi;
 	}
 
+	public static Fidelity ifFi(String name) {
+		Fidelity fi = new Fidelity(name);
+		fi.fiType = ServiceFidelity.Type.SELECT;
+		fi.setOption("IF");
+		return fi;
+	}
+
 	public static Projection po(String name, Fidelity... fidelities) {
 		return projection(name, fidelities);
 	}
