@@ -59,6 +59,6 @@ public interface Fi {
 	}
 
     public boolean isValid();
-	
+
 }
 

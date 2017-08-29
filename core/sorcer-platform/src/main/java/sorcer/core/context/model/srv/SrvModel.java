@@ -390,6 +390,17 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                             // first select the requested fidelity
                             entry.getServiceFidelity().setSelect(((Fidelity) de.annotation()).getName());
                         }
+                    } else if (de.getType().equals(Variability.Type.CONDITION)) {
+                        Conditional condition = de.getCondition();
+                        if (condition.isTrue()) {
+                            // apply only if condition is true
+                            if (dpl != null && dpl.size() > 0) {
+                                for (Path p : dpl) {
+                                    getValue(p.path, args);
+                                }
+                            }
+                        }
+                        continue;
                     }
                     if (dpl != null && dpl.size() > 0) {
                         for (Path p : dpl) {

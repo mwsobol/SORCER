@@ -18,6 +18,7 @@ package sorcer.core.context.model.ent;
 
 import sorcer.service.Arg;
 import sorcer.service.Context;
+import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
 import sorcer.service.modeling.Reference;
 import sorcer.service.modeling.SupportComponent;

@@ -2763,7 +2763,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		MonitorUtil.checkpoint(this);
 	}
 
-	public T asis(String path)  {
+	public T asis(String path) {
 		T val = null;
 		synchronized (this) {
 			if (isRevaluable == true) {
@@ -2781,10 +2781,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 			} catch (ContextException e) {
 				e.printStackTrace();
 			}
+			return null;
 		} else {
 			return val;
 		}
-		return val;
 	}
 
 	@Override

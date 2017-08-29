@@ -95,7 +95,7 @@ public interface Domain extends Mogram, Dependency {
 	public Context getOutConnector(Arg... args) throws ContextException, RemoteException;
 
 	/**
-	 * Returns a value of the object at the path od this domain,=.
+	 * Returns a value of the object at the path od this domain
 	 * (evaluation or invocation on this object if needed).
 	 *
 	 * @param path
@@ -104,6 +104,15 @@ public interface Domain extends Mogram, Dependency {
 	 * @throws ModelException
 	 */
 	public Object getValue(String path, Arg... args) throws ContextException, RemoteException;
+
+	/**
+	 * Returns a value of the object at the key od this map-oriented domain
+	 *
+	 * @param key
+	 *            the variable name
+	 * @return this domain value at the path
+	 */
+	public Object get(String key);
 
 	/**
 	 * Returns a value of the object at the path as is

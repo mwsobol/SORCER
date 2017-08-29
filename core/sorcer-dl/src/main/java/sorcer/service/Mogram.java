@@ -85,6 +85,15 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
 
     public Context getContext() throws ContextException;
 
+    /**
+     * Returns a value of the component at the key
+     *
+     * @param key
+     *            the component name
+     * @return the componet at the path
+     */
+    public Object get(String key);
+
     public Mogram clearScope() throws MogramException;
 
     public void reportException(Throwable t);
@@ -332,8 +341,6 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
     public MogramStrategy getMogramStrategy();
 
     public void setBuilder(Signature builder) throws MogramException;
-
-    Object get(String component);
 
     public String describe();
 }

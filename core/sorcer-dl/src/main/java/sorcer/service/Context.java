@@ -331,17 +331,6 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	 */
 	public Context getCurrentContext() throws ContextException;
 
-	/**
-	 * Returns a value of the object at the path as is
-	 * (no evaluation or invocation on this object).
-	 *
-	 * @param path
-	 *            the key (path)
-	 * @return this context value at the path
-	 * @throws ContextException
-	 */
-	public T asis(String path);
-
 	public void setReturnValue(Object value) throws ContextException;
 
 	public Object putDbValue(String path, Object value) throws ContextException, RemoteException;

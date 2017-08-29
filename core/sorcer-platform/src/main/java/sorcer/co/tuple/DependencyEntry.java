@@ -36,7 +36,7 @@ public class DependencyEntry extends Entry<List<Path>> {
         super(path, paths);
     }
 
-    public DependencyEntry(Conditional condition, String path, List<Path> paths) {
+    public DependencyEntry(String path, Conditional condition, List<Path> paths) {
         super(path, paths);
         this.condition = condition;
     }

@@ -398,6 +398,10 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		return (ServiceFidelity)_2;
 	}
 
+	public String fiName() {
+		return ((Fidelity)getSelectedFidelity()).getName();
+	}
+
 	public Object getSelectedFidelity() {
 		return getServiceFidelity().getSelect();
 	}

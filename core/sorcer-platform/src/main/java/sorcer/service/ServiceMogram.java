@@ -1050,7 +1050,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.couplings = couplings;
     }
 
-    public ServiceFidelity<MdaEntry> setMdaFi(Context context) {
+    public ServiceFidelity<MdaEntry> setMdaFi(Context context) throws ContextException {
        if(mdaFi == null) {
            Object mdaComponent = context.get(Context.MDA_PATH);
            if (mdaComponent != null) {
