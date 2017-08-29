@@ -171,7 +171,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public static final String COMPONENT = ServiceProvider.class.getName();
 
 	/** Logger for logging information about this instance */
-	private static final Logger logger = LoggerFactory.getLogger(COMPONENT);
+	protected static final Logger logger = LoggerFactory.getLogger(COMPONENT);
 
 	static {
 		try {
@@ -213,7 +213,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	private final AtomicBoolean running = new AtomicBoolean(true);
 
-	private Map<Uuid, ProviderSession> sessions;
+	protected Map<Uuid, ProviderSession> sessions;
 
 	protected ScheduledExecutorService scheduler;
 

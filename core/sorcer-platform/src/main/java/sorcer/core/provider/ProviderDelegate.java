@@ -281,8 +281,8 @@ public class ProviderDelegate {
 	private Object[] serviceBeans;
 
 	/**
-	 * Exposed service type components. A key is an interface and a eval its
-	 * implementing service-object.
+	 * Exposed service beans as a map. A key is an a service bean interface
+	 * and a value is a service bean implementing the interface.
 	 */
 	private Map<Class<?>, Object> serviceComponents;
 
@@ -2860,7 +2860,7 @@ public class ProviderDelegate {
 		return createBean(clazz);
 	}
 
-	private Object createBean(Class beanClass) throws Exception {
+	protected Object createBean(Class beanClass) throws Exception {
 		Object bean = beanClass.newInstance();
 		initBean(bean);
 		return bean;
