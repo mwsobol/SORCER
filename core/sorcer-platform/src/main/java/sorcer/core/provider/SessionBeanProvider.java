@@ -11,6 +11,7 @@ import sorcer.service.*;
 import javax.security.auth.Subject;
 import java.rmi.RemoteException;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -83,11 +84,11 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
                     logger.info("using session: {}", id);
                 }
                 if (cxt.containsPath(ServiceSession.SESSION_READ)) {
-                    cxt.append(ps);
+                    read(ps, cxt, (Context) cxt.get(ServiceSession.SESSION_READ));
                 }
                 Task out = delegate.exertBeanTask((Task) mogram, bean, args);
                 if (cxt.containsPath(ServiceSession.SESSION_WRITE)) {
-                    ps.append(out.getDataContext());
+                    write(ps, out.getDataContext(), (Context) cxt.get(ServiceSession.SESSION_WRITE));
                 }
             } catch (ContextException e) {
                 mogram.reportException(e);
@@ -149,4 +150,31 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
     public void clear() throws RemoteException {
         sessions.clear();
     }
+
+    public Context read(Context session, Context taskContext, Context connector) throws ContextException {
+        if (connector != null) {
+            Iterator it = ((ServiceContext) session).entryIterator();
+            while (it.hasNext()) {
+                Map.Entry e = (Map.Entry) it.next();
+                if (connector.containsPath((String) e.getKey())) {
+                    taskContext.putInValue((String) e.getKey(), session.getValue((String) e.getKey()));
+                }
+            }
+        }
+        return taskContext;
+    }
+
+    public Context write(Context session, Context taskContext, Context connector) throws ContextException {
+        if (connector != null) {
+            Iterator it = ((ServiceContext) connector).entryIterator();
+            while (it.hasNext()) {
+                Map.Entry e = (Map.Entry) it.next();
+                if (taskContext.containsPath((String) e.getKey())) {
+                    session.putOutValue((String) e.getKey(), taskContext.getValue((String) e.getKey()));
+                }
+            }
+        }
+        return taskContext;
+    }
+
 }
