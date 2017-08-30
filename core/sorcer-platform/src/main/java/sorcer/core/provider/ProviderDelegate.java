@@ -60,6 +60,8 @@ import sorcer.core.proxy.Partnership;
 import sorcer.core.proxy.ProviderProxy;
 import sorcer.core.service.Configurer;
 import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.jini.jeri.RecordingInvocationDispatcher;
 import sorcer.jini.jeri.SorcerILFactory;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
@@ -215,7 +217,9 @@ public class ProviderDelegate {
 
 	protected Object providerProxy;
 
-	private long eventID = 0, seqNum = 0;
+    protected ServiceSignature beanSignature;
+
+    private long eventID = 0, seqNum = 0;
 
 	private List<Entry> extraLookupAttributes = new Vector<Entry>();
 
@@ -2618,163 +2622,200 @@ public class ProviderDelegate {
 	 * 
 	 * @param config the configuration to use for supplying the exporter
 	 */
-	private void getExporters(Configuration config) {
-		try {
+    private void getExporters(Configuration config) {
+        List<Object> allBeans = new ArrayList<>();
+        try {
             String exporterInterface = Sorcer.getProperty(P_EXPORTER_INTERFACE);
             try {
                 exporterInterface = (String) config.getEntry(ServiceProvider.COMPONENT,
-                                                             EXPORTER_INTERFACE,
-                                                             String.class,
-                                                             SorcerEnv.getLocalHost().getHostAddress());
-			} catch (Exception e) {
-				// do nothng
-			}
-			logger.info(">>>>> exporterInterface: {}", exporterInterface);
+                        EXPORTER_INTERFACE,
+                        String.class,
+                        SorcerEnv.getLocalHost().getHostAddress());
+            } catch (Exception e) {
+                // do nothng
+            }
+            logger.info(">>>>> exporterInterface: {}", exporterInterface);
 
-			int exporterPort;
-			String port = Sorcer.getProperty(P_EXPORTER_PORT);
-			if (port != null)
-				exporterPort = Integer.parseInt(port);
+            int exporterPort;
+            String port = Sorcer.getProperty(P_EXPORTER_PORT);
+            if (port != null)
+                exporterPort = Integer.parseInt(port);
             else
                 exporterPort = (Integer) config.getEntry(ServiceProvider.COMPONENT,
-                                                         EXPORTER_PORT,
-                                                         Integer.class,
-                                                         0);
-			logger.info(">>>>> exporterPort: {}", exporterPort);
+                        EXPORTER_PORT,
+                        Integer.class,
+                        0);
+            logger.info(">>>>> exporterPort: {}", exporterPort);
 
-			try {
-				// check if not setValue by the provider
-				if (smartProxy == null) {
-					// initialize smart proxy
-					smartProxy = config.getEntry(ServiceProvider.COMPONENT,
-												 SMART_PROXY,
-												 Object.class,
-												 null);
-				}
-			} catch (Exception e) {
-				logger.warn(">>>>> NO SMART PROXY specified", e);
-				smartProxy = null;
-			}
-
-			List<Object> allBeans = new ArrayList<>();
-            // find it out if service bean instances are available
-            Object[] beans = (Object[]) Config.getNonNullEntry(config,
-                                                               ServiceProvider.COMPONENT,
-                                                               BEANS,
-                                                               Object[].class,
-                                                               new Object[] {});
-			if (beans.length > 0) {
-				logger.debug("*** service beans by {}\nfor: {}", getProviderName(), Arrays.toString(beans));
-                for (Object bean : beans) {
-					initBean(bean);
-					allBeans.add(bean);
-                    exports.put(bean, this);
+            try {
+                // check if not setValue by the provider
+                if (smartProxy == null) {
+                    // initialize smart proxy
+                    smartProxy = config.getEntry(ServiceProvider.COMPONENT,
+                            SMART_PROXY,
+                            Object.class,
+                            null);
                 }
-			}
-
-            // find it out if data service bean instances are available
-            Object[] dataBeans = (Object[]) Config.getNonNullEntry(config,
-                                                                   ServiceProvider.COMPONENT,
-                                                                   DATA_BEANS,
-                                                                   Object[].class,
-                                                                   new Object[] {},
-                                                                   getProviderProperties());
-            if (dataBeans.length > 0) {
-				logger.debug("*** data service beans by {}\nfor: {}", getProviderName(), Arrays.toString(dataBeans));
-                for (Object dataBean : dataBeans) {
-                    initBean(dataBean);
-                    allBeans.add(dataBean);
-                    exports.put(dataBean, this);
-                }
-			}
-
-            // find it out if service classes are available
-            Class[] beanClasses = (Class[]) Config.getNonNullEntry(config,
-                                                                   ServiceProvider.COMPONENT,
-                                                                   BEAN_CLASSES,
-                                                                   Class[].class,
-                                                                   new Class[] {});
-			if (beanClasses.length > 0) {
-				logger.debug("*** service bean classes by {} for: \n{}", getProviderName(), Arrays.toString(beanClasses));
-                for (Class beanClass : beanClasses)
-                    allBeans.add(instantiate(beanClass));
-			}
-
-			// find it out if Groovy scripts are available
-            String[] scriptlets = (String[]) Config.getNonNullEntry(config,
-                                                                    ServiceProvider.COMPONENT,
-                                                                    SCRIPTLETS,
-                                                                    String[].class,
-                                                                    new String[] {});
-            if (scriptlets.length > 0) {
-				logger.debug("*** service scriptlets by {} for: \n{}", getProviderName(), Arrays.toString(scriptlets));
-                for (String scriptlet : scriptlets)
-                    allBeans.add(instantiateScriplet(scriptlet));
-			}
+            } catch (Exception e) {
+                logger.warn(">>>>> NO SMART PROXY specified", e);
+                smartProxy = null;
+            }
 
             exporterFactory = (AbstractExporterFactory) config.getEntry(ServiceProvider.COMPONENT,
-                                                                        "exporterFactory",
-                                                                        AbstractExporterFactory.class,
-                                                                        null);
+                    "exporterFactory",
+                    AbstractExporterFactory.class,
+                    null);
             if (exporterFactory == null)
                 exporterFactory = ExporterFactories.EXPORTER;
 
-			analyticsRecorder = new AnalyticsRecorder(getHostName(),
-													  getServiceID(),
-													  getProviderName(),
-													  System.getProperty("user.name"));
+            analyticsRecorder = new AnalyticsRecorder(getHostName(),
+                    getServiceID(),
+                    getProviderName(),
+                    System.getProperty("user.name"));
 
+            // find it out if service bean signature are available
+            Signature signature = (Signature) config.getEntry(ServiceProvider.COMPONENT,
+                    BEAN_SIG,
+                    Signature.class,
+                    null);
+            if (signature != null) {
+                logger.debug("*** service bean signature by {}\nfor: {}", getProviderName(), signature);
+                beanSignature = (ServiceSignature) signature;
+                logger.info("session bean signature: {} \nfor: {}", signature, getProviderName());
+                // non session bean to be exported, session beans are created by BeanSessionProvider
+                Object bean = sorcer.co.operator.instance(beanSignature);
+                initBean(bean);
+                allBeans.add(bean);
+                exports.put(bean, this);
+            } else {
+                // find it out if session service bean is available
+                Object bean = config.getEntry(ServiceProvider.COMPONENT,
+                        SESSION_BEAN,
+                        Object.class,
+                        null);
+                logger.warn("session bean: {} \nfor: {}", bean, getProviderName());
+                if (bean != null) {
+                    initBean(bean);
+                    allBeans.add(bean);
+                    exports.put(bean, this);
+                } else {
+                    otherServiceBeans(config, allBeans);
+                }
+            }
 
-			if (allBeans.size() > 0) {
-				logger.debug("*** all beans by: {} for: \n{}", getProviderName(), allBeans);
-				serviceBeans = allBeans.toArray();
-				initServiceBeans(serviceBeans);
+            if (allBeans.size() > 0) {
+                logger.debug("*** all beans by: {} for: \n{}", getProviderName(), allBeans);
+                serviceBeans = allBeans.toArray();
+                initServiceBeans(serviceBeans);
                 SorcerILFactory ilFactory = new SorcerILFactory(serviceComponents, implClassLoader, analyticsRecorder);
                 ilFactory.setRemoteLogging(remoteLogging);
                 //ilFactory.setMonitoringBeanHandler(new DefaultMonitoringBeanHandler(config, this));
                 outerExporter = exporterFactory.get(ilFactory);
                 logger.info("{}, {}", outerExporter, ((BasicJeriExporter)outerExporter).getInvocationLayerFactory().getClass().getName());
-			} else {
-				logger.warn("*** NO beans used by {}", getProviderName());
+            } else {
+                logger.warn("*** NO beans used by {}", getProviderName());
                 outerExporter = (Exporter) config.getEntry(ServiceProvider.COMPONENT,
-                                                           EXPORTER,
-                                                           Exporter.class,
-                                                           null);
-				if (outerExporter == null) {
-					InvocationLayerFactory ilF = new BasicILFactory() {
-						@Override
-						protected InvocationDispatcher createInvocationDispatcher(Collection methods,
-																				  Remote impl,
-																				  ServerCapabilities caps) throws ExportException {
-							return new RecordingInvocationDispatcher(methods,
-																	 caps,
-																	 getServerConstraints(),
-																	 getPermissionClass(),
-																	 implClassLoader,
-																	 analyticsRecorder);
-						}
-					};
-					outerExporter = exporterFactory.get(ilF);
-				}
+                        EXPORTER,
+                        Exporter.class,
+                        null);
+                if (outerExporter == null) {
+                    InvocationLayerFactory ilF = new BasicILFactory() {
+                        @Override
+                        protected InvocationDispatcher createInvocationDispatcher(Collection methods,
+                                                                                  Remote impl,
+                                                                                  ServerCapabilities caps) throws ExportException {
+                            return new RecordingInvocationDispatcher(methods,
+                                    caps,
+                                    getServerConstraints(),
+                                    getPermissionClass(),
+                                    implClassLoader,
+                                    analyticsRecorder);
+                        }
+                    };
+                    outerExporter = exporterFactory.get(ilF);
+                }
                 logger.info("current exporter: {}", outerExporter.toString());
-                try {
-                    partnerExporter = (Exporter) Config.getNonNullEntry(config,
-                                                                        ServiceProvider.COMPONENT, SERVER_EXPORTER,
-                                                                        Exporter.class);
-					if (partnerExporter == null) {
-						logger.warn("NO provider inner exporter defined!!!");
-					} else {
-						logger.debug("your partner exporter: {}", partnerExporter);
-					}
-				} catch (ConfigurationException e) {
-					// do nothing
-				}
-			}
-		} catch (Exception ex) {
-			logger.warn("Error getting exporters", ex);
-			// ignore missing exporters and use default configurations for exporters
-		}
-	}
+
+                partnerExporter = (Exporter) Config.getNonNullEntry(config,
+                        ServiceProvider.COMPONENT, SERVER_EXPORTER,
+                        Exporter.class);
+                if (partnerExporter == null) {
+                    logger.warn("NO provider inner exporter defined!!!");
+                } else {
+                    logger.debug("your partner exporter: {}", partnerExporter);
+                }
+            }
+        } catch (Exception ex) {
+            logger.warn("Error getting exporters", ex);
+            // ignore missing exporters and use default configurations for exporters
+        }
+    }
+
+	private void otherServiceBeans(Configuration config, List<Object> allBeans) throws Exception {
+        // find it out if service bean instances are available
+        Object[] beans = (Object[]) Config.getNonNullEntry(config,
+                ServiceProvider.COMPONENT,
+                BEANS,
+                Object[].class,
+                new Object[]{});
+        if (beans.length > 0) {
+            logger.debug("*** service beans by {}\nfor: {}", getProviderName(), Arrays.toString(beans));
+            for (Object bean : beans) {
+                initBean(bean);
+                allBeans.add(bean);
+                exports.put(bean, this);
+            }
+        }
+
+        // find it out if data service bean instances are available
+        Object[] dataBeans = (Object[]) Config.getNonNullEntry(config,
+                ServiceProvider.COMPONENT,
+                DATA_BEANS,
+                Object[].class,
+                new Object[]{},
+                getProviderProperties());
+        if (dataBeans.length > 0) {
+            logger.debug("*** data service beans by {}\nfor: {}", getProviderName(), Arrays.toString(dataBeans));
+            for (Object dataBean : dataBeans) {
+                initBean(dataBean);
+                allBeans.add(dataBean);
+                exports.put(dataBean, this);
+            }
+        }
+
+        // find it out if service classes are available
+        Class[] beanClasses = (Class[]) Config.getNonNullEntry(config,
+                ServiceProvider.COMPONENT,
+                BEAN_CLASSES,
+                Class[].class,
+                new Class[]{});
+        if (beanClasses.length > 0) {
+            logger.debug("*** service bean classes by {} for: \n{}", getProviderName(), Arrays.toString(beanClasses));
+            for (Class beanClass : beanClasses)
+                allBeans.add(instantiate(beanClass));
+        }
+
+        // find it out if Groovy scripts are available
+        String[] scriptlets = (String[]) Config.getNonNullEntry(config,
+                ServiceProvider.COMPONENT,
+                SCRIPTLETS,
+                String[].class,
+                new String[]{});
+        if (scriptlets.length > 0) {
+            logger.debug("*** service scriptlets by {} for: \n{}", getProviderName(), Arrays.toString(scriptlets));
+            for (String scriptlet : scriptlets)
+                allBeans.add(instantiateScriplet(scriptlet));
+        }
+
+    }
+
+    public Signature getBeanSignature() {
+        return beanSignature;
+    }
+
+    public void setBeanSignature(Signature beanSignature) {
+        this.beanSignature = (ServiceSignature)beanSignature;
+    }
 
 	/**
 	 * Use javax.inject.Provider implementations as factory objects
@@ -3131,6 +3172,10 @@ public class ProviderDelegate {
 	public final static String SCRIPTLETS = "scriptlets";
 
 	public final static String BEAN_CLASSES = "beanClasses";
+
+    public final static String BEAN_SIG = "beanSignature";
+
+    public final static String SESSION_BEAN = "sessionBean";
 
 	public final static String CONTEXT_MANAGER = "contextManager";
 

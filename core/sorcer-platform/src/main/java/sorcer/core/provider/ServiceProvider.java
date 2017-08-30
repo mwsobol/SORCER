@@ -54,6 +54,7 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.proxy.Outer;
 import sorcer.core.proxy.Partner;
 import sorcer.core.proxy.Partnership;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.scratch.ScratchManager;
 import sorcer.scratch.ScratchManagerSupport;
 import sorcer.service.*;

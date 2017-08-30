@@ -18,8 +18,6 @@ import java.rmi.RemoteException;
  */
 public class BeanSessionProvider extends ServiceProvider {
 
-    private ServiceSignature beanSignature;
-
     public BeanSessionProvider() throws RemoteException {
         super();
     }
@@ -34,15 +32,6 @@ public class BeanSessionProvider extends ServiceProvider {
     public BeanSessionProvider(String[] args, LifeCycle lifeCycle) throws Exception {
         super(args, lifeCycle);
     }
-
-    public Signature getBeanSignature() {
-        return beanSignature;
-    }
-
-    public void setBeanSignature(Signature beanSignature) {
-        this.beanSignature = (ServiceSignature)beanSignature;
-    }
-
 
     /** {@inheritDoc} */
     public ServiceExertion execute(Exertion task) throws TransactionException,
@@ -78,7 +67,7 @@ public class BeanSessionProvider extends ServiceProvider {
                     ps = new ProviderSession(id);
                     sessions.put(id, ps);
                     try {
-                        bean = sorcer.co.operator.instance(beanSignature);
+                        bean = sorcer.co.operator.instance(delegate.getBeanSignature());
                     } catch (Exception e) {
                         throw new ExertionException(e);
                     }
