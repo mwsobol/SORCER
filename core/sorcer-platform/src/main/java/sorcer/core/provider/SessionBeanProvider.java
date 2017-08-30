@@ -11,6 +11,7 @@ import sorcer.service.*;
 import javax.security.auth.Subject;
 import java.rmi.RemoteException;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by Mike Sobolewski on 8/29/17.
@@ -105,7 +106,12 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
     }
 
     @Override
-    public Context getSession(String id) throws RuntimeException {
+    public Set getSessions() throws RemoteException {
+        return sessions.keySet();
+    }
+
+    @Override
+    public Context getSession(String id) throws RemoteException {
         Iterator<Uuid> si = sessions.keySet().iterator();
         Uuid key;
         while(si.hasNext()) {
@@ -113,7 +119,7 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
             if (key.toString().equals(id)) {
                 Context session = sessions.get(key);
                 // remove bean of this session
-                session.remove(key.toString())
+                session.remove(key.toString());
                 return session;
             }
         }
@@ -121,13 +127,13 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
     }
 
     @Override
-    public Object get(String id, String key) throws RuntimeException {
+    public Object get(String id, String key) throws RemoteException {
         Context session = getSession(id);
         return session.get(key);
     }
 
     @Override
-    public void remove(String id) throws RuntimeException {
+    public void remove(String id) throws RemoteException {
         Iterator<Uuid> si = sessions.keySet().iterator();
         Uuid key;
         while(si.hasNext()) {
@@ -140,7 +146,7 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
     }
 
     @Override
-    public void clear() throws RuntimeException {
+    public void clear() throws RemoteException {
         sessions.clear();
     }
 }
