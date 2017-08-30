@@ -16,6 +16,7 @@
  */
 package sorcer.co;
 
+import net.jini.id.Uuid;
 import org.rioproject.resolver.Artifact;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.resolver.ResolverHelper;
@@ -348,7 +349,15 @@ public class operator extends sorcer.operator {
 			return new Setup(aspect.toString(), null);
 		}
 	}
-	
+
+    public static Uuid id(Mogram mogram) {
+        return mogram.getId();
+    }
+
+    public static void setId(Mogram mogram, Uuid id) {
+	    mogram.setId(id);
+    }
+
 	public static Entry in(Entry... entries) {
 		for (Entry  entry : entries) {
 			entry.setType(Type.INPUT);

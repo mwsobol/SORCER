@@ -217,7 +217,9 @@ public class ProviderDelegate {
 
 	protected Object providerProxy;
 
-    protected ServiceSignature beanSignature;
+    private ServiceSignature beanSignature;
+
+    private Object sessionBean;
 
     private long eventID = 0, seqNum = 0;
 
@@ -983,68 +985,134 @@ public class ProviderDelegate {
 				}
 			}
 		}
-		if (impl != null) {
-			if (task.getProcessSignature().getReturnPath() != null) {
-				((ServiceContext) task.getContext()).setReturnPath(task
-						.getProcessSignature().getReturnPath());
-			}
-			// determine args and parameterTpes from the context
-			Class[] argTypes = new Class[] { Context.class };
-			ServiceContext cxt = (ServiceContext) task.getContext();
-			boolean isContextual = true;
-			if (cxt.getParameterTypes() != null & cxt.getArgs() != null) {
-				argTypes = cxt.getParameterTypes();
-				isContextual = false;
-			} 
-			Method m = null;
-			try {
-				// select the proper method for the bean type
-				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof ProcModel)) {
-					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
-					isContextual = true;
-				} else if (selector.equals("evaluate") && impl instanceof Domain) {
-					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
-					isContextual = true;
-				} else if (selector.equals("exert") && impl instanceof ServiceShell) {
-					m = impl.getClass().getMethod(selector, Mogram.class, Arg[].class);
-					isContextual = false;
-				} else if (selector.equals("getValue") && impl instanceof Evaluation) {
-					m = impl.getClass().getMethod(selector, Arg[].class);
-					isContextual = false;
-				} else
-					m = impl.getClass().getMethod(selector, argTypes);
-				if(logger.isTraceEnabled())
-					logger.trace("Executing service bean method: {} by: {} isContextual: {}",
-								 m, config.getProviderName(), isContextual);
-				task.getContext().setExertion(task);
-				((ServiceContext) task.getContext()).getMogramStrategy().setCurrentSelector(selector);
-				String pf = task.getProcessSignature().getPrefix();
-				if (pf != null)
-					((ServiceContext) task.getContext()).setCurrentPrefix(pf);
+        return exertBeanTask(task, impl, args);
+//        if (impl != null) {
+//			if (task.getProcessSignature().getReturnPath() != null) {
+//				((ServiceContext) task.getContext()).setReturnPath(task
+//						.getProcessSignature().getReturnPath());
+//			}
+//			// determine args and parameterTpes from the context
+//			Class[] argTypes = new Class[] { Context.class };
+//			ServiceContext cxt = (ServiceContext) task.getContext();
+//			boolean isContextual = true;
+//			if (cxt.getParameterTypes() != null & cxt.getArgs() != null) {
+//				argTypes = cxt.getParameterTypes();
+//				isContextual = false;
+//			}
+//			Method m = null;
+//			try {
+//				// select the proper method for the bean type
+//				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof ProcModel)) {
+//					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
+//					isContextual = true;
+//				} else if (selector.equals("evaluate") && impl instanceof Domain) {
+//					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
+//					isContextual = true;
+//				} else if (selector.equals("exert") && impl instanceof ServiceShell) {
+//					m = impl.getClass().getMethod(selector, Mogram.class, Arg[].class);
+//					isContextual = false;
+//				} else if (selector.equals("getValue") && impl instanceof Evaluation) {
+//					m = impl.getClass().getMethod(selector, Arg[].class);
+//					isContextual = false;
+//				} else
+//					m = impl.getClass().getMethod(selector, argTypes);
+//				if(logger.isTraceEnabled())
+//					logger.trace("Executing service bean method: {} by: {} isContextual: {}",
+//								 m, config.getProviderName(), isContextual);
+//				task.getContext().setExertion(task);
+//				((ServiceContext) task.getContext()).getMogramStrategy().setCurrentSelector(selector);
+//				String pf = task.getProcessSignature().getPrefix();
+//				if (pf != null)
+//					((ServiceContext) task.getContext()).setCurrentPrefix(pf);
+//
+//				Context result = task.getContext();
+//				if (isContextual)
+//					result = execContextualBean(m, task, impl, args);
+//				else
+//					result = execParametricBean(m, task, impl, args);
+//
+//				// clear task in the context
+//				result.setExertion(null);
+//				task.setContext(result);
+//				task.setStatus(Exec.DONE);
+//				return task;
+//            } catch (InvocationTargetException e){
+//                Throwable t = e.getCause();
+//                task.reportException(t);
+//                logger.warn("Error while executing: " + m + " " + t.getMessage());
+//			} catch (Exception e) {
+//				task.reportException(e);
+//                logger.warn("Error while executing: " + m + " " + e.getMessage());
+//			}
+//		}
+//		task.setStatus(Exec.FAILED);
+//		return task;
+	}
 
-				Context result = task.getContext();
-				if (isContextual) 
-					result = execContextualBean(m, task, impl, args);
-				else
-					result = execParametricBean(m, task, impl, args);
+    Task exertBeanTask(Task task, Object bean, Arg... args) throws ContextException {
+        String selector = task.getProcessSignature().getSelector();
+        if (bean != null) {
+            if (task.getProcessSignature().getReturnPath() != null) {
+                ((ServiceContext) task.getContext()).setReturnPath(task
+                        .getProcessSignature().getReturnPath());
+            }
+            // determine args and parameterTpes from the context
+            Class[] argTypes = new Class[] { Context.class };
+            ServiceContext cxt = (ServiceContext) task.getContext();
+            boolean isContextual = true;
+            if (cxt.getParameterTypes() != null & cxt.getArgs() != null) {
+                argTypes = cxt.getParameterTypes();
+                isContextual = false;
+            }
+            Method m = null;
+            try {
+                // select the proper method for the bean type
+                if (selector.equals("invoke") && (bean instanceof Exertion || bean instanceof ProcModel)) {
+                    m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
+                    isContextual = true;
+                } else if (selector.equals("evaluate") && bean instanceof Domain) {
+                    m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
+                    isContextual = true;
+                } else if (selector.equals("exert") && bean instanceof ServiceShell) {
+                    m = bean.getClass().getMethod(selector, Mogram.class, Arg[].class);
+                    isContextual = false;
+                } else if (selector.equals("getValue") && bean instanceof Evaluation) {
+                    m = bean.getClass().getMethod(selector, Arg[].class);
+                    isContextual = false;
+                } else
+                    m = bean.getClass().getMethod(selector, argTypes);
+                if(logger.isTraceEnabled())
+                    logger.trace("Executing service bean method: {} by: {} isContextual: {}",
+                            m, config.getProviderName(), isContextual);
+                task.getContext().setExertion(task);
+                ((ServiceContext) task.getContext()).getMogramStrategy().setCurrentSelector(selector);
+                String pf = task.getProcessSignature().getPrefix();
+                if (pf != null)
+                    ((ServiceContext) task.getContext()).setCurrentPrefix(pf);
 
-				// clear task in the context
-				result.setExertion(null);
-				task.setContext(result);
-				task.setStatus(Exec.DONE);
-				return task;
+                Context result = task.getContext();
+                if (isContextual)
+                    result = execContextualBean(m, task, bean, args);
+                else
+                    result = execParametricBean(m, task, bean, args);
+
+                // clear task in the context
+                result.setExertion(null);
+                task.setContext(result);
+                task.setStatus(Exec.DONE);
+                return task;
             } catch (InvocationTargetException e){
                 Throwable t = e.getCause();
                 task.reportException(t);
                 logger.warn("Error while executing: " + m + " " + t.getMessage());
-			} catch (Exception e) {
-				task.reportException(e);
+            } catch (Exception e) {
+                task.reportException(e);
                 logger.warn("Error while executing: " + m + " " + e.getMessage());
-			}
-		}
-		task.setStatus(Exec.FAILED);
-		return task;
-	}
+            }
+        }
+        task.setStatus(Exec.FAILED);
+        return task;
+    }
 
 	private Context execContextualBean(Method m, Task task, Object impl, Arg... args)
 			throws ContextException, IllegalArgumentException,
@@ -2689,15 +2757,15 @@ public class ProviderDelegate {
                 exports.put(bean, this);
             } else {
                 // find it out if session service bean is available
-                Object bean = config.getEntry(ServiceProvider.COMPONENT,
+                sessionBean = config.getEntry(ServiceProvider.COMPONENT,
                         SESSION_BEAN,
                         Object.class,
                         null);
-                logger.warn("session bean: {} \nfor: {}", bean, getProviderName());
-                if (bean != null) {
-                    initBean(bean);
-                    allBeans.add(bean);
-                    exports.put(bean, this);
+                logger.warn("session bean: {} \nfor: {}", sessionBean, getProviderName());
+                if (sessionBean != null) {
+                    initBean(sessionBean);
+                    allBeans.add(sessionBean);
+                    exports.put(sessionBean, this);
                 } else {
                     otherServiceBeans(config, allBeans);
                 }
@@ -2736,9 +2804,10 @@ public class ProviderDelegate {
                 }
                 logger.info("current exporter: {}", outerExporter.toString());
 
-                partnerExporter = (Exporter) Config.getNonNullEntry(config,
-                        ServiceProvider.COMPONENT, SERVER_EXPORTER,
-                        Exporter.class);
+                partnerExporter = (Exporter) config.getEntry(ServiceProvider.COMPONENT,
+                        SERVER_EXPORTER,
+                        Exporter.class,
+                        null);
                 if (partnerExporter == null) {
                     logger.warn("NO provider inner exporter defined!!!");
                 } else {
@@ -2813,11 +2882,12 @@ public class ProviderDelegate {
         return beanSignature;
     }
 
-    public void setBeanSignature(Signature beanSignature) {
-        this.beanSignature = (ServiceSignature)beanSignature;
+
+    public Object getSessionBean() {
+        return sessionBean;
     }
 
-	/**
+    /**
 	 * Use javax.inject.Provider implementations as factory objects
 	 */
 	private static void callProviders(Object[] serviceBeans) {

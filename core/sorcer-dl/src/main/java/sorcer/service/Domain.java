@@ -34,7 +34,18 @@ public interface Domain extends Mogram, Dependency {
      */
     public Context evaluate(Context inputContext, Arg... args) throws ContextException, RemoteException;
 
-	/**
+    /**
+     * Returns a value of the object at the path as is
+     * (no evaluation or invocation on this object).
+     *
+     * @param path
+     *            the variable name
+     * @return this model value at the path
+     * @throws ModelException
+     */
+    public Object asis(String path);
+
+    /**
 	 * Returns the context of all responses of this domain with a provided configuration.
 	 *
 	 * @param args optional configuration arguments
@@ -104,26 +115,6 @@ public interface Domain extends Mogram, Dependency {
 	 * @throws ModelException
 	 */
 	public Object getValue(String path, Arg... args) throws ContextException, RemoteException;
-
-	/**
-	 * Returns a value of the object at the key od this map-oriented domain
-	 *
-	 * @param key
-	 *            the variable name
-	 * @return this domain value at the path
-	 */
-	public Object get(String key);
-
-	/**
-	 * Returns a value of the object at the path as is
-	 * (no evaluation or invocation on this object).
-	 *
-	 * @param path
-	 *            the variable name
-	 * @return this model value at the path
-	 * @throws ModelException
-	 */
-	public Object asis(String path);
 
 	public Domain add(Identifiable... objects) throws ContextException,
 			RemoteException;

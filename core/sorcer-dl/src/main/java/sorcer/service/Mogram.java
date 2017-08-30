@@ -63,6 +63,8 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
      */
     public Uuid getId();
 
+    public void setId(Uuid id);
+
     public int getIndex();
 
     public void setIndex(int i);

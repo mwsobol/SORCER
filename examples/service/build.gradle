@@ -97,7 +97,7 @@ bootme {
     starterConfig = file("${projectDir.path}/configs/StartAdderConfig.groovy")
     systemProperties = ["relative.repo.path" : repoPath(), "java.util.logging.config.file" : "${projectDir.path}/configs/sorcer-prv.logging"]
     spawn = true
-    //debug = true
+//    debug = true
 }
 
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
@@ -127,9 +127,9 @@ test {
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
     }
-//    dependsOn([install])
-    dependsOn([install, bootme])
-    finalizedBy(stopme)
+    dependsOn([install])
+//    dependsOn([install, bootme])
+//    finalizedBy(stopme)
 }
 
 
