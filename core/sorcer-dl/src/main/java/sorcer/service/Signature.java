@@ -290,7 +290,7 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 	static final Type APD = Type.APD_DATA;
 
 
-	public static class Out extends ArrayList<Path> implements Arg {
+	public static class Out extends Paths {
 		private static final long serialVersionUID = 1L;
 
 		public Out() {
@@ -308,32 +308,9 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 				add(new Path(name)) ;
 			}
 		}
-
-		public Out(int initialCapacity) {
-			super(initialCapacity);
-		}
-
-		public String[] getPaths() {
-			String[] paths = new String[size()];
-			for (int i = 0; i < size(); i++)
-				paths[i] = get(i).path();
-
-			return paths;
-		}
-
-		public Path[] getExtPaths() {
-			Path[] paths = new Path[size()];
-			return this.toArray(paths);
-		}
-
-		@Override
-		public String getName() {
-			return toString();
-		}
-
 	}
 
-	public static class In extends ArrayList<Path> implements Arg {
+	public static class In extends Paths {
 		private static final long serialVersionUID = 1L;
 
 		public In() {
@@ -350,31 +327,9 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 				add(new Path(name)) ;
 			}
 		}
-
-		public In(int initialCapacity) {
-			super(initialCapacity);
-		}
-
-		public String[] getPaths() {
-			String[] paths = new String[size()];
-			for (int i = 0; i < size(); i++)
-				paths[i] = get(i).path();
-
-			return paths;
-		}
-
-		public Path[] getSigPaths() {
-			Path[] paths = new Path[size()];
-			return this.toArray(paths);
-		}
-
-		@Override
-		public String getName() {
-			return toString();
-		}
 	}
 
-	public static class Read extends ArrayList<Path> implements Arg {
+	public static class Read extends Paths {
 		private static final long serialVersionUID = 1L;
 
 		public Read() {
@@ -391,31 +346,9 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 				add(new Path(name)) ;
 			}
 		}
-
-		public Read(int initialCapacity) {
-			super(initialCapacity);
-		}
-
-		public String[] getPaths() {
-			String[] paths = new String[size()];
-			for (int i = 0; i < size(); i++)
-				paths[i] = get(i).path();
-
-			return paths;
-		}
-
-		public Path[] getSigPaths() {
-			Path[] paths = new Path[size()];
-			return this.toArray(paths);
-		}
-
-		@Override
-		public String getName() {
-			return toString();
-		}
 	}
 
-	public static class Write extends ArrayList<Path> implements Arg {
+	public static class Write extends Paths {
 		private static final long serialVersionUID = 1L;
 
 		public Write() {
@@ -432,31 +365,79 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 				add(new Path(name)) ;
 			}
 		}
-
-		public Write(int initialCapacity) {
-			super(initialCapacity);
-		}
-
-		public String[] getPaths() {
-			String[] paths = new String[size()];
-			for (int i = 0; i < size(); i++)
-				paths[i] = get(i).path();
-
-			return paths;
-		}
-
-		public Path[] getSigPaths() {
-			Path[] paths = new Path[size()];
-			return this.toArray(paths);
-		}
-
-		@Override
-		public String getName() {
-			return toString();
-		}
 	}
 
-	public static class Append extends ArrayList<Path> implements Arg {
+    public static class State extends Paths {
+        private static final long serialVersionUID = 1L;
+
+        public State() {
+            super();
+        }
+
+        public State(Path[] paths) {
+            for (Path path : paths) {
+                add(path) ;
+            }
+        }
+        public State(String[] names) {
+            for (String name : names) {
+                add(new Path(name)) ;
+            }
+        }
+    }
+
+    public static class Paths extends ArrayList<Path> implements Arg {
+        private static final long serialVersionUID = 1L;
+
+        public Paths() {
+            super();
+        }
+
+        public Paths(Path[] paths) {
+            for (Path path : paths) {
+                add(path) ;
+            }
+        }
+        public Paths(String[] names) {
+            for (String name : names) {
+                add(new Path(name)) ;
+            }
+        }
+
+        public String[] getPaths() {
+            String[] paths = new String[size()];
+            for (int i = 0; i < size(); i++)
+                paths[i] = get(i).path();
+
+            return paths;
+        }
+
+        public boolean containsPath(String path) {
+            for (Path p : this) {
+                if (p.getName().equals(path)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public Path[] getExtPaths() {
+            Path[] paths = new Path[size()];
+            return this.toArray(paths);
+        }
+
+        public Path[] getSigPaths() {
+            Path[] paths = new Path[size()];
+            return this.toArray(paths);
+        }
+
+        @Override
+        public String getName() {
+            return toString();
+        }
+    }
+
+	public static class Append extends Paths {
 		private static final long serialVersionUID = 1L;
 
 		public Append() {
@@ -473,49 +454,26 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 				add(new Path(name)) ;
 			}
 		}
-
-		public Append(int initialCapacity) {
-			super(initialCapacity);
-		}
-
-		public String[] getPaths() {
-			String[] paths = new String[size()];
-			for (int i = 0; i < size(); i++)
-				paths[i] = get(i).path();
-
-			return paths;
-		}
-
-		public Path[] getSigPaths() {
-			Path[] paths = new Path[size()];
-			return this.toArray(paths);
-		}
-
-		@Override
-		public String getName() {
-			return toString();
-		}
 	}
 
-    public static class SessionPaths extends ArrayList<ArrayList<Path>> implements Arg {
+    public static class SessionPaths extends ArrayList<Paths> implements Arg {
         private static final long serialVersionUID = 1L;
 
         public SessionPaths() {
             super();
         }
 
-        public SessionPaths(ArrayList<Path>[] lists) {
-            for (ArrayList<Path> al : lists) {
+        public SessionPaths(Paths[] lists) {
+            for (Paths al : lists) {
                 add(al);
             }
         }
 
-        public ArrayList<Path> getPaths(Class<?> clazz) {
-            for(ArrayList al : this) {
+        public Paths getPaths(Class<?> clazz) {
+            for(Paths al : this) {
                 if (clazz.isInstance(al)) {
                     return al;
                 }
-                break;
             }
             return null;
         }

@@ -187,6 +187,19 @@ public class operator extends sorcer.operator {
 		return new ServiceSignature.Append(pl.toArray(pa));
 	}
 
+    public static Signature.State state(Object... elems) {
+        List<Path> pl = new ArrayList(elems.length);
+        for (Object o : elems) {
+            if (o instanceof String) {
+                pl.add(new Path((String)o));
+            } else if  (o instanceof Path) {
+                pl.add(((Path)o));
+            }
+        }
+        Path[]  pa = new Path[pl.size()];
+        return new Signature.State(pl.toArray(pa));
+    }
+
 	public static Path filePath(String filename) {
 		if(Artifact.isArtifact(filename)) {
 			try {

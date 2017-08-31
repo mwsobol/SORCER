@@ -66,7 +66,19 @@ public class NetMograms {
 
 	}
 
-	@Test
+    @Test
+    public void sessionTask() throws SignatureException, ExertionException, ContextException  {
+
+        Task sum = task("t6", sig("sum", Adder.class, prvName("Adder")),
+                cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+
+        assertTrue(eval(sum).equals(100.0));
+        assertTrue(eval(sum).equals(200.0));
+        assertTrue(eval(sum).equals(300.0));
+    }
+
+
+    @Test
 	public void beanValueTask() throws Exception  {
 
 		Task t5 = task("t5", sig("add", Adder.class, prvName("Session Adder")),
@@ -77,17 +89,6 @@ public class NetMograms {
 		assertTrue(value(out, "result/y").equals(100.0));
 		assertTrue(id(out).equals(cid));
 	}
-
-    @Test
-    public void sessionTask() throws SignatureException, ExertionException, ContextException  {
-
-        Task sum = task("t6", sig("sum", Adder.class),
-                cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
-
-		assertTrue(eval(sum).equals(100.0));
-		assertTrue(eval(sum).equals(200.0));
-		assertTrue(eval(sum).equals(300.0));
-    }
 
     @Test
 	public void spaceTask() throws Exception {

@@ -85,19 +85,39 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
                     cxt.putValue(BEAN_SESSION, id);
                     logger.info("using session: {}", id);
                 }
-                List<Path> paths;
+                Signature.Paths paths;
                 Signature.SessionPaths sessionPaths = cxt.getReturnPath().sessionPaths;
                 if (sessionPaths != null) {
+                    paths = sessionPaths.getPaths(Signature.Append.class);
+                    if (paths != null && paths.size() > 0) {
+                        write(ps, cxt, paths);
+                    }
                     paths = sessionPaths.getPaths(Signature.Read.class);
                     if (paths != null && paths.size() > 0) {
-                        read(ps, cxt, paths);
+                        if (paths.size() == 1 && paths.get(0).path.equals("*")) {
+                            cxt.getDataContext().append(ps);
+                            cxt.getDataContext().remove(id);
+                        } else {
+                            read(ps, cxt, paths);
+                        }
                     }
                 }
+
                 Task out = delegate.exertBeanTask((Task) mogram, bean, args);
+
                 if (sessionPaths != null) {
                     paths = sessionPaths.getPaths(Signature.Write.class);
                     if (paths != null && paths.size() > 0) {
                         write(ps, out.getDataContext(), paths);
+                    }
+                    paths = sessionPaths.getPaths(Signature.State.class);
+                    if (paths != null && paths.size() > 0) {
+                        if (paths.size() == 1 && paths.get(0).path.equals("*")) {
+                            out.getDataContext().append(ps);
+                            out.getDataContext().remove(id);
+                        } else {
+                            read(ps, out.getDataContext(), paths);
+                        }
                     }
                 }
                 return out;
@@ -166,11 +186,20 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
         sessions.clear();
     }
 
-    public Context read(Context session, Context taskContext, List<Path> paths) throws ContextException {
+    public Context get(Context session, Context taskContext, List<Path> paths) throws ContextException {
+        for (Path p : paths) {
+            if (session.containsPath(p.path)) {
+                taskContext.putOutValue(p.path, taskContext.getValue(p.path));
+            }
+        }
+        return taskContext;
+    }
+
+    public Context read(Context session, Context taskContext, Signature.Paths paths) throws ContextException {
         Iterator it = ((ServiceContext) session).entryIterator();
         while (it.hasNext()) {
             Map.Entry e = (Map.Entry) it.next();
-            if (paths.contains(e.getKey())) {
+            if (paths.containsPath((String) e.getKey())) {
                 taskContext.putInValue((String) e.getKey(), session.getValue((String) e.getKey()));
             }
         }

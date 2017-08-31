@@ -1081,6 +1081,7 @@ public class operator extends sorcer.operator {
 		List<MapContext> connList = new ArrayList<MapContext>();
 		ServiceType srvType = null;
 		Args args = null;
+		Provider provider = null;
 		if (items != null) {
 			for (Object o : items) {
 				if (o instanceof ProviderName) {
@@ -1103,7 +1104,9 @@ public class operator extends sorcer.operator {
 //                        logger.warn("failed to load fiType for: {}", srvType.typeName);
 //                        serviceType = Object.class;
 //                    }
-				} else if (o instanceof Args) {
+				} else if (o instanceof Provider) {
+                    provider = (Provider) o;
+                } else if (o instanceof Args) {
 					args = (Args) o;
 				}
 			}
@@ -1121,6 +1124,19 @@ public class operator extends sorcer.operator {
                 sig = new NetSignature(operation, serviceType, providerName);
             } else {
                 sig = new ObjectSignature(operation, serviceType);
+                if (provider != null) {
+                    // loclal SessionBeanProvider
+                    if (provider instanceof SessionBeanProvider) {
+                        Object bean = null;
+                        try {
+                            bean = sig.getServiceType().newInstance();
+                        } catch (InstantiationException | IllegalAccessException e) {
+                            throw new SignatureException(e);
+                        }
+                        ((SessionBeanProvider)provider).setBean(bean);
+                    }
+                    ((ObjectSignature)sig).setTarget(provider);
+                }
                 sig.setProviderName(providerName);
 				if (args != null) {
 					((ObjectSignature)sig).setArgs(args.args);
@@ -2718,8 +2734,8 @@ public class operator extends sorcer.operator {
 		return new ReturnPath(path, sessionPaths);
 	}
 
-	public static SessionPaths session(ArrayList<Path>... arrayLists) {
-		return new SessionPaths(arrayLists);
+	public static SessionPaths session(Paths... pathsArray) {
+		return new SessionPaths(pathsArray);
 	}
 
 	public static ReturnPath self() {

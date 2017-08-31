@@ -70,29 +70,41 @@ public class LocalMograms {
 		assertTrue(id(out).equals(cid));
 	}
 
-	@Test
-	public void sessionValueTask() throws Exception  {
+    @Test
+    public void sessionUpdateTasks() throws Exception  {
 
-		Task t5 = task("t5", sig("add", SessionBeanProvider.class),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("result/y", session(append("arg/x1", "arg/x2"), read("arg/x1", "arg/x2"), write("result/y")))));
+        Object provider = SessionBeanProvider.class.newInstance();
+        Task t5 = task("t5", sig("add", AdderImpl.class, provider),
+                cxt("t5-add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+                        result("result/y", session(append("arg/x1", "arg/x2"), read("arg/x1", "arg/x2"), write("result/y")))));
 
-//        Uuid sid = id(context(t5));
-		logger.info("ZZZZZZZZZZ context1: " + context(exert(t5)));
+        Uuid cid = id(context(t5));
+        Context out = context(exert(t5));
+        logger.info("out: " + out);
+        assertTrue(value(out, "result/y").equals(100.0));
+        // no sessions yet
+        assertTrue(value(out, "bean/session") == null);
 
-//        setId(context(t5), sid);
-		logger.info("ZZZZZZZZZZ context2: " + context(exert(t5)));
+        Task t6 = task("t6", sig("nothing", AdderImpl.class, provider),
+                cxt("t6-add", result(session(state("arg/x1", "arg/x2", "result/y")))));
 
-//        setId(context(t5), sid);
-		logger.info("ZZZZZZZZZZ context3: " + context(exert(t5)));
-		// get the result eval
-//        assertTrue(eval(t5).equals(100.0));
+        setId(context(t6), id(out));
+        out = context(exert(t6));
+        logger.info("out: " + out);
+        assertTrue(value(out, "result/y").equals(100.0));
+        // session from the previous call
+        assertTrue(value(out, "bean/session").equals(cid));
 
-//        // get the subcontext output from the exertion
-//        assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-//                eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+        Task t7 = task("t7", sig("nothing", AdderImpl.class, provider),
+                cxt("t7-add", result(session(state("*")))));
 
-	}
+        setId(context(t7), id(out));
+        out = context(exert(t7));
+        logger.info("out: " + out);
+        assertTrue(value(out, "result/y").equals(100.0));
+        // session from the previous call
+        assertTrue(value(out, "bean/session").equals(cid));
+    }
 
 	@Test
 	public void evaluateTask() throws SignatureException, ExertionException, ContextException {
