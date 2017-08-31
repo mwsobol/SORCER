@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.core.provider.SessionBeanProvider;
+import sorcer.provider.adder.impl.AdderImpl;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
@@ -49,28 +51,32 @@ public class NetMograms {
 				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
-    @Test
-    public void valueTask() throws Exception  {
+	@Test
+	public void valueTask() throws SignatureException, ExertionException, ContextException  {
 
-        Task t5 = task("t5", sig("add", Adder.class),
-                cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+		Task t5 = task("t5", sig("add", Adder.class),
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-//        Uuid sid = id(context(t5));
-        logger.info("ZZZZZZZZZZ context1: " + context(exert(t5)));
+		// get the result eval
+		assertTrue(eval(t5).equals(100.0));
 
-//        setId(context(t5), sid);
-		logger.info("ZZZZZZZZZZ context2: " + context(exert(t5)));
+		// get the subcontext output from the exertion
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
+				eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
 
-//        setId(context(t5), sid);
-		logger.info("ZZZZZZZZZZ context3: " + context(exert(t5)));
-        // get the result eval
-//        assertTrue(eval(t5).equals(100.0));
+	}
 
-//        // get the subcontext output from the exertion
-//        assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-//                eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+	@Test
+	public void beanValueTask() throws Exception  {
 
-    }
+		Task t5 = task("t5", sig("add", Adder.class, prvName("Session Adder")),
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+
+        Uuid cid = id(context(t5));
+		Context out = context(exert(t5));
+		assertTrue(value(out, "result/y").equals(100.0));
+		assertTrue(id(out).equals(cid));
+	}
 
     @Test
     public void sessionTask() throws SignatureException, ExertionException, ContextException  {
@@ -104,7 +110,7 @@ public class NetMograms {
 
 		// three entry model
 		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-				ent(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+				ent(sig("add", Adder.class, prvName("Adder"), result("result/y", inPaths("arg/x1", "arg/x2")))),
 				sorcer.mo.operator.response("add", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);

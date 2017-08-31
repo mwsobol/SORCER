@@ -25,9 +25,6 @@ import java.util.Iterator;
  */
 public interface ServiceSession {
 
-        public static  String SESSION_READ = "session/read/context";
-
-        public static  String SESSION_WRITE = "session/write/context";
         /**
          * Returns the last time the requestor sent a request associated with this
          * session, as the number of milliseconds since midnight January 1, 1970

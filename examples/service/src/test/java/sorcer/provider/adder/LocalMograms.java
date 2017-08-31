@@ -1,11 +1,13 @@
 package sorcer.provider.adder;
 
+import net.jini.id.Uuid;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.core.provider.SessionBeanProvider;
 import sorcer.provider.adder.impl.AdderImpl;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -48,6 +50,48 @@ public class LocalMograms {
 		// get the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("eval/result", 100.0)).equals(
 				value(cxt, outPaths("arg/x1", "eval/result"))));
+	}
+
+	@Test
+	public void exertSessionBeanTask() throws Exception  {
+
+		Task t5 = task("t5", sig("add", AdderImpl.class, SessionBeanProvider.class),
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+
+		Uuid cid = id(context(t5));
+		Context out = context(exert(t5));
+		assertTrue(value(out, "result/y").equals(100.0));
+		assertTrue(value(out, "bean/session") == null);
+		assertTrue(id(out).equals(cid));
+
+		out = context(exert(t5));
+		assertTrue(value(out, "result/y").equals(100.0));
+		assertTrue(value(out, "bean/session").equals(cid));
+		assertTrue(id(out).equals(cid));
+	}
+
+	@Test
+	public void sessionValueTask() throws Exception  {
+
+		Task t5 = task("t5", sig("add", SessionBeanProvider.class),
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+						result("result/y", session(append("arg/x1", "arg/x2"), read("arg/x1", "arg/x2"), write("result/y")))));
+
+//        Uuid sid = id(context(t5));
+		logger.info("ZZZZZZZZZZ context1: " + context(exert(t5)));
+
+//        setId(context(t5), sid);
+		logger.info("ZZZZZZZZZZ context2: " + context(exert(t5)));
+
+//        setId(context(t5), sid);
+		logger.info("ZZZZZZZZZZ context3: " + context(exert(t5)));
+		// get the result eval
+//        assertTrue(eval(t5).equals(100.0));
+
+//        // get the subcontext output from the exertion
+//        assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
+//                eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+
 	}
 
 	@Test

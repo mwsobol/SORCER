@@ -374,6 +374,159 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 		}
 	}
 
+	public static class Read extends ArrayList<Path> implements Arg {
+		private static final long serialVersionUID = 1L;
+
+		public Read() {
+			super();
+		}
+
+		public Read(Path[] paths) {
+			for (Path path : paths) {
+				add(path) ;
+			}
+		}
+		public Read(String[] names) {
+			for (String name : names) {
+				add(new Path(name)) ;
+			}
+		}
+
+		public Read(int initialCapacity) {
+			super(initialCapacity);
+		}
+
+		public String[] getPaths() {
+			String[] paths = new String[size()];
+			for (int i = 0; i < size(); i++)
+				paths[i] = get(i).path();
+
+			return paths;
+		}
+
+		public Path[] getSigPaths() {
+			Path[] paths = new Path[size()];
+			return this.toArray(paths);
+		}
+
+		@Override
+		public String getName() {
+			return toString();
+		}
+	}
+
+	public static class Write extends ArrayList<Path> implements Arg {
+		private static final long serialVersionUID = 1L;
+
+		public Write() {
+			super();
+		}
+
+		public Write(Path[] paths) {
+			for (Path path : paths) {
+				add(path) ;
+			}
+		}
+		public Write(String[] names) {
+			for (String name : names) {
+				add(new Path(name)) ;
+			}
+		}
+
+		public Write(int initialCapacity) {
+			super(initialCapacity);
+		}
+
+		public String[] getPaths() {
+			String[] paths = new String[size()];
+			for (int i = 0; i < size(); i++)
+				paths[i] = get(i).path();
+
+			return paths;
+		}
+
+		public Path[] getSigPaths() {
+			Path[] paths = new Path[size()];
+			return this.toArray(paths);
+		}
+
+		@Override
+		public String getName() {
+			return toString();
+		}
+	}
+
+	public static class Append extends ArrayList<Path> implements Arg {
+		private static final long serialVersionUID = 1L;
+
+		public Append() {
+			super();
+		}
+
+		public Append(Path[] paths) {
+			for (Path path : paths) {
+				add(path) ;
+			}
+		}
+		public Append(String[] names) {
+			for (String name : names) {
+				add(new Path(name)) ;
+			}
+		}
+
+		public Append(int initialCapacity) {
+			super(initialCapacity);
+		}
+
+		public String[] getPaths() {
+			String[] paths = new String[size()];
+			for (int i = 0; i < size(); i++)
+				paths[i] = get(i).path();
+
+			return paths;
+		}
+
+		public Path[] getSigPaths() {
+			Path[] paths = new Path[size()];
+			return this.toArray(paths);
+		}
+
+		@Override
+		public String getName() {
+			return toString();
+		}
+	}
+
+    public static class SessionPaths extends ArrayList<ArrayList<Path>> implements Arg {
+        private static final long serialVersionUID = 1L;
+
+        public SessionPaths() {
+            super();
+        }
+
+        public SessionPaths(ArrayList<Path>[] lists) {
+            for (ArrayList<Path> al : lists) {
+                add(al);
+            }
+        }
+
+        public ArrayList<Path> getPaths(Class<?> clazz) {
+            for(ArrayList al : this) {
+                if (clazz.isInstance(al)) {
+                    return al;
+                }
+                break;
+            }
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return toString();
+        }
+    }
+
+
     public static class Operation implements Serializable, Arg {
         static final long serialVersionUID = 1L;
 
@@ -462,9 +615,10 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 		public String path;
 		public Direction direction;
 		public Path[] outPaths;
-		public Path[] inPaths;
-		public Class<T> type;
+        public Path[] inPaths;
+        public Class<T> type;
 		private Context dataContext;
+        public SessionPaths sessionPaths;
 
 		public ReturnPath() {
 			// return the context
@@ -508,6 +662,16 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 				this.inPaths = inPaths.toArray(ps);
 			}
 			direction = Direction.INOUT;
+		}
+
+        public ReturnPath(String path, In inPaths, Out outPaths, SessionPaths sessionPaths) {
+		    this(path, inPaths, outPaths);
+            this.sessionPaths = sessionPaths;
+        }
+
+		public ReturnPath(String path, SessionPaths sessionPaths, Path... argPaths) {
+			this(path, argPaths);
+			this.sessionPaths = sessionPaths;
 		}
 
 		public ReturnPath(String path, Path... argPaths) {

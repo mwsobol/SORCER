@@ -21,6 +21,7 @@ package sorcer.core.exertion;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
+import sorcer.core.provider.Provider;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
@@ -87,8 +88,9 @@ public class ObjectTask extends Task {
 	}
 
 	public Task doTask(Transaction txn, Arg... args) throws SignatureException, RemoteException, MogramException {
-		if (delegate != null)
+		if (delegate != null) {
 			return delegate.doTask(txn);
+		}
 
 		MethodInvoker evaluator = null;
 		ObjectSignature os = (ObjectSignature) getProcessSignature();
@@ -125,6 +127,8 @@ public class ObjectTask extends Task {
 				if (target != null) {
 					if (target instanceof Method) {
 						result = invokeMethod((Method)target, os);
+					} else if (target instanceof Provider) {
+						result = ((Provider) target).exert(this, null).getDataContext();
 					} else {
 						evaluator = new MethodInvoker(target, os.getSelector());
 					}
@@ -133,10 +137,12 @@ public class ObjectTask extends Task {
 					evaluator = new MethodInvoker(prv, os.getSelector());
 				}
 			}
-			if (os.getSelector().equals("evaluate") || os.getSelector().equals("explore")) {
-				evaluator.setParameterTypes(new Class[]{Context.class, Arg[].class});
-			} else {
-				evaluator.setParameterTypes(new Class[]{Context.class});
+			if (evaluator != null) {
+				if (os.getSelector().equals("evaluate") || os.getSelector().equals("explore")) {
+					evaluator.setParameterTypes(new Class[]{Context.class, Arg[].class});
+				} else {
+					evaluator.setParameterTypes(new Class[]{Context.class});
+				}
 			}
 			if (os.getReturnPath() != null)
 				dataContext.setReturnPath(os.getReturnPath());

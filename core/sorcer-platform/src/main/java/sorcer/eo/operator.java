@@ -926,6 +926,22 @@ public class operator extends sorcer.operator {
 		return sig(operation, serviceType, new Object[]{});
 	}
 
+    public static Signature sig(String operation, Class serviceType, Class target)
+            throws SignatureException {
+        Signature ts = sig(operation, serviceType, new Object[]{});
+        try {
+            Object provider = target.newInstance();
+            if (provider instanceof SessionBeanProvider) {
+                Object bean = serviceType.newInstance();
+                ((SessionBeanProvider)provider).setBean(bean);
+            }
+            ((ObjectSignature)ts).setTarget(provider);
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new SignatureException(e);
+        }
+        return ts;
+    }
+
 	public static Signature matchTypes(Signature signature, Class... matchTypes)
 			throws SignatureException {
 		Class[] types = matchTypes;
@@ -2694,6 +2710,18 @@ public class operator extends sorcer.operator {
 		return new ReturnPath(null, paths);
 	}
 
+    public static ReturnPath result(SessionPaths sessionPaths) {
+        return new ReturnPath(null, sessionPaths);
+    }
+
+	public static ReturnPath result(String path, SessionPaths sessionPaths) {
+		return new ReturnPath(path, sessionPaths);
+	}
+
+	public static SessionPaths session(ArrayList<Path>... arrayLists) {
+		return new SessionPaths(arrayLists);
+	}
+
 	public static ReturnPath self() {
 		return new ReturnPath();
 	}
@@ -2712,6 +2740,10 @@ public class operator extends sorcer.operator {
 
 	public static ReturnPath result(String path, In inPaths, Out outPaths) {
 		return new ReturnPath(path, inPaths, outPaths);
+	}
+
+	public static ReturnPath result(String path, In inPaths, Out outPaths, SessionPaths sessionPaths) {
+		return new ReturnPath(path, inPaths, outPaths, sessionPaths);
 	}
 
 	public static ReturnPath result(String path, Direction direction) {

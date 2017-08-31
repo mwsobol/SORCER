@@ -136,16 +136,55 @@ public class operator extends sorcer.operator {
 	}
 
 	public static ServiceSignature.In inPaths(Object... elems) {
-        List<Path> pl = new ArrayList(elems.length);
-        for (Object o : elems) {
-            if (o instanceof String) {
-                pl.add(new Path((String)o));
-            } else if  (o instanceof Path) {
-                pl.add(((Path)o));
-            }
-        }
-        Path[]  pa = new Path[pl.size()];
+		List<Path> pl = new ArrayList(elems.length);
+		for (Object o : elems) {
+			if (o instanceof String) {
+				pl.add(new Path((String)o));
+			} else if  (o instanceof Path) {
+				pl.add(((Path)o));
+			}
+		}
+		Path[]  pa = new Path[pl.size()];
 		return new ServiceSignature.In(pl.toArray(pa));
+	}
+
+	public static ServiceSignature.Read read(Object... elems) {
+		List<Path> pl = new ArrayList(elems.length);
+		for (Object o : elems) {
+			if (o instanceof String) {
+				pl.add(new Path((String)o));
+			} else if  (o instanceof Path) {
+				pl.add(((Path)o));
+			}
+		}
+		Path[]  pa = new Path[pl.size()];
+		return new ServiceSignature.Read(pl.toArray(pa));
+	}
+
+	public static ServiceSignature.Write write(Object... elems) {
+		List<Path> pl = new ArrayList(elems.length);
+		for (Object o : elems) {
+			if (o instanceof String) {
+				pl.add(new Path((String)o));
+			} else if  (o instanceof Path) {
+				pl.add(((Path)o));
+			}
+		}
+		Path[]  pa = new Path[pl.size()];
+		return new ServiceSignature.Write(pl.toArray(pa));
+	}
+
+	public static ServiceSignature.Append append(Object... elems) {
+		List<Path> pl = new ArrayList(elems.length);
+		for (Object o : elems) {
+			if (o instanceof String) {
+				pl.add(new Path((String)o));
+			} else if  (o instanceof Path) {
+				pl.add(((Path)o));
+			}
+		}
+		Path[]  pa = new Path[pl.size()];
+		return new ServiceSignature.Append(pl.toArray(pa));
 	}
 
 	public static Path filePath(String filename) {

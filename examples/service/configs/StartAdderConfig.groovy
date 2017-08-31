@@ -39,11 +39,11 @@ class StartAll {
         def codebase = "${relativeRepoPath}/adder-${sorcerVersion}-dl.jar ${relativeRepoPath}/adder-${sorcerVersion}-ui.jar sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
         def configArg = ["${configPath}/adder-prv.config"]
-//        descriptors << new SorcerServiceDescriptor(codebase,
-//                                                   policy,
-//                                                   "${buildLibPath}/adder-${sorcerVersion}-prv.jar${File.pathSeparator}${buildLibPath}/adder-${sorcerVersion}-ui.jar",
-//                                                   "sorcer.core.provider.ServiceTasker",
-//                                                   configArg as String[])
+        descriptors << new SorcerServiceDescriptor(codebase,
+                                                   policy,
+                                                   "${buildLibPath}/adder-${sorcerVersion}-prv.jar${File.pathSeparator}${buildLibPath}/adder-${sorcerVersion}-ui.jar",
+                                                   "sorcer.core.provider.ServiceTasker",
+                                                   configArg as String[])
 
         configArg = ["${configPath}/adder-session-bean.config"]
         descriptors << new SorcerServiceDescriptor(codebase,

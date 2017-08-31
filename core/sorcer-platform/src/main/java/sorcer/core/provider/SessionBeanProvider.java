@@ -10,14 +10,14 @@ import sorcer.service.*;
 
 import javax.security.auth.Subject;
 import java.rmi.RemoteException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Mike Sobolewski on 8/29/17.
  */
 public class SessionBeanProvider extends ServiceProvider implements SessionManagement {
+
+    private Object bean;
 
     public SessionBeanProvider() throws RemoteException {
         super();
@@ -58,7 +58,6 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
             ExertionException, RemoteException {
         if (mogram instanceof Task) {
             ServiceContext cxt = null;
-            Object bean = null;
             try {
                 cxt = (ServiceContext) mogram.getDataContext();
                 cxt.updateContextWith(mogram.getProcessSignature().getInConnector());
@@ -69,10 +68,12 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
                     logger.info("created new session: {}", id);
                     sessions.put(id, ps);
                     try {
-                        if (delegate.getBeanSignature() != null) {
-                            bean = sorcer.co.operator.instance(delegate.getBeanSignature());
-                        } else {
-                            bean = delegate.getSessionBean().getClass().newInstance();
+                        if (bean == null) {
+                            if (delegate.getBeanSignature() != null) {
+                                bean = sorcer.co.operator.instance(delegate.getBeanSignature());
+                            } else {
+                                bean = delegate.getSessionBean().getClass().newInstance();
+                            }
                         }
                         logger.info("created new bean: {} for: {}", bean, id);
                     } catch (Exception e) {
@@ -81,24 +82,38 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
                     ps.setAttribute(id.toString(), bean);
                 } else {
                     bean = ps.getAttribute(id.toString());
+                    cxt.putValue(BEAN_SESSION, id);
                     logger.info("using session: {}", id);
                 }
-                if (cxt.containsPath(ServiceSession.SESSION_READ)) {
-                    read(ps, cxt, (Context) cxt.get(ServiceSession.SESSION_READ));
+                List<Path> paths;
+                Signature.SessionPaths sessionPaths = cxt.getReturnPath().sessionPaths;
+                if (sessionPaths != null) {
+                    paths = sessionPaths.getPaths(Signature.Read.class);
+                    if (paths != null && paths.size() > 0) {
+                        read(ps, cxt, paths);
+                    }
                 }
                 Task out = delegate.exertBeanTask((Task) mogram, bean, args);
-                if (cxt.containsPath(ServiceSession.SESSION_WRITE)) {
-                    write(ps, out.getDataContext(), (Context) cxt.get(ServiceSession.SESSION_WRITE));
+                if (sessionPaths != null) {
+                    paths = sessionPaths.getPaths(Signature.Write.class);
+                    if (paths != null && paths.size() > 0) {
+                        write(ps, out.getDataContext(), paths);
+                    }
                 }
+                return out;
             } catch (ContextException e) {
                 mogram.reportException(e);
                 e.printStackTrace();
+                mogram.setStatus(Exec.FAILED);
+                return mogram;
             }
         } else if (mogram instanceof Context) {
             return serviceContextOnly((Context) mogram);
+        } else {
+            mogram.reportException(new ExertionException("Wrong mogram for: " +  this.getClass().getSimpleName()));
+            mogram.setStatus(Exec.ERROR);
+            return mogram;
         }
-        mogram.setStatus(Exec.FAILED);
-        return mogram;
     }
 
     /** {@inheritDoc} */
@@ -151,30 +166,31 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
         sessions.clear();
     }
 
-    public Context read(Context session, Context taskContext, Context connector) throws ContextException {
-        if (connector != null) {
-            Iterator it = ((ServiceContext) session).entryIterator();
-            while (it.hasNext()) {
-                Map.Entry e = (Map.Entry) it.next();
-                if (connector.containsPath((String) e.getKey())) {
-                    taskContext.putInValue((String) e.getKey(), session.getValue((String) e.getKey()));
-                }
+    public Context read(Context session, Context taskContext, List<Path> paths) throws ContextException {
+        Iterator it = ((ServiceContext) session).entryIterator();
+        while (it.hasNext()) {
+            Map.Entry e = (Map.Entry) it.next();
+            if (paths.contains(e.getKey())) {
+                taskContext.putInValue((String) e.getKey(), session.getValue((String) e.getKey()));
             }
         }
         return taskContext;
     }
 
-    public Context write(Context session, Context taskContext, Context connector) throws ContextException {
-        if (connector != null) {
-            Iterator it = ((ServiceContext) connector).entryIterator();
-            while (it.hasNext()) {
-                Map.Entry e = (Map.Entry) it.next();
-                if (taskContext.containsPath((String) e.getKey())) {
-                    session.putOutValue((String) e.getKey(), taskContext.getValue((String) e.getKey()));
-                }
+    public Context write(Context session, Context taskContext, List<Path> paths) throws ContextException {
+       for (Path p : paths) {
+            if (taskContext.containsPath(p.path)) {
+                session.putOutValue(p.path, taskContext.getValue(p.path));
             }
         }
         return taskContext;
     }
 
+    public Object getBean() {
+        return bean;
+    }
+
+    public void setBean(Object bean) {
+        this.bean = bean;
+    }
 }

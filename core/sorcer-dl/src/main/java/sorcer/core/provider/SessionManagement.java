@@ -12,6 +12,8 @@ import java.util.Set;
  */
 public interface SessionManagement extends Remote {
 
+    final String BEAN_SESSION = "bean/session";
+
     public Set getSessions() throws RemoteException;
 
     public Context getSession(String id) throws RemoteException;
