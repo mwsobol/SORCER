@@ -79,6 +79,12 @@ public class ObjectSignature extends ServiceSignature {
 		this(null, object, initSelector, argTypes, args);
 	}
 
+	public ObjectSignature(Class<?> clazz, String initSelector) throws InstantiationException,
+			IllegalAccessException {
+		this.serviceType.providerType = clazz;
+		setInitSelector(initSelector);
+	}
+
 	public ObjectSignature(String selector, Object object, String initSelector, Class<?>[] argTypes,
 						   Object... args) throws InstantiationException,
 			IllegalAccessException {
