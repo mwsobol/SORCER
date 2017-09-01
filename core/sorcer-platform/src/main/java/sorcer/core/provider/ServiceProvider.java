@@ -218,6 +218,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	protected ScheduledExecutorService scheduler;
 
+	// a service bean used for local execution in this container
+	protected Object bean;
+
 	/** MBean for JMX access*/
 	private ProviderAdmin providerAdmin;
 
@@ -1512,11 +1515,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				cxt = (ServiceContext) mogram.getDataContext();
 				cxt.updateContextWith(mogram.getProcessSignature().getInConnector());
 				Uuid id = cxt.getId();
+				// a created session to be used in the implementation class of the bean itself
 				ProviderSession ps = sessions.get(id);
 				if (ps == null) {
 					ps = new ProviderSession(id);
 					sessions.put(id, ps);
 				}
+				if (bean != null) {
+                    return delegate.exertBeanTask((Task) mogram, bean, args);
+                }
 			} catch (ContextException e) {
 				e.printStackTrace();
 			}
@@ -2153,5 +2160,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 
 		throw new UnsupportedOperationException("Cannot list files for URL " + dirURL);
+	}
+
+	public Object getBean() {
+		return bean;
+	}
+
+	public void setBean(Object bean) {
+		this.bean = bean;
 	}
 }

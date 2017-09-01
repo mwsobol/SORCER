@@ -17,8 +17,6 @@ import java.util.*;
  */
 public class SessionBeanProvider extends ServiceProvider implements SessionManagement {
 
-    private Object bean;
-
     public SessionBeanProvider() throws RemoteException {
         super();
     }
@@ -215,11 +213,4 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
         return taskContext;
     }
 
-    public Object getBean() {
-        return bean;
-    }
-
-    public void setBean(Object bean) {
-        this.bean = bean;
-    }
 }

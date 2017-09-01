@@ -931,9 +931,9 @@ public class operator extends sorcer.operator {
         Signature ts = sig(operation, serviceType, new Object[]{});
         try {
             Object provider = target.newInstance();
-            if (provider instanceof SessionBeanProvider) {
+            if (provider instanceof ServiceProvider) {
                 Object bean = serviceType.newInstance();
-                ((SessionBeanProvider)provider).setBean(bean);
+                ((ServiceProvider)provider).setBean(bean);
             }
             ((ObjectSignature)ts).setTarget(provider);
         } catch (InstantiationException | IllegalAccessException e) {

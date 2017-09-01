@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.core.provider.ServiceProvider;
 import sorcer.core.provider.SessionBeanProvider;
 import sorcer.provider.adder.impl.AdderImpl;
 import sorcer.service.*;
@@ -29,9 +30,35 @@ public class LocalMograms {
 	private final static Logger logger = LoggerFactory.getLogger(LocalMograms.class);
 
 	@Test
-	public void exertTask() throws Exception {
+	public void exertImplTask() throws Exception {
 
+		// a service bean AdderImpl exerted directy
 		Task t5 = task("t5", sig("add", AdderImpl.class),
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
+
+		Task out = exert(t5);
+		Context cxt = context(out);
+		logger.info("out context: " + cxt);
+		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
+		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
+		logger.info("context @ calculated/provider: " + value(cxt, "calculated/provider"));
+		logger.info("context @ result/eval: " + value(cxt, "eval/result"));
+		// same as "eval/result"
+		logger.info("context @ result/eval: " + value(cxt, Adder.RESULT_PATH));
+
+		// get a single context argument
+		assertEquals(100.0, value(cxt, "eval/result"));
+
+		// get the subcontext output from the context
+		assertTrue(context(ent("arg/x1", 20.0), ent("eval/result", 100.0)).equals(
+				value(cxt, outPaths("arg/x1", "eval/result"))));
+	}
+
+	@Test
+	public void exertBeanTask() throws Exception {
+
+		// a service bean AdderImpl exerted by the ServiceProvider container
+		Task t5 = task("t5", sig("add", AdderImpl.class, ServiceProvider.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		Task out = exert(t5);
@@ -55,6 +82,7 @@ public class LocalMograms {
 	@Test
 	public void exertSessionBeanTask() throws Exception  {
 
+		// a service bean AdderImpl exerted by the SessionBeanProvider container
 		Task t5 = task("t5", sig("add", AdderImpl.class, SessionBeanProvider.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
@@ -76,7 +104,8 @@ public class LocalMograms {
         Object provider = SessionBeanProvider.class.newInstance();
         Task t5 = task("t5", sig("add", AdderImpl.class, provider),
                 cxt("t5-add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                        result("result/y", session(append("arg/x1", "arg/x2"), read("arg/x1", "arg/x2"), write("result/y")))));
+                        result("result/y", session(append("arg/x1", "arg/x2"),
+								read("arg/x1", "arg/x2"), write("result/y")))));
 
         Uuid cid = id(context(t5));
         Context out = context(exert(t5));
