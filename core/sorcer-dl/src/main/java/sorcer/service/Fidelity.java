@@ -16,7 +16,7 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
 
 	protected String path = "";
 
-	protected String option = "";
+	protected Object option = "";
 
 	protected T select;
 
@@ -141,11 +141,11 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
 			this.dependers.add(depender);
 	}
 
-	public String getOption() {
+	public Object getOption() {
 		return option;
 	}
 
-	public void setOption(String option) {
+	public void setOption(Object option) {
 		this.option = option;
 	}
 

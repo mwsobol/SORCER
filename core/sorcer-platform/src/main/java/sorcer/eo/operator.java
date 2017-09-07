@@ -1619,10 +1619,18 @@ public class operator extends sorcer.operator {
 		return fi;
 	}
 
+	public static Fidelity fi(String name, String path, String gradientName, Fidelity subFi) {
+		Fidelity fi = new Fidelity(name, path);
+		fi.fiType = Fidelity.Type.GRADIENT;
+		fi.setSelect(gradientName);
+        fi.setOption(subFi);
+        return fi;
+	}
+
 	public static Fidelity fi(String name, String path, Fidelity subFi) {
 		Fidelity fi = new Fidelity(name, path);
 		fi.fiType = Fidelity.Type.SELECT;
-		fi.setSelect(subFi);
+        fi.setOption(subFi);
 		return fi;
 	}
 
