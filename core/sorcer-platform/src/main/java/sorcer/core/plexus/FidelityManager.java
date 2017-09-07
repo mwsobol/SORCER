@@ -375,6 +375,10 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         }
     }
 
+    public String getProjectionFi(String projectionName) {
+        return metafidelities.get(projectionName).getSelects().get(0).getName();
+    }
+
     public boolean isTraced() {
         return isTraced;
     }

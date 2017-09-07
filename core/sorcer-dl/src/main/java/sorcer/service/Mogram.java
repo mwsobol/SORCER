@@ -320,6 +320,13 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
     public void update(Setup... contextEntries) throws ContextException, RemoteException;
 
     /**
+     * Returns the first fidelity name of a given projection.
+     *
+     * @param projectionName
+     */
+    public String getProjectionFi(String projectionName) throws ContextException, RemoteException;
+
+    /**
      * Check if this context is export controlled, accessible to principals from
      * export controlled countries.
      *

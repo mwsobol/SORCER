@@ -1066,6 +1066,11 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
        return mdaFi;
     }
 
+    @Override
+    public String getProjectionFi(String projectionName) throws ContextException, RemoteException {
+        return ((FidelityManager)fiManager).getProjectionFi(projectionName);
+    }
+
     public Differentiator getDifferentiator() {
         return differentiator;
     }
