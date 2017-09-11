@@ -48,6 +48,29 @@ public class operator extends sorcer.operator {
 
 	private static final Logger logger = LoggerFactory.getLogger(operator.class.getName());
 
+	public static Neo neo(String path, double signal) {
+		return new Neo(path, signal);
+	}
+
+    public static Neo neo(String path, Args signals) {
+        return new Neo(path, signals);
+    }
+
+    public static Neo neo(String path, Args signals, Context<Float> weights) {
+        return new Neo(path, signals, weights);
+    }
+
+    public static Entry th(String path, double threshold) {
+	    Entry e = new Entry(path, threshold);
+	    e.setType(Variability.Type.THRESHOLD);
+        return e;
+    }
+
+    public static Entry bias(String path, double bias) {
+        Entry e = new Entry(path, bias);
+        e.setType(Variability.Type.BIAS);
+        return e;
+    }
 
 	public static <T> Proc<T> proc(String path, T argument) throws EvaluationException, RemoteException {
 		return new Proc(path, argument);
@@ -201,6 +224,11 @@ public class operator extends sorcer.operator {
         return fi;
     }
 
+    public static ProcModel neoModel(String name, Object... objects)
+            throws ContextException, RemoteException {
+	    return procModel(name, objects);
+    }
+
 	public static ProcModel procModel(String name, Object... objects)
 			throws RemoteException, ContextException {
 		ProcModel pm = new ProcModel(name);
@@ -315,6 +343,11 @@ public class operator extends sorcer.operator {
 			throws ContextException, RemoteException {
 		return invoker.invoke(context, parameters);
 	}
+
+    public static Object activate(ProcModel procModel, String parname, Arg... parameters)
+            throws RemoteException, InvocationException {
+	    return invoke(procModel, parname, parameters);
+    }
 
 	public static Object invoke(ProcModel procModel, String parname, Arg... parameters)
 			throws RemoteException, InvocationException {

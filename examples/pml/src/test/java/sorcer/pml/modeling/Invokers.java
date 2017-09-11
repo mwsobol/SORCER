@@ -10,6 +10,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.core.context.model.ent.Neo;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.AltInvoker;
@@ -114,6 +115,25 @@ public class Invokers {
 		assertEquals(invoke(pm, "expr"), 60.0);
 		logger.info("get eval: " + value(pm, "expr"));
 		assertTrue(value(pm, "expr").equals(60.0));
+	}
+
+	@Test
+	public void serviceNeurons() throws Exception {
+		ProcModel pm = neoModel("neural-model");
+		add(pm, neo("x1", 10.0), neo("x2", 20.0));
+		add(pm, neo("x3", signals("x1", "x2"), weights(val("x1", 2.0), val("x2", 10.0))));
+
+//        logger.info("activate x1: " + activate(pm, "x1"));
+        assertEquals(activate(pm, "x1"), 10.0);
+
+//        logger.info("activate x3: " + activate(pm, "x3"));
+        assertEquals(activate(pm, "x3"), 220.0);
+
+//        logger.info("activate x3: " + activate(pm, "x3", th("x3", 200.0)));
+        assertEquals(activate(pm, "x3", th("x3", 200.0)), 1.0);
+
+//        logger.info("activate x3: " + activate(pm, "x3", th("x3", 0.0), bias("x3", 50.0)));
+        assertEquals(activate(pm, "x3", th("x3", 0.0), bias("x3", 50.0)), 270.0);
 	}
 
 	@Test

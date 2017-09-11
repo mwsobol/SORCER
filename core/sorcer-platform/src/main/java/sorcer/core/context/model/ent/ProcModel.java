@@ -192,7 +192,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 					}
 				}
 			}
-			return super.putValue(path, value);
+			return super.put(path, value);
 		} catch (RemoteException e) {
 			throw new ContextException(e);
 		}

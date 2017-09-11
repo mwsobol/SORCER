@@ -106,7 +106,7 @@ public class ServiceInvoker<T> extends Observable implements  Invocation<T>, Ide
 			.getName());
 
 	public ServiceInvoker() {
-		this("invoker-" + count++);
+		this((String) null);
 	}
 	
 	public ServiceInvoker(String name) {

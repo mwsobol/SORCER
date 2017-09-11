@@ -234,6 +234,10 @@ public class operator extends sorcer.operator {
 		return context(entries);
 	}
 
+    public static Context<Float> weights(Entry... entries) throws ContextException {
+        return context((Object[])entries);
+    }
+
 	public static Context context(Object... entries) throws ContextException {
 		// do not create a context from Context, jut return
 		if (entries == null || entries.length == 0) {
@@ -2990,6 +2994,10 @@ public class operator extends sorcer.operator {
 		public String toString() {
 			return "types: " + Arrays.toString(parameterTypes);
 		}
+	}
+
+	public static Args signals(Object... args) {
+		return new Args(args);
 	}
 
 	public static Args args(Object... args) {
