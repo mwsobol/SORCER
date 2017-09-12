@@ -1521,6 +1521,30 @@ public class operator extends sorcer.operator {
 		return fi;
 	}
 
+	public static ServiceFidelity<NeoFidelity> mnFi(NeoFidelity... fidelities) {
+		ServiceFidelity<NeoFidelity> fi = new ServiceFidelity(fidelities);
+		fi.fiType = ServiceFidelity.Type.NEO;
+		return fi;
+	}
+
+    public static NeoFidelity nFi(String name, Args args, Context<Float> weights, Entry... entries) {
+        NeoFidelity fi = new NeoFidelity(name, args, weights, entries);
+        fi.fiType = ServiceFidelity.Type.NEO;
+        return fi;
+    }
+
+    public static NeoFidelity nFi(String name, Args args, Entry... entries) {
+        NeoFidelity fi = new NeoFidelity(name, args, null, entries);
+        fi.fiType = ServiceFidelity.Type.NEO;
+        return fi;
+    }
+
+    public static NeoFidelity nFi(String name, Context<Float> weights, Entry... entries) {
+        NeoFidelity fi = new NeoFidelity(name, weights, entries);
+        fi.fiType = ServiceFidelity.Type.NEO;
+        return fi;
+    }
+
 	public static ServiceFidelity<Entry> eFi(Entry... entries) {
 		ServiceFidelity<Entry> fi = new ServiceFidelity(entries);
 		fi.fiType = ServiceFidelity.Type.ENTRY;

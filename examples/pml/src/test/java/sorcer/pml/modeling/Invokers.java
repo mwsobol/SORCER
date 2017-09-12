@@ -137,6 +137,25 @@ public class Invokers {
 	}
 
 	@Test
+	public void serviceNeuronFidelities() throws Exception {
+		ProcModel pm = neoModel("neural-model");
+		add(pm, neo("x1", 10.0), neo("x2", 20.0));
+		add(pm, neo("x3", signals("x1", "x2"), weights(val("x1", 2.0), val("x2", 5.0))));
+		add(pm, neo("x4", mnFi(
+				nFi("n1", signals("x1", "x2"), weights(val("x1", 1.5), val("x2", 10.0))),
+				nFi("n2", signals("x1", "x2"), weights(val("x1", 2.0), val("x2", 12.0))))));
+
+//      logger.info("activate1 x4: " + activate(pm, "x4", fi("x4", "n1")));
+		assertEquals(activate(pm, "x4", fi("x4", "n1")), 215.0);
+//
+//		logger.info("activate2 x4: " + activate(pm, "x4", th("x4", 200.0), fi("x4", "n1")));
+		assertEquals(activate(pm, "x4", th("x4", 200.0), fi("x4", "n1")), 1.0);
+
+//      logger.info("activate3 x4: " + activate(pm, "x4", th("x4", 0.0), fi("x4", "n2")));
+        assertEquals(activate(pm, "x4", th("x4", 0.0), fi("x4", "n2")), 260.0);
+	}
+
+	@Test
 	public void invokeTask() throws Exception {
 		Task t4 = task(
 				"t4",
