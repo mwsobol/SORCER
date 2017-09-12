@@ -60,6 +60,10 @@ public class operator extends sorcer.operator {
         return new Neo(path, signals, weights);
     }
 
+	public static Neo neo(String path, ServiceFidelity<NeoFidelity> fidelities) {
+		return new Neo(path, fidelities);
+	}
+
     public static Entry th(String path, double threshold) {
 	    Entry e = new Entry(path, threshold);
 	    e.setType(Variability.Type.THRESHOLD);

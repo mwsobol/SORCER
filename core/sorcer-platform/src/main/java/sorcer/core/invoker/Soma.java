@@ -18,9 +18,11 @@
 package sorcer.core.invoker;
 
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.NeoFidelity;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
 
+import java.io.FileFilter;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -36,7 +38,9 @@ public class Soma extends ServiceInvoker<Double> {
 		defaultName = "soma-";
 	}
 
-	// linear transformation of the input vector
+    protected ServiceFidelity<NeoFidelity> fidelities;
+
+    // linear transformation of the input vector
     double bias = 0.0;
 
 	// for step function
@@ -93,15 +97,24 @@ public class Soma extends ServiceInvoker<Double> {
 	public Double activate(Arg... entries) throws EvaluationException, RemoteException {
         List<String> names = args.getNames();
         for (Arg arg : entries) {
-            if (arg instanceof Entry) {
+            if (arg instanceof Fidelity) {
+                if (arg.getName().equals(name)) {
+                    fidelities.setSelect(((Fidelity) arg).getPath());
+                }
+            } else if (arg instanceof Entry) {
                 if (((Entry) arg).getType() == Variability.Type.THRESHOLD
                         && name.equals(arg.getName())) {
                     threshold = (double) ((Entry) arg).get();
                 } else if (((Entry) arg).getType() == Variability.Type.BIAS
                         && name.equals(arg.getName())) {
                     bias = (double) ((Entry) arg).get();
+
                 }
             }
+        }
+
+        if (fidelities != null && fidelities.getSelect() != null) {
+            applyFidelity();
         }
         double sum = 0.0;
         for (String name : args.getNames()) {
@@ -109,7 +122,7 @@ public class Soma extends ServiceInvoker<Double> {
             double wt = (double) weights.get(name);
             sum = sum + (in * wt);
         }
-		sum = sum + bias;
+        sum = sum + bias;
 
         if (rectified) {
             // if rectified linear soma
@@ -124,5 +137,30 @@ public class Soma extends ServiceInvoker<Double> {
             }
         }
         return sum;
-	}
+    }
+
+    public ServiceFidelity<NeoFidelity> getFidelities() {
+        return fidelities;
+    }
+
+    public void setFidelities(ServiceFidelity<NeoFidelity> fidelities) {
+        this.fidelities = fidelities;
+    }
+
+	private void applyFidelity() {
+          NeoFidelity fi = fidelities.getSelect();
+          if (fi.getWeights() != null) {
+              weights = fi.getWeights();
+          }
+        if (fi.getArgs() != null && fi.getArgs().size() > 0) {
+            args = fi.getArgs().argSet();
+        }
+        if (fi.getThreshold() != null) {
+            threshold = fi.getThreshold();
+        }
+        if (fi.getBias() != null) {
+            bias = fi.getBias();
+        }
+    }
+
 }

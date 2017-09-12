@@ -48,10 +48,8 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 
 	protected Soma soma;
 
-	protected Entry selectedFidelity;
+	protected ServiceFidelity<NeoFidelity> fidelities;
 
-	// proc fidelities for this proc
-	protected ServiceFidelity<Entry> fidelities;
 
 	public Neo(String name) {
 		super(name);
@@ -87,6 +85,11 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 
     }
 
+	public Neo(String name, ServiceFidelity<NeoFidelity> fidelities) {
+		this(name);
+		this.fidelities= fidelities;
+	}
+
     /* (non-Javadoc)
 	 * @see sorcer.service.Evaluation#substitute(sorcer.co.tuple.Parameter[])
 	 */
@@ -103,8 +106,7 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 
 					}
 				} else if (p instanceof Fidelity && fidelities != null) {
-					selectedFidelity = fidelities.getSelect(((Fidelity)p).getName());
-                    fidelities.setSelect(((Fidelity)p).getName());
+                    fidelities.setSelect(p.getName());
 				} else if (p instanceof Context) {
 					if (scope == null)
 						scope = (Context) p;
@@ -243,19 +245,6 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 		isPersistent = state;
 	}
 
-	public ServiceFidelity<Entry> getFidelities() {
-		return fidelities;
-	}
-
-	@Override
-	public Object getSelectedFidelity() {
-		return selectedFidelity;
-	}
-
-	public void setSelectedFidelity(Entry selectedFidelity) {
-		this.selectedFidelity = selectedFidelity;
-	}
-	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Invocation#invoke(sorcer.service.Context, sorcer.service.Arg[])
 	 */
@@ -270,7 +259,9 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
                     soma.getScope().append(context);
                 }
             }
-            if (soma.getArgs().size() == 0) {
+            if (fidelities != null) {
+               soma.setFidelities(fidelities);
+            } else if (soma.getArgs().size() == 0) {
                 return _2;
             }
             _2 = soma.activate(args);
@@ -317,17 +308,8 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 	 */
 	public void setScope(Object scope) throws RemoteException {
 		this.scope = (Context)scope;
-		
-	}
 
-	public void selectFidelity(String name) throws EntException {
-		selectedFidelity = fidelities.getSelect(name);
 	}
-
-	public void setFidelities(ServiceFidelity<Entry> fidelities) {
-		this.fidelities = fidelities;
-	}
-
 
 	@Override
 	public boolean isReactive() {
@@ -345,8 +327,16 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 		}
 	}
 
+	public ServiceFidelity<NeoFidelity> getFidelities() {
+			return fidelities;
+	}
+
+	public void setFidelities(ServiceFidelity<NeoFidelity> fidelities) {
+			this.fidelities = fidelities;
+    }
+
     @Override
-    public Double getPerturbedValue(String varName) throws EvaluationException, RemoteException {
+	public Double getPerturbedValue(String varName) throws EvaluationException, RemoteException {
         return (Double)(soma.getScope().get(varName)) + bias;
     }
 
