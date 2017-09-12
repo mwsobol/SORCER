@@ -2755,18 +2755,19 @@ public class ProviderDelegate {
                 initBean(bean);
                 allBeans.add(bean);
                 exports.put(bean, this);
-            } else {
+				logger.warn("session bean: {} \nfor: {}", beanSignature, getProviderName());
+			} else {
                 // find it out if session service bean is available
                 sessionBean = config.getEntry(ServiceProvider.COMPONENT,
                         SESSION_BEAN,
                         Object.class,
                         null);
-                logger.warn("session bean: {} \nfor: {}", sessionBean, getProviderName());
                 if (sessionBean != null) {
                     initBean(sessionBean);
                     allBeans.add(sessionBean);
                     exports.put(sessionBean, this);
-                } else {
+					logger.warn("session bean: {} \nfor: {}", sessionBean, getProviderName());
+				} else {
                     otherServiceBeans(config, allBeans);
                 }
             }
@@ -2808,10 +2809,8 @@ public class ProviderDelegate {
                         SERVER_EXPORTER,
                         Exporter.class,
                         null);
-                if (partnerExporter == null) {
-                    logger.warn("NO provider inner exporter defined!!!");
-                } else {
-                    logger.debug("your partner exporter: {}", partnerExporter);
+                if (partnerExporter != null) {
+                    logger.warn("your partner exporter: {}", partnerExporter);
                 }
             }
         } catch (Exception ex) {

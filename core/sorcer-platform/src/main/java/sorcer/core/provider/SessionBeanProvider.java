@@ -73,11 +73,11 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
                                 bean = delegate.getSessionBean().getClass().newInstance();
                             }
                         }
+                        ps.setAttribute(id.toString(), bean);
                         logger.info("created new bean: {} for: {}", bean, id);
                     } catch (Exception e) {
                         throw new ExertionException(e);
                     }
-                    ps.setAttribute(id.toString(), bean);
                 } else {
                     bean = ps.getAttribute(id.toString());
                     cxt.putValue(BEAN_SESSION, id);
