@@ -3279,7 +3279,7 @@ public class ServiceContext<T> extends ServiceMogram implements
                 Class serviceType = task.getServiceType();
                 if (provider != null) {
 					Task out = ((ServiceProvider)provider).getDelegate().doTask(task, txn, args);
-					// clear provider execution scope
+					// clearSessions provider execution scope
 					out.getContext().setScope(null);
 					return (T) out;
                 } else if (Invocation.class.isAssignableFrom(serviceType)) {

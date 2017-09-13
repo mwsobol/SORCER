@@ -238,7 +238,7 @@ public class GlyphView extends JComponent{
 		//there's only one
 		_lastSelected=_selected;
 		if(!SorcerServiceBrowser.PROPS_MODE){
-			//clear if not in props mode
+			//clearSessions if not in props mode
 			_selected=null;
 		}
 		

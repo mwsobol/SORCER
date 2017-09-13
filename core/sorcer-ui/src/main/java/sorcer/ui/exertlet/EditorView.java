@@ -360,7 +360,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				return;
 			} else if (EXERT_LABEL.equals(command)) {
 				String script = editPane.getText();
-				// clear the previous feedback
+				// clearSessions the previous feedback
 				feedbackPane.setText("");
 				if (model != null) {
 					runTaskScript(script);

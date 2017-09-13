@@ -1623,7 +1623,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 
 				tp.addChangeListener(new ChangeListener() {
 					public void stateChanged(ChangeEvent evt) {
-						// clear the eventview
+						// clearSessions the eventview
 						tp.setComponentAt(2, emptyPanel);
 						if (tp.getSelectedIndex() == 1) {
 							SwingUtilities.invokeLater(wrap(new Runnable() {
@@ -2096,7 +2096,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 		DefaultMutableTreeNode node = getNode(sid);
 		if (node != null) {
 			if (node == _selectedNode) {
-				// clear the right pane
+				// clearSessions the right pane
 				showRightPaneImpl(null);
 			}
 			DefaultTreeModel model = (DefaultTreeModel) _tree.getModel();
@@ -2112,7 +2112,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 			ServiceNode sn = (ServiceNode) serviceNode.getUserObject();
 			if (sn.sameServiceID(sid)) {
 				if (serviceNode == _selectedNode) {
-					// clear the right pane
+					// clearSessions the right pane
 					showRightPaneImpl(null);
 				}
 				DefaultTreeModel model = (DefaultTreeModel) _tree2.getModel();

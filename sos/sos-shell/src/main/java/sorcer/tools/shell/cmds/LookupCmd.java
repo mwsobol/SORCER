@@ -57,7 +57,7 @@ public class LookupCmd extends ShellCmd {
 			+ "\n  -p   show services based on the " + Provider.class.getName() + " interface" 
 			+ "\n  <service index>   show and select the fetched <service index> provider"
 			+ "\n  -v   show the selected provider"
-			+ "\n  -x   clear the selected provider"
+			+ "\n  -x   clearSessions the selected provider"
 			+ "\n  -n   show service based on the name attribute eval"
 			+ "\n  -t   show services based on the fiType name"
 			+ "\n  --d <service index>	  destroy the <provider index> provider";

@@ -897,17 +897,17 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	protected static class ClearCmd extends ShellCmd {
 
 		{
-			COMMAND_NAME = "clear";
+			COMMAND_NAME = "clearSessions";
 
 			NOT_LOADED_MSG = "***command not loaded due to conflict";
 
-			COMMAND_USAGE = "clear -a | -p | -m | -e";
+			COMMAND_USAGE = "clearSessions -a | -p | -m | -e";
 
 			COMMAND_HELP = "Clear fetched from the network resorces;"
-					+ "  -a   clear all cached resources"
-					+ "  -p   clear service providers"
-					+ "  -m   clear EMX providers"
-					+ "  -e   clear monitored exertion infos";
+					+ "  -a   clearSessions all cached resources"
+					+ "  -p   clearSessions service providers"
+					+ "  -m   clearSessions EMX providers"
+					+ "  -e   clearSessions monitored exertion infos";
 		}
 		
 		public void execute(String... args) throws IOException, InterruptedException {
@@ -1742,7 +1742,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	{
 		aliases = new HashMap<String, String>();
 		aliases.put("xrt", "exert");
-		aliases.put("cls", "clear");
+		aliases.put("cls", "clearSessions");
 		aliases.put("ed", "edit");
 		aliases.put("shh", "sh -h");
 		aliases.put("shn", "sh -n");
@@ -1769,7 +1769,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
     static final String[] shellCommands = { "start", "disco", "ls", "chgrp",
 			"groups", "lup", "chgrp", "chport", "help", "eval", "exert", "http", "emx",
-			"gvy", "edit", "clear", "exec", "about", "sos", "ds", "sp" };
+			"gvy", "edit", "clearSessions", "exec", "about", "sos", "ds", "sp" };
 
 	static final Class[] shellCmdClasses = { StartStopCmd.class, DiscoCmd.class,
 			DirCmd.class, ChgrpCmd.class, GroupsCmd.class, LookupCmd.class,

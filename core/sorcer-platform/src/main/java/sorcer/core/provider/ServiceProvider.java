@@ -214,7 +214,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	private final AtomicBoolean running = new AtomicBoolean(true);
 
-	protected Map<Uuid, ProviderSession> sessions;
+	protected Map<Uuid, ServiceSession> sessions;
 
 	protected ScheduledExecutorService scheduler;
 
@@ -228,7 +228,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		providers.add(this);
 		delegate = new ProviderDelegate();
 		delegate.provider = this;
-		sessions = new ConcurrentHashMap<Uuid, ProviderSession>();
+		sessions = new ConcurrentHashMap<Uuid, ServiceSession>();
 		logger.info("\n\t<init> providers.size() = " + providers.size()
 				+ "\n\t<init> providers = " + providers
 				+ "\n\t<init> this.getName = " + this.getName());
@@ -1516,7 +1516,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				cxt.updateContextWith(mogram.getProcessSignature().getInConnector());
 				Uuid id = cxt.getId();
 				// a created session to be used in the implementation class of the bean itself
-				ProviderSession ps = sessions.get(id);
+				ProviderSession ps = (ProviderSession) sessions.get(id);
 				if (ps == null) {
 					ps = new ProviderSession(id);
 					sessions.put(id, ps);
@@ -1581,6 +1581,10 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				dataContext.removePath((String) e.getKey());
 			}
 		}
+	}
+
+	public Map<Uuid, ServiceSession> getSessions() {
+		return sessions;
 	}
 
 	public ServiceSession getSession(Context context) throws ContextException {
@@ -2013,10 +2017,10 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					Thread.sleep(ProviderDelegate.KEEP_ALIVE_TIME);
 
 					// remove inactive sessions
-					Iterator<Map.Entry<Uuid, ProviderSession>> si = sessions.entrySet().iterator();
+					Iterator<Map.Entry<Uuid, ServiceSession>> si = sessions.entrySet().iterator();
 					while (si.hasNext())  {
-						Map.Entry<Uuid, ProviderSession> se = si.next();
-						ProviderSession ss = se.getValue();
+						Map.Entry<Uuid, ServiceSession> se = si.next();
+						ProviderSession ss = (ProviderSession)se.getValue();
 						long now = System.currentTimeMillis();
 						if (now - ss.getLastAccessedTime() > ss.getMaxInactiveInterval() * 1000) {
 							si.remove();

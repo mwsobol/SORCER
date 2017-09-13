@@ -118,7 +118,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 Class serviceType = exertion.getServiceType();
                 if (provider != null) {
                     Task out = ((ServiceProvider)provider).getDelegate().doTask((Task) exertion, txn, args);
-                    // clear provider execution scope
+                    // clearSessions provider execution scope
                     out.getContext().setScope(null);
                     return (T) out;
                 } else if (Invocation.class.isAssignableFrom(serviceType)) {

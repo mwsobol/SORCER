@@ -53,7 +53,7 @@ public class DataStorageCmd extends ShellCmd {
 				+ "\n  -s   show data storage services"
 				+ "\n  -s   <storage index>   select the data storage given <storage index>"
 				+ "\n  -v   print the selected storage service"
-				+ "\n  -x   clear the selection of data storage service"
+				+ "\n  -x   clearSessions the selection of data storage service"
 				+ "\n  -l   [<store fiType>] list all storage records or of a given fiType"
 				+ "\n  -r   print the selected record"
 				+ "\n  -s   save the selected record in a given file ";

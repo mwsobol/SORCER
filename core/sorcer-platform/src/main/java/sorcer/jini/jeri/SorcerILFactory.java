@@ -32,6 +32,7 @@ import org.slf4j.MDC;
 import sorcer.core.analytics.AnalyticsRecorder;
 import sorcer.core.provider.Modeler;
 import sorcer.core.provider.RemoteServiceShell;
+import sorcer.core.provider.SessionBeanProvider;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 
@@ -281,23 +282,26 @@ public class SorcerILFactory extends BasicILFactory {
                                   Method method,
                                   Object[] args,
                                   Collection context) throws Throwable {
-            if (logger.isTraceEnabled())
+            if (logger.isTraceEnabled()) {
                 logger.trace("Invoke {}", method);
-            if (impl == null || args == null || context == null)
+            }
+            if (impl == null || args == null || context == null) {
                 throw new NullPointerException();
+            }
 
             if (!method.isAccessible() &&
                 !(Modifier.isPublic(method.getDeclaringClass().getModifiers()) &&
-                  Modifier.isPublic(method.getModifiers())))
+                  Modifier.isPublic(method.getModifiers()))) {
                 throw new IllegalArgumentException("method not public or set accessible");
+            }
 
             Class decl = method.getDeclaringClass();
             if (decl == ProxyTrust.class &&
                 method.getName().equals("getProxyVerifier") &&
                 impl instanceof ServerProxyTrust) {
-                if (args.length != 0)
+                if (args.length != 0) {
                     throw new IllegalArgumentException("incorrect arguments");
-
+                }
                 return ((ServerProxyTrust) impl).getProxyVerifier();
             }
             Object obj;
@@ -310,10 +314,11 @@ public class SorcerILFactory extends BasicILFactory {
 
                 Object service;
                 if (args.length > 0 && isSorcerType(args[0])) {
-                    if (logger.isTraceEnabled())
+                    if (logger.isTraceEnabled()) {
                         logger.trace("Process Sorcer type for {}", args[0].getClass().getName());
+                    }
                     service = serviceBeanMap.get(((Exertion) args[0]).getProcessSignature().getServiceType());
-                    if (service != null) {
+                    if (service != null && !(impl instanceof SessionBeanProvider)) {
                         if (logger.isTraceEnabled())
                             logger.trace("Service determined to be {}", service.getClass().getName());
                         obj = method.invoke(service, args);
@@ -379,12 +384,13 @@ public class SorcerILFactory extends BasicILFactory {
         if (target instanceof Exertion) {
             Class serviceType = ((Exertion) target).getProcessSignature().getServiceType();
             if (target instanceof CompoundExertion
-                || Modeler.class.isAssignableFrom(serviceType)
-                || Evaluation.class.isAssignableFrom(serviceType)
-                || Invocation.class.isAssignableFrom(serviceType))
+                    || Modeler.class.isAssignableFrom(serviceType)
+                    || Evaluation.class.isAssignableFrom(serviceType)
+                    || Invocation.class.isAssignableFrom(serviceType)) {
                 return true;
-            else
+            } else {
                 return false;
+            }
         } else {
             return false;
         }

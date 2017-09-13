@@ -60,7 +60,7 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
                 cxt = (ServiceContext) mogram.getDataContext();
                 cxt.updateContextWith(mogram.getProcessSignature().getInConnector());
                 Uuid id = cxt.getId();
-                ProviderSession ps = sessions.get(id);
+                ProviderSession ps = (ProviderSession) sessions.get(id);
                 if (ps == null) {
                     ps = new ProviderSession(id);
                     logger.info("created new session: {}", id);
@@ -140,18 +140,22 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
     }
 
     @Override
-    public Set getSessions() throws RemoteException {
-        return sessions.keySet();
+    public List<Uuid> getSessionIds() throws RemoteException {
+        List<Uuid> list = new ArrayList<>();
+        for (Uuid id : sessions.keySet()) {
+            list.add(id);
+        }
+        return list;
     }
 
     @Override
-    public Context getSession(String id) throws RemoteException {
+    public Context getSession(Uuid id) throws RemoteException {
         Iterator<Uuid> si = sessions.keySet().iterator();
         Uuid key;
         while(si.hasNext()) {
             key = si.next();
-            if (key.toString().equals(id)) {
-                Context session = sessions.get(key);
+            if (key.equals(id)) {
+                Context session = (Context) sessions.get(id);
                 // remove bean of this session
                 session.remove(key.toString());
                 return session;
@@ -161,26 +165,12 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
     }
 
     @Override
-    public Object get(String id, String key) throws RemoteException {
-        Context session = getSession(id);
-        return session.get(key);
+    public void removeSession(String id) throws RemoteException {
+        sessions.remove(id);
     }
 
     @Override
-    public void remove(String id) throws RemoteException {
-        Iterator<Uuid> si = sessions.keySet().iterator();
-        Uuid key;
-        while(si.hasNext()) {
-            key = si.next();
-            if (key.toString().equals(id)) {
-                sessions.remove(key);
-                break;
-            }
-        }
-    }
-
-    @Override
-    public void clear() throws RemoteException {
+    public void clearSessions() throws RemoteException {
         sessions.clear();
     }
 

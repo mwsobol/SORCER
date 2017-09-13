@@ -189,9 +189,9 @@ public class SdbUtil {
 		String storageName = Sorcer.getActualName(Sorcer
 				.getDatabaseStorerName());
 		Task objectStoreTask = task(
-				"clear",
+				"clearSessions",
 				sig("contextClear", DatabaseStorer.class, prvName(storageName)),
-				context("clear", operator.inVal(StorageManagement.store_type, type),
+				context("clearSessions", operator.inVal(StorageManagement.store_type, type),
 						result(StorageManagement.store_size)));
 		return (Integer) eval(objectStoreTask);
 	}

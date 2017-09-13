@@ -7,8 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.provider.SessionBeanProvider;
-import sorcer.provider.adder.impl.AdderImpl;
+import sorcer.core.provider.SessionManagement;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
@@ -77,7 +76,6 @@ public class NetMograms {
         assertTrue(eval(sum).equals(300.0));
     }
 
-
     @Test
 	public void beanValueTask() throws Exception  {
 
@@ -88,6 +86,57 @@ public class NetMograms {
 		Context out = context(exert(t5));
 		assertTrue(value(out, "result/y").equals(100.0));
 		assertTrue(id(out).equals(cid));
+	}
+
+	@Test
+	public void beanMultipleSessions() throws Exception  {
+
+		SessionManagement provider = (SessionManagement) provider(sig(Adder.class, prvName("Session Adder")));
+		provider.clearSessions();
+
+		Task t5 = task("t5", sig("add", Adder.class, prvName("Session Adder")),
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+
+		t5.setContext(cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+		Context out = context(exert(t5));
+		assertTrue(value(out, "result/y").equals(100.0));
+		assertTrue(provider.getSessionIds().size() == 1);
+
+		t5.setContext(cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+		exert(t5);
+		assertTrue(provider.getSessionIds().size() == 2);
+
+		t5.setContext(cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+		exert(t5);
+		assertTrue(provider.getSessionIds().size() == 3);
+
+		provider.clearSessions();
+		assertTrue(provider.getSessionIds().size() == 0);
+	}
+
+	@Test
+	public void beanSessionIdTask() throws Exception  {
+
+		SessionManagement provider = (SessionManagement) provider(sig(Adder.class, prvName("Session Adder")));
+		provider.clearSessions();
+
+		Task t5 = task("t5", sig("add", Adder.class, prvName("Session Adder")),
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+
+		Uuid cid = id(context(t5));
+		Context out = context(exert(t5));
+		assertTrue(value(out, "result/y").equals(100.0));
+		assertTrue(id(out).equals(cid));
+		assertTrue(provider.getSessionIds().size() == 1);
+
+		context(exert(t5));
+		assertTrue(provider.getSessionIds().size() == 1);
+
+		context(exert(t5));
+		assertTrue(provider.getSessionIds().size() == 1);
+
+		provider.clearSessions();
+		assertTrue(provider.getSessionIds().size() == 0);
 	}
 
     @Test

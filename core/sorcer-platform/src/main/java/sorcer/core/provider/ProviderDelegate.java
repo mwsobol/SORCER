@@ -1031,7 +1031,7 @@ public class ProviderDelegate {
 //				else
 //					result = execParametricBean(m, task, impl, args);
 //
-//				// clear task in the context
+//				// clearSessions task in the context
 //				result.setExertion(null);
 //				task.setContext(result);
 //				task.setStatus(Exec.DONE);
@@ -1096,7 +1096,7 @@ public class ProviderDelegate {
                 else
                     result = execParametricBean(m, task, bean, args);
 
-                // clear task in the context
+                // clearSessions task in the context
                 result.setExertion(null);
                 task.setContext(result);
                 task.setStatus(Exec.DONE);
@@ -1341,7 +1341,7 @@ public class ProviderDelegate {
 				} else if (task.getDataContext().getScope() != null) {
 					task.getDataContext().getScope().append(cxt);
 				}
-				// clear the exertion and the context
+				// clearSessions the exertion and the context
 				cxt.setExertion(null);
 				task.setService(null);
 				logger.debug("CONTEXT GOING OUT: " + cxt);
