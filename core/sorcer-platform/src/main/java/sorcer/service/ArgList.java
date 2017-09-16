@@ -19,7 +19,7 @@ package sorcer.service;
 
 import sorcer.core.Tag;
 import sorcer.core.context.model.ent.EntException;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class ArgList extends ArrayList<Arg> {
 
 	static final long serialVersionUID = -4997255102658715823L;
 
-	protected Variability.Type type = Variability.Type.ARG;;
+	protected Functionality.Type type = Functionality.Type.ARG;;
 
 	public ArgList() {
 		super();
@@ -79,11 +79,11 @@ public class ArgList extends ArrayList<Arg> {
 		return null;
 	}
 
-	public Variability.Type getType() {
+	public Functionality.Type getType() {
 		return type;
 	}
 
-	public void setType(Variability.Type type) {
+	public void setType(Functionality.Type type) {
 		this.type = type;
 	}
 

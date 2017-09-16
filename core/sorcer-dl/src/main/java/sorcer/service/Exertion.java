@@ -68,7 +68,7 @@ import sorcer.service.Strategy.Flow;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evaluation<Object>,
+public interface Exertion extends Mogram, Computable, Dependency, Invocation<Object>, Evaluation<Object>,
 		Paradigmatic, Mappable, Serializable {
 
 	/**

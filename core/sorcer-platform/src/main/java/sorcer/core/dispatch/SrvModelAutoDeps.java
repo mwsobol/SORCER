@@ -22,7 +22,7 @@ import org.codehaus.plexus.util.dag.DAG;
 import org.codehaus.plexus.util.dag.TopologicalSorter;
 import org.codehaus.plexus.util.dag.Vertex;
 import sorcer.co.tuple.SignatureEntry;
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.dispatch.graph.DirectedGraph;
@@ -179,11 +179,11 @@ public class SrvModelAutoDeps {
             entryMap.put(entryName, srvModel.getData().get(entryName));
 
             Object entry = srvModel.getData().get(entryName);
-            if (entry instanceof Entry) {
-                Object entryVal = ((Entry)entry)._2;
+            if (entry instanceof Function) {
+                Object entryVal = ((Function)entry).get();
                 ReturnPath rp = null;
                 if (entryVal instanceof SignatureEntry) {
-                    Signature signature = ((SignatureEntry)entryVal)._2;
+                    Signature signature = ((SignatureEntry)entryVal).get();
                     if (signature!=null) rp = (ReturnPath)signature.getReturnPath();
                 } else if (entry instanceof Srv) {
                     rp = ((Srv) entry).getReturnPath();
@@ -211,11 +211,11 @@ public class SrvModelAutoDeps {
     private void getMapping(SrvModel srvModel) throws CycleDetectedException, SortingException {
         for (String entryName : srvModel.getData().keySet()) {
             Object entry = srvModel.getData().get(entryName);
-            if (entry instanceof Entry) {
+            if (entry instanceof Function) {
                 ReturnPath rp = null;
-                Object entryVal = ((Entry)entry)._2;
+                Object entryVal = ((Function)entry).get();
                 if (entryVal instanceof SignatureEntry) {
-                    Signature signature = ((SignatureEntry)entryVal)._2;
+                    Signature signature = ((SignatureEntry)entryVal).get();
                     rp =  (ReturnPath)signature.getReturnPath();
                 } else if (entry instanceof Srv) {
                     rp = ((Srv)entry).getReturnPath();

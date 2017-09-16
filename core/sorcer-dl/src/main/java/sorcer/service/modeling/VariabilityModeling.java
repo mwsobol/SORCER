@@ -24,22 +24,22 @@ import sorcer.service.ContextException;
  */
 public interface VariabilityModeling {
 
-	public Variability<?> getVar(String vraname) throws ContextException;
+	public Functionality<?> getVar(String vraname) throws ContextException;
 
-	public Variability<?> getInvariantVar(String varName)
+	public Functionality<?> getInvariantVar(String varName)
 			throws ContextException;
 
-	public Variability<?> getConstantVar(String varName)
+	public Functionality<?> getConstantVar(String varName)
 			throws ContextException;
 
-	public Variability<?> getLinkedVar(String varName) throws ContextException;
+	public Functionality<?> getLinkedVar(String varName) throws ContextException;
 
-	public Variability<?> getOutputVar(String varName) throws ContextException;
+	public Functionality<?> getOutputVar(String varName) throws ContextException;
 
-	public Variability<?> getConstraintVar(String varName)
+	public Functionality<?> getConstraintVar(String varName)
 			throws ContextException;
 
-	public Variability<?> getObjectiveVar(String varName)
+	public Functionality<?> getObjectiveVar(String varName)
 			throws ContextException;
 
 }

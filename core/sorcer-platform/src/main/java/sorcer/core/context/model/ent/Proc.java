@@ -23,7 +23,7 @@ import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.VariabilityModeling;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -42,7 +42,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
+public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T>,
 		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T> {
 
 	private static final long serialVersionUID = 7495489980319169695L;
@@ -63,16 +63,16 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	// Sorcer Mappable: Context, Exertion, or Var args
 	protected Mappable mappable;
 
-	protected Entry selectedFidelity;
+	protected Function selectedFidelity;
 
 	// proc fidelities for this proc
-	protected ServiceFidelity<Entry> fidelities;
+	protected ServiceFidelity<Function> fidelities;
 
 	public Proc(String parname) {
 		super(parname);
 		name = parname;
 		value = null;
-		type = Variability.Type.PROC;
+		type = Functionality.Type.PROC;
 	}
 	
 	public Proc(Identifiable identifiable) {
@@ -87,7 +87,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 
 		if (argument instanceof ServiceFidelity) {
 			fidelities = (ServiceFidelity)argument;
-            selectedFidelity = (Entry) ((ServiceFidelity) argument).getSelects().get(0);
+            selectedFidelity = (Function) ((ServiceFidelity) argument).getSelects().get(0);
 			value = (T) selectedFidelity;
 		} else if (argument instanceof Evaluation || argument instanceof Invocation) {
 			if (argument instanceof ConditionalInvocation) {
@@ -102,10 +102,10 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 			}
 			value = argument;
 		} else {
-			_2 = argument;
+			item = argument;
 			value = argument;
 		}
-		type = Variability.Type.PROC;
+		type = Functionality.Type.PROC;
 	}
 
 	public Proc(String path, Object argument, Object scope)
@@ -123,7 +123,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		if (argument instanceof Scopable) {
 			((Scopable) argument).setScope(this.scope);
 		}
-		type = Variability.Type.PROC;
+		type = Functionality.Type.PROC;
 	}
 	
 	public Proc(Mappable map, String name, String path) {
@@ -140,7 +140,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		return name;
 	}
 
-	public void setValue(Object value) throws SetterException, RemoteException {
+	public void setValue(Object value) throws SetterException {
 		if (isPersistent && mappable == null) {
 			try {
 				if (SdbUtil.isSosURL(this.value)) {
@@ -153,9 +153,9 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 			}
 			return;
 		}
-		if (mappable != null && this._2 instanceof String ) {
+		if (mappable != null && this.item instanceof String ) {
 			try {
-				Object val = mappable.asis((String)_2);
+				Object val = mappable.asis((String)item);
 				if (val instanceof Proc) {
 					((Proc)val).setValue(value);
 				} else if (isPersistent) {
@@ -172,7 +172,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 						}
 					}
 				} else {
-					mappable.putValue((String)_2, value);
+					mappable.putValue((String)item, value);
 				}
 			} catch (Exception e) {
 				throw new SetterException(e);
@@ -181,23 +181,23 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 			this.value = (T) value;
 		} else {
 			this.value = (T)value;
-			_2 = (T) value;
+			item = (T) value;
 		}
 	}
 
 	@Override
-	public T value() {
+	public T get() {
 		return value;
 	}
 
 	/* (non-Javadoc)
          * @see sorcer.service.Evaluation#getAsis()
          */
-	public T asis() throws EvaluationException, RemoteException {
+	public T asis() {
 		if (value != null) {
 			return value;
 		} else {
-			return _2;
+			return item;
 		}
 	}
 	
@@ -210,13 +210,13 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		if (value instanceof Incrementor || ((value instanceof ServiceInvoker) &&
 				scope != null && (scope instanceof ProcModel) && ((ProcModel)scope).isChanged()))
 			isValid = false;
-		if (_2 != null && isValid && args.length == 00 && !isPersistent) {
+		if (item != null && isValid && args.length == 00 && !isPersistent) {
 			try {
-				if (_2 instanceof String
-						&& mappable != null && mappable.getValue((String)_2) != null)
-                    return (T) mappable.getValue((String)_2);
+				if (item instanceof String
+						&& mappable != null && mappable.getValue((String)item) != null)
+                    return (T) mappable.getValue((String) item);
                 else
-                    return _2;
+                    return item;
 			} catch (ContextException e) {
 				throw new EvaluationException(e);
 			}
@@ -257,8 +257,8 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 				}
 
 				// indirect scope for entry values
-				if (val instanceof Entry) {
-					Object ev = ((Entry)val).asis();
+				if (val instanceof Function) {
+					Object ev = ((Function)val).asis();
 					if (ev instanceof Scopable && ((Scopable)ev).getScope() != null) {
 						if (scope instanceof VariabilityModeling) {
 							((Scopable)ev).getScope().setScope(scope);
@@ -282,13 +282,13 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 					}
 				}
 				val = ((Evaluation<T>) val).getValue(args);
-				_2 = val;
+				item = val;
 				isValid = true;
 			}
 
 			if (isPersistent) {
-				if (val == null && _2!= null) {
-					val = _2;
+				if (val == null && item!= null) {
+					val = item;
 				}
 				if (SdbUtil.isSosURL(val)) {
 					val = (T) ((URL) val).getContent();
@@ -305,13 +305,13 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 						p.setPersistent(true);
 					} else {
 						this.value = (T)url;
-						_2 = null;
+						item = null;
 					}
 				}
 			}
 		} catch (Exception e) {
 			// make the cache invalid
-			_2 = null;
+			item = null;
 			isValid = false;
 			e.printStackTrace();
 			throw new EvaluationException(e);
@@ -354,13 +354,9 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	private boolean isFidelityValid(Object fidelity) throws EvaluationException {
 		if (fidelity == null || fidelity == Context.none)
 			return false;
-		if (fidelity instanceof Entry) {
+		if (fidelity instanceof Function) {
 			Object obj = null;
-			try {
-				obj = ((Entry)fidelity).asis();
-			} catch (RemoteException e) {
-				throw new EvaluationException(e);
-			}
+			obj = ((Function)fidelity).asis();
 			if (obj == null || obj == Context.none) return false;
 		}
 		 return true;
@@ -404,7 +400,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
             ps = "" + value;
         }
 
-        return "proc [name: " + name + ", eval: " + ps + ", path: " + _1 + "]";
+        return "proc [name: " + name + ", eval: " + ps + ", path: " + key + "]";
     }
 
 	/* (non-Javadoc)
@@ -445,7 +441,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	 */
 	@Override
 	public Class getValueType() {
-		return _2.getClass();
+		return item.getClass();
 	}
 
 	/* (non-Javadoc)
@@ -492,8 +488,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	 * @see sorcer.vfe.Variability#valueChanged(java.lang.Object)
 	 */
 	@Override
-	public void valueChanged(Object obj) throws EvaluationException,
-			RemoteException {		
+	public void valueChanged(Object obj) throws EvaluationException {
 	}
 
 	/* (non-Javadoc)
@@ -556,7 +551,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		return (mappable != null);
 	}
 
-	public ServiceFidelity<Entry> getFidelities() {
+	public ServiceFidelity<Function> getFidelities() {
 		return fidelities;
 	}
 
@@ -565,7 +560,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		return selectedFidelity;
 	}
 
-	public void setSelectedFidelity(Entry selectedFidelity) {
+	public void setSelectedFidelity(Function selectedFidelity) {
 		this.selectedFidelity = selectedFidelity;
 	}
 	
@@ -677,7 +672,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		selectedFidelity = fidelities.getSelect(name);
 	}
 
-	public void setFidelities(ServiceFidelity<Entry> fidelities) {
+	public void setFidelities(ServiceFidelity<Function> fidelities) {
 		this.fidelities = fidelities;
 	}
 	

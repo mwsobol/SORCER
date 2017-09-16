@@ -19,7 +19,6 @@ package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.exertion.AltMogram;
@@ -308,11 +307,11 @@ public abstract class Block extends CompoundExertion {
 		try {
 			for (Arg e : entries) {
 				if (e instanceof Entry) {
-					if (((Entry) e).path().indexOf(name) >= 0)
-						putBlockValue(((Entry) e).path(), ((Entry) e).value());
+					if (e.getName().indexOf(name) >= 0)
+						putBlockValue(e.getName(), ((Entry) e).get());
 
 					else
-						super.putValue(((Entry) e).path(), ((Entry) e).value());
+						super.putValue(e.getName(), ((Entry) e).get());
 				}
 			}
 			updateConditions();

@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.eo.operator;
 import sorcer.service.*;
 
@@ -66,7 +66,7 @@ import java.util.List;
  * of the context.
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ServiceInvoker<T> extends Observable implements  Invocation<T>, Identifiable, Scopable, Evaluator<T>, Reactive<T>, Observer, Serializable {
+public class ServiceInvoker<T> extends Observable implements  Computable, Invocation<T>, Identifiable, Scopable, Evaluator<T>, Reactive<T>, Observer, Serializable {
 
 	private static final long serialVersionUID = -2007501128660915681L;
 	
@@ -433,10 +433,9 @@ public class ServiceInvoker<T> extends Observable implements  Invocation<T>, Ide
 	public void substitute(Arg... entries)
 			throws SetterException {
 		for (Arg e : entries) {
-			if (e instanceof Entry<?>) {
+			if (e instanceof Entry) {
 				try {
-					((ServiceContext)invokeContext).putValue(((Entry<T>) e)._1,
-							((Entry<T>) e)._2);
+					invokeContext.putValue(e.getName(), ((Entry) e).get());
 				} catch (ContextException ex) {
 					throw new SetterException(ex);
 				}
@@ -602,4 +601,17 @@ public class ServiceInvoker<T> extends Observable implements  Invocation<T>, Ide
 		return null;
 	}
 
+	@Override
+	public Object compute(Arg... args) throws EvaluationException {
+		try {
+			Context cxt = (Context)Arg.getServiceModel(args);
+			if (cxt !=null) {
+				invokeContext = cxt;
+				return getValue(args);
+			}
+		} catch (RemoteException e) {
+			throw new EvaluationException();
+		}
+		return null;
+	}
 }

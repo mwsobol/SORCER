@@ -16,35 +16,38 @@
  */
 package sorcer.co.tuple;
 
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Value;
 import sorcer.service.Signature;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Functionality;
 
-public class InoutEntry<T> extends Entry<T> {
+public class InoutValue<T> extends Value<T> {
+
     private static final long serialVersionUID = 1L;
 
-    public InoutEntry() {
+    public InoutValue() {
         super();
         annotation = Signature.Direction.INOUT;
-        type = Variability.Type.INOUT;
+        type = Functionality.Type.INOUT;
     }
-
-    public InoutEntry(String path) {
+    public InoutValue(String path) {
         this(path, null, false, 0);
     }
 
-    public InoutEntry(String path, T value) {
-        this(path, value, 0);
+    public InoutValue(String path, T value) {
+        this(path, value, false, 0);
     }
 
-    public InoutEntry(String path, T value, int index) {
+    public InoutValue(String path, T value, int index) {
         this(path, value, false, index);
     }
 
-    InoutEntry(String path, T value, boolean isPersistant, int index) {
-        super(path, value, isPersistant, index);
-        type = Variability.Type.INOUT;
+
+    public InoutValue(String path, T value, boolean isPersistent, int index) {
+        super(path);
+        this.item = value;
+        this.isPersistent = isPersistent;
+        this.index = index;
+        type = Functionality.Type.INOUT;
         annotation = Signature.Direction.INOUT;
     }
-
 }

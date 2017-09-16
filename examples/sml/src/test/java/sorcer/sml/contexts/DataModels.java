@@ -7,9 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.ListContext;
-import sorcer.core.context.model.ent.Entry;
-import sorcer.po.operator;
+import sorcer.core.context.model.ent.Function;
+import sorcer.core.context.model.ent.Value;
 import sorcer.service.Context;
+import sorcer.service.Entry;
 
 import java.net.URL;
 import java.util.List;
@@ -80,22 +81,22 @@ public class DataModels {
     @Test
     public void directionalEntries() throws Exception {
 
-        Entry<Double> e = ent("arg/x1", 10.0);
+        Value<Double> e = val("arg/x1", 10.0);
         assertEquals("arg/x1", key(e));
         // a path is a String - usually a sequence of attributes
         assertEquals(path(e), "arg/x1");
 
-        Entry<Double> in = inVal("arg/x2", 10.0);
+        Value<Double> in = inVal("arg/x2", 10.0);
         assertTrue(path(in).equals("arg/x2"));
-        assertTrue(eval(in).equals(10.0));
+        assertTrue(val(in).equals(10.0));
 
-        Entry<Double> out = outVal("arg/y", 20.0);
+        Value<Double> out = outVal("arg/y", 20.0);
         assertTrue(path(out).equals("arg/y"));
-        assertTrue(eval(out).equals(20.0));
+        assertTrue(val(out).equals(20.0));
 
-        Entry<Double> inout = inoutVal("arg/z", 30.0);
+        Value<Double> inout = inoutVal("arg/z", 30.0);
         assertTrue(path(inout).equals("arg/z"));
-        assertTrue(eval(inout).equals(30.0));
+        assertTrue(val(inout).equals(30.0));
 
     }
 

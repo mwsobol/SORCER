@@ -17,12 +17,11 @@
 
 package sorcer.core.invoker;
 
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.NeoFidelity;
 import sorcer.service.*;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Activation;
+import sorcer.service.modeling.Functionality;
 
-import java.io.FileFilter;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -30,47 +29,47 @@ import java.util.List;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class Soma extends ServiceInvoker<Double> {
+public class Activator extends ServiceInvoker<Double> implements Activation {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	{
-		defaultName = "soma-";
-	}
+    {
+        defaultName = "activator-";
+    }
 
     protected ServiceFidelity<NeoFidelity> fidelities;
 
     // linear transformation of the input vector
     double bias = 0.0;
 
-	// for step function
+    // for step function
     double threshold = 0.0;
 
     Context<Float> weights;
 
     boolean rectified = false;
 
-    public Soma() {
+    public Activator() {
         super();
     }
 
-    public Soma(String name) {
+    public Activator(String name) {
         super(name);
     }
-	
-	@Override
-	public Double invoke(Context context, Arg... entries)
-			throws RemoteException, InvocationException {
-		try {
-			return activate(entries);
-		} catch (Exception e) {
-			throw new InvocationException(e);
-		}
-	}
-	
-	@Override
-	public Double invoke(Arg... entries) throws InvocationException, RemoteException,
-			InvocationException {
+
+    @Override
+    public Double invoke(Context context, Arg... entries)
+            throws RemoteException, InvocationException {
+        try {
+            return activate(entries);
+        } catch (Exception e) {
+            throw new InvocationException(e);
+        }
+    }
+
+    @Override
+    public Double invoke(Arg... entries) throws InvocationException, RemoteException,
+            InvocationException {
         try {
             return activate(entries);
         } catch (EvaluationException e) {
@@ -94,7 +93,7 @@ public class Soma extends ServiceInvoker<Double> {
         this.weights = weights;
     }
 
-	public Double activate(Arg... entries) throws EvaluationException, RemoteException {
+    public Double activate(Arg... entries) throws EvaluationException, RemoteException {
         List<String> names = args.getNames();
         for (Arg arg : entries) {
             if (arg instanceof Fidelity) {
@@ -102,10 +101,10 @@ public class Soma extends ServiceInvoker<Double> {
                     fidelities.setSelect(((Fidelity) arg).getPath());
                 }
             } else if (arg instanceof Entry) {
-                if (((Entry) arg).getType() == Variability.Type.THRESHOLD
+                if (((Entry) arg).getType() == Functionality.Type.THRESHOLD
                         && name.equals(arg.getName())) {
                     threshold = (double) ((Entry) arg).get();
-                } else if (((Entry) arg).getType() == Variability.Type.BIAS
+                } else if (((Entry) arg).getType() == Functionality.Type.BIAS
                         && name.equals(arg.getName())) {
                     bias = (double) ((Entry) arg).get();
 
@@ -118,7 +117,7 @@ public class Soma extends ServiceInvoker<Double> {
         }
         double sum = 0.0;
         for (String name : args.getNames()) {
-            double in = (double) ((Entry)invokeContext.get(name)).getValue();
+            double in = (double) ((Entry)invokeContext.get(name)).get();
             double wt = (double) weights.get(name);
             sum = sum + (in * wt);
         }
@@ -147,11 +146,11 @@ public class Soma extends ServiceInvoker<Double> {
         this.fidelities = fidelities;
     }
 
-	private void applyFidelity() {
-          NeoFidelity fi = fidelities.getSelect();
-          if (fi.getWeights() != null) {
-              weights = fi.getWeights();
-          }
+    private void applyFidelity() {
+        NeoFidelity fi = fidelities.getSelect();
+        if (fi.getWeights() != null) {
+            weights = fi.getWeights();
+        }
         if (fi.getArgs() != null && fi.getArgs().size() > 0) {
             args = fi.getArgs().argSet();
         }

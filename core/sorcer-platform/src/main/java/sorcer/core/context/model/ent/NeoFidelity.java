@@ -18,7 +18,7 @@ package sorcer.core.context.model.ent;
 import sorcer.service.Context;
 import sorcer.service.Fidelity;
 import sorcer.eo.operator.Args;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Functionality;
 
 /**
  * @author Mike Sobolewski
@@ -40,22 +40,22 @@ public class NeoFidelity extends Fidelity<Context<Float>> {
         this.weights = weights;
     }
 
-    public NeoFidelity(String name, Args args, Entry... entries) {
+    public NeoFidelity(String name, Args args, Function... entries) {
         this(name, args, null, entries);
     }
 
-    public NeoFidelity(String name, Context<Float> weights, Entry... entries) {
+    public NeoFidelity(String name, Context<Float> weights, Function... entries) {
         this(name, null, weights, entries);
     }
 
-    public NeoFidelity(String name, Args args, Context<Float> weights, Entry... entries) {
+    public NeoFidelity(String name, Args args, Context<Float> weights, Function... entries) {
         fiName = name;
         this.args = args;
         this.weights = weights;
-        for (Entry e : entries) {
-            if (e.getType() == Variability.Type.THRESHOLD) {
+        for (Function e : entries) {
+            if (e.getType() == Functionality.Type.THRESHOLD) {
                 threshold = (double) e.get();
-            } else if (e.getType() == Variability.Type.BIAS) {
+            } else if (e.getType() == Functionality.Type.BIAS) {
                 bias = (double) e.get();
             }
         }

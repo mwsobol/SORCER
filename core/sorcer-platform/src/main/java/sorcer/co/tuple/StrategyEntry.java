@@ -17,21 +17,23 @@
 
 package sorcer.co.tuple;
 
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.service.Arg;
+import sorcer.service.Entry;
 import sorcer.service.Strategy;
 
 import java.io.IOException;
 import java.net.URL;
 
-public class StrategyEntry extends Entry<Strategy> implements Arg {
-	private static final long serialVersionUID = -5033590792138379782L;
+public class StrategyEntry extends Entry<String, Strategy> implements Arg {
+
+	private static final long serialVersionUID = 1L;
 
 	private URL url;
 
 	public StrategyEntry(String path, Strategy strategy) {
 		super(path);
-		_2 = strategy;
+		item = strategy;
 	};
 
 	public StrategyEntry(String path, URL strategy) {
@@ -51,14 +53,6 @@ public class StrategyEntry extends Entry<Strategy> implements Arg {
 				e.printStackTrace();
 			}
 		}
-		return (Strategy) _2;
-	}
-	
-	/* (non-Javadoc)
-	 * @see sorcer.service.Arg#getName()
-	 */
-	@Override
-	public String getName() {
-		return ""+_1;
+		return item;
 	}
 }

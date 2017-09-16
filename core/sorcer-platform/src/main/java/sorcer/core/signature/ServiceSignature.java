@@ -30,7 +30,7 @@ import sorcer.core.provider.ProviderName;
 import sorcer.core.provider.ServiceName;
 import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Functionality;
 import sorcer.util.Log;
 
 import java.io.IOException;
@@ -175,7 +175,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	 *
 	 * @return Variability of this service provider
 	 */
-	public Variability<?> getVariability() {
+	public Functionality<?> getVariability() {
 		return null;
 	}
 

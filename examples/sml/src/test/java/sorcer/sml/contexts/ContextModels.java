@@ -10,7 +10,7 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
 import sorcer.core.context.model.ent.Proc;
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.po.operator;
 import sorcer.service.Context;
@@ -56,7 +56,7 @@ public class ContextModels {
 		add(mdl, ent("arg/x7", invoker("x1 + x3", operator.ents("x1", "x3"))));
 
 		assertTrue(eval(mdl, "arg/x7").equals(4.0));
-		assertTrue(asis(mdl, "arg/x7") instanceof Entry);
+		assertTrue(asis(mdl, "arg/x7") instanceof Function);
 		assertTrue(asis(mdl, "arg/x7") instanceof Proc);
 		assertTrue(asis(asis(mdl, "arg/x7")) instanceof ServiceInvoker);
 	}
@@ -153,7 +153,7 @@ public class ContextModels {
 				inVal("x1", 20.0),
 				inVal("x2", 80.0));
 
-		Entry e = ent("x2", 100.0);
+		Function e = ent("x2", 100.0);
 		assertEquals(100.0, value((Context)exec(e, cxt), "x2"));
 	}
 
@@ -165,7 +165,7 @@ public class ContextModels {
 				inVal("x2", 80.0),
 				result("result/y"));
 
-		Entry ie = ent("multiply", invoker("x1 * x2", operator.ents("x1", "x2")));
+		Function ie = ent("multiply", invoker("x1 * x2", operator.ents("x1", "x2")));
 		Object result = exec(ie, em);
 		assertEquals(1600.0, result);
 	}
@@ -177,7 +177,7 @@ public class ContextModels {
 				inVal("y1", 20.0),
 				inVal("y2", 80.0));
 
-		Entry se = ent(sig("add", AdderImpl.class, result("add", inPaths("y1", "y2"))));
+		Function se = ent(sig("add", AdderImpl.class, result("add", inPaths("y1", "y2"))));
 		Context result = (Context) exec(se, sm);
 		assertEquals(100.0, value(result, "add"));
 	}
@@ -189,7 +189,7 @@ public class ContextModels {
 				inVal("y1", 20.0),
 				inVal("y2", 80.0));
 
-		Entry se = ent(sig("add", Adder.class, result("add", inPaths("y1", "y2"))));
+		Function se = ent(sig("add", Adder.class, result("add", inPaths("y1", "y2"))));
 		Context result = (Context) exec(se, sm);
 		assertEquals(100.0, value(result, "add"));
 	}

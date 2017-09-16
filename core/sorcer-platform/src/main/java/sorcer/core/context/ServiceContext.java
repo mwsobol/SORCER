@@ -23,9 +23,8 @@ import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.co.tuple.InputEntry;
-import sorcer.co.tuple.OutputEntry;
-import sorcer.co.tuple.Tuple2;
+import sorcer.co.tuple.InputValue;
+import sorcer.co.tuple.OutputValue;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.ent.Proc;
@@ -44,7 +43,7 @@ import sorcer.service.Signature.Direction;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.Model;
 import sorcer.service.Domain;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Functionality;
 import sorcer.util.ObjectCloner;
 import sorcer.util.SorcerUtil;
 
@@ -94,7 +93,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected ServiceExertion exertion;
 	protected String currentPrefix;
 	protected boolean isFinalized = false;
-	protected Variability.Type type = Variability.Type.CONTEXT;
+	protected Functionality.Type type = Functionality.Type.CONTEXT;
 	Signature.Direction direction = Signature.Direction.INOUT;
 
 	/**
@@ -1614,11 +1613,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 			val = getValue(path, args);
 			if (val instanceof Context) {
 				subcntxt.append((Context) val);
-			} else if (val instanceof Entry) {
-				Object v = ((Entry)val).value();
+			} else if (val instanceof Function) {
+				Object v = ((Function)val).get();
 				subcntxt.putValue(path, v);
-				if (path != ((Entry)val).getName())
-					subcntxt.putValue(((Entry)val).getName(), v);
+				if (path != ((Function)val).getName())
+					subcntxt.putValue(((Function)val).getName(), v);
 			} else {
 				List<String> inpaths = getInPaths();
 				List<String> outpaths = getOutPaths();
@@ -2545,16 +2544,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Object initValue = null;
 		T newVal = null;
 		Object id = null;
-		if (value instanceof Tuple2) {
-			initValue = ((Tuple2) value).key();
-			newVal = ((Tuple2<?, T>) value).value();
+		if (value instanceof Entry) {
+			initValue = ((Entry) value).key();
+			newVal = (T) ((Entry)value).get();
 			updateValue(initValue, newVal, id);
 		} else if (value instanceof Identifiable) {
 			id = ((Identifiable) value).getId();
 			updateValue(initValue, newVal, id);
-		} else if (value instanceof Tuple2[]) {
-			for (int i = 0; i < ((Tuple2[]) value).length; i++) {
-				updateValue(((Tuple2[]) value)[i]);
+		} else if (value instanceof Entry[]) {
+			for (int i = 0; i < ((Entry[]) value).length; i++) {
+				updateValue(((Entry[]) value)[i]);
 			}
 		} else if (value instanceof Identifiable[]) {
 			for (int i = 0; i < ((Identifiable[]) value).length; i++) {
@@ -2683,20 +2682,18 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 		try {
 			for (Arg e : entries) {
-				if (e instanceof Tuple2) {
-					T val = null;
-
-					if (((Tuple2) e)._2 instanceof Evaluation)
-						val = (T)((Evaluation) ((Tuple2) e).value()).getValue();
+				if (e instanceof Entry) {
+					Object val = null;
+					if (((Entry) e).get() instanceof Evaluation)
+						val = ((Evaluation) ((Entry) e).get()).getValue();
 					else
-						val = (T)((Tuple2) e).value();
+						val = ((Entry) e).get();
 
-					if (((Tuple2) e)._1 instanceof String) {
-						if (asis((String) ((Tuple2) e)._1) instanceof Setter) {
-							((Setter) asis((String) ((Tuple2) e)._1))
-									.setValue(val);
+					if (((Entry) e).get() instanceof String) {
+						if (asis((String) ((Entry) e).key()) instanceof Setter) {
+							((Setter) asis(e.getName())).setValue(val);
 						} else {
-							putValue((String) ((Tuple2) e)._1, val);
+							putValue(e.getName(), val);
 						}
 					}
 				}
@@ -2791,8 +2788,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public Domain add(Identifiable... objects) throws ContextException, RemoteException {
 		boolean changed = false;
 		for (Identifiable obj : objects) {
-			if (obj instanceof Entry) {
-				putValue(obj.getName(), ((Entry) obj).asis());
+			if (obj instanceof Function) {
+				putValue(obj.getName(), ((Function) obj).asis());
 			} else {
 				putValue(obj.getName(), obj);
 			}
@@ -2803,13 +2800,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 	
-	public Entry entry(String path) {
+	public Function entry(String path) {
 		Object obj = null;
 		if (path != null) {
 			obj = data.get(path);
 		}
-		if (obj instanceof Entry) {
-			return (Entry)obj;
+		if (obj instanceof Function) {
+			return (Function)obj;
 		} else
 			return null;
 	}
@@ -2894,8 +2891,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 							((Scopable)obj).getScope().append(this);
 						}
 					} else if (obj instanceof Entry
-							&& ((Entry)obj).value() instanceof Scopable) {
-						((Scopable)((Entry)obj).asis()).setScope(this);
+							&& ((Function)obj).get() instanceof Scopable) {
+						((Scopable)((Function)obj).asis()).setScope(this);
 					}
 					obj = ((Evaluation<T>)obj).getValue(entries);
 				} else if ((obj instanceof Paradigmatic)
@@ -2904,8 +2901,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 				}
 			}
 			if (obj instanceof Reactive && ((Reactive)obj).isReactive()) {
-				if (obj instanceof Entry && ((Entry)obj).value() instanceof Scopable)
-					((Scopable)((Entry)obj).value()).setScope(this);
+				if (obj instanceof Entry && ((Entry)obj).get() instanceof Scopable)
+					((Scopable)((Entry)obj).get()).setScope(this);
 				obj = (T) ((Evaluation) obj).getValue(entries);
 			}
 			if (scope != null && (obj == Context.none || obj == null ))
@@ -3022,7 +3019,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Map.Entry<String, T> e;
 		while (ei.hasNext()) {
 			e = (Map.Entry<String, T>) ei.next();
-			if (e.getValue() instanceof InputEntry) {
+			if (e.getValue() instanceof InputValue) {
 				icxt.putValue(e.getKey(), e.getValue());
 			}
 		}
@@ -3035,7 +3032,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Map.Entry<String, T> e;
 		while (ei.hasNext()) {
 			e = (Map.Entry<String, T>) ei.next();
-			if (e.getValue() instanceof OutputEntry) {
+			if (e.getValue() instanceof OutputValue) {
 				ocxt.putValue(e.getKey(), e.getValue());
 			}
 		}
@@ -3094,7 +3091,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public Object addValue(Identifiable value) throws ContextException {
 		if (value instanceof Entry && !((Entry)value).isPersistent()) {
-			return putValue(value.getName(), ((Entry)value).value());
+			return putValue(value.getName(), ((Entry)value).get());
 		}
 		return putValue(value.getName(), value);
 	}
@@ -3163,17 +3160,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 		put(p.getName(), (T)p);
 		if (p.getScope() == null || p.getScope().size() == 0)
 			p.setScope(this);
-		try {
-			if (p.asis() instanceof Scopable) {
-				Scopable si = (Scopable) p.asis();
-				if (si.getScope() == null || si.getScope().size() == 0)
-					((Scopable) p.asis()).setScope(this);
-				else {
-					((ServiceContext)si.getScope()).setScope(this);
-				}
+		if (p.asis() instanceof Scopable) {
+			Scopable si = (Scopable) p.asis();
+			if (si.getScope() == null || si.getScope().size() == 0)
+				((Scopable) p.asis()).setScope(this);
+			else {
+				si.getScope().setScope(this);
 			}
-		} catch (RemoteException e) {
-			throw new ContextException(e);
 		}
 		isChanged = true;
 		return p;
@@ -3183,12 +3176,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		put(p.getName(), (T)p);
 		if (p.getScope() == null)
 			p.setScope(new ProcModel(p.getName()).append(this));
-		try {
-			if (p.asis() instanceof ServiceInvoker) {
-				((ServiceInvoker) p.asis()).setScope(this);
-			}
-		} catch (RemoteException e) {
-			throw new ContextException(e);
+		if (p.asis() instanceof ServiceInvoker) {
+			((ServiceInvoker) p.asis()).setScope(this);
 		}
 		isChanged = true;
 		return p;
@@ -3251,7 +3240,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		try {
 			if (subjectValue instanceof Class) {
 				signature = sig(subjectPath, subjectValue);
-				return (T) ((Exertion)operator.xrt(name, signature, this).exert(txn, entries)).getContext();
+				return (T) operator.xrt(name, signature, this).exert(txn, entries).getContext();
 			} else {
 				// evaluates model outputs - response
 				getResponse(entries);
@@ -3398,11 +3387,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return data.put(key, value);
 	}
 
-	public Variability.Type getType() {
+	public Functionality.Type getType() {
 		return type;
 	}
 
-	public void setType(Variability.Type type) {
+	public void setType(Functionality.Type type) {
 		this.type = type;
 	}
 
@@ -3440,8 +3429,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.direction = direction;
 	}
 
-	public Entry<T> getEntry(String path) {
-		return new Entry(path, data.get(path));
+	public Function<T> getEntry(String path) {
+		return new Function(path, data.get(path));
 	}
 
 	public String getSingletonPath() throws ContextException {

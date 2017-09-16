@@ -1,59 +1,60 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.co.tuple.Tuple2;
+import sorcer.service.Entry;
 
 /**
  * Created by Mike Sobolewski on 5/15/17.
  */
-public class Tie extends Tuple2<String, String> {
+public class Tie extends Entry<String, String> {
 
     public Tie(String domain, String entry) {
-        _1 = domain;
-        _2 = entry;
+        key = domain;
+        item = entry;
     }
 
     public String domain() {
-        return _1;
+        return key;
     }
 
     public String entry() {
-        return _2;
+        return item;
     }
 
 
     public String domain(String domain) {
-        _1 = domain;
-        return _1;
+        key = domain;
+        return key;
     }
 
     public String entry(String entry) {
-        _2 = entry;
-        return _2;
+        item = entry;
+        return item;
     }
 
     @Override
     public String toString() {
-        return  _1 + ":" + _2;
+        return  key + ":" + item;
     }
 
     @Override
     public int hashCode() {
-        int hash = _1.length() + _1.length() + 1;
-        return hash * 31 + _1.hashCode() + _2.hashCode();
+        int hash = key.length() + key.length() + 1;
+        return hash * 31 + key.hashCode() + item.hashCode();
     }
 
     @Override
     public boolean equals(Object object) {
         if (object instanceof Tie) {
-            if (_2 != null && ((Tie) object)._2 == null) {
+            if (item != null && ((Tie) object).item == null) {
                 return false;
-            } else if (_2 == null && ((Tie) object)._2 != null) {
+            } else if (item == null && ((Tie) object).item != null) {
                 return false;
-            } else if (((Tie) object)._1.equals(_1)
-                    && ((Tie) object)._2 == _2) {
+            } else if (((Tie) object).key.equals(key)
+                    && ((Tie) object).item == item) {
                 return true;
-            } else if (((Tie) object)._1.equals(_1)
-                    && ((Tie) object)._2.equals(_2)) {
+            } else if (((Tie) object).key.equals(key)
+                    && ((Tie) object).item.equals(item)) {
                 return true;
             }
         }

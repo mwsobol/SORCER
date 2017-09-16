@@ -20,15 +20,17 @@ package sorcer.co.tuple;
 import sorcer.service.ServiceFidelity;
 
 public class Tuple3<T1, T2, T3> extends Tuple2<T1, T2> {
+
 	private static final long serialVersionUID = 8462677030360698197L;
+
 	public T3 _3 = null;
 
-	public Tuple3() {
+	public Tuple3(T1 x1, T2 x2) {
+		super(x1, x2);
 	}
 	
 	public Tuple3(T1 x1, T2 x2, T3 x3) {
-		_1 = x1;
-		_2 = x2;
+		super(x1, x2);
 		_3 = x3;
 	}
 	

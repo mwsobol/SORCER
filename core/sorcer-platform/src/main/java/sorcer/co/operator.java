@@ -34,8 +34,8 @@ import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Variability;
-import sorcer.service.modeling.Variability.Type;
+import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Functionality.Type;
 import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
@@ -325,36 +325,42 @@ public class operator extends sorcer.operator {
 		return new Path(path, info, Path.Type.MAP);
 	}
 
-	public static <T> Entry<T> init(String domain, String path, T value) {
-		Entry ent = new Entry<T>(path, value);
+	public static <T> Function<T> init(String domain, String path, T value) {
+		Function ent = new Function<T>(path, value);
 		ent.annotation(domain);
 		ent.setType(Type.DOMAIN_PRED);
 		return ent;
 	}
 
-	public static <T> Entry<T> init(String path, T value) {
-		Entry ent = new Entry<T>(path, value);
+	public static <T> Function<T> init(String path, T value) {
+		Function ent = new Function<T>(path, value);
 		ent.setType(Type.PRED);
 		return ent;
 	}
 
-	public static <T> Entry<T> val(String domain, String path, T value) {
-		Entry ent = new Entry<T>(path, value);
+	public static <T> Function<T> val(String domain, String path, T value) {
+		Function ent = new Function<T>(path, value);
 		ent.annotation(domain);
 		ent.setType(Type.DOMAIN_CONSTANT);
 		return ent;
 	}
 
-	public static <T> Entry<T> val(Path path, T value) {
-		Entry ent = new Entry<T>(path.path, value);
-		ent.annotation(path.info.toString());
-		ent.setType(Type.CONSTANT);
+	public static <T> Value<T> val(String path, T value) {
+		Value ent = new Value<T>(path, value);
+		ent.setType(Type.VAL);
 		return ent;
 	}
 
-	public static <T> Entry<T> val(String path, T value) {
-		Entry ent = new Entry<T>(path, value);
-		ent.setType(Type.CONSTANT);
+	public static <T> Value<T> val(Path path, T value) {
+		Value ent = new Value<T>(path.path, value);
+		ent.annotation(path.info.toString());
+		ent.setType(Type.VAL);
+		return ent;
+	}
+
+	public static <T> Function<T> ent(String path, T value) {
+		Function ent = new Function<T>(path, value);
+		ent.setType(Type.FUNCTION);
 		return ent;
 	}
 
@@ -376,7 +382,7 @@ public class operator extends sorcer.operator {
 		return setup(aspect, null, null, entries);
 	}
 
-	public static Setup setup(Object aspect, String entryName, Entry... entries) throws ContextException {
+	public static Setup setup(Object aspect, String entryName, Function... entries) throws ContextException {
 		return setup(aspect, entryName, null, entries);
 	}
 
@@ -393,7 +399,7 @@ public class operator extends sorcer.operator {
 			}
 
 			for (Entry e : entries) {
-				cxt.put((String) e._1, e.get());
+				cxt.put(e.getName(), e.get());
 			}
 			cxt.isValid(false);
 			return new Setup(aspect.toString(), cxt);
@@ -410,28 +416,28 @@ public class operator extends sorcer.operator {
 	    mogram.setId(id);
     }
 
-	public static Entry in(Entry... entries) {
-		for (Entry  entry : entries) {
+	public static Function in(Function... entries) {
+		for (Function entry : entries) {
 			entry.setType(Type.INPUT);
 		}
 		return entries[0];
 	}
 
-	public static Entry out(Entry... entries) {
-		for (Entry  entry : entries) {
+	public static Function out(Function... entries) {
+		for (Function entry : entries) {
 			entry.setType(Type.OUTPUT);
 		}
 		return entries[0];
 	}
 
-	public static Entry inout(Entry... entries) {
-		for (Entry  entry : entries) {
+	public static Function inout(Function... entries) {
+		for (Function entry : entries) {
 			entry.setType(Type.INOUT);
 		}
 		return entries[0];
 	}
 
-	public static Object annotation(Entry entry) {
+	public static Object annotation(Function entry) {
         return entry.annotation();
     }
 
@@ -467,7 +473,7 @@ public class operator extends sorcer.operator {
 	public static DependencyEntry dep(String path, Fidelity fi, Path... paths) {
 		DependencyEntry de = new DependencyEntry(path, Arrays.asList(paths));
 		de.annotation(fi);
-		de.setType(Variability.Type.FIDELITY);
+		de.setType(Functionality.Type.FIDELITY);
         return de;
 	}
 
@@ -485,7 +491,7 @@ public class operator extends sorcer.operator {
 	public static DependencyEntry dep(String path, Fidelity fi, List<Path> paths) {
 		DependencyEntry de = new DependencyEntry(path, paths);
 		de.annotation(fi);
-		de.setType(Variability.Type.FIDELITY);
+		de.setType(Functionality.Type.FIDELITY);
 		return de;
 	}
 
@@ -493,13 +499,13 @@ public class operator extends sorcer.operator {
 		return dependencies;
 	}
 
-	public static <T> Entry<T> rvEnt(String path, T value) {
-		Entry<T> e = new Entry<T>(path, value);
+	public static <T> Function<T> rvEnt(String path, T value) {
+		Function<T> e = new Function<T>(path, value);
 		return e.setReactive(true);
 	}
 
-	public static <T> Entry<T> urvEnt(String path, T value) {
-		Entry<T> e = new Entry<T>(path, value);
+	public static <T> Function<T> urvEnt(String path, T value) {
+		Function<T> e = new Function<T>(path, value);
 		return e.setReactive(false);
 	}
 
@@ -520,9 +526,9 @@ public class operator extends sorcer.operator {
 			throw new ContextException("No Entry at path: " + path);
 	}
 
-	public static Entry<Object>  val(String path) {
-		Entry ent = new Entry(path, null);
-		ent.setType(Variability.Type.VAL);
+	public static Function<Object> val(String path) {
+		Function ent = new Function(path, null);
+		ent.setType(Functionality.Type.VAL);
 		return ent;
 	}
 
@@ -530,25 +536,25 @@ public class operator extends sorcer.operator {
 		return  ent.getContextValue(path);
 	}
 
-    public static <T> OutputEntry<T> outVal(String path, T value) {
+    public static <T> OutputValue<T> outVal(String path, T value) {
 		if (value instanceof String && ((String)value).indexOf('|') > 0) {
-			OutputEntry oe =  outVal(path, null);
+			OutputValue oe =  outVal(path, null);
 			oe.annotation(value);
 			return oe;
 		}
-		OutputEntry ent = new OutputEntry(path, value, 0);
+		OutputValue ent = new OutputValue(path, value, 0);
 		if (value instanceof Class)
 			ent.setValClass((Class) value);
 		return ent;
 	}
 
-	public static <T> OutputEntry<T> outVal(String path, T value, String annotation) {
-		OutputEntry oe =  outVal(path, value);
+	public static <T> OutputValue<T> outVal(String path, T value, String annotation) {
+		OutputValue oe =  outVal(path, value);
 		oe.annotation(annotation);
 		return oe;
 	}
 
-	public static class DataEntry<T> extends Entry<T> {
+	public static class DataEntry<T> extends Entry<String, T> {
 		private static final long serialVersionUID = 1L;
 
 		DataEntry(String path, T value) {
@@ -556,8 +562,8 @@ public class operator extends sorcer.operator {
 			if (v == null)
 				v = (T) Context.none;
 
-			this._1 = path;
-			this._2 = v;
+			this.setKey(path);
+			this.set(v);
 		}
 	}
 
@@ -565,76 +571,72 @@ public class operator extends sorcer.operator {
 		return new DataEntry(Context.DSD_PATH, data);
 	}
 
-	public static <T> OutputEntry<T> outVal(String path, T value, int index) {
-		return new OutputEntry(path, value, index);
+	public static <T> OutputValue<T> outVal(String path, T value, int index) {
+		return new OutputValue(path, value, index);
 	}
 
-	public static <T> OutputEntry<T> dbOutVal(String path, T value) {
-		return new OutputEntry(path, value, true, 0);
+	public static <T> OutputValue<T> dbOutVal(String path, T value) {
+		return new OutputValue(path, value, true, 0);
 	}
 
-	public static InputEntry input(String path) {
-		return new InputEntry(path, null, 0);
+	public static InputValue input(String path) {
+		return new InputValue(path, null, 0);
 	}
 
-	public static OutputEntry outVal(String path) {
-		return new OutputEntry(path, null, 0);
+	public static OutputValue outVal(String path) {
+		return new OutputValue(path, null, 0);
 	}
 
-	public static InputEntry inVal(String path) {
-		return new InputEntry(path, null, 0);
+	public static InputValue inVal(String path) {
+		return new InputValue(path, null, 0);
 	}
 
-	public static Entry at(String path, Object value) {
-		return new Entry(path, value, 0);
+	public static Function at(String path, Object value) {
+		return new Function(path, value, 0);
 	}
 
-	public static Entry at(String path, Object value, int index) {
-		return new Entry(path, value, index);
+	public static Function at(String path, Object value, int index) {
+		return new Function(path, value, index);
 	}
 
-	public static <T> InputEntry<T> inVal(String path, T value) {
-		return new InputEntry(path, value, 0);
+	public static <T> InputValue<T> inVal(String path, T value) {
+		return new InputValue(path, value, 0);
 	}
 
-	public static <T> InputEntry<T> dbInVal(String path, T value, String annotation) {
-		InputEntry<T> ie = new InputEntry(path, value, true, 0);
+	public static <T> InputValue<T> dbInVal(String path, T value, String annotation) {
+		InputValue<T> ie = new InputValue(path, value, true, 0);
 		ie.annotation(annotation);
 		return ie;
 	}
 
-	public static <T> InputEntry<T> dbInVal(String path, T value) {
-		return new InputEntry(path, value, true, 0);
+	public static <T> InputValue<T> dbInVal(String path, T value) {
+		return new InputValue(path, value, true, 0);
 	}
 
-	public static <T> InputEntry<T> inVal(String path, T value, int index) {
-		return new InputEntry(path, value, index);
+	public static <T> InputValue<T> inVal(String path, T value, int index) {
+		return new InputValue(path, value, index);
 	}
 
-	public static <T> InputEntry<T> inVal(String path, T value, String annotation) {
-		InputEntry<T> ie = inVal(path, value);
+	public static <T> InputValue<T> inVal(String path, T value, String annotation) {
+		InputValue<T> ie = inVal(path, value);
 		ie.annotation(annotation);
 		return ie;
 	}
 
-	public static <T> InputEntry<T> inVal(String path, T value, Class valClass, String annotation) {
-		InputEntry<T> ie = new InputEntry(path, value, 0);
+	public static <T> InputValue<T> inVal(String path, T value, Class valClass, String annotation) {
+		InputValue<T> ie = new InputValue(path, value, 0);
 		if (valClass != null)
 			ie.setValClass(valClass);
 		ie.annotation(annotation);
 		return ie;
 	}
 
-	public static <T> InputEntry<T> inVal(String path, T value, Class valClass) {
+	public static <T> InputValue<T> inVal(String path, T value, Class valClass) {
 		return inVal(path, value, valClass, null);
 	}
 
-    public static <T> Entry<T> setValue(Entry<T> entry, T value) throws ContextException {
-		try {
-			entry.setValue(value);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
+    public static <T> Value<T> setValue(Value<T> entry, T value) throws ContextException {
+		entry.setValue(value);
 		if (entry instanceof Proc) {
 			Proc procEntry = (Proc)entry;
 			if (procEntry.getScope() != null && procEntry.getContextable() == null) {
@@ -650,8 +652,8 @@ public class operator extends sorcer.operator {
 		return entry;
 	}
 
-	public static Setup setValue(Setup entry, Entry... entries) throws ContextException {
-		for (Entry e :  entries) {
+	public static Setup setValue(Setup entry, Value... entries) throws ContextException {
+		for (Value e :  entries) {
 				entry.setEntry(e.getName(), e.get());
 		}
 		return entry;
@@ -676,7 +678,7 @@ public class operator extends sorcer.operator {
 						((Setter)entry).setValue(dburl);
 						if (object instanceof Proc) {
 							// its eval is now persisted
-							((Proc)object)._2 = null;
+							((Proc)object).set(null);
 						}
 						return dburl;
 					}
@@ -776,19 +778,19 @@ public class operator extends sorcer.operator {
 		return SdbUtil.size(type);
 	}
 
-	public static <T extends Entry> T persistent(T entry) {
+	public static <T extends Function> T persistent(T entry) {
 		entry.setPersistent(true);
 		return entry;
 	}
 
-	public static <T> Entry<T> dbVal(String path) {
-		Entry<T> e = new Proc<T>(path);
+	public static <T> Function<T> dbVal(String path) {
+		Function<T> e = new Proc<T>(path);
 		e.setPersistent(true);
 		return e;
 	}
 
-	public static <T> Entry<T> dbVal(String path, T value) throws EvaluationException {
-		Entry<T> e = new Entry<T>(path, value);
+	public static <T> Function<T> dbVal(String path, T value) throws EvaluationException {
+		Function<T> e = new Function<T>(path, value);
 		e.setPersistent(true);
 		if (SdbUtil.isSosURL(value)) {
 			try {
@@ -830,16 +832,32 @@ public class operator extends sorcer.operator {
 		return dburl;
 	}
 
-	public static StrategyEntry strategyEnt(String x1, Strategy strategy) {
-		return new StrategyEntry(x1, strategy);
+	public static StrategyEntry strategyEnt(String name, Strategy strategy) {
+		return new StrategyEntry(name, strategy);
 	}
 
-	public static <T1, T2> T1 key(Tuple2<T1, T2> entry) {
-		return entry._1;
+	public static <K, V> String key(Tuple2<K, V> entry) {
+		return entry.getName();
 	}
 
-	public static <T2> String path(Tuple2<String, T2> entry) {
-		return entry._1;
+	public static <K, V> String path(Tuple2<K, V> entry) {
+		return entry.getName();
+	}
+
+	public static <K, V> V val(Tuple2<K, V> entry) {
+		return entry.value();
+	}
+
+	public static <K, V> V val(Entry<K, V> entry) {
+		return entry.getItem();
+	}
+
+	public static <V> String key(Entry<String, V> entry) {
+		return entry.getName();
+	}
+
+	public static <V> String path(Entry<String, V> entry) {
+		return entry.getName();
 	}
 
 	public static <T extends List> DataTable dataTable(T... elems) {
@@ -877,8 +895,8 @@ public class operator extends sorcer.operator {
 	}
 
     public static String fi(Object object) {
-	    if (object instanceof Entry) {
-	        return ((Entry)object).fiName();
+	    if (object instanceof Function) {
+	        return ((Function)object).fiName();
         } else {
             return object.toString();
         }
@@ -972,10 +990,18 @@ public class operator extends sorcer.operator {
 		return lc;
 	}
 
-	public static Map<Object, Object> dictionary(Tuple2<?, ?>... entries) {
+    public static Map<Object, Object> dictionary(Tuple2... entries) {
+        Map<Object, Object> map = new HashMap<Object, Object>();
+        for (Tuple2 entry : entries) {
+            map.put(entry.getName(), entry.value());
+        }
+        return map;
+    }
+
+	public static Map<Object, Object> dictionary(Entry... entries) {
 		Map<Object, Object> map = new HashMap<Object, Object>();
-		for (Tuple2<?, ?> entry : entries) {
-			map.put(entry._1, entry._2);
+		for (Entry entry : entries) {
+			map.put(entry.getName(), entry.getItem());
 		}
 		return map;
 	}
@@ -1017,32 +1043,41 @@ public class operator extends sorcer.operator {
 	public static <K, V> Map<K, V> map(Tuple2<K, V>... entries) {
 		Map<K, V> map = new HashMap<K, V>();
 		for (Tuple2<K, V> entry : entries) {
-			map.put(entry._1, entry._2);
+			map.put(entry.key(), entry.value());
+		}
+		return map;
+	}
+
+	public static <K, V> Map<K, V> map(Entry<K, V>... entries) {
+		Map<K, V> map = new HashMap<K, V>();
+		for (Entry<K, V> entry : entries) {
+			map.put(entry.getKey(), entry.get());
 		}
 		return map;
 	}
 
 	public static Object rasis(Entry entry)
 			throws ContextException {
-		String path = entry.path();
+		String path = entry.getName();
 		Object o = asis(entry);
-		while (o instanceof Entry && ((Entry)o)._1.equals(path)) {
-			o = asis((Entry)o);;
+		while (o instanceof Function && ((Entry)o).getKey().equals(path)) {
+			o = asis((Function)o);;
 		}
 		return o;
 	}
 
-	public static Object get(Entry entry) throws ContextException {
+	public static Object get(Function entry) throws ContextException {
 		return rasis(entry);
+	}
+
+	public static Object asis(Function entry)
+			throws ContextException {
+		return entry.asis();
 	}
 
 	public static Object asis(Entry entry)
 			throws ContextException {
-		try {
-			return entry.asis();
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
+		return entry.asis();
 	}
 
 	public static <T> T asis(Context<T> context, String path)
@@ -1053,8 +1088,8 @@ public class operator extends sorcer.operator {
 	public static <T> T rasis(Context<T> context, String path)
 			throws ContextException {
 		Object o = context.asis(path);
-		if (o instanceof Entry)
-			return (T)rasis((Entry)o);
+		if (o instanceof Function)
+			return (T)rasis((Function)o);
 		else
 			return (T)o;
 	}
@@ -1107,15 +1142,13 @@ public class operator extends sorcer.operator {
 		for (Evaluation d : dependers) {
             path = d.getName();
             if (path != null && path.equals("self")) {
-                ((Entry)d)._1 = (((Domain) dependee).getName());
+                ((Entry)d).setKey(((Domain) dependee).getName());
             }
             if (d instanceof DependencyEntry && ((DependencyEntry)d).getType().equals(Type.CONDITION)) {
                 ((DependencyEntry)d).getCondition().setConditionalContext((Context)dependee);
                 }
 			if (!dependee.getDependers().contains(d)) {
                 dependee.getDependers().add(d);
-
-
             }
 		}
 		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof DependencyEntry) {

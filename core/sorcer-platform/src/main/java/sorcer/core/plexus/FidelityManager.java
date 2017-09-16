@@ -25,7 +25,7 @@ import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.invoker.Observable;
 import sorcer.core.invoker.Observer;
 import sorcer.service.*;
@@ -363,9 +363,9 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         metafidelities.put(sysFiName, sysFi);
     }
 
-    public void put(Entry<ServiceFidelity<Fidelity>>... entries) {
+    public void put(Function<ServiceFidelity<Fidelity>>... entries) {
         try {
-            for(Entry<ServiceFidelity<Fidelity>> e : entries) {
+            for(Function<ServiceFidelity<Fidelity>> e : entries) {
                 metafidelities.put(e.getName(), e.getValue());
             }
         } catch (EvaluationException e) {

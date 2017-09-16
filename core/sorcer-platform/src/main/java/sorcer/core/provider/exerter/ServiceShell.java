@@ -35,7 +35,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.DispatcherException;
 import sorcer.core.dispatch.ExertionSorter;
@@ -253,7 +253,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 			for (Arg a : entries) {
 				if (a instanceof Entry) {
 					exertion.getContext().putValue(
-							((Entry) a).path(), ((Entry) a).value());
+							a.getName(), ((Entry) a).getItem());
 				}
 			}
 		}
@@ -887,7 +887,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 				se.readFile(new File(((NetletSignature)service).getServiceSource()));
 				return evaluate((Mogram)se.interpret());
 			} else if (service instanceof Exertion) {
-				return eval((Evaluation) service, args);
+				return eval((Computable) service, args);
 			} else if (service instanceof ProcModel) {
 				((Model)service).getResponse(args);
 			} else if (service instanceof Context) {

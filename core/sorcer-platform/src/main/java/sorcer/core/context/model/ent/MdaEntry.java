@@ -21,12 +21,12 @@ import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.Domain;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Functionality;
 
 /**
  * Created by Mike Soblewski on 06/03/16.
  */
-public class MdaEntry extends Entry<Mda> implements Mda {
+public class MdaEntry extends Entry<String, Mda> implements Mda {
 
     private String name;
 
@@ -36,25 +36,25 @@ public class MdaEntry extends Entry<Mda> implements Mda {
 
     public MdaEntry(String name, Mda mda) throws EvaluationException {
         this.name = name;
-        this._2 = mda;
-        this.type = Variability.Type.MDA;
+        this.item = mda;
+        this.type = Functionality.Type.MDA;
     }
 
     public MdaEntry(String name, Signature signature) throws EvaluationException {
         this.name = name;
         this.signature = signature;
-        this.type = Variability.Type.MDA;
+        this.type = Functionality.Type.MDA;
     }
 
     public MdaEntry(String name, Mda mda, Context context) throws EvaluationException {
         this.name = name;
         scope = context;
-        this._2 = mda;
-        this.type = Variability.Type.MDA;
+        this.item = mda;
+        this.type = Functionality.Type.MDA;
     }
 
     public Mda getMda() {
-        return _2;
+        return item;
     }
 
     public Signature getSignature() {
@@ -64,12 +64,12 @@ public class MdaEntry extends Entry<Mda> implements Mda {
     @Override
     public void analyze(Model model, Context context) throws EvaluationException {
         try {
-            if (_2 != null && _2 instanceof Mda) {
-                _2.analyze(model, context);
+            if (item != null && item instanceof Mda) {
+                item.analyze(model, context);
             } else if (signature != null) {
-                _2 = (Mda) ((ObjectSignature)signature).initInstance();
-                _2.analyze(model, context);
-            } else if (_2 == null) {
+                item = (Mda) ((ObjectSignature)signature).initInstance();
+                item.analyze(model, context);
+            } else if (item == null) {
                 throw new InvocationException("No MDA anslysis available!");
             }
         } catch (ContextException | SignatureException e) {

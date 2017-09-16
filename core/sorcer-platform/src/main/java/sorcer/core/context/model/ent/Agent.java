@@ -29,6 +29,7 @@ import java.util.Arrays;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.service.Arg;
 import sorcer.service.Context;
+import sorcer.service.Entry;
 import sorcer.service.EvaluationException;
 
 /**
@@ -58,12 +59,16 @@ public class Agent<T> extends Proc<T> implements Serializable {
 		this.className = className;
 		this.agentURLs = agentURLs;
 	}
-	
-	public T evaluate(Arg... entries)
-			throws EvaluationException, RemoteException {
-		if (invoker != null)
-			return (T)invoker.invoke(getPars(entries));
-					
+
+	public T evaluate(Arg... entries) throws EvaluationException {
+		try {
+			if (invoker != null) {
+				return (T) invoker.invoke(getPars(entries));
+			}
+		} catch (RemoteException e) {
+			throw new EvaluationException(e);
+		}
+
 		if (className == null)
 			className = getClassName(entries);
 
@@ -116,7 +121,11 @@ public class Agent<T> extends Proc<T> implements Serializable {
 							+ e.getClass().getName() + ": "
 							+ e.getLocalizedMessage());
 		}
-		value = (T)invoker.invoke(entries);
+		try {
+			value = (T)invoker.invoke(entries);
+		} catch (RemoteException e) {
+			throw new EvaluationException();
+		}
 		invoker.valueValid(true);
 		return value;
 	}
@@ -133,7 +142,7 @@ public class Agent<T> extends Proc<T> implements Serializable {
 	 * @see sorcer.service.Evaluation#getAsis()
 	 */
 	@Override
-	public T asis() throws EvaluationException, RemoteException {
+	public T asis() {
 		return (T) invoker;
 	}
 	
@@ -148,8 +157,8 @@ public class Agent<T> extends Proc<T> implements Serializable {
 	
 	private String getClassName(Arg... entries) {
 		for (Arg p : entries) {
-			if (p instanceof Entry && ((Entry)p).key().equals("class"))
-				return (String)((Entry)p).value();
+			if (p instanceof Entry && p.getName().equals("class"))
+				return (String)((Entry)p).get();
 		}
 		return null;
 	}

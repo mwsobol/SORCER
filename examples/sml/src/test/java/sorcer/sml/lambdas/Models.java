@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.*;
@@ -88,7 +88,7 @@ public class Models {
 				lambda("subtract", (Context<Double> model) ->
 						v(model, "multiply") - v(model, "add")),
 				lambda("multiply2", (Context<Object> cxt) -> {
-					Entry multiply = (Entry) asis(cxt, "multiply");
+					Function multiply = (Function) asis(cxt, "multiply");
 					double out = 0;
 					if (value(cxt, "multiply/done").equals(false)) {
 						out = (double) exec(multiply, cxt) + 10.0;
@@ -99,7 +99,7 @@ public class Models {
 					return out;
 				}),
 				lambda("multiply3", (Context<Object> cxt) -> {
-					Entry multiply = (Entry) asis(cxt, "multiply");
+					Function multiply = (Function) asis(cxt, "multiply");
 					double out = 0;
 					if (value(cxt, "multiply/done").equals(false)) {
 						out = (double) exec(multiply, cxt);

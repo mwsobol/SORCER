@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import sorcer.core.context.model.ent.Proc;
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;
 import sorcer.service.ContextException;
@@ -76,7 +76,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 		this.args = new ArgSet(procEntries);
 	}
 
-	public CmdInvoker(String[] cmdarray, Entry... parEntries) {
+	public CmdInvoker(String[] cmdarray, Function... parEntries) {
 		this.cmdarray = cmdarray;
 		this.args = new ArgSet(parEntries);
 	}

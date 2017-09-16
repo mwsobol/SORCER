@@ -19,7 +19,6 @@ package sorcer.service;
 
 import sorcer.service.modeling.EvaluationComponent;
 import sorcer.service.modeling.SupportComponent;
-import sorcer.service.modeling.Valuation;
 
 import java.rmi.RemoteException;
 
@@ -29,28 +28,14 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public interface  Evaluation <T> extends Substitutable, Scopable, Item, EvaluationComponent, SupportComponent {
+public interface Computable<T> {
 
 	/**
-	 * Returns the value of the existing value of this evaluation that might be invalid.
-	 * 
-	 * @return the value as is
-	 * @throws EvaluationException
-	 * @throws RemoteException
-	 */
-	public T asis() throws EvaluationException, RemoteException;
-		
-	/**
-	 * Returns the current value of this evaluation. The current value can be
-	 * exiting value with no need to evaluate it if it's still valid.
-	 * 
+	 * Returns the current value of this computation.
+	 *
 	 * @return the current value of this evaluation
 	 * @throws EvaluationException
-	 * @throws RemoteException
 	 */
-	public T getValue(Arg... entries) throws EvaluationException, RemoteException;
-
-
-	public void setNegative(boolean negative);
+	public T compute(Arg... args) throws EvaluationException;
 
 }

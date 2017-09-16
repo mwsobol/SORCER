@@ -17,59 +17,57 @@
 
 package sorcer.core.context.model.ent;
 
-import sorcer.service.Context;
 import sorcer.service.ContextException;
-import sorcer.service.Evaluator;
+import sorcer.service.Entry;
 import sorcer.service.Setup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by Mike Sobolewski on 04/25/17.
  */
-public class Config extends Entry<List<Setup>> {
+public class Config extends Entry<String, List<Setup>> {
 
 	public Config(String path) {
-		_1 = path;
+		key = path;
 	}
 
 	public Config(String path, List<Setup> setups) {
-		_1 = path;
-		_2 = setups;
+		key = path;
+		item = setups;
 	}
 
 	public Config(String path, Setup[] setups) {
-		_1 = path;
-		_2 = new ArrayList(setups.length);
+		key = path;
+		item = new ArrayList(setups.length);
 		for (Setup s :setups) {
-			_2.add(s);
+			item.add(s);
 		}
 	}
 
 	public List<Setup> getSetups() {
-		return _2;
+		return item;
 	}
 
 	public void add(Setup setup) throws ContextException {
-		_2.add(setup);
+		item.add(setup);
 		isValid(false);
 	}
 
 	public void addAll(List<Setup> list) throws ContextException {
-		_2.addAll(list);
+		item.addAll(list);
 		isValid(false);
 	}
 
 	public Setup remove(String name) throws ContextException {
 		Setup deleted = null;
-		for (Setup s : _2) {
+		for (Setup s : item) {
 			if (s.getName().equals(name)) {
 				deleted = s;
 			}
 		}
-		_2.remove(deleted);
+		item.remove(deleted);
 		return deleted;
 	}
 

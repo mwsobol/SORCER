@@ -84,8 +84,8 @@ public class ArithmeticMograms {
 		Object val = asis(mo, "subtract");
 		if (val instanceof Srv) {
 			Srv srv = ((Srv)val);
-			if (srv.value() instanceof ContextCallable) {
-				ContextCallable ctx = (ContextCallable) srv.value();
+			if (srv.get() instanceof ContextCallable) {
+				ContextCallable ctx = (ContextCallable) srv.get();
 				logger.info("class: " + ctx.getClass());
 			}
 		}

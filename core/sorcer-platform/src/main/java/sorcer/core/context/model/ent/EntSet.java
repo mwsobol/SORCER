@@ -31,7 +31,7 @@ import sorcer.service.EvaluationException;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class EntSet extends TreeSet<Entry> {
+public class EntSet extends TreeSet<Function> {
 	
 	private static final long serialVersionUID = -4662755904016297879L;
 	
@@ -60,8 +60,8 @@ public class EntSet extends TreeSet<Entry> {
 		}
 	}
 	
-	public Entry getPar(String parName) throws EntException {
-		for (Entry v : this) {
+	public Function getPar(String parName) throws EntException {
+		for (Function v : this) {
 			if (v.getName().equals(parName))
 				return v;
 		}
@@ -70,8 +70,8 @@ public class EntSet extends TreeSet<Entry> {
 	
 	public void setValue(String parName, Object value)
 			throws EvaluationException {
-		Entry procEntry = null;
-		for (Entry p : this) {
+		Function procEntry = null;
+		for (Function p : this) {
 			if (p.getName().equals(parName)) {
 				procEntry = p;
 				try {
@@ -92,7 +92,7 @@ public class EntSet extends TreeSet<Entry> {
 			allParNames.addAll(nl);
 		}
 		EntList out = new EntList();
-		for (Entry v : this) {
+		for (Function v : this) {
 			if (allParNames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -103,7 +103,7 @@ public class EntSet extends TreeSet<Entry> {
 	public EntSet selectPars(String... parnames) {
 		List<String> vnames = Arrays.asList(parnames);
 		EntSet out = new EntSet();
-		for (Entry v : this) {
+		for (Function v : this) {
 			if (vnames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -116,7 +116,7 @@ public class EntSet extends TreeSet<Entry> {
 		if (!(obj instanceof Proc<?>))
 			return false;
 		else {
-			for (Entry v : this) {
+			for (Function v : this) {
 				if (v.getName().equals(((Proc<?>)obj).getName()))
 					return true;
 			}
@@ -129,7 +129,7 @@ public class EntSet extends TreeSet<Entry> {
 		if (obj == null || !(obj instanceof Proc<?>)) {
 			return false;
 		} else {
-			for (Entry v : this) {
+			for (Function v : this) {
 				if (v.getName().equals(((Proc<?>) obj).getName())) {
 					super.remove(v);
 					return true;
@@ -141,7 +141,7 @@ public class EntSet extends TreeSet<Entry> {
 	
 	 public List<String> getNames() {
 		 List<String> names = new ArrayList<String>(size());
-		 Iterator<Entry> i = iterator();
+		 Iterator<Function> i = iterator();
 		 while (i.hasNext()) {
 			 names.add(i.next().getName());
 		 }
@@ -150,7 +150,7 @@ public class EntSet extends TreeSet<Entry> {
 	 
 	 public List<Object> getValues() throws EvaluationException, RemoteException {
 		 List<Object> values = new ArrayList<Object>(size());
-		 Iterator<Entry> i = iterator();
+		 Iterator<Function> i = iterator();
 		 while (i.hasNext()) {
 			 values.add(i.next().getValue());
 		 }
@@ -164,7 +164,7 @@ public class EntSet extends TreeSet<Entry> {
 			
 	 public EntList toParList() {
 		 EntList vl = new EntList(size());
-		 for (Entry v : this)
+		 for (Function v : this)
 			 vl.add(v);
 		 return vl;
 	 }
@@ -181,7 +181,7 @@ public class EntSet extends TreeSet<Entry> {
 	 }
 
 	 public void clearPars() throws EvaluationException {
-			for (Entry p : this) {
+			for (Function p : this) {
 				try {
 					p.setValue(null);
 				} catch (Exception e) {

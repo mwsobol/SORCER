@@ -28,7 +28,7 @@ import java.util.Set;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class EntryList extends ArrayList<Entry> {
+public class EntryList extends ArrayList<Function> {
 	
 	static final long serialVersionUID = 1L;
 	
@@ -48,11 +48,11 @@ public class EntryList extends ArrayList<Entry> {
 		super(size);
 	}
 
-	public EntryList(Set<Entry> entrySet) {
+	public EntryList(Set<Function> entrySet) {
 		addAll(entrySet);
 	}
 
-	public EntryList(String name, Entry...  entryLists) {
+	public EntryList(String name, Function...  entryLists) {
 		this(entryLists);
 		this.name = name;
 	}
@@ -64,29 +64,29 @@ public class EntryList extends ArrayList<Entry> {
 		}
 	}
 	
-	public EntryList(Entry... entryArray) {
+	public EntryList(Function... entryArray) {
 		super();
-		for (Entry e : entryArray) {
+		for (Function e : entryArray) {
 			add(e);
 		}
 	}
 	
 	public  EntryList(EntryList  entryList) {
 		super();
-		for (Entry t : entryList) {
+		for (Function t : entryList) {
 			add(t);
 		}
 	}
 	
 	public EntryList(EntSet parSet) {
 		super();
-		for (Entry p : parSet) {
-			add(new Entry(p.getName(), p));
+		for (Function p : parSet) {
+			add(new Function(p.getName(), p));
 		}
 	}
 		
-	public Entry getEntry(String entryName) {
-		for (Entry e : this) {
+	public Function getEntry(String entryName) {
+		for (Function e : this) {
 			if (e.getName().equals(entryName)) {
 				return e;
 			}
@@ -95,16 +95,16 @@ public class EntryList extends ArrayList<Entry> {
 	}
 
 	public boolean containsEntryName(String name) {
-		return contains(new Entry(name));
+		return contains(new Function(name));
 	}
 	
 	@Override
 	public boolean contains(Object obj) {
-		if (!(obj instanceof Entry<?>))
+		if (!(obj instanceof Function<?>))
 			return false;
 		else {
-			for (Entry e : this) {
-				if (e.getName().equals(((Entry)obj).getName()))
+			for (Function e : this) {
+				if (e.getName().equals(((Function)obj).getName()))
 					return true;
 			}
 		}
@@ -113,11 +113,11 @@ public class EntryList extends ArrayList<Entry> {
 	
 	@Override
 	public boolean remove(Object obj) {
-		if (obj == null || !(obj instanceof Entry<?>)) {
+		if (obj == null || !(obj instanceof Function<?>)) {
 			return false;
 		} else {
-			for (Entry e : this) {
-				if (e.getName().equals(((Entry) obj).getName())) {
+			for (Function e : this) {
+				if (e.getName().equals(((Function) obj).getName())) {
 					super.remove(e);
 					return true;
 				}
@@ -142,14 +142,14 @@ public class EntryList extends ArrayList<Entry> {
 		 return values;
 	 }
 	 
-	 public Entry[] toArray() {
-		 Entry[] va = new Entry[size()];
+	 public Function[] toArray() {
+		 Function[] va = new Function[size()];
 		 return toArray(va);
 	 }
 			
-	 public static EntryList asList(Entry[] array) {
+	 public static EntryList asList(Function[] array) {
 		 EntryList el = new EntryList(array.length);
-		 for (Entry<?> e : array)
+		 for (Function<?> e : array)
 			 el.add(e);
 		 return el;
 	 }

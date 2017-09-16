@@ -1,6 +1,6 @@
 /*
- * Copyright 2015 the original author or authors.
- * Copyright 2015 SorcerSoft.org.
+ * Copyright 2016 the original author or authors.
+ * Copyright 2016 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,19 @@
  * limitations under the License.
  */
 
-package sorcer.co.tuple;
+package sorcer.service.modeling;
 
-import sorcer.core.context.model.ent.Function;
-import sorcer.service.Entry;
-import sorcer.service.Mogram;
+import sorcer.service.*;
+import sorcer.service.modeling.EvaluationComponent;
+import sorcer.service.modeling.SupportComponent;
+
+import java.rmi.RemoteException;
 
 /**
- * Created by Mike Sobolewski on 10/28/15.
+ * Created by Mike Sobolewski on 7/26/16.
  */
-public class MogramEntry extends Entry<String, Mogram> {
+public interface Activation  extends Substitutable, Scopable, Item, EvaluationComponent, SupportComponent {
 
-    private static final long serialVersionUID = 1L;
+    public Double activate(Arg... entries) throws EvaluationException, RemoteException;
 
-    public MogramEntry(String path, Mogram value) {
-        super(path, value);
-    }
 }

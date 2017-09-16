@@ -144,7 +144,8 @@ public class CoffeeServiceTest {
 //				ent("change$", invoker("paid$ - (coffee$ + delivery$)", args("paid$", "coffee$", "delivery$"))));
 
 		add(mod, ent("change$", invoker("paid$ - (coffee$ + delivery$)", operator.ents("paid$", "coffee$", "delivery$"))));
-		dependsOn(mod, ent("change$", "makeCoffee"), ent("change$", "deliver"));
+		dependsOn(mod, dep("change$", paths("makeCoffee")), dep("change$", paths("deliver")));
+
 		responseUp(mod, "makeCoffee", "deliver", "change$", "paid$");
 		Context out = response(mod);
 		logger.info("out: " + out);

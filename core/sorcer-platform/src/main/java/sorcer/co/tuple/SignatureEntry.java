@@ -17,14 +17,15 @@
 
 package sorcer.co.tuple;
 
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.service.Context;
+import sorcer.service.Entry;
 import sorcer.service.Signature;
 
 /**
  * Created by Mike Sobolewski
  */
-public class SignatureEntry extends Entry<Signature> {
+public class SignatureEntry extends Entry<String, Signature> {
 
     private static final long serialVersionUID = 1L;
 

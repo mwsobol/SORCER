@@ -22,7 +22,8 @@ import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
+import sorcer.core.context.model.ent.Value;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.dispatch.DispatcherException;
@@ -143,12 +144,12 @@ public class operator {
         return model;
     }
 
-    public static Model setValue(Model model, String entName, Entry... entries)
+    public static Model setValue(Model model, String entName, Function... entries)
             throws ContextException {
         Object entry = model.asis(entName);
         if (entry != null) {
             if (entry instanceof Setup) {
-                for (Entry e : entries) {
+                for (Function e : entries) {
                     ((Setup) entry).getContext().putValue(e.getName(), e.get());
                 }
             }
@@ -160,7 +161,7 @@ public class operator {
 
     public static Model setValue(Model model, Entry... entries) throws ContextException {
         for(Entry ent :entries) {
-            setValue(model, ent.getName(), ent.value());
+            setValue(model, ent.getName(), ent.get());
         }
         return model;
     }
@@ -238,19 +239,15 @@ public class operator {
     }
 
     public static Entry result(Entry entry) throws ContextException {
-        try {
-            Entry out = null;
+        Entry out = null;
 
-            if (entry.asis() instanceof ServiceContext) {
-                out = new Entry(entry.path(), ((ServiceContext)entry.asis()).getValue(entry.path()));
-                return out;
-            } else {
-                out = new Entry(entry.path(), entry.getValue());
-            }
+        if (entry.asis() instanceof ServiceContext) {
+            out = new Entry(entry.getName(), ((ServiceContext)entry.asis()).getValue(entry.getName()));
             return out;
-        } catch (RemoteException e) {
-            throw new ContextException(e);
+        } else {
+            out = new Entry(entry.getName(), entry.getItem());
         }
+        return out;
     }
 
     public static Context result(Domain model) throws ContextException {
@@ -265,7 +262,7 @@ public class operator {
         return ((ServiceContext)((ServiceContext)model).getMogramStrategy().getOutcome()).get(path);
     }
 
-    public static  ServiceContext substitute(ServiceContext model, Entry... entries) throws ContextException {
+    public static  ServiceContext substitute(ServiceContext model, Function... entries) throws ContextException {
         model.substitute(entries);
         return model;
     }
@@ -371,7 +368,7 @@ public class operator {
         return map;
     }
 
-    public static Context inConn(boolean isRedundant, Entry... entries) throws ContextException {
+    public static Context inConn(boolean isRedundant, Value... entries) throws ContextException {
         MapContext map = new MapContext();
         map.direction = MapContext.Direction.IN;
         map.isRedundant = isRedundant;
@@ -379,7 +376,7 @@ public class operator {
         sorcer.eo.operator.populteContext(map, items);
         return map;
     }
-    public static Context inConn(Entry... entries) throws ContextException {
+    public static Context inConn(Value... entries) throws ContextException {
         return inConn(false, entries);
     }
 
@@ -488,7 +485,7 @@ public class operator {
                 model = ((SrvModel)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
-            } else if (item instanceof Srv && ((Entry)item)._2 instanceof MorphFidelity) {
+            } else if (item instanceof Srv && ((Function)item).getItem() instanceof MorphFidelity) {
                 morphFiEnts.add((Srv)item);
             } else if (item instanceof Fidelity) {
                 if (((Fidelity) item).getFiType().equals(Fidelity.Type.META)) {
@@ -512,15 +509,15 @@ public class operator {
             MorphFidelity mFi = null;
             if ((morphFiEnts.size() > 0)) {
                 for (Srv morphFiEnt : morphFiEnts) {
-                    mFi = (MorphFidelity) morphFiEnt._2;
-                    fiManager.addMorphedFidelity(morphFiEnt._1, mFi);
-                    fiManager.addFidelity(morphFiEnt._1, mFi.getFidelity());
-                    mFi.setPath(morphFiEnt._1);
+                    mFi = (MorphFidelity) morphFiEnt.getItem() ;
+                    fiManager.addMorphedFidelity(morphFiEnt.getName(), mFi);
+                    fiManager.addFidelity(morphFiEnt.getName(), mFi.getFidelity());
+                    mFi.setPath(morphFiEnt.getName());
                     mFi.setSelect((Arg) mFi.getSelects().get(0));
                     mFi.addObserver(fiManager);
                     if (mFi.getMorpherFidelity() != null) {
                         // setValue the default morpher
-                        mFi.setMorpher((Morpher) ((Entry)mFi.getMorpherFidelity().get(0))._2);
+                        mFi.setMorpher((Morpher) ((Function)mFi.getMorpherFidelity().get(0)).getItem());
                     }
                 }
             }
@@ -530,7 +527,7 @@ public class operator {
             model.getMogramStrategy().setResponsePaths(((ServiceFidelity) responsePaths).getSelects());
         }
         if (complement != null) {
-            model.setSubject(complement.path(), complement.value());
+            model.setSubject(complement.getName(), complement.getId());
         }
 
         Object[] dest = new Object[items.length+1];

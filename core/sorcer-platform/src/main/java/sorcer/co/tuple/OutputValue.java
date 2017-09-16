@@ -16,36 +16,39 @@
  */
 package sorcer.co.tuple;
 
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Value;
 import sorcer.service.Signature;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Functionality;
 
-public class OutputEntry<T> extends Entry<T> {
+public class OutputValue<T> extends Value<T> {
 
 	private static final long serialVersionUID = 1L;
 
-	public OutputEntry() {
+	public OutputValue() {
 		super();
         annotation = Signature.Direction.OUT;
-		type = Variability.Type.OUTPUT;
+		type = Functionality.Type.OUTPUT;
+	}
+	public OutputValue(String path) {
+		this(path, null, false, 0);
 	}
 
-	public OutputEntry(String path) {
-        this(path, null, false, 0);
+	public OutputValue(String path, T value) {
+		this(path, value, false, 0);
 	}
 
-	public OutputEntry(String path, T value) {
-        this(path, value, false, 0);
-	}
-
-    public OutputEntry(String path, T value, int index) {
+	public OutputValue(String path, T value, int index) {
 		this(path, value, false, index);
 	}
 
-	public OutputEntry(String path, T value, boolean isPersistant, int index) {
-		super(path, value, isPersistant, index);
+
+	public OutputValue(String path, T value, boolean isPersistent, int index) {
+		super(path);
+		this.item = value;
+		this.isPersistent = isPersistent;
+		this.index = index;
         annotation = Signature.Direction.OUT;
-		type = Variability.Type.OUTPUT;
+		type = Functionality.Type.OUTPUT;
 	}
 
 }

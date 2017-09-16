@@ -20,15 +20,14 @@ import sorcer.service.Arg;
 import sorcer.service.Fidelity;
 import sorcer.service.ServiceFidelity;
 import sorcer.service.Signature;
-import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Functionality;
 
 public class ModelSignature extends ServiceSignature {
 
 	static final long serialVersionUID = 5482425096559139341L;
 
-	private Variability var;
+	private Functionality var;
 
 	private Fidelity fidelity;
 
@@ -89,7 +88,7 @@ public class ModelSignature extends ServiceSignature {
 	 * 
 	 * @return the evaluation
 	 */
-	public Variability<?> getVar() {
+	public Functionality<?> getVar() {
 		return var;
 	}
 

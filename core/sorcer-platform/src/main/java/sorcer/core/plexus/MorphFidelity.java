@@ -16,10 +16,9 @@
 
 package sorcer.core.plexus;
 
-import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.Ref;
 import sorcer.core.invoker.Observable;
 import sorcer.service.*;
@@ -40,7 +39,7 @@ public class MorphFidelity<T extends Arg> extends Observable implements
 
     private String path;
 
-    private ServiceFidelity<Entry> morpherFidelity;
+    private ServiceFidelity<Function> morpherFidelity;
 
     private Uuid id = UuidFactory.generate();
 
@@ -116,11 +115,11 @@ public class MorphFidelity<T extends Arg> extends Observable implements
         fidelity.setSelects(selects);
     }
 
-    public ServiceFidelity<Entry> getMorpherFidelity() {
+    public ServiceFidelity<Function> getMorpherFidelity() {
         return morpherFidelity;
     }
 
-    public void setMorpherFidelity(ServiceFidelity<Entry> morpherFidelity) {
+    public void setMorpherFidelity(ServiceFidelity<Function> morpherFidelity) {
         this.morpherFidelity = morpherFidelity;
     }
 

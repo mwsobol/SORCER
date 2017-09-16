@@ -20,7 +20,7 @@ package sorcer.service;
 import sorcer.core.provider.ProviderName;
 import sorcer.service.modeling.EvaluationComponent;
 import sorcer.service.modeling.SupportComponent;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Functionality;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -92,7 +92,7 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 	 *
 	 * @return Variability of this service provider
 	 */
-	public Variability<?> getVariability();
+	public Functionality<?> getVariability();
 
 	public void setProviderName(ProviderName providerName);
 

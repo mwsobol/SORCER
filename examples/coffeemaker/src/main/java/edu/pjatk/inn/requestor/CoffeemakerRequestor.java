@@ -10,12 +10,11 @@ import sorcer.service.Domain;
 import java.io.File;
 
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.paths;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.responseUp;
 import static sorcer.mo.operator.srvModel;
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.proc;
-import static sorcer.po.operator.srv;
+import static sorcer.po.operator.*;
 
 public class CoffeemakerRequestor extends ServiceRequestor {
 
@@ -88,8 +87,8 @@ public class CoffeemakerRequestor extends ServiceRequestor {
                         result("delivery$", inPaths("location", "room")))));
 //				proc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
 
-        add(mdl, proc("change$", invoker("paid$ - (coffee$ + delivery$)", operator.ents("paid$", "coffee$", "delivery$"))));
-        dependsOn(mdl, operator.ent("change$", "makeCoffee"), operator.ent("change$", "deliver"));
+        add(mdl, proc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
+        dependsOn(mdl, dep("change$", paths("makeCoffee")), dep("change$", paths("deliver")));
         responseUp(mdl, "makeCoffee", "deliver", "change$", "paid$");
 
         return mdl;

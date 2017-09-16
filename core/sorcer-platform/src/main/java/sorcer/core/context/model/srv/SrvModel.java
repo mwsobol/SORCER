@@ -26,7 +26,7 @@ import sorcer.co.tuple.DependencyEntry;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ModelStrategy;
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.MorphFidelity;
@@ -37,7 +37,7 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Functionality;
 import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
@@ -162,7 +162,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     if (((Srv) val).getSrvValue() != null && ((Srv) val).isValueCurrent() && !isChanged())
                         return ((Srv) val).getSrvValue();
                     else {
-                        Signature sig = ((SignatureEntry) ((Srv) val).asis()).value();
+                        Signature sig = ((SignatureEntry) ((Srv) val).asis()).get();
                         return evalSignature(sig, path, args);
                     }
                 } else if (val2 instanceof ServiceFidelity) {
@@ -179,16 +179,16 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     Object out = null;
                     if (obj instanceof Signature)
                         out = evalSignature((Signature)obj, path);
-                    else if (obj instanceof Entry) {
-                        ((Entry)obj).setScope(this);
-                        out = ((Entry) obj).getValue(args);
+                    else if (obj instanceof Function) {
+                        ((Function)obj).setScope(this);
+                        out = ((Function) obj).getValue(args);
                     }
                     ((MorphFidelity) val2).setChanged();
                     ((MorphFidelity) val2).notifyObservers(out);
                     return out;
                 } else if (val2 instanceof MogramEntry) {
                     return evalMogram((MogramEntry)val2, path, args);
-                } else if (val2 instanceof ValueCallable && ((Srv) val).getType() == Variability.Type.LAMBDA) {
+                } else if (val2 instanceof ValueCallable && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
                     ReturnPath rp = ((Srv) val).getReturnPath();
                     Object obj = null;
                     if (rp != null && rp.inPaths != null) {
@@ -219,32 +219,32 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     }
                     ((Srv) get(path)).setSrvValue(cxt);
                     return out;
-                } else if (val2 instanceof Client && ((Srv) val).getType() == Variability.Type.LAMBDA) {
-                    String entryPath = ((Entry)val).getName();
+                } else if (val2 instanceof Client && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
+                    String entryPath = ((Function)val).getName();
                     Object out = ((Client)val2).exec((Service) this.asis(entryPath), this, args);
                     ((Srv) get(path)).setSrvValue(out);
                     return out;
-                } else if (val2 instanceof EntryCollable && ((Srv) val).getType() == Variability.Type.LAMBDA) {
-                    Entry entry = ((EntryCollable)val2).call(this);
-                    ((Srv) get(path)).setSrvValue(entry.value());
+                } else if (val2 instanceof EntryCollable && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
+                    Function entry = ((EntryCollable)val2).call(this);
+                    ((Srv) get(path)).setSrvValue(entry.get());
                     if (path != entry.getName())
-                        putValue(entry.getName(), entry.value());
+                        putValue(entry.getName(), entry.get());
                     else if (asis(entry.getName()) instanceof Srv) {
-                        ((Srv)asis(entry.getName())).setSrvValue(entry.value());
+                        ((Srv)asis(entry.getName())).setSrvValue(entry.get());
                     }
                     return entry;
                 } else if (val2 instanceof Closure) {
-                    Entry entry = (Entry) ((Closure)val2).call(this);
-                    ((Srv) get(path)).setSrvValue(entry.value());
-                    putValue(path, entry.value());
+                    Function entry = (Function) ((Closure)val2).call(this);
+                    ((Srv) get(path)).setSrvValue(entry.get());
+                    putValue(path, entry.get());
                     if (path != entry.getName())
-                        putValue(entry.getName(), entry.value());
+                        putValue(entry.getName(), entry.get());
                     return entry;
                 } else if (val2 instanceof ServiceInvoker) {
                     val =  ((ServiceInvoker)val2).invoke(args);
                     ((Srv) get(path)).setSrvValue(val);
                     return val;
-                } else if (val2 instanceof Service && ((Srv) val).getType() == Variability.Type.LAMBDA) {
+                } else if (val2 instanceof Service && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
                     String[] paths = ((Srv)val).getPaths();
                     Arg[] nargs = null;
                     if (paths == null || paths.length == 0) {
@@ -253,7 +253,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                         nargs = new Arg[paths.length];
                         for (int i = 0; i < paths.length; i++) {
                             if (!(asis(paths[i]) instanceof Arg))
-                                nargs[i] = new Entry(paths[i], asis(paths[i]));
+                                nargs[i] = new Function(paths[i], asis(paths[i]));
                             else
                                 nargs[i] = (Arg) asis(paths[i]);
                         }
@@ -273,12 +273,12 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             throw new EvaluationException(e);
         }
         // the same entry in entry
-        if (val instanceof Entry && ((Entry) val).getName().equals(path)) {
-            return ((Entry) val).value();
+        if (val instanceof Function && ((Function) val).getName().equals(path)) {
+            return ((Function) val).get();
         }
         if (val instanceof ServiceFidelity) {
             try {
-                return ((Entry)((ServiceFidelity)val).getSelect()).getValue();
+                return ((Function)((ServiceFidelity)val).getSelect()).getValue();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -336,7 +336,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         for (Fidelity sfi : fiList) {
             if (sfi.getName().equals(path)) {
                 selected = sfi;
-                ((Entry) asis(path)).isValid(false);
+                ((Function) asis(path)).isValid(false);
                 isChanged();
                 break;
             }
@@ -371,11 +371,11 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         Map<String, List<DependencyEntry>> dpm = ((ModelStrategy)mogramStrategy).getDependentPaths();
         if (dpm != null && dpm.get(path) != null) {
             List<DependencyEntry> del = dpm.get(path);
-            Entry entry = entry(path);
+            Function entry = entry(path);
             if (del != null && del.size() > 0) {
                 for (DependencyEntry de : del) {
-                    List<Path> dpl = de._2;
-                    if (de.getType().equals(Variability.Type.FIDELITY)) {
+                    List<Path> dpl = de.get();
+                    if (de.getType().equals(Functionality.Type.FIDELITY)) {
                         if (((Fidelity) de.annotation()).getOption().equals("IF")) {
                             if (((Fidelity) entry.getSelectedFidelity()).getName().equals(((Fidelity) de.annotation()).getName())) {
                                 // apply only to matched fidelity
@@ -390,7 +390,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                             // first select the requested fidelity
                             entry.getServiceFidelity().setSelect(((Fidelity) de.annotation()).getName());
                         }
-                    } else if (de.getType().equals(Variability.Type.CONDITION)) {
+                    } else if (de.getType().equals(Functionality.Type.CONDITION)) {
                         Conditional condition = de.getCondition();
                         if (condition.isTrue()) {
                             // apply only if condition is true
@@ -467,8 +467,8 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             Map.Entry e = i.next();
             if (e.getValue() instanceof Srv) {
                 ((Srv) e.getValue()).srvValue = null;
-            } else if (e.getValue() instanceof Entry && ((Entry)e.getValue()).asis() instanceof Evaluation) {
-                ((Entry)e.getValue()).isValid(false);
+            } else if (e.getValue() instanceof Function && ((Function)e.getValue()).asis() instanceof Evaluation) {
+                ((Function)e.getValue()).isValid(false);
             }
         }
         return this;

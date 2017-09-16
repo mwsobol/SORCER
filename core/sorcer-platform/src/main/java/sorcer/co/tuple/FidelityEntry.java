@@ -20,13 +20,14 @@ package sorcer.co.tuple;
  * @author Mike Sobolewski
  */
 
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
+import sorcer.service.Entry;
 import sorcer.service.ServiceFidelity;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class FidelityEntry extends Entry<ServiceFidelity> {
+public class FidelityEntry extends Entry<String, ServiceFidelity> {
 	private static final long serialVersionUID = -508307270964254478L;
 
 	// fidelities for this entry

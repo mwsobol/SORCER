@@ -14,27 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sorcer.co.tuple;
 
-import sorcer.core.context.model.ent.Entry;
-import sorcer.service.Signature;
-import sorcer.service.modeling.Variability;
+package sorcer.service.modeling;
 
-public class InputEntry<T> extends Entry<T> {
+import sorcer.service.Arg;
+import sorcer.service.EvaluationException;
+import sorcer.service.modeling.EvaluationComponent;
+import sorcer.service.modeling.SupportComponent;
 
-	private static final long serialVersionUID = 1L;
+import java.rmi.RemoteException;
 
-	public InputEntry(String path, T value, int index) {
-		super(path, value);
-		this.index = index;
-		type = Variability.Type.INPUT;
-        annotation = Signature.Direction.IN;
-    }
 
-	public InputEntry(String path, T value, boolean isPersistant, int index) {
-		super(path, value, isPersistant, index);
-		annotation = Signature.Direction.IN;
-		type = Variability.Type.INPUT;
-	}
+/**
+ * A functionality for all object values of the constant function type.
+ * 
+ * @author Mike Sobolewski
+ */
+public interface Valuation<T> {
 
+	/**
+	 * Returns the current item of this valuation.
+	 * 
+	 * @return the current item of this valuation
+	 */
+	public T get() ;
+
+	public void set(T item) ;
 }

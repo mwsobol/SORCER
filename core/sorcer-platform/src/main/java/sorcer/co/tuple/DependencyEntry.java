@@ -17,8 +17,9 @@
 
 package sorcer.co.tuple;
 
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.service.Conditional;
+import sorcer.service.Entry;
 import sorcer.service.Path;
 
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 6/21/15.
  */
-public class DependencyEntry extends Entry<List<Path>> {
+public class DependencyEntry extends Function<List<Path>> {
     private static final long serialVersionUID = 1L;
 
     private Conditional condition;

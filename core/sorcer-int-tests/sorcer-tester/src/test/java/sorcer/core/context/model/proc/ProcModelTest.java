@@ -11,9 +11,7 @@ import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Agent;
-import sorcer.core.context.model.ent.Proc;
-import sorcer.core.context.model.ent.ProcModel;
+import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
@@ -282,7 +280,7 @@ public class ProcModelTest {
 		Proc dbIn = persistent(as(proc("dbIn", "design/in"), cxt));
 		assertTrue(eval(dbIn).equals(25.0));  	// is persisted
 		assertTrue(dbIn.asis().equals("design/in"));
-		assertTrue(eval((Evaluation) asis(cxt, "design/in")).equals(25.0));
+		assertTrue(eval((Value) asis(cxt, "design/in")).equals(25.0));
 		assertTrue(value(cxt, "design/in").equals(25.0));
 
 		setValue(dbIn, 30.0); 	// is persisted

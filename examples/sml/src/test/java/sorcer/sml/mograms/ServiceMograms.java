@@ -126,7 +126,7 @@ public class ServiceMograms {
         IncrementerImpl incrementer = new IncrementerImpl(100.0);
 
         Model mdl = model(
-                inVal("by", eFi(inVal("by-10", 10.0), inVal("by-20", 20.0))), inVal("out", 0.0),
+                inVal("by", entFi(inVal("by-10", 10.0), inVal("by-20", 20.0))), inVal("out", 0.0),
                 ent(sig("increment", incrementer, result("out", inPaths("by", "template")))),
                 ent("multiply", invoker("add * out", ents("add", "out"))));
 

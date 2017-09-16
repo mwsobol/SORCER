@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.Evaluation;
 import sorcer.service.EvaluationException;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Functionality;
 import sorcer.util.GenericUtil;
 import sorcer.util.Sorcer;
 
@@ -66,7 +66,7 @@ public class ContextNode implements Serializable {
 
 	private Object value;
 	// variables used to get values from the corresponding dependent variables
-	protected Map<String, Variability> variables;
+	protected Map<String, Functionality> variables;
 
 	public ContextNode() {
 		// empty context node
@@ -302,7 +302,7 @@ public class ContextNode implements Serializable {
 		itemData.put(itemName, itemDataVect);
 	}
 
-	public void addVar(String itemName, Variability var)
+	public void addVar(String itemName, Functionality var)
 			throws ContextNodeException {
 
 		if (hasItem(itemName) == false) {

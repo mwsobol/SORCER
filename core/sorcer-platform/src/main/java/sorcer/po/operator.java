@@ -31,7 +31,7 @@ import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.eo.operator.Args;
 import sorcer.service.modeling.SupportComponent;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Functionality;
 
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -64,15 +64,15 @@ public class operator extends sorcer.operator {
 		return new Neo(path, fidelities);
 	}
 
-    public static Entry th(String path, double threshold) {
-	    Entry e = new Entry(path, threshold);
-	    e.setType(Variability.Type.THRESHOLD);
+    public static Function th(String path, double threshold) {
+	    Function e = new Function(path, threshold);
+	    e.setType(Functionality.Type.THRESHOLD);
         return e;
     }
 
-    public static Entry bias(String path, double bias) {
-        Entry e = new Entry(path, bias);
-        e.setType(Variability.Type.BIAS);
+    public static Function bias(String path, double bias) {
+        Function e = new Function(path, bias);
+        e.setType(Functionality.Type.BIAS);
         return e;
     }
 
@@ -111,9 +111,9 @@ public class operator extends sorcer.operator {
 		if (object instanceof Context) {
 			p = new Proc(path, argument);
 			p.setScope(object);
-		} else if (object instanceof Entry) {
+		} else if (object instanceof Function) {
 			p = new Proc(path, argument);
-			p.setScope(context((Entry)object));
+			p.setScope(context((Function)object));
 		} else if (object instanceof Service) {
 			p = new Proc(path, argument, object);
 		}
@@ -174,7 +174,7 @@ public class operator extends sorcer.operator {
 		return new Srv(path, model, name);
 	}
 
-	public static Srv srv(String name, String path, Model model, Variability.Type type) {
+	public static Srv srv(String name, String path, Model model, Functionality.Type type) {
 		return new Srv(path, model, name, type);
 	}
 
@@ -222,7 +222,7 @@ public class operator extends sorcer.operator {
         return fi;
     }
 
-    public static ServiceFidelity<Proc> pFi(Entry... entries) {
+    public static ServiceFidelity<Proc> pFi(Function... entries) {
         ServiceFidelity<Proc> fi = new ServiceFidelity(entries);
         fi.fiType = ServiceFidelity.Type.PROC;
         return fi;
@@ -300,9 +300,9 @@ public class operator extends sorcer.operator {
 		return proc(procModel, name);
 	}
 
-	public static ProcModel put(ProcModel procModel, Tuple2... entries) throws ContextException {
-		for (Tuple2 e : entries) {
-			procModel.putValue((String)e.key(), e.value());
+	public static ProcModel put(ProcModel procModel, Entry... entries) throws ContextException {
+		for (Entry e : entries) {
+			procModel.putValue(e.getName(), e.getItem());
 		}
 		procModel.setContextChanged(true);
 		return procModel;
@@ -674,8 +674,8 @@ public class operator extends sorcer.operator {
 			return null;
 	}
 
-	public static Entry ent(Model model, String path) throws ContextException {
-        return new Entry(path, model.asis(path));
+	public static Function ent(Model model, String path) throws ContextException {
+        return new Function(path, model.asis(path));
     }
 
 	public static <T extends Arg> Srv ent(String name, MorphFidelity<T> fidelity) {
@@ -692,15 +692,15 @@ public class operator extends sorcer.operator {
         return srv(fidelity);
     }
 
-	public static <T> Entry<T> ent(Path path, T value, Arg... args) {
-		Entry<T> entry = ent(path.getName(), value, args);
+	public static <T> Entry<String, T> ent(Path path, T value, Arg... args) {
+		Entry<String, T> entry = ent(path.getName(), value, args);
 		entry.annotation(path.info.toString());
 		return entry;
 	}
 
 	public static <T> Ref<T> ref(SupportComponent component) {
 		Ref cr = new Ref();
-		cr._2 = component;
+		cr.set(component);
 		return cr;
 	}
 
@@ -709,12 +709,8 @@ public class operator extends sorcer.operator {
 		return cr;
 	}
 
-//    public static Entry ent(String path, Domain model) {
-//        return new Entry(path, model);
-//    }
-
-    public static <T> Entry<T> ent(String path, T value, Arg... args) {
-		Entry<T> entry = null;
+    public static <T> Function<T> ent(String path, T value, Arg... args) {
+		Function<T> entry = null;
 		if (value instanceof Invocation || value instanceof Evaluation) {
 			entry = new Proc<T>(path, value);
 		} else if (value instanceof Signature) {
@@ -724,29 +720,29 @@ public class operator extends sorcer.operator {
 				cxt = (Context)mog;
 			}
 			if (cxt != null) {
-				entry = (Entry<T>) srv(path, (Identifiable) value, cxt, args);
+				entry = (Function<T>) srv(path, (Identifiable) value, cxt, args);
 			} else {
-				entry =  (Entry<T>) srv(path, (Identifiable) value, null, args);
+				entry =  (Function<T>) srv(path, (Identifiable) value, null, args);
 			}
 		} else if (value instanceof ServiceFidelity) {
-			entry = (Entry<T>) new Srv(path, value);
+			entry = (Function<T>) new Srv(path, value);
 		} else if (value instanceof MultiFiMogram) {
 			try {
 				((MultiFiMogram)value).setUnifiedName(path);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-			entry = (Entry<T>) new Srv(path, value);
+			entry = (Function<T>) new Srv(path, value);
 		} else if (value instanceof List && ((List)value).get(0) instanceof Path) {
-			entry = (Entry<T>) new DependencyEntry(path, (List)value);
+			entry =  (Function<T>) new DependencyEntry(path, (List)value);
 		} else if (value instanceof ServiceMogram) {
-			entry = (Entry<T>) new Srv(path, value);
+			entry = (Function<T>) new Srv(path, value);
 		} else if (value instanceof Service) {
-			entry = (Entry<T>) new Proc(path, value);
+			entry = (Function<T>) new Proc(path, value);
 		} else if (value.getClass() == Tuple2.class) {
-			return new Entry(path, value);
+			return new Function(path, value);
 		} else {
-			entry = new Entry<T>(path, value);
+			entry = new Function<T>(path, value);
 		}
 
 		Context cxt = null;
@@ -756,11 +752,10 @@ public class operator extends sorcer.operator {
 		try {
 			// special cases of procedural attachmnet
 			if (entry instanceof Proc) {
-				Proc proc = (Proc) entry;
 				if (cxt != null) {
-					((Proc) entry).setScope(cxt);
-				} else if (args.length == 1 && args[0] instanceof Entry) {
-					entry.setScope(context((Entry) args[0]));
+					entry.setScope(cxt);
+				} else if (args.length == 1 && args[0] instanceof Function) {
+					entry.setScope(context((Function) args[0]));
 				} else if (args.length == 1 && args[0] instanceof Service) {
 					entry = new Proc(path, value, args[0]);
 				}
@@ -804,8 +799,8 @@ public class operator extends sorcer.operator {
 		return assoc;
 	}
 
-	public static Entry ent(String path) {
-		return new Entry(path, null);
+	public static Function ent(String path) {
+		return new Function(path, null);
 	}
 
 	public static <T> TagEntry<T> ent(String path, T value, String association) {
@@ -816,95 +811,95 @@ public class operator extends sorcer.operator {
 			throws ContextException {
 		ArgSet as = new ArgSet();
 		for (String name : entries) {
-			as.add(new Entry(name, Context.none));
+			as.add(new Function(name, Context.none));
 		}
 		return as.toArray();
 	}
 
-	public static Arg[] ents(Entry... entries)
+	public static Arg[] ents(Function... entries)
 			throws ContextException {
 		ArgSet as = new ArgSet();
-		for (Entry e : entries) {
+		for (Function e : entries) {
 			as.add(e);
 		}
 		return as.toArray();
 	}
 
-	public static Entry inout(Entry entry) {
-		entry.setType(Variability.Type.INOUT);
+	public static Function inout(Function entry) {
+		entry.setType(Functionality.Type.INOUT);
 		return entry;
 	}
 
-	public static InputEntry inoutVal(String path) {
-		return new InputEntry(path, null, 0);
+	public static InputValue inoutVal(String path) {
+		return new InputValue(path, null, 0);
 	}
 
-	public static <T> InoutEntry<T> inoutVal(String path, T value) {
-		return new InoutEntry(path, value, 0);
+	public static <T> InoutValue<T> inoutVal(String path, T value) {
+		return new InoutValue(path, value, 0);
 	}
 
-	public static <T> InoutEntry<T> inoutVal(String path, T value, int index) {
-		return new InoutEntry(path, value, index);
+	public static <T> InoutValue<T> inoutVal(String path, T value, int index) {
+		return new InoutValue(path, value, index);
 	}
 
-	public static <T> InoutEntry<T> inoutVal(String path, T value, String annotation) {
-		InoutEntry<T> ie = inoutVal(path, value);
+	public static <T> InoutValue<T> inoutVal(String path, T value, String annotation) {
+		InoutValue<T> ie = inoutVal(path, value);
 		ie.annotation(annotation);
 		return ie;
 	}
 
 	public static Srv lambda(String path, Service service, Args args) {
 		Srv srv = new Srv(path, path, service, args.getNameArray());
-		srv.setType(Variability.Type.LAMBDA);
+		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
 	public static Srv lambda(String path, Service service, String name, Args args) {
 		Srv srv = new Srv(name, path, service,  args.getNameArray());
-		srv.setType(Variability.Type.LAMBDA);
+		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
 	public static Srv lambda(String path, String name, Client client) {
 		Srv srv = new Srv(name, path, client);
-		srv.setType(Variability.Type.LAMBDA);
+		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
 	public static <T> Srv lambda(String path, Callable<T> call) {
 		Srv srv = new Srv(path, call);
-		srv.setType(Variability.Type.LAMBDA);
+		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
 	public static <T> Srv lambda(String path, ValueCallable<T> call) {
 		Srv srv = new Srv(path, call);
-		srv.setType(Variability.Type.LAMBDA);
+		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
 	public static <T> Srv lambda(String path, ValueCallable<T> call, Args args) {
 		Srv srv = new Srv(path, call, args.getNameArray());
-		srv.setType(Variability.Type.LAMBDA);
+		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
 	public static <T> Srv lambda(String path, ValueCallable<T> lambda, Context context, Args args)
 			throws InvocationException {
 		Srv srv = new Srv(path, invoker(lambda, context, args));
-		srv.setType(Variability.Type.LAMBDA);
+		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
 	public static <T> Srv lambda(String path, EntryCollable<T> call) {
 		Srv srv = new Srv(path, call);
-		srv.setType(Variability.Type.LAMBDA);
+		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 
 	public static <T> Srv lambda(String path, ValueCallable<T> call, Signature.ReturnPath returnPath) {
 		Srv srv = new Srv(path, call, returnPath);
-		srv.setType(Variability.Type.LAMBDA);
+		srv.setType(Functionality.Type.LAMBDA);
 		return srv;
 	}
 }

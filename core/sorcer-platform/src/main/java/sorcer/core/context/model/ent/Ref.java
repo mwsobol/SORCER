@@ -18,12 +18,10 @@ package sorcer.core.context.model.ent;
 
 import sorcer.service.Arg;
 import sorcer.service.Context;
-import sorcer.service.ContextException;
+import sorcer.service.Entry;
 import sorcer.service.EvaluationException;
 import sorcer.service.modeling.Reference;
 import sorcer.service.modeling.SupportComponent;
-import sorcer.service.modeling.Variability;
-import sorcer.util.url.sos.SdbUtil;
 
 import java.rmi.RemoteException;
 
@@ -33,7 +31,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public class Ref<T> extends Entry<T> implements Reference, SupportComponent {
+public class Ref<T> extends Entry<String, T> implements Reference, SupportComponent {
 
 	private static final long serialVersionUID = 1L;
 
@@ -46,7 +44,7 @@ public class Ref<T> extends Entry<T> implements Reference, SupportComponent {
 	public Ref(final String path, Arg... args) {
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");
-		this._1 = path;
+		this.key = path;
 		this.args = args;
 
 	}
@@ -54,7 +52,7 @@ public class Ref<T> extends Entry<T> implements Reference, SupportComponent {
 	public Ref(final String path, Context scope, Arg... args) {
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");
-		this._1 = path;
+		this.key = path;
 		this.scope = scope;
 		this.args = args;
 	}
@@ -62,10 +60,10 @@ public class Ref<T> extends Entry<T> implements Reference, SupportComponent {
 	@Override
 	public T getValue(Arg... args) throws EvaluationException, RemoteException {
 		T out = null;
-		if (_2 != null) {
-			out = _2;
+		if (item != null) {
+			out = item;
 		} else {
-			out = this._2 = (T) scope.asis(_1);
+			out = this.item = (T) scope.asis(key);
 		}
 		return out;
 	}

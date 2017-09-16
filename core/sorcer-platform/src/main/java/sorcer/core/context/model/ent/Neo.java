@@ -19,14 +19,13 @@ package sorcer.core.context.model.ent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ApplicationDescription;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.invoker.Soma;
+import sorcer.core.invoker.Activator;
 import sorcer.eo.operator;
 import sorcer.service.*;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Activation;
+import sorcer.service.modeling.Functionality;
 
 
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 
@@ -38,7 +37,7 @@ import java.util.Iterator;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Neo extends Entry<Double> implements Variability<Double>, Invocation<Double>, Setter, Scopable, Comparable<Double>{
+public class Neo extends Function<Double> implements Functionality<Double>, Activation, Invocation<Double>, Setter, Scopable, Comparable<Double>{
 
 	private static final long serialVersionUID = 1L;
 
@@ -46,42 +45,42 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 
 	protected double bias;
 
-	protected Soma soma;
+	protected Activator activator;
 
 	protected ServiceFidelity<NeoFidelity> fidelities;
 
 
 	public Neo(String name) {
 		super(name);
-        soma = new Soma(name);
+        activator = new Activator(name);
 		type = Type.NEURON;
 	}
 
        public Neo(String name, double value) {
         this(name);
-        _2 = value;
+        item = value;
     }
 
     public Neo(String name, operator.Args args) {
         this(name);
-        soma.setArgs(args.argSet());
+        activator.setArgs(args.argSet());
     }
 
     public Neo(String name, operator.Args args, Context<Float> weights) {
         this(name, args);
-        soma.setWeights(weights);
+        activator.setWeights(weights);
     }
 
-    public Neo(String name, double value, Context<Entry> signals) {
+    public Neo(String name, double value, Context<Function> signals) {
         this(name);
-        _2 = value;
-        soma.setScope(signals);
+        item = value;
+        activator.setScope(signals);
     }
 
-    public Neo(String name, double value, Context<Entry> signals, Context<Float> weights) {
+    public Neo(String name, double value, Context<Function> signals, Context<Float> weights) {
         this(name);
-        _2 = value;
-        soma.setScope(signals);
+		item = value;
+        activator.setScope(signals);
 
     }
 
@@ -100,7 +99,7 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 		for (Arg p : parameters) {
 			try {
 				if (p instanceof Neo) {
-					if (_1.equals(((Neo) p)._1)) {
+					if (key.equals(((Neo) p).key)) {
 						if (((Neo) p).getScope() != null)
 							scope.append(((Neo) p).getScope());
 
@@ -123,13 +122,9 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 	private boolean isFidelityValid(Object fidelity) throws EvaluationException {
 		if (fidelity == null || fidelity == Context.none)
 			return false;
-		if (fidelity instanceof Entry) {
+		if (fidelity instanceof Function) {
 			Object obj = null;
-			try {
-				obj = ((Entry)fidelity).asis();
-			} catch (RemoteException e) {
-				throw new EvaluationException(e);
-			}
+			obj = ((Function)fidelity).asis();
 			if (obj == null || obj == Context.none) return false;
 		}
 		 return true;
@@ -142,8 +137,8 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 	public void setScope(Context scope) {
 		if (scope != null) {
             this.scope = scope;
-            if (soma != null) {
-                soma.setScope(scope);
+            if (activator != null) {
+                activator.setScope(scope);
             }
         }
 	}
@@ -156,7 +151,7 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 		if (o == null)
 			throw new NullPointerException();
 		if (o instanceof Double)
-			return _2.compareTo(o);
+			return item.compareTo(o);
 		else
 			return -1;
 	}
@@ -182,7 +177,7 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 	 */
 	@Override
 	public Class getValueType() {
-		return _2.getClass();
+		return item.getClass();
 	}
 
 	/* (non-Javadoc)
@@ -207,10 +202,10 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 
     @Override
     public Double getValue(Arg... args) throws EvaluationException, RemoteException {
-	    if (soma.getArgs().size() > 0) {
-            _2 = soma.activate(args);
+	    if (activator.getArgs().size() > 0) {
+            item = activator.activate(args);
         }
-        return _2;
+        return item;
     }
 
 	@Override
@@ -222,8 +217,7 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 	 * @see sorcer.vfe.Variability#valueChanged(java.lang.Object)
 	 */
 	@Override
-	public void valueChanged(Object obj) throws EvaluationException,
-			RemoteException {		
+	public void valueChanged(Object obj) throws EvaluationException {
 	}
 
 	/* (non-Javadoc)
@@ -253,19 +247,19 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
             InvocationException {
         try {
             if (context != null) {
-                if (soma.getScope() == null)
-                    soma.setScope(context);
+                if (activator.getScope() == null)
+                    activator.setScope(context);
                 else {
-                    soma.getScope().append(context);
+                    activator.getScope().append(context);
                 }
             }
             if (fidelities != null) {
-               soma.setFidelities(fidelities);
-            } else if (soma.getArgs().size() == 0) {
-                return _2;
+               activator.setFidelities(fidelities);
+            } else if (activator.getArgs().size() == 0) {
+                return item;
             }
-            _2 = soma.activate(args);
-            return _2;
+            item = activator.activate(args);
+            return item;
         } catch (Exception e) {
             throw new InvocationException(e);
         }
@@ -280,7 +274,7 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 		while (i.hasNext()) {
 			Neo procEntry = (Neo)i.next();
 			try {
-				soma.getScope().putValue(procEntry.getName(), procEntry.asis());
+				activator.getScope().putValue(procEntry.getName(), procEntry.asis());
 			} catch (Exception e) {
 				throw new EvaluationException(e);
 			} 
@@ -290,14 +284,14 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 
 	@Override
 	public int hashCode() {
-		int hash = _1.length() + 1;
-		return hash = hash * 31 + _1.hashCode();
+		int hash = key.length() + 1;
+		return hash * 31 + key.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof Neo
-				&& ((Neo) object)._1.equals(_1))
+				&& ((Neo) object).key.equals(key))
 			return true;
 		else
 			return false;
@@ -312,8 +306,9 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 	}
 
 	@Override
-	public boolean isReactive() {
-		return true;
+	public Double activate(Arg... entries) throws EvaluationException, RemoteException {
+//		return activator.activate(entries);
+		return null;
 	}
 
 	@Override
@@ -337,7 +332,7 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 
     @Override
 	public Double getPerturbedValue(String varName) throws EvaluationException, RemoteException {
-        return (Double)(soma.getScope().get(varName)) + bias;
+        return (Double)(activator.getScope().get(varName)) + bias;
     }
 
     @Override

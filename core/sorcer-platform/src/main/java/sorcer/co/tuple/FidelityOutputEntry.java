@@ -19,7 +19,7 @@ package sorcer.co.tuple;
 import sorcer.service.Arg;
 import sorcer.service.ServiceFidelity;
 
-public class FidelityOutputEntry<T, F extends Arg> extends OutputEntry<T> {
+public class FidelityOutputEntry<T, F extends Arg> extends OutputValue<T> {
 
     private static final long serialVersionUID = 1L;
 

@@ -31,7 +31,7 @@ import sorcer.service.EvaluationException;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class EntList extends ArrayList<Entry> {
+public class EntList extends ArrayList<Function> {
 
 	static final long serialVersionUID = -4997255102658715823L;
 
@@ -68,8 +68,8 @@ public class EntList extends ArrayList<Entry> {
 		}
 	}
 
-	public Entry<? extends Object> getEntry(String parName) throws EntException {
-		for (Entry p : this) {
+	public Function<? extends Object> getEntry(String parName) throws EntException {
+		for (Function p : this) {
 			if (p.getName().equals(parName)) {
 				return p;
 			}
@@ -79,8 +79,8 @@ public class EntList extends ArrayList<Entry> {
 
 	public void setEntValue(String parName, Object value)
 			throws EvaluationException {
-		Entry procEntry = null;
-		for (Entry ent : this) {
+		Function procEntry = null;
+		for (Function ent : this) {
 			if (ent.getName().equals(parName)) {
 				procEntry = ent;
 				try {
@@ -101,7 +101,7 @@ public class EntList extends ArrayList<Entry> {
 			allParNames.addAll(nl);
 		}
 		EntList out = new EntList();
-		for (Entry v : this) {
+		for (Function v : this) {
 			if (allParNames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -112,7 +112,7 @@ public class EntList extends ArrayList<Entry> {
 	public EntList selectEnts(String... entNames) {
 		List<String> vnames = Arrays.asList(entNames);
 		EntList out = new EntList();
-		for (Entry v : this) {
+		for (Function v : this) {
 			if (vnames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -121,7 +121,7 @@ public class EntList extends ArrayList<Entry> {
 	}
 
 	public boolean containsEntName(String name) {
-		return contains(new Entry(name));
+		return contains(new Function(name));
 	}
 
 	@Override
@@ -129,7 +129,7 @@ public class EntList extends ArrayList<Entry> {
 		if (!(obj instanceof Proc<?>))
 			return false;
 		else {
-			for (Entry v : this) {
+			for (Function v : this) {
 				if (v.getName().equals(((Proc<?>) obj).getName()))
 					return true;
 			}
@@ -142,7 +142,7 @@ public class EntList extends ArrayList<Entry> {
 		if (obj == null || !(obj instanceof Proc<?>)) {
 			return false;
 		} else {
-			for (Entry v : this) {
+			for (Function v : this) {
 				if (v.getName().equals(((Proc<?>) obj).getName())) {
 					super.remove(v);
 					return true;
@@ -223,9 +223,9 @@ public class EntList extends ArrayList<Entry> {
 	public EntList toEntList() {
 		EntList out = new EntList();
 		for (Arg a : this) {
-			if (!(a instanceof Entry))
+			if (!(a instanceof Function))
 				throw new RuntimeException("wrong argument");
-			out.add((Entry)a);
+			out.add((Function)a);
 		}
 		return out;
 	}

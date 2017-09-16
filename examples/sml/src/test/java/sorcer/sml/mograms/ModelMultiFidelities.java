@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
@@ -56,8 +56,8 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mdl = model(
-                ent("arg/x1", eFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
-                ent("arg/x2", eFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
+                ent("arg/x1", entFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
+                ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
                 ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mFi", "arg/x1", "arg/x2"));
@@ -78,8 +78,8 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mdl = model(
-                ent("arg/x1", eFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
-                ent("arg/x2", eFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
+                ent("arg/x1", entFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
+                ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
                 ent("sFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 FidelityManagement.YES,
@@ -141,7 +141,7 @@ public class ModelMultiFidelities {
                 val("eval1", invoker("add", "x1 + x2", ents("x1", "x2"))),
                 val("eval2", invoker("multiply", "x1 * x2", ents("x1", "x2"))),
 
-                ent("mFi", eFi(ref("eval1"), ref("eval2"))),
+                ent("mFi", entFi(ref("eval1"), ref("eval2"))),
                 response("mFi", "x1", "x2"));
 
         Context out = response(mod, fi("mFi", "add"));
@@ -300,15 +300,15 @@ public class ModelMultiFidelities {
             }
         };
 
-        Entry addEnt = ent(sig("add", AdderImpl.class,
+        Function addEnt = ent(sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2"))));
-        Entry subtractEnt = ent(sig("subtract", SubtractorImpl.class,
+        Function subtractEnt = ent(sig("subtract", SubtractorImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2"))));
-        Entry multiplyEnt = ent(sig("multiply", MultiplierImpl.class,
+        Function multiplyEnt = ent(sig("multiply", MultiplierImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2"))));
-        Entry divideEnt = ent(sig("divide", DividerImpl.class,
+        Function divideEnt = ent(sig("divide", DividerImpl.class,
                 result("result/y2", inPaths("arg/x1", "arg/x2"))));
-        Entry averageEnt = ent(sig("average", AveragerImpl.class,
+        Function averageEnt = ent(sig("average", AveragerImpl.class,
                 result("result/y2", inPaths("arg/x1", "arg/x2"))));
 
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
@@ -377,8 +377,8 @@ public class ModelMultiFidelities {
 
         // three entry multifidelity model with morphers
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
-				ent("arg/y1", eFi(inVal("arg/y1/fi1", 10.0), inVal("arg/y1/fi2", 11.0))),
-				ent("arg/y2", eFi(inVal("arg/y2/fi1", 90.0), inVal("arg/y2/fi2", 91.0))),
+				ent("arg/y1", entFi(inVal("arg/y1/fi1", 10.0), inVal("arg/y1/fi2", 11.0))),
+				ent("arg/y2", entFi(inVal("arg/y2/fi1", 90.0), inVal("arg/y2/fi2", 91.0))),
                 ent("mFi1", mFi(morpher1, add, multiply)),
                 ent("mFi2", mFi(morpher2, average, divide, subtract)),
                 ent("mFi3", mFi(average, divide, multiply)),
@@ -402,9 +402,9 @@ public class ModelMultiFidelities {
 
     @Test
     public void selectMultifidelityEntries() throws Exception {
-        Entry e1 = ent("x1", 5.0);
-        Entry e2 = ent("x2", 6.0);
-        Entry e3 = ent("x3", 7.0);
+        Function e1 = ent("x1", 5.0);
+        Function e2 = ent("x2", 6.0);
+        Function e3 = ent("x3", 7.0);
 
         MultiFiMogram mfs = fiMog("args", rFi(e1, e2, e3));
 
@@ -425,9 +425,9 @@ public class ModelMultiFidelities {
 
     @Test
     public void morphMultifidelityEntries() throws Exception {
-        Entry e1 = ent("x1", 5.0);
-        Entry e2 = ent("x2", 6.0);
-        Entry e3 = ent("x3", 7.0);
+        Function e1 = ent("x1", 5.0);
+        Function e2 = ent("x2", 6.0);
+        Function e3 = ent("x3", 7.0);
 
         Morpher morpher = (mgr, mFi, value) -> {
             ServiceFidelity<Signature> fi =  mFi.getFidelity();
@@ -635,7 +635,7 @@ public class ModelMultiFidelities {
         // four entry multifidelity model with morphers
         Model mdl = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 ent("mFi1", mFi(morpher1, add, multiply)),
-                ent("mFi2", mFi(eFi(ent("ph2", morpher2), ent("ph4", morpher4)), average, divide, subtract)),
+                ent("mFi2", mFi(entFi(ent("ph2", morpher2), ent("ph4", morpher4)), average, divide, subtract)),
                 ent("mFi3", mFi(average, divide, multiply)),
                 ent("mFi4", fiMog(mFi(morpher3, t5, t4))),
                 fi2, fi3, fi4, fi5,

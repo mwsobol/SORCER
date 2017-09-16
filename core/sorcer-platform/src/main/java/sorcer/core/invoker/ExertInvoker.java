@@ -18,7 +18,7 @@ package sorcer.core.invoker;
 
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
@@ -98,7 +98,7 @@ public class ExertInvoker extends ServiceInvoker implements ExertionInvoking {
 		return evaluatedExertion;
 	}
 
-	public void substitute(Entry... entries) throws SetterException,
+	public void substitute(Function... entries) throws SetterException,
 			RemoteException {
 		((ServiceExertion)exertion).substitute(entries);
 	}

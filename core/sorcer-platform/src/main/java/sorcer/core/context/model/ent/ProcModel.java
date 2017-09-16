@@ -24,7 +24,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Variability;
+import sorcer.service.modeling.Functionality;
 import sorcer.util.Response;
 import sorcer.service.Signature.ReturnPath;
 
@@ -118,18 +118,18 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 				}
 			}
 
-			if ((val instanceof Proc) && (((Proc) val).asis() instanceof Entry)) {
-				bindEntry((Entry) ((Proc)val).asis());
+			if ((val instanceof Proc) && (((Proc) val).asis() instanceof Function)) {
+				bindEntry((Function) ((Proc)val).asis());
 			} else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
 				((Scopable)((Scopable)val).getScope()).setScope(this);
-			} else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
-				((Scopable) ((Entry)val).asis()).setScope(this);
+			} else if (val instanceof Function && (((Function)val).asis() instanceof Scopable)) {
+				((Scopable) ((Function)val).asis()).setScope(this);
 			}
 
 			if (val != null && val instanceof Evaluation) {
 				return ((Evaluation) val).getValue(args);
 			}   if (val instanceof ServiceFidelity) {
-				return new Entry(path, val).getValue(args);
+				return new Function(path, val).getValue(args);
 			} else if (path == null && val == null
 					&& ((ModelStrategy)mogramStrategy).getResponsePaths() != null) {
 				if (((ModelStrategy)mogramStrategy).getResponsePaths().size() == 1)
@@ -178,24 +178,20 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 	public Object putValue(String path, Object value) throws ContextException {
 		isChanged = true;
 		Object obj = get(path);
-		try {
-			if (obj instanceof Proc) {
-				((Proc) obj).setValue(value);
-				return value;
-			} else {
-				if (value instanceof Scopable) {
-					Object scope = ((Scopable) value).getScope();
-					if (scope != null && ((Context) scope).size() > 0) {
-						((Context) scope).append(this);
-					} else {
-						((Scopable) value).setScope(this);
-					}
+		if (obj instanceof Proc) {
+			((Proc) obj).setValue(value);
+			return value;
+		} else {
+			if (value instanceof Scopable) {
+				Object scope = ((Scopable) value).getScope();
+				if (scope != null && ((Context) scope).size() > 0) {
+					((Context) scope).append(this);
+				} else {
+					((Scopable) value).setScope(this);
 				}
 			}
-			return super.put(path, value);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
 		}
+		return super.put(path, value);
 	}
 
 	public Proc getPar(String name) throws ContextException {
@@ -206,12 +202,12 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			return new Proc(name, asis(name), this);
 	}
 	
-	public Entry bindEntry(Entry ent) throws ContextException, RemoteException {
+	public Function bindEntry(Function ent) throws ContextException, RemoteException {
 		ArgSet args = ent.getArgs();
 		if (args != null) {
 			for (Arg v : args)
 				if (get(v.getName()) != null) {
-					((Entry) v).setValue(getValue(v.getName()));
+					((Function) v).setValue(getValue(v.getName()));
 				}
 		}
 		return ent;
@@ -233,7 +229,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 				p = (Proc) obj;
 			} else if (obj instanceof Entry) {
 				putValue((String) ((Entry) obj).key(),
-						((Entry) obj).value());
+						((Entry) obj).get());
 			} else if (obj instanceof Identifiable) {
 				String pn = obj.getName();
 				p = new Proc(pn, obj, new ProcModel(pn).append(this));
@@ -259,12 +255,12 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			String pn = obj.getName();
 			if (obj instanceof Proc) {
 				p = (Proc) obj;
-			} else if (obj instanceof Variability || obj instanceof Setup) {
+			} else if (obj instanceof Functionality || obj instanceof Setup) {
 				putValue(pn, obj);
-			} else if (obj instanceof Entry) {
-				putValue(pn, ((Entry)obj).asis());
-				if (((Entry)obj).annotation() != null) {
-					mark(obj.getName(), ((Entry)obj).annotation().toString());
+			} else if (obj instanceof Function) {
+				putValue(pn, ((Function)obj).asis());
+				if (((Function)obj).annotation() != null) {
+					mark(obj.getName(), ((Function)obj).annotation().toString());
 				}
 			} else {
 				putValue(pn, obj);
@@ -287,7 +283,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		while (i.hasNext()) {
 			Map.Entry<String, Object> entry = i.next();
 			Object val = entry.getValue();
-			if (val instanceof Entry && ((Entry)val).value() instanceof Evaluation) {
+			if (val instanceof Entry && ((Entry)val).get() instanceof Evaluation) {
 				((Entry) val).isValid(false);
 			}
 		}
@@ -380,34 +376,34 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 	}
 
 	@Override
-	public Entry entry(String path) {
+	public Function entry(String path) {
 		Object entry = null;
 		if (path != null) {
 			entry = data.get(path);
 		}
-		if (entry instanceof Entry) {
-			return (Entry)entry;
+		if (entry instanceof Function) {
+			return (Function)entry;
 		} else {
 			return null;
 		}
 	}
 
-	public Variability getVar(String name) throws ContextException {
+	public Functionality getVar(String name) throws ContextException {
 		String key;
 		Object val = null;
 		Iterator e = keyIterator();
 		while (e.hasNext()) {
 			key = (String) e.next();
 			val = getValue(key);
-			if (val instanceof Variability) {
-				if (((Variability) val).getName().equals(name))
-					return (Variability) val;
+			if (val instanceof Functionality) {
+				if (((Functionality) val).getName().equals(name))
+					return (Functionality) val;
 			}
 		}
 		throw new ContextException("No such variability in context: " + name);
 	}
 	
-	private Proc putVar(String path, Variability value) throws ContextException {
+	private Proc putVar(String path, Functionality value) throws ContextException {
 		putValue(path, value);
 		markVar(this, path, value);
 		return new Proc(path, value, this);
@@ -437,7 +433,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 	 * @return enumeration of marked variable nodes.
 	 * @throws ContextException
 	 */
-	public Enumeration getVarPaths(Variability var) throws ContextException {
+	public Enumeration getVarPaths(Functionality var) throws ContextException {
 		String assoc = VAR_NODE_TYPE + APS + var.getName() + APS + var.getType();
 		String[] paths = Contexts.getMarkedPaths(this, assoc);
 		Vector outpaths = new Vector();
@@ -449,17 +445,17 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 
 	}
 	
-	public static Variability[] getMarkedVariables(Context sc,
-			String association) throws ContextException {
+	public static Functionality[] getMarkedVariables(Context sc,
+                                                     String association) throws ContextException {
 		String[] paths = Contexts.getMarkedPaths(sc, association);
 		java.util.Set nodes = new HashSet();
 		Object obj = null;
 		for (int i = 0; i < paths.length; i++) {
 			obj = sc.getValue(paths[i]);
-			if (obj != null && obj instanceof Variability)
+			if (obj != null && obj instanceof Functionality)
 				nodes.add(obj);
 		}
-		Variability[] nodeArray = new Variability[nodes.size()];
+		Functionality[] nodeArray = new Functionality[nodes.size()];
 		nodes.toArray(nodeArray);
 		return nodeArray;
 	}
@@ -469,7 +465,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 	 * In ServiceContexr#init()
 	 * DATA_NODE_TYPE + APS + VAR + APS + type + APS
 	 */
-	public static Context markVar(Context cntxt, String path, Variability var)
+	public static Context markVar(Context cntxt, String path, Functionality var)
 			throws ContextException {
 		return cntxt.mark(path, Context.VAR_NODE_TYPE + APS
 				+ var.getName() + APS + var.getType());

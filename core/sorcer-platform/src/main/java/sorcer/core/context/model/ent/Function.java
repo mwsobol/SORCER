@@ -37,8 +37,9 @@ import static sorcer.eo.operator.add;
 /**
  * @author Mike Sobolewski
  */
-public class
-Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, EvaluationComponent, SupportComponent, Scopable, Setter, Reactive<T> {
+public class Function<T> extends Value<T> implements Evaluation<T>, Callable<T>, Dependency, Comparable<T>,
+		EvaluationComponent, SupportComponent, Scopable, Setter, Reactive<T> {
+
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
@@ -47,66 +48,53 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 
 	protected Object annotation;
 
-	protected Class valClass;
-
-	protected Variability.Type type = Variability.Type.VAL;
-
 	// if reactive then its values are evaluated if active (either Evaluation or Invocation type)
 	protected boolean isReactive = false;
-
-	// when context of this entry is changed then isValid == false
-	protected boolean isValid = true;
 
 	protected ContextSelection contextSelector;
 
 	// dependency management for this Entry
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
-	protected Context scope;
-
-	public Entry() {
+	public Function() {
 	}
 
-	public Entry(final String path) {
+	public Function(final String path) {
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");
-		this._1 = path;
+		this.key = path;
 	}
 
-	public Entry(final String path, final T value) {
+	public Function(final String path, final T value) {
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");
 		T v = value;
 		if (v == null)
 			v = (T)Context.none;
 
-		this._1 = path;
+		this.key = path;
 		if (SdbUtil.isSosURL(v)) {
 			isPersistent = true;
 		}
 		if (v.getClass().getName().indexOf("Lambda") > 0)
-			type = Variability.Type.LAMBDA;
+			type = Functionality.Type.LAMBDA;
 
-		this._2 = v;
+		this.item = v;
 	}
 
-	public Entry(final String path, final T value, final int index) {
+	public Function(final String path, final T value, final int index) {
 		this(path, value);
 		this.index = index;
 	}
 
-	public Entry(final String path, final T value, final String annotation) {
+	public Function(final String path, final T value, final String annotation) {
 		this(path, value);
 		this.annotation = annotation;
 	}
 
-	public T get() {
-		return _2;
-	}
-
 	@Override
 	public T getValue(Arg... args) throws EvaluationException, RemoteException {
-		T val = this._2;
+		T val = this.item;
 		URL url = null;
 		try {
 			substitute(args);
@@ -120,16 +108,16 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 						url = SdbUtil.store(val);
 					} else {
 						UuidObject uo = new UuidObject(val);
-						uo.setName(_1);
+						uo.setName(key);
 						url = SdbUtil.store(uo);
 					}
-					this._2 = (T)url;
+					this.item = (T)url;
 				}
 			} else if (val instanceof Invocation) {
 				val = (T) ((Invocation) val).invoke(null, args);
 			} else if (val instanceof Evaluation) {
-				if (val instanceof Entry && ((Entry)val).getName().equals(_1)) {
-					val = (T) ((Entry)val).getValue();
+				if (val instanceof Function && ((Function)val).getName().equals(key)) {
+					val = (T) ((Function)val).getValue();
 				} else {
 					val = ((Evaluation<T>) val).getValue(args);
 				}
@@ -137,13 +125,13 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 				// return the selected fidelity of this entry
 				for (Arg arg : args) {
 					if (arg instanceof Fidelity) {
-						if (((Fidelity)arg).getPath().equals(_1)) {
+						if (((Fidelity)arg).getPath().equals(key)) {
 							((ServiceFidelity)val).setSelect(arg.getName());
 							break;
 						}
 					}
 				}
-				val = (T) ((Entry)((ServiceFidelity) val).getSelect()).getValue();
+				val = (T) ((Function)((ServiceFidelity) val).getSelect()).getValue();
 			} else if (val instanceof Callable) {
 				val = (T) ((Callable)val).call(args);
 			} else if (val instanceof Service) {
@@ -179,23 +167,23 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 	}
 
 	@Override
-	public void setValue(Object value) throws SetterException, RemoteException {
+	public void setValue(Object value) throws SetterException {
 		if (isPersistent) {
 			try {
 				if (SdbUtil.isSosURL(value)) {
-					this._2 = (T) value;
-				} else if (SdbUtil.isSosURL(this._2)) {
-					if (((URL) this._2).getRef() == null) {
-						this._2 = (T) SdbUtil.store(value);
+					this.item = (T) value;
+				} else if (SdbUtil.isSosURL(this.item)) {
+					if (((URL) this.item).getRef() == null) {
+						this.item = (T) SdbUtil.store(value);
 					} else {
-						SdbUtil.update((URL) this._2, value);
+						SdbUtil.update((URL) this.item, value);
 					}
 				}
 			} catch (Exception e) {
 				throw new SetterException(e);
 			}
 		} else {
-			this._2 = (T) value;
+			this.item = (T) value;
 		}
 	}
 
@@ -223,45 +211,34 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 	public int compareTo(T o) {
 		if (o == null)
 			throw new NullPointerException();
-		if (o instanceof Entry<?>)
-			return _1.compareTo(((Entry<?>) o).getName());
+		if (o instanceof Function<?>)
+			return key.compareTo(((Function<?>) o).getName());
 		else
 			return -1;
 	}
 
 	@Override
 	public int hashCode() {
-		int hash = _1.length() + 1;
-		return hash * 31 + _1.hashCode();
+		int hash = key.length() + 1;
+		return hash * 31 + key.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof Entry) {
-			if (_2 != null && ((Entry) object)._2 == null) {
+		if (object instanceof Function) {
+			if (item != null && ((Function) object).item == null) {
 				return false;
-			} else if (_2 == null && ((Entry) object)._2 != null) {
+			} else if (item == null && ((Function) object).item != null) {
 				return false;
-			} else if (((Entry) object)._1.equals(_1)
-					&& ((Entry) object)._2 == _2) {
+			} else if (((Function) object).key.equals(key)
+					&& ((Function) object).item == item) {
 				return true;
-			} else if (((Entry) object)._1.equals(_1)
-					&& ((Entry) object)._2.equals(_2)) {
+			} else if (((Function) object).key.equals(key)
+					&& ((Function) object).item.equals(item)) {
 				return true;
 			}
 		}
 		return false;
-	}
-
-	public boolean isValid() {
-		return isValid;
-	}
-
-	public void isValid(boolean state) {
-		isValid = state;
-		if (_2  instanceof Entry) {
-			((Entry)_2).isValid = state;
-		}
 	}
 
 	@Override
@@ -289,23 +266,23 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 	public String toString() {
 		String en = "";
 		try {
-			if (_2 instanceof Evaluation && ((Evaluation) _2).asis() != null) {
-				if (this == _2) {
-					return "[" + _1 + "=" + ((Evaluation)_2).getName() + "x]";  // loop
+			if (item instanceof Evaluation && ((Evaluation) item).asis() != null) {
+				if (this == item) {
+					return "[" + key + "=" + ((Evaluation)item).getName() + "x]";  // loop
 				}
-				en = ((Evaluation) _2).asis().toString();
+				en = ((Evaluation) item).asis().toString();
 			} else {
-				en = "" + _2;
+				en = "" + item;
 			}
 		}catch (EvaluationException e) {
 			e.printStackTrace();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		return "[" + _1 + "=" + en + "]";
+		return "[" + key + "=" + en + "]";
 	}
 
-	public Entry(String path, T value, boolean isPersistant, int index) {
+	public Function(String path, T value, boolean isPersistant, int index) {
 		this(path, value, index);
 		this.isPersistent = isPersistant;
 	}
@@ -315,7 +292,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		return isReactive;
 	}
 
-	public Entry<T> setReactive(boolean isReactive) {
+	public Function<T> setReactive(boolean isReactive) {
 		this.isReactive = isReactive;
 		return this;
 	}
@@ -325,53 +302,29 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		Context cxt = null;
 		Context out = new ServiceContext();
 		if (mogram instanceof ProcModel) {
-			if (_2 != null && _2 != Context.none)
+			if (item != null && item != Context.none)
 				add((Context)mogram, this);
-			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Path(_1));
+			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Path(key));
 			out = (Context) ((Model)mogram).getResponse();
 		} else if (mogram instanceof ServiceContext) {
-			if (_2 == null || _2 == Context.none) {
-				out.putValue(_1, ((Context)mogram).getValue(_1));
+			if (item == null || item == Context.none) {
+				out.putValue(key, ((Context)mogram).getValue(key));
 			} else {
-				if (_2 instanceof Evaluation) {
+				if (item instanceof Evaluation) {
 					this.setReactive(true);
-					((ServiceContext)mogram).putValue(_1, this);
+					((ServiceContext)mogram).putValue(key, this);
 				} else {
-					((ServiceContext)mogram).putValue(_1, _2);
+					((ServiceContext)mogram).putValue(key, item);
 				}
-				out.putValue(_1, ((ServiceContext) mogram).getValue(_1));
+				out.putValue(key, ((ServiceContext) mogram).getValue(key));
 			}
 		} else if (mogram instanceof Exertion) {
-			if (_2 != null && _2 != Context.none)
-				mogram.getContext().putValue(_1, _2);
+			if (item != null && item != Context.none)
+				mogram.getContext().putValue(key, item);
 			cxt =  mogram.exert(txn).getContext();
-			out.putValue(_1, cxt.getValue(_1));
+			out.putValue(key, cxt.getValue(key));
 		}
 		return out;
-	}
-
-	public Variability.Type getType() {
-		return type;
-	}
-
-	public void setType(Variability.Type type) {
-		this.type = type;
-	}
-
-	public Context getScope() {
-		return scope;
-	}
-
-	public void setScope(Context scope) {
-		this.scope = scope;
-	}
-
-	public Class getValClass() {
-		return valClass;
-	}
-
-	public void setValClass(Class valClass) {
-		this.valClass = valClass;
 	}
 
 	@Override
@@ -379,10 +332,10 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		Domain cxt = Arg.getServiceModel(args);
 		if (cxt != null) {
 			// entry substitution
-			((ServiceContext)cxt).putValue(_1, _2);
+			((ServiceContext)cxt).putValue(key, item);
 			return cxt;
 		} else {
-			return _2;
+			return item;
 		}
 	}
 
@@ -395,7 +348,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 	}
 
 	public ServiceFidelity getServiceFidelity() {
-		return (ServiceFidelity)_2;
+		return (ServiceFidelity)item;
 	}
 
 	public String fiName() {
