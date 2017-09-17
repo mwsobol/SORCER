@@ -19,6 +19,7 @@ package sorcer.core.provider.exerter;
 
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
 import sorcer.service.*;
 

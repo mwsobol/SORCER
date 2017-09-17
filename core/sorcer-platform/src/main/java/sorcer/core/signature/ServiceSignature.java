@@ -31,6 +31,7 @@ import sorcer.core.provider.ServiceName;
 import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.sig;
 import sorcer.util.Log;
 
 import java.io.IOException;
@@ -42,7 +43,7 @@ import java.util.*;
 
 import static sorcer.eo.operator.*;
 
-public class ServiceSignature implements Signature, SorcerConstants {
+public class ServiceSignature implements Signature, SorcerConstants, sig {
 
 	static final long serialVersionUID = -8527094638557595398L;
 

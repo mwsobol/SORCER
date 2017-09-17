@@ -71,7 +71,7 @@ public class DataStorageCmd extends ShellCmd {
 	public DataStorageCmd() {
 	}
 
-	public void execute(String... args) throws RemoteException, MonitorException {
+	public void execute(String... args) throws RemoteException, MonitorException, MogramException {
 		out = NetworkShell.getShellOutputStream();
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
@@ -171,81 +171,63 @@ public class DataStorageCmd extends ShellCmd {
 		out.println(((ServiceExertion) xrt).describe());
 	}
 
-	private void printRecords(Store type)
-			throws RemoteException, MonitorException {
-		if (dataStorers == null || dataStorers.length == 0) {
-			findStorers();
-		}
-		Map<Uuid, ObjectInfo> all;
-		if (selectedDataStorer >= 0) {
-			out.println("From Data Storage: "
-					+ AttributesUtil
-							.getProviderName(dataStorers[selectedDataStorer].attributeSets)
-					+ " at: "
-					+ AttributesUtil
-							.getHostName(dataStorers[selectedDataStorer].attributeSets));
+	private void printRecords(Store type) throws  MogramException {
+		try {
+			if (dataStorers == null || dataStorers.length == 0) {
+				findStorers();
+			}
+			Map<Uuid, ObjectInfo> all;
+			if (selectedDataStorer >= 0) {
+				out.println("From Data Storage: "
+						+ AttributesUtil
+						.getProviderName(dataStorers[selectedDataStorer].attributeSets)
+						+ " at: "
+						+ AttributesUtil
+						.getHostName(dataStorers[selectedDataStorer].attributeSets));
 //			all = ((StorageManagement) dataStorers[selectedDataStorer].service)
 //					.getMonitorableExertionInfo(fiType,
 //							NetworkShell.getPrincipal());
-			
-			Context cxt = null;
-			 try {
-				 store("test-only");
-				 out.println("XXXXXXXXXXXXX service item: " + dataStorers[selectedDataStorer]);
-				 out.println("XXXXXXXXXXXXX service: " + (DatabaseStorer) dataStorers[selectedDataStorer].service);
-				 out.println("XXXXXXXXXXXXX interfaces: " + Arrays.toString(dataStorers[selectedDataStorer].service.getClass().getInterfaces()));
-				 out.println("XXXXXXXXXXXXX name: " + ((Provider) dataStorers[selectedDataStorer].service).getProviderName());
-				 try {
-				 cxt = ((DatabaseStorer) dataStorers[selectedDataStorer].service).contextList(SdbUtil.getListContext(Store.object));
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
-				out.println("XXXXXXXXXXXXX context: " + cxt);
-				try {
-					store("test-only");
-					List<String>  records = list(Store.object);
-					out.println("XXXXXXXXXXXXX records; " + records);
-				} catch (ExertionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SignatureException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				out.println(cxt.getValue(DatabaseStorer.store_content_list));
-//			} catch (ExertionException e) {
-//				e.printStackTrace();
-//			} catch (SignatureException e) {
-//				e.printStackTrace();
-			} catch (ContextException e) {
-				e.printStackTrace();
-			}
-			
-			
-			
-		} else {
-			Map<Uuid, ObjectInfo> ri = null;
-			all = new HashMap<Uuid, ObjectInfo>();
-			for (int i = 0; i < dataStorers.length; i++) {
-				out.println("From Data Storage "
-						+ AttributesUtil
-								.getProviderName(dataStorers[i].attributeSets)
-						+ " at: "
-						+ AttributesUtil
-								.getHostName(dataStorers[i].attributeSets));
 
-				DatabaseStorer emx = (DatabaseStorer) dataStorers[i].service;
-//				ri = emx.getMonitorableExertionInfo(fiType,
+				Context cxt = null;
+
+				store("test-only");
+//				out.println("XXXXXXXXXXXXX service item: " + dataStorers[selectedDataStorer]);
+//				out.println("XXXXXXXXXXXXX service: " + (DatabaseStorer) dataStorers[selectedDataStorer].service);
+//				out.println("XXXXXXXXXXXXX interfaces: " + Arrays.toString(dataStorers[selectedDataStorer].service.getClass().getInterfaces()));
+//				out.println("XXXXXXXXXXXXX name: " + ((Provider) dataStorers[selectedDataStorer].service).getProviderName());
+				cxt = ((DatabaseStorer) dataStorers[selectedDataStorer].service).contextList(SdbUtil.getListContext(Store.object));
+//				out.println("XXXXXXXXXXXXX context: " + cxt);
+
+				store("test-only");
+				List<String> records = list(Store.object);
+//				out.println("XXXXXXXXXXXXX records; " + records);
+				out.println(cxt.getValue(DatabaseStorer.store_content_list));
+			} else {
+				Map<Uuid, ObjectInfo> ri = null;
+				all = new HashMap<Uuid, ObjectInfo>();
+				for (int i = 0; i < dataStorers.length; i++) {
+					out.println("From Data Storage "
+							+ AttributesUtil
+							.getProviderName(dataStorers[i].attributeSets)
+							+ " at: "
+							+ AttributesUtil
+							.getHostName(dataStorers[i].attributeSets));
+
+					DatabaseStorer emx = (DatabaseStorer) dataStorers[i].service;
+//					ri = emx.getMonitorableExertionInfo(fiType,
 //						NetworkShell.getPrincipal());
-				if (ri != null && ri.size() > 0) {
-					all.putAll(ri);
-				}
-				// populate exertion/EMX map
-				dataStorerMap.clear();
-				for (ObjectInfo ei : ri.values()) {
-					dataStorerMap.put(ei.uuid, dataStorers[i]);
+					if (ri != null && ri.size() > 0) {
+						all.putAll(ri);
+					}
+					// populate exertion/EMX map
+					dataStorerMap.clear();
+					for (ObjectInfo ei : ri.values()) {
+						dataStorerMap.put(ei.uuid, dataStorers[i]);
+					}
 				}
 			}
+		} catch (ContextException | RemoteException | SignatureException | MalformedURLException e) {
+			throw new MogramException(e);
 		}
 //		if (all.size() == 0) {
 //			out.println("No monitored mograms at this time.");

@@ -76,7 +76,7 @@ public class operator extends sorcer.operator {
         return e;
     }
 
-	public static <T> Proc<T> proc(String path, T argument) throws EvaluationException, RemoteException {
+    public static <T> Proc<T> proc(String path, T argument) throws EvaluationException, RemoteException {
 		return new Proc(path, argument);
 	}
 
@@ -146,9 +146,9 @@ public class operator extends sorcer.operator {
 	public static Srv srv(String name, Identifiable item, Context context, Arg... args) {
 		String srvName = item.getName();
 		Srv srv = null;
-		if (name != null)
-			srvName = name;
-
+		if (name != null) {
+            srvName = name;
+        }
 		if (item instanceof Signature) {
 			srv = new Srv(srvName,
 					new SignatureEntry(item.getName(), (Signature) item, context));
@@ -179,7 +179,7 @@ public class operator extends sorcer.operator {
 	}
 
 	public static Srv aka(String name, String path) {
-		return new Srv(path, null, name);
+		return new Srv(name, null, path);
 	}
 
 	public static Srv alias(String name, String path) {
@@ -328,6 +328,31 @@ public class operator extends sorcer.operator {
 		else if (object instanceof Identifiable)
 			return new Proc(((Identifiable) object).getName(), object);
 		return null;
+	}
+
+	public static Proc func() {
+		GroovyInvoker gi = new GroovyInvoker();
+		return new Proc(gi.getName(), gi);
+	}
+
+    public static Proc func(String expression,  Arg... parameters) {
+        return fun(null, expression, null, parameters);
+    }
+
+	public static Proc func(String expression, Context context,  Arg... parameters) {
+		return fun(null, expression, context, parameters);
+	}
+
+	public static Proc fun(String path, String expression, Context context,  Arg... parameters) {
+		GroovyInvoker gi = new GroovyInvoker(expression, parameters);
+		if (context != null) {
+            gi.setScope(context);
+        }
+		String name = path;
+		if (path == null) {
+			name = gi.getName();
+		}
+		return new Proc(name, gi);
 	}
 
 	public static Proc proc(Invocation invoker) {
@@ -692,8 +717,8 @@ public class operator extends sorcer.operator {
         return srv(fidelity);
     }
 
-	public static <T> Entry<String, T> ent(Path path, T value, Arg... args) {
-		Entry<String, T> entry = ent(path.getName(), value, args);
+	public static <T> Entry<T> ent(Path path, T value, Arg... args) {
+		Entry<T> entry = ent(path.getName(), value, args);
 		entry.annotation(path.info.toString());
 		return entry;
 	}
@@ -848,7 +873,19 @@ public class operator extends sorcer.operator {
 		return ie;
 	}
 
-	public static Srv lambda(String path, Service service, Args args) {
+    public static Srv lmbd(String path, Args args) {
+        Srv srv = new Srv(path, path);
+        srv.setType(Functionality.Type.LAMBDA);
+        return srv;
+    }
+
+    public static Srv lmbd(String path, Service service, Args args) {
+        Srv srv = new Srv(path, path, service, args.getNameArray());
+        srv.setType(Functionality.Type.LAMBDA);
+        return srv;
+    }
+
+    public static Srv lambda(String path, Service service, Args args) {
 		Srv srv = new Srv(path, path, service, args.getNameArray());
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;

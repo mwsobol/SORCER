@@ -26,7 +26,7 @@ import sorcer.service.modeling.Functionality;
 /**
  * Created by Mike Soblewski on 06/03/16.
  */
-public class MdaEntry extends Entry<String, Mda> implements Mda {
+public class MdaEntry extends Entry<Mda> implements Mda {
 
     private String name;
 

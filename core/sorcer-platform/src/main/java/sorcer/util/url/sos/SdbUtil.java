@@ -184,7 +184,7 @@ public class SdbUtil {
 				StorageManagement.object_url);
 	}
 
-	public static int clear(Store type) throws ExertionException,
+	public static int clear(Store type) throws MogramException,
 			SignatureException, ContextException {
 		String storageName = Sorcer.getActualName(Sorcer
 				.getDatabaseStorerName());
@@ -196,7 +196,7 @@ public class SdbUtil {
 		return (Integer) eval(objectStoreTask);
 	}
 
-	public static int size(Store type) throws ExertionException,
+	public static int size(Store type) throws MogramException,
 			SignatureException, ContextException {
 		String storageName = Sorcer.getActualName(Sorcer
 				.getDatabaseStorerName());
@@ -208,7 +208,7 @@ public class SdbUtil {
 		return (Integer) eval(objectStoreTask);
 	}
 	
-	public static URL delete(Object object) throws ExertionException,
+	public static URL delete(Object object) throws MogramException,
 			SignatureException, ContextException {
 		if (object instanceof URL) {
 			return deleteURL((URL) object);
@@ -217,7 +217,7 @@ public class SdbUtil {
 		}
 	}
 
-	public static URL deleteObject(Object object) throws ExertionException,
+	public static URL deleteObject(Object object) throws MogramException,
 			SignatureException, ContextException {
 		String storageName = Sorcer.getActualName(Sorcer
 				.getDatabaseStorerName());
@@ -229,8 +229,7 @@ public class SdbUtil {
 		return (URL) eval(objectStoreTask);
 	}
 
-	public static URL deleteURL(URL url) throws ExertionException,
-			SignatureException, ContextException {
+	public static URL deleteURL(URL url) throws MogramException {
 		String serviceTypeName = getServiceType(url);
 		String storageName = getProviderName(url);
 		Task objectStoreTask = null;
@@ -242,8 +241,8 @@ public class SdbUtil {
 					context("delete",
 							operator.inVal(StorageManagement.object_deleted, url),
 							result(StorageManagement.object_url)));
-		} catch (ClassNotFoundException e) {
-			throw new SignatureException("No such service fiType: "
+		} catch (ClassNotFoundException | SignatureException e) {
+			throw new MogramException("No such service fiType: "
 					+ serviceTypeName, e);
 		}
 		return (URL) eval(objectStoreTask);
@@ -262,8 +261,8 @@ public class SdbUtil {
 		return (URL) out.getDataContext().getValue(StorageManagement.object_url);
 	}
 
-	public static URL write(Object object) throws ExertionException,
-			SignatureException, ContextException {
+	public static URL write(Object object) throws MogramException,
+			SignatureException {
 		String storageName = Sorcer.getActualName(Sorcer.getSpacerName());
 		Task objectStoreTask = task(
 				"write",
@@ -274,13 +273,13 @@ public class SdbUtil {
 		return (URL) eval(objectStoreTask);
 	}
 
-	static public Object retrieve(URL url) throws ExertionException,
+	static public Object retrieve(URL url) throws MogramException,
 			SignatureException, ContextException {
 		return retrieve(SdbUtil.getUuid(url), getStoreType(url));
 	}
 
 	static public Object retrieve(Uuid storeUuid, Store storeType)
-			throws ExertionException, SignatureException, ContextException {
+			throws MogramException, SignatureException, ContextException {
 		Task objectRetrieveTask = task(
 				"retrieve",
 				sig("contextRetrieve", DatabaseStorer.class,
@@ -293,14 +292,14 @@ public class SdbUtil {
 		}
 	}
 
-	static public List<String> list(URL url) throws ExertionException,
+	static public List<String> list(URL url) throws MogramException,
 			SignatureException, ContextException {
 		return list(url, null);
 
 	}
 
 	static public List<String> list(URL url, Store storeType)
-			throws ExertionException, SignatureException, ContextException {
+			throws MogramException, SignatureException, ContextException {
 		Store type = storeType;
 		String providerName = getProviderName(url);
 		if (providerName == null)
@@ -319,7 +318,7 @@ public class SdbUtil {
 		return (List<String>) eval(listTask);
 	}
 
-	static public List<String> list(Store storeType) throws ExertionException,
+	static public List<String> list(Store storeType) throws MogramException,
 			SignatureException, ContextException {
 		String storageName = Sorcer.getActualName(Sorcer
 				.getDatabaseStorerName());

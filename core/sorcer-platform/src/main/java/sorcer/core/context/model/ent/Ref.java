@@ -18,7 +18,6 @@ package sorcer.core.context.model.ent;
 
 import sorcer.service.Arg;
 import sorcer.service.Context;
-import sorcer.service.Entry;
 import sorcer.service.EvaluationException;
 import sorcer.service.modeling.Reference;
 import sorcer.service.modeling.SupportComponent;
@@ -31,7 +30,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public class Ref<T> extends Entry<String, T> implements Reference, SupportComponent {
+public class Ref<T> extends Entry<T> implements Reference, SupportComponent {
 
 	private static final long serialVersionUID = 1L;
 

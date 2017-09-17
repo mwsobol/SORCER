@@ -11,6 +11,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.tuple.*;
 import sorcer.core.Tag;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.ProcModel;
@@ -160,7 +161,7 @@ public class CollectionOperators {
 	@Test
 	public void entryOperator() throws Exception {
 
-		Function<Double> e = ent("arg/x1", 10.0);
+		Entry<Double> e = val("arg/x1", 10.0);
 		assertEquals("arg/x1", key(e));
 		// a path is a String - usually a sequence of attributes
 		assertEquals("arg/x1", path(e));
@@ -207,13 +208,13 @@ public class CollectionOperators {
 	public void dbEntryOperator() throws Exception {
 
 		// create a persistent entry
-		Function<Double> de = dbVal("x3", 110.0);
+		Entry<Double> de = dbVal("x3", 110.0);
 		assertFalse(asis(de) instanceof URL);
 		assertTrue(eval(de).equals(110.0));
 		assertTrue(asis(de) instanceof URL);
 
 		// create an entry
-		Function<Double> e = ent("x1", 10.0);
+		Entry<Double> e = ent("x1", 10.0);
 		assertTrue(eval(e).equals(10.0));
 		assertTrue(asis(e).equals(10.0));
 		assertFalse(asis(e) instanceof URL);
@@ -225,12 +226,12 @@ public class CollectionOperators {
 		assertTrue(asis(e) instanceof URL);
 
 		// create a persistent entry with URL
-		Function<?> urle = dbVal("x2", valUrl);
+		Entry<?> urle = dbVal("x2", valUrl);
 		assertTrue(eval(urle).equals(10.0));
 		assertTrue(asis(urle) instanceof URL);
 
 		// assign a given URL
-		Function<Object> dbe = dbVal("y1");
+		Entry<Object> dbe = dbVal("y1", 1.0);
 		setValue(dbe, valUrl);
 		assertTrue(eval(dbe).equals(10.0));
 		assertTrue(asis(dbe) instanceof URL);
@@ -240,14 +241,14 @@ public class CollectionOperators {
 	@Test
 	public void entOperator() throws Exception {
 
-		Function add = ent("add", invoker("x + y", args("x", "y")));
+		Entry add = ent("add", invoker("x + y", args("x", "y")));
 		Context<Double> cxt = context(ent("x", 10.0), ent("y", 20.0));
-		logger.info("eval: " + eval(add, cxt));
+//		logger.info("eval: " + eval(add, cxt));
 		assertTrue(eval(add, cxt).equals(30.0));
 
 		cxt = context(ent("x", 20.0), ent("y", 30.0));
 		add = ent("add", invoker("x + y", args("x", "y")), cxt);
-		logger.info("proc eval: " + eval(add));
+//		logger.info("proc eval: " + eval(add));
 		assertTrue(eval(add).equals(50.0));
 
 	}
@@ -268,7 +269,7 @@ public class CollectionOperators {
 	}
 
 	@Test
-	public void dbParOperator() throws Exception {
+	public void dbProcOperator() throws Exception {
 
 		// persist values of args
 		Function dbp1 = persistent(ent("design/in", 25.0));
@@ -287,8 +288,8 @@ public class CollectionOperators {
 		URL p1Url = store(val("design/in", 30.0));
 		URL p2Url = store(val("url/sorcer", "http://sorcersoft.org"));
 
-		assertEquals(eval((Function) content(p1Url)), 30.0);
-		assertEquals(eval((Function)content(p2Url)), "http://sorcersoft.org");
+		assertEquals(eval((Entry)content(p1Url)), 30.0);
+		assertEquals(eval((Entry)content(p2Url)), "http://sorcersoft.org");
 
 	}
 
@@ -356,7 +357,7 @@ public class CollectionOperators {
 		assertTrue(get(cxt, "arg/x4").equals(1.4));
 		assertTrue(get(cxt, "arg/x5").equals(1.5));
 		assertTrue(get(cxt, "arg/x6").equals(1.6));
-		assertTrue(asis(cxt, "arg/x7") instanceof Proc);
+		assertTrue(asis(cxt, "arg/x7") instanceof Invocation);
 
 		// aliasing args with reactive value args - rvEnt
 		put(cxt, rvEnt("arg/x6", ent("overwrite", 20.0)));
@@ -373,7 +374,7 @@ public class CollectionOperators {
 		logger.info("x1: " + value(cxt, "arg/x1"));
 		logger.info("x3: " + value(cxt, "arg/x3"));
 
-		assertTrue(asis(cxt, "arg/x7") instanceof Proc);
+		assertTrue(asis(cxt, "arg/x7") instanceof Invocation);
 		assertEquals(4.0, value(cxt, "arg/x7"));
 
 	}

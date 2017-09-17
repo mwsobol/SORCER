@@ -136,7 +136,7 @@ public class LocalMograms {
     }
 
 	@Test
-	public void evaluateTask() throws SignatureException, ExertionException, ContextException {
+	public void evaluateTask() throws Exception {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
@@ -150,7 +150,7 @@ public class LocalMograms {
 	}
 
 	@Test
-	public void filterTaskContext() throws SignatureException, ExertionException, ContextException {
+	public void filterTaskContext() throws Exception {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), outVal("out/val"),
@@ -162,7 +162,7 @@ public class LocalMograms {
 	}
 
 	@Test
-	public void filterSingleOutPathContext() throws SignatureException, ExertionException, ContextException {
+	public void filterSingleOutPathContext() throws Exception {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), outVal("out/val"),

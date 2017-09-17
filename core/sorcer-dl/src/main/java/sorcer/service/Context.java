@@ -20,6 +20,7 @@ package sorcer.service;
 
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
+import sorcer.service.modeling.mog;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -73,7 +74,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
+public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter<T>, Paradigmatic, mog {
 
 	/** parameter (proc) */
 	final static String PATH_PAR = "proc";

@@ -20,10 +20,7 @@ package sorcer.mo;
 import sorcer.core.context.MapContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Proc;
-import sorcer.core.context.model.ent.ProcModel;
-import sorcer.core.context.model.ent.Function;
-import sorcer.core.context.model.ent.Value;
+import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.dispatch.DispatcherException;
@@ -303,14 +300,6 @@ public class operator {
         return response(model, path);
     }
 
-    public static Object response(Domain model, String path) throws ContextException {
-        try {
-            return ((ServiceContext)model).getResponseAt(path);
-        } catch (RemoteException e) {
-            throw new ContextException(e);
-        }
-    }
-
     public static Context resp(Domain model) throws ContextException {
         return response(model);
     }
@@ -329,8 +318,12 @@ public class operator {
     }
 
 
-    public static Context response(Domain model, Object... items) throws ContextException {
+    public static ServiceContext response(Domain model, Object... items) throws ContextException {
         try {
+            if (items.length == 1 && items[0] instanceof String) {
+                return (ServiceContext) ((ServiceContext)model).getResponseAt((String)items[0]);
+            }
+
             List<Arg> argl = new ArrayList();
             List<Path> paths = new ArrayList();;
             for (Object item : items) {
@@ -347,11 +340,11 @@ public class operator {
                 }
             }
             if (paths != null && paths.size() > 0) {
-                ((ModelStrategy)((Mogram)model).getMogramStrategy()).setResponsePaths(paths);
+                ((ModelStrategy)model.getMogramStrategy()).setResponsePaths(paths);
             }
             Arg[] args = new Arg[argl.size()];
             argl.toArray(args);
-            return (Context) model.getResponse(args);
+            return (ServiceContext) model.getResponse(args);
         } catch (RemoteException e) {
             throw new ContextException(e);
         }

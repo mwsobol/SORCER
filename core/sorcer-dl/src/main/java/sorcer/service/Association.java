@@ -28,14 +28,12 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public class Entry<K, I> implements Computable<I>, net.jini.core.entry.Entry, Serializable, Identifiable, Arg {
+public class Association<K, I> implements net.jini.core.entry.Entry, Serializable, Identifiable, Arg {
 	private  static final long serialVersionUID =  1L;
 
 	protected K key = null;
 
 	protected I item = null;
-
-    protected boolean isPersistent = false;
 
     protected Class valClass;
 
@@ -50,14 +48,14 @@ public class Entry<K, I> implements Computable<I>, net.jini.core.entry.Entry, Se
     // when scope of this entry is changed then is not valid
     protected boolean isValid = true;
 
-    public Entry() {
+    public Association() {
 	}
 
-    public Entry(K key) {
+    public Association(K key) {
         this.key = key;
     }
 
-    public Entry(K key, I item) {
+    public Association(K key, I item) {
 		this.key = key;
 		this.item = item;
 	}
@@ -82,13 +80,7 @@ public class Entry<K, I> implements Computable<I>, net.jini.core.entry.Entry, Se
 		return item;
 	}
 
-    public I get() {
-        return item;
-    }
-
-    // polimorphic evaluation of all entries that may depend on
-    // implemented extending interfaces
-    public I compute(Arg... entries) throws EvaluationException {
+    public I get(Arg... args) throws ContextException {
         return item;
     }
 
@@ -107,14 +99,6 @@ public class Entry<K, I> implements Computable<I>, net.jini.core.entry.Entry, Se
 	@Override
 	public String toString() {
 		return "[" + key + ":" + item + "]";
-	}
-
-	public boolean isPersistent() {
-		return isPersistent;
-	}
-
-	public void setPersistent(boolean isPersistent) {
-		this.isPersistent = isPersistent;
 	}
 
 	public Object exec(Arg... entries) throws ServiceException, RemoteException {
@@ -169,8 +153,8 @@ public class Entry<K, I> implements Computable<I>, net.jini.core.entry.Entry, Se
 
     public void isValid(boolean state) {
         isValid = state;
-        if (item  instanceof Entry) {
-            ((Entry)item).isValid = state;
+        if (item  instanceof Association) {
+            ((Association)item).isValid = state;
         }
     }
 
@@ -180,16 +164,16 @@ public class Entry<K, I> implements Computable<I>, net.jini.core.entry.Entry, Se
     }
 
     public boolean equals(Object object) {
-        if (object instanceof Entry) {
-            if (item != null && ((Entry) object).item == null) {
+        if (object instanceof Association) {
+            if (item != null && ((Association) object).item == null) {
                 return false;
-            } else if (item == null && ((Entry) object).item != null) {
+            } else if (item == null && ((Association) object).item != null) {
                 return false;
-            } else if (((Entry) object).key.equals(key)
-                    && ((Entry) object).item == item) {
+            } else if (((Association) object).key.equals(key)
+                    && ((Association) object).item == item) {
                 return true;
-            } else if (((Entry) object).key.equals(key)
-                    && ((Entry) object).item.equals(item)) {
+            } else if (((Association) object).key.equals(key)
+                    && ((Association) object).item.equals(item)) {
                 return true;
             }
         }

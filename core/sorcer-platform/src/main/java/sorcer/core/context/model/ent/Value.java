@@ -3,21 +3,19 @@ package sorcer.core.context.model.ent;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Valuation;
+import sorcer.service.modeling.val;
+import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.net.URL;
-import java.rmi.RemoteException;
 
 /**
  * @author Mike Sobolewski
  */
-public class Value<V> extends Entry<String, V> implements Valuation<V>, Comparable<V>, Identifiable, Arg {
+public class Value<V> extends Entry<V> implements Valuation<V>, Comparable<V>, Identifiable, Arg, val<V> {
 
     // sequence number for unnamed mogram instances
     private static int count = 0;
-
-    // its arguments is persisted
-    protected boolean isPersistent = false;
 
     protected Functionality.Type type = Functionality.Type.VAL;
 
@@ -34,21 +32,11 @@ public class Value<V> extends Entry<String, V> implements Valuation<V>, Comparab
     }
 
     public Value(final String path, final V value) {
-        if(path == null)
-            throw new IllegalArgumentException("path must not be null");
+        super(path, value);
         if (value instanceof ServiceFidelity) {
             multiFi = (ServiceFidelity) value;
-            item = (V) ((Value)multiFi.get(0)).getItem();
-        } else {
-            V v = value;
-            if (v == null)
-                v = (V) Context.none;
-            if (SdbUtil.isSosURL(v)) {
-                isPersistent = true;
-            }
-            this.item = v;
+            item = (V) ((Value) multiFi.get(0)).getItem();
         }
-        this.key = path;
     }
 
     public Value(String path, V value, int index) {
@@ -110,13 +98,13 @@ public class Value<V> extends Entry<String, V> implements Valuation<V>, Comparab
         else
             return -1;
     }
+
     /**
      * <p>
      * Assigns the flag for persistent storage of values of this entry
      * </p>
      *
-     * @param isPersistent
-     *            the isPersistent to setValue
+     * @param isPersistent the isPersistent to setValue
      * @return nothing
      */
     public void setPersistent(boolean isPersistent) {
@@ -144,4 +132,19 @@ public class Value<V> extends Entry<String, V> implements Valuation<V>, Comparab
         return "[" + key + "=" + item + "]";
     }
 
+    public V get(Arg... args) throws ContextException {
+        if (args != null && args.length> 0) {
+            for (Arg arg : args) {
+                if (arg instanceof Fidelity && multiFi != null) {
+                    if (((Fidelity) arg).getPath() == null || ((Fidelity) arg).getPath().equals(key)) {
+                        multiFi.setSelect(arg.getName());
+                        item = (V) ((Value) multiFi.getSelect()).get(args);
+                    }
+                }
+            }
+        } else {
+            return super.get(args);
+        }
+        return item;
+    }
 }

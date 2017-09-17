@@ -26,6 +26,7 @@ import sorcer.core.context.StrategyContext;
 import sorcer.core.provider.Jobber;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
+import sorcer.service.modeling.mog;
 
 /**
  * An exertion is a federated service command (statement) communicated by a requestor -
@@ -68,8 +69,8 @@ import sorcer.service.Strategy.Flow;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Exertion extends Mogram, Computable, Dependency, Invocation<Object>, Evaluation<Object>,
-		Paradigmatic, Mappable, Serializable {
+public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evaluation<Object>,
+		Paradigmatic, Mappable, Serializable, mog {
 
 	/**
 	 * Returns a deployment ID for this exertion.

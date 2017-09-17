@@ -27,6 +27,7 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.*;
 import sorcer.eo.operator;
 import sorcer.service.*;
+import sorcer.service.modeling.sig;
 import sorcer.util.MavenUtil;
 
 import java.io.IOException;
@@ -42,7 +43,7 @@ import static sorcer.eo.operator.*;
  *
  * Created by Mike Sobolewski
  */
-public class NetSignature extends ObjectSignature {
+public class NetSignature extends ObjectSignature implements sig {
 
 	private static final long serialVersionUID = 1L;
 

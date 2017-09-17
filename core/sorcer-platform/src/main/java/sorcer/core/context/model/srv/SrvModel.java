@@ -26,6 +26,7 @@ import sorcer.co.tuple.DependencyEntry;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ModelStrategy;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.ServiceInvoker;
@@ -253,7 +254,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                         nargs = new Arg[paths.length];
                         for (int i = 0; i < paths.length; i++) {
                             if (!(asis(paths[i]) instanceof Arg))
-                                nargs[i] = new Function(paths[i], asis(paths[i]));
+                                nargs[i] = new Entry(paths[i], asis(paths[i]));
                             else
                                 nargs[i] = (Arg) asis(paths[i]);
                         }
@@ -269,19 +270,16 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             } else {
                 return super.getValue(path, args);
             }
+
+            // the same entry in entry
+            if (val instanceof Function && ((Function) val).getName().equals(path)) {
+                return ((Entry) val).get(args);
+            }
+            if (val instanceof ServiceFidelity) {
+                return ((Entry)((ServiceFidelity)val).getSelect()).get(args);
+            }
         } catch (Exception e) {
             throw new EvaluationException(e);
-        }
-        // the same entry in entry
-        if (val instanceof Function && ((Function) val).getName().equals(path)) {
-            return ((Function) val).get();
-        }
-        if (val instanceof ServiceFidelity) {
-            try {
-                return ((Function)((ServiceFidelity)val).getSelect()).getValue();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
         }
         return val;
     }
@@ -466,7 +464,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         while (i.hasNext()) {
             Map.Entry e = i.next();
             if (e.getValue() instanceof Srv) {
-                ((Srv) e.getValue()).srvValue = null;
+                ((Srv) e.getValue()).setItem(null);
             } else if (e.getValue() instanceof Function && ((Function)e.getValue()).asis() instanceof Evaluation) {
                 ((Function)e.getValue()).isValid(false);
             }

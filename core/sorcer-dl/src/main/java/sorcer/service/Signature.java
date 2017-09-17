@@ -21,6 +21,7 @@ import sorcer.core.provider.ProviderName;
 import sorcer.service.modeling.EvaluationComponent;
 import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.sig;
 
 import java.io.IOException;
 import java.io.Serializable;

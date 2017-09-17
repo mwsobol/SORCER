@@ -554,7 +554,7 @@ public class operator extends sorcer.operator {
 		return oe;
 	}
 
-	public static class DataEntry<T> extends Entry<String, T> {
+	public static class DataEntry<T> extends Entry<T> {
 		private static final long serialVersionUID = 1L;
 
 		DataEntry(String path, T value) {
@@ -635,8 +635,12 @@ public class operator extends sorcer.operator {
 		return inVal(path, value, valClass, null);
 	}
 
-    public static <T> Value<T> setValue(Value<T> entry, T value) throws ContextException {
-		entry.setValue(value);
+    public static <T> Entry<T> setValue(Entry<T> entry, T value) throws ContextException {
+		try {
+			entry.setValue(value);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 		if (entry instanceof Proc) {
 			Proc procEntry = (Proc)entry;
 			if (procEntry.getScope() != null && procEntry.getContextable() == null) {
@@ -737,22 +741,22 @@ public class operator extends sorcer.operator {
 		return SdbUtil.update(object);
 	}
 
-	public static List<String> list(URL url) throws ExertionException,
+	public static List<String> list(URL url) throws MogramException,
 			SignatureException, ContextException {
 		return SdbUtil.list(url);
 	}
 
-	public static List<String> list(DatabaseStorer.Store store) throws ExertionException,
+	public static List<String> list(DatabaseStorer.Store store) throws MogramException,
 			SignatureException, ContextException {
 		return SdbUtil.list(store);
 	}
 
-	public static URL delete(Object object) throws ExertionException,
+	public static URL delete(Object object) throws MogramException,
 			SignatureException, ContextException {
 		return SdbUtil.delete(object);
 	}
 
-	public static int clear(DatabaseStorer.Store type) throws ExertionException,
+	public static int clear(DatabaseStorer.Store type) throws MogramException,
 			SignatureException, ContextException {
 		return SdbUtil.clear(type);
 	}
@@ -773,29 +777,29 @@ public class operator extends sorcer.operator {
 		return map.size();
 	}
 
-	public static int size(DatabaseStorer.Store type) throws ExertionException,
+	public static int size(DatabaseStorer.Store type) throws MogramException,
 			SignatureException, ContextException {
 		return SdbUtil.size(type);
 	}
 
-	public static <T extends Function> T persistent(T entry) {
+	public static <T extends Entry> T persistent(T entry) {
 		entry.setPersistent(true);
 		return entry;
 	}
 
-	public static <T> Function<T> dbVal(String path) {
-		Function<T> e = new Proc<T>(path);
+	public static <T> Entry<T> dbVal(String path) {
+		Entry<T> e = new Proc<T>(path);
 		e.setPersistent(true);
 		return e;
 	}
 
-	public static <T> Function<T> dbVal(String path, T value) throws EvaluationException {
-		Function<T> e = new Function<T>(path, value);
+	public static <T> Entry<T> dbVal(String path, T value) throws EvaluationException {
+		Value<T> e = new Value<T>(path, value);
 		e.setPersistent(true);
 		if (SdbUtil.isSosURL(value)) {
 			try {
-				e.getValue();
-			} catch (RemoteException ex) {
+				e.get();
+			} catch (ContextException ex) {
 				throw new EvaluationException(ex);
 			}
 		}
@@ -848,15 +852,15 @@ public class operator extends sorcer.operator {
 		return entry.value();
 	}
 
-	public static <K, V> V val(Entry<K, V> entry) {
+	public static <V> V val(Entry<V> entry) {
 		return entry.getItem();
 	}
 
-	public static <V> String key(Entry<String, V> entry) {
+	public static <V> String key(Entry<V> entry) {
 		return entry.getName();
 	}
 
-	public static <V> String path(Entry<String, V> entry) {
+	public static <V> String path(Entry<V> entry) {
 		return entry.getName();
 	}
 
@@ -1048,10 +1052,10 @@ public class operator extends sorcer.operator {
 		return map;
 	}
 
-	public static <K, V> Map<K, V> map(Entry<K, V>... entries) {
+	public static <K, V> Map<K, V> map(Association<K, V>... entries) {
 		Map<K, V> map = new HashMap<K, V>();
-		for (Entry<K, V> entry : entries) {
-			map.put(entry.getKey(), entry.get());
+		for (Association<K, V> entry : entries) {
+			map.put(entry.getKey(), entry.getItem());
 		}
 		return map;
 	}

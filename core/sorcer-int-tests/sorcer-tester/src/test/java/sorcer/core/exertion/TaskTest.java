@@ -31,7 +31,7 @@ public class TaskTest {
 	private final static Logger logger = LoggerFactory.getLogger(TaskTest.class);
 
 	@Test
-	public void freeArithmeticTaskTest() throws ExertionException, SignatureException, ContextException {
+	public void freeArithmeticTaskTest() throws Exception {
 		//to test tracing of execution enable ServiceExertion.debug 		
 		Exertion task = task("add",
 				sig("add"),

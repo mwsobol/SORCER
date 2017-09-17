@@ -22,8 +22,9 @@ import sorcer.service.ServiceFidelity;
 import sorcer.service.Signature;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.sig;
 
-public class ModelSignature extends ServiceSignature {
+public class ModelSignature extends ServiceSignature implements sig {
 
 	static final long serialVersionUID = 5482425096559139341L;
 

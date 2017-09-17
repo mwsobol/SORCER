@@ -11,9 +11,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.model.ent.Function;
-import sorcer.core.context.model.ent.Proc;
-import sorcer.core.context.model.ent.ProcModel;
+import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.pml.provider.impl.Volume;
@@ -343,13 +341,13 @@ public class ProcModels {
 		Context cxt = context(val("url", "htt://sorcersoft.org"), val("design/in", 25.0));
 
 		// persistent proc
-		Function dbIn = persistent(as(proc("dbIn", "design/in"), cxt));
+		Entry dbIn = persistent(as(proc("dbIn", "design/in"), cxt));
 		assertTrue(eval(dbIn).equals(25.0));  	// is persisted
 		assertTrue(dbIn.asis().equals("design/in"));
-		assertTrue(eval((Function) asis(cxt, "design/in")).equals(25.0));
+		assertTrue(eval((Entry) asis(cxt, "design/in")).equals(25.0));
 		assertTrue(value(cxt, "design/in").equals(25.0));
 
-		setValue(dbIn, 30.0); 	// is persisted
+		setValue((Value)dbIn, 30.0); 	// is persisted
 		assertTrue(eval(dbIn).equals(30.0));
 
 		// associated context is updated accordingly

@@ -17,6 +17,7 @@
 package sorcer.co.tuple;
 
 import sorcer.core.context.model.ent.Value;
+import sorcer.service.ServiceFidelity;
 import sorcer.service.Signature;
 import sorcer.service.modeling.Functionality;
 
@@ -38,11 +39,10 @@ public class InputValue<T> extends Value<T> {
 
 
     public InputValue(String path, T value, boolean isPersistent, int index) {
-        super(path);
-        this.item = value;
+        super(path, value);
         this.isPersistent = isPersistent;
         this.index = index;
-        annotation = Signature.Direction.OUT;
-        type = Functionality.Type.OUTPUT;
+        annotation = Signature.Direction.IN;
+        type = Functionality.Type.INPUT;
     }
 }

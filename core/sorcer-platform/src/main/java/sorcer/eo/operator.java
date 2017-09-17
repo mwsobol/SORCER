@@ -36,6 +36,7 @@ import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.exertion.*;
 import sorcer.core.invoker.IncrementInvoker;
+import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.*;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
@@ -112,7 +113,7 @@ public class operator extends sorcer.operator {
 								 Arg... entries) throws ContextException {
 		Object obj = null;
 		if (object instanceof Entry) {
-			obj = ((Entry) object).compute(entries);
+			obj = ((Entry) object).get(entries);
 		} else if (object instanceof Context) {
 			obj = value((Context) object, path, entries);
 			obj = value((Context) obj, entries);
@@ -125,15 +126,15 @@ public class operator extends sorcer.operator {
 	public static Object revalue(Object object, Arg... entries)
 			throws EvaluationException {
 		Object obj = null;
+        try {
 		if (object instanceof Entry) {
-			obj =  ((Entry) object).compute(entries);
+			obj =  ((Entry) object).get(entries);
 		} else if (object instanceof Context) {
-			try {
-				obj = value((Context) object, entries);
-			} catch (ContextException e) {
-				throw new EvaluationException(e);
-			}
+            obj = value((Context) object, entries);
 		}
+        } catch (ContextException e) {
+            throw new EvaluationException(e);
+        }
 		if (obj != null) {
             return obj;
 		} else {
@@ -243,19 +244,19 @@ public class operator extends sorcer.operator {
         return context((Object[])entries);
     }
 
-	public static Context context(Object... entries) throws ContextException {
+	public static ServiceContext context(Object... entries) throws ContextException {
 		// do not create a context from Context, jut return
 		if (entries == null || entries.length == 0) {
 			return new ServiceContext();
 		} else if (entries.length == 1 && entries[0] instanceof Context) {
-			return (Context) entries[0];
+			return (ServiceContext) entries[0];
 		} else if (entries.length == 1 && entries[0] instanceof Mogram) {
-			return ((Mogram)entries[0]).getContext();
+			return (ServiceContext)((Mogram)entries[0]).getContext();
 		} else if (entries.length == 1 && entries[0] instanceof List) {
-			return contextFromList((List) entries[0]);
+			return (ServiceContext)contextFromList((List) entries[0]);
 		}
 
-		Context cxt = null;
+		ServiceContext cxt = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
 		Strategy.Access accessType = null;
 		Strategy.Flow flowType = null;
@@ -266,27 +267,27 @@ public class operator extends sorcer.operator {
 			Exertion xrt = (Exertion) entries[0];
 			if (entries.length >= 2 && entries[1] instanceof String)
 				xrt = (Exertion) (xrt).getComponentMogram((String) entries[1]);
-			return xrt.getDataContext();
+			return (ServiceContext) xrt.getDataContext();
 		} else if (entries[0] instanceof Link) {
-			return ((Link) entries[0]).getContext();
+			return (ServiceContext) ((Link) entries[0]).getContext();
 		} else if (entries.length == 1 && entries[0] instanceof String) {
 			return new PositionalContext((String) entries[0]);
 		} else if (entries.length == 2 && entries[0] instanceof String
 				&& entries[1] instanceof Exertion) {
-			return ((CompoundExertion) entries[1]).getComponentMogram(
+			return (ServiceContext) ((CompoundExertion) entries[1]).getComponentMogram(
 					(String) entries[0]).getContext();
 		} else if (entries[0] instanceof Context && entries[1] instanceof List) {
 			return ((ServiceContext) entries[0]).getDirectionalSubcontext(Path.getPathArray((List)entries[1]));
 		} else if (entries[0] instanceof Context) {
-			cxt = (Context) entries[0];
+			cxt = (ServiceContext) entries[0];
 		} else if (Context.class.isAssignableFrom(entries[0].getClass())) {
 			try {
-				cxt = (Context) ((Class) entries[0]).newInstance();
+				cxt = (ServiceContext) ((Class) entries[0]).newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new ContextException(e);
 			}
 		} else {
-			cxt = getPersistedContext(entries);
+			cxt = (ServiceContext) getPersistedContext(entries);
 			if (cxt != null) return cxt;
 		}
 		String name = getUnknown();
@@ -324,8 +325,8 @@ public class operator extends sorcer.operator {
 				execPath = (ExecPath) o;
 			} else if (o instanceof Proc) {
 				procEntryList.add((Proc) o);
-			} else if (o instanceof Function) {
-				entryList.add((Function) o);
+			} else if (o instanceof Value) {
+				entryList.add((Value) o);
 			} else if (o instanceof Context.Type) {
 				types.add((Context.Type) o);
 			} else if (o instanceof String) {
@@ -384,7 +385,7 @@ public class operator extends sorcer.operator {
 					cxt = new ServiceContext(name);
 			} else if (customContextClass != null) {
 				try {
-					cxt = (Context) customContextClass.newInstance();
+					cxt = (ServiceContext) customContextClass.newInstance();
 				} catch (Exception e) {
 					throw new ContextException(e);
 				}
@@ -579,7 +580,9 @@ public class operator extends sorcer.operator {
 						((Scopable) ent.getItem()).setScope(pcxt);
 				}
 				pcxt.putInoutValueAt(ent.getName(), ent, i + 1);
-			} else if (ent instanceof InputValue || ent.getType().equals(Functionality.Type.INPUT)) {
+			} else if (ent instanceof Value &&
+                    (ent.getType() == Functionality.Type.INPUT ||
+                    ent.getType() == Functionality.Type.VAL)) {
 				Object par = ent.getItem();
 				if (par instanceof Scopable) {
 					((Scopable) par).setScope(pcxt);
@@ -589,19 +592,19 @@ public class operator extends sorcer.operator {
 				} else {
 					pcxt.putInValueAt(ent.getName(), ent.getItem(), i + 1);
 				}
-			} else if (ent instanceof OutputValue || ent.getType().equals(Functionality.Type.OUTPUT)) {
+			} else if (ent instanceof OutputValue || ent.getType() == Functionality.Type.OUTPUT) {
 				if (ent.isPersistent()) {
 					setProc(pcxt, ent, i);
 				} else {
 					pcxt.putOutValueAt(ent.getName(), ent.getItem(), ent.getValClass(), i + 1);
 				}
-			} else if (ent instanceof InoutValue || ent.getType().equals(Functionality.Type.INOUT)) {
+			} else if (ent instanceof InoutValue || ent.getType() == Functionality.Type.INOUT) {
 				if (ent.isPersistent()) {
 					setProc(pcxt, ent, i);
 				} else {
 					pcxt.putInoutValueAt(ent.getName(), ent.getItem(), i + 1);
 				}
-			} else if (ent instanceof Function) {
+			} else if (ent instanceof Entry) {
 				if (ent.isPersistent()) {
 					setProc(pcxt, entryList.get(i), i);
 				} else {
@@ -919,7 +922,7 @@ public class operator extends sorcer.operator {
 		return new SignatureDeployer(builders);
 	}
 
-	public static Signature sig(String operation, Class serviceType)
+	public static ServiceSignature sig(String operation, Class serviceType)
 			throws SignatureException {
 		return sig(operation, serviceType, new Object[]{});
 	}
@@ -1073,7 +1076,7 @@ public class operator extends sorcer.operator {
 		return signature;
 	}
 
-	public static Signature sig(String operation, Class serviceType, Object... items) throws SignatureException {
+	public static ServiceSignature sig(String operation, Class serviceType, Object... items) throws SignatureException {
 		ProviderName providerName = null;
 		Provision p = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
@@ -1198,7 +1201,7 @@ public class operator extends sorcer.operator {
 			}
 		}
 
-		return sig;
+		return (ServiceSignature) sig;
 	}
 
 	public static Operation op(Signature sig) {
@@ -2007,7 +2010,11 @@ public class operator extends sorcer.operator {
 				mFi.addObserver(fiManager);
 				if (mFi.getMorpherFidelity() != null) {
 					// setValue the default morpher
-					mFi.setMorpher((Morpher) ((Function) mFi.getMorpherFidelity().get(0)).get());
+					try {
+						mFi.setMorpher((Morpher) ((Function) mFi.getMorpherFidelity().get(0)).get());
+					} catch (ContextException e) {
+						throw new ExertionException(e);
+					}
 				}
 			}
 		}
@@ -2028,11 +2035,12 @@ public class operator extends sorcer.operator {
 		return task;
 	}
 
-	public static <M extends Domain> M mdl(Object... items) throws ContextException, SortingException {
-		return model(items);
-	}
+//	public static <M extends Model> M mdl(Object... items) throws ContextException, SortingException {
+//		return model(items);
+//	}
 
 	public static <M extends Domain> M model(Object... items) throws ContextException, SortingException {
+//	public static Domain model(Object... items) throws ContextException, SortingException {
 		String name = "unknown" + count++;
 		boolean hasEntry = false;
 		boolean evalType = false;
@@ -2048,14 +2056,14 @@ public class operator extends sorcer.operator {
 				hasExertion = true;
 			} else if (i instanceof Signature) {
 				hasSignature = true;
-			} else if (i instanceof Function) {
+			} else if (i instanceof Entry) {
 				try {
 					hasEntry = true;
 					if (i instanceof Proc)
 						procType = true;
 					else if (i instanceof Srv) {
 						srvType = true;
-					} else if (((Function) i).asis() instanceof Evaluation) {
+					} else if (((Entry) i).asis() instanceof Evaluation) {
 						evalType = true;
 					}
 				} catch (Exception e) {
@@ -2079,7 +2087,7 @@ public class operator extends sorcer.operator {
 				mo = sorcer.mo.operator.procModel(items);
 			}
 
-			((ServiceMogram)mo).setName(name);
+			mo.setName(name);
 			if (mo instanceof SrvModel && autoDeps)
 				mo = new SrvModelAutoDeps((SrvModel)mo).get();
 			return (M) mo;
@@ -2133,7 +2141,7 @@ public class operator extends sorcer.operator {
 			if ((hasSignature && hasContext || hasExertion) && !hasEntry) {
 				return (M) xrt(name, items);
 			} else {
-				return model(items);
+				return (M) model(items);
 			}
 		} catch(Exception e) {
 			throw new MogramException("do not know what mogram to create");
@@ -2538,6 +2546,10 @@ public class operator extends sorcer.operator {
 		return value(context, path, args);
 	}
 
+	public static <T> T value(Valuation<T> valuation) throws ContextException {
+		return valuation.get();
+	}
+
 	public static <T> T value(Context<T> context, Arg... args)
 			throws ContextException {
 		try {
@@ -2557,32 +2569,59 @@ public class operator extends sorcer.operator {
         }
     }
 
-    public static <T> T eval(Computable<T> entry, Arg... args)
-            throws EvaluationException {
+	public static Object eval(Mogram mogram, Arg... args) throws MogramException {
+		try {
+			synchronized (mogram) {
+				if (mogram instanceof Exertion) {
+					return exec(mogram, args);
+				} else if (mogram instanceof Model) {
+					return ((Model)mogram).getResponse(args);
+				}
+			}
+		} catch (RemoteException | ServiceException e) {
+			throw new MogramException(e);
+		}
+		return null;
+	}
+
+	public static <T> T eval(ServiceInvoker<T> invoker, Arg... args)
+			throws EvaluationException {
+		try {
+			if (invoker instanceof Incrementor){
+                    return ((Incrementor<T>) invoker).next();
+                } else {
+				return invoker.invoke(args);
+			}
+		} catch (RemoteException e) {
+			throw new EvaluationException(e);
+		}
+	}
+
+	public static <T> T eval(Entry<T> entry, Arg... args)
+			throws EvaluationException {
         try {
             synchronized (entry) {
                 if (entry instanceof Function) {
                     try {
-                        return (T) ((Function) entry).getValue(args);
+                        return (T) ((Function)entry).getValue(args);
                     } catch (RemoteException e) {
                         throw new EvaluationException(e);
                     }
                 } else if (entry instanceof Value) {
-                    return (T) ((Value) entry).get();
+                    return (T) ((Value) entry).get(args);
+                } else if (entry instanceof Evaluation) {
+                    if (entry instanceof Exertion) {
+                        return (T) exec((Exertion) entry, args);
+                    } else if (entry instanceof Entry) {
+                        if (entry.asis() instanceof ServiceContext) {
+                            return (T) ((ServiceContext) entry.asis()).getValue(entry.getName());
+                        } else {
+                            return (T) ((Evaluation) entry).getValue(args);
+                        }
+                    } else if (entry instanceof Incrementor) {
+                        return ((Incrementor<T>) entry).next();
+                    }
                 }
-//                else if (entry instanceof Evaluation) {
-//                    if (entry instanceof Exertion) {
-//                        return (T) exec((Exertion) entry, args);
-//                    } else if (entry instanceof Entry) {
-//                        if ((Entry) entry.asis() instanceof ServiceContext) {
-//                            return (T) ((ServiceContext) entry.asis()).getValue(entry.getName());
-//                        } else {
-//                            return (T) ((Evaluation) entry).getValue(args);
-//                        }
-//                    } else if (entry instanceof Incrementor) {
-//                        return ((Incrementor<T>) entry).next();
-//                    }
-//                }
             }
         }catch (Exception e) {
                 throw new EvaluationException(e);
@@ -2725,7 +2764,7 @@ public class operator extends sorcer.operator {
 
 	public static Object exec(Service service, Arg... args) throws ServiceException, RemoteException {
 		try {
-			if (service instanceof Function || service instanceof Signature ) {
+			if (service instanceof Entry || service instanceof Signature ) {
 				return service.exec(args);
 			} else if (service instanceof Context || service instanceof MultiFiMogram) {
 				if (service instanceof Model) {
@@ -2843,7 +2882,7 @@ public class operator extends sorcer.operator {
 	}
 
 
-	public static class Range extends Entry<Integer, Integer> {
+	public static class Range extends Association<Integer, Integer> {
 		private static final long serialVersionUID = 1L;
 		public Integer[] range;
 
@@ -2893,7 +2932,7 @@ public class operator extends sorcer.operator {
 		return context.getLink(path);
 	}
 
-	public static <T> ControlContext strategy(T... entries) {
+	public static <T> ControlContext strategy(T... entries) throws ContextException {
 		ControlContext cc = new ControlContext();
 		List<Signature> sl = new ArrayList<Signature>();
 		for (Object o : entries) {
@@ -2921,19 +2960,19 @@ public class operator extends sorcer.operator {
 				cc.setOpti((Opti) o);
 			} else if (o instanceof Exec.State) {
 				cc.setExecState((Exec.State) o);
-			} else if (o instanceof Function) {
-				cc.put(((Function)o).getName(), ((Function)o).get());
+			} else if (o instanceof Entry) {
+				cc.put(((Entry)o).getName(), ((Entry)o).get());
 			}
 		}
 		cc.setSignatures(sl);
 		return cc;
 	}
 
-	public static Flow flow(Entry entry) throws EvaluationException {
+	public static Flow flow(Entry entry) throws ContextException {
 		return ((Strategy) entry.get()).getFlowType();
 	}
 
-	public static Access access(Entry entry) throws EvaluationException {
+	public static Access access(Entry entry) throws ContextException {
 		return ((Strategy) entry.get()).getAccessType();
 	}
 
@@ -3211,12 +3250,11 @@ public class operator extends sorcer.operator {
 		return p;
 	}
 
-
-	public static class Complement<T> extends Entry<String, T> {
+	public static class Complement<T> extends Entry<T> {
 		private static final long serialVersionUID = 1L;
 
 		Complement(String path, T value) {
-			super(path);
+			this.key = path;
 			this.item = value;
 		}
 	}

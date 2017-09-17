@@ -1,12 +1,9 @@
 package sorcer.core.context.model.ent;
 
-import sorcer.co.tuple.Tuple2;
-import sorcer.service.Entry;
-
 /**
  * Created by Mike Sobolewski on 5/15/17.
  */
-public class Tie extends Entry<String, String> {
+public class Tie extends Entry<String> {
 
     public Tie(String domain, String entry) {
         key = domain;

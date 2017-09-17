@@ -63,20 +63,20 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String path, Object value, String[] paths) {
-        super(path, value);
-        this.name = path;
+    public Srv(String name, Object value, String[] paths) {
+        super(name, value);
+        this.name = name;
         this.paths = paths;
         type = Functionality.Type.SRV;
     }
-    public Srv(String path, Object value) {
-        super(path, value);
-        this.name = path;
+    public Srv(String name, Object value) {
+        super(name, value);
+        this.name = name;
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String path, Object value, ReturnPath returnPath) {
-        this(path, value);
+    public Srv(String name, Object value, ReturnPath returnPath) {
+        this(name, value);
         this.returnPath = returnPath;
     }
 
@@ -148,7 +148,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
 
     @Override
     public void valueChanged() throws EvaluationException {
-          isValid = false;
+        isValid = false;
     }
 
     @Override
@@ -175,14 +175,14 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
                 } else if (((SignatureEntry) item).getContext() != null) {
                     try {
                         return execSignature(((SignatureEntry) item).get(),
-                            ((SignatureEntry) item).getContext());
+                                ((SignatureEntry) item).getContext());
                     } catch (MogramException e) {
                         throw new EvaluationException(e);
                     }
                 }
                 throw new EvaluationException("No model available for entry: " + this);
             } else if (item instanceof MogramEntry) {
-                Context cxt = ((Mogram) ((Function) item).get()).exert(entries).getContext();
+                Context cxt = ((MogramEntry) item).get().exert(entries).getContext();
                 Object val = cxt.getValue(Context.RETURN);
                 if (val != null) {
                     return val;
@@ -200,7 +200,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
     }
 
     private Object execMorphFidelity(MorphFidelity mFi, Arg... entries)
-        throws ServiceException, RemoteException, TransactionException {
+            throws ServiceException, RemoteException, TransactionException {
         Object obj = mFi.getSelect();
         Object out = null;
         if (obj instanceof Scopable) {
@@ -265,7 +265,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
             if (mod instanceof SrvModel && item instanceof ValueCallable) {
                 return ((ValueCallable) item).call((Context) mod);
             } else if  (mod instanceof Context && item instanceof SignatureEntry) {
-                return ((ServiceContext)mod).execSignature(((SignatureEntry) item).get());
+                return ((ServiceContext)mod).execSignature(((SignatureEntry) item).get(args));
             } else {
                 item = mod;
                 return getValue(args);

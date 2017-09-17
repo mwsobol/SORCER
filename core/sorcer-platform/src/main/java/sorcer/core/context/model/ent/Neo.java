@@ -24,6 +24,7 @@ import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Activation;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.func;
 
 
 import java.rmi.RemoteException;
@@ -37,7 +38,8 @@ import java.util.Iterator;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Neo extends Function<Double> implements Functionality<Double>, Activation, Invocation<Double>, Setter, Scopable, Comparable<Double>{
+public class Neo extends Function<Double> implements Functionality<Double>, Activation, Invocation<Double>,
+		Setter, Scopable, Comparable<Double>, func<Double> {
 
 	private static final long serialVersionUID = 1L;
 

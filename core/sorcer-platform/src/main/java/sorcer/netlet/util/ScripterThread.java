@@ -27,6 +27,7 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
@@ -101,7 +102,7 @@ public class ScripterThread extends Thread {
                     logger.info(">>>>>>>>>>> serviceShell eval result: " + result);
                 }
             } else if (target instanceof Function){
-                result = new Function(((Function)target).getName(), eval((Computable<? extends Object>) target));
+                result = new Function(((Function)target).getName(), eval((Entry<? extends Object>) target));
                 logger.info(">>>>>>>>>>> eval entry: " + result);
             } else if (target != null) {
                 logger.info(">>>>>>>>>>> eval result: " + target);

@@ -22,6 +22,7 @@ import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.Tuple2;
 import sorcer.core.context.ContextSelection;
 import sorcer.core.context.ServiceContext;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
 import sorcer.util.bdb.objects.UuidObject;
@@ -114,7 +115,8 @@ public class Function<T> extends Value<T> implements Evaluation<T>, Callable<T>,
 					this.item = (T)url;
 				}
 			} else if (val instanceof Invocation) {
-				val = (T) ((Invocation) val).invoke(null, args);
+				Context cxt = (Context) Arg.getServiceModel(args);
+				val = (T) ((Invocation) val).invoke(cxt, args);
 			} else if (val instanceof Evaluation) {
 				if (val instanceof Function && ((Function)val).getName().equals(key)) {
 					val = (T) ((Function)val).getValue();
@@ -140,13 +142,13 @@ public class Function<T> extends Value<T> implements Evaluation<T>, Callable<T>,
 		} catch (Exception e) {
 			throw new EvaluationException(e);
 		}
-        if (contextSelector != null) {
-            try {
-                val = (T) contextSelector.doSelect(val);
-            } catch (ContextException e) {
-                throw new EvaluationException(e);
-            }
-        }
+		if (contextSelector != null) {
+			try {
+				val = (T) contextSelector.doSelect(val);
+			} catch (ContextException e) {
+				throw new EvaluationException(e);
+			}
+		}
 		if (val instanceof Number && negative) {
 			Number result = (Number) val;
 			Double rd = result.doubleValue() * -1;

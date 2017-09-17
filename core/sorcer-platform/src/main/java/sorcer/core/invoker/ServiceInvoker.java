@@ -22,9 +22,9 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
-import sorcer.core.context.model.ent.Function;
 import sorcer.eo.operator;
 import sorcer.service.*;
 
@@ -66,7 +66,7 @@ import java.util.List;
  * of the context.
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ServiceInvoker<T> extends Observable implements  Computable, Invocation<T>, Identifiable, Scopable, Evaluator<T>, Reactive<T>, Observer, Serializable {
+public class ServiceInvoker<T> extends Observable implements Invocation<T>, Identifiable, Scopable, Evaluator<T>, Reactive<T>, Observer, Serializable {
 
 	private static final long serialVersionUID = -2007501128660915681L;
 	
@@ -184,7 +184,7 @@ public class ServiceInvoker<T> extends Observable implements  Computable, Invoca
 		this.evaluator = evaluator;
 		this.args = new ArgSet(procEntries);
 	}
-	
+
 	/**
 	 * <p>
 	 * Returns a setValue of parameters (args) of this invoker that are a a subset of
@@ -282,16 +282,20 @@ public class ServiceInvoker<T> extends Observable implements  Computable, Invoca
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */
-	public ServiceInvoker addPar(Object par) throws EvaluationException, RemoteException {
+	public ServiceInvoker addPar(Object par) throws EvaluationException {
 		if (par instanceof Proc) {
 			((ServiceContext)invokeContext).put(((Proc) par).getName(), par);
 			if (((Proc) par).asis() instanceof ServiceInvoker) {
-				((ServiceInvoker) ((Proc) par).getValue()).addObserver(this);
-				args.add((Proc) par);
-				value = null;
-				setChanged();
-				notifyObservers(this);
-				valueValid(false);
+				try {
+					((ServiceInvoker) ((Proc) par).getValue()).addObserver(this);
+					args.add((Proc) par);
+					value = null;
+					setChanged();
+					notifyObservers(this);
+					valueValid(false);
+				} catch (RemoteException e) {
+					throw new EvaluationException(e);
+				}
 			}
 		} else if (par instanceof Identifiable) {
 			try {
@@ -304,8 +308,7 @@ public class ServiceInvoker<T> extends Observable implements  Computable, Invoca
 		return this;
 	}
 
-	synchronized public void addPars(ArgSet parSet) throws EvaluationException,
-			RemoteException {
+	synchronized public void addPars(ArgSet parSet) throws EvaluationException {
 		for (Arg p : parSet) {
 			addPar(p);
 		}
@@ -529,7 +532,7 @@ public class ServiceInvoker<T> extends Observable implements  Computable, Invoca
 	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.proc.EntSet)
 	 */
 	@Override
-	public void addArgs(ArgSet set) throws EvaluationException, RemoteException {
+	public void addArgs(ArgSet set) throws EvaluationException {
 		addPars(set);
 	}
 
@@ -601,17 +604,4 @@ public class ServiceInvoker<T> extends Observable implements  Computable, Invoca
 		return null;
 	}
 
-	@Override
-	public Object compute(Arg... args) throws EvaluationException {
-		try {
-			Context cxt = (Context)Arg.getServiceModel(args);
-			if (cxt !=null) {
-				invokeContext = cxt;
-				return getValue(args);
-			}
-		} catch (RemoteException e) {
-			throw new EvaluationException();
-		}
-		return null;
-	}
 }

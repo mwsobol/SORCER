@@ -18,6 +18,8 @@
 package sorcer.service.modeling;
 
 import sorcer.service.Arg;
+import sorcer.service.Context;
+import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
 import sorcer.service.modeling.EvaluationComponent;
 import sorcer.service.modeling.SupportComponent;
@@ -37,7 +39,7 @@ public interface Valuation<T> {
 	 * 
 	 * @return the current item of this valuation
 	 */
-	public T get() ;
+	public T get(Arg... args) throws ContextException;
 
 	public void set(T item) ;
 }

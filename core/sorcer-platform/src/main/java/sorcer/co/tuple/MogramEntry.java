@@ -17,14 +17,13 @@
 
 package sorcer.co.tuple;
 
-import sorcer.core.context.model.ent.Function;
-import sorcer.service.Entry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Mogram;
 
 /**
  * Created by Mike Sobolewski on 10/28/15.
  */
-public class MogramEntry extends Entry<String, Mogram> {
+public class MogramEntry extends Entry<Mogram> {
 
     private static final long serialVersionUID = 1L;
 

@@ -20,6 +20,7 @@ package sorcer.core.signature;
 import net.jini.core.transaction.TransactionException;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
+import sorcer.service.modeling.sig;
 import sorcer.util.Sorcer;
 
 import java.io.File;
@@ -28,7 +29,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 8/3/15.
  */
-public class NetletSignature extends ServiceSignature {
+public class NetletSignature extends ServiceSignature implements sig {
 
     protected Path serviceSource;
 

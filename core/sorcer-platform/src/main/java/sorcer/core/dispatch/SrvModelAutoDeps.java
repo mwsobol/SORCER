@@ -22,6 +22,7 @@ import org.codehaus.plexus.util.dag.DAG;
 import org.codehaus.plexus.util.dag.TopologicalSorter;
 import org.codehaus.plexus.util.dag.Vertex;
 import sorcer.co.tuple.SignatureEntry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
@@ -179,11 +180,11 @@ public class SrvModelAutoDeps {
             entryMap.put(entryName, srvModel.getData().get(entryName));
 
             Object entry = srvModel.getData().get(entryName);
-            if (entry instanceof Function) {
-                Object entryVal = ((Function)entry).get();
+            if (entry instanceof Entry) {
+                Object entryVal = ((Entry)entry).getItem();
                 ReturnPath rp = null;
                 if (entryVal instanceof SignatureEntry) {
-                    Signature signature = ((SignatureEntry)entryVal).get();
+                    Signature signature = ((SignatureEntry)entryVal).getItem();
                     if (signature!=null) rp = (ReturnPath)signature.getReturnPath();
                 } else if (entry instanceof Srv) {
                     rp = ((Srv) entry).getReturnPath();
@@ -213,9 +214,9 @@ public class SrvModelAutoDeps {
             Object entry = srvModel.getData().get(entryName);
             if (entry instanceof Function) {
                 ReturnPath rp = null;
-                Object entryVal = ((Function)entry).get();
+                Object entryVal = ((Entry)entry).getItem();
                 if (entryVal instanceof SignatureEntry) {
-                    Signature signature = ((SignatureEntry)entryVal).get();
+                    Signature signature = ((SignatureEntry)entryVal).getItem();
                     rp =  (ReturnPath)signature.getReturnPath();
                 } else if (entry instanceof Srv) {
                     rp = ((Srv)entry).getReturnPath();

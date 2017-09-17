@@ -17,6 +17,7 @@
 
 package sorcer.core.invoker;
 
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.NeoFidelity;
 import sorcer.service.*;
 import sorcer.service.modeling.Activation;
@@ -103,10 +104,10 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
             } else if (arg instanceof Entry) {
                 if (((Entry) arg).getType() == Functionality.Type.THRESHOLD
                         && name.equals(arg.getName())) {
-                    threshold = (double) ((Entry) arg).get();
+                    threshold = (double) ((Entry) arg).getItem();
                 } else if (((Entry) arg).getType() == Functionality.Type.BIAS
                         && name.equals(arg.getName())) {
-                    bias = (double) ((Entry) arg).get();
+                    bias = (double) ((Entry) arg).getItem();
 
                 }
             }
@@ -117,7 +118,7 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
         }
         double sum = 0.0;
         for (String name : args.getNames()) {
-            double in = (double) ((Entry)invokeContext.get(name)).get();
+            double in = (double) ((Entry)invokeContext.get(name)).getItem();
             double wt = (double) weights.get(name);
             sum = sum + (in * wt);
         }

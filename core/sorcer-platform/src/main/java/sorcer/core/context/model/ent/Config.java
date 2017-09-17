@@ -18,7 +18,6 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.service.ContextException;
-import sorcer.service.Entry;
 import sorcer.service.Setup;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 04/25/17.
  */
-public class Config extends Entry<String, List<Setup>> {
+public class Config extends Entry<List<Setup>> {
 
 	public Config(String path) {
 		key = path;

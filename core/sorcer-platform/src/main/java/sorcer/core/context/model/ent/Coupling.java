@@ -1,12 +1,11 @@
 package sorcer.core.context.model.ent;
 
-import sorcer.co.tuple.Tuple2;
-import sorcer.service.Entry;
+import sorcer.service.Association;
 
 /**
  * Created by Mike Sobolewski on 5/15/17.
  */
-public class Coupling extends Entry<Tie, Tie> {
+public class Coupling extends Association<Tie, Tie> {
 
     public Coupling(Tie from, Tie to) {
         key = from;

@@ -22,6 +22,7 @@ import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.provider.Exerter;
+import sorcer.service.modeling.mog;
 
 import java.rmi.RemoteException;
 import java.security.Principal;

@@ -23,7 +23,7 @@ import net.jini.id.Uuid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.*;
-import sorcer.core.context.model.ent.Function;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.deploy.DeploymentIdFactory;
 import sorcer.core.deploy.ServiceDeployment;
@@ -1019,7 +1019,11 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         Context cxt = (Context) Arg.getServiceModel(args);
         if (cxt != null) {
               dataContext = (ServiceContext) cxt;
-              return operator.eval(this, args);
+            try {
+                return operator.eval(this, args);
+            } catch (ServiceException e) {
+                throw new MogramException(e);
+            }
         }
         return null;
     }
@@ -1078,12 +1082,4 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         // do nothing
     }
 
-    @Override
-    public Object compute(Arg... args) throws EvaluationException {
-        try {
-            return exert(args);
-        } catch (MogramException | TransactionException | RemoteException e) {
-            throw new EvaluationException(e);
-        }
-    }
 }

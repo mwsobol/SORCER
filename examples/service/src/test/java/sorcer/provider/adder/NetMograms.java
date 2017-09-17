@@ -51,7 +51,7 @@ public class NetMograms {
 	}
 
 	@Test
-	public void valueTask() throws SignatureException, ExertionException, ContextException  {
+	public void valueTask() throws Exception  {
 
 		Task t5 = task("t5", sig("add", Adder.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
@@ -66,7 +66,7 @@ public class NetMograms {
 	}
 
     @Test
-    public void sessionTask() throws SignatureException, ExertionException, ContextException  {
+    public void sessionTask() throws Exception  {
 
         Task sum = task("t6", sig("sum", Adder.class, prvName("Adder")),
                 cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));

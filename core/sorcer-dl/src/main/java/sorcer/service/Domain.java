@@ -17,12 +17,14 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.mog;
+
 import java.rmi.RemoteException;
 
 /**
  * Created by Mike Sobolewski on 7/26/16.
  */
-public interface Domain extends Mogram, Dependency {
+public interface Domain extends Mogram, Dependency, mog {
 
     /**
      * Returns a requested evaluation context with a provided input context and arguments.

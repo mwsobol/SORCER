@@ -3,12 +3,14 @@ package sorcer.fidelities;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.plexus.FiMap;
 import sorcer.core.service.Projection;
 import sorcer.service.EvaluationException;
 import sorcer.service.Fidelity;
 import sorcer.service.FidelityList;
 import sorcer.service.ServiceFidelity;
+import sorcer.service.modeling.Functionality;
 import sorcer.util.ModelTable;
 import sorcer.util.DataTable;
 

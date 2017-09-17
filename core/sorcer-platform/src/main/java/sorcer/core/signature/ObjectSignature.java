@@ -26,6 +26,7 @@ import sorcer.core.invoker.MethodInvoker;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 import sorcer.service.modeling.Modeling;
+import sorcer.service.modeling.sig;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -35,7 +36,7 @@ import java.rmi.RemoteException;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.task;
 
-public class ObjectSignature extends ServiceSignature {
+public class ObjectSignature extends ServiceSignature implements sig {
 
 	static final long serialVersionUID = 8042346568722803852L;
 

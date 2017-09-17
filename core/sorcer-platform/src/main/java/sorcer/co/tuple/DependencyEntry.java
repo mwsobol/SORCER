@@ -19,7 +19,6 @@ package sorcer.co.tuple;
 
 import sorcer.core.context.model.ent.Function;
 import sorcer.service.Conditional;
-import sorcer.service.Entry;
 import sorcer.service.Path;
 
 import java.util.List;

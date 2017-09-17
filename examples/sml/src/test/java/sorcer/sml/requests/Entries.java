@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.Value;
 import sorcer.service.*;
@@ -39,8 +40,8 @@ public class Entries {
 	@Test
 	public void directionalEntries() throws Exception {
 
-		Function x1 = proc("arg/x1", 100.0);
-		assertEquals(100.0, eval(x1));
+        Function x1 = proc("arg/x1", 100.0);
+        assertEquals(100.0, eval(x1));
         assertTrue(direction(x1) == null);
 
 		Value x2 = inVal("arg/x2", 20.0);
@@ -53,11 +54,12 @@ public class Entries {
 
         // entry of entry
 		Entry x4 = inoutVal("arg/x4", x3);
-		assertEquals(80.0, eval(x4));
+		assertEquals(x3, eval(x4));
         assertTrue(direction(x4) == Direction.INOUT);
 		assertEquals(name(asis(x4)), "arg/x3");
-        assertTrue(direction((Function) asis(x4)) == Direction.OUT);
-	}
+        assertTrue(direction(x4) == Direction.INOUT);
+
+    }
 
     @Test
     public void setup1() throws Exception {
@@ -212,7 +214,7 @@ public class Entries {
     }
 
 	@Test
-	public void getConditionalParValue() throws Exception {
+	public void getConditionalProcValue() throws Exception {
 
 		Function y1 = proc("y1", alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
 			opt(condition((Context<Double> cxt) -> value(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
@@ -223,7 +225,7 @@ public class Entries {
 	}
 
 	@Test
-	public void getConditionalPar2Value() throws Exception {
+	public void getConditionalProc2Value() throws Exception {
 
 		Function y1 = proc("y1", alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
 			opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
@@ -234,7 +236,7 @@ public class Entries {
 	}
 
 	@Test
-	public void getConditionalPar3Value() throws Exception {
+	public void getConditionalProc3Value() throws Exception {
 
 		Function y1 = proc("y1", alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
 			opt(30.0)),

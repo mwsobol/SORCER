@@ -25,6 +25,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.VariabilityModeling;
+import sorcer.service.modeling.func;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.net.MalformedURLException;
@@ -43,7 +44,7 @@ import java.util.*;
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
 public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T>,
-		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T> {
+		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, func<T> {
 
 	private static final long serialVersionUID = 7495489980319169695L;
 	 
@@ -186,7 +187,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	}
 
 	@Override
-	public T get() {
+	public T get(Arg... args) {
 		return value;
 	}
 

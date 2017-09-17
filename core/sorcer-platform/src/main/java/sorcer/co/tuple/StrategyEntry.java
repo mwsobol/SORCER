@@ -17,15 +17,14 @@
 
 package sorcer.co.tuple;
 
-import sorcer.core.context.model.ent.Function;
 import sorcer.service.Arg;
-import sorcer.service.Entry;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Strategy;
 
 import java.io.IOException;
 import java.net.URL;
 
-public class StrategyEntry extends Entry<String, Strategy> implements Arg {
+public class StrategyEntry extends Entry<Strategy> implements Arg {
 
 	private static final long serialVersionUID = 1L;
 

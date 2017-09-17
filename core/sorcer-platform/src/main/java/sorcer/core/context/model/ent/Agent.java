@@ -29,7 +29,6 @@ import java.util.Arrays;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.service.Arg;
 import sorcer.service.Context;
-import sorcer.service.Entry;
 import sorcer.service.EvaluationException;
 
 /**
@@ -158,7 +157,7 @@ public class Agent<T> extends Proc<T> implements Serializable {
 	private String getClassName(Arg... entries) {
 		for (Arg p : entries) {
 			if (p instanceof Entry && p.getName().equals("class"))
-				return (String)((Entry)p).get();
+				return (String)((Entry)p).getItem();
 		}
 		return null;
 	}

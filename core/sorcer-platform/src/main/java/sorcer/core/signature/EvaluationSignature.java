@@ -18,8 +18,9 @@
 package sorcer.core.signature;
 
 import sorcer.service.Evaluation;
+import sorcer.service.modeling.sig;
 
-public class EvaluationSignature extends ServiceSignature {
+public class EvaluationSignature extends ServiceSignature implements sig {
 
 	static final long serialVersionUID = -7142818720710405999L;
 	

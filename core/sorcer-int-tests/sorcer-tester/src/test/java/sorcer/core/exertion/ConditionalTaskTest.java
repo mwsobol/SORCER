@@ -67,7 +67,7 @@ public class ConditionalTaskTest {
 	}
 
 	@Test
-	public void altExertionTest() throws RemoteException, ContextException, SignatureException, ExertionException {
+	public void altExertionTest() throws Exception {
 		ProcModel pm = procModel("proc-model");
 		pm.putValue("x1", 30.0);
 		pm.putValue("y1", 20.0);

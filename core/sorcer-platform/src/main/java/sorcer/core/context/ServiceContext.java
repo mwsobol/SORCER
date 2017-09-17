@@ -44,6 +44,7 @@ import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.Model;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.cxt;
 import sorcer.util.ObjectCloner;
 import sorcer.util.SorcerUtil;
 
@@ -61,7 +62,7 @@ import static sorcer.eo.operator.task;
  * Implements the base-level service context interface {@link Context}.
  */
 public class ServiceContext<T> extends ServiceMogram implements
-		Context<T>, AssociativeContext<T>, Contexter<T>, SorcerConstants {
+		Context<T>, AssociativeContext<T>, Contexter<T>, cxt<T>, SorcerConstants {
 
 	private static final long serialVersionUID = 3311956866023311727L;
 	protected Map<String, T> data = new ConcurrentHashMap<String, T>();
@@ -1613,7 +1614,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			val = getValue(path, args);
 			if (val instanceof Context) {
 				subcntxt.append((Context) val);
-			} else if (val instanceof Function) {
+			} else if (val instanceof Entry) {
 				Object v = ((Function)val).get();
 				subcntxt.putValue(path, v);
 				if (path != ((Function)val).getName())
@@ -2280,6 +2281,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
+	@Override
 	public T putInValue(String path, T value, String association)
 			throws ContextException {
 		putValue(path, value);
@@ -2288,6 +2290,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return value;
 	}
 
+	@Override
 	public T putOutValue(String path, T value, String association)
 			throws ContextException {
 		putValue(path, value);
@@ -2296,6 +2299,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return value;
 	}
 
+	@Override
 	public T putInoutValue(String path, T value, String association)
 			throws ContextException {
 		putValue(path, value);
