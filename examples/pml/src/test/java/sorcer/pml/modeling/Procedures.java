@@ -37,38 +37,38 @@ public class Procedures {
 
 	public void smlSyntax() throws Exception {
 
-//		sig s1 = sig("x3", Class.class);
-//		Object o1 = exec(s1);
-//
-//		val v1 = val("x1", 10.8);
-//		func f1 = proc("x2", 20.0);
-//		func f2 = func("v1 + f1", args("v1", "f1"));
-//		func f3 = lmbd("s1", args("v1", "f1"));
-//		func f4 = neo("x3", 1.0);
-//		func f5 = srv(sig("s1", Class.class));
-//		func f5b = srv(s1);
-//		mog m1 = model(f1, f2, f3, f4, f5);
-//		Object o2 = value(v1);
-//		Object o3 = eval((Entry)f1);
-//
-//		cxt c1 = context(v1, val("x4", 10.8), f1);
-//
-//		Object o4 = value(context(), "path");
-//		Object o5 = response((Model) model(), "path");
-//		cxt c3 = response((Model) model());
-//
-//		Object o6 = eval(task());
-//		Object o6b = eval(task(s1, c1));
-//		Object o7 = eval(block());
-//		Object o8 = eval(job());
-//
-//		mog m2 = exert(task());
-//		mog m3 = exert(job());
-//		mog m4 = exert(model());
-//		cxt c4 = context(exert(job()));
-//		mog m5 = model(v1, f1, f2, f3, c1, m2, m3, m4);
-//		Object o9 = exec(m3);
-//		Object o10 = exec(m5);
+		sig s1 = sig("x3", Class.class);
+		Object o1 = exec(s1);
+
+		val v1 = val("x1", 10.8);
+		func f1 = proc("x2", 20.0);
+		func f2 = func("v1 + f1", args("v1", "f1"));
+		func f3 = lmbd("s1", args("v1", "f1"));
+		func f4 = neo("x3", 1.0);
+		func f5 = srv(sig("s1", Class.class));
+		func f5b = srv(s1);
+		mog m1 = model(f1, f2, f3, f4, f5);
+		Object o2 = value(v1);
+		Object o3 = eval((Entry)f1);
+
+		cxt c1 = context(v1, val("x4", 10.8), f1);
+
+		Object o4 = value(context(), "path");
+		Object o5 = response((Model) model(), "path");
+		cxt c3 = response((Model) model());
+
+		Object o6 = eval(task());
+		Object o6b = eval(task(s1, c1));
+		Object o7 = eval(block());
+		Object o8 = eval(job());
+
+		mog m2 = exert(task());
+		mog m3 = exert(job());
+		mog m4 = exert(model());
+		cxt c4 = context(exert(job()));
+		mog m5 = model(v1, f1, f2, f3, c1, m2, m3, m4);
+		Object o9 = exec(m3);
+		Object o10 = exec(m5);
 
 	}
 

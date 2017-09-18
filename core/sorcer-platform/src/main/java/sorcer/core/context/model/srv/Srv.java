@@ -15,6 +15,7 @@ import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Serviceablenes;
+import sorcer.service.modeling.func;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -27,7 +28,7 @@ import static sorcer.eo.operator.task;
  * Created by Mike Sobolewski on 4/14/15.
  */
 public class Srv extends Function<Object> implements Functionality<Object>, Serviceablenes,
-        Comparable<Object>, Reactive<Object>, Serializable {
+        Comparable<Object>, Reactive<Object>, Serializable, func<Object> {
 
     private static Logger logger = LoggerFactory.getLogger(Srv.class.getName());
 
