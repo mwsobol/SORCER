@@ -397,7 +397,7 @@ public class ControlFlowManager {
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             String path = (String) entry.getKey();
-			Object eval = entry.getValue();
+			Object eval = entry.value();
 
             try {
                 context.putValue(path, eval);
@@ -423,7 +423,7 @@ public class ControlFlowManager {
 
             while (e.hasMoreElements()) {
 				path = (String) e.nextElement();
-                toContext.putValue(path, fromContext.getValue(path));
+                toContext.putValue(path, fromContext.value(path));
             }
         } catch (ContextException ce) {
             ce.printStackTrace();

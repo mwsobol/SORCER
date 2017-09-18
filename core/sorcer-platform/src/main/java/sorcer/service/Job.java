@@ -458,7 +458,7 @@ public class Job extends CompoundExertion {
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Mappable#getValue(java.lang.String, sorcer.service.Arg[])
+	 * @see sorcer.service.Mappable#value(java.lang.String, sorcer.service.Arg[])
 	 */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {

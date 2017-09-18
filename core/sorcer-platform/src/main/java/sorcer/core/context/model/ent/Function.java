@@ -101,8 +101,8 @@ public class Function<T> extends Value<T> implements Evaluation<T>, Callable<T>,
 			substitute(args);
 			if (isPersistent) {
 				if (SdbUtil.isSosURL(val)) {
-					val = (T) ((URL) val).getContent();
-					if (val instanceof UuidObject)
+					Object out = ((URL)val).getContent();
+					if (out instanceof UuidObject)
 						val = (T) ((UuidObject) val).getObject();
 				} else {
 					if (val instanceof UuidObject) {
@@ -118,11 +118,7 @@ public class Function<T> extends Value<T> implements Evaluation<T>, Callable<T>,
 				Context cxt = (Context) Arg.getServiceModel(args);
 				val = (T) ((Invocation) val).invoke(cxt, args);
 			} else if (val instanceof Evaluation) {
-				if (val instanceof Function && ((Function)val).getName().equals(key)) {
-					val = (T) ((Function)val).getValue();
-				} else {
-					val = ((Evaluation<T>) val).getValue(args);
-				}
+				val = ((Evaluation<T>) val).getValue(args);
 			} else if (val instanceof ServiceFidelity) {
 				// return the selected fidelity of this entry
 				for (Arg arg : args) {
@@ -133,7 +129,7 @@ public class Function<T> extends Value<T> implements Evaluation<T>, Callable<T>,
 						}
 					}
 				}
-				val = (T) ((Function)((ServiceFidelity) val).getSelect()).getValue();
+				val = (T) ((Entry)((ServiceFidelity) val).getSelect()).get(args);
 			} else if (val instanceof Callable) {
 				val = (T) ((Callable)val).call(args);
 			} else if (val instanceof Service) {

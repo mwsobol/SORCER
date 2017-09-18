@@ -42,13 +42,13 @@ public class ContextTest {
 		
 //		logger.info("invoke context: " + invokeContext);
 
-//		logger.info("path arg1/eval: " + addLink.getContext().getValue("arg1/eval"));
+//		logger.info("path arg1/eval: " + addLink.getContext().value("arg1/eval"));
 		assertEquals(addLink.getContext().getValue("arg1/eval"), 90.0);
-//		logger.info("path arg2/eval: " + multiplyLink.getContext().getValue("arg2/eval"));
+//		logger.info("path arg2/eval: " + multiplyLink.getContext().value("arg2/eval"));
 		assertEquals(multiplyLink.getContext().getValue("arg2/eval"), 70.0);
-//		logger.info("path add/arg1/eval: " + invokeContext.getValue("add/arg1/eval"));
+//		logger.info("path add/arg1/eval: " + invokeContext.value("add/arg1/eval"));
 		assertEquals(invokeContext.getValue("add/arg1/eval"), 90.0);
-//		logger.info("path multiply/arg2/eval: " + invokeContext.getValue("multiply/arg2/eval"));
+//		logger.info("path multiply/arg2/eval: " + invokeContext.value("multiply/arg2/eval"));
 		assertEquals(invokeContext.getValue("multiply/arg2/eval"), 70.0);
 
 	}
@@ -57,9 +57,9 @@ public class ContextTest {
 	public void softValueTest() throws Exception {
 		Context cxt = context("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0));
 		
-//		logger.info("arg/x1 = " + cxt.getValue("arg/x1"));
+//		logger.info("arg/x1 = " + cxt.value("arg/x1"));
 		assertEquals(cxt.getValue("arg/x1"), 20.0);
-//		logger.info("val x1 = " + cxt.getValue("x1"));
+//		logger.info("val x1 = " + cxt.value("x1"));
 		assertEquals(cxt.getValue("x1"), null);
 //		logger.info("weak x1 = " + cxt.getSoftValue("arg/var/x1"));
 		assertEquals(cxt.getSoftValue("arg/var/x1"), 20.0);

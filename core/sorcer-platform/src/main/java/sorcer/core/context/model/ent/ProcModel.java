@@ -121,7 +121,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			if ((val instanceof Proc) && (((Proc) val).asis() instanceof Function)) {
 				bindEntry((Function) ((Proc)val).asis());
 			} else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
-				((Scopable)((Scopable)val).getScope()).setScope(this);
+				((Scopable)val).getScope().setScope(this);
 			} else if (val instanceof Function && (((Function)val).asis() instanceof Scopable)) {
 				((Scopable) ((Function)val).asis()).setScope(this);
 			}
@@ -158,7 +158,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Evaluation#getValue(sorcer.core.context.Path.Entry[])
+	 * @see sorcer.service.Evaluation#value(sorcer.core.context.Path.Entry[])
 	 */
 	@Override
 	public Object getValue(Arg... entries) throws EvaluationException {
@@ -257,10 +257,10 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 				p = (Proc) obj;
 			} else if (obj instanceof Functionality || obj instanceof Setup) {
 				putValue(pn, obj);
-			} else if (obj instanceof Function) {
-				putValue(pn, ((Function)obj).asis());
-				if (((Function)obj).annotation() != null) {
-					mark(obj.getName(), ((Function)obj).annotation().toString());
+			} else if (obj instanceof Entry) {
+				putValue(pn, ((Entry)obj).asis());
+				if (((Entry)obj).annotation() != null) {
+					mark(obj.getName(), ((Entry)obj).annotation().toString());
 				}
 			} else {
 				putValue(pn, obj);

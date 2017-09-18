@@ -10,7 +10,7 @@ import sorcer.util.url.sos.SdbUtil;
 import java.net.URL;
 import java.rmi.RemoteException;
 
-public class Entry<V> extends Association<String, V> implements Service, Setter {
+public class Entry<V> extends Association<String, V> implements Callable<V>, Service, Setter {
 
     protected boolean negative;
 
@@ -50,6 +50,14 @@ public class Entry<V> extends Association<String, V> implements Service, Setter 
         this.contextSelector = contextSelector;
     }
 
+    public Object getData() {
+        Object data = item;
+        if (item instanceof Entry && ((Entry)data).getKey().equals(key)) {
+            return ((Entry)item).getData();
+        }
+        return data;
+    }
+
     @Override
     public V get(Arg... args) throws ContextException {
         V val = item;
@@ -59,8 +67,8 @@ public class Entry<V> extends Association<String, V> implements Service, Setter 
             substitute(args);
             if (isPersistent) {
                 if (SdbUtil.isSosURL(val)) {
-                    val = (V) ((URL) val).getContent();
-                    if (val instanceof UuidObject)
+                    out = (V) ((URL) val).getContent();
+                    if (out instanceof UuidObject)
                         val = (V) ((UuidObject) val).getObject();
                 } else {
                     if (val instanceof UuidObject) {
@@ -132,6 +140,15 @@ public class Entry<V> extends Association<String, V> implements Service, Setter 
 
     public void setNegative(boolean negative) {
         this.negative = negative;
+    }
+
+    @Override
+    public V call(Arg... args) throws EvaluationException, RemoteException {
+        try {
+            return get(args);
+        } catch (ContextException e) {
+            throw new EvaluationException(e);
+        }
     }
 
     public void substitute(Arg... entries) throws SetterException {

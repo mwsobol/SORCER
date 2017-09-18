@@ -734,10 +734,35 @@ public class operator extends sorcer.operator {
 		return cr;
 	}
 
-    public static <T> Function<T> ent(String path, T value, Arg... args) {
-		Function<T> entry = null;
+//	public static <T> Functionality<T> ent(String path, T value, Arg... args) {
+//		Functionality<T> entry = null;
+//		if (value instanceof Invocation || value instanceof Evaluation) {
+//			entry = new Proc<T>(path, value);
+//			((Entry)entry).setType(Functionality.Type.PROC);
+//		} else if (value instanceof Signature) {
+//			Mogram mog = Arg.getMogram(args);
+//			Context cxt = null;
+//			if (mog instanceof Context) {
+//				cxt = (Context) mog;
+//			}
+//			if (cxt != null) {
+//				entry = (Functionality<T>) srv(path, (Identifiable) value, cxt, args);
+//			} else {
+//				entry = (Functionality<T>) srv(path, (Identifiable) value, null, args);
+//			}
+//			((Entry)entry).setType(Functionality.Type.SRV);
+//		} else {
+//			entry = (Functionality<T>) new Function(path, value);
+//			((Entry)entry).setType(Functionality.Type.FUNCTION);
+//		}
+//		return entry;
+//	}
+
+    public static <T> Entry<T> ent(String path, T value, Arg... args) {
+		Entry<T> entry = null;
 		if (value instanceof Invocation || value instanceof Evaluation) {
 			entry = new Proc<T>(path, value);
+			entry.setType(Functionality.Type.PROC);
 		} else if (value instanceof Signature) {
 			Mogram mog = Arg.getMogram(args);
 			Context cxt = null;
@@ -745,29 +770,35 @@ public class operator extends sorcer.operator {
 				cxt = (Context)mog;
 			}
 			if (cxt != null) {
-				entry = (Function<T>) srv(path, (Identifiable) value, cxt, args);
+				entry = (Entry<T>) srv(path, (Identifiable) value, cxt, args);
 			} else {
-				entry =  (Function<T>) srv(path, (Identifiable) value, null, args);
+				entry =  (Entry<T>) srv(path, (Identifiable) value, null, args);
 			}
+			entry.setType(Functionality.Type.SRV);
 		} else if (value instanceof ServiceFidelity) {
-			entry = (Function<T>) new Srv(path, value);
+			entry = (Entry<T>) new Srv(path, value);
+			entry.setType(Functionality.Type.FIDELITY);
 		} else if (value instanceof MultiFiMogram) {
 			try {
 				((MultiFiMogram)value).setUnifiedName(path);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-			entry = (Function<T>) new Srv(path, value);
+			entry = (Entry<T>) new Srv(path, value);
 		} else if (value instanceof List && ((List)value).get(0) instanceof Path) {
-			entry =  (Function<T>) new DependencyEntry(path, (List)value);
+			entry =  (Entry<T>) new DependencyEntry(path, (List)value);
 		} else if (value instanceof ServiceMogram) {
-			entry = (Function<T>) new Srv(path, value);
+			entry = (Entry<T>) new Srv(path, value);
+			entry.setType(Functionality.Type.SRV);
 		} else if (value instanceof Service) {
-			entry = (Function<T>) new Proc(path, value);
+			entry = (Entry<T>) new Proc(path, value);
+			entry.setType(Functionality.Type.PROC);
 		} else if (value.getClass() == Tuple2.class) {
-			return new Function(path, value);
+			entry = (Entry<T>) new Function(path, value);
+			entry.setType(Functionality.Type.CONSTANT);
 		} else {
-			entry = new Function<T>(path, value);
+			entry = (Entry<T>) new Function<T>(path, value);
+			entry.setType(Functionality.Type.VAL);
 		}
 
 		Context cxt = null;
@@ -897,7 +928,7 @@ public class operator extends sorcer.operator {
 		return srv;
 	}
 
-	public static Srv lambda(String path, String name, Client client) {
+	public static Srv lambda(String name, String path, Client client) {
 		Srv srv = new Srv(name, path, client);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;

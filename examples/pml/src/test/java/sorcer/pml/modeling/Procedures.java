@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.service.Context;
@@ -99,9 +100,8 @@ public class Procedures {
 
 	}
 	
-	
 	@Test
-	public void closingParWihEntries() throws Exception {
+	public void closingProcWihEntries() throws Exception {
 		Proc y = proc("y",
 				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = eval(y, val("x1", 10.0), val("x2", 50.0), val("x3", 20.0), val("x4", 80.0));
@@ -123,7 +123,7 @@ public class Procedures {
 	}
 
 	@Test
-	public void dbParOperator() throws Exception {	
+	public void dbProcOperator() throws Exception {
 		
 		Proc<Double> dbp1 = persistent(proc("design/in", 25.0));
 		Proc<String> dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
@@ -136,7 +136,7 @@ public class Procedures {
 
 		assertTrue(content(dbp1Url).equals(25.0));
 		assertEquals(content(dbp2Url), "http://sorcersoft.org/sobol");
-		
+
 		assertTrue(eval(dbp1).equals(25.0));
 		assertEquals(eval(dbp2), "http://sorcersoft.org/sobol");
 

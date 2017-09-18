@@ -54,7 +54,7 @@ public class Entries {
 
         // entry of entry
 		Entry x4 = inoutVal("arg/x4", x3);
-		assertEquals(x3, eval(x4));
+		assertEquals(eval(x3), eval(x4));
         assertTrue(direction(x4) == Direction.INOUT);
 		assertEquals(name(asis(x4)), "arg/x3");
         assertTrue(direction(x4) == Direction.INOUT);

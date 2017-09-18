@@ -80,7 +80,7 @@ public class ArithmeticMograms {
 				} ),
 				response("subtract", "multiply2", "add"));
 
-		dependsOn(mo, ent("subtract", paths("multiply2", "add")));
+		dependsOn(mo, dep("subtract", paths("multiply2", "add")));
 		Object val = asis(mo, "subtract");
 		if (val instanceof Srv) {
 			Srv srv = ((Srv)val);
@@ -263,8 +263,8 @@ public class ArithmeticMograms {
     public void loopBlock() throws Exception {
         Block block = block("block",
                 context(ent("x1", 10.0), ent("x2", 20.0), ent("z", 100.0)),
-                loop(condition((Context<Double> scope) -> value(scope, "x1") + value(scope, "x2")
-                                < value(scope, "z")),
+                loop(condition((Context<Double> scope) ->
+								value(scope, "x1") + value(scope, "x2") < value(scope, "z")),
                         task(ent("x1", invoker("x1 + 3", args("x1"))))));
 
         block = exert(block);

@@ -296,7 +296,7 @@ public class Invokers {
 
 		assertEquals(pm.getValue("x"), 10.0);
 		assertEquals(pm.getValue("y"), 20.0);
-		// logger.info("condition eval: " + pm.getValue("condition"));
+		// logger.info("condition eval: " + pm.value("condition"));
 		assertEquals(pm.getValue("condition"), false);
 
 		pm.putValue("x", 300.0);

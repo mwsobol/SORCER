@@ -20,7 +20,6 @@ import static sorcer.eo.operator.get;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
 import static sorcer.po.operator.*;
-import static sorcer.service.Arg.setArgValue;
 import static sorcer.util.exec.ExecUtils.CmdResult;
 
 /**
@@ -120,7 +119,7 @@ Entries {
         // an entry as a Service lambda
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
                 lambda("s1", (Arg[] args) -> {
-                    setArgValue(args, "x",  Arg.getValue(args, "y"));
+                    Arg.setValue(args, "x",  Arg.value(args, "y"));
                     return exec(Arg.getEntry(args, "x")); },
                         args("x", "y")));
 

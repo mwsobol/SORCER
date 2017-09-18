@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
@@ -402,9 +403,9 @@ public class ModelMultiFidelities {
 
     @Test
     public void selectMultifidelityEntries() throws Exception {
-        Function e1 = ent("x1", 5.0);
-        Function e2 = ent("x2", 6.0);
-        Function e3 = ent("x3", 7.0);
+        Entry e1 = ent("x1", 5.0);
+        Entry e2 = ent("x2", 6.0);
+        Entry e3 = ent("x3", 7.0);
 
         MultiFiMogram mfs = fiMog("args", rFi(e1, e2, e3));
 
@@ -425,9 +426,9 @@ public class ModelMultiFidelities {
 
     @Test
     public void morphMultifidelityEntries() throws Exception {
-        Function e1 = ent("x1", 5.0);
-        Function e2 = ent("x2", 6.0);
-        Function e3 = ent("x3", 7.0);
+        Entry e1 = ent("x1", 5.0);
+        Entry e2 = ent("x2", 6.0);
+        Entry e3 = ent("x3", 7.0);
 
         Morpher morpher = (mgr, mFi, value) -> {
             ServiceFidelity<Signature> fi =  mFi.getFidelity();

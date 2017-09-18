@@ -257,7 +257,7 @@ public class Contexts implements SorcerConstants {
 					// Util.debug(this, "old DataNode data =
 					// "+((DataNode)val).getData());
 					// Util.debug(this, "new DataNode data =
-					// "+((DataNode)fromCntxt.getValue(key)).getData());
+					// "+((DataNode)fromCntxt.value(key)).getData());
 					((ContextNode) val).copy((ContextNode) fromCntxt
 							.getValue(key));
 					// Util.debug(this, "old DataNode data =

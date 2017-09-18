@@ -56,7 +56,7 @@ public class ProcModels {
 
 
 	@Test
-	public void closingParScope() throws Exception {
+	public void closingProcScope() throws Exception {
 
 		// a proc is a variable (entry) evaluated in its own scope (context)
 		Proc y = proc("y",
@@ -70,7 +70,7 @@ public class ProcModels {
 
 
 	@Test
-	public void createParModel() throws Exception {
+	public void createProcModel() throws Exception {
 
 		ProcModel model = procModel(
 				"Hello Arithmetic Domain #1",
@@ -137,7 +137,7 @@ public class ProcModels {
 
 
 	@Test
-	public void parInvoker() throws Exception {
+	public void procInvoker() throws Exception {
 
 		ProcModel pm = new ProcModel("proc-model");
 		add(pm, proc("x", 10.0));
@@ -164,7 +164,7 @@ public class ProcModels {
 
 
 	@Test
-	public void parModelTest() throws Exception {
+	public void procModelTest() throws Exception {
 		ProcModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
 				proc("add", invoker("x + y", args("x", "y"))));
 
@@ -179,7 +179,7 @@ public class ProcModels {
 
 
 	@Test
-	public void expendingParModelTest() throws Exception {
+	public void expendingProcModelTest() throws Exception {
 		ProcModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
 				proc("add", invoker("x + y", args("x", "y"))));
 
@@ -204,7 +204,8 @@ public class ProcModels {
 
 		assertTrue(eval(pm, "add").equals(30.0));
 
-		response(pm, "add");
+		Object out = response(pm, "add");
+		assertTrue(out.equals(30.0));
 		assertTrue(eval(pm).equals(30.0));
 
 		// with new arguments, closure
@@ -264,7 +265,7 @@ public class ProcModels {
 
 
 	@Test
-	public void argVsParPersistence() throws Exception {
+	public void argVsProcPersistence() throws Exception {
 
 		// persistable just indicates that argument is persistent,
 		// for example when eval(proc) is invoked
@@ -313,7 +314,7 @@ public class ProcModels {
 
 
 	@Test
-	public void aliasedParsTest() throws Exception {
+	public void aliasedProcsTest() throws Exception {
 
 		Context cxt = context(proc("design/in1", 25.0), proc("design/in2", 35.0));
 
@@ -366,7 +367,7 @@ public class ProcModels {
 
 
 	@Test
-	public void exertionPars() throws Exception {
+	public void exertionProcs() throws Exception {
 
 		Context c4 = context("multiply", inVal("arg/x1"), inVal("arg/x2"),
 				outVal("result/y"));
@@ -474,7 +475,7 @@ public class ProcModels {
 
 
 	@Test
-	public void parModelConditions() throws Exception {
+	public void procModelConditions() throws Exception {
 
 		final ProcModel pm = new ProcModel("proc-model");
 		pm.putValue("x", 10.0);

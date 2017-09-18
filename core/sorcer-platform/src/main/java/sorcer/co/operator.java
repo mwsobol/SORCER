@@ -52,6 +52,7 @@ import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.srv;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class operator extends sorcer.operator {
@@ -358,12 +359,6 @@ public class operator extends sorcer.operator {
 		return ent;
 	}
 
-	public static <T> Function<T> ent(String path, T value) {
-		Function ent = new Function<T>(path, value);
-		ent.setType(Type.FUNCTION);
-		return ent;
-	}
-
 	public static Config config(Object path, Setup... entries) {
 		Config ent = new Config(path.toString(), entries);
 		ent.isValid(false);
@@ -416,28 +411,28 @@ public class operator extends sorcer.operator {
 	    mogram.setId(id);
     }
 
-	public static Function in(Function... entries) {
-		for (Function entry : entries) {
+	public static Entry in(Entry... entries) {
+		for (Entry entry : entries) {
 			entry.setType(Type.INPUT);
 		}
 		return entries[0];
 	}
 
-	public static Function out(Function... entries) {
-		for (Function entry : entries) {
+	public static Entry out(Entry... entries) {
+		for (Entry entry : entries) {
 			entry.setType(Type.OUTPUT);
 		}
 		return entries[0];
 	}
 
-	public static Function inout(Function... entries) {
-		for (Function entry : entries) {
+	public static Entry inout(Entry... entries) {
+		for (Entry entry : entries) {
 			entry.setType(Type.INOUT);
 		}
 		return entries[0];
 	}
 
-	public static Object annotation(Function entry) {
+	public static Object annotation(Entry entry) {
         return entry.annotation();
     }
 
@@ -819,13 +814,13 @@ public class operator extends sorcer.operator {
 				((Setter) v).setPersistent(true);
 				((Evaluation)v).getValue();
 				dburl = (URL) ((Evaluation)v).asis();
-//			}
-//			else {
-//				Entry dbe = new Entry(path, context.asis(path));
-//				((Setter)dbe).setPersistent(true);
-//				dbe.getValue();
-//				context.putValue(path, dbe);
-//				dburl = (URL) dbe.asis();
+			}
+			else if (context.asis(path) instanceof Entry) {
+				Entry dbe = new Entry(path, context.asis(path));
+				dbe.setPersistent(true);
+				dbe.get();
+				context.putValue(path, dbe);
+				dburl = (URL) dbe.asis();
 			} else {
 				dburl = store(v);
 				context.putValue(path, dburl);

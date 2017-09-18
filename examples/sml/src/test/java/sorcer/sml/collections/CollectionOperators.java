@@ -272,7 +272,7 @@ public class CollectionOperators {
 	public void dbProcOperator() throws Exception {
 
 		// persist values of args
-		Function dbp1 = persistent(ent("design/in", 25.0));
+		Entry dbp1 = persistent(ent("design/in", 25.0));
         Function dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
 
 		assertFalse(asis(dbp1) instanceof URL);

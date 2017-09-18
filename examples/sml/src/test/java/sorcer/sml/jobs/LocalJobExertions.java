@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.po.operator.ent;
 
 
 /**
@@ -68,20 +69,20 @@ public class LocalJobExertions implements SorcerConstants {
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
-				context("subtract", in(operator.ent("arg/x1")), in(operator.ent("arg/x2")),
-						out(operator.ent("result/y"))));
+				context("subtract", in(ent("arg/x1")), in(ent("arg/x2")),
+						out(ent("result/y"))));
 
 		Task t4 = task(
 				"t4",
 				sig("multiply", MultiplierImpl.class),
-				context("multiply", in(operator.ent("arg/x1", 10.0)), in(operator.ent("arg/x2", 50.0)),
-						out(operator.ent("result/y"))));
+				context("multiply", in(ent("arg/x1", 10.0)), in(ent("arg/x2", 50.0)),
+						out(ent("result/y"))));
 
 		Task t5 = task(
 				"t5",
 				sig("add", AdderImpl.class),
-				context("add", in(operator.ent("arg/x1", 20.0)), in(operator.ent("arg/x2", 80.0)),
-						out(operator.ent("result/y"))));
+				context("add", in(ent("arg/x1", 20.0)), in(ent("arg/x2", 80.0)),
+						out(ent("result/y"))));
 
 		Job job = job(sig("exert", ServiceJobber.class),
 				"j1", t4, t5, t3,
@@ -389,7 +390,7 @@ public class LocalJobExertions implements SorcerConstants {
 		// exertion used as as service provider
 		Job exerter = ArithmeticUtil.createLocalJob();
 
-		Context out  = exert(exerter, context(operator.ent("j1/t3/result/y")));
+		Context out  = exert(exerter, context(ent("j1/t3/result/y")));
 		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));
 		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 

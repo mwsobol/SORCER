@@ -125,7 +125,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 						.getLabel());
 			// GroovyObject test=new GroovyObject("1+1");
 
-			// editField.setText(test.getValue().toString());
+			// editField.setText(test.value().toString());
 			editField.setColumns(60);
 			editField.setRows(1);
 			editField.setLineWrap(true);

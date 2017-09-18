@@ -235,7 +235,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			if (lambda != null || evaluator != null)
 				return (T) invokeEvaluator(entries);
 			else
-				throw new EvaluationException("Evaluation#getValue() not implemented by: " + this.getClass().getName());
+				throw new EvaluationException("Evaluation#value() not implemented by: " + this.getClass().getName());
 			
 	}
 

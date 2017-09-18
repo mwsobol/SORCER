@@ -114,7 +114,7 @@ public class Mograms {
                 aka("y1", "multiply/x1"),
                 response("subtract"));
 
-        //dependsOn(m, proc("subtract", paths("multiply", "add")));
+        //dependsOn(m, dep("subtract", paths("multiply", "add")));
         logger.info("response: " + response(m));
         Context out = response(m);
 

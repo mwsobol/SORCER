@@ -19,6 +19,7 @@ package sorcer.core.invoker;
 
 import groovy.lang.GroovyShell;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.service.*;
 
@@ -102,8 +103,8 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		if (entries != null) {
 			for (Arg a : entries)
 				try {
-					if (a instanceof Evaluation) {
-						invokeContext.putValue(a.getName(), ((Evaluation) a).getValue());
+					if (a instanceof Entry) {
+						invokeContext.putValue(a.getName(), ((Entry) a).get());
 					}
 				} catch (Exception e) {
 					throw new InvocationException(e);

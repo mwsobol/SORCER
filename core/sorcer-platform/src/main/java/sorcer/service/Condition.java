@@ -75,6 +75,9 @@ import java.util.Map;
 
 	private Boolean status = null;
 
+	// overwrites status
+	private boolean value = false;
+
 	public Condition() {
 		// do nothing
 	}
@@ -88,7 +91,7 @@ import java.util.Map;
 	}
 
 	public Condition(Boolean status) {
-		this.status = status;
+		this.value = status;
 	}
 
 	public Condition(Context<?> context) {
@@ -173,7 +176,7 @@ import java.util.Map;
 
 		if (obj instanceof Boolean)
 			return (Boolean) obj;
-		else if (obj != null)
+		else if (value)
 			return true;
 		else
 			return false;
@@ -214,7 +217,7 @@ import java.util.Map;
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluation#getValue(sorcer.service.Parameter[])
+	 * @see sorcer.service.Evaluation#value(sorcer.service.Parameter[])
 	 */
 	@Override
 	public Object getValue(Arg... entries) throws EvaluationException,

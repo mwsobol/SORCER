@@ -9,6 +9,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.invoker.ServiceInvoker;
@@ -153,7 +154,7 @@ public class ContextModels {
 				inVal("x1", 20.0),
 				inVal("x2", 80.0));
 
-		Function e = ent("x2", 100.0);
+		Entry e = ent("x2", 100.0);
 		assertEquals(100.0, value((Context)exec(e, cxt), "x2"));
 	}
 
@@ -165,7 +166,7 @@ public class ContextModels {
 				inVal("x2", 80.0),
 				result("result/y"));
 
-		Function ie = ent("multiply", invoker("x1 * x2", operator.ents("x1", "x2")));
+		Entry ie = ent("multiply", invoker("x1 * x2", operator.ents("x1", "x2")));
 		Object result = exec(ie, em);
 		assertEquals(1600.0, result);
 	}

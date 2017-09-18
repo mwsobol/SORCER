@@ -1011,7 +1011,7 @@ public class ProviderDelegate {
 //				} else if (selector.equals("exert") && impl instanceof ServiceShell) {
 //					m = impl.getClass().getMethod(selector, Mogram.class, Arg[].class);
 //					isContextual = false;
-//				} else if (selector.equals("getValue") && impl instanceof Evaluation) {
+//				} else if (selector.equals("value") && impl instanceof Evaluation) {
 //					m = impl.getClass().getMethod(selector, Arg[].class);
 //					isContextual = false;
 //				} else
@@ -1076,7 +1076,7 @@ public class ProviderDelegate {
                 } else if (selector.equals("exert") && bean instanceof ServiceShell) {
                     m = bean.getClass().getMethod(selector, Mogram.class, Arg[].class);
                     isContextual = false;
-                } else if (selector.equals("getValue") && bean instanceof Evaluation) {
+                } else if (selector.equals("value") && bean instanceof Evaluation) {
                     m = bean.getClass().getMethod(selector, Arg[].class);
                     isContextual = false;
                 } else
@@ -1172,7 +1172,7 @@ public class ProviderDelegate {
 			task.getTrace().addAll(xrt.getTrace());
 			//((ServiceContext) result).setReturnValue(result);
 
-		} else if (selector.equals("getValue") && impl instanceof Evaluation) {
+		} else if (selector.equals("value") && impl instanceof Evaluation) {
 			Object obj;
 			if (argTypes == null) {
 				obj = m.invoke(impl, new Object[] { args });

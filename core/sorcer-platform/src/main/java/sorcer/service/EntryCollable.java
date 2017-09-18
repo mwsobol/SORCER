@@ -16,6 +16,7 @@
  */
 
 package sorcer.service;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
 import java.io.Serializable;
 
@@ -25,6 +26,6 @@ import java.io.Serializable;
 @FunctionalInterface
 public interface EntryCollable<T> extends Serializable {
 
-    Function<T> call(Context<T> context) throws MogramException;
+    Entry<T> call(Context<T> context) throws MogramException;
 
 }

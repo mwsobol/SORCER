@@ -135,6 +135,10 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Serializabl
         return valClass;
     }
 
+    public Object getAnnotation() {
+        return annotation;
+    }
+
     public void setValClass(Class valClass) {
         this.valClass = valClass;
     }

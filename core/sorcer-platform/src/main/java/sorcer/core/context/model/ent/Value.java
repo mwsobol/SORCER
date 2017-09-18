@@ -133,7 +133,7 @@ public class Value<V> extends Entry<V> implements Valuation<V>, Comparable<V>, I
     }
 
     public V get(Arg... args) throws ContextException {
-        if (args != null && args.length> 0) {
+        if (args != null && args.length > 0) {
             for (Arg arg : args) {
                 if (arg instanceof Fidelity && multiFi != null) {
                     if (((Fidelity) arg).getPath() == null || ((Fidelity) arg).getPath().equals(key)) {
@@ -142,8 +142,8 @@ public class Value<V> extends Entry<V> implements Valuation<V>, Comparable<V>, I
                     }
                 }
             }
-        } else {
-            return super.get(args);
+        } else if (item instanceof Entry) {
+            return (V) ((Entry)item).get(args);
         }
         return item;
     }

@@ -51,7 +51,7 @@ public class OptInvoker<T> extends ServiceInvoker<T> implements ConditionalInvoc
 
 	public OptInvoker(String name, ServiceInvoker<T> invoker) {
 		super(name);
-		this.condition = null;
+		this.condition = new Condition(true);
 		this.target = invoker;
 	}
 	

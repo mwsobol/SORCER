@@ -832,7 +832,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Evaluation#getValue()
+     * @see sorcer.service.Evaluation#value()
      */
     public Object getValue(Arg... entries) throws EvaluationException,
             RemoteException {

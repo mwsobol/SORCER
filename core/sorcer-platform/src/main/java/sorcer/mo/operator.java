@@ -317,13 +317,16 @@ public class operator {
         return model;
     }
 
+    public static Object response(Domain model, String path) throws ContextException {
+        try {
+            return ((ServiceContext)model).getResponseAt(path);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+    }
 
     public static ServiceContext response(Domain model, Object... items) throws ContextException {
         try {
-            if (items.length == 1 && items[0] instanceof String) {
-                return (ServiceContext) ((ServiceContext)model).getResponseAt((String)items[0]);
-            }
-
             List<Arg> argl = new ArrayList();
             List<Path> paths = new ArrayList();;
             for (Object item : items) {

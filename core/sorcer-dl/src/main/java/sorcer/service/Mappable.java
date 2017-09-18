@@ -53,7 +53,7 @@ public interface Mappable<T> extends Identifiable {
 	 * in this mappable. Neither the path nor the value can be
 	 * <code>null</code>. <p>
 	 * 
-	 * The value can be retrieved by calling the <code>getValue</code> method with a
+	 * The value can be retrieved by calling the <code>value</code> method with a
 	 * path that is equal to the original path.
 	 * 
 	 * @param path the attribute-based path

@@ -26,6 +26,7 @@ import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.VariabilityModeling;
 import sorcer.service.modeling.func;
+import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.net.MalformedURLException;
@@ -203,7 +204,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluation#getValue(sorcer.co.tuple.Parameter[])
+	 * @see sorcer.service.Evaluation#value(sorcer.co.tuple.Parameter[])
 	 */
 	@Override
 	public T getValue(Arg... args) throws EvaluationException, RemoteException {
@@ -256,10 +257,9 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 						((Scopable) val).getScope().append(scope);
 					}
 				}
-
 				// indirect scope for entry values
-				if (val instanceof Function) {
-					Object ev = ((Function)val).asis();
+				if (val instanceof Entry) {
+					Object ev = ((Entry)val).asis();
 					if (ev instanceof Scopable && ((Scopable)ev).getScope() != null) {
 						if (scope instanceof VariabilityModeling) {
 							((Scopable)ev).getScope().setScope(scope);
@@ -268,7 +268,6 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 						}
 					}
 				}
-
 				if (val instanceof Exertion) {
 					// TODO context binding for all mograms, works for tasks only
 					Context cxt = ((Exertion)val).getDataContext();
@@ -292,7 +291,12 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 					val = item;
 				}
 				if (SdbUtil.isSosURL(val)) {
-					val = (T) ((URL) val).getContent();
+					Object out = ((URL) val).getContent();
+					if (out instanceof UuidObject) {
+						val = (T) ((UuidObject) val).getObject();
+					} else {
+						val = (T) out;
+					}
 				} else {
 					URL url = SdbUtil.store(val);
 					Proc p = null;
@@ -581,7 +585,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Mappable#getValue(java.lang.String, sorcer.service.Arg[])
+	 * @see sorcer.service.Mappable#value(java.lang.String, sorcer.service.Arg[])
 	 */
 	@Override
 	public T getValue(String path, Arg... args) throws ContextException {

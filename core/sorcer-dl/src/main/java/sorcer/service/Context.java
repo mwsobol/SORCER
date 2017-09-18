@@ -413,7 +413,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	 *         ServiceContext; the second element is the path in the
 	 *         ServiceContext. Note, a context node is not required at the
 	 *         returned path in the returned context--the results merely
-	 *         indicate the mapping (getValue on the resulting context at the
+	 *         indicate the mapping (value on the resulting context at the
 	 *         resulting path will yield the contents)
 	 *
 	 * @throws ContextException
@@ -733,7 +733,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	/**
 	 * Returns the {@link ContextLink} object that resides at path in the
 	 * context. This method is necessary since ContextLink objects are otherwise
-	 * transparent. For example, getValue(path) returns a value in the linked
+	 * transparent. For example, value(path) returns a value in the linked
 	 * context, not the LinkedContext object.
 	 *
 	 * @param path

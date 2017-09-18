@@ -48,6 +48,7 @@ import sorcer.service.modeling.cxt;
 import sorcer.util.ObjectCloner;
 import sorcer.util.SorcerUtil;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -630,7 +631,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public Object putLink(String name, String path, Context cntxt, String offset)
 			throws ContextException {
 		// insert a ContextLink (a.k.a. a symbolic link) to cntxt
-		// this makes this.getValue(path) == cntxt.getValue(offset)
+		// this makes this.value(path) == cntxt.value(offset)
 		if (path == null)
 			throw new ContextException("ERROR: path is null");
 
@@ -1615,10 +1616,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (val instanceof Context) {
 				subcntxt.append((Context) val);
 			} else if (val instanceof Entry) {
-				Object v = ((Function)val).get();
+				Object v = ((Entry)val).getItem();
 				subcntxt.putValue(path, v);
-				if (path != ((Function)val).getName())
-					subcntxt.putValue(((Function)val).getName(), v);
+				if (path != ((Entry)val).getName())
+					subcntxt.putValue(((Entry)val).getName(), v);
 			} else {
 				List<String> inpaths = getInPaths();
 				List<String> outpaths = getOutPaths();
@@ -1942,7 +1943,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				if (val instanceof Proc)
 					val = "proc: " + ((Proc)val).getName();
 				else
-//					val = getValue(path);
+//					val = value(path);
 					val = asis(path);
 			} catch (Exception ex) {
 				sb.append("\nUnable to retrieve eval: " + ex.getMessage());
@@ -2012,7 +2013,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			// System.out.print(path);
 			sb.append(path).append(" = ");
 			try {
-				// System.out.println(" = "+getValue(path));
+				// System.out.println(" = "+value(path));
 				val = getValue(path);
 			} catch (Exception ex) {
 				sb.append("\nUnable to retrieve eval: " + ex.getMessage());
@@ -2348,7 +2349,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public boolean isLinkedContext(Object path) {
 		Object result;
-		// System.out.println("getValue: path = \""+path+"\"");
+		// System.out.println("value: path = \""+path+"\"");
 		result = data.get(path);
 		if (result instanceof ContextLink) {
 			return true;
@@ -2688,22 +2689,15 @@ public class ServiceContext<T> extends ServiceMogram implements
 			for (Arg e : entries) {
 				if (e instanceof Entry) {
 					Object val = null;
-					if (((Entry) e).get() instanceof Evaluation)
+					if (((Entry) e).get() instanceof Evaluation) {
 						val = ((Evaluation) ((Entry) e).get()).getValue();
-					else
-						val = ((Entry) e).get();
-
-					if (((Entry) e).get() instanceof String) {
-						if (asis((String) ((Entry) e).key()) instanceof Setter) {
-							((Setter) asis(e.getName())).setValue(val);
-						} else {
-							putValue(e.getName(), val);
-						}
+					} else {
+						val = ((Value) e).get();
 					}
+					putValue(e.getName(), val);
 				}
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} catch (ContextException | RemoteException ex) {
 			throw new SetterException(ex);
 		}
 	}

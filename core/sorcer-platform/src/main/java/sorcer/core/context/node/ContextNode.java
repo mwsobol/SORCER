@@ -830,7 +830,7 @@ public class ContextNode implements Serializable {
 			}
 		} else if (itemDataVect.elementAt(0).equals("JEP")) {
 			try {
-				//obj = ((ExpressionEvaluator) data).getValue(itemName);
+				//obj = ((ExpressionEvaluator) data).value(itemName);
 				obj = ((Evaluation) data).getValue();
 			} catch (EvaluationException e) {
 				e.printStackTrace();

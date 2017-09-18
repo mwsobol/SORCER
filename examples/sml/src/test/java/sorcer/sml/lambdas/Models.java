@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
@@ -134,20 +136,21 @@ public class Models {
 						v(model, "multiply") - v(model, "add")),
 				lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
 					double out = (double) exec(entry, scope);
+					// out is result of multiply
 					if (out > 400) {
 						putValue(scope, "multiply/x1", 20.0);
 						putValue(scope, "multiply/x2", 50.0);
 						out = (double)exec(entry, scope);
 					}
-					return context(ent("multiply2", out));
+					return context(val("multiply2", out));
                 } ),
 				response("subtract", "multiply", "multiply2", "add"));
 
-		dependsOn(mo, ent("subtract", paths("multiply2", "add")));
+		dependsOn(mo, dep("subtract", paths("multiply", "add")));
 
         Context out = response(mo);
         logger.info("model response: " + out);
-        assertTrue(get(out, "subtract").equals(900.0));
+        assertTrue(get(out, "subtract").equals(400.0));
         assertTrue(get(out, "multiply2").equals(1000.0));
         assertTrue(get(out, "add").equals(100.0));
 	}
@@ -172,7 +175,7 @@ public class Models {
 				response("subtract", "multiply/out", "add/out", "model/response"));
 
 		logger.info("DEPS: " + printDeps(mo));
-		dependsOn(mo, ent("subtract", paths("multiply", "add")));
+		dependsOn(mo, dep("subtract", paths("multiply", "add")));
 
 		Context out = response(mo);
 		logger.info("model response: " + out);
@@ -203,7 +206,7 @@ public class Models {
 						inPaths("multiply/out", "add/out")))),
 				response("subtract", "lambda", "out"));
 
-	//	dependsOn(mo, proc("subtract", paths("multiply", "add")));
+	//	dependsOn(mo, dep("subtract", paths("multiply", "add")));
 
 		add(mo, lambda("lambda", entFunction));
 
@@ -215,7 +218,7 @@ public class Models {
 	}
 
 	@Test
-	public void entryReturnValueSubstitution() throws Exception {
+	public void entryReturnValueWithSubstitution() throws Exception {
 
 		EntryCollable<Double> callTask = (Context<Double> context) -> {
 			Context out = null;
@@ -226,7 +229,7 @@ public class Models {
 			out = context(exert(task));
 			value = (Double)get(out, "multiply/result");
 			// owerite the original eval with a new task
-			return ent("multiply/out", value);
+			return val("multiply/out", value);
 		};
 
 		// usage of in and out connectors associated with model
@@ -236,7 +239,7 @@ public class Models {
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("multiply/result")));
 
-		Domain mo = model(
+		Domain mdl = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
@@ -246,20 +249,22 @@ public class Models {
 				ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
 						inPaths("multiply/out", "add/out")))),
 				response("subtract", "multiply"));
+//				response("lambda"));
 
-		dependsOn(mo, ent("subtract", paths("lambda", "add")));
+		dependsOn(mdl, dep("subtract", paths("lambda", "add")));
 
-		add(mo, innerTask);
-		add(mo, lambda("lambda", callTask));
-		responseDown(mo, "multiply");
-		responseUp(mo, "lambda");
+		add(mdl, innerTask);
+		add(mdl, lambda("lambda", callTask));
+		responseDown(mdl, "multiply");
+		responseUp(mdl, "lambda");
 
-		Context out = response(mo);
+		Context out = response(mdl);
 		logger.info("response: " + out);
-        assertTrue(get(out, "multiply").equals(500.0));
+		assertTrue(get(out, "multiply").equals(500.0));
 		assertTrue(get(out, "lambda").equals(2000.0));
-        assertTrue(get(out, "subtract").equals(1900.0));
-    }
+		assertTrue(get(out, "subtract").equals(1900.0));
+	}
+
 
 	@Test
 	public void lambdaTaskInLoop() throws Exception {
