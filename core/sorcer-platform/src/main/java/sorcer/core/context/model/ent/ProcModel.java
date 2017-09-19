@@ -461,7 +461,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 	}
 	
 	/**
-	 * setValue context type as variable
+	 * set context type as variable
 	 * In ServiceContexr#init()
 	 * DATA_NODE_TYPE + APS + VAR + APS + type + APS
 	 */

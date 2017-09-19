@@ -17,7 +17,7 @@ import sorcer.util.Sorcer;
 import java.net.URL;
 import java.rmi.RemoteException;
 
-import static sorcer.eo.operator.value;
+import static sorcer.co.operator.value;
 
 public class AdderDBProvider extends DatabaseProvider implements RemoteAdder {
 	private Arithmometer arithmometer = new Arithmometer();

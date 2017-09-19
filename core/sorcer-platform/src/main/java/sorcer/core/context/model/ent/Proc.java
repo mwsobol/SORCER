@@ -25,6 +25,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.VariabilityModeling;
+import sorcer.service.modeling.ent;
 import sorcer.service.modeling.func;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
@@ -217,8 +218,11 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 				if (item instanceof String
 						&& mappable != null && mappable.getValue((String)item) != null)
                     return (T) mappable.getValue((String) item);
-                else
-                    return item;
+                else if (item instanceof Entry) {
+					return (T) ((Entry)item).getData();
+				} else {
+					return item;
+				}
 			} catch (ContextException e) {
 				throw new EvaluationException(e);
 			}
@@ -634,7 +638,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.core.context.model.Variability#addArgs(ArgSet setValue)
+	 * @see sorcer.core.context.model.Variability#addArgs(ArgSet set)
 	 */
 	@Override
 	public void addArgs(ArgSet set) throws EvaluationException {

@@ -295,7 +295,7 @@ public class GenericUtil {
 		scriptVect.add("fi");
 		scriptVect.add("source " + mcrEnv);
 		
-		// mcr cache root should be setValue; it will use up all the space
+		// mcr cache root should be set; it will use up all the space
 		// in a tmp dir; hard to debug failure in slurm...script gets
 		// on queue then dies because drive is full
 		//
@@ -913,7 +913,7 @@ public class GenericUtil {
 		return tildePath;
 	}
 
-	/** Returns a unique setValue of references * */
+	/** Returns a unique set of references * */
 	public static Object[] getUniqueReferences(Object[] objA) {
 		Set<Object> mySet = Collections.synchronizedSet(new HashSet<Object>());
 		for (int i = 0; i < objA.length; i++) {
@@ -930,7 +930,7 @@ public class GenericUtil {
 	}
 
 	/**
-	 * Unpacks all Object[] in myVect and hands back a unique setValue of references
+	 * Unpacks all Object[] in myVect and hands back a unique set of references
 	 * (myVect elements must be Object[]).
 	 */
 	public static Object[] getUniqueReferences(Vector<Object> myVect) {
@@ -2093,7 +2093,7 @@ public class GenericUtil {
 //				if ((cygwinHomeFile.exists()) && (cygwinHomeFile.canRead())) {
 //					cygwinHome = cygwinHomeTest;
 //				} else {
-//					String msg = "***error: the environment variable CYGWIN_HOME is not setValue correctly."
+//					String msg = "***error: the environment variable CYGWIN_HOME is not set correctly."
 //							+ "(Check env and make sure to use DOS file path format.)";
 //					logger.error(msg);
 //					throw new Exception(msg);

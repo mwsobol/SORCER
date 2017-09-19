@@ -36,13 +36,13 @@ public class StartPlugin {
 			 * 
 			 * 
 			 * sorcer.ssb.tools.plugin.browser.ServiceBrowserUI._exporter=(Exporter
-			 * ) config.getEntry( "com.ssb.tools.browser", "exporter",
+			 * ) config.entry( "com.ssb.tools.browser", "exporter",
 			 * Exporter.class, new
 			 * BasicJeriExporter(TcpServerEndpoint.getInstance(0), new
 			 * BasicILFactory()));
 			 * 
 			 * 
-			 * LoginContext loginContext = (LoginContext) config.getEntry(
+			 * LoginContext loginContext = (LoginContext) config.entry(
 			 * "sorcer.ssb.tools.browser", "loginContext", LoginContext.class,
 			 * null); if (loginContext == null) {
 			 * sorcer.ssb.tools.plugin.browser.ServiceBrowser.start(args); }

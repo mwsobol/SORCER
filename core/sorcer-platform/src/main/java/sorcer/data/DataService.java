@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * The DataService provides the support to serve up data from a directory (or a setValue of directories).
+ * The DataService provides the support to serve up data from a directory (or a set of directories).
  *
  * @author Dennis Reedy
  */
@@ -324,9 +324,9 @@ public class DataService implements FileURLHandler {
 
     /**
      * Get the DataService data directory. The {@link DataService#DATA_DIR} system property is first
-     * consulted, if that property is not setValue, the default is either the TMPDIR
+     * consulted, if that property is not set, the default is either the TMPDIR
      * System.getProperty("java.io.tmpdir")/sorcer/user/data is used and the {@link DataService#DATA_DIR}
-     * system property is setValue.
+     * system property is set.
      *
      * @return The DataService data directory.
      */

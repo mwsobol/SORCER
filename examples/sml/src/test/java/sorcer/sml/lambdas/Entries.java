@@ -119,8 +119,8 @@ Entries {
         // an entry as a Service lambda
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
                 lambda("s1", (Arg[] args) -> {
-                    Arg.setValue(args, "x",  Arg.value(args, "y"));
-                    return exec(Arg.getEntry(args, "x")); },
+                    Arg.set(args, "x",  Arg.get(args, "y"));
+                    return exec(Arg.entry(args, "x")); },
                         args("x", "y")));
 
         logger.info("s1 eval: ", eval(mo, "s1"));

@@ -383,15 +383,15 @@ public class ProviderDelegate {
         // Initialize hostName and hostAddress
         getHostName();
         getHostAddress();
-        // setValue provider's ID persistance flag if defined in provider's
+        // set provider's ID persistance flag if defined in provider's
 		// properties
 		idPersistent = Sorcer.getProperty(P_SERVICE_ID_PERSISTENT, "false").equals("true");
-		// setValue provider join groups if defined in provider's properties
+		// set provider join groups if defined in provider's properties
 		groupsToDiscover = Sorcer.getLookupGroups();
 		logger.info("ServiceProvider:groups to discover={}"+ SorcerUtil.arrayToString(groupsToDiscover));
-		// setValue provider space group if defined in provider's properties
+		// set provider space group if defined in provider's properties
 		spaceGroup = config.getProperty(J_SPACE_GROUP, Sorcer.getSpaceGroup());
-		// setValue provider space name if defined in provider's properties
+		// set provider space name if defined in provider's properties
 		spaceName = config.getProperty(J_SPACE_NAME, Sorcer.getActualSpaceName());
 
 		try {
@@ -1499,7 +1499,7 @@ public class ProviderDelegate {
 	 * <li>A {@link SorcerServiceInfo}entry with all the information about this
 	 * provider.
 	 * <li>A main UIDescriptor if the provider overrides
-	 * <li>Extra lookup attributes setValue via #addExtraLookupAttribute(Entry)
+	 * <li>Extra lookup attributes set via #addExtraLookupAttribute(Entry)
 	 * </ul>
 	 * 
 	 * @return an array of Jini Service Entries.
@@ -2054,7 +2054,7 @@ public class ProviderDelegate {
 			String str;
 			String providerName;
 
-			// setValue provider name if defined in provider's properties
+			// set provider name if defined in provider's properties
 			str = getProperty(P_PROVIDER_NAME);
 			if (str != null) {
 				providerName = str.trim();
@@ -2152,9 +2152,9 @@ public class ProviderDelegate {
 		 * Sets a configuration property.
 		 * 
 		 * @param key
-		 *            they key to setValue (usualy starts with provider.)
+		 *            they key to set (usualy starts with provider.)
 		 * @param value
-		 *            the eval to setValue to.
+		 *            the eval to set to.
 		 */
 		public void setProperty(String key, String value) {
 			props.setProperty(key, value);
@@ -2616,7 +2616,7 @@ public class ProviderDelegate {
 	/**
 	 * Returns a proxy object for this provider. If the smart proxy is alocated
 	 * then returns a non exported object to be registerd with loookup services.
-	 * However, if a smart proxy is defined then the provider's proxy is setValue as
+	 * However, if a smart proxy is defined then the provider's proxy is set as
 	 * its inner proxy. Otherwise the {@link Remote} outer proxy of this provider
 	 * is returned.
 	 * 
@@ -2716,7 +2716,7 @@ public class ProviderDelegate {
             logger.info(">>>>> exporterPort: {}", exporterPort);
 
             try {
-                // check if not setValue by the provider
+                // check if not set by the provider
                 if (smartProxy == null) {
                     // initialize smart proxy
                     smartProxy = config.getEntry(ServiceProvider.COMPONENT,

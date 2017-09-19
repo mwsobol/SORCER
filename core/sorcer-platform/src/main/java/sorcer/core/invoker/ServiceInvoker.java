@@ -98,7 +98,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 
 	protected ValueCallable lambda;
 
-	// setValue of dependent variables for this evaluator
+	// set of dependent variables for this evaluator
 	protected ArgSet args = new ArgSet();
 
 	/** Logger for logging information about instances of this type */
@@ -187,7 +187,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 
 	/**
 	 * <p>
-	 * Returns a setValue of parameters (args) of this invoker that are a a subset of
+	 * Returns a set of parameters (args) of this invoker that are a a subset of
 	 * parameters of its invokeContext.
 	 * </p>
 	 * 
@@ -200,11 +200,11 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 
 	/**
 	 * <p>
-	 * Assigns a setValue of parameters (args) for this invoker.
+	 * Assigns a set of parameters (args) for this invoker.
 	 * </p>
 	 * 
 	 * @param args
-	 *            the args to setValue
+	 *            the args to set
 	 */
 	public ServiceInvoker setArgs(ArgSet args) {
 		this.args = args;
@@ -264,7 +264,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		// ignore updates from itself
 		valueValid(false);
 		
-		// setValue eval to null so getValueAsIs returns null
+		// set eval to null so getValueAsIs returns null
 		value = null;
 		setChanged();
 		notifyObservers(this);
@@ -476,7 +476,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	 * </p>
 	 * 
 	 * @param evaluator
-	 *            the evaluator to setValue
+	 *            the evaluator to set
 	 * @throws RemoteException 
 	 * @throws ContextException 
 	 */
@@ -529,7 +529,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.proc.EntSet)
+	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.proc.EntrySet)
 	 */
 	@Override
 	public void addArgs(ArgSet set) throws EvaluationException {

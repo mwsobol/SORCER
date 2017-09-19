@@ -40,19 +40,19 @@ public class NeoFidelity extends Fidelity<Context<Float>> {
         this.weights = weights;
     }
 
-    public NeoFidelity(String name, Args args, Function... entries) {
-        this(name, args, null, entries);
+    public NeoFidelity(String name, Args args, Value... entries) {
+        this(name, null, args, entries);
     }
 
-    public NeoFidelity(String name, Context<Float> weights, Function... entries) {
-        this(name, null, weights, entries);
+    public NeoFidelity(String name, Context<Float> weights, Value... entries) {
+        this(name, weights, null, entries);
     }
 
-    public NeoFidelity(String name, Args args, Context<Float> weights, Function... entries) {
+    public NeoFidelity(String name, Context<Float> weights,  Args args, Value... entries) {
         fiName = name;
         this.args = args;
         this.weights = weights;
-        for (Function e : entries) {
+        for (Value e : entries) {
             if (e.getType() == Functionality.Type.THRESHOLD) {
                 threshold = (double) e.getItem();
             } else if (e.getType() == Functionality.Type.BIAS) {

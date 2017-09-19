@@ -16,6 +16,7 @@
  */
 package sorcer.eo;
 
+import com.sun.tools.internal.xjc.model.nav.EagerNClass;
 import groovy.lang.Closure;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
@@ -69,7 +70,6 @@ import java.util.*;
 import static sorcer.co.operator.path;
 import static sorcer.co.operator.*;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.ent;
 import static sorcer.po.operator.srv;
 
 /**
@@ -292,7 +292,7 @@ public class operator extends sorcer.operator {
 		}
 		String name = getUnknown();
 		List<Entry> entryList = new ArrayList();
-		List<Proc> procEntryList = new ArrayList();
+		List<Function> funcEntryList = new ArrayList();
 		List<Context.Type> types = new ArrayList();
 		List<EntryList> entryLists = new ArrayList();
 		List<DependencyEntry> depList = new ArrayList();
@@ -323,8 +323,8 @@ public class operator extends sorcer.operator {
 				returnPath = (ReturnPath) o;
 			} else if (o instanceof ExecPath) {
 				execPath = (ExecPath) o;
-			} else if (o instanceof Proc) {
-				procEntryList.add((Proc) o);
+			} else if (o instanceof Function) {
+				funcEntryList.add((Function) o);
 			} else if (o instanceof Value) {
 				entryList.add((Value) o);
 			} else if (o instanceof Context.Type) {
@@ -411,8 +411,8 @@ public class operator extends sorcer.operator {
 			if (entryList.size() > 0)
 				populteContext(cxt, entryList);
 		}
-		if (procEntryList.size() > 0) {
-			for (Proc p : procEntryList)
+		if (funcEntryList.size() > 0) {
+			for (Function p : funcEntryList)
 				cxt.putValue(p.getName(), p);
 		}
 		if (returnPath != null)
@@ -697,10 +697,14 @@ public class operator extends sorcer.operator {
 						pc.putInoutValueAt(i.getName(), ((Entry) i).getItem(), pc.getTally() + 1);
 					}
 				} else {
-					if (context instanceof ProcModel || isReactive) {
-						pc.putValueAt(i.getName(), i, pc.getTally() + 1);
-					} else {
+					if (i instanceof Value) {
 						pc.putValueAt(i.getName(), ((Entry) i).getItem(), pc.getTally() + 1);
+					} else {
+						if (context instanceof ProcModel || isReactive) {
+							pc.putValueAt(i.getName(), i, pc.getTally() + 1);
+						} else {
+							pc.putValueAt(i.getName(), ((Entry) i).getItem(), pc.getTally() + 1);
+						}
 					}
 				}
 			} else if (context instanceof ServiceContext) {
@@ -726,7 +730,7 @@ public class operator extends sorcer.operator {
 					if (context instanceof ProcModel || isReactive) {
 						context.putValue(i.getName(), i);
 					} else {
-						context.putValue(i.getName(), ((Function) i).getItem());
+						context.putValue(i.getName(), ((Entry) i).getItem());
 					}
 				}
 			}
@@ -1505,7 +1509,7 @@ public class operator extends sorcer.operator {
 		return fi;
 	}
 
-	public static ServiceFidelity<Function> entFi(String fiName, Function... entries) {
+	public static ServiceFidelity<Function> entFi(String fiName, Value... entries) {
 		ServiceFidelity<Function> fi = new ServiceFidelity(fiName, entries);
 		fi.fiType = ServiceFidelity.Type.ENTRY;
 		return fi;
@@ -1517,19 +1521,19 @@ public class operator extends sorcer.operator {
 		return fi;
 	}
 
-    public static NeoFidelity nFi(String name, Args args, Context<Float> weights, Function... entries) {
-        NeoFidelity fi = new NeoFidelity(name, args, weights, entries);
+    public static NeoFidelity nFi(String name, Args args, Context<Float> weights, Value... entries) {
+        NeoFidelity fi = new NeoFidelity(name, weights, args, entries);
         fi.fiType = ServiceFidelity.Type.NEO;
         return fi;
     }
 
-    public static NeoFidelity nFi(String name, Args args, Function... entries) {
-        NeoFidelity fi = new NeoFidelity(name, args, null, entries);
+    public static NeoFidelity nFi(String name, Args args, Value... entries) {
+        NeoFidelity fi = new NeoFidelity(name, null, args, entries);
         fi.fiType = ServiceFidelity.Type.NEO;
         return fi;
     }
 
-    public static NeoFidelity nFi(String name, Context<Float> weights, Function... entries) {
+    public static NeoFidelity nFi(String name, Context<Float> weights, Value... entries) {
         NeoFidelity fi = new NeoFidelity(name, weights, entries);
         fi.fiType = ServiceFidelity.Type.NEO;
         return fi;
@@ -2002,7 +2006,7 @@ public class operator extends sorcer.operator {
 				fiManager.getMorphFidelities().put(mFi.getName(), mFi);
 				mFi.addObserver(fiManager);
 				if (mFi.getMorpherFidelity() != null) {
-					// setValue the default morpher
+					// set the default morpher
 					try {
 						mFi.setMorpher((Morpher) ((Function) mFi.getMorpherFidelity().get(0)).get());
 					} catch (ContextException e) {
@@ -2315,7 +2319,7 @@ public class operator extends sorcer.operator {
 				fiManager.getMorphFidelities().put(mFi.getName(), mFi);
 				mFi.addObserver(fiManager);
 				if (mFi.getMorpherFidelity() != null) {
-					// setValue the default morpher
+					// set the default morpher
 					mFi.setMorpher((Morpher) ((Function) mFi.getMorpherFidelity().get(0)).get());
 				}
 			}
@@ -2513,57 +2517,6 @@ public class operator extends sorcer.operator {
 		}
 	}
 
-	public static <T> T value(Context<T> context, String path,
-							  Arg... args) throws ContextException {
-		try {
-			Object val = context.get(path);
-		    if (context instanceof DataContext) {
-		    	return (T) val;
-			}
-			val = ((ServiceContext) context).getValue(path, args);
-			if (SdbUtil.isSosURL(val)) {
-				return (T) ((URL) val).getContent();
-			} else if (((ServiceContext)context).getType().equals(Functionality.Type.MADO)) {
-				return (T)((ServiceContext)context).getEvalValue(path);
-			} else if (val instanceof Srv && ((Srv)val).asis() instanceof  EntryCollable) {
-				Entry entry = ((EntryCollable)((Srv)val).asis()).call(context);
-				return (T) entry.asis();
-			} else {
-				return (T) val;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new ContextException(e);
-		}
-	}
-
-	public static <T> T v(Context<T> context, String path, Arg... args) throws ContextException {
-		return value(context, path, args);
-	}
-
-	public static <T> T value(Valuation<T> valuation) throws ContextException {
-		return valuation.get();
-	}
-
-	public static <T> T value(Context<T> context, Arg... args)
-			throws ContextException {
-		try {
-			synchronized (context) {
-				return (T) ((ServiceContext)context).getValue(args);
-			}
-		} catch (Exception e) {
-			throw new ContextException(e);
-		}
-	}
-
-	public static Object value(Context context, String domain, String path) throws ContextException {
-        if (((ServiceContext)context).getType().equals(Functionality.Type.MADO)) {
-            return ((ServiceContext)context.getDomain(domain)).getEvalValue(path);
-        } else {
-            return context.getDomain(domain).getValue(path);
-        }
-    }
-
 	public static Object eval(Mogram mogram, Arg... args) throws MogramException {
 		try {
 			synchronized (mogram) {
@@ -2592,37 +2545,36 @@ public class operator extends sorcer.operator {
 		}
 	}
 
-	public static <T> T eval(Entry<T> entry, Arg... args)
+	public static <T> T eval(ent<T> entry, Arg... args)
 			throws EvaluationException {
         try {
             synchronized (entry) {
-                if (entry instanceof Functionality) {
-                    try {
-                        return (T) ((Functionality)entry).getValue(args);
-                    } catch (RemoteException e) {
-                        throw new EvaluationException(e);
-                    }
-                } else if (entry instanceof Valuation) {
+//                if (entry instanceof Entry) {
+//                    try {
+//                        return (T) ((Entry)entry).getValue(args);
+//                    } catch (RemoteException e) {
+//                        throw new EvaluationException(e);
+//                    }
+//                } else
+                if (entry instanceof Valuation) {
                     return (T) ((Valuation) entry).get(args);
-                } else if (entry instanceof Evaluation) {
-                    if (entry instanceof Exertion) {
-                        return (T) exec(entry, args);
-                    } else if (entry instanceof Entry) {
-                        if (entry.asis() instanceof ServiceContext) {
-                            return (T) ((ServiceContext) entry.asis()).getValue(entry.getName());
-                        } else {
-                            return (T) ((Evaluation) entry).getValue(args);
-                        }
-                    } else if (entry instanceof Incrementor) {
+                } else if (entry instanceof Exertion) {
+                    return (T) exec((Entry) entry, args);
+                } else if (((Entry) entry).asis() instanceof ServiceContext) {
+                    return (T) ((ServiceContext) ((Entry) entry).asis()).getValue(((Entry) entry).getName());
+                } else if (entry instanceof Incrementor) {
                         return ((Incrementor<T>) entry).next();
-                    }
+                } else if (entry instanceof Evaluation){
+                    return (T) ((Evaluation) entry).getValue(args);
+                } else {
+                    return (T) ((Entry)entry).get(args);
                 }
             }
-        }catch (Exception e) {
-                throw new EvaluationException(e);
-            }
-            return null;
+        } catch (Exception e) {
+            throw new EvaluationException(e);
         }
+    }
+
 
 //    public static <T> T eval(Evaluation<T> evaluation, Arg... args)
 //            throws EvaluationException {
@@ -2979,17 +2931,17 @@ public class operator extends sorcer.operator {
 		return strategy.getAccessType();
 	}
 
-	public static EntryList inputs(Function...  entries) {
+	public static EntryList inputs(Value...  entries) {
 		return designInputs(entries);
 	}
 
-	public static EntryList designInputs(Function...  entries) {
+	public static EntryList designInputs(Value...  entries) {
 		EntryList el = new EntryList(entries);
-		el.setType(EntryList.Type.INITIAL_DESIGN);
+		el.setType(Functionality.Type.INPUT);
 		return el;
 	}
 
-	public static EntryList initialDesign(Function...  entries) {
+	public static EntryList initialDesign(Value...  entries) {
 		return designInputs(entries);
 	}
 

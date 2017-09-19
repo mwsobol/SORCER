@@ -7,7 +7,7 @@ import sorcer.service.MonitorException;
 
 import java.rmi.RemoteException;
 
-import static sorcer.eo.operator.value;
+import static sorcer.co.operator.value;
 
 public class ArithmeticImpl implements Arithmetic {
 

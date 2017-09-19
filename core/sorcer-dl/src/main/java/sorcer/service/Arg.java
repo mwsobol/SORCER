@@ -70,22 +70,21 @@ public interface Arg extends Serializable {
 		return null;
 	}
 
-	public static Object value(Arg[] args, String path) throws EvaluationException, RemoteException {
+	public static Object get(Arg[] args, String path) throws EvaluationException, RemoteException {
 		for (Arg arg : args) {
 			if (arg instanceof Callable && arg.getName().equals(path))
 				return ((Callable)arg).call(args);
 		}
 		return null;
 	}
-
-	public static void setValue(Arg[] args, String path, Object value) throws SetterException, RemoteException {
+	public static void set(Arg[] args, String path, Object value) throws SetterException, RemoteException {
 		for (Arg arg : args) {
 			if (arg instanceof Callable && arg.getName().equals(path))
 				((Setter)arg).setValue(value);
 		}
 	}
 
-	public static Callable getEntry(Arg[] args, String name) {
+	public static Callable entry(Arg[] args, String name) {
 		for (Arg arg : args) {
 			if (arg instanceof Callable && arg.getName().equals(name))
 				return (Callable)arg;
@@ -116,6 +115,7 @@ public interface Arg extends Serializable {
 		}
 		return argsAsStrings;
 	}
+
 }
 
 

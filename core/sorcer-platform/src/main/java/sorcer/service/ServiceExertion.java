@@ -888,7 +888,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * </p>
      *
      * @param dependers
-     *            the dependers to setValue
+     *            the dependers to set
      */
     public void setDependers(List<Evaluation> dependers) {
         this.dependers = dependers;

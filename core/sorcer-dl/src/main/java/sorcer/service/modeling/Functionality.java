@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Functionality<T> extends Identifiable, Evaluation<T>, Perturbation<T>, Serializable {
+public interface Functionality<T> extends Identifiable, Evaluation<T>, Perturbation<T>, Serializable, ent<T> {
 
 	/**
 	 * Types allow for grouping in the functional model so all variables of a
@@ -43,7 +43,7 @@ public interface Functionality<T> extends Identifiable, Evaluation<T>, Perturbat
 		INPUT, CONSTANT, DOMAIN_CONSTANT, INVARIANT, OUTPUT, INOUT, RESPONSE, DESIGN, PARAMETER, LINKED, CONSTRAINT, OBJECTIVE,
 		DERIVATIVE, GRADIENT, RANDOM, BOUNDED, FUNDAMENTAL, RAW, DELEGATION, COMPOSITION, MULTIVAL, DOMAIN, PRED, DOMAIN_PRED,
 		FILTER, PERSISTER, EVALUATOR, EVALUATION, PRODUCT, WATCHABLE, ENT, PROC, NEURON, VAR, SRV, LAMBDA, VAL, THRESHOLD, BIAS,
-		FUNCTION, DATA, CONTEXT, ARRAY, LIST, MODEL, EXERTION, SELF, CONDITION, FIDELITY, LOCATOR, ARG, PATH, CONFIG, PROXY, COUPLED, MDA, MADO, NONE
+		FUNCTION, DATA, CONTEXT, ARRAY, LIST, MODEL, EXERTION, MOGRAM, SELF, CONDITION, FIDELITY, LOCATOR, ARG, PATH, CONFIG, PROXY, COUPLED, MDA, MADO, NONE
 	}
 
 	public enum MathType {

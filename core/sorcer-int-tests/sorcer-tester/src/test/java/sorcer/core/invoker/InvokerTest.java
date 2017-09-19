@@ -66,9 +66,9 @@ public class InvokerTest {
 		public Double update(Context arg) throws Exception {
 			setValue(x, value(arg, "x"));
 			setValue(y, value(context, "y"));
-			// x setValue from 'arg'
+			// x set from 'arg'
 			assertTrue(eval(x).equals(200.0));
-			// y setValue from construtor's context 'in'
+			// y set from construtor's context 'in'
 			assertTrue(eval(y).equals(30.0));
 			assertTrue(eval(z).equals(170.0));
 			return (double)eval(x) + (double)eval(y) + (double)value(pm, "z");

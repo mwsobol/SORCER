@@ -70,7 +70,7 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
      * Returns the maximum time interval, in seconds, that the service provider
      * will keep this session open between requestor accesses. After this interval,
      * the service provider will invalidate the session. The maximum time
-     * interval can be setValue with the <code>setMaxInactiveInterval</code> method.
+     * interval can be set with the <code>setMaxInactiveInterval</code> method.
      * A zero or negative time indicates that the session should never timeout.
      *
      * @return an integer specifying the number of seconds this session remains

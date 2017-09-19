@@ -375,7 +375,7 @@ public class Task extends ServiceExertion {
 	 * </p>
 	 * 
 	 * @param isContinous
-	 *            the isContinous to setValue
+	 *            the isContinous to set
 	 */
 	public void setContinous(boolean isContinous) {
 		this.isContinous = isContinous;

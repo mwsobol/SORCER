@@ -1,4 +1,4 @@
 package sorcer.service.modeling;
 
-public interface val<V> extends Valuation<V> {
+public interface ent<V> extends Entrance<V> {
 }

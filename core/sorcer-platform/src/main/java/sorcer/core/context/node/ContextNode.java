@@ -92,7 +92,7 @@ public class ContextNode implements Serializable {
 		this.isTransient = isTran;
 	}
 
-	// Method to setValue the datatype of the node's data
+	// Method to set the datatype of the node's data
 	// The type should be one of the types in java.sql.Types.
 	public void setDataType(int dataType) {
 		this.dataType = dataType;
@@ -357,7 +357,7 @@ public class ContextNode implements Serializable {
 			int ctr = 0;
 			Object obj2 = this.getItemValue(itemName);
 			logger.info("setItemValue:\n"
-					+ "Checking to see if the setValue() took "
+					+ "Checking to see if the set() took "
 					+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
 					+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 					+ obj2 + "\"");
@@ -372,7 +372,7 @@ public class ContextNode implements Serializable {
 				obj2 = this.getItemValue(itemName);
 
 				logger.info("setItemValue:\n"
-						+ "Checking to see if the setValue() took "
+						+ "Checking to see if the set() took "
 						+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
 						+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 						+ obj2 + "\"");
@@ -398,7 +398,7 @@ public class ContextNode implements Serializable {
 			int ctr = 0;
 			Object obj2 = this.getItemValue(itemName);
 			logger.info("setItemValue:\n"
-					+ "Checking to see if the setValue() took "
+					+ "Checking to see if the set() took "
 					+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
 					+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 					+ obj2 + "\"");
@@ -413,7 +413,7 @@ public class ContextNode implements Serializable {
 				obj2 = this.getItemValue(itemName);
 
 				logger.info("setItemValue:\n"
-						+ "Checking to see if the setValue() took "
+						+ "Checking to see if the set() took "
 						+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
 						+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 						+ obj2 + "\"");
@@ -441,7 +441,7 @@ public class ContextNode implements Serializable {
 			int ctr = 0;
 			Object obj2 = this.getItemValue(itemName);
 			logger.info("setItemValue:\n"
-					+ "Checking to see if the setValue() took "
+					+ "Checking to see if the set() took "
 					+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
 					+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 					+ obj2 + "\"");
@@ -456,7 +456,7 @@ public class ContextNode implements Serializable {
 				obj2 = this.getItemValue(itemName);
 
 				logger.info("setItemValue:\n"
-						+ "Checking to see if the setValue() took "
+						+ "Checking to see if the set() took "
 						+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
 						+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 						+ obj2 + "\"");
@@ -489,7 +489,7 @@ public class ContextNode implements Serializable {
 			int ctr = 0;
 			Object obj2 = this.getItemValue(itemName);
 			logger.info("setItemValue:\n"
-					+ "Checking to see if the setValue() took "
+					+ "Checking to see if the set() took "
 					+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
 					+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 					+ obj2 + "\"");
@@ -504,7 +504,7 @@ public class ContextNode implements Serializable {
 				obj2 = this.getItemValue(itemName);
 
 				logger.info("setItemValue:\n"
-						+ "Checking to see if the setValue() took "
+						+ "Checking to see if the set() took "
 						+ "hold:\n\titemName=\"" + itemName + "\"\n\t"
 						+ "desired eval=\"" + obj + "\"\n\t" + "read eval=\""
 						+ obj2 + "\"");
@@ -1381,7 +1381,7 @@ public class ContextNode implements Serializable {
 				download(localFile);
 				// download(new File(dir, fileName));
 				setData(Sorcer.getScratchURL(new File(dir, fileName)));
-				logger.info("setValue context node URL to: " + getData());
+				logger.info("set context node URL to: " + getData());
 				StringBuffer cmd = new StringBuffer("chmod +777 ")
 						.append(localFile);
 				Process p = Runtime.getRuntime().exec(cmd.toString());

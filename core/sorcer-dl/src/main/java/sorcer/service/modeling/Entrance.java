@@ -18,25 +18,23 @@
 package sorcer.service.modeling;
 
 import sorcer.service.Arg;
+import sorcer.service.ContextException;
 
 import java.rmi.RemoteException;
 
 
 /**
- * A getter is a generic agent that returns a value calculated in many different
- * ways. A getter may evaluate provided arguments and return a calculated value
- * by itself or retrieve value from a data repository. Alternatively a getter
- * may use a target as an independent agent at which the getting operation is
- * aimed (the third party service) to obtain the requested value or finally as a
- * filter that can filter out the value from the provided target.
+ * A generic getter od data
  *
  * @author Mike Sobolewski
  */
-public interface Getter<T> extends Filtration, EvaluationComponent, SupportComponent {
+public interface Entrance<T>  {
 
-    public String getName();
+    /**
+     * Returns the current data of this entrance.
+     *
+     * @return the current data of this entrance
+     */
+    public T get(Arg... args) throws ContextException;
 
-    public Object getTarget();
-
-    public T getValue(Object target, Arg... arguments) throws GetterException, RemoteException;
 }

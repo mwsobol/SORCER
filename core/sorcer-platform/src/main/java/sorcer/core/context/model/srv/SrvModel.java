@@ -180,7 +180,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     Object out = null;
                     if (obj instanceof Signature)
                         out = evalSignature((Signature)obj, path);
-                    else if (obj instanceof Function) {
+                    else if (obj instanceof Entry) {
                         ((Function)obj).setScope(this);
                         out = ((Function) obj).getValue(args);
                     }

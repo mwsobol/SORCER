@@ -42,7 +42,7 @@ public class EvaluationSignature extends ServiceSignature implements sig {
 	/**   
 	    <p> Sets the evaluator for this signature. </p>
 	
-	    @param evaluator the evaluation to setValue
+	    @param evaluator the evaluation to set
 	 */
 	public void setEvaluator(Evaluation evaluator) {
 		this.evaluator = evaluator;

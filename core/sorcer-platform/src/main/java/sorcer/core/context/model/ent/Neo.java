@@ -68,7 +68,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Acti
         activator.setArgs(args.argSet());
     }
 
-    public Neo(String name, operator.Args args, Context<Float> weights) {
+    public Neo(String name, Context<Float> weights, operator.Args args) {
         this(name, args);
         activator.setWeights(weights);
     }
@@ -79,12 +79,29 @@ public class Neo extends Function<Double> implements Functionality<Double>, Acti
         activator.setScope(signals);
     }
 
-    public Neo(String name, double value, Context<Function> signals, Context<Float> weights) {
+	public Neo(String name, Context<Value> signals, Context<Float> weights, operator.Args args) {
+		this(name, args);
+		activator.setScope(signals);
+
+	}
+
+	public Neo(String name, Context<Value> signals, Context<Float> weights) {
+		this(name);
+		activator.setScope(signals);
+
+	}
+
+	public Neo(String name, double value, Context<Value> signals, Context<Float> weights) {
         this(name);
 		item = value;
         activator.setScope(signals);
 
     }
+
+	public Neo(String name, Context<Float> weights, Arg... args) {
+		this(name, new operator.Args(args));
+		activator.setWeights(weights);
+	}
 
 	public Neo(String name, ServiceFidelity<NeoFidelity> fidelities) {
 		this(name);
@@ -268,7 +285,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Acti
     }
 
 	/* (non-Javadoc)
-	 * @see sorcer.core.context.model.Variability#addArgs(ArgSet setValue)
+	 * @see sorcer.core.context.model.Variability#addArgs(ArgSet set)
 	 */
 	@Override
 	public void addArgs(ArgSet set) throws EvaluationException {

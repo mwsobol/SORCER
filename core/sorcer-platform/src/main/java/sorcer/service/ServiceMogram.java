@@ -731,7 +731,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
      * Assigns a monitor session for this mograms.
      * </p>
      *
-     * @param monitorSession the monitorSession to setValue
+     * @param monitorSession the monitorSession to set
      */
     public void setMonitorSession(MonitoringSession monitorSession) {
         this.monitorSession = monitorSession;

@@ -19,6 +19,7 @@ import java.rmi.RemoteException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.asis;
+import static sorcer.co.operator.value;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.args;
@@ -58,7 +59,6 @@ public class Entries {
         assertTrue(direction(x4) == Direction.INOUT);
 		assertEquals(name(asis(x4)), "arg/x3");
         assertTrue(direction(x4) == Direction.INOUT);
-
     }
 
     @Test
@@ -99,7 +99,7 @@ public class Entries {
 	@Test
 	public void expressionEntry() throws Exception {
 
-		Value z1 = proc("z1", expr("x1 + 4 * x2 + 30",
+		Function z1 = proc("z1", expr("x1 + 4 * x2 + 30",
 					context(proc("x1", 10.0), proc("x2", 20.0)),
                     args("x1", "x2")));
 
@@ -119,9 +119,9 @@ public class Entries {
 
         @Override
         public Double invoke(Context<Double> cxt, Arg... entries) throws RemoteException, ContextException {
-            Function<Double> x = proc("x", 20.0);
-            Function<Double> y = proc("y", 30.0);
-            Function<Double> z = proc("z", invoker("x - y", x, y));
+            Entry<Double> x = proc("x", 20.0);
+            Entry<Double> y = proc("y", 30.0);
+            Entry<Double> z = proc("z", invoker("x - y", x, y));
 
             if (value(cxt, "x") != null)
                 setValue(x, value(cxt, "x"));
@@ -140,7 +140,7 @@ public class Entries {
             return getClass().getName();
         }
 
-    };
+    }
 
 	@Test
 	public void methodEntry() throws Exception {
@@ -148,7 +148,7 @@ public class Entries {
         Object obj = new Doer();
 
         // no scope for invocation
-        Function m1 = proc("m1", methodInvoker("invoke", obj));
+        Entry m1 = proc("m1", methodInvoker("invoke", obj));
         assertEquals(eval(m1), 40.0);
 
         // method invocation with a scope

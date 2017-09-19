@@ -512,7 +512,7 @@ public class operator {
                     mFi.setSelect((Arg) mFi.getSelects().get(0));
                     mFi.addObserver(fiManager);
                     if (mFi.getMorpherFidelity() != null) {
-                        // setValue the default morpher
+                        // set the default morpher
                         mFi.setMorpher((Morpher) ((Function)mFi.getMorpherFidelity().get(0)).getItem());
                     }
                 }

@@ -38,7 +38,7 @@ import static sorcer.eo.operator.add;
 /**
  * @author Mike Sobolewski
  */
-public class Function<T> extends Value<T> implements Evaluation<T>, Callable<T>, Dependency, Comparable<T>,
+public class Function<T> extends Entry<T> implements Evaluation<T>, Callable<T>, Dependency, Comparable<T>,
 		EvaluationComponent, SupportComponent, Scopable, Setter, Reactive<T> {
 
 	private static final long serialVersionUID = 5168783170981015779L;
@@ -323,18 +323,6 @@ public class Function<T> extends Value<T> implements Evaluation<T>, Callable<T>,
 			out.putValue(key, cxt.getValue(key));
 		}
 		return out;
-	}
-
-	@Override
-	public Object exec(Arg... args) throws ServiceException, RemoteException {
-		Domain cxt = Arg.getServiceModel(args);
-		if (cxt != null) {
-			// entry substitution
-			((ServiceContext)cxt).putValue(key, item);
-			return cxt;
-		} else {
-			return item;
-		}
 	}
 
 	public boolean isNegative() {

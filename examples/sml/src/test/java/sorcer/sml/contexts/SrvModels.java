@@ -55,7 +55,7 @@ public class SrvModels {
 
         Context scope = context(ent("x1", 20.0), ent("y1", 40.0));
 
-        Model mo = model(ent("x", 10.0), ent("y", 20.0),
+        Model mdl = model(ent("x", 10.0), ent("y", 20.0),
             proc(invoker("lambda", (cxt) -> {
                     return (double) value(cxt, "x")
                         + (double) value(cxt, "y")
@@ -64,9 +64,9 @@ public class SrvModels {
                 },
                 scope, args("x", "y"))));
 //        logger.info("invoke eval: " + eval(mo, "lambda"));
-        assertEquals(eval(mo, "lambda"), 100.0);
-        assertEquals(eval(ent("lambda", mo)), 100.0);
-        assertEquals(result(ent("lambda", mo)), ent("lambda", 100.0));
+        assertEquals(eval(mdl, "lambda"), 100.0);
+        assertEquals(eval(ent("lambda", mdl)), 100.0);
+        assertEquals(result(ent("lambda", mdl)), ent("lambda", 100.0));
     }
 
     @Test

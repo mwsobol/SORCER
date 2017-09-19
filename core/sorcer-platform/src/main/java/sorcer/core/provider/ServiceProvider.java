@@ -371,7 +371,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	/**
-	 * Add attribute sets for the service. The resulting setValue will be used for
+	 * Add attribute sets for the service. The resulting set will be used for
 	 * all future joins. The attribute sets are also added to all
 	 * currently-joined lookup services.
 	 *
@@ -385,7 +385,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/**
 	 * Modify the current attribute sets, using the same semantics as
-	 * ServiceRegistration.modifyAttributes. The resulting setValue will be used for
+	 * ServiceRegistration.modifyAttributes. The resulting set will be used for
 	 * all future joins. The same modifications are also made to all
 	 * currently-joined lookup services.
 	 *
@@ -418,7 +418,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	/**
-	 * Add new groups to the setValue to join. Lookup services in the new groups will
+	 * Add new groups to the set to join. Lookup services in the new groups will
 	 * be discovered and joined.
 	 *
 	 * @param groups
@@ -452,7 +452,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	/**
-	 * Remove groups from the setValue to join. Leases are cancelled at lookup
+	 * Remove groups from the set to join. Leases are cancelled at lookup
 	 * services that are not members of any of the remaining groups.
 	 *
 	 * @param groups
@@ -532,7 +532,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	/**
-	 * Remove locators for specific lookup services from the setValue to join. Any
+	 * Remove locators for specific lookup services from the set to join. Any
 	 * leases held at the lookup services are cancelled.
 	 *
 	 * @param locators
@@ -649,7 +649,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * Returns a proxy object for this provider. If the smart proxy is alocated
 	 * then returns a non exported object to be registerd with loookup services.
 	 * However, if a smart proxy implements {@link Outer} then the
-	 * provider's proxy is setValue as its inner proxy. Otherwise the {@link java.rmi.Remote}
+	 * provider's proxy is set as its inner proxy. Otherwise the {@link java.rmi.Remote}
 	 * outer proxy of this provider is returned.
 	 *
 	 * @return a proxy, or null

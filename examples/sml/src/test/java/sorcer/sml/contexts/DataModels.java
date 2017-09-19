@@ -289,7 +289,7 @@ public class DataModels {
     @Test
     public void exertContext() throws Exception {
         Context cxt = context(inVal("x1", 20.0d), inVal("x2", 40.0d));
-        cxt = exert(cxt, inVal("x1", 50.0d));
+        cxt = exert(cxt, inVal("x1", 50.0));
         assertTrue(value(cxt, "x1").equals(50.0));
     }
 

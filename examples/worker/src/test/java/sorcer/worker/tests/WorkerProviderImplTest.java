@@ -18,6 +18,7 @@ import java.rmi.RemoteException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import static sorcer.co.operator.value;
 import static sorcer.eo.operator.*;
 
 /**

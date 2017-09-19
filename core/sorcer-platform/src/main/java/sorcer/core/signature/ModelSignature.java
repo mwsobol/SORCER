@@ -118,7 +118,7 @@ public class ModelSignature extends ServiceSignature implements sig {
 	 * </p>
 	 * 
 	 * @param fidelity
-	 *            the fidelity to setValue
+	 *            the fidelity to set
 	 */
 	public void setFidelity(ServiceFidelity fidelity) {
 		this.fidelity = fidelity;

@@ -25,6 +25,7 @@ import sorcer.core.Tag;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.ent.*;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
@@ -36,6 +37,7 @@ import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Functionality.Type;
+import sorcer.service.modeling.Valuation;
 import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
@@ -630,34 +632,6 @@ public class operator extends sorcer.operator {
 		return inVal(path, value, valClass, null);
 	}
 
-    public static <T> Entry<T> setValue(Entry<T> entry, T value) throws ContextException {
-		try {
-			entry.setValue(value);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
-		if (entry instanceof Proc) {
-			Proc procEntry = (Proc)entry;
-			if (procEntry.getScope() != null && procEntry.getContextable() == null) {
-				procEntry.getScope().putValue(procEntry.getName(), value);
-			}
-		}
-		entry.isValid(false);
-		return entry;
-	}
-
-	public static Setup setValue(Setup entry, String contextPath, Object value) throws ContextException {
-		entry.setEntry(contextPath, value);
-		return entry;
-	}
-
-	public static Setup setValue(Setup entry, Value... entries) throws ContextException {
-		for (Value e :  entries) {
-				entry.setEntry(e.getName(), e.get());
-		}
-		return entry;
-	}
-
 	public static <S extends Setter> boolean isPersistent(S setter) {
 		return setter.isPersistent();
 	}
@@ -976,8 +950,97 @@ public class operator extends sorcer.operator {
 		return table.getValue(rowName, columnName);
 	}
 
-	public static Object value(DataTable table, int row, int column) {
+    public static <T> Entry<T> setValue(Entry<T> entry, T value) throws ContextException {
+        try {
+            entry.setValue(value);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+        if (entry instanceof Proc) {
+            Proc procEntry = (Proc)entry;
+            if (procEntry.getScope() != null && procEntry.getContextable() == null) {
+                procEntry.getScope().putValue(procEntry.getName(), value);
+            }
+        }
+        entry.isValid(false);
+        return entry;
+    }
+
+    public static Setup setValue(Setup entry, String contextPath, Object value) throws ContextException {
+        entry.setEntry(contextPath, value);
+        return entry;
+    }
+
+    public static Setup setValue(Setup entry, Value... entries) throws ContextException {
+        for (Value e :  entries) {
+            entry.setEntry(e.getName(), e.get());
+        }
+        return entry;
+    }
+
+    public static Object value(DataTable table, int row, int column) {
 		return table.getValueAt(row, column);
+	}
+
+	public static <T> T value(Context<T> context, String path,
+							  Arg... args) throws ContextException {
+		try {
+			Object val = context.get(path);
+			if (context instanceof DataContext) {
+				return (T) val;
+			} else if (val instanceof Value) {
+			    return (T) ((Value)val).getData();
+            }
+			val = ((ServiceContext) context).getValue(path, args);
+			if (SdbUtil.isSosURL(val)) {
+				return (T) ((URL) val).getContent();
+			} else if (((ServiceContext)context).getType().equals(Functionality.Type.MADO)) {
+				return (T)((ServiceContext)context).getEvalValue(path);
+			} else if (val instanceof Srv && ((Srv)val).asis() instanceof  EntryCollable) {
+				Entry entry = ((EntryCollable)((Srv)val).asis()).call(context);
+				return (T) entry.asis();
+			} else {
+				return (T) val;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ContextException(e);
+		}
+	}
+
+	public static <T> T v(Context<T> context, String path, Arg... args) throws ContextException {
+		return value(context, path, args);
+	}
+
+	public static <T> T value(Valuation<T> valuation) throws ContextException {
+		return valuation.get();
+	}
+
+	public static <T> T value(Context<T> context, Arg... args)
+			throws ContextException {
+		try {
+			synchronized (context) {
+				return (T) ((ServiceContext)context).getValue(args);
+			}
+		} catch (Exception e) {
+			throw new ContextException(e);
+		}
+	}
+
+	public static Object value(Context context, String domain, String path) throws ContextException {
+		if (((ServiceContext)context).getType().equals(Functionality.Type.MADO)) {
+			return ((ServiceContext)context.getDomain(domain)).getEvalValue(path);
+		} else {
+			return context.getDomain(domain).getValue(path);
+		}
+	}
+
+	public static Object value(Arg[] args, String path) throws EvaluationException, RemoteException {
+		for (Arg arg : args) {
+			if (arg instanceof sorcer.service.Callable && arg.getName().equals(path))
+				return ((sorcer.service.Callable)arg).call(args);
+		}
+		return null;
 	}
 
 	public static <T extends Object> ListContext<T> listContext(T... elems)

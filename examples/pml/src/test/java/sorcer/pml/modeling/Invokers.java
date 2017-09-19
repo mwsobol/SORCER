@@ -61,9 +61,9 @@ public class Invokers {
 		public Double update(Context arg) throws Exception {
 			setValue(x, value(arg, "x"));
 			setValue(y, value(context, "y"));
-			// x setValue from 'arg'
+			// x set from 'arg'
 			assertTrue(eval(x).equals(200.0));
-			// y setValue from construtor's context 'in'
+			// y set from construtor's context 'in'
 			assertTrue(eval(y).equals(30.0));
 			assertTrue(eval(z).equals(170.0));
 			return (double)eval(x) + (double)eval(y) + (double)value(pm, "z");
@@ -121,7 +121,7 @@ public class Invokers {
 	public void serviceNeurons() throws Exception {
 		ProcModel pm = neoModel("neural-model");
 		add(pm, neo("x1", 10.0), neo("x2", 20.0));
-		add(pm, neo("x3", signals("x1", "x2"), weights(val("x1", 2.0), val("x2", 10.0))));
+		add(pm, neo("x3", weights(val("x1", 2.0), val("x2", 10.0)), signals("x1", "x2")));
 
 //        logger.info("activate x1: " + activate(pm, "x1"));
         assertEquals(activate(pm, "x1"), 10.0);
@@ -140,7 +140,7 @@ public class Invokers {
 	public void serviceNeuronFidelities() throws Exception {
 		ProcModel pm = neoModel("neural-model");
 		add(pm, neo("x1", 10.0), neo("x2", 20.0));
-		add(pm, neo("x3", signals("x1", "x2"), weights(val("x1", 2.0), val("x2", 5.0))));
+		add(pm, neo("x3", weights(val("x1", 2.0), val("x2", 5.0)), signals("x1", "x2")));
 		add(pm, neo("x4", mnFi(
 				nFi("n1", signals("x1", "x2"), weights(val("x1", 1.5), val("x2", 10.0))),
 				nFi("n2", signals("x1", "x2"), weights(val("x1", 2.0), val("x2", 12.0))))));

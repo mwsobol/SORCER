@@ -408,7 +408,7 @@ public class ProcModels {
 		// get job parameter eval
 		assertTrue(eval(j1p).equals(400.0));
 
-		// setValue job parameter eval
+		// set job parameter eval
 		setValue(j1p, 1000.0);
 		assertTrue(eval(j1p).equals(1000.0));
 
@@ -641,7 +641,7 @@ public class ProcModels {
 
 		String sorcerVersion = System.getProperty("sorcer.version");
 
-		// setValue the sphere/radius in the model
+		// set the sphere/radius in the model
 		put(pm, "sphere/radius", 20.0);
 		// attach the agent to the proc-model and invoke
         add(pm, agent("getSphereVolume",
@@ -649,6 +649,7 @@ public class ProcModels {
                         .getWebsterUrl() + "/pml-" + sorcerVersion+".jar")));
 
 		Object result = value((Context)value(pm,"getSphereVolume"), "sphere/volume");
+		logger.info("result: " +result);
 
 		assertTrue(result.equals(33510.32163829113));
 

@@ -104,7 +104,7 @@ public class Value<V> extends Entry<V> implements Valuation<V>, Comparable<V>, I
      * Assigns the flag for persistent storage of values of this entry
      * </p>
      *
-     * @param isPersistent the isPersistent to setValue
+     * @param isPersistent the isPersistent to set
      * @return nothing
      */
     public void setPersistent(boolean isPersistent) {
@@ -132,6 +132,11 @@ public class Value<V> extends Entry<V> implements Valuation<V>, Comparable<V>, I
         return "[" + key + "=" + item + "]";
     }
 
+    @Override
+    public V value() {
+        return getData();
+    }
+
     public V get(Arg... args) throws ContextException {
         if (args != null && args.length > 0) {
             for (Arg arg : args) {
@@ -143,8 +148,10 @@ public class Value<V> extends Entry<V> implements Valuation<V>, Comparable<V>, I
                 }
             }
         } else if (item instanceof Entry) {
-            return (V) ((Entry)item).get(args);
+            return (V) ((Entry)item).getData(args);
         }
         return item;
     }
+
+
 }

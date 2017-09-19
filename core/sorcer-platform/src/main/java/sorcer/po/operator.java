@@ -35,6 +35,7 @@ import sorcer.service.modeling.Functionality;
 
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -56,11 +57,15 @@ public class operator extends sorcer.operator {
         return new Neo(path, signals);
     }
 
-    public static Neo neo(String path, Args signals, Context<Float> weights) {
-        return new Neo(path, signals, weights);
+    public static Neo neo(String path, Context<Float> weights,  Args signals) {
+        return new Neo(path, weights, signals);
     }
 
-	public static Neo neo(String path, ServiceFidelity<NeoFidelity> fidelities) {
+    public static Neo neo(String path, Context<Float> weights, double signal, Args signals) {
+        return new Neo(path, weights, signals);
+    }
+
+    public static Neo neo(String path, ServiceFidelity<NeoFidelity> fidelities) {
 		return new Neo(path, fidelities);
 	}
 
@@ -717,8 +722,8 @@ public class operator extends sorcer.operator {
         return srv(fidelity);
     }
 
-	public static <T> Entry<T> ent(Path path, T value, Arg... args) {
-		Entry<T> entry = ent(path.getName(), value, args);
+	public static Entry ent(Path path, Object value, Arg... args) {
+		Entry entry = ent(path.getName(), value, args);
 		entry.annotation(path.info.toString());
 		return entry;
 	}
@@ -734,36 +739,19 @@ public class operator extends sorcer.operator {
 		return cr;
 	}
 
-//	public static <T> Functionality<T> ent(String path, T value, Arg... args) {
-//		Functionality<T> entry = null;
-//		if (value instanceof Invocation || value instanceof Evaluation) {
-//			entry = new Proc<T>(path, value);
-//			((Entry)entry).setType(Functionality.Type.PROC);
-//		} else if (value instanceof Signature) {
-//			Mogram mog = Arg.getMogram(args);
-//			Context cxt = null;
-//			if (mog instanceof Context) {
-//				cxt = (Context) mog;
-//			}
-//			if (cxt != null) {
-//				entry = (Functionality<T>) srv(path, (Identifiable) value, cxt, args);
-//			} else {
-//				entry = (Functionality<T>) srv(path, (Identifiable) value, null, args);
-//			}
-//			((Entry)entry).setType(Functionality.Type.SRV);
-//		} else {
-//			entry = (Functionality<T>) new Function(path, value);
-//			((Entry)entry).setType(Functionality.Type.FUNCTION);
-//		}
-//		return entry;
-//	}
-
     public static <T> Entry<T> ent(String path, T value, Arg... args) {
 		Entry<T> entry = null;
-		if (value instanceof Invocation || value instanceof Evaluation) {
-			entry = new Proc<T>(path, value);
-			entry.setType(Functionality.Type.PROC);
-		} else if (value instanceof Signature) {
+		if (value instanceof Number ||  value instanceof String ||
+				value instanceof Date) {
+			return new Value(path, value);
+		} else if (value instanceof Context && args != null && args.length > 0) {
+			return (Entry<T>) new Neo(path, (Context)value, new Args(args));
+		}
+//		else if (value instanceof Invocation || value instanceof Evaluation) {
+//			entry = new Proc<T>(path, value);
+//			entry.setType(Functionality.Type.PROC);
+//		}
+		else if (value instanceof Signature) {
 			Mogram mog = Arg.getMogram(args);
 			Context cxt = null;
 			if (mog instanceof Context) {
@@ -788,8 +776,8 @@ public class operator extends sorcer.operator {
 		} else if (value instanceof List && ((List)value).get(0) instanceof Path) {
 			entry =  (Entry<T>) new DependencyEntry(path, (List)value);
 		} else if (value instanceof ServiceMogram) {
-			entry = (Entry<T>) new Srv(path, value);
-			entry.setType(Functionality.Type.SRV);
+			entry = (Entry<T>) new MogramEntry(path, (Mogram) value);
+			entry.setType(Functionality.Type.MOGRAM);
 		} else if (value instanceof Service) {
 			entry = (Entry<T>) new Proc(path, value);
 			entry.setType(Functionality.Type.PROC);
@@ -797,8 +785,8 @@ public class operator extends sorcer.operator {
 			entry = (Entry<T>) new Function(path, value);
 			entry.setType(Functionality.Type.CONSTANT);
 		} else {
-			entry = (Entry<T>) new Function<T>(path, value);
-			entry.setType(Functionality.Type.VAL);
+			entry = new Entry<T>(path, value);
+			entry.setType(Functionality.Type.ENT);
 		}
 
 		Context cxt = null;

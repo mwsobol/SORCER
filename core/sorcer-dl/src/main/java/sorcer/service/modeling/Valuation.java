@@ -28,18 +28,21 @@ import java.rmi.RemoteException;
 
 
 /**
- * A functionality for all object values of the constant function type.
+ * The functionality for all value objects.
  * 
  * @author Mike Sobolewski
  */
-public interface Valuation<T> {
+public interface Valuation<T> extends Entrance<T> {
 
 	/**
-	 * Returns the current item of this valuation.
+	 * Returns the current value of this valuation.
 	 * 
-	 * @return the current item of this valuation
+	 * @return the current value of this valuation
 	 */
-	public T get(Arg... args) throws ContextException;
+	public T value();
 
-	public void set(T item) ;
+	/**
+	 * Sets the current value of this valuation.
+	 **/
+	public void set(T value) ;
 }

@@ -138,8 +138,9 @@ public class ArithmeticMograms {
 				response("subtract"));
 
 		logger.info("dependencies: " + dependencies(m));
-//        logger.info("response: " + response(m));
 		Context out = response(m);
+		logger.info("response: " + out);
+
 
 		assertTrue(get(out, "subtract").equals(400.0));
 	}

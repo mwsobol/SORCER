@@ -1,16 +1,19 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.core.context.ContextSelection;
+import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
+import sorcer.service.modeling.Entrance;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Valuation;
+import sorcer.service.modeling.ent;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.net.URL;
 import java.rmi.RemoteException;
 
-public class Entry<V> extends Association<String, V> implements Callable<V>, Service, Setter {
+public class Entry<V> extends Association<String, V> implements Entrance<V>, Callable<V>, Service, Setter, ent<V> {
 
     protected boolean negative;
 
@@ -50,12 +53,12 @@ public class Entry<V> extends Association<String, V> implements Callable<V>, Ser
         this.contextSelector = contextSelector;
     }
 
-    public Object getData() {
+    public V getData(Arg... args) {
         Object data = item;
         if (item instanceof Entry && ((Entry)data).getKey().equals(key)) {
-            return ((Entry)item).getData();
+            return (V) ((Entry)item).getData();
         }
-        return data;
+        return (V) data;
     }
 
     @Override
@@ -90,7 +93,7 @@ public class Entry<V> extends Association<String, V> implements Callable<V>, Ser
                     val = ((Evaluation<V>) val).getValue(args);
                 }
             } else if (val instanceof Valuation) {
-                val = (V) ((Valuation) val).get(args);
+                val = (V) ((Valuation) val).value();
             } else if (val instanceof ServiceFidelity) {
                 // return the selected fidelity of this entry
                 for (Arg arg : args) {
@@ -140,6 +143,18 @@ public class Entry<V> extends Association<String, V> implements Callable<V>, Ser
 
     public void setNegative(boolean negative) {
         this.negative = negative;
+    }
+
+    @Override
+    public Object exec(Arg... args) throws ServiceException, RemoteException {
+        Domain cxt = Arg.getServiceModel(args);
+        if (cxt != null) {
+            // entry substitution
+            ((ServiceContext)cxt).putValue(key, item);
+            return cxt;
+        } else {
+            return item;
+        }
     }
 
     @Override

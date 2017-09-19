@@ -213,7 +213,7 @@ public class ListContext<T extends Object> extends ServiceContext<T> implements 
 	}
 
 	/* (non-Javadoc)
-	 * @see java.util.List#setValue(int, java.lang.Object)
+	 * @see java.util.List#set(int, java.lang.Object)
 	 */
 	public Object set(int index, T element) throws ContextException {
 		putValue(pathFor(index), element);

@@ -44,6 +44,7 @@ import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.Model;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Valuation;
 import sorcer.service.modeling.cxt;
 import sorcer.util.ObjectCloner;
 import sorcer.util.SorcerUtil;
@@ -73,7 +74,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected ReturnPath<T> returnPath;
 	protected ReturnPath<T> returnJobPath;
 
-	// for calls by reflection for 'args' Object[] setValue the path
+	// for calls by reflection for 'args' Object[] set the path
 	// or use the default one: Context.ARGS
 	//protected String argsPath = Context.ARGS;
 	protected String argsPath;
@@ -852,7 +853,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public boolean isLocalMetaattribute(String attributeName) {
 		// Metaattributes are stored in the localContextAttributes
-		// hashtable and have key equal to the attribute setValue, not the
+		// hashtable and have key equal to the attribute set, not the
 		// eval as with singleton attributes
 		return isLocalAttribute(attributeName)
 				&& !getDataAttributeMap().get(attributeName).equals(
@@ -903,7 +904,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public boolean isMetaattribute(String attributeName)
 			throws ContextException {
 		// Metaattributes are stored in the localContextAttributeisLos
-		// hashtable and have key equal to the attribute setValue, not the
+		// hashtable and have key equal to the attribute set, not the
 		// eval as with singleton attributes
 		boolean result = isLocalAttribute(attributeName)
 				&& !getDataAttributeMap().get(attributeName).equals(
@@ -1072,7 +1073,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		List<String> keys = new ArrayList<String>();
 		if (isSingletonAttribute(attr)) {
 			values = (Map)getMetacontext().get(attr);
-			if (values != null) { // if there are no attributes setValue,
+			if (values != null) { // if there are no attributes set,
 				// values==null;
 				for (Object key : values.keySet()) {
 					if (values.get(key).equals(value))
@@ -1354,8 +1355,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return is;
 	}
 
-	public EntList getPars() {
-		EntList pl = new EntList();
+	public EntryList getPars() {
+		EntryList pl = new EntryList();
 		Iterator<Map.Entry<String, T>> i = entryIterator();
 		Map.Entry<String, T> entry;
 		while (i.hasNext()) {
@@ -1855,9 +1856,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 		}
 
-		// now all attributes are setValue, and metaattributes are setValue
-		// implicitly IF the metaattribute definitions are setValue in the
-		// new context. So, next we setValue the definitions, or at least
+		// now all attributes are set, and metaattributes are set
+		// implicitly IF the metaattribute definitions are set in the
+		// new context. So, next we set the definitions, or at least
 		// try...
 
 		String metapath_target, metapath_source;
@@ -2691,8 +2692,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 					Object val = null;
 					if (((Entry) e).get() instanceof Evaluation) {
 						val = ((Evaluation) ((Entry) e).get()).getValue();
-					} else {
-						val = ((Value) e).get();
+					} else  {
+						val = ((Entry) e).get();
 					}
 					putValue(e.getName(), val);
 				}
@@ -3124,7 +3125,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.entryLists = entryLists;
 	}
 
-	public EntryList getEntryList(EntryList.Type type) {
+	public EntryList getEntryList(Functionality.Type type) {
 		if (entryLists != null) {
 			for (EntryList el : entryLists) {
 				if (el.getType().equals(type))

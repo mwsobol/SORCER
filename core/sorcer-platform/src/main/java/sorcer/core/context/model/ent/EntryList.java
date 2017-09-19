@@ -1,7 +1,7 @@
 /*
  * Copyright 2010 the original author or authors.
  * Copyright 2010 SorcerSoft.org.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.service.EvaluationException;
+import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -28,18 +29,14 @@ import java.util.Set;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class EntryList extends ArrayList<Function> {
-	
+public class EntryList extends ArrayList<Entry> {
+
 	static final long serialVersionUID = 1L;
-	
-	public enum Type {
-		INPUT, OUTPUT, INITIAL_DESIGN, OPTIMIZED_DESIGN, CONSTRAINTS, LINKED, CONSTNTS, INVARIANTS
-	}
-	
-	private Type type = Type.INPUT;
-	
+
+	private Functionality.Type type = Functionality.Type.INPUT;
+
 	private String name;
-	
+
 	public EntryList() {
 		super();
 	}
@@ -48,45 +45,45 @@ public class EntryList extends ArrayList<Function> {
 		super(size);
 	}
 
-	public EntryList(Set<Function> entrySet) {
+	public EntryList(Set<Value> entrySet) {
 		addAll(entrySet);
 	}
 
-	public EntryList(String name, Function...  entryLists) {
+	public EntryList(String name, EntryList...  entryLists) {
 		this(entryLists);
 		this.name = name;
 	}
-	
+
 	public EntryList(EntryList...  entryLists) {
 		super();
 		for (EntryList el : entryLists) {
 			addAll(el);
 		}
 	}
-	
-	public EntryList(Function... entryArray) {
+
+	public EntryList(Value... entryArray) {
 		super();
-		for (Function e : entryArray) {
+		for (Value e : entryArray) {
 			add(e);
 		}
 	}
-	
+
 	public  EntryList(EntryList  entryList) {
 		super();
-		for (Function t : entryList) {
+		for (Entry t : entryList) {
 			add(t);
 		}
 	}
-	
-	public EntryList(EntSet parSet) {
+
+	public EntryList(EntrySet entrySet) {
 		super();
-		for (Function p : parSet) {
-			add(new Function(p.getName(), p));
+		for (Entry p : entrySet) {
+			add(new Value(p.getName(), p));
 		}
 	}
-		
-	public Function getEntry(String entryName) {
-		for (Function e : this) {
+
+	public Entry getEntry(String entryName) {
+		for (Entry e : this) {
 			if (e.getName().equals(entryName)) {
 				return e;
 			}
@@ -95,29 +92,29 @@ public class EntryList extends ArrayList<Function> {
 	}
 
 	public boolean containsEntryName(String name) {
-		return contains(new Function(name));
+		return contains(new Value(name));
 	}
-	
+
 	@Override
 	public boolean contains(Object obj) {
-		if (!(obj instanceof Function<?>))
+		if (!(obj instanceof Value<?>))
 			return false;
 		else {
-			for (Function e : this) {
-				if (e.getName().equals(((Function)obj).getName()))
+			for (Entry e : this) {
+				if (e.getName().equals(((Value)obj).getName()))
 					return true;
 			}
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean remove(Object obj) {
-		if (obj == null || !(obj instanceof Function<?>)) {
+		if (obj == null || !(obj instanceof Value<?>)) {
 			return false;
 		} else {
-			for (Function e : this) {
-				if (e.getName().equals(((Function) obj).getName())) {
+			for (Entry e : this) {
+				if (e.getName().equals(((Value) obj).getName())) {
 					super.remove(e);
 					return true;
 				}
@@ -125,45 +122,45 @@ public class EntryList extends ArrayList<Function> {
 		}
 		return false;
 	}
-	
-	 public List<String> getNames() {
-		 List<String> names = new ArrayList<String>(size());
-		 for (int i = 0; i < size(); i++) {
-			 names.add(get(i).getName());
-		 }
-		 return names;
-	 }
 
-	 public List<Object> getValues() throws EvaluationException, RemoteException {
-		 List<Object> values = new ArrayList<Object>(size());
-		 for (int i = 0; i < size(); i++) {
-			 values.add(get(i).getValue());
-		 }
-		 return values;
-	 }
-	 
-	 public Function[] toArray() {
-		 Function[] va = new Function[size()];
-		 return toArray(va);
-	 }
-			
-	 public static EntryList asList(Function[] array) {
-		 EntryList el = new EntryList(array.length);
-		 for (Function<?> e : array)
-			 el.add(e);
-		 return el;
-	 }
-	
+	public List<String> getNames() {
+		List<String> names = new ArrayList<String>(size());
+		for (int i = 0; i < size(); i++) {
+			names.add(get(i).getName());
+		}
+		return names;
+	}
+
+	public List<Object> getValues() throws EvaluationException, RemoteException {
+		List<Object> values = new ArrayList<Object>(size());
+		for (int i = 0; i < size(); i++) {
+			values.add(get(i).getItem());
+		}
+		return values;
+	}
+
+	public Value[] toArray() {
+		Value[] va = new Value[size()];
+		return toArray(va);
+	}
+
+	public static EntryList asList(Value[] array) {
+		EntryList el = new EntryList(array.length);
+		for (Value<?> e : array)
+			el.add(e);
+		return el;
+	}
+
 	public String describe() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getNames().toString());
 		sb.append("\n");
 		for (int i = 0; i < size(); i++) {
-			 sb.append(get(i).getName());
-			 sb.append("\n");
-			 sb.append(get(i));
-			 sb.append("\n");
-		 }
+			sb.append(get(i).getName());
+			sb.append("\n");
+			sb.append(get(i));
+			sb.append("\n");
+		}
 		return sb.toString();
 	}
 
@@ -175,11 +172,11 @@ public class EntryList extends ArrayList<Function> {
 		this.name = name;
 	}
 
-	public Type getType() {
+	public Functionality.Type getType() {
 		return type;
 	}
 
-	public void setType(Type type) {
+	public void setType(Functionality.Type type) {
 		this.type = type;
 	}
 

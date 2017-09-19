@@ -125,7 +125,7 @@ public class CollectionOperators {
 	@Test
 	public void genericSetOperator() throws Exception {
 
-		// the setValue operator creates instances of java.util.Set
+		// the set operator creates instances of java.util.Set
 		Set<Serializable> s = set("name", "Mike", "name", "Ray", x("height", 174));
 		assertEquals(s.size(), 4);
 		assertEquals(x("height", 174)._1, "height");
@@ -439,7 +439,7 @@ public class CollectionOperators {
 		// get service proc j1p eval
 		assertEquals(eval(j1p), 400.0);
 
-		// setValue job parameter eval
+		// set job parameter eval
 		setValue(j1p, 1000.0);
 		assertEquals(eval(j1p), 1000.0);
 

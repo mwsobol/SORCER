@@ -9,6 +9,7 @@ import sorcer.worker.provider.Work;
 import java.io.Serializable;
 import java.util.List;
 
+import static sorcer.co.operator.value;
 import static sorcer.eo.operator.*;
 
 /**

@@ -249,7 +249,7 @@ public class ProcModelTest {
 	
 	@Test
 	public void persistableDbTest() throws SignatureException, ExertionException, ContextException, IOException {
-		// persistable just indicates that parameter is setValue given eval that can be persist,
+		// persistable just indicates that parameter is set given eval that can be persist,
 		// for example when eval(proc) is invoked
 		Proc dbp1 = persistent(proc("design/in", 25.0));
 		Proc dbp2 = dbEnt("url", "myUrl1");
@@ -361,7 +361,7 @@ public class ProcModelTest {
 		// get job parameter eval
 		assertTrue(eval(j1p).equals(400.0));
 		
-		// setValue job parameter eval
+		// set job parameter eval
 		setValue(j1p, 1000.0);
 		assertTrue(eval(j1p).equals(1000.0));
 
@@ -493,7 +493,7 @@ public class ProcModelTest {
 		Proc<Double> y = proc("y", 20.0);
 		Proc z = proc("z", invoker("x - y", x, y));
 		
-		// setValue the sphere/radius in the model
+		// set the sphere/radius in the model
 		put(pm, "sphere/radius", 20.0);
 		// attach the agent to the proc-model and invoke
 		pm.add(new Agent("getSphereVolume",

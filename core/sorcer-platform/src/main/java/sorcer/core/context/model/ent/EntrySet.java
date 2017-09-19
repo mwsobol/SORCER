@@ -3,7 +3,7 @@ package sorcer.core.context.model.ent;
 /*
  * Copyright 2013 the original author or authors.
  * Copyright 2013 SorcerSoft.org.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,79 +31,79 @@ import sorcer.service.EvaluationException;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class EntSet extends TreeSet<Function> {
-	
+public class EntrySet extends TreeSet<Entry> {
+
 	private static final long serialVersionUID = -4662755904016297879L;
-	
-	public EntSet() {
+
+	public EntrySet() {
 		super();
 	}
 
-	public EntSet(EntList entList) {
+	public EntrySet(EntryList entList) {
 		addAll(entList);
 	}
-	
-	public EntSet(Set<Proc> procEntrySet) {
+
+	public EntrySet(Set<Value> procEntrySet) {
 		addAll(procEntrySet);
 	}
 
-	
-	public EntSet(EntList... entLists) {
-		for (EntList vl : entLists) {
+
+	public EntrySet(EntryList... entLists) {
+		for (EntryList vl : entLists) {
 			addAll(vl);
 		}
 	}
-	
-	public EntSet(Proc<?>... procEntries) {
-		for (Proc<?> v : procEntries) {
+
+	public EntrySet(Value<?>... procEntries) {
+		for (Value<?> v : procEntries) {
 			add(v);
 		}
 	}
-	
-	public Function getPar(String parName) throws EntException {
-		for (Function v : this) {
-			if (v.getName().equals(parName))
+
+	public Entry getPar(String name) throws EntException {
+		for (Entry v : this) {
+			if (v.getName().equals(name))
 				return v;
 		}
 		return null;
 	}
-	
-	public void setValue(String parName, Object value)
+
+	public void setValue(String name, Object value)
 			throws EvaluationException {
-		Function procEntry = null;
-		for (Function p : this) {
-			if (p.getName().equals(parName)) {
-				procEntry = p;
+		Entry ent = null;
+		for (Entry v : this) {
+			if (v.getName().equals(name)) {
+				ent = v;
 				try {
-					procEntry.setValue(value);
+					ent.setValue(value);
 				} catch (Exception e) {
 					throw new EvaluationException(e);
 				}
 				break;
 			}
 		}
-		if (procEntry == null)
-			throw new EntException("No such Proc in the list: " + parName);
+		if (ent == null)
+			throw new EntException("No such Value in the list: " + name);
 	}
-	
-	public EntList selectPars(List<String>... parnames) {
+
+	public EntryList selectEntries(List<String>... nameLists) {
 		List<String> allParNames = new ArrayList<String>();
-		for (List<String> nl : parnames) {
+		for (List<String> nl : nameLists) {
 			allParNames.addAll(nl);
 		}
-		EntList out = new EntList();
-		for (Function v : this) {
+		EntryList out = new EntryList();
+		for (Entry v : this) {
 			if (allParNames.contains(v.getName())) {
 				out.add(v);
 			}
 		}
 		return out;
 	}
-	
-	public EntSet selectPars(String... parnames) {
-		List<String> vnames = Arrays.asList(parnames);
-		EntSet out = new EntSet();
-		for (Function v : this) {
+
+	public EntrySet selectPars(String... names) {
+		List<String> vnames = Arrays.asList(names);
+		EntrySet out = new EntrySet();
+		for (Entry v : this) {
 			if (vnames.contains(v.getName())) {
 				out.add(v);
 			}
@@ -113,24 +113,24 @@ public class EntSet extends TreeSet<Function> {
 
 	@Override
 	public boolean contains(Object obj) {
-		if (!(obj instanceof Proc<?>))
+		if (!(obj instanceof Value))
 			return false;
 		else {
-			for (Function v : this) {
-				if (v.getName().equals(((Proc<?>)obj).getName()))
+			for (Entry v : this) {
+				if (v.getName().equals(((Value)obj).getName()))
 					return true;
 			}
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean remove(Object obj) {
-		if (obj == null || !(obj instanceof Proc<?>)) {
+		if (obj == null || !(obj instanceof Value)) {
 			return false;
 		} else {
-			for (Function v : this) {
-				if (v.getName().equals(((Proc<?>) obj).getName())) {
+			for (Entry v : this) {
+				if (v.getName().equals(((Value) obj).getName())) {
 					super.remove(v);
 					return true;
 				}
@@ -138,55 +138,55 @@ public class EntSet extends TreeSet<Function> {
 		}
 		return false;
 	}
-	
-	 public List<String> getNames() {
-		 List<String> names = new ArrayList<String>(size());
-		 Iterator<Function> i = iterator();
-		 while (i.hasNext()) {
-			 names.add(i.next().getName());
-		 }
-		 return names;
-	 }
-	 
-	 public List<Object> getValues() throws EvaluationException, RemoteException {
-		 List<Object> values = new ArrayList<Object>(size());
-		 Iterator<Function> i = iterator();
-		 while (i.hasNext()) {
-			 values.add(i.next().getValue());
-		 }
-		 return values;
-	 }
-	 
-	 public Proc<?>[] toArray() {
-		 Proc<?>[] va = new Proc[size()];
-		 return toArray(va);
-	 }
-			
-	 public EntList toParList() {
-		 EntList vl = new EntList(size());
-		 for (Function v : this)
-			 vl.add(v);
-		 return vl;
-	 }
 
-	 public static EntSet asParSet(EntList list) {
-		 return new EntSet(list);
-	 }
+	public List<String> getNames() {
+		List<String> names = new ArrayList<String>(size());
+		Iterator<Entry> i = iterator();
+		while (i.hasNext()) {
+			names.add(i.next().getName());
+		}
+		return names;
+	}
 
-	 public static EntList asList(Proc<?>[] array) {
-		 EntList vl = new EntList(array.length);
-		 for (Proc<?> v : array)
-			 vl.add(v);
-		 return vl;
-	 }
+	public List<Object> getValues() throws EvaluationException, RemoteException {
+		List<Object> values = new ArrayList<Object>(size());
+		Iterator<Entry> i = iterator();
+		while (i.hasNext()) {
+			values.add(i.next().getItem());
+		}
+		return values;
+	}
 
-	 public void clearPars() throws EvaluationException {
-			for (Function p : this) {
-				try {
-					p.setValue(null);
-				} catch (Exception e) {
-					throw new EvaluationException(e);
-				} 
+	public Value[] toArray() {
+		Value[] va = new Value[size()];
+		return toArray(va);
+	}
+
+	public EntryList toEntryList() {
+		EntryList vl = new EntryList(size());
+		for (Entry v : this)
+			vl.add(v);
+		return vl;
+	}
+
+	public static EntrySet asEntSet(EntryList list) {
+		return new EntrySet(list);
+	}
+
+	public static EntryList asList(Value[] array) {
+		EntryList vl = new EntryList(array.length);
+		for (Value v : array)
+			vl.add(v);
+		return vl;
+	}
+
+	public void clearEntries() throws EvaluationException {
+		for (Entry v : this) {
+			try {
+				v.setValue(null);
+			} catch (Exception e) {
+				throw new EvaluationException(e);
 			}
 		}
+	}
 }
