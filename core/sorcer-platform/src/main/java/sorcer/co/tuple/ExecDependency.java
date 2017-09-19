@@ -26,17 +26,17 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 6/21/15.
  */
-public class DependencyEntry extends Function<List<Path>> {
+public class ExecDependency extends Function<List<Path>> {
     private static final long serialVersionUID = 1L;
 
     private Conditional condition;
 
     @SuppressWarnings("unchecked")
-    public DependencyEntry(String path, List<Path> paths) {
+    public ExecDependency(String path, List<Path> paths) {
         super(path, paths);
     }
 
-    public DependencyEntry(String path, Conditional condition, List<Path> paths) {
+    public ExecDependency(String path, Conditional condition, List<Path> paths) {
         super(path, paths);
         this.condition = condition;
     }

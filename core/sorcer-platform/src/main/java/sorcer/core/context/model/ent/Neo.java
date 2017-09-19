@@ -331,7 +331,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Acti
 	}
 
 	@Override
-	public Double exec(Arg... args) throws MogramException, RemoteException {
+	public Double value(Arg... args) throws MogramException, RemoteException {
 		Context cxt = (Context) Arg.getServiceModel(args);
 		if (cxt != null) {
 			scope = cxt;

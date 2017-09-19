@@ -9,6 +9,7 @@ import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ContextSelector;
 import sorcer.core.context.model.ent.Coupling;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.MdaEntry;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.FidelityManager;
@@ -1088,6 +1089,16 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     @Override
     public void update(Setup... contextEntries) throws ContextException, RemoteException {
         // implement in subclasses
+    }
+
+    @Override
+    public Entry exec(Arg... args) throws ServiceException, RemoteException {
+        Object result = value(args);
+        if (result instanceof Entry) {
+            return (Entry)result;
+        } else {
+            return new Entry(name, result);
+        }
     }
 
 }

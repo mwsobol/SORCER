@@ -145,8 +145,8 @@ public class Entry<V> extends Association<String, V> implements Entrance<V>, Cal
         this.negative = negative;
     }
 
-    @Override
-    public Object exec(Arg... args) throws ServiceException, RemoteException {
+
+    public Object value(Arg... args) throws ServiceException, RemoteException {
         Domain cxt = Arg.getServiceModel(args);
         if (cxt != null) {
             // entry substitution
@@ -155,6 +155,16 @@ public class Entry<V> extends Association<String, V> implements Entrance<V>, Cal
         } else {
             return item;
         }
+    }
+
+    @Override
+    public Entry exec(Arg... args) throws ServiceException, RemoteException {
+       Object result = value(args);
+       if (result instanceof Entry) {
+           return (Entry)result;
+       } else {
+           return new Entry(key, result);
+       }
     }
 
     @Override

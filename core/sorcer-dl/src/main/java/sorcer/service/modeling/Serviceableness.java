@@ -43,7 +43,7 @@ import java.io.Serializable;
  *
  * @author Mike Sobolewski
  */
-public interface Serviceablenes {
+public interface Serviceableness {
 
 	public Signature getSiganture() throws ContextException;
 

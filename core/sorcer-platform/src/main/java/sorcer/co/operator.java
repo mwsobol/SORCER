@@ -457,42 +457,42 @@ public class operator extends sorcer.operator {
 		return false;
 	}
 
-    public static DependencyEntry dep(String path, Path... paths) {
-		return new DependencyEntry(path, Arrays.asList(paths));
+    public static ExecDependency dep(String path, Path... paths) {
+		return new ExecDependency(path, Arrays.asList(paths));
 	}
 
-	public static DependencyEntry dep(String path, Conditional condition, Path... paths) {
-        DependencyEntry de = new DependencyEntry(path, condition, Arrays.asList(paths));
+	public static ExecDependency dep(String path, Conditional condition, Path... paths) {
+        ExecDependency de = new ExecDependency(path, condition, Arrays.asList(paths));
         de.setType(Type.CONDITION);
         return de;
 	}
 
-	public static DependencyEntry dep(String path, Fidelity fi, Path... paths) {
-		DependencyEntry de = new DependencyEntry(path, Arrays.asList(paths));
+	public static ExecDependency dep(String path, Fidelity fi, Path... paths) {
+		ExecDependency de = new ExecDependency(path, Arrays.asList(paths));
 		de.annotation(fi);
 		de.setType(Functionality.Type.FIDELITY);
         return de;
 	}
 
-	public static DependencyEntry dep(String path, Conditional condition, List<Path> paths) {
-        DependencyEntry de = new DependencyEntry(path, condition, paths);
+	public static ExecDependency dep(String path, Conditional condition, List<Path> paths) {
+        ExecDependency de = new ExecDependency(path, condition, paths);
         de.setType(Type.CONDITION);
         return de;
 	}
 
-	public static DependencyEntry dep(String path, List<Path> paths) {
-		return new DependencyEntry(path, paths);
+	public static ExecDependency dep(String path, List<Path> paths) {
+		return new ExecDependency(path, paths);
 	}
 
 
-	public static DependencyEntry dep(String path, Fidelity fi, List<Path> paths) {
-		DependencyEntry de = new DependencyEntry(path, paths);
+	public static ExecDependency dep(String path, Fidelity fi, List<Path> paths) {
+		ExecDependency de = new ExecDependency(path, paths);
 		de.annotation(fi);
 		de.setType(Functionality.Type.FIDELITY);
 		return de;
 	}
 
-	public static DependencyEntry[] deps(DependencyEntry... dependencies) {
+	public static ExecDependency[] deps(ExecDependency... dependencies) {
 		return dependencies;
 	}
 
@@ -1195,7 +1195,7 @@ public class operator extends sorcer.operator {
 			parModel.getData().remove(path);
 	}
 
-    public static Map<String, List<DependencyEntry>> dependencies(Domain model) {
+    public static Map<String, List<ExecDependency>> dependencies(Domain model) {
          return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
 
@@ -1206,15 +1206,15 @@ public class operator extends sorcer.operator {
             if (path != null && path.equals("self")) {
                 ((Entry)d).setKey(((Domain) dependee).getName());
             }
-            if (d instanceof DependencyEntry && ((DependencyEntry)d).getType().equals(Type.CONDITION)) {
-                ((DependencyEntry)d).getCondition().setConditionalContext((Context)dependee);
+            if (d instanceof ExecDependency && ((ExecDependency)d).getType().equals(Type.CONDITION)) {
+                ((ExecDependency)d).getCondition().setConditionalContext((Context)dependee);
                 }
 			if (!dependee.getDependers().contains(d)) {
                 dependee.getDependers().add(d);
             }
 		}
-		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof DependencyEntry) {
-			Map<String, List<DependencyEntry>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
+		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
+			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
 			for (Evaluation e : dependers) {
 				path = e.getName();
 				if (dm.get(path) != null) {
@@ -1222,8 +1222,8 @@ public class operator extends sorcer.operator {
                         ((List) dm.get(path)).add(e);
                     }
 				} else {
-					List<DependencyEntry> del = new ArrayList();
-					del.add((DependencyEntry)e);
+					List<ExecDependency> del = new ArrayList();
+					del.add((ExecDependency)e);
 					dm.put(path, del);
 				}
 			}

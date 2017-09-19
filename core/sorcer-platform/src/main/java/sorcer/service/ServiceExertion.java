@@ -1015,7 +1015,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     @Override
-    public Object exec(Arg... args) throws MogramException, RemoteException {
+    public Object value(Arg... args) throws MogramException, RemoteException {
         Context cxt = (Context) Arg.getServiceModel(args);
         if (cxt != null) {
               dataContext = (ServiceContext) cxt;

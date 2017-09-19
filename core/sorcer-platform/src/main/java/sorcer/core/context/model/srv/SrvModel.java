@@ -22,7 +22,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.co.tuple.DependencyEntry;
+import sorcer.co.tuple.ExecDependency;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ModelStrategy;
@@ -367,12 +367,12 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
     }
 
     protected void execDependencies(String path, Arg... args) throws ContextException {
-        Map<String, List<DependencyEntry>> dpm = ((ModelStrategy)mogramStrategy).getDependentPaths();
+        Map<String, List<ExecDependency>> dpm = ((ModelStrategy)mogramStrategy).getDependentPaths();
         if (dpm != null && dpm.get(path) != null) {
-            List<DependencyEntry> del = dpm.get(path);
+            List<ExecDependency> del = dpm.get(path);
             Function entry = entry(path);
             if (del != null && del.size() > 0) {
-                for (DependencyEntry de : del) {
+                for (ExecDependency de : del) {
                     List<Path> dpl = de.get();
                     if (de.getType().equals(Functionality.Type.FIDELITY)) {
                         if (((Fidelity) de.annotation()).getOption().equals("IF")) {

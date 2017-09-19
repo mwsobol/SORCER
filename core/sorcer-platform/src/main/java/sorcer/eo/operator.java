@@ -16,7 +16,6 @@
  */
 package sorcer.eo;
 
-import com.sun.tools.internal.xjc.model.nav.EagerNClass;
 import groovy.lang.Closure;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
@@ -295,7 +294,7 @@ public class operator extends sorcer.operator {
 		List<Function> funcEntryList = new ArrayList();
 		List<Context.Type> types = new ArrayList();
 		List<EntryList> entryLists = new ArrayList();
-		List<DependencyEntry> depList = new ArrayList();
+		List<ExecDependency> depList = new ArrayList();
 		Complement subject = null;
 		ReturnPath returnPath = null;
 		ExecPath execPath = null;
@@ -335,8 +334,8 @@ public class operator extends sorcer.operator {
 				entryLists.add((EntryList) o);
 			} else if (o instanceof MapContext) {
 				connList.add((MapContext) o);
-			} else if (o instanceof DependencyEntry) {
-				depList.add((DependencyEntry) o);
+			} else if (o instanceof ExecDependency) {
+				depList.add((ExecDependency) o);
 			} else if (o instanceof Signature) {
 				sig = (Signature) o;
 			} else if (o instanceof Class) {
@@ -455,15 +454,15 @@ public class operator extends sorcer.operator {
 			}
 		}
 		if (depList.size() > 0) {
-			Map<String, List<DependencyEntry>> dm = ((ServiceContext) cxt).getMogramStrategy().getDependentPaths();
+			Map<String, List<ExecDependency>> dm = ((ServiceContext) cxt).getMogramStrategy().getDependentPaths();
 			String path = null;
-			List<DependencyEntry> dependentPaths = null;
-			for (DependencyEntry e : depList) {
+			List<ExecDependency> dependentPaths = null;
+			for (ExecDependency e : depList) {
 				path = e.getName();
 				if (dm.get(path) != null) {
 					((List)dm.get(path)).add(e);
 				} else {
-					List<DependencyEntry> del = new ArrayList();
+					List<ExecDependency> del = new ArrayList();
 					del.add(e);
 					dm.put(path, del);
 				}

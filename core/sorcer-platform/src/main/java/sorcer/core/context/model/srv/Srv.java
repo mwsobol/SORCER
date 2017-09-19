@@ -14,7 +14,7 @@ import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Serviceablenes;
+import sorcer.service.modeling.Serviceableness;
 import sorcer.service.modeling.func;
 
 import java.io.Serializable;
@@ -27,7 +27,7 @@ import static sorcer.eo.operator.task;
 /**
  * Created by Mike Sobolewski on 4/14/15.
  */
-public class Srv extends Function<Object> implements Functionality<Object>, Serviceablenes,
+public class Srv extends Function<Object> implements Functionality<Object>, Serviceableness,
         Comparable<Object>, Reactive<Object>, Serializable, func<Object> {
 
     private static Logger logger = LoggerFactory.getLogger(Srv.class.getName());
@@ -260,7 +260,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
     }
 
     @Override
-    public Object exec(Arg... args) throws ServiceException, RemoteException {
+    public Object value(Arg... args) throws ServiceException, RemoteException {
         Domain mod = Arg.getServiceModel(args);
         if (mod != null) {
             if (mod instanceof SrvModel && item instanceof ValueCallable) {

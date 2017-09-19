@@ -9,14 +9,17 @@ package sorcer.service;
 
 import net.jini.core.transaction.TransactionException;
 
+import sorcer.service.modeling.Entrance;
+
 import java.rmi.RemoteException;
 
 /**
  * Created by Mike Sobolewski.
  */
-@FunctionalInterface
 public interface Service {
 
-    public Object exec(Arg... args) throws ServiceException, RemoteException;
+    public Entrance exec(Arg... args) throws ServiceException, RemoteException;
+
+    public Object value(Arg... args) throws ServiceException, RemoteException;
 
 }

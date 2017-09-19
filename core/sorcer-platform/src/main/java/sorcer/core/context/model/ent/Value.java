@@ -12,7 +12,7 @@ import java.net.URL;
 /**
  * @author Mike Sobolewski
  */
-public class Value<V> extends Entry<V> implements Valuation<V>, Comparable<V>, Identifiable, Arg, val<V> {
+public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, Identifiable, Arg, val<T> {
 
     // sequence number for unnamed mogram instances
     private static int count = 0;
@@ -31,21 +31,21 @@ public class Value<V> extends Entry<V> implements Valuation<V>, Comparable<V>, I
         this.key = path;
     }
 
-    public Value(final String path, final V value) {
+    public Value(final String path, final T value) {
         super(path, value);
         if (value instanceof ServiceFidelity) {
             multiFi = (ServiceFidelity) value;
-            item = (V) ((Value) multiFi.get(0)).getItem();
+            item = (T) ((Value) multiFi.get(0)).getItem();
         }
     }
 
-    public Value(String path, V value, int index) {
+    public Value(String path, T value, int index) {
         this.key = path;
         this.item = value;
         this.index = index;
     }
 
-    public Value(String path, V value, boolean isPersistant, int index) {
+    public Value(String path, T value, boolean isPersistant, int index) {
         this(path, value, index);
         this.isPersistent = isPersistant;
     }
@@ -54,10 +54,10 @@ public class Value<V> extends Entry<V> implements Valuation<V>, Comparable<V>, I
         if (isPersistent) {
             try {
                 if (SdbUtil.isSosURL(value)) {
-                    this.item = (V) value;
+                    this.item = (T) value;
                 } else if (SdbUtil.isSosURL(this.item)) {
                     if (((URL) this.item).getRef() == null) {
-                        this.item = (V) SdbUtil.store(value);
+                        this.item = (T) SdbUtil.store(value);
                     } else {
                         SdbUtil.update((URL) this.item, value);
                     }
@@ -66,7 +66,7 @@ public class Value<V> extends Entry<V> implements Valuation<V>, Comparable<V>, I
                 throw new SetterException(e);
             }
         } else {
-            this.item = (V) value;
+            this.item = (T) value;
         }
     }
 
@@ -90,7 +90,7 @@ public class Value<V> extends Entry<V> implements Valuation<V>, Comparable<V>, I
  * @see java.lang.Comparable#compareTo(java.lang.Object)
  */
     @Override
-    public int compareTo(V o) {
+    public int compareTo(T o) {
         if (o == null)
             throw new NullPointerException();
         if (o instanceof Value)
@@ -133,22 +133,22 @@ public class Value<V> extends Entry<V> implements Valuation<V>, Comparable<V>, I
     }
 
     @Override
-    public V value() {
+    public T value() {
         return getData();
     }
 
-    public V get(Arg... args) throws ContextException {
+    public T get(Arg... args) throws ContextException {
         if (args != null && args.length > 0) {
             for (Arg arg : args) {
                 if (arg instanceof Fidelity && multiFi != null) {
                     if (((Fidelity) arg).getPath() == null || ((Fidelity) arg).getPath().equals(key)) {
                         multiFi.setSelect(arg.getName());
-                        item = (V) ((Value) multiFi.getSelect()).get(args);
+                        item = (T) ((Value) multiFi.getSelect()).get(args);
                     }
                 }
             }
         } else if (item instanceof Entry) {
-            return (V) ((Entry)item).getData(args);
+            return (T) ((Entry)item).getData(args);
         }
         return item;
     }

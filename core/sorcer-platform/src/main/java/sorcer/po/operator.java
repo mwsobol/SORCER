@@ -774,7 +774,7 @@ public class operator extends sorcer.operator {
 			}
 			entry = (Entry<T>) new Srv(path, value);
 		} else if (value instanceof List && ((List)value).get(0) instanceof Path) {
-			entry =  (Entry<T>) new DependencyEntry(path, (List)value);
+			entry =  (Entry<T>) new ExecDependency(path, (List)value);
 		} else if (value instanceof ServiceMogram) {
 			entry = (Entry<T>) new MogramEntry(path, (Mogram) value);
 			entry.setType(Functionality.Type.MOGRAM);
