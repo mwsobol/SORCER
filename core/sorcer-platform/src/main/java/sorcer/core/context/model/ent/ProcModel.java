@@ -158,7 +158,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Evaluation#value(sorcer.core.context.Path.Entry[])
+	 * @see sorcer.service.Evaluation#execute(sorcer.core.context.Path.Entry[])
 	 */
 	@Override
 	public Object getValue(Arg... entries) throws EvaluationException {

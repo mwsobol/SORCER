@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 /**
- * Any named configuration parameter value in particular a free variable.
+ * Any named configuration parameter execute in particular a free variable.
  */
 
 public interface Arg extends Serializable {

@@ -17,6 +17,7 @@
 
 package sorcer.core.context;
 
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.service.Domain;
 
@@ -80,7 +81,7 @@ public class Copier implements Evaluation<Context> {
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws MogramException, RemoteException {
 		Domain cxt = Arg.getServiceModel(args);
 		if (cxt != null) {
 			fromContext = (Context) cxt;

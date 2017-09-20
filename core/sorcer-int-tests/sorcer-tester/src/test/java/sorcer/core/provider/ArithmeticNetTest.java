@@ -353,7 +353,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void arithmeticEolExerter() throws Exception {
 		// get the current eval of the exertlet
-		Task task = task("eval", sig("value", Evaluation.class, prvName("Arithmetic Exerter")));
+		Task task = task("eval", sig("execute", Evaluation.class, prvName("Arithmetic Exerter")));
 		logger.info("j1/t3/result/y: " + operator.eval(task, "j1/t3/result/y"));
 		assertEquals(operator.eval(task, "j1/t3/result/y"), 400.0);
 	
@@ -391,7 +391,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void arithmeticApiExerter() throws Exception {
 		// get the current eval of the exertlet
-		NetSignature signature = new NetSignature("value", Evaluation.class,
+		NetSignature signature = new NetSignature("execute", Evaluation.class,
 				Sorcer.getActualName("Arithmetic Exerter"));
 		Task task = new NetTask("eval", signature);
 		Task result = task.exert();
@@ -442,7 +442,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		result = task.exert();
 		out = (Context) result.getReturnValue();
 //		logger.info("result context: " + out);
-//		logger.info("j1/t3/result/y: " + out.value("j1/t3/result/y"));
+//		logger.info("j1/t3/result/y: " + out.execute("j1/t3/result/y"));
 		assertEquals(out.getValue("j1/t3/result/y"), 1210.0);
 
 
@@ -465,7 +465,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		result = (Task)task.exert();
 		out = (Context) result.getReturnValue();
 //		logger.info("result context: " + out);
-//		logger.info("j1/t3/result/y: " + out.value("j1/t3/result/y"));
+//		logger.info("j1/t3/result/y: " + out.execute("j1/t3/result/y"));
 		assertEquals(out.getValue("j1/t3/result/y"), 400.0);
 	}
 

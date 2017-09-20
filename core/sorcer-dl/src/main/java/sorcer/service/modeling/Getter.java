@@ -23,12 +23,12 @@ import java.rmi.RemoteException;
 
 
 /**
- * A getter is a generic agent that returns a value calculated in many different
- * ways. A getter may evaluate provided arguments and return a calculated value
- * by itself or retrieve value from a data repository. Alternatively a getter
+ * A getter is a generic agent that returns a execute calculated in many different
+ * ways. A getter may evaluate provided arguments and return a calculated execute
+ * by itself or retrieve execute from a data repository. Alternatively a getter
  * may use a target as an independent agent at which the getting operation is
- * aimed (the third party service) to obtain the requested value or finally as a
- * filter that can filter out the value from the provided target.
+ * aimed (the third party service) to obtain the requested execute or finally as a
+ * filter that can filter out the execute from the provided target.
  *
  * @author Mike Sobolewski
  */

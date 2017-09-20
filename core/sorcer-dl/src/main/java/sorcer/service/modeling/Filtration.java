@@ -28,9 +28,9 @@ import java.rmi.RemoteException;
 public interface Filtration<T> extends Item, EvaluationComponent, SupportComponent {
 
     /**
-     * Returns the filtered out value from the given input.
+     * Returns the filtered out execute from the given input.
      *
-     * @return the filtered out value
+     * @return the filtered out execute
      * @throws FilterException
      * @throws RemoteException
      */

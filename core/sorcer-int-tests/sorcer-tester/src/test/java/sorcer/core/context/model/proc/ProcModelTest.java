@@ -70,12 +70,12 @@ public class ProcModelTest {
 		assertEquals(pm.getValue("add"), 30.0);
 
 		responseUp(pm, "add");
-//		logger.info("pm context eval: " + pm.value());
+//		logger.info("pm context eval: " + pm.execute());
 		assertEquals(pm.getValue(), 30.0);
 
 		pm.putValue("x", 100.0);
 		pm.putValue("y", 200.0);
-//		logger.info("add eval: " + pm.value("add"));
+//		logger.info("add eval: " + pm.execute("add"));
 		assertEquals(pm.getValue("add"), 300.0);
 
 		assertEquals(pm.invoke(context(inVal("x", 200.0), inVal("y", 300.0))), 500.0);

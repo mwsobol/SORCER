@@ -33,10 +33,10 @@ import java.util.Arrays;
  * A service <code>Signature</code> is an indirect behavioral feature of
  * {@link Exertion}s that declares a service that can be performed by instances
  * of {@link Service}s. It contains a service fiType and a selector of operation
- * of that service fiType (interface). Its implicit parameter and return value is
+ * of that service fiType (interface). Its implicit parameter and return execute is
  * a service {@link Context}. Thus, the explicit signature of service-oriented
  * operations is defined by the same {@link Context} fiType for any exertion
- * parameter and return value . A signature may include a collection of optional
+ * parameter and return execute . A signature may include a collection of optional
  * attributes describing a preferred {@link Service} with a given service fiType.
  * Also a signature can carry own implementation when its fiType is implemented
  * with the provided codebase.
@@ -49,7 +49,7 @@ import java.util.Arrays;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Signature extends Item, Comparable, Dependency, Identifiable,
+public interface Signature extends Request, Comparable, Dependency, Identifiable,
 		EvaluationComponent, SupportComponent, Serializable {
 
 	/**
@@ -113,29 +113,29 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 	public Class[] getMatchTypes();
 
 	/**
-	 * Assigns a path to the return value by this signature.
+	 * Assigns a path to the return execute by this signature.
 	 *
 	 * @param path
-	 *            to the return value
+	 *            to the return execute
 	 */
 	public void setReturnPath(SignatureReturnPath path);
 
 	public void setReturnPath(String path);
 
 	/**
-	 * Assigns a path to the return value with a path and directional attribute.
+	 * Assigns a path to the return execute with a path and directional attribute.
 	 *
 	 * @param path
-	 *            to the return value
+	 *            to the return execute
 	 * @param direction
 	 *            the path directional attribute
 	 */
 	public void setReturnPath(String path, Direction direction);
 
 	/**
-	 * Returns a path to the return value by this signature.
+	 * Returns a path to the return execute by this signature.
 	 *
-	 * @return path to the return value
+	 * @return path to the return execute
 	 */
 	public SignatureReturnPath getReturnPath();
 

@@ -97,7 +97,7 @@ public class operator extends sorcer.operator {
 
 	public static Object revalue(Context context, String path,
 								 Arg... entries) throws ContextException {
-		Object obj = value(context, path, entries);
+		Object obj = sorcer.co.operator.value(context, path, entries);
 		if (obj instanceof Evaluation) {
             try {
                 obj = ((Evaluation) obj).getValue(entries);
@@ -114,8 +114,8 @@ public class operator extends sorcer.operator {
 		if (object instanceof Entry) {
 			obj = ((Entry) object).get(entries);
 		} else if (object instanceof Context) {
-			obj = value((Context) object, path, entries);
-			obj = value((Context) obj, entries);
+			obj = sorcer.co.operator.value((Context) object, path, entries);
+			obj = sorcer.co.operator.value((Context) obj, entries);
 		} else {
 			obj = object;
 		}
@@ -129,7 +129,7 @@ public class operator extends sorcer.operator {
 		if (object instanceof Entry) {
 			obj =  ((Entry) object).get(entries);
 		} else if (object instanceof Context) {
-            obj = value((Context) object, entries);
+            obj = sorcer.co.operator.value((Context) object, entries);
 		}
         } catch (ContextException e) {
             throw new EvaluationException(e);
@@ -233,7 +233,7 @@ public class operator extends sorcer.operator {
 	public static Context data(Object... entries) throws ContextException {
 		for (Object obj : entries) {
 			if (!(obj instanceof String) || !(obj instanceof Function && ((Function)obj).getType().equals(Functionality.Type.VAL))) {
-				throw new ContextException("Not value entry " + obj.toString());
+				throw new ContextException("Not execute entry " + obj.toString());
 			}
 		}
 		return context(entries);
@@ -1401,21 +1401,21 @@ public class operator extends sorcer.operator {
 		return signature;
 	}
 
-	public static ServiceFidelity<Fidelity> fi(String name, Fidelity... selectors) {
-		ServiceFidelity<Fidelity> fi = new ServiceFidelity(name, selectors);
+	public static MetaFi fi(String name, Fidelity... selectors) {
+		MetaFi fi = new MetaFi(name, selectors);
 		fi.fiType = ServiceFidelity.Type.META;
 		return fi;
 	}
 
-	public static List<Signature>  fis(Mogram exertion) {
+	public static List<Service>  fis(Mogram exertion) {
 		return ((ServiceMogram) exertion).getServiceFidelities().get(exertion.getName()).getSelects();
 	}
 
-	public static ServiceFidelity<Signature> fi(Mogram mogram) {
+	public static Fidelity fi(Mogram mogram) {
 		return mogram.getSelectedFidelity();
 	}
 
-	public static ServiceFidelity<Signature> fi(Mogram mogram, String selection) {
+	public static Fidelity fi(Mogram mogram, String selection) {
 		return mogram.selectFidelity(selection);
 	}
 
@@ -1423,41 +1423,41 @@ public class operator extends sorcer.operator {
 		return ((ServiceExertion) exertion).getSelectedFidelitySelector();
 	}
 
-	public static Map<String, ServiceFidelity> srvFis(Exertion exertion) {
+	public static Map<String, Fidelity> srvFis(Exertion exertion) {
 		return exertion.getFidelities();
 	}
 
-	public static MorphFidelity<Request> mFi(Morpher morpher, Request... services) {
-		MorphFidelity<Request> morphFi = new MorphFidelity(new ServiceFidelity(services));
+	public static MorphFidelity mFi(Morpher morpher, Service... services) {
+		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity((Service[]) services));
 		morphFi.setMorpher(morpher);
 		return morphFi;
 	}
 
-	public static MorphFidelity<Request> mFi(String name, Morpher morpher, Request... services) {
-		MorphFidelity<Request> morphFi = new MorphFidelity(new ServiceFidelity(name, services));
+	public static MorphFidelity mFi(String name, Morpher morpher, Request... services) {
+		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
 		morphFi.setMorpher(morpher);
 		morphFi.setPath(name);
 		return morphFi;
 	}
 
-	public static MorphFidelity<Request> mFi(Request... services) {
-		MorphFidelity<Request> morphFi = new MorphFidelity(new ServiceFidelity(services));
+	public static MorphFidelity mFi(Request... services) {
+		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(services));
 		return morphFi;
 	}
 
-	public static MorphFidelity<Request> mFi(String name, Request... services) {
-		MorphFidelity<Request> morphFi = new MorphFidelity(new ServiceFidelity(name, services));
+	public static MorphFidelity mFi(String name, Request... services) {
+		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
 		return morphFi;
 	}
 
-	public static ServiceFidelity<Request> rFi(Request... services) {
-		ServiceFidelity<Request> srvFi = new ServiceFidelity(services);
+	public static ServiceFidelity rFi(Request... services) {
+		ServiceFidelity srvFi = new ServiceFidelity(services);
 		srvFi.fiType = ServiceFidelity.Type.REQUEST;
 		return srvFi;
 	}
 
-	public static ServiceFidelity<Request> rFi(String name, Request... services) {
-		ServiceFidelity<Request> srvFi = new ServiceFidelity(services);
+	public static ServiceFidelity rFi(String name, Request... services) {
+		ServiceFidelity srvFi = new ServiceFidelity(services);
 		srvFi.setPath(name);
 		srvFi.fiType = ServiceFidelity.Type.REQUEST;
 		return srvFi;
@@ -1467,55 +1467,74 @@ public class operator extends sorcer.operator {
 		((MultiFiMogram)mogram).selectFidelity(selection);
 	}
 
-	public static MultiFiMogram fiMog(ServiceFidelity<Request> fidelity) {
+	public static MultiFiMogram fiMog(MetaFi fidelity) {
 		return new MultiFiMogram(fidelity.getName(), fidelity);
 	}
-	public static MultiFiMogram fiMog(MorphFidelity<Request> fidelity) {
+	public static MultiFiMogram fiMog(MorphFidelity fidelity) {
 		return new MultiFiMogram(fidelity.getName(), fidelity);
 	}
 
-	public static MultiFiMogram fiMog(String name, ServiceFidelity<Request> fidelity) {
-		return new MultiFiMogram(name, fidelity);
-	}
-	public static MultiFiMogram fiMog(String name, MorphFidelity<Request> fidelity) {
+	public static MultiFiMogram fiMog(String name, MetaFi fidelity) {
 		return new MultiFiMogram(name, fidelity);
 	}
 
-	public static MultiFiMogram fiMog(ServiceFidelity<Request> fidelity, Context context) {
+	public static MultiFiMogram fiMog(String name, ServiceFidelity fidelity) {
+		return new MultiFiMogram(name, fidelity);
+	}
+
+	public static MultiFiMogram fiMog(String name, MorphFidelity fidelity) {
+		return new MultiFiMogram(name, fidelity);
+	}
+
+	public static MultiFiMogram fiMog(MetaFi fidelity, Context context) {
 		return new MultiFiMogram(context, fidelity);
 	}
 
-	public static MultiFiMogram fiMog(String name, MorphFidelity<Request> fidelity, Context context) {
+	public static MultiFiMogram fiMog(ServiceFidelity fidelity, Context context) {
+		MultiFiMogram mfr = new MultiFiMogram(fidelity);
+		mfr.setScope(context);
+		mfr.setName(fidelity.getName());
+		return mfr;
+	}
+
+	public static MultiFiMogram fiMog(String name, ServiceFidelity fidelity, Context context) {
+		MultiFiMogram mfr = new MultiFiMogram(name, fidelity);
+		mfr.setScope(context);
+		mfr.setName(fidelity.getName());
+		return mfr;
+	}
+
+	public static MultiFiMogram fiMog(String name, MorphFidelity fidelity, Context context) {
 		MultiFiMogram mfr = new MultiFiMogram(context, fidelity);
 		mfr.setName(fidelity.getName());
 		return mfr;
 	}
 
-	public static MultiFiMogram fiMog(MorphFidelity<Request> fidelity, Context context) {
+	public static MultiFiMogram fiMog(MorphFidelity fidelity, Context context) {
 		MultiFiMogram mfr = new MultiFiMogram(context, fidelity);
 		mfr.setName(fidelity.getName());
 		return mfr;
 	}
 
-	public static MorphFidelity<Signature> multiFi(Signature... signatures) {
-		MorphFidelity<Signature> multiFi = new MorphFidelity(new ServiceFidelity(signatures));
+	public static MorphFidelity multiFi(Signature... signatures) {
+		MorphFidelity multiFi = new MorphFidelity(new ServiceFidelity(signatures));
 		return multiFi;
 	}
 
-	public static ServiceFidelity<Signature> sFi(Signature... signatures) {
-		ServiceFidelity<Signature> fi = new ServiceFidelity(signatures);
+	public static ServiceFidelity sFi(Signature... signatures) {
+		ServiceFidelity fi = new ServiceFidelity(signatures);
 		fi.fiType = ServiceFidelity.Type.SIG;
 		return fi;
 	}
 
-	public static ServiceFidelity<Function> entFi(String fiName, Value... entries) {
-		ServiceFidelity<Function> fi = new ServiceFidelity(fiName, entries);
+	public static ServiceFidelity entFi(String fiName, Value... entries) {
+		ServiceFidelity fi = new ServiceFidelity(fiName, entries);
 		fi.fiType = ServiceFidelity.Type.ENTRY;
 		return fi;
 	}
 
-	public static ServiceFidelity<NeoFidelity> mnFi(NeoFidelity... fidelities) {
-		ServiceFidelity<NeoFidelity> fi = new ServiceFidelity(fidelities);
+	public static ServiceFidelity mnFi(NeoFidelity... fidelities) {
+		ServiceFidelity fi = new ServiceFidelity(fidelities);
 		fi.fiType = ServiceFidelity.Type.NEO;
 		return fi;
 	}
@@ -1538,8 +1557,8 @@ public class operator extends sorcer.operator {
         return fi;
     }
 
-	public static ServiceFidelity<Function> entFi(Entry... entries) {
-		ServiceFidelity<Function> fi = new ServiceFidelity(entries);
+	public static Fidelity<Entrance> entFi(Entrance... entries) {
+		Fidelity<Entrance> fi = new Fidelity(entries);
 		fi.fiType = ServiceFidelity.Type.ENTRY;
 		return fi;
 	}
@@ -1656,8 +1675,8 @@ public class operator extends sorcer.operator {
 	}
 
 
-	public static ServiceFidelity<Path> rFi(String name, String path) {
-		ServiceFidelity<Path> fi = new ServiceFidelity(name, path(path));
+	public static ServiceFidelity rFi(String name, String path) {
+		ServiceFidelity fi = new ServiceFidelity(name, path(path));
 		fi.setPath(path);
 		fi.setSelect(path);
 		fi.fiType = ServiceFidelity.Type.SELECT;
@@ -1671,22 +1690,22 @@ public class operator extends sorcer.operator {
 		return fi;
 	}
 
-	public static ServiceFidelity<Signature> sFi(String name, Signature... signatures) {
-		ServiceFidelity<Signature> fi = new ServiceFidelity(name, signatures);
+	public static ServiceFidelity sFi(String name, Signature... signatures) {
+		ServiceFidelity fi = new ServiceFidelity(name, signatures);
 		fi.setSelect(signatures[0]);
 		fi.fiType = ServiceFidelity.Type.SIG;
 		return fi;
 	}
 
-	public static ServiceFidelity<Ref> sFi(String name, Ref... references) {
-		ServiceFidelity<Ref> fi = new ServiceFidelity(name, references);
+	public static ServiceFidelity sFi(String name, Ref... references) {
+		ServiceFidelity fi = new ServiceFidelity(name, references);
 		fi.setSelect(references[0]);
 		fi.fiType = ServiceFidelity.Type.REF;
 		return fi;
 	}
 
-	public static ServiceFidelity<Ref> sFi(Ref... references) {
-		ServiceFidelity<Ref> fi = new ServiceFidelity(references);
+	public static ServiceFidelity sFi(Ref... references) {
+		ServiceFidelity fi = new ServiceFidelity(references);
 		fi.fiType = ServiceFidelity.Type.REF;
 		return fi;
 	}
@@ -1837,8 +1856,8 @@ public class operator extends sorcer.operator {
 		String name = null;
 		String selector = null;
 		List<String> strings = new ArrayList();
-		List<Signature> sigs = new ArrayList();
-		Signature srvSig = null;
+		List<Service> sigs = new ArrayList();
+		Service srvSig = null;
 		Context context = null;
 		ControlContext cc = null;
 		// structural pass
@@ -1859,9 +1878,9 @@ public class operator extends sorcer.operator {
 		if (sigs.size() == 1) {
 			srvSig = sigs.get(0);
 		} else if (sigs.size() > 1) {
-			for (Signature s : sigs) {
-				if (s.getType() == Signature.SRV) {
-					srvSig = s;
+			for (Object s : sigs) {
+				if (s instanceof Signature && ((Signature)s).getType() == Signature.SRV) {
+					srvSig = (Signature)s;
 					break;
 				}
 			}
@@ -1871,11 +1890,11 @@ public class operator extends sorcer.operator {
 			if (operation != null) {
 				selector = operation.selector;
 			} else {
-				selector = srvSig.getSelector();
+				selector = ((Signature)srvSig).getSelector();
 			}
 
 			if (name == null) {
-				name = srvSig.getSelector();
+				name = ((Signature)srvSig).getSelector();
 			}
 		}
 		if (strings.size()==1) {
@@ -1895,15 +1914,15 @@ public class operator extends sorcer.operator {
 		if (srvSig != null) {
 			try {
 				if (((ServiceSignature)srvSig).isModelerSignature()) {
-					task = (Task) modelerTask(name, srvSig);
+					task = (Task) modelerTask(name, (Signature)srvSig);
 				} else if (srvSig.getClass() == ObjectSignature.class) {
-					task = new ObjectTask(name, srvSig);
+					task = new ObjectTask(name, (Signature) srvSig);
 				} else if (srvSig.getClass() == NetSignature.class) {
-					task = new NetTask(name, srvSig);
+					task = new NetTask(name,  (Signature) srvSig);
 				} else if (srvSig.getClass() == EvaluationSignature.class) {
 					task = new EvaluationTask(name, (EvaluationSignature)srvSig);
 				} else if (srvSig.getClass() == ServiceSignature.class) {
-					task = new Task(name, srvSig);
+					task = new Task(name,  (Signature) srvSig);
 				}
 			} catch (SignatureException e) {
 				throw new ExertionException(e);
@@ -1918,7 +1937,7 @@ public class operator extends sorcer.operator {
 		Strategy.FidelityManagement fm = null;
 		Access access = null;
 		Flow flow = null;
-		List<ServiceFidelity> fis = new ArrayList<>();
+		List<Service> fis = new ArrayList<>();
 		MorphFidelity mFi = null;
 		// configuration pass
 		for (Object o : items) {
@@ -1967,15 +1986,15 @@ public class operator extends sorcer.operator {
 			srvFi.setName(name);
 			srvFi.setPath(name);
 			task.putFidelity(name, srvFi);
-			task.setSelectedFidelity(fis.get(0));
-			task.setSelectedFidelitySelector(fis.get(0).getName());
-			for (ServiceFidelity fi : fis) {
-				fi.setPath(task.getName());
+			task.setSelectedFidelity((ServiceFidelity)fis.get(0));
+			task.setSelectedFidelitySelector(((Identifiable)fis.get(0)).getName());
+			for (Service fi : fis) {
+				((ServiceFidelity)fi).setPath(task.getName());
 			}
 		}
 
 		if (mFi != null) {
-			List<ServiceFidelity> sList = mFi.getFidelity().getSelects();
+			List<Service> sList = mFi.getFidelity().getSelects();
 			ServiceFidelity first = (ServiceFidelity) mFi.getFidelity().getSelects().get(0);
 			mFi.setName(task.getName());
 			mFi.setPath(task.getName());
@@ -1984,7 +2003,7 @@ public class operator extends sorcer.operator {
 			for (Object fi : sList) {
 				((ServiceFidelity)fi).setPath(name);
 			}
-			task.putFidelity(task.getName(), mFi.getFidelity());
+			task.putFidelity(task.getName(), (Fidelity) mFi.getFidelity());
 			task.setSelectedFidelitySelector(first.getName());
 			task.setServiceMorphFidelity(mFi);
 			task.setSelectedFidelity(first);
@@ -2192,9 +2211,9 @@ public class operator extends sorcer.operator {
 		List<Pipe> pipes = new ArrayList();
 		FidelityManager fiManager = null;
 		Strategy.FidelityManagement fm = null;
-		List<ServiceFidelity> fis = new ArrayList<>();
+		List<Service> fis = new ArrayList<>();
 		MorphFidelity mFi = null;
-		List<ServiceFidelity<ServiceFidelity>> metaFis = new ArrayList();
+		List<Fidelity> metaFis = new ArrayList();
 		List<MapContext> connList = new ArrayList();
 
 		for (int i = 0; i < elems.length; i++) {
@@ -2220,7 +2239,7 @@ public class operator extends sorcer.operator {
 				mFi = (MorphFidelity) elems[i];
 			} else if (elems[i] instanceof ServiceFidelity) {
 				if (((ServiceFidelity) elems[i]).getFiType().equals(ServiceFidelity.Type.META)) {
-					metaFis.add((ServiceFidelity<ServiceFidelity>) elems[i]);
+					metaFis.add((ServiceFidelity) elems[i]);
 				} else {
 					fis.add(((ServiceFidelity) elems[i]));
 				}
@@ -2250,10 +2269,10 @@ public class operator extends sorcer.operator {
 			srvFi.setName(name);
 			srvFi.setPath(name);
 			job.putFidelity(name, srvFi);
-			job.setSelectedFidelity(fis.get(0));
-			job.setSelectedFidelitySelector(fis.get(0).getName());
-			for (ServiceFidelity fi : fis) {
-				fi.setPath(job.getName());
+			job.setSelectedFidelity((ServiceFidelity)fis.get(0));
+			job.setSelectedFidelitySelector(((Identifiable)fis.get(0)).getName());
+			for (Service fi : fis) {
+				((ServiceFidelity)fi).setPath(job.getName());
 			}
 		}
 
@@ -2275,7 +2294,7 @@ public class operator extends sorcer.operator {
 		}
 
 		if (mFi != null) {
-			List<ServiceFidelity> sList = mFi.getFidelity().getSelects();
+			List<Service> sList = mFi.getFidelity().getSelects();
 			ServiceFidelity first = (ServiceFidelity) mFi.getFidelity().getSelects().get(0);
 			mFi.setName(job.getName());
 			mFi.setPath(job.getName());
@@ -2292,8 +2311,8 @@ public class operator extends sorcer.operator {
 		}
 
 		if (metaFis.size() > 0) {
-			ServiceFidelity<ServiceFidelity> metaFi = new ServiceFidelity(name, metaFis);
-			ServiceFidelity first = metaFis.get(0);
+			MetaFi metaFi = new MetaFi(name, metaFis);
+			Fidelity first = metaFis.get(0);
 			metaFi.setSelect(first);
 			metaFi.setName(job.getName());
 			metaFi.setPath(job.getName());
@@ -2301,7 +2320,7 @@ public class operator extends sorcer.operator {
 				((ServiceFidelity)fi).setPath(name);
 			}
 			job.putMetafidelity(job.getName(), metaFi);
-			job.setSelectedMetafidelity(first);
+			job.setSelectedMetafidelity((Metafidelity) first);
 		}
 
 		if (fm == Strategy.FidelityManagement.YES && job.getFidelityManager() == null
@@ -2493,136 +2512,6 @@ public class operator extends sorcer.operator {
         }
     }
 
-	public static <T extends Mogram> T exert(Exerter service, T mogram, Arg... entries)
-			throws TransactionException, MogramException, RemoteException {
-		return service.exert(mogram, null, entries);
-	}
-
-	public static <T extends Mogram> T exert(Mogram service, T mogram, Arg... entries)
-			throws TransactionException, MogramException, RemoteException {
-		return service.exert(mogram, null, entries);
-	}
-
-	public static <T extends Mogram> T exert(Mogram service, T mogram, Transaction txn, Arg... entries)
-			throws TransactionException, MogramException, RemoteException {
-		return service.exert(mogram, txn, entries);
-	}
-
-	public static Object execItem(Item item, Arg... args) throws ServiceException {
-		try {
-			return item.exec(args);
-		} catch (RemoteException e) {
-			throw new ServiceException(e);
-		}
-	}
-
-	public static Object eval(Mogram mogram, Arg... args) throws MogramException {
-		try {
-			synchronized (mogram) {
-				if (mogram instanceof Exertion) {
-					return exec(mogram, args);
-				} else if (mogram instanceof Model) {
-					return ((Model)mogram).getResponse(args);
-				}
-			}
-		} catch (RemoteException | ServiceException e) {
-			throw new MogramException(e);
-		}
-		return null;
-	}
-
-	public static <T> T eval(ServiceInvoker<T> invoker, Arg... args)
-			throws EvaluationException {
-		try {
-			if (invoker instanceof Incrementor){
-                    return ((Incrementor<T>) invoker).next();
-                } else {
-				return invoker.invoke(args);
-			}
-		} catch (RemoteException e) {
-			throw new EvaluationException(e);
-		}
-	}
-
-	public static <T> T eval(ent<T> entry, Arg... args)
-			throws EvaluationException {
-        try {
-            synchronized (entry) {
-//                if (entry instanceof Entry) {
-//                    try {
-//                        return (T) ((Entry)entry).getValue(args);
-//                    } catch (RemoteException e) {
-//                        throw new EvaluationException(e);
-//                    }
-//                } else
-                if (entry instanceof Valuation) {
-                    return (T) ((Valuation) entry).get(args);
-                } else if (entry instanceof Exertion) {
-                    return (T) exec((Entry) entry, args);
-                } else if (((Entry) entry).asis() instanceof ServiceContext) {
-                    return (T) ((ServiceContext) ((Entry) entry).asis()).getValue(((Entry) entry).getName());
-                } else if (entry instanceof Incrementor) {
-                        return ((Incrementor<T>) entry).next();
-                } else if (entry instanceof Evaluation){
-                    return (T) ((Evaluation) entry).getValue(args);
-                } else {
-                    return (T) ((Entry)entry).get(args);
-                }
-            }
-        } catch (Exception e) {
-            throw new EvaluationException(e);
-        }
-    }
-
-
-//    public static <T> T eval(Evaluation<T> evaluation, Arg... args)
-//            throws EvaluationException {
-//        try {
-//            synchronized (evaluation) {
-//                if (evaluation instanceof Exertion) {
-//                    return (T) exec(evaluation, args);
-//                } else if (evaluation instanceof Entry){
-//                    if (evaluation.asis() instanceof ServiceContext) {
-//                        return (T) ((ServiceContext)evaluation.asis()).value(evaluation.getName());
-//                    } else {
-//                        return evaluation.value(args);
-//                    }
-//                } else if (evaluation instanceof Incrementor){
-//                    return ((Incrementor<T>) evaluation).next();
-//                } else {
-//                    return (T) ((Evaluation)evaluation).value(args);
-//                }
-//            }
-//        } catch (Exception e) {
-//            throw new EvaluationException(e);
-//        }
-//    }
-
-	public static Object eval(Exertion exertion, String selector,
-							 Arg... args) throws EvaluationException {
-			try {
-				exertion.getDataContext().setReturnPath(new ReturnPath(selector));
-				return exec(exertion, args);
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new EvaluationException(e);
-			}
-		}
-
-	/**
-	 * Assigns the tag for this context, for example "triplet|one|two|three" is a
-	 * tag (relation) named 'triplet' as a product of three "places" one, two, three.
-	 *
-	 * @param context
-	 * @param association
-	 * @throws ContextException
-	 */
-	public static Context tagAssociation(Context context, String association)
-			throws ContextException {
-		context.setAttribute(association);
-		return context;
-	}
-
 	/**
 	 * Associates a given path in this context with a tag
 	 * defined for this context. If a tag, for example, is
@@ -2706,55 +2595,6 @@ public class operator extends sorcer.operator {
 
 	public static void print(Object obj) {
 		System.out.println(obj.toString());
-	}
-
-	public static Object exec(Service service, Arg... args) throws ServiceException, RemoteException {
-		try {
-			if (service instanceof Entry || service instanceof Signature ) {
-				return service.exec(args);
-			} else if (service instanceof Context || service instanceof MultiFiMogram) {
-				if (service instanceof Model) {
-					return ((Model)service).getResponse(args);
-				} else {
-					return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
-				}
-			} else if (service instanceof Exertion) {
-				return new ServiceShell().evaluate((Mogram) service, args);
-			} else if (service instanceof Evaluation) {
-				return ((Evaluation) service).getValue(args);
-			} else if (service instanceof Modeling) {
-				Domain cxt = Arg.getServiceModel(args);
-				if (cxt != null) {
-					return ((Modeling) service).evaluate((ServiceContext)cxt);
-				} else {
-					((Context)service).substitute(args);
-					((Modeling) service).evaluate();
-				}
-				return ((Model)service).getResult();
-			}else {
-				return service.exec(args);
-			}
-		} catch (Exception e) {
-			throw new ServiceException(e);
-		}
-	}
-
-	public static List<ThrowableTrace> exceptions(Exertion exertion) throws RemoteException {
-		return exertion.getExceptions();
-	}
-
-	public static <T extends Mogram> T exert(T mogram, Arg... args) throws MogramException {
-		try {
-			return mogram.exert(null, args);
-		} catch (Exception e) {
-			throw new ExertionException(e);
-		}
-	}
-
-	public static <T extends Mogram> T exert(T input,
-											 Transaction transaction,
-											 Arg... entries) throws ExertionException {
-		return new sorcer.core.provider.exerter.ServiceShell().exert(input, transaction, entries);
 	}
 
 	public static OutputValue output(Object value) {

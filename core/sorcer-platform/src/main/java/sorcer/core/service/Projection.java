@@ -17,10 +17,7 @@
 
 package sorcer.core.service;
 
-import sorcer.service.Arg;
-import sorcer.service.Fidelity;
-import sorcer.service.FidelityList;
-import sorcer.service.ServiceFidelity;
+import sorcer.service.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +26,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 6/26/16.
  */
-public class Projection extends ServiceFidelity<Fidelity> {
+public class Projection extends ServiceFidelity {
 
 	public Projection(Fidelity fidelity) {
 		this.fiName = fidelity.getName();
@@ -41,7 +38,7 @@ public class Projection extends ServiceFidelity<Fidelity> {
 		this.selects = Arrays.asList(fidelities);
 	}
 
-    public Projection(List<Fidelity> fidelities) {
+    public Projection(List<Service> fidelities) {
         super();
         this.selects = fidelities;
     }
@@ -60,10 +57,10 @@ public class Projection extends ServiceFidelity<Fidelity> {
 	}
 
 	public Fidelity getSelect() {
-		return select;
+		return (Fidelity) select;
 	}
 
-	public List<Fidelity> getFidelities() {
+	public List<Service> getFidelities() {
 		return selects;
 	}
 
@@ -83,7 +80,8 @@ public class Projection extends ServiceFidelity<Fidelity> {
 	}
 
 	public void setFidelities(FidelityList fidelities) {
-		this.selects = fidelities;
+		List<Service> sl = new ArrayList<>();
+		this.selects = fidelities.toServiceList();
 	}
 
 	@Override
@@ -139,11 +137,11 @@ public class Projection extends ServiceFidelity<Fidelity> {
 
 	public List<Fidelity> getAllFidelities() {
 		List<Fidelity> out = new ArrayList();
-		for (Fidelity fi : selects) {
+		for (Service fi : selects) {
 			if (fi instanceof Projection) {
 				out.addAll(selectFidelities(((Projection)fi).getAllFidelities()));
 			} else if (fi.getClass() == Fidelity.class) {
-				out.add(fi);
+				out.add((Fidelity) fi);
 			}
 		}
 		return out;
@@ -151,17 +149,31 @@ public class Projection extends ServiceFidelity<Fidelity> {
 
 	public static List<Fidelity> selectFidelities(Arg[] entries) {
 		FidelityList out = new FidelityList();
-		for (Arg a : entries) {
-			if (a instanceof Projection) {
-				out.addAll(((Projection) a).getAllFidelities());
-			} else if (a instanceof FidelityList) {
-				out.addAll((FidelityList) a);
-			} else if (a instanceof Fidelity && ((Fidelity)a).fiType == Fidelity.Type.SELECT) {
-				out.add((Fidelity)a);
+		for (Arg s : entries) {
+			if (s instanceof Projection) {
+				out.addAll(((Projection) s).getAllFidelities());
+			} else if (s instanceof FidelityList) {
+				out.addAll((FidelityList) s);
+			} else if (s instanceof Fidelity && ((Fidelity)s).fiType == Fidelity.Type.SELECT) {
+				out.add((Fidelity)s);
 			}
 		}
 		return out;
 	}
+
+//	public static List<Fidelity> selectFidelities(Service[] entries) {
+//		FidelityList out = new FidelityList();
+//		for (Service s : entries) {
+//			if (s instanceof Projection) {
+//				out.addAll(((Projection) s).getAllFidelities());
+//			} else if (s instanceof FidelityList) {
+//				out.addAll((FidelityList) s);
+//			} else if (s instanceof Fidelity && ((Fidelity)s).fiType == Fidelity.Type.SELECT) {
+//				out.add((Fidelity)s);
+//			}
+//		}
+//		return out;
+//	}
 
 	public ServiceFidelity[] toFidelityArray() {
 		List<Fidelity> allFi = getAllFidelities();

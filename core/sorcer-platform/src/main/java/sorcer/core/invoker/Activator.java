@@ -38,7 +38,7 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
         defaultName = "activator-";
     }
 
-    protected ServiceFidelity<NeoFidelity> fidelities;
+    protected ServiceFidelity fidelities;
 
     // linear transformation of the input vector
     double bias = 0.0;
@@ -139,16 +139,16 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
         return sum;
     }
 
-    public ServiceFidelity<NeoFidelity> getFidelities() {
+    public ServiceFidelity getFidelities() {
         return fidelities;
     }
 
-    public void setFidelities(ServiceFidelity<NeoFidelity> fidelities) {
+    public void setFidelities(ServiceFidelity fidelities) {
         this.fidelities = fidelities;
     }
 
     private void applyFidelity() {
-        NeoFidelity fi = fidelities.getSelect();
+        NeoFidelity fi = (NeoFidelity) fidelities.getSelect();
         if (fi.getWeights() != null) {
             weights = fi.getWeights();
         }

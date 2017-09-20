@@ -235,7 +235,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			if (lambda != null || evaluator != null)
 				return (T) invokeEvaluator(entries);
 			else
-				throw new EvaluationException("Evaluation#value() not implemented by: " + this.getClass().getName());
+				throw new EvaluationException("Evaluation#execute() not implemented by: " + this.getClass().getName());
 			
 	}
 
@@ -595,7 +595,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws MogramException, RemoteException {
 		Context cxt = (Context)Arg.getServiceModel(args);
 		if (cxt !=null) {
 			invokeContext = cxt;

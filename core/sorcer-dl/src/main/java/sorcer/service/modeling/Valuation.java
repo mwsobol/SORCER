@@ -17,32 +17,23 @@
 
 package sorcer.service.modeling;
 
-import sorcer.service.Arg;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.EvaluationException;
-import sorcer.service.modeling.EvaluationComponent;
-import sorcer.service.modeling.SupportComponent;
-
-import java.rmi.RemoteException;
-
 
 /**
- * The functionality for all value objects.
+ * The functionality for all execute objects.
  * 
  * @author Mike Sobolewski
  */
 public interface Valuation<T> extends Entrance<T> {
 
 	/**
-	 * Returns the current value of this valuation.
+	 * Returns the current execute of this valuation.
 	 * 
-	 * @return the current value of this valuation
+	 * @return the current execute of this valuation
 	 */
 	public T value();
 
 	/**
-	 * Sets the current value of this valuation.
+	 * Sets the current execute of this valuation.
 	 **/
 	public void set(T value) ;
 }

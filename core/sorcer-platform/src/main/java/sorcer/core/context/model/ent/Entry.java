@@ -13,7 +13,7 @@ import sorcer.util.url.sos.SdbUtil;
 import java.net.URL;
 import java.rmi.RemoteException;
 
-public class Entry<V> extends Association<String, V> implements Entrance<V>, Callable<V>, Service, Setter, ent<V> {
+public class Entry<V> extends Association<String, V> implements Entrance<V>, Callable<V>, Setter, ent<V> {
 
     protected boolean negative;
 
@@ -108,7 +108,7 @@ public class Entry<V> extends Association<String, V> implements Entrance<V>, Cal
             } else if (val instanceof Callable) {
                 val = (V) ((Callable)val).call(args);
             } else if (val instanceof Service) {
-                out = (V) ((Service)val).exec(args);
+                out = (V) ((Service)val).execute(args);
             }
             out = val;
         } catch (Exception e) {
@@ -146,7 +146,7 @@ public class Entry<V> extends Association<String, V> implements Entrance<V>, Cal
     }
 
 
-    public Object value(Arg... args) throws ServiceException, RemoteException {
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
         Domain cxt = Arg.getServiceModel(args);
         if (cxt != null) {
             // entry substitution
@@ -158,13 +158,23 @@ public class Entry<V> extends Association<String, V> implements Entrance<V>, Cal
     }
 
     @Override
-    public Entry exec(Arg... args) throws ServiceException, RemoteException {
-       Object result = value(args);
+    public Entry act(Arg... args) throws ServiceException, RemoteException {
+       Object result = this.execute(args);
        if (result instanceof Entry) {
            return (Entry)result;
        } else {
            return new Entry(key, result);
        }
+    }
+
+    @Override
+    public Entrance act(String entryName, Arg... args) throws ServiceException, RemoteException {
+        Object result = this.execute(args);
+        if (result instanceof Entry) {
+            return (Entry)result;
+        } else {
+            return new Entry(entryName, result);
+        }
     }
 
     @Override

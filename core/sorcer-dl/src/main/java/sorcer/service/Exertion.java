@@ -112,14 +112,14 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>, Evalua
 	public Mogram getComponentMogram(String path);
 	
 	/**
-	 * Returns a value associated with a path (key) in this exertion's context.
+	 * Returns a execute associated with a path (key) in this exertion's context.
 	 * 
 	 * @return a referenced by a path object
 	 */
 	public Object getValue(String path, Arg... args) throws ContextException;
 		
 	/**
-	 * Returns a return value associated with a return path in this exertion's context.
+	 * Returns a return execute associated with a return path in this exertion's context.
 	 * 
 	 * @return a referenced by a return path object
 	 */

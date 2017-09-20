@@ -16,7 +16,6 @@
  */
 package sorcer;
 
-import net.jini.core.transaction.TransactionException;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -24,7 +23,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike  Sobolewski on 5/4/17.
  */
-public class operator implements Request {
+public class operator implements Item {
 	private static operator op = new operator();
 
 	public static operator getInstance() {
@@ -35,12 +34,12 @@ public class operator implements Request {
 	}
 
 	@Override
-	public Object exec(Arg... args) throws ServiceException, RemoteException {
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
 
 		if (args.length == 1 && args[0] instanceof Signature) {
 			// requestor services
 			Signature rs = (Signature) args[0];
-			return rs.exec(rs);
+			return rs.execute(rs);
 		} else {
 			throw new ServiceException("invalid service arguments");
 		}

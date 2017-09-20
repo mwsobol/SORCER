@@ -23,5 +23,5 @@ package sorcer.service;
  *
  * @author Mike Sobolewski
  */
-public interface Item extends Request {
+public interface Item extends Service, Arg {
 }

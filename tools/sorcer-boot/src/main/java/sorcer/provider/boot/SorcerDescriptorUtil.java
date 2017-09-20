@@ -1094,7 +1094,7 @@ public class SorcerDescriptorUtil {
 		// service provider classpath
 		String sysCallerClasspath = ConfigUtil.concat(new Object[] {
 				sorcerLib,fs,"sorcer",fs,"lib",fs,"sos-caller-"+sorcerVersion + ".jar",
-				ps,sorcerLib,fs,"common",fs,"commons-exec-",commonsExecVersion,".jar"
+				ps,sorcerLib,fs,"common",fs,"commons-act-",commonsExecVersion,".jar"
 		});
 
 		// service provider codebase

@@ -193,7 +193,7 @@ public class PlatformLoader {
      * Scan through Element named capability.
      */
     Capability visitElement_capability(Element element) { // <capability>
-        // element.value();
+        // element.execute();
         Capability cap = new Capability();
         NamedNodeMap attrs = element.getAttributes();
         for (int i = 0; i < attrs.getLength(); i++) {

@@ -30,7 +30,7 @@ public interface ServiceSession {
          * session, as the number of milliseconds since midnight January 1, 1970
          * GMT, and marked by the time the container received the request.
          * <p>
-         * Actions that your application takes, such as getting or setting a value
+         * Actions that your application takes, such as getting or setting a execute
          * associated with the session, do not affect the access time.
          *
          * @return a <code>long</code> representing the last time the client sent a
@@ -100,8 +100,8 @@ public interface ServiceSession {
          * If an object was already bound to this session of this name that
          * implements <code>net.jini.core.event.RemoteEventListener</code>, its
          * <code>ProviderSessionBindingListener.valueUnbound</code> method is called
-         * to indicate the unbound value of this session.<p>
-         * If the value passed in is null, this has the same effect as calling
+         * to indicate the unbound execute of this session.<p>
+         * If the execute passed in is null, this has the same effect as calling
          * <code>removeAttribute()</code>.
          *
          * @param name
@@ -122,7 +122,7 @@ public interface ServiceSession {
          * <code>net.jini.core.event.RemoteEventListener</code>, the provider calls
          * <code>net.jini.core.event.RemoteEventListener.notify/code>. The container then
          * notifies any related service in the exerting federation to indicate the unbound 
-         * value of this session.
+         * execute of this session.
          *
          * @param name
          *            the name of the object to remove from this session

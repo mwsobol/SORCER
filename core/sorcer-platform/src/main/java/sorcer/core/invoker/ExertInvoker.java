@@ -57,7 +57,7 @@ public class ExertInvoker extends ServiceInvoker implements ExertionInvoking {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluation#value(sorcer.service.Args[])
+	 * @see sorcer.service.Evaluation#execute(sorcer.service.Args[])
 	 */
 	@Override
 	public Object getValue(Arg... entries) throws InvocationException,

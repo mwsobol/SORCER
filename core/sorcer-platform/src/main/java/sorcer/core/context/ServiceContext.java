@@ -41,15 +41,11 @@ import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Signature.Direction;
 import sorcer.service.Signature.ReturnPath;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.*;
 import sorcer.service.Domain;
-import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Valuation;
-import sorcer.service.modeling.cxt;
 import sorcer.util.ObjectCloner;
 import sorcer.util.SorcerUtil;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -244,7 +240,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		try {
 			// default relation tags: tag, assoc, and triplet
 			setAttribute("tag");
-			setAttribute("assoc|key|value");
+			setAttribute("assoc|key|execute");
 			setAttribute("triplet|1|2|3");
 			// context path tag
 			setAttribute(PATH_PAR);
@@ -632,7 +628,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public Object putLink(String name, String path, Context cntxt, String offset)
 			throws ContextException {
 		// insert a ContextLink (a.k.a. a symbolic link) to cntxt
-		// this makes this.value(path) == cntxt.value(offset)
+		// this makes this.execute(path) == cntxt.execute(offset)
 		if (path == null)
 			throw new ContextException("ERROR: path is null");
 
@@ -1944,7 +1940,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				if (val instanceof Proc)
 					val = "proc: " + ((Proc)val).getName();
 				else
-//					val = value(path);
+//					val = execute(path);
 					val = asis(path);
 			} catch (Exception ex) {
 				sb.append("\nUnable to retrieve eval: " + ex.getMessage());
@@ -2014,7 +2010,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			// System.out.print(path);
 			sb.append(path).append(" = ");
 			try {
-				// System.out.println(" = "+value(path));
+				// System.out.println(" = "+execute(path));
 				val = getValue(path);
 			} catch (Exception ex) {
 				sb.append("\nUnable to retrieve eval: " + ex.getMessage());
@@ -2350,7 +2346,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public boolean isLinkedContext(Object path) {
 		Object result;
-		// System.out.println("value: path = \""+path+"\"");
+		// System.out.println("execute: path = \""+path+"\"");
 		result = data.get(path);
 		if (result instanceof ContextLink) {
 			return true;
@@ -3482,13 +3478,33 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws MogramException, RemoteException {
 		Context cxt = (Context) Arg.getServiceModel(args);
 		if (cxt != null) {
 			scope = cxt;
 			return getResponse(args);
 		} else {
 			return getValue(args);
+		}
+	}
+
+	@Override
+	public Entry act(Arg... args) throws ServiceException, RemoteException {
+		Object result = this.execute(args);
+		if (result instanceof Entry) {
+			return (Entry)result;
+		} else {
+			return new Entry(name, result);
+		}
+	}
+
+	@Override
+	public Entrance act(String entryName, Arg... args) throws ServiceException, RemoteException {
+		Object result = this.execute(args);
+		if (result instanceof Entry) {
+			return (Entry)result;
+		} else {
+			return new Entry(entryName, result);
 		}
 	}
 

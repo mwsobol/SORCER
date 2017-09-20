@@ -95,9 +95,9 @@ public interface FileURLHandler {
         public String getDir();
 
         /**
-         * Get the value of the DATA_URL system property
+         * Get the execute of the DATA_URL system property
          *
-         * @return The value of the DATA_URL system property
+         * @return The execute of the DATA_URL system property
          */
         public String getDataUrl();
 

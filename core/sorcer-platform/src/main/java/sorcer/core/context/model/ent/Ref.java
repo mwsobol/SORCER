@@ -26,7 +26,7 @@ import java.rmi.RemoteException;
 
 /**
  * In service-based modeling, a reference (for short a ref) is a special kind of
- * entry, used to refer to a value of its path in the context model.
+ * entry, used to refer to a execute of its path in the context model.
  * 
  * @author Mike Sobolewski
  */

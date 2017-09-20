@@ -32,19 +32,19 @@ import java.rmi.RemoteException;
 public interface  Evaluation <T> extends Substitutable, Scopable, Item, EvaluationComponent, SupportComponent {
 
 	/**
-	 * Returns the value of the existing value of this evaluation that might be invalid.
+	 * Returns the execute of the existing execute of this evaluation that might be invalid.
 	 * 
-	 * @return the value as is
+	 * @return the execute as is
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */
 	public T asis() throws EvaluationException, RemoteException;
 		
 	/**
-	 * Returns the current value of this evaluation. The current value can be
-	 * exiting value with no need to evaluate it if it's still valid.
+	 * Returns the current execute of this evaluation. The current execute can be
+	 * exiting execute with no need to evaluate it if it's still valid.
 	 * 
-	 * @return the current value of this evaluation
+	 * @return the current execute of this evaluation
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */

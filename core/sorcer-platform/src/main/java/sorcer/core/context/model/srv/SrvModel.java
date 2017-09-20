@@ -113,8 +113,8 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
     }
 
     public boolean isBatch() {
-        for (Signature s : selectedFidelity.getSelects()) {
-            if (s.getType() != Signature.Type.PROC)
+        for (Object s : selectedFidelity.getSelects()) {
+            if (s instanceof Signature && ((Signature)s).getType() != Signature.Type.PROC)
                 return false;
         }
         return true;
@@ -138,7 +138,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         return out;
     }
 
-    // used as value but renamed to alter polymorphic chaining
+    // used as execute but renamed to alter polymorphic chaining
     public Object getSrvValue(String path, Arg... args) throws EvaluationException {
         Object val = null;
         try {
@@ -176,7 +176,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                         return selection;
                     }
                 } else if (carrier instanceof MorphFidelity) {
-                    Object obj = getFi(((MorphFidelity) carrier).getFidelity(), args, path);
+                    Object obj = getFi((ServiceFidelity)((MorphFidelity) carrier).getFidelity(), args, path);
                     Object out = null;
                     if (obj instanceof Signature)
                         out = evalSignature((Signature)obj, path);
@@ -260,7 +260,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                                 nargs[i] = (Arg) asis(paths[i]);
                         }
                     }
-                    Object out = ((Service)carrier).exec(nargs);
+                    Object out = ((Service)carrier).execute(nargs);
                     ((Srv) get(path)).setSrvValue(out);
                     return out;
                 } else {
@@ -329,7 +329,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         return null;
     }
 
-    protected <T extends Arg> T getFi(ServiceFidelity<T> fi, Arg[] entries, String path) throws ContextException {
+    protected Service getFi(ServiceFidelity fi, Arg[] entries, String path) throws ContextException {
        Fidelity selected = null;
         List<Fidelity> fiList = Projection.selectFidelities(entries);
         for (Fidelity sfi : fiList) {
@@ -341,8 +341,8 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             }
         }
 
-        List<T> choices = fi.getSelects(this);
-        for (T s : choices) {
+        List<Service> choices = fi.getSelects(this);
+        for (Service s : choices) {
             if (selected == null && fi.getSelect() != null)
                 return fi.getSelect();
             else {
@@ -352,7 +352,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                 } else {
                     selectPath = ((Fidelity)choices.get(0)).getPath();
                 }
-                if (s.getName().equals(selectPath)) {
+                if (((Identifiable)s).getName().equals(selectPath)) {
                     fi.setSelect(s);
                     return s;
                 }
@@ -442,7 +442,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         Signature signature = null;
         try {
             if (selectedFidelity != null) {
-                signature = selectedFidelity.getSelect();
+                signature = (Signature) selectedFidelity.getSelect();
             } else if (subjectValue != null && subjectValue instanceof Signature) {
                 signature = (Signature)subjectValue;
             }

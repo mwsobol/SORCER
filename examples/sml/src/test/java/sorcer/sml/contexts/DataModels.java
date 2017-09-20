@@ -298,7 +298,7 @@ public class DataModels {
     public void contextModelService() throws Exception {
         Context cxt = context(inVal("x1", 20.0d), inVal("x2", 40.0d),
                 returnPath("x2"));
-//        logger.info("service: " + exec(cxt));
+//        logger.info("service: " + act(cxt));
         assertEquals(exec(cxt), 40.0);
     }
 

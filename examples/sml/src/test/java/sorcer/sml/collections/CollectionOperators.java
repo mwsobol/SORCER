@@ -359,7 +359,7 @@ public class CollectionOperators {
 		assertTrue(get(cxt, "arg/x6").equals(1.6));
 		assertTrue(asis(cxt, "arg/x7") instanceof Invocation);
 
-		// aliasing args with reactive value args - rvEnt
+		// aliasing args with reactive execute args - rvEnt
 		put(cxt, rvEnt("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 		urvEnt(cxt, "arg/x6");

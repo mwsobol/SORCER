@@ -199,7 +199,7 @@ public final class Level implements java.io.Serializable {
 
     /**
      * Convert the string passed as argument to a Level. If the conversion fails,
-     * then this method returns the value of <code>defaultLevel</code>.
+     * then this method returns the execute of <code>defaultLevel</code>.
      */
     public static Level toLevel(String sArg, Level defaultLevel) {
         if (sArg == null) {

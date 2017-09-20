@@ -219,7 +219,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
                 return cxt;
             }
         }  else if (obj instanceof Service) {
-            out = ((Service)obj).exec(entries);
+            out = ((Service)obj).execute(entries);
         } else {
             return obj;
         }
@@ -260,7 +260,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
     }
 
     @Override
-    public Object value(Arg... args) throws ServiceException, RemoteException {
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
         Domain mod = Arg.getServiceModel(args);
         if (mod != null) {
             if (mod instanceof SrvModel && item instanceof ValueCallable) {

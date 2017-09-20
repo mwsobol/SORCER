@@ -16,6 +16,7 @@ import sorcer.service.*;
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.so.operator.exert;
 
 public class ArithmeticSorcerRequestor extends SorcerRequestor {
 

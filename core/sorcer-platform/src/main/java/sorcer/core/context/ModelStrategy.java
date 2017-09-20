@@ -51,10 +51,10 @@ public class ModelStrategy implements MogramStrategy, Serializable {
 
     protected Map<String, List<ExecDependency>> dependentPaths;
 
-    protected ServiceFidelity<Arg> selectedFidelity;
+    protected ServiceFidelity  selectedFidelity;
 
     // select fidelities for this service context
-    protected Map<String, ServiceFidelity<Arg>> selectFidelities;
+    protected Map<String, ServiceFidelity> selectFidelities;
 
     // evaluated model response args
     protected Context outcome;
@@ -183,7 +183,7 @@ public class ModelStrategy implements MogramStrategy, Serializable {
         return dependers;
     }
 
-    public void setSelectFidelities(Map<String, ServiceFidelity<Arg>> selectFidelities) {
+    public void setSelectFidelities(Map<String, ServiceFidelity> selectFidelities) {
         this.selectFidelities = selectFidelities;
     }
 
@@ -253,11 +253,11 @@ public class ModelStrategy implements MogramStrategy, Serializable {
         this.target = target;
     }
 
-    public ServiceFidelity<Arg> getFidelity() {
+    public ServiceFidelity getFidelity() {
         return selectedFidelity;
     }
 
-    public void setFidelity(ServiceFidelity<Arg> fidelity) {
+    public void setFidelity(ServiceFidelity fidelity) {
         selectedFidelity = fidelity;
     }
 

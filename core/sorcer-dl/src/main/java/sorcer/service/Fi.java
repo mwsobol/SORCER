@@ -18,7 +18,9 @@
 package sorcer.service;
 
 
-public interface Fi {
+import java.util.List;
+
+public interface Fi<T> extends Identifiable, Request {
 
     final static int e = 0;
     final static int s = 1;
@@ -52,11 +54,24 @@ public interface Fi {
             }
             return null;
         }
-
         public String getName() {
 			return toString();
 		}
 	}
+
+    public T getSelect();
+
+    public void setSelect(String fiName);
+
+    public List<T> getSelects();
+
+    public void addSelect(T select);
+
+    public String getPath();
+
+    public void setPath(String path);
+
+    public void setSelect(T select);
 
     public boolean isValid();
 

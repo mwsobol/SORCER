@@ -99,7 +99,7 @@ public abstract class Block extends CompoundExertion {
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Exertion#value(java.lang.String, sorcer.service.Arg[])
+	 * @see sorcer.service.Exertion#execute(java.lang.String, sorcer.service.Arg[])
 	 */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {

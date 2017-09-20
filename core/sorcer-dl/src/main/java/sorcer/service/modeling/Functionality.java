@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 /**
- * A variable has id, name and value. Its value can be evaluated by a related
+ * A variable has id, name and execute. Its execute can be evaluated by a related
  * Evaluator.
  *
  * @author Mike Sobolewski

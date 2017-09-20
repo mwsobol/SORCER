@@ -46,7 +46,7 @@ import static org.junit.Assert.assertTrue;
  * If the operating system is provided as "Mac" or "OSX" (case ignored), the result is transformed to "Mac OS X"
  * If "Win or "win" is provided, it is translated to "Windows".
  *
- * When entering IP addresses, enter either the IP Address or the fully qualified host name
+ * When entering IP addresses, act either the IP Address or the fully qualified host name
  *
  * If providing machine architecture, the provided eval must be the same as what
  * System.getProperty("os.arch") returns for the required machine architecture

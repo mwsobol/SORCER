@@ -64,7 +64,7 @@ public class ObjectJob extends Job {
 	
 	public Job doJob(Transaction txn) throws ExertionException,
 			SignatureException, RemoteException {
-		// return (Job) new ServiceJobber().exec(job, txn);
+		// return (Job) new ServiceJobber().act(job, txn);
 		Job result = null;
 		try {
 			ObjectSignature os = (ObjectSignature) getProcessSignature();

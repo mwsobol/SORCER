@@ -17,6 +17,7 @@
 package sorcer.service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -81,6 +82,12 @@ public class FidelityList extends ArrayList<Fidelity> implements Arg {
             }
         }
         return out;
+    }
+
+    public List<Service> toServiceList() {
+        List<Service> sl = new ArrayList<>();
+        sl.addAll(this);
+        return sl;
     }
 
     public String toString() {

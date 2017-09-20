@@ -24,12 +24,14 @@ import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import sorcer.core.SorcerConstants;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.provider.Modeler;
 import sorcer.core.provider.ProviderName;
 import sorcer.core.provider.ServiceName;
 import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
+import sorcer.service.modeling.Entrance;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.sig;
 import sorcer.util.Log;
@@ -687,8 +689,27 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException {
-	    throw new MogramException("Signature service exec should be implementd in subclasses");
+	public Object execute(Arg... args) throws MogramException, RemoteException {
+	    throw new MogramException("Signature service act should be implementd in subclasses");
 	}
 
+	@Override
+	public Entry act(Arg... args) throws ServiceException, RemoteException {
+		Object result = this.execute(args);
+		if (result instanceof Entry) {
+			return (Entry)result;
+		} else {
+			return new Entry(name, result);
+		}
+	}
+
+	@Override
+	public Entrance act(String entryName, Arg... args) throws ServiceException, RemoteException {
+		Object result = this.execute(args);
+		if (result instanceof Entry) {
+			return (Entry)result;
+		} else {
+			return new Entry(entryName, result);
+		}
+	}
 }

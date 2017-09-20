@@ -17,10 +17,8 @@
 
 package sorcer.service;
 
-import sorcer.core.Tag;
 import sorcer.service.modeling.Reference;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +26,9 @@ import java.util.List;
  * @author Mike Sobolewski
  *
  */
-public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multifidelity<T>  {
+public class ServiceFidelity extends Fidelity<Service> {
 
 	private static final long serialVersionUID = -875629011139790420L;
-
-	protected List<T> selects = new ArrayList<T>();
 
 	public ServiceFidelity() {
 		super();
@@ -52,54 +48,40 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 		this.path = path;
 	}
 
-	public ServiceFidelity(Arg name) {
-		this.fiName = name.getName();
+	public ServiceFidelity(Service service) {
+		this.fiName = ((Identifiable)service).getName();
 	}
 
-	public ServiceFidelity(Fidelity<T> fi) {
+	public ServiceFidelity(Fidelity fi) {
 		this.fiName = fi.getName();
 		this.path = fi.getPath();
-		this.select = fi.getSelect();
+		this.select = (Service) fi.getSelect();
 	}
 
-	public ServiceFidelity(T[] selects) {
+	public ServiceFidelity(Service[] selects) {
 		fiName = "fidelity" + count++;
-		for (T s : selects)
+		for (Service s : selects)
 			this.selects.add(s);
 		select =  selects[0];
 	}
 
-	public T getSelect(String name) {
-		for (T s : selects) {
-			if (s.getName().equals(name)) {
+	public Service getSelect(String name) {
+		for (Service s : selects) {
+			if (((Identifiable)s).getName().equals(name)) {
 				return s;
 			}
 		}
 		return null;
 	}
 
-	public ServiceFidelity(String... selects) {
-		this.fiName = "";
-		fiType = Type.NAME;
-		for (String s : selects)
-			this.selects.add((T) new Tag(s));
-	}
-
-	public ServiceFidelity(String name, String... selects) {
+	public ServiceFidelity(String name, Service... selects) {
 		this.fiName = name;
-		fiType = Type.NAME;
-		for (String s : selects)
-			this.selects.add((T) new Tag(s));
-	}
-
-	public ServiceFidelity(String name, T... selects) {
-		this.fiName = name;
-		for (T s : selects)
+		for (Service s : selects)
 			this.selects.add(s);
 	}
 
-	public ServiceFidelity(ServiceFidelity<T> fidelity) {
-		for (T s : fidelity.selects)
+	public ServiceFidelity(ServiceFidelity fidelity) {
+		for (Service s : fidelity.selects)
 			selects.add(s);
 		this.path = fidelity.path;
 		this.fiType = fidelity.fiType;
@@ -109,48 +91,28 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 			this.fiName = "fidelity" + count++;
 	}
 
-	public ServiceFidelity(String name, ServiceFidelity<T> fidelity) {
-		for (T s : fidelity.selects)
+	public ServiceFidelity(String name, ServiceFidelity fidelity) {
+		for (Service s : fidelity.selects)
 			selects.add(s);
 		this.path = fidelity.path;
 		this.fiType = fidelity.fiType;
 		this.fiName = name;
 	}
 
-	public ServiceFidelity(String name, List<T> selectors) {
-		for (T s : selectors)
+	public ServiceFidelity(String name, List<Service> selectors) {
+		for (Service s : selectors)
 			selects.add(s);
 		this.fiName = name;
 	}
 
-	public ServiceFidelity(String name, T selector) {
+	public ServiceFidelity(String name, Service selector) {
 		selects.add(selector);
 		this.fiName = name;
 	}
 
-	public T getSelect() {
-		// if a select not set return the firts one option
-		if (select == null && selects.size() > 0) {
-			select = selects.get(0);
-		}
-		return select;
-	}
-
-	public String getSelectName() {
-		return select.getName();
-	}
-
-	public List<String> getSelectNames() {
-		List<String> names = new ArrayList<>(selects.size());
-		for (T item : selects) {
-			names.add(item.getName());
-		}
-		return names;
-	}
-
 	public void setSelect(String fiName) {
-		for (T item : selects) {
-			if (item.getName().equals(fiName)) {
+		for (Service item : selects) {
+			if (((Identifiable)item).getName().equals(fiName)) {
 				this.select = item;
 				return;
 			}
@@ -159,21 +121,14 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 	}
 
 	public String getPath(String fidelityName) {
-		for (T select : selects) {
-			if (select.getName().equals(fidelityName)) {
+		for (Service select : selects) {
+			if (((Identifiable)select).getName().equals(fidelityName)) {
 				if (select instanceof ServiceFidelity) {
 					return ((ServiceFidelity) select).getPath();
 				}
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public Object exec(Arg... args) throws ServiceException, RemoteException {
-		if (select instanceof Service) {
-			return ((Service)select).exec(args);
-		} else return select;
 	}
 
 	@Override
@@ -191,20 +146,12 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 		selects.clear();
 	}
 
-	public void removeSelect(T select) {
+	public void removeSelect(Service select) {
 		this.selects.remove(select);
 	}
 
-	public void addSelect(T select) {
-		selects.add(select);
-	}
-
-	public T get(int index) {
+	public Service get(int index) {
 		return selects.get(index);
-	}
-
-	public List<T> getSelects() {
-		return selects;
 	}
 
 	public List getSelects(Context scope) throws ContextException {
@@ -225,7 +172,7 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 
 	public Signature getProcessSignature() {
 		if (selects.size() > 0) {
-			for (T item : selects) {
+			for (Service item : selects) {
 				if (item instanceof Signature
 						&& ((Signature) item).getType().equals(Signature.Type.PROC)) {
 					return (Signature) item;
@@ -235,7 +182,7 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 		return null;
 	}
 
-	public void setSelects(List<T> selects) {
+	public void setSelects(List<Service> selects) {
 		this.selects = selects;
 	}
 

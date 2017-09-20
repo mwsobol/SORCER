@@ -89,7 +89,7 @@ public interface Cataloger extends Service, Remote {
 
 	/**
 	 * Returns at most maxMatches items matching the template, plus the total
-	 * number of items that match the template. The return value is never null,
+	 * number of items that match the template. The return execute is never null,
 	 * and the returned items array is only null if maxMatches is zero. For each
 	 * returned item, if the service object cannot be deserialized, the service
 	 * field of the item is set to null and no exception is thrown. Similarly,
@@ -101,7 +101,7 @@ public interface Cataloger extends Service, Remote {
 	 * @param maxMatches
 	 * @return a ServiceMatches instance that contains at most maxMatches items
 	 *         matching the template, plus the total number of items that match
-	 *         the template. The return value is never null, and the returned
+	 *         the template. The return execute is never null, and the returned
 	 *         items array is only null if maxMatches is zero.
 	 * @throws RemoteException
 	 */
@@ -111,7 +111,7 @@ public interface Cataloger extends Service, Remote {
 	/**
 	 * Returns a map with a key as service interface (those interfaces
 	 * which are placed under package sorcer.provider or sorcer.core.provider)
-	 * and its value is a list of interface's method names.
+	 * and its execute is a list of interface's method names.
 	 * 
 	 * @return a hash map of all SORCER provider interfaces with corresponding
 	 *         method names.

@@ -17,8 +17,8 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.Entrance;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Valuation;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public class Association<K, I> implements net.jini.core.entry.Entry, Serializable, Identifiable, Arg {
+public class Association<K, I> implements net.jini.core.entry.Entry, Entrance<I>, Serializable, Identifiable, Arg {
 	private  static final long serialVersionUID =  1L;
 
 	protected K key = null;
@@ -101,7 +101,7 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Serializabl
 		return "[" + key + ":" + item + "]";
 	}
 
-	public Object exec(Arg... entries) throws ServiceException, RemoteException {
+	public Object execute(Arg... entries) throws ServiceException, RemoteException {
 		return item;
 	}
 
@@ -184,4 +184,13 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Serializabl
         return false;
     }
 
+    @Override
+    public Entrance act(Arg... args) throws ServiceException, RemoteException {
+        return new Association<>(key, item);
+    }
+
+    @Override
+    public Entrance act(String entryName, Arg... args) throws ServiceException, RemoteException {
+        return new Association<>(entryName, item);
+    }
 }

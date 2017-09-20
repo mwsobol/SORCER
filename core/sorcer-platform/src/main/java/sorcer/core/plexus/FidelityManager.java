@@ -25,7 +25,7 @@ import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.co.tuple.Tuple2;
-import sorcer.core.context.model.ent.Function;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.invoker.Observer;
 import sorcer.service.*;
@@ -39,7 +39,7 @@ import static sorcer.eo.operator.rFi;
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Observer, Identifiable {
+public class FidelityManager<T extends Service> implements FidelityManagement<T>, Observer, Identifiable {
 
     // sequence number for unnamed instances
     protected static int count = 0;
@@ -49,10 +49,10 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     Uuid id = UuidFactory.generate();
 
     // fidelities for signatures and other selection of T
-    protected Map<String, ServiceFidelity<T>> fidelities = new ConcurrentHashMap<>();
+    protected Map<String, Fidelity> fidelities = new ConcurrentHashMap<>();
 
     // fidelities for fidelites
-    protected Map<String, ServiceFidelity<Fidelity>> metafidelities = new ConcurrentHashMap<>();
+    protected Map<String, Metafidelity> metafidelities = new ConcurrentHashMap<>();
 
     // fidelities for signatures and other selection of T
     protected Map<String, MorphFidelity> morphFidelities = new ConcurrentHashMap<>();
@@ -83,16 +83,16 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         this.mogram = mogram;
     }
 
-    public Map<String, ServiceFidelity<Fidelity>> getMetafidelities() {
+    public Map<String, Metafidelity> getMetafidelities() {
         return metafidelities;
     }
 
-    public void setMetafidelities(Map<String, ServiceFidelity<Fidelity>> metafidelities) {
+    public void setMetafidelities(Map<String, Metafidelity> metafidelities) {
         this.metafidelities = metafidelities;
     }
 
     @Override
-    public Map<String, ServiceFidelity<T>> getFidelities() {
+    public Map<String, Fidelity> getFidelities() {
         return fidelities;
     }
 
@@ -105,11 +105,11 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         this.morphFidelities = morphFidelities;
     }
 
-    public void setFidelities(Map<String, ServiceFidelity<T>> fidelities) {
+    public void setFidelities(Map<String, Fidelity> fidelities) {
         this.fidelities = fidelities;
     }
 
-    public void addFidelity(String path, ServiceFidelity<T> fi) {
+    public void addFidelity(String path, Fidelity  fi) {
         if (fi != null)
             this.fidelities.put(path, fi);
     }
@@ -150,7 +150,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         }
     }
 
-    public void addMetafidelity(String path, ServiceFidelity<Fidelity> fi) {
+    public void addMetafidelity(String path, Metafidelity fi) {
         this.metafidelities.put(path, fi);
     }
 
@@ -178,17 +178,17 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
        // implement is subclasses
     }
 
-    public void add(ServiceFidelity<Fidelity> fidelity) {
+    public void add( Metafidelity fidelity) {
         put(fidelity.getName(), fidelity);
     }
 
-    public void init(List<ServiceFidelity<Fidelity>> fidelities) {
+    public void init(List<ServiceFidelity> fidelities) {
         if (fidelities == null || fidelities.size() == 0) {
             initialize();
             return;
         }
         for (ServiceFidelity fi : fidelities) {
-            put(fi.getName(), fi);
+            this.fidelities.put(fi.getName(), fi);
         }
     }
 
@@ -224,19 +224,19 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     @Override
     public void morph(String... fiNames)  throws EvaluationException {
         for (String fiName : fiNames) {
-            ServiceFidelity<Fidelity> mFi = metafidelities.get(fiName);
-            List<Fidelity> fis = mFi.getSelects();
+            Metafidelity mFi = metafidelities.get(fiName);
+            List<Fi> fis = mFi.getSelects();
             String name = null;
             String path = null;
             if (isTraced) {
-                fiTrace.add(new ServiceFidelity(fiName, fis));
+                fiTrace.add(new Fidelity(fiName, fis));
             }
-            for (Fidelity fi : fis) {
-                name = fi.getName();
-                path = fi.getPath();
-                Iterator<Map.Entry<String, ServiceFidelity<T>>> i = fidelities.entrySet().iterator();
+            for (Service fi : fis) {
+                name = ((Fidelity)fi).getName();
+                path = ((Fidelity)fi).getPath();
+                Iterator<Map.Entry<String, Fidelity>> i = fidelities.entrySet().iterator();
                 while (i.hasNext()) {
-                    Map.Entry<String, ServiceFidelity<T>> fiEnt = i.next();
+                    Map.Entry<String, Fidelity> fiEnt = i.next();
                     if (fiEnt.getKey().equals(name)) {
                         if (morphFidelities.get(name) != null) {
                             morphFidelities.get(name).setMorpherSelect(path);
@@ -257,20 +257,20 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
 
     public ServiceFidelityList resetFidelities() throws ContextException, RemoteException {
         ServiceFidelityList fl = new ServiceFidelityList();
-        Collection<ServiceFidelity<T>> fc = fidelities.values();
-        for (ServiceFidelity sf : fc) {
+        Collection<Fidelity> fc = fidelities.values();
+        for (Fidelity sf : fc) {
             sf.setSelect(sf.get(0));
-            fl.add(rFi(sf.getPath(), sf.getSelect().getName()));
+            fl.add(rFi(sf.getPath(), ((Identifiable)sf.getSelect()).getName()));
         }
         return fl;
     }
 
     public ServiceFidelityList getCurrentFidelities() throws ContextException, RemoteException {
         ServiceFidelityList fl = new ServiceFidelityList();
-		Iterator<Map.Entry<String, ServiceFidelity<T>>> it = fidelities.entrySet().iterator();
+		Iterator<Map.Entry<String, Fidelity>> it = fidelities.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry<String, ServiceFidelity<T>> me = it.next();
-			fl.add(rFi(me.getKey(), me.getValue().getSelect().getName()));
+			Map.Entry<String, Fidelity> me = it.next();
+			fl.add(rFi(me.getKey(), ((Identifiable)me.getValue().getSelect()).getName()));
 		}
         return fl;
     }
@@ -278,14 +278,14 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     @Override
     public FidelityList getDefaultFidelities() throws RemoteException {
         FidelityList fl = new FidelityList();
-		Iterator<Map.Entry<String, ServiceFidelity<T>>> it = fidelities.entrySet().iterator();
+		Iterator<Map.Entry<String, Fidelity>> it = fidelities.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry<String, ServiceFidelity<T>> me = it.next();
+			Map.Entry<String, Fidelity> me = it.next();
             Object defaultFi =  me.getValue().getSelects().get(0);
             if (defaultFi instanceof ServiceFidelity) {
                 fl.add(new Fidelity(((ServiceFidelity)defaultFi).getName(), ((ServiceFidelity)defaultFi).getPath()));
             } else {
-                fl.add(new Fidelity(me.getKey(), me.getValue().get(0).getName()));
+                fl.add(new Fidelity(me.getKey(), ((Identifiable)me.getValue().get(0)).getName()));
             }
 		}
         return fl;
@@ -295,7 +295,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     public void reconfigure(String... fiNames) throws RemoteException {
         // applies to MultiFiRequests
         if (fidelities.size() == 1 && fiNames.length == 1) {
-            ServiceFidelity fi = fidelities.get(name);
+            Fidelity fi = fidelities.get(name);
             if (fi == null) {
                 fi = getFidelity(fiNames[0]);
             }
@@ -309,17 +309,17 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
 
-    private ServiceFidelity getFidelity(String name) {
-        ServiceFidelity fi = fidelities.get(name);
+    private Fidelity getFidelity(String name) {
+        Fidelity fi = fidelities.get(name);
         if (fi == null) {
             // get unknown fidelity
             Set<String> keys = fidelities.keySet();
             Iterator<String> i = keys.iterator();
             String key = i.next();
-            ServiceFidelity sf = fidelities.get(key);
-            List<ServiceFidelity> sfl = sf.getSelects();
-            for (ServiceFidelity f : sfl) {
-                if (f.getName().equals(name))
+            Fidelity sf = fidelities.get(key);
+            List<Service> sfl = sf.getSelects();
+            for (Service f : sfl) {
+                if (((Identifiable)f).getName().equals(name))
                     return sf;
             }
         }
@@ -337,7 +337,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         }
         if (this.fidelities.size() > 0) {
             for (Fidelity fi : fidelities) {
-                ServiceFidelity sFi = this.fidelities.get(fi.getName());
+                Fidelity sFi = this.fidelities.get(fi.getName());
                 if (sFi != null) {
                     sFi.setSelect(fi.getPath());
                     if (mogram instanceof Exertion) {
@@ -353,30 +353,24 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         }
     }
 
-    public void add(ServiceFidelity<Fidelity>... sysFis) {
-        for (ServiceFidelity<Fidelity> sysFi : sysFis){
+    public void add(Metafidelity... sysFis) {
+        for (Metafidelity sysFi : sysFis){
             metafidelities.put(sysFi.getName(), sysFi);
         }
     }
 
-    public void put(String sysFiName, ServiceFidelity<Fidelity> sysFi) {
+    public void put(String sysFiName, Metafidelity sysFi) {
         metafidelities.put(sysFiName, sysFi);
     }
 
-    public void put(Function<ServiceFidelity<Fidelity>>... entries) {
-        try {
-            for(Function<ServiceFidelity<Fidelity>> e : entries) {
-                metafidelities.put(e.getName(), e.getValue());
-            }
-        } catch (EvaluationException e) {
-            e.printStackTrace();
-        } catch (RemoteException e) {
-            e.printStackTrace();
+    public void put(Entry<Metafidelity>... entries) {
+        for(Entry<Metafidelity> e : entries) {
+            metafidelities.put(e.getName(), e.getItem());
         }
     }
 
     public String getProjectionFi(String projectionName) {
-        return metafidelities.get(projectionName).getSelects().get(0).getName();
+        return ((Identifiable)metafidelities.get(projectionName).getSelects().get(0)).getName();
     }
 
     public boolean isTraced() {
@@ -425,7 +419,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
     @Override
-    public Object exec(Arg... args) throws MogramException, RemoteException {
+    public Object execute(Arg... args) throws MogramException, RemoteException {
         return null;
     }
 

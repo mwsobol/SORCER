@@ -134,7 +134,7 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-		Task callerTask = task("volume", sig("exec", SysCaller.class),
+		Task callerTask = task("volume", sig("act", SysCaller.class),
 						cxt(proc("cmd", "java -cp  " + cp + Volume.class.getName()),
 								inVal("cylinder"), outVal("cylinder/volume"), outVal("cylinder/radius"),
 								outVal("cylinder/height")));
@@ -165,7 +165,7 @@ public class SysCalls {
 		Model sm = srvModel(proc("x", 10.0), ent("y"),
 				proc("multiply", invoker("x * y", args("x", "y"))),
 				proc("add", invoker("x + y", args("x", "y"))),
-				srv("volume", sig("exec", SysCaller.class,
+				srv("volume", sig("act", SysCaller.class,
 						cxt(proc("cmd", "java -cp  " + cp + Volume.class.getName()),
 						inVal("cylinder"), outVal("cylinder/volume"), outVal("cylinder/radius"),
 						outVal("cylinder/height")))));
@@ -203,7 +203,7 @@ public class SysCalls {
 		Model sm = srvModel(proc("x", 10.0), ent("y"),
 				proc("multiply", invoker("x * y", args("x", "y"))),
 				proc("add", invoker("x + y", args("x", "y"))),
-				srv("volume", sig("exec", SysCaller.class,
+				srv("volume", sig("act", SysCaller.class,
 						cxt(proc("cmd", "java -cp  " + cp + Volume.class.getName()),
 								inVal("cylinder", Arg.class),
 								outVal("cylinder/volume", double.class),

@@ -44,7 +44,7 @@ import sorcer.core.context.node.ContextNode;
  * selected item is a path or if it is a data node.
  * 
  * <li>For paths user can specify the pathname and direction. <li>For data nodes
- * the user can select the data type and enter the types eval
+ * the user can select the data type and act the types eval
  * 
  * <b>Note if the provider is not complied with Groovy support the Groovy option
  * will not be available</b>
@@ -125,7 +125,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 						.getLabel());
 			// GroovyObject test=new GroovyObject("1+1");
 
-			// editField.setText(test.value().toString());
+			// editField.setText(test.execute().toString());
 			editField.setColumns(60);
 			editField.setRows(1);
 			editField.setLineWrap(true);

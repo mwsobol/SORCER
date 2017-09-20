@@ -157,7 +157,7 @@ public class Providers implements SorcerConstants {
 		Iterator it = ((ServiceContext) context).entryIterator();
 		while (it.hasNext()) {
 			Map.Entry pair = (Map.Entry) it.next();
-			Object val = pair.value();
+			Object val = pair.execute();
 			if (val instanceof ContextNode) {
 				String fileName = null;
 				ContextNode cn = (ContextNode) val;
@@ -197,7 +197,7 @@ public class Providers implements SorcerConstants {
 		Iterator it = ((ServiceContext) context).entryIterator();
 		while (it.hasNext()) {
 			Map.Entry pair = (Map.Entry) it.next();
-			ContextNode cn = (ContextNode) pair.value();
+			ContextNode cn = (ContextNode) pair.execute();
 			if (cn.isURL()) {
 				String fileName = GenericUtil.getUniqueString() + ".dn";
 

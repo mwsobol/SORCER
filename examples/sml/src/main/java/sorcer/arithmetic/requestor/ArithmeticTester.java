@@ -20,6 +20,7 @@ import java.util.concurrent.Future;
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.so.operator.*;
 
 /**
  * Testing parameter passing between tasks within the same service job. Two

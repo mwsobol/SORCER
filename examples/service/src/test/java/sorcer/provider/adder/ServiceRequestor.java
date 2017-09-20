@@ -26,7 +26,7 @@ public class ServiceRequestor {
 	public void adderRequestorAsService() throws Exception {
 
 //		ExertRequestor req = new ExertRequestor(AdderRequestor.class, "exertion");
-//		Context cxt = (Context) req.exec();
+//		Context cxt = (Context) req.act();
 
 		sorcer.core.requestor.ServiceRequestor req = requestor(AdderRequestor.class, "exertion");
 //		sorcer.core.requestor.ServiceRequestor req = requestor(AdderRequestor.class, "netlet");

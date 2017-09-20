@@ -34,7 +34,7 @@ import sorcer.service.*;
 
 import java.rmi.RemoteException;
 
-import static sorcer.eo.operator.eval;
+import static sorcer.so.operator.eval;
 import static sorcer.util.StringUtils.tName;
 
 public class ScripterThread extends Thread {
@@ -148,7 +148,7 @@ public class ScripterThread extends Thread {
             "sorcer.co.operator",
             "sorcer.po.operator",
             "sorcer.mo.operator",
-            "sorcer.util.exec.ExecUtils",
+            "sorcer.util.act.ExecUtils",
             "sorcer.util.StringUtils"
     };
 
@@ -178,7 +178,7 @@ public class ScripterThread extends Thread {
             "sorcer.co.operator",
             "sorcer.po.operator",
             "sorcer.mo.operator",
-            "sorcer.util.exec.ExecUtils",
+            "sorcer.util.act.ExecUtils",
             "sorcer.util.StringUtils",
             // var-oriented modeling
             "sorcer.modeling.vo.operator"

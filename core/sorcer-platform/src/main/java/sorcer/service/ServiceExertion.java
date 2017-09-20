@@ -45,6 +45,8 @@ import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static sorcer.so.operator.eval;
+
 /**
  * @author Mike Sobolewski
  */
@@ -832,7 +834,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Evaluation#value()
+     * @see sorcer.service.Evaluation#execute()
      */
     public Object getValue(Arg... entries) throws EvaluationException,
             RemoteException {
@@ -1015,12 +1017,12 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     @Override
-    public Object value(Arg... args) throws MogramException, RemoteException {
+    public Object execute(Arg... args) throws MogramException, RemoteException {
         Context cxt = (Context) Arg.getServiceModel(args);
         if (cxt != null) {
               dataContext = (ServiceContext) cxt;
             try {
-                return operator.eval(this, args);
+                return eval(this, args);
             } catch (ServiceException e) {
                 throw new MogramException(e);
             }

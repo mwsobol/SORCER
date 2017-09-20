@@ -23,6 +23,7 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.Contexts;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.exertion.ObjectBlock;
 import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.*;
@@ -196,7 +197,7 @@ abstract public class RendezvousBean implements Service, Exerter {
 			throws TransactionException, ExertionException, RemoteException;
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws MogramException, RemoteException {
 		Mogram mog = Arg.getMogram(args);
 		if (mog != null)
 			try {
@@ -207,4 +208,5 @@ abstract public class RendezvousBean implements Service, Exerter {
 		else
 			return null;
 	}
+
 }

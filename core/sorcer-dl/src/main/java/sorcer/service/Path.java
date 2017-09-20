@@ -17,12 +17,18 @@
 
 package sorcer.service;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Path implements Arg  {
+public class Path implements Arg, Service  {
 
 	private static final long serialVersionUID = 1L;
+
+	@Override
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
+		return this;
+	}
 
 	public enum Type {
 		PATH, MAP, ENT, CONTEXT, ARRAY, OUT

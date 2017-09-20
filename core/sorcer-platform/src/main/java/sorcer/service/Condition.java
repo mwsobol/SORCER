@@ -18,10 +18,10 @@
 package sorcer.service;
 
 import groovy.lang.Closure;
-import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.exertion.AltMogram;
 import sorcer.core.exertion.LoopMogram;
@@ -217,7 +217,7 @@ import java.util.Map;
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluation#value(sorcer.service.Parameter[])
+	 * @see sorcer.service.Evaluation#execute(sorcer.service.Parameter[])
 	 */
 	@Override
 	public Object getValue(Arg... entries) throws EvaluationException,
@@ -339,7 +339,7 @@ import java.util.Map;
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws MogramException, RemoteException {
 		Context cxt = (Context) Arg.getServiceModel(args);
 		if (cxt != null) {
 			conditionalContext = cxt;

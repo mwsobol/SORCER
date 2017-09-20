@@ -36,7 +36,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static sorcer.co.operator.*;
+import static sorcer.so.operator.*;
 import static sorcer.eo.operator.*;
 
 /**

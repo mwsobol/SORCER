@@ -67,6 +67,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import static sorcer.eo.operator.*;
+import static sorcer.so.operator.eval;
 
 /**
  * @author Mike Sobolewski
@@ -903,9 +904,9 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 			} else if (service instanceof MultiFiMogram) {
 				Object out = null;
 				MorphFidelity morphFidelity = ((MultiFiMogram)service).getMorphFidelity();
-				ServiceFidelity<Request> sfi = ((MultiFiMogram)service).getServiceFidelity();
+				ServiceFidelity sfi = (ServiceFidelity) ((MultiFiMogram)service).getServiceFidelity();
 				if (sfi == null) {
-					ServiceFidelity fi = ((MultiFiMogram)service).getMorphFidelity().getFidelity();
+					ServiceFidelity fi = (ServiceFidelity) ((MultiFiMogram)service).getMorphFidelity().getFidelity();
 					Object select = fi.getSelect();
 					if (select != null) {
 						if (select instanceof Mogram)
@@ -913,17 +914,17 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 						else {
 							Context cxt = ((MultiFiMogram)service).getScope();
 							if (select instanceof Signature && cxt != null)
-								out = ((Service) select).exec(cxt);
+								out = ((Service) select).execute(cxt);
 							else
-								out = ((Service) select).exec(args);
+								out = ((Service) select).execute(args);
 						}
 					}
 				}
 				Context cxt = ((MultiFiMogram)service).getScope();
 				if (sfi.getSelect() instanceof Signature && cxt != null) {
-					out = sfi.getSelect().exec(cxt);
+					out = sfi.getSelect().execute(cxt);
 				} else {
-					out = sfi.getSelect().exec(args);
+					out = sfi.getSelect().execute(args);
 				}
 
 				if (morphFidelity != null) {
@@ -953,7 +954,8 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws MogramException, RemoteException {
 		return evaluate(args);
 	}
+
 }

@@ -39,7 +39,7 @@ import java.util.*;
  * context is illustrated by <code>ArrayContext</code>.
  * <p>
  * A service context is a tree-like structure with two types of nodes. Leaf
- * nodes are called data (value) nodes and the remaining nodes are called
+ * nodes are called data (execute) nodes and the remaining nodes are called
  * context attribute nodes. Context attributes define a namespace for the data
  * in a uniform way for use by all related services. A path of context
  * attributes leading from the root of the context to any leaf node along with
@@ -88,7 +88,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	/** directional attribute (da) */
 	final static String DIRECTION = "da";
 
-	/** entry value class (vc) */
+	/** entry execute class (vc) */
 	final static String VAL_CLASS = "vc";
 
 	/** operand positioning (OPP) for operators (direction with index) */
@@ -185,7 +185,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 			+ SorcerConstants.CPS + "data";
 
 	/**
-	 * An object to specify no context value.
+	 * An object to specify no context execute.
 	 */
 	public static class none implements Serializable {
 		private static final long serialVersionUID = -6152257095701812950L;
@@ -206,11 +206,11 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	final public static Object none = new none();
 
 	/**
-	 * Returns a value at the path if exists, otherwise a value of the path that
+	 * Returns a execute at the path if exists, otherwise a execute of the path that
 	 * ends with the last attribute of the given path.
 	 *
 	 * @param path
-	 *            The path of a context value.
+	 *            The path of a context execute.
 	 */
 	public T getSoftValue(String path) throws ContextException;
 
@@ -260,7 +260,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	public Provider getProvider() throws SignatureException;
 
 	/**
-	 * Returns the result value associated with this context.
+	 * Returns the result execute associated with this context.
 	 *
 	 * @param entries data for closing free variables
 	 *
@@ -276,9 +276,9 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	public void setExertion(Exertion task);
 
 	/**
-	 * Returns the subject path in this context. A subject is a path/value
+	 * Returns the subject path in this context. A subject is a path/execute
 	 * association and is interpreted as the context constituent about which
-	 * something is predicated. Other path/value associations of this context
+	 * something is predicated. Other path/execute associations of this context
 	 * are interpreted as complements of the context subject.
 	 *
 	 * @return the subject path
@@ -286,26 +286,26 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	public String getSubjectPath();
 
 	/**
-	 * Returns the subject value in this context. A subject is a path/value
+	 * Returns the subject execute in this context. A subject is a path/execute
 	 * association and is interpreted as the context constituent about which
-	 * something is predicated. Other path/value associations of this context
+	 * something is predicated. Other path/execute associations of this context
 	 * are interpreted as complements of the context subject.
 	 *
-	 * @return the subject value
+	 * @return the subject execute
 	 */
 	public Object getSubjectValue();
 
 	/**
-	 * Assigns the subject <code>value</code> at <code>path</code> in this
-	 * context. A subject is a path/value association and is interpreted as the
-	 * context constituent about which something is predicated. Other path/value
+	 * Assigns the subject <code>execute</code> at <code>path</code> in this
+	 * context. A subject is a path/execute association and is interpreted as the
+	 * context constituent about which something is predicated. Other path/execute
 	 * associations of this context are interpreted as complements of the
 	 * context subject.
 	 *
 	 * @param path
 	 *            the subject path
 	 * @param value
-	 *            the subject value
+	 *            the subject execute
 	 */
 	public void setSubject(String path, Object value);
 
@@ -413,7 +413,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	 *         ServiceContext; the second element is the path in the
 	 *         ServiceContext. Note, a context node is not required at the
 	 *         returned path in the returned context--the results merely
-	 *         indicate the mapping (value on the resulting context at the
+	 *         indicate the mapping (execute on the resulting context at the
 	 *         resulting path will yield the contents)
 	 *
 	 * @throws ContextException
@@ -427,10 +427,10 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	public void checkpoint() throws ContextException;
 
 	/**
-	 * Annotates the path with the tuple (value sequence) specified by a
+	 * Annotates the path with the tuple (execute sequence) specified by a
 	 * relation in the domain of attribute product related to the context data
 	 * nodes.The relation can be either a single search attribute (property) or
-	 * attribute product. The search attribute-value sequence must be separated
+	 * attribute product. The search attribute-execute sequence must be separated
 	 * by the <code>Context.APS</code>. Marked data nodes can be found by their
 	 * tuples (@link #getMarkedPaths} independently of associative context paths
 	 * defined by context attributes {@link #getValue}. It is usually assumed
@@ -443,7 +443,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	 * @param path
 	 *            the location in the context namespace
 	 * @param tuple
-	 *            the domain-value sequence
+	 *            the domain-execute sequence
 	 * @return self
 	 * @throws ContextException
 	 */
@@ -490,7 +490,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	public void setAttribute(String attribute) throws ContextException;
 
 	/**
-	 * Returns boolean value designating if <code>attributeName</code> is an
+	 * Returns boolean execute designating if <code>attributeName</code> is an
 	 * attribute in the top-level context. Does not descend into linked
 	 * contexts. Is true if attribute is singleton or metaattribute fiType.
 	 *
@@ -500,7 +500,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	public boolean isLocalAttribute(String attributeName);
 
 	/**
-	 * Returns boolean value designating if <code>attributeName</code> is a
+	 * Returns boolean execute designating if <code>attributeName</code> is a
 	 * singleton attribute in the top-level context. Does not descend into
 	 * linked contexts.
 	 *
@@ -510,7 +510,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	public boolean isLocalSingletonAttribute(String attributeName);
 
 	/**
-	 * Returns boolean value designating if <code>attributeName</code> is a meta
+	 * Returns boolean execute designating if <code>attributeName</code> is a meta
 	 * attribute in the top-level context. Does not descend into linked
 	 * contexts.
 	 *
@@ -520,7 +520,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	public boolean isLocalMetaattribute(String attributeName);
 
 	/**
-	 * Returns a {@link boolean} value designating if <code>attributeName</code>
+	 * Returns a {@link boolean} execute designating if <code>attributeName</code>
 	 * is an attribute in this context including any linked contexts
 	 *
 	 * @return <code>boolean</code>
@@ -533,7 +533,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	public boolean isAttribute(String attributeName) throws ContextException;
 
 	/**
-	 * Returns a {@link boolean} value designating if <code>attributeName</code>
+	 * Returns a {@link boolean} execute designating if <code>attributeName</code>
 	 * is a singleton attribute in this context including any linked contexts
 	 *
 	 * @return <code>boolean</code>
@@ -547,7 +547,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 			throws ContextException;
 
 	/**
-	 * Returns a {@link boolean} value designating if <code>attributeName</code>
+	 * Returns a {@link boolean} execute designating if <code>attributeName</code>
 	 * is a meta attribute in this context including any linked contexts
 	 *
 	 * @return <code>boolean</code>
@@ -561,7 +561,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 			throws ContextException;
 
 	/**
-	 * Returns the value part of the specified attribute that has been assigned
+	 * Returns the execute part of the specified attribute that has been assigned
 	 * to this context node. The attribute can be either a singleton attribute
 	 * or a meta-attribute, which is itself a collection of attributes.
 	 *
@@ -570,7 +570,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	 * @param attributeName
 	 *            the name of the metaattribute
 	 *
-	 * @return <code>String</code> the attribute value
+	 * @return <code>String</code> the attribute execute
 	 * @throws ContextException
 	 * @see #getSingletonAttributeValue
 	 * @see #getMetaattributeValue
@@ -579,17 +579,17 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 			throws ContextException;
 
 	/**
-	 * Returns the value part of the specified singleton attribute that has been
+	 * Returns the execute part of the specified singleton attribute that has been
 	 * assigned to this context node. A singleton attribute is a single
-	 * attribute with a single value as distinguished from a metaattribute which
-	 * designates multiple attribute-value pairs.
+	 * attribute with a single execute as distinguished from a metaattribute which
+	 * designates multiple attribute-execute pairs.
 	 *
 	 * @param path
 	 *            the location in the context
 	 * @param attributeName
 	 *            the name of the metaattribute
 	 *
-	 * @return <code>String</code> the attribute value
+	 * @return <code>String</code> the attribute execute
 	 * @throws ContextException
 	 * @see #getAttributeValue
 	 * @see #getMetaattributeValue
@@ -598,8 +598,8 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 			throws ContextException;
 
 	/**
-	 * Returns the value part of the specified metaattribute that has been
-	 * assigned to this context node. The attribute value is a concatenation of
+	 * Returns the execute part of the specified metaattribute that has been
+	 * assigned to this context node. The attribute execute is a concatenation of
 	 * the individual attribute values, separated by the context meta-path
 	 * separator character (CMPS).
 	 *
@@ -608,7 +608,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	 * @param attributeName
 	 *            the name of the metaattribute
 	 *
-	 * @return <code>String</code> the meta-attribute value
+	 * @return <code>String</code> the meta-attribute execute
 	 * @throws ContextException
 	 * @see #getAttributeValue
 	 * @see #getSingletonAttributeValue
@@ -733,7 +733,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	/**
 	 * Returns the {@link ContextLink} object that resides at path in the
 	 * context. This method is necessary since ContextLink objects are otherwise
-	 * transparent. For example, value(path) returns a value in the linked
+	 * transparent. For example, execute(path) returns a execute in the linked
 	 * context, not the LinkedContext object.
 	 *
 	 * @param path
@@ -746,41 +746,41 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	public Link getLink(String path) throws ContextException;
 
 	/**
-	 * Allocates a value in the context with the directional attribute set to
+	 * Allocates a execute in the context with the directional attribute set to
 	 * DA_IN.
 	 */
 	public T putInValue(String path, T value) throws ContextException;
 
 	/**
-	 * Allocates a value in the context with the directional attribute set to
+	 * Allocates a execute in the context with the directional attribute set to
 	 * DA_OUT.
 	 */
 	public T putOutValue(String path, T value)
 			throws ContextException;
 
 	/**
-	 * Allocates a value in the context with the directional attribute set to
+	 * Allocates a execute in the context with the directional attribute set to
 	 * DA_INOUT.
 	 */
 	public T putInoutValue(String path, T value)
 			throws ContextException;
 
 	/**
-	 * Allocates a value in the context with the directional attribute set to
+	 * Allocates a execute in the context with the directional attribute set to
 	 * DA_IN.
 	 */
 	public T putInValue(String path, T value, String association)
 			throws ContextException;
 
 	/**
-	 * Allocates a value in the context with the directional attribute set to
+	 * Allocates a execute in the context with the directional attribute set to
 	 * DA_OUT.
 	 */
 	public T putOutValue(String path, T value, String association)
 			throws ContextException;
 
 	/**
-	 * Allocates a value in the context with the directional attribute set to
+	 * Allocates a execute in the context with the directional attribute set to
 	 * DA_INOUT.
 	 */
 	public T putInoutValue(String path, T value, String association)
@@ -851,7 +851,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	public List<String> simpleAttributes() throws ContextException;
 
 	/**
-	 * Get all meta associations (meta attribute-meta value pairs) at the
+	 * Get all meta associations (meta attribute-meta execute pairs) at the
 	 * specified context node.
 	 *
 	 * @param path

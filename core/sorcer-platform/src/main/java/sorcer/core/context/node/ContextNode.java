@@ -830,7 +830,7 @@ public class ContextNode implements Serializable {
 			}
 		} else if (itemDataVect.elementAt(0).equals("JEP")) {
 			try {
-				//obj = ((ExpressionEvaluator) data).value(itemName);
+				//obj = ((ExpressionEvaluator) data).execute(itemName);
 				obj = ((Evaluation) data).getValue();
 			} catch (EvaluationException e) {
 				e.printStackTrace();
@@ -1384,7 +1384,7 @@ public class ContextNode implements Serializable {
 				logger.info("set context node URL to: " + getData());
 				StringBuffer cmd = new StringBuffer("chmod +777 ")
 						.append(localFile);
-				Process p = Runtime.getRuntime().exec(cmd.toString());
+				Process p = Runtime.getRuntime().act(cmd.toString());
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

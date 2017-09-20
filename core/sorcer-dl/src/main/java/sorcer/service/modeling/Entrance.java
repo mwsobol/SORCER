@@ -19,8 +19,7 @@ package sorcer.service.modeling;
 
 import sorcer.service.Arg;
 import sorcer.service.ContextException;
-
-import java.rmi.RemoteException;
+import sorcer.service.Request;
 
 
 /**
@@ -28,13 +27,13 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Entrance<T>  {
+public interface Entrance<V> extends Request {
 
     /**
      * Returns the current data of this entrance.
      *
      * @return the current data of this entrance
      */
-    public T get(Arg... args) throws ContextException;
+    public V get(Arg... args) throws ContextException;
 
 }

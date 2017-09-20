@@ -36,7 +36,7 @@ public class Componenet extends AbstractEntry {
      * Construct an instance of this class, with all fields
      * initialized appropriately.
      *
-     * @param name  the value of the name
+     * @param name  the execute of the name
      */
     public Componenet(String name) {
 	this.name = name;

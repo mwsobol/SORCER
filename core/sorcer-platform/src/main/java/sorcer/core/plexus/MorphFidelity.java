@@ -18,10 +18,11 @@ package sorcer.core.plexus;
 
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
-import sorcer.core.context.model.ent.Function;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Ref;
 import sorcer.core.invoker.Observable;
 import sorcer.service.*;
+import sorcer.service.modeling.Entrance;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -29,21 +30,20 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 04/26/16.
  */
-public class MorphFidelity<T extends Arg> extends Observable implements
-        Identifiable, Multifidelity<T>, Arg {
+public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>, Arg {
 
-    // fidelity of fidelities T  that is observable
-    private ServiceFidelity<T> fidelity;
+    // fidelity of fidelities thatare observable
+    private Fidelity<T> fidelity;
 
     private Morpher morpher;
 
     private String path;
 
-    private ServiceFidelity<Function> morpherFidelity;
+    private ServiceFidelity morpherFidelity;
 
     private Uuid id = UuidFactory.generate();
 
-    public MorphFidelity(ServiceFidelity fi) {
+    public MorphFidelity(Fidelity fi) {
         fidelity = fi;
         path = fi.getPath();
     }
@@ -52,11 +52,11 @@ public class MorphFidelity<T extends Arg> extends Observable implements
         addObserver(manager);
     }
 
-    public ServiceFidelity<T> getFidelity() {
+    public Fidelity getFidelity() {
         return fidelity;
     }
 
-    public void setFidelity(ServiceFidelity<T> fi) {
+    public void setFidelity(Fidelity fi) {
         this.fidelity = fi;
     }
 
@@ -76,7 +76,6 @@ public class MorphFidelity<T extends Arg> extends Observable implements
         return select;
     }
 
-    @Override
     public void setSelect(String name) {
         fidelity.setSelect(name);
     }
@@ -84,13 +83,7 @@ public class MorphFidelity<T extends Arg> extends Observable implements
     public void setMorpherSelect(String name) {
         if (morpherFidelity != null) {
             morpherFidelity.setSelect(name);
-            try {
-                morpher = (Morpher) morpherFidelity.getSelect().getValue();
-            } catch (EvaluationException e) {
-                e.printStackTrace();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+            morpher = (Morpher) ((Entry)morpherFidelity.getSelect()).getItem();
         }
     }
 
@@ -101,6 +94,11 @@ public class MorphFidelity<T extends Arg> extends Observable implements
 
     public void setSelect(T selection) {
         fidelity.setSelect(selection);
+    }
+
+    @Override
+    public boolean isValid() {
+        return false;
     }
 
     public T getSelect(String name) {
@@ -115,11 +113,11 @@ public class MorphFidelity<T extends Arg> extends Observable implements
         fidelity.setSelects(selects);
     }
 
-    public ServiceFidelity<Function> getMorpherFidelity() {
+    public ServiceFidelity getMorpherFidelity() {
         return morpherFidelity;
     }
 
-    public void setMorpherFidelity(ServiceFidelity<Function> morpherFidelity) {
+    public void setMorpherFidelity(ServiceFidelity morpherFidelity) {
         this.morpherFidelity = morpherFidelity;
     }
 
@@ -131,12 +129,6 @@ public class MorphFidelity<T extends Arg> extends Observable implements
         path = fidelityPath;
     }
 
-    @Override
-    public Object exec(Arg... args) throws ServiceException, RemoteException {
-        if (fidelity.getSelect() instanceof Service) {
-            return ((Service)fidelity.getSelect()).exec(args);
-        } else return fidelity.getSelect();
-    }
 
     @Override
     public Object getId() {
@@ -169,5 +161,21 @@ public class MorphFidelity<T extends Arg> extends Observable implements
         return fidelity.getSelects().size();
     }
 
+    @Override
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
+        if (fidelity.getSelect() instanceof Service) {
+            return ((Service)fidelity.getSelect()).execute(args);
+        } else return fidelity.getSelect();
+    }
+
+    @Override
+    public Entrance act(Arg... args) throws ServiceException, RemoteException {
+        return new Entry(path, fidelity);
+    }
+
+    @Override
+    public Entrance act(String entryName, Arg... args) throws ServiceException, RemoteException {
+        return new Entry(entryName, fidelity);
+    }
 }
 

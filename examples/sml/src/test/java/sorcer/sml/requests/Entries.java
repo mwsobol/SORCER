@@ -63,26 +63,26 @@ public class Entries {
 
     @Test
     public void setup1() throws Exception {
-        Setup cxtEnt = setup("context/value", context(val("arg/x1", 100.0), val("arg/x2", 20.0)));
+        Setup cxtEnt = setup("context/execute", context(val("arg/x1", 100.0), val("arg/x2", 20.0)));
         assertEquals(100.0, val(cxtEnt, "arg/x1"));
     }
 
     @Test
     public void setup2() throws Exception {
-        Setup cxtEnt = setup("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        Setup cxtEnt = setup("context/execute", val("arg/x1", 100.0), val("arg/x2", 20.0));
         assertEquals(100.0, val(cxtEnt, "arg/x1"));
     }
 
     @Test
     public void setValueOfSetup1() throws Exception {
-        Setup cxtEnt = setup("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        Setup cxtEnt = setup("context/execute", val("arg/x1", 100.0), val("arg/x2", 20.0));
         setValue(cxtEnt, "arg/x1", 80.0);
         assertEquals(80.0, val(cxtEnt, "arg/x1"));
     }
 
     @Test
     public void setValueOfSetup2() throws Exception {
-        Setup cxtEnt = setup("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        Setup cxtEnt = setup("context/execute", val("arg/x1", 100.0), val("arg/x2", 20.0));
         setValue(cxtEnt, val("arg/x1", 80.0), val("arg/x2", 10.0));
         assertEquals(80.0, val(cxtEnt, "arg/x1"));
         assertEquals(10.0, val(cxtEnt, "arg/x2"));
@@ -129,17 +129,6 @@ public class Entries {
                 setValue(y, value(cxt, "y"));
             return eval(y) + eval(x) + eval(z);
         }
-
-        @Override
-        public Object exec(Arg... args) throws MogramException, RemoteException {
-            return invoke((Context)Arg.getServiceModel(args), args);
-        }
-
-        @Override
-        public String getName() {
-            return getClass().getName();
-        }
-
     }
 
 	@Test

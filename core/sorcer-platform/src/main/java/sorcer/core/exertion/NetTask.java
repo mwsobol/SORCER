@@ -146,7 +146,7 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws MogramException, RemoteException {
 		try {
 			return doTask(null, args);
 		} catch (SignatureException e) {

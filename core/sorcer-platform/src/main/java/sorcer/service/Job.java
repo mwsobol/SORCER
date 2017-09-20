@@ -188,7 +188,7 @@ public class Job extends CompoundExertion {
             SignatureException, RemoteException, TransactionException {
         if (delegate == null) {
             if (delegate == null) {
-                Signature ps = selectedFidelity.select;
+                Signature ps = (Signature) selectedFidelity.select;
                 if (ps instanceof NetSignature) {
                     delegate = new NetJob(name);
                 } else {
@@ -458,7 +458,7 @@ public class Job extends CompoundExertion {
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Mappable#value(java.lang.String, sorcer.service.Arg[])
+	 * @see sorcer.service.Mappable#execute(java.lang.String, sorcer.service.Arg[])
 	 */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {

@@ -30,10 +30,10 @@ import java.rmi.RemoteException;
 public interface Reference<T>  extends Scopable {
 		
 	/**
-	 * Returns the current value of this evaluation. The current value can be
-	 * exiting value with no need to evaluate it if it's still valid.
+	 * Returns the current execute of this evaluation. The current execute can be
+	 * exiting execute with no need to evaluate it if it's still valid.
 	 * 
-	 * @return the current value of this evaluation
+	 * @return the current execute of this evaluation
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */

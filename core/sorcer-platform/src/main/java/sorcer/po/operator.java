@@ -65,7 +65,7 @@ public class operator extends sorcer.operator {
         return new Neo(path, weights, signals);
     }
 
-    public static Neo neo(String path, ServiceFidelity<NeoFidelity> fidelities) {
+    public static Neo neo(String path, ServiceFidelity fidelities) {
 		return new Neo(path, fidelities);
 	}
 
@@ -125,17 +125,17 @@ public class operator extends sorcer.operator {
 		return p;
 	}
 
-	public static Srv srv(ServiceFidelity<Signature> fidelity) {
+	public static Srv srv(ServiceFidelity fidelity) {
 		Srv service = new Srv(fidelity.getName(), fidelity);
 		return service;
 	}
 
-	public static <T extends Arg> Srv srv(String name, ServiceFidelity<T> fidelity) {
+	public static Srv srv(String name, ServiceFidelity fidelity) {
 		Srv service = new Srv(name, fidelity);
 		return service;
 	}
 
-	public static Srv srv(String name, MorphFidelity<Signature> fidelity) {
+	public static Srv srv(String name, MorphFidelity fidelity) {
 		Srv service = new Srv(name, fidelity);
 		return service;
 	}
@@ -227,8 +227,8 @@ public class operator extends sorcer.operator {
         return fi;
     }
 
-    public static ServiceFidelity<Proc> pFi(Function... entries) {
-        ServiceFidelity<Proc> fi = new ServiceFidelity(entries);
+    public static ServiceFidelity pFi(Function... entries) {
+        ServiceFidelity fi = new ServiceFidelity(entries);
         fi.fiType = ServiceFidelity.Type.PROC;
         return fi;
     }
@@ -361,7 +361,7 @@ public class operator extends sorcer.operator {
 	}
 
 	public static Proc proc(Invocation invoker) {
-		return new Proc(invoker.getName(), invoker);
+		return new Proc(((ServiceInvoker)invoker).getName(), invoker);
 	}
 
 	public static Proc proc(String path, Invocation invoker) {
@@ -708,17 +708,17 @@ public class operator extends sorcer.operator {
         return new Function(path, model.asis(path));
     }
 
-	public static <T extends Arg> Srv ent(String name, MorphFidelity<T> fidelity) {
+	public static <T extends Service> Srv ent(String name, MorphFidelity fidelity) {
         fidelity.setPath(name);
         fidelity.getFidelity().setPath(name);
         return srv(name, fidelity);
     }
 
-	public static Srv ent(String name, ServiceFidelity<Signature> fidelity) {
+	public static Srv ent(String name, ServiceFidelity fidelity) {
         return srv(name, fidelity);
     }
 
-	public static Srv ent(ServiceFidelity<Signature> fidelity) {
+	public static Srv ent(ServiceFidelity fidelity) {
         return srv(fidelity);
     }
 
@@ -747,8 +747,8 @@ public class operator extends sorcer.operator {
 		} else if (value instanceof Context && args != null && args.length > 0) {
 			return (Entry<T>) new Neo(path, (Context)value, new Args(args));
 		}
-//		else if (value instanceof Invocation || value instanceof Evaluation) {
-//			entry = new Proc<T>(path, value);
+//		else if (execute instanceof Invocation || execute instanceof Evaluation) {
+//			entry = new Proc<T>(path, execute);
 //			entry.setType(Functionality.Type.PROC);
 //		}
 		else if (value instanceof Signature) {

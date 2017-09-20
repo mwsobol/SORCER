@@ -54,7 +54,6 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.proxy.Outer;
 import sorcer.core.proxy.Partner;
 import sorcer.core.proxy.Partnership;
-import sorcer.core.signature.ServiceSignature;
 import sorcer.scratch.ScratchManager;
 import sorcer.scratch.ScratchManagerSupport;
 import sorcer.service.*;
@@ -98,7 +97,7 @@ import static sorcer.util.StringUtils.tName;
  *  <code>buildMyBean</code> of the class <code>MyServiceBean</code>.
  * <p>
  * In the simplest case, the provider exports and registers its own (outer) proxy with
- * the primary methods {@code Service.exec(Arg[])} and service federation request
+ * the primary methods {@code Service.act(Arg[])} and service federation request
  * {@code Exerter.exert(Mogram, Transaction, Arg[])}. The functionality of an
  * outer proxy can be extended by its inner server functionality with its Remote
  * inner proxy. In this case, the outer proxies have to implement {@link sorcer.core.proxy.Outer}
@@ -589,7 +588,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws MogramException, RemoteException {
 		Mogram srv = Arg.getMogram(args);
 		if (srv != null) {
 			return service(srv);
@@ -1293,7 +1292,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				   + "\ntotal service op calls = " + numCalls + " "
 				   + "\nnumber of service op calls running = "	+ numThreads + " "
 				   + "\nservice op call ids running = " + threadIds + " "
-		           + "\naverage exec time [s]       = " + avgExecTime;
+		           + "\naverage act time [s]       = " + avgExecTime;
         return msg;
 	}
 

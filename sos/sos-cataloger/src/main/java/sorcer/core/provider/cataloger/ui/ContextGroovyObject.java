@@ -31,7 +31,7 @@ import groovy.lang.GroovyShell;
  * 
  * More information can be found at: http://groovy.codehaus.org/
  * 
- * Providers that utilize the value methods of this object must add:
+ * Providers that utilize the execute methods of this object must add:
  * 
  *  ${path.separator}${iGrid.home}/common/groovy.jar to the sorcer-jars section of their run.xml
  *  
@@ -88,7 +88,7 @@ public class ContextGroovyObject implements Serializable
 			} 
 			catch(RuntimeException e) 
 			{
-				System.out.println("Error Occurred in Groovy Shell-value! With Attributes"+e.getMessage());
+				System.out.println("Error Occurred in Groovy Shell-execute! With Attributes"+e.getMessage());
 				throw new Exception("Groovy Parsing Error: "+e.getMessage());
 			}
 		}
@@ -148,7 +148,7 @@ public class ContextGroovyObject implements Serializable
 			} 
 			catch(RuntimeException e) 
 			{
-				System.out.println("Error Occurred in Groovy Shell-value! With Attributes"+e.getMessage());
+				System.out.println("Error Occurred in Groovy Shell-execute! With Attributes"+e.getMessage());
 				throw new Exception("Groovy Parsing Error: "+e.getMessage());
 			}
 		}

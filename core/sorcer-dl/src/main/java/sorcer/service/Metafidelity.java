@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 5/15/16.
  */
-public interface Multifidelity<Fi> extends Item, Serializable {
+public interface Metafidelity extends Item, Serializable {
 
     public String getName();
 

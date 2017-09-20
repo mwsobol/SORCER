@@ -315,7 +315,7 @@ public class Models {
     public void amorphousModel() throws Exception {
 
 		Morpher mFi1Morpher = (mgr, mFi, value) -> {
-			ServiceFidelity<Signature> fi =  mFi.getFidelity();
+			Fidelity<Signature> fi =  mFi.getFidelity();
 			if (fi.getSelectName().equals("add")) {
 				if (((Double) value) <= 200.0) {
 					mgr.morph("sysFi2");
@@ -328,7 +328,7 @@ public class Models {
 		};
 
         Morpher mFi2Morpher = (mgr, mFi, value) -> {
-            ServiceFidelity<Signature> fi =  mFi.getFidelity();
+            Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("divide")) {
                 if (((Double) value) <= 9.0) {
                     mgr.morph("sysFi4");
@@ -338,9 +338,9 @@ public class Models {
             }
         };
 
-        ServiceFidelity<Fidelity> fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        ServiceFidelity<Fidelity> fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-        ServiceFidelity<Fidelity> fi4 = fi("sysFi4", fi("mFi3", "average"));
+        MetaFi fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+		MetaFi fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+		MetaFi fi4 = fi("sysFi4", fi("mFi3", "average"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));

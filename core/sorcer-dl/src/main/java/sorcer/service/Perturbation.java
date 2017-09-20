@@ -22,9 +22,9 @@ import java.rmi.RemoteException;
 public interface  Perturbation <T extends Object> {
 
 	/**
-	 * Returns the value of the associated perturbed state.
+	 * Returns the execute of the associated perturbed state.
 	 * 
-	 * @return the current value of this state
+	 * @return the current execute of this state
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */

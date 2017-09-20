@@ -29,7 +29,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface InEntry {
     /**
-     * If true (the default) a value is required in the context
+     * If true (the default) a execute is required in the context
      */
     public boolean required() default true;
 }

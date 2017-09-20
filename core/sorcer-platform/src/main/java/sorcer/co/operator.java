@@ -56,6 +56,9 @@ import java.util.concurrent.Callable;
 import static sorcer.po.operator.invoker;
 import static sorcer.po.operator.srv;
 
+/**
+ * Created by Mike Sobolewski
+ */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class operator extends sorcer.operator {
 

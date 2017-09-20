@@ -89,7 +89,7 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
     public Context getContext() throws ContextException;
 
     /**
-     * Returns a value of the component at the key
+     * Returns a execute of the component at the key
      *
      * @param key
      *            the component name
@@ -137,7 +137,7 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
      * @param selection
      *            The service fidelity name.
      */
-    public ServiceFidelity selectFidelity(String selection);
+    public Fidelity selectFidelity(String selection);
 
     /**
      * Returns a service fidelity of this exertion that consists of process
@@ -148,12 +148,12 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
      * @return a collection of all service signatures
      * @see #getProcessSignature
      */
-    public ServiceFidelity<Signature> getSelectedFidelity();
+    public Fidelity getSelectedFidelity();
 
     /**
      * Returns a map of all available service fidelities of this exertion.
      */
-    public Map<String, ServiceFidelity> getFidelities();
+    public Map<String, Fidelity> getFidelities();
 
     /**
      * Returns a fdelity manager for of this exertion.

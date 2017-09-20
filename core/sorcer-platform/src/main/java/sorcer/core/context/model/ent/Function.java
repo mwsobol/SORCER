@@ -19,10 +19,8 @@ package sorcer.core.context.model.ent;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.co.tuple.Tuple2;
 import sorcer.core.context.ContextSelection;
 import sorcer.core.context.ServiceContext;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
 import sorcer.util.bdb.objects.UuidObject;
@@ -133,7 +131,7 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Callable<T>,
 			} else if (val instanceof Callable) {
 				val = (T) ((Callable)val).call(args);
 			} else if (val instanceof Service) {
-				val = (T) ((Service)val).exec(args);
+				val = (T) ((Service)val).execute(args);
 			}
 		} catch (Exception e) {
 			throw new EvaluationException(e);

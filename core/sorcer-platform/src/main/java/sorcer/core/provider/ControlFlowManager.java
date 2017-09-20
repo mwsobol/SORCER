@@ -397,7 +397,7 @@ public class ControlFlowManager {
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             String path = (String) entry.getKey();
-			Object eval = entry.value();
+			Object eval = entry.execute();
 
             try {
                 context.putValue(path, eval);
@@ -423,7 +423,7 @@ public class ControlFlowManager {
 
             while (e.hasMoreElements()) {
 				path = (String) e.nextElement();
-                toContext.putValue(path, fromContext.value(path));
+                toContext.putValue(path, fromContext.execute(path));
             }
         } catch (ContextException ce) {
             ce.printStackTrace();
@@ -488,7 +488,7 @@ public class ControlFlowManager {
 
     public Task doFidelityTask(Task task) throws MogramException,
             SignatureException, RemoteException, ContextException {
-        ServiceFidelity tf = task.getSelectedFidelity();
+        ServiceFidelity tf = (ServiceFidelity)task.getSelectedFidelity();
         task.correctBatchSignatures();
         task.startExecTime();
         // append context from Contexters
@@ -504,7 +504,7 @@ public class ControlFlowManager {
             task.setContext(cxt);
         }
         // exert service task
-		ServiceFidelity<Signature> ts = new ServiceFidelity(task.getName());
+		ServiceFidelity ts = new ServiceFidelity(task.getName());
         Signature tsig = task.getProcessSignature();
         ((ServiceContext)task.getContext()).getMogramStrategy().setCurrentSelector(tsig.getSelector());
         ((ServiceContext)task.getContext()).setCurrentPrefix(tsig.getPrefix());
@@ -571,7 +571,7 @@ public class ControlFlowManager {
                 ((ServiceContext)shared).getMogramStrategy().setCurrentSelector(signatures.get(i).getSelector());
                 ((ServiceContext)shared).setCurrentPrefix(signatures.get(i).getPrefix());
 
-                ServiceFidelity<Signature> tmp = new ServiceFidelity<Signature>();
+                ServiceFidelity tmp = new ServiceFidelity();
                 tmp.getSelects().add(signatures.get(i));
                 t.setSelectedFidelity(tmp);
                 t.setContinous(true);

@@ -68,11 +68,11 @@ public class Contexts implements SorcerConstants {
 
 	final static String JOB_FEEDBACK = "job" + CPS + "feedback";
 
-	final static String GET_EXEC_TIME = "get" + CPS + "exec/time";
+	final static String GET_EXEC_TIME = "get" + CPS + "act/time";
 
 	final static String TASK_REVIEW = "task" + CPS + "review";
 
-	final static String EXEC_TIME = "exec" + CPS + "time";
+	final static String EXEC_TIME = "act" + CPS + "time";
 
 	final static String PRIORITY = "priority";
 
@@ -257,7 +257,7 @@ public class Contexts implements SorcerConstants {
 					// Util.debug(this, "old DataNode data =
 					// "+((DataNode)val).getData());
 					// Util.debug(this, "new DataNode data =
-					// "+((DataNode)fromCntxt.value(key)).getData());
+					// "+((DataNode)fromCntxt.execute(key)).getData());
 					((ContextNode) val).copy((ContextNode) fromCntxt
 							.getValue(key));
 					// Util.debug(this, "old DataNode data =

@@ -260,13 +260,13 @@ public class Task extends ServiceExertion {
 		if (selectedFidelity.selects.size() == 1) {
 			sb.append(getProcessSignature().getProviderName());
 		} else {
-			for (Signature s : selectedFidelity.selects) {
+			for (Object s : selectedFidelity.selects) {
 				sb.append("\n  ").append(s);
 			}
 		}
 		String time = getControlContext().getExecTime();
 		if (time != null && time.length() > 0)
-			sb.append("\n\texec time=").append(time);
+			sb.append("\n\tact time=").append(time);
 		sb.append("\n");
 		sb.append(controlContext).append("\n");
 //		sb.append(dataContext);
@@ -287,7 +287,7 @@ public class Task extends ServiceExertion {
 		sb.append("\n  status: ").append(getStatus());
 		String time = getControlContext().getExecTime();
 		if (time != null && time.length() > 0)
-			sb.append("\n  exec time: ").append(time);
+			sb.append("\n  act time: ").append(time);
 		return sb.toString();
 	}
 
@@ -388,7 +388,7 @@ public class Task extends ServiceExertion {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Mappable#value(java.lang.String, sorcer.service.Arg[])
+	 * @see sorcer.service.Mappable#execute(java.lang.String, sorcer.service.Arg[])
 	 */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
@@ -421,20 +421,20 @@ public class Task extends ServiceExertion {
 	public void correctBatchSignatures() {
 		// if all signatures are of service process SRV fiType make all
 		// except the last one of preprocess PRE fiType
-		List<Signature> alls = selectedFidelity.selects;
+		List<Service> alls = selectedFidelity.selects;
 		if (alls.size() > 1) {
-			Signature lastSig = alls.get(alls.size() - 1);
+			Signature lastSig = (Signature) alls.get(alls.size() - 1);
 			if (alls.size() > 1 && this.isBatch() && !(lastSig instanceof NetSignature)) {
 				boolean allSrvType = true;
-				for (Signature sig : alls) {
-					if (!sig.getType().equals(Signature.SRV)) {
+				for (Service sig : alls) {
+					if (!((Signature)sig).getType().equals(Signature.SRV)) {
 						allSrvType = false;
 						break;
 					}
 				}
 				if (allSrvType) {
 					for (int i = 0; i < alls.size() - 1; i++) {
-						alls.get(i).setType(Signature.PRE);
+						((Signature)alls.get(i)).setType(Signature.PRE);
 					}
 				}
 			}

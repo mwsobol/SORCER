@@ -30,11 +30,11 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public interface FidelityManagement<T extends Arg> extends Service, RemoteEventListener, Serializable {
+public interface FidelityManagement<T extends Service> extends Service, RemoteEventListener, Serializable {
 
-    public Map<String, ServiceFidelity<T>> getFidelities() throws RemoteException;
+    public Map<String, Fidelity> getFidelities() throws RemoteException;
 
-    public Map<String, ServiceFidelity<Fidelity>> getMetafidelities() throws RemoteException;
+    public  Map<String, Metafidelity> getMetafidelities() throws RemoteException;
 
     public void morph(String... fiNames) throws EvaluationException, RemoteException;
 

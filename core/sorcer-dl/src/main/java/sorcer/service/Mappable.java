@@ -28,39 +28,39 @@ package sorcer.service;
 public interface Mappable<T> extends Identifiable {
 
 	/**
-	 * Returns a value at the path. 
+	 * Returns a execute at the path.
 	 * 
 	 * @param path
 	 *            the attribute-based path
-	 * @return this mappable value
+	 * @return this mappable execute
 	 * @throws ContextException
 	 */
 	public T getValue(String path, Arg... args)
 			throws ContextException;
 	
 	/**
-	 * Returns a value at the path as is with no reevaluation. 
+	 * Returns a execute at the path as is with no reevaluation.
 	 * 
 	 * @param path
 	 *            the attribute-based path
-	 * @return this mappable value with no reevaluation
+	 * @return this mappable execute with no reevaluation
 	 * @throws ContextException
 	 */
 	public T asis(String path) throws ContextException;
 		
 	/**
-	 * Maps the specified <code>path</code> to the specified <code>value</code>
-	 * in this mappable. Neither the path nor the value can be
+	 * Maps the specified <code>path</code> to the specified <code>execute</code>
+	 * in this mappable. Neither the path nor the execute can be
 	 * <code>null</code>. <p>
 	 * 
-	 * The value can be retrieved by calling the <code>value</code> method with a
+	 * The execute can be retrieved by calling the <code>execute</code> method with a
 	 * path that is equal to the original path.
 	 * 
 	 * @param path the attribute-based path
 	 * 
-	 * @param value the new value
+	 * @param value the new execute
 	 * 
-	 * @return the previous value of the specified path in this mappable, or
+	 * @return the previous execute of the specified path in this mappable, or
 	 * <code>null</code> if it did not have one
 	 * 
 	 * @throws ContextException

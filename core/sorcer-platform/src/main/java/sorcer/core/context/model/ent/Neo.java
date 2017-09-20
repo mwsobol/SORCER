@@ -49,7 +49,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Acti
 
 	protected Activator activator;
 
-	protected ServiceFidelity<NeoFidelity> fidelities;
+	protected ServiceFidelity fidelities;
 
 
 	public Neo(String name) {
@@ -103,7 +103,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Acti
 		activator.setWeights(weights);
 	}
 
-	public Neo(String name, ServiceFidelity<NeoFidelity> fidelities) {
+	public Neo(String name, ServiceFidelity fidelities) {
 		this(name);
 		this.fidelities= fidelities;
 	}
@@ -331,7 +331,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Acti
 	}
 
 	@Override
-	public Double value(Arg... args) throws MogramException, RemoteException {
+	public Double execute(Arg... args) throws MogramException, RemoteException {
 		Context cxt = (Context) Arg.getServiceModel(args);
 		if (cxt != null) {
 			scope = cxt;
@@ -341,11 +341,11 @@ public class Neo extends Function<Double> implements Functionality<Double>, Acti
 		}
 	}
 
-	public ServiceFidelity<NeoFidelity> getFidelities() {
+	public ServiceFidelity getFidelities() {
 			return fidelities;
 	}
 
-	public void setFidelities(ServiceFidelity<NeoFidelity> fidelities) {
+	public void setFidelities(ServiceFidelity fidelities) {
 			this.fidelities = fidelities;
     }
 

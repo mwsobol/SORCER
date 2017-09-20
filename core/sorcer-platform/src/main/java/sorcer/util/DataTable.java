@@ -830,7 +830,7 @@ public class DataTable implements ModelTable {
 		return rowList.get(column);
 	}
 
-//	public Object value(Object rowName, String columnName) {
+//	public Object execute(Object rowName, String columnName) {
 //		int row = rowIndexOf(rowName);
 //		int column = columnIndexOf(columnName);
 //		List rowList = (List) dataList.get(row);

@@ -1,5 +1,8 @@
 package sorcer.service;
 
+import sorcer.core.Tag;
+import sorcer.service.modeling.Entrance;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +10,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 6/27/16.
  */
-public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.Entry {
+public class Fidelity<T> implements Fi<T>, Item, Dependency, net.jini.core.entry.Entry {
     static final long serialVersionUID = 1L;
 
 	protected static int count = 0;
@@ -19,6 +22,8 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
 	protected Object option = "";
 
 	protected T select;
+
+	protected List<T> selects = new ArrayList<T>();
 
 	public Type fiType = Type.SELECT;
 
@@ -48,7 +53,32 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
         this.select = (T) select;
     }
 
-	@Override
+    public Fidelity(String... names) {
+        this.fiName = "";
+        fiType = Type.NAME;
+        for (String s : names)
+            this.selects.add((T) new Tag(s));
+    }
+
+    public Fidelity(String name, List<Fi> fis) {
+        this.fiName = name;
+        fiType = Type.NAME;
+        for (Fi fi : fis)
+            this.selects.add((T) fi);
+    }
+
+    public Fidelity(Entrance... entries) {
+        fiType = Type.NAME;
+        for (Entrance fi : entries)
+            this.selects.add((T) fi);
+    }
+
+    @Override
+    public Object getId() {
+        return fiName;
+    }
+
+    @Override
 	public String getName() {
 		return fiName;
 	}
@@ -57,9 +87,29 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
 		this.fiName = name;
 	}
 
-	public T getSelect() {
+    public T get(int index) {
+        return selects.get(index);
+    }
+
+    public T getSelect() {
+		// if a select not set return the firts one option
+		if (select == null && selects.size() > 0) {
+			select = selects.get(0);
+		}
 		return select;
 	}
+
+    public String getSelectName() {
+        return ((Identifiable)select).getName();
+    }
+
+    public List<T> getSelects() {
+		return selects;
+	}
+
+    public void addSelect(T select) {
+        selects.add(select);
+    }
 
 	public String getPath() {
 		return path;
@@ -73,7 +123,38 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
 		this.select = select;
 	}
 
-	public Type getFiType() {
+	public void setSelect(String fiName) {
+		for (T item : selects) {
+			if (((Identifiable)item).getName().equals(fiName)) {
+				this.select = item;
+				return;
+			}
+
+		}
+	}
+
+	public T getSelect(String name) {
+		for (T s : selects) {
+			if (((Identifiable)s).getName().equals(name)) {
+				return s;
+			}
+		}
+		return null;
+	}
+
+	public void setSelects(List<T> selects) {
+		this.selects = selects;
+	}
+
+    public List<String> getSelectNames() {
+        List<String> names = new ArrayList<>(selects.size());
+        for (T item : selects) {
+            names.add(((Identifiable)item).getName());
+        }
+        return names;
+    }
+
+    public Type getFiType() {
 		return fiType;
 	}
 
@@ -116,7 +197,7 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
 		return true;
 	}
 
-	@Override
+    @Override
 	public String toString() {
 		return (path == null ? fiName :
 				fiName + "@" + path)
@@ -125,9 +206,9 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
 	}
 
     @Override
-    public Object exec(Arg... args) throws ServiceException, RemoteException {
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
         if (select instanceof Request) {
-            return ((Request)select).exec(args);
+            return ((Request)select).execute(args);
         } else {
             return select;
         }
@@ -153,4 +234,14 @@ public class Fidelity<T> implements Fi, Item, Dependency, net.jini.core.entry.En
 	public List<Evaluation> getDependers() {
 		return dependers;
 	}
+
+    @Override
+    public Entrance act(Arg... args) throws ServiceException, RemoteException {
+        return null;
+    }
+
+    @Override
+    public Entrance act(String entryName, Arg... args) throws ServiceException, RemoteException {
+        return null;
+    }
 }

@@ -539,7 +539,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.core.context.IndexedContext#value(int)
+	 * @see sorcer.core.context.IndexedContext#execute(int)
 	 */
 	@Override
 	public Object getValue(int i) throws ContextException {

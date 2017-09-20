@@ -32,7 +32,7 @@ public class JavaSystemProperties {
      *
      * @param key        property key
      * @param properties map od properties, use system properties if null
-     * @return property value
+     * @return property execute
      */
 	public static String getProperty(String key, Map<String, String> properties) {
 		return getProperty(key, null, properties);
@@ -41,9 +41,9 @@ public class JavaSystemProperties {
     /**
      * Get the property from Properties object or, if it's null, from the system properties.
      * @param key             property key
-     * @param defaultValue    default value returned if property is not defined
+     * @param defaultValue    default execute returned if property is not defined
      * @param properties      properties to search they key in. If null, the system properties are used
-     * @return property value or default value if the property is not defined
+     * @return property execute or default execute if the property is not defined
      */
     @SuppressWarnings("unchecked")
     public static String getProperty(String key, String defaultValue, Properties properties) {
@@ -53,9 +53,9 @@ public class JavaSystemProperties {
     /**
      * Get the property from map or, if map is null, from the system properties.
      * @param key             property key
-     * @param defaultValue    default value returned if property is not defined
+     * @param defaultValue    default execute returned if property is not defined
      * @param properties      Map to search they key in. If null, the system properties are used
-     * @return property value or default value if the property is not defined
+     * @return property execute or default execute if the property is not defined
      */
     public static String getProperty(String key, String defaultValue, Map<String, String> properties) {
 		if (properties == null) {

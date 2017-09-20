@@ -32,7 +32,7 @@ import java.rmi.RemoteException;
  * contexts, data structures defined in SORCER.
  * 
  * A service context is dictionary (associative array) composed of a collection
- * of (key, value) pairs, such that each possible key appears at most once in
+ * of (key, execute) pairs, such that each possible key appears at most once in
  * the collection. Keys are considered as parameters and values as arguments of
  * the service invokers accepting service contexts as their input data. A key is
  * expressed by a path of attributes like directories in paths of a file system.
@@ -43,13 +43,13 @@ import java.rmi.RemoteException;
  * called, the context arguments for that call can be assigned to the
  * corresponding parameters of the invoker. The context values for all paths
  * inside the context are defined explicitly by corresponding objects or
- * calculated by corresponding invokers. Thus, requesting a value for a path in
+ * calculated by corresponding invokers. Thus, requesting a execute for a path in
  * a context is a computation defined by a invoker composition within the scope
  * of the context.
  * 
  * @author Mike Sobolewski
  */
-public interface Invocation<T> extends Item {
+public interface Invocation<T> {
 
 	public T invoke(Context<T> context, Arg... entries) throws ContextException, RemoteException;
 }

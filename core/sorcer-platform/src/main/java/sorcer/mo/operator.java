@@ -84,14 +84,14 @@ public class operator {
         }
     }
 
-    public static ServiceFidelity<Domain> mdlFi(Domain... models) {
-        ServiceFidelity<Domain> fi = new ServiceFidelity(models);
+    public static ServiceFidelity mdlFi(Domain... models) {
+        ServiceFidelity fi = new ServiceFidelity(models);
         fi.fiType = ServiceFidelity.Type.MODEL;
         return fi;
     }
 
-    public static ServiceFidelity<Domain> mdlFi(String fiName, Domain... models) {
-        ServiceFidelity<Domain> fi = new ServiceFidelity(fiName, models);
+    public static ServiceFidelity mdlFi(String fiName, Domain... models) {
+        ServiceFidelity fi = new ServiceFidelity(fiName, models);
         fi.fiType = ServiceFidelity.Type.MODEL;
         return fi;
     }
@@ -395,9 +395,9 @@ public class operator {
         return  new ReturnPath<>(path);
     }
 
-    public static ServiceFidelity<Arg> response(String... paths) {
-        return  new ServiceFidelity(paths);
-    }
+//    public static ServiceFidelity response(String... paths) {
+//        return  new ServiceFidelity(paths);
+//    }
 
     public static Paradigmatic modeling(Paradigmatic paradigm) {
         paradigm.setModeling(true);
@@ -409,8 +409,8 @@ public class operator {
         return paradigm;
     }
 
-    public static Mogram addProjection(Mogram mogram, ServiceFidelity<Fidelity>... fidelities) {
-        for ( ServiceFidelity<Fidelity> fi : fidelities) {
+    public static Mogram addProjection(Mogram mogram, Metafidelity... fidelities) {
+        for ( Metafidelity fi : fidelities) {
             ((FidelityManager)mogram.getFidelityManager()).put(fi.getName(), fi);
         }
         return mogram;
@@ -422,7 +422,7 @@ public class operator {
         try {
             for (Fidelity fi : fidelities) {
                 if (fi instanceof ServiceFidelity) {
-                    List<Fidelity> selects = ((ServiceFidelity) fi).getSelects();
+                    List<Service> selects = ((ServiceFidelity) fi).getSelects();
                     fiArray = new Fidelity[selects.size()];
                     selects.toArray(fiArray);
                     mogram.getFidelityManager().reconfigure(fiArray);
@@ -467,10 +467,10 @@ public class operator {
     public static Model srvModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
         List<Signature> sigs = new ArrayList<>();
-        Fidelity responsePaths = null;
+        Fidelity<Path> responsePaths = null;
         SrvModel model = null;
         FidelityManager fiManager = null;
-        List<ServiceFidelity<Fidelity>> metaFis = new ArrayList<>();
+        List<ServiceFidelity> metaFis = new ArrayList<>();
         List<Srv> morphFiEnts = new ArrayList();
         for (Object item : items) {
             if (item instanceof Signature) {
@@ -485,7 +485,7 @@ public class operator {
                 morphFiEnts.add((Srv)item);
             } else if (item instanceof Fidelity) {
                 if (((Fidelity) item).getFiType().equals(Fidelity.Type.META)) {
-                    metaFis.add((ServiceFidelity<Fidelity>) item);
+                    metaFis.add((ServiceFidelity) item);
                 } else {
                     responsePaths = ((Fidelity) item);
                 }
@@ -509,7 +509,7 @@ public class operator {
                     fiManager.addMorphedFidelity(morphFiEnt.getName(), mFi);
                     fiManager.addFidelity(morphFiEnt.getName(), mFi.getFidelity());
                     mFi.setPath(morphFiEnt.getName());
-                    mFi.setSelect((Arg) mFi.getSelects().get(0));
+                    mFi.setSelect((Service) mFi.getSelects().get(0));
                     mFi.addObserver(fiManager);
                     if (mFi.getMorpherFidelity() != null) {
                         // set the default morpher
@@ -520,7 +520,7 @@ public class operator {
         }
 
         if (responsePaths != null) {
-            model.getMogramStrategy().setResponsePaths(((ServiceFidelity) responsePaths).getSelects());
+            model.getMogramStrategy().setResponsePaths(responsePaths.getSelects());
         }
         if (complement != null) {
             model.setSubject(complement.getName(), complement.getId());
@@ -530,6 +530,10 @@ public class operator {
         System.arraycopy(items,  0, dest,  1, items.length);
         dest[0] = model;
         return (Model)context(dest);
+    }
+
+    public static Fidelity<Arg> response(String... paths) {
+        return  new Fidelity(paths);
     }
 
     public static void update(Mogram mogram, Setup... entries) throws ContextException {

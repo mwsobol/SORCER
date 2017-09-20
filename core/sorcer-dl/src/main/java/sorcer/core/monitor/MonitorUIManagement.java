@@ -53,7 +53,7 @@ public interface MonitorUIManagement {
 	 * The spec requires that this method gets all the monitorable exertion
 	 * infos from all the monitor managers and return a Hashtable where
 	 * 
-	 * key -> ExertionReferenceID value -> Some info regarding this exertion
+	 * key -> ExertionReferenceID execute -> Some info regarding this exertion
 	 * 
 	 * @throws RemoteException
 	 *             if there is a communication error

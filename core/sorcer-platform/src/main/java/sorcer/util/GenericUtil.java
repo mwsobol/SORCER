@@ -2001,7 +2001,7 @@ public class GenericUtil {
 	 *            wmic /interactive:off process where name=\"analyzeWingNoise.exe\" delete
 	 *	     	  wmic /interactive:off process where name=\"NAFNoise.exe\" delete
 	 *
-	 *			 kill all processes matching the exec names in "".
+	 *			 kill all processes matching the act names in "".
 	 *
 	 * @return Exit eval of exert command with worker method
 	 * @throws Exception 

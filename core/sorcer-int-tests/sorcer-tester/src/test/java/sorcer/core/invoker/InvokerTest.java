@@ -359,12 +359,12 @@ public class InvokerTest {
 		
 		Object val = pm.getValue("condition");
 //		logger.info("condition eval: " + val);
-//		logger.info("condition eval: " + pm.value("condition"));
+//		logger.info("condition eval: " + pm.execute("condition"));
 		assertEquals(pm.getValue("condition"), false);
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		// logger.info("condition eval: " + pm.value("condition"));
+		// logger.info("condition eval: " + pm.execute("condition"));
 		assertEquals(pm.getValue("condition"), true);
 
 		// enclosing class conditional context

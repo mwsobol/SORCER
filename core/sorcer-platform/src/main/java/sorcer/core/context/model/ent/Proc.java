@@ -66,10 +66,10 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	// Sorcer Mappable: Context, Exertion, or Var args
 	protected Mappable mappable;
 
-	protected Function selectedFidelity;
+	protected Entry selectedFidelity;
 
 	// proc fidelities for this proc
-	protected ServiceFidelity<Function> fidelities;
+	protected ServiceFidelity fidelities;
 
 	public Proc(String parname) {
 		super(parname);
@@ -205,7 +205,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluation#value(sorcer.co.tuple.Parameter[])
+	 * @see sorcer.service.Evaluation#execute(sorcer.co.tuple.Parameter[])
 	 */
 	@Override
 	public T getValue(Arg... args) throws EvaluationException, RemoteException {
@@ -332,26 +332,26 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	 * @see sorcer.service.Evaluation#substitute(sorcer.co.tuple.Parameter[])
 	 */
 	@Override
-	public void substitute(Arg... parameters) throws SetterException {
-		if (parameters == null)
+	public void substitute(Arg... args) throws SetterException {
+		if (args == null)
 			return;
-		for (Arg p : parameters) {
+		for (Arg arg : args) {
 			try {
-				if (p instanceof Proc) {
-					if (name.equals(((Proc<T>) p).name)) {
-						value = ((Proc<T>) p).value;
-						if (((Proc<T>) p).getScope() != null)
-							scope.append(((Proc<T>) p).getScope());
+				if (arg instanceof Proc) {
+					if (name.equals(((Proc<T>) arg).name)) {
+						value = ((Proc<T>) arg).value;
+						if (((Proc<T>) arg).getScope() != null)
+							scope.append(((Proc<T>) arg).getScope());
 
 					}
-				} else if (p instanceof Fidelity && fidelities != null) {
-					selectedFidelity = fidelities.getSelect(((Fidelity)p).getName());
-                    fidelities.setSelect(((Fidelity)p).getName());
-				} else if (p instanceof Context) {
+				} else if (arg instanceof Fidelity && fidelities != null) {
+					selectedFidelity = (Entry) fidelities.getSelect(arg.getName());
+                    fidelities.setSelect(arg.getName());
+				} else if (arg instanceof Context) {
 					if (scope == null)
-						scope = (Context) p;
+						scope = (Context) arg;
 					else
-						scope.append((Context) p);
+						scope.append((Context) arg);
 				}
 			} catch (ContextException e) {
 				e.printStackTrace();
@@ -376,8 +376,8 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	}
 
 	public void setScope(Context scope) {
-		if (scope != null && ((ServiceContext)scope).containsPath(Condition._closure_))
-			((ServiceContext)scope).remove(Condition._closure_);
+		if (scope != null && scope.containsPath(Condition._closure_))
+			scope.remove(Condition._closure_);
 		this.scope = scope;
 	}
 	
@@ -560,7 +560,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		return (mappable != null);
 	}
 
-	public ServiceFidelity<Function> getFidelities() {
+	public ServiceFidelity getFidelities() {
 		return fidelities;
 	}
 
@@ -589,7 +589,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Mappable#value(java.lang.String, sorcer.service.Arg[])
+	 * @see sorcer.service.Mappable#execute(java.lang.String, sorcer.service.Arg[])
 	 */
 	@Override
 	public T getValue(String path, Arg... args) throws ContextException {
@@ -678,10 +678,10 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	}
 
 	public void selectFidelity(String name) throws EntException {
-		selectedFidelity = fidelities.getSelect(name);
+		selectedFidelity = (Entry) fidelities.getSelect(name);
 	}
 
-	public void setFidelities(ServiceFidelity<Function> fidelities) {
+	public void setFidelities(ServiceFidelity fidelities) {
 		this.fidelities = fidelities;
 	}
 	
@@ -692,7 +692,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	}
 
 	@Override
-	public Object value(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws MogramException, RemoteException {
 		Context cxt = (Context) Arg.getServiceModel(args);
 		if (cxt != null) {
 			scope = cxt;

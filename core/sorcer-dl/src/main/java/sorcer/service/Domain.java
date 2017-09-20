@@ -37,12 +37,12 @@ public interface Domain extends Mogram, Dependency, mog {
     public Context evaluate(Context inputContext, Arg... args) throws ContextException, RemoteException;
 
     /**
-     * Returns a value of the object at the path as is
+     * Returns a execute of the object at the path as is
      * (no evaluation or invocation on this object).
      *
      * @param path
      *            the variable name
-     * @return this model value at the path
+     * @return this model execute at the path
      * @throws ModelException
      */
     public Object asis(String path);
@@ -108,12 +108,12 @@ public interface Domain extends Mogram, Dependency, mog {
 	public Context getOutConnector(Arg... args) throws ContextException, RemoteException;
 
 	/**
-	 * Returns a value of the object at the path od this domain
+	 * Returns a execute of the object at the path od this domain
 	 * (evaluation or invocation on this object if needed).
 	 *
 	 * @param path
 	 *            the variable name
-	 * @return this domain value at the path
+	 * @return this domain execute at the path
 	 * @throws ModelException
 	 */
 	public Object getValue(String path, Arg... args) throws ContextException, RemoteException;
