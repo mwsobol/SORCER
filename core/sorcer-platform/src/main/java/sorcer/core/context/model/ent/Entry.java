@@ -3,7 +3,7 @@ package sorcer.core.context.model.ent;
 import sorcer.core.context.ContextSelection;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
-import sorcer.service.modeling.Entrance;
+import sorcer.service.modeling.Union;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Valuation;
 import sorcer.service.modeling.ent;
@@ -13,7 +13,7 @@ import sorcer.util.url.sos.SdbUtil;
 import java.net.URL;
 import java.rmi.RemoteException;
 
-public class Entry<V> extends Association<String, V> implements Entrance<V>, Callable<V>, Setter, ent<V> {
+public class Entry<V> extends Association<String, V> implements Union<V>, Callable<V>, Setter, ent<V> {
 
     protected boolean negative;
 
@@ -168,7 +168,7 @@ public class Entry<V> extends Association<String, V> implements Entrance<V>, Cal
     }
 
     @Override
-    public Entrance act(String entryName, Arg... args) throws ServiceException, RemoteException {
+    public Union act(String entryName, Arg... args) throws ServiceException, RemoteException {
         Object result = this.execute(args);
         if (result instanceof Entry) {
             return (Entry)result;

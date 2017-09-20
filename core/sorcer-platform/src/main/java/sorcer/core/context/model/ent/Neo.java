@@ -38,7 +38,7 @@ import java.util.Iterator;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Neo extends Function<Double> implements Functionality<Double>, Activation, Invocation<Double>,
+public class Neo extends Function<Double> implements Functionality<Double>, Invocation<Double>,
 		Setter, Scopable, Comparable<Double>, func<Double> {
 
 	private static final long serialVersionUID = 1L;
@@ -322,12 +322,6 @@ public class Neo extends Function<Double> implements Functionality<Double>, Acti
 	public void setScope(Object scope) throws RemoteException {
 		this.scope = (Context)scope;
 
-	}
-
-	@Override
-	public Double activate(Arg... entries) throws EvaluationException, RemoteException {
-//		return activator.activate(entries);
-		return null;
 	}
 
 	@Override

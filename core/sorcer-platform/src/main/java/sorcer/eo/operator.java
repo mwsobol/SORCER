@@ -19,8 +19,6 @@ package sorcer.eo;
 import groovy.lang.Closure;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
-import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.operator.DataEntry;
@@ -36,11 +34,9 @@ import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.exertion.*;
 import sorcer.core.invoker.IncrementInvoker;
-import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.*;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
-import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.requestor.ServiceRequestor;
@@ -1557,8 +1553,8 @@ public class operator extends sorcer.operator {
         return fi;
     }
 
-	public static Fidelity<Entrance> entFi(Entrance... entries) {
-		Fidelity<Entrance> fi = new Fidelity(entries);
+	public static Fidelity<Union> entFi(Union... entries) {
+		Fidelity<Union> fi = new Fidelity(entries);
 		fi.fiType = ServiceFidelity.Type.ENTRY;
 		return fi;
 	}

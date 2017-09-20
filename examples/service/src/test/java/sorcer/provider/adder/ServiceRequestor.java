@@ -13,6 +13,7 @@ import sorcer.util.ModelTable;
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.so.operator.exec;
 
 /**
  * @author Mike Sobolewski

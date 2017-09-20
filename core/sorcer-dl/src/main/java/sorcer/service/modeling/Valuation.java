@@ -23,7 +23,7 @@ package sorcer.service.modeling;
  * 
  * @author Mike Sobolewski
  */
-public interface Valuation<T> extends Entrance<T> {
+public interface Valuation<T> extends Union<T> {
 
 	/**
 	 * Returns the current execute of this valuation.

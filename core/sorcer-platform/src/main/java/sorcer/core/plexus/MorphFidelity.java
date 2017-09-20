@@ -22,7 +22,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Ref;
 import sorcer.core.invoker.Observable;
 import sorcer.service.*;
-import sorcer.service.modeling.Entrance;
+import sorcer.service.modeling.Union;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -169,12 +169,12 @@ public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>,
     }
 
     @Override
-    public Entrance act(Arg... args) throws ServiceException, RemoteException {
+    public Union act(Arg... args) throws ServiceException, RemoteException {
         return new Entry(path, fidelity);
     }
 
     @Override
-    public Entrance act(String entryName, Arg... args) throws ServiceException, RemoteException {
+    public Union act(String entryName, Arg... args) throws ServiceException, RemoteException {
         return new Entry(entryName, fidelity);
     }
 }

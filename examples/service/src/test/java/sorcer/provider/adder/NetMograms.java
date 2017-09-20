@@ -20,6 +20,7 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.mo.operator.response;
 import static sorcer.po.operator.ent;
+import static sorcer.so.operator.*;
 
 /**
  * @author Mike Sobolewski

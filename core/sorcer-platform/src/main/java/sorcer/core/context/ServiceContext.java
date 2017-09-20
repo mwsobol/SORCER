@@ -3499,7 +3499,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Entrance act(String entryName, Arg... args) throws ServiceException, RemoteException {
+	public Union act(String entryName, Arg... args) throws ServiceException, RemoteException {
 		Object result = this.execute(args);
 		if (result instanceof Entry) {
 			return (Entry)result;

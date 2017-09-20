@@ -1,7 +1,7 @@
 package sorcer.service;
 
 import sorcer.core.Tag;
-import sorcer.service.modeling.Entrance;
+import sorcer.service.modeling.Union;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -67,9 +67,9 @@ public class Fidelity<T> implements Fi<T>, Item, Dependency, net.jini.core.entry
             this.selects.add((T) fi);
     }
 
-    public Fidelity(Entrance... entries) {
+    public Fidelity(Union... entries) {
         fiType = Type.NAME;
-        for (Entrance fi : entries)
+        for (Union fi : entries)
             this.selects.add((T) fi);
     }
 
@@ -236,12 +236,12 @@ public class Fidelity<T> implements Fi<T>, Item, Dependency, net.jini.core.entry
 	}
 
     @Override
-    public Entrance act(Arg... args) throws ServiceException, RemoteException {
+    public Union act(Arg... args) throws ServiceException, RemoteException {
         return null;
     }
 
     @Override
-    public Entrance act(String entryName, Arg... args) throws ServiceException, RemoteException {
+    public Union act(String entryName, Arg... args) throws ServiceException, RemoteException {
         return null;
     }
 }

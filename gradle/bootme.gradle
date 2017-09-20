@@ -33,7 +33,7 @@ class BootMe extends DefaultTask {
     @Input @org.gradle.api.tasks.Optional
     def systemProperties = [:]
     @Input @org.gradle.api.tasks.Optional
-    boolean spawn = true
+    boolean spawn = false
     @Input @org.gradle.api.tasks.Optional
     boolean debug
 

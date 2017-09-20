@@ -73,8 +73,7 @@ abstract public class RendezvousBean implements Service, Exerter {
 	
 	protected void replaceNullExertionIDs(Exertion ex) {
 		if (ex != null && ((ServiceExertion) ex).getId() == null) {
-			((ServiceExertion) ex)
-					.setId(UuidFactory.generate());
+			ex.setId(UuidFactory.generate());
 			if (ex.isJob()) {
 				for (int i = 0; i < ((Job) ex).size(); i++)
 					replaceNullExertionIDs(((Job) ex).get(i));

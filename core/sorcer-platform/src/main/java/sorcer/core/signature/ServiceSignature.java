@@ -31,7 +31,7 @@ import sorcer.core.provider.ProviderName;
 import sorcer.core.provider.ServiceName;
 import sorcer.service.*;
 import sorcer.service.Strategy.Provision;
-import sorcer.service.modeling.Entrance;
+import sorcer.service.modeling.Union;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.sig;
 import sorcer.util.Log;
@@ -704,7 +704,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	}
 
 	@Override
-	public Entrance act(String entryName, Arg... args) throws ServiceException, RemoteException {
+	public Union act(String entryName, Arg... args) throws ServiceException, RemoteException {
 		Object result = this.execute(args);
 		if (result instanceof Entry) {
 			return (Entry)result;

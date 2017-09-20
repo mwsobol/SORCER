@@ -19,6 +19,6 @@ package sorcer.service;
 /**
  * Created by Mike Sobolewski on 5/16/16.
  */
-public interface Request extends EntryService, Arg {
+public interface Request extends Activity, Arg {
 
 }
