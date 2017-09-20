@@ -16,8 +16,8 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.eo.operator.eval;
 import static sorcer.po.operator.ent;
+import static sorcer.so.operator.eval;
 
 /**
  * @author Mike Sobolewski

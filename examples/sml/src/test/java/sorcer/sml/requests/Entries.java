@@ -26,6 +26,7 @@ import static sorcer.eo.operator.args;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.loop;
+import static sorcer.so.operator.*;
 import static sorcer.service.Signature.Direction;
 import static sorcer.util.exec.ExecUtils.CmdResult;
 

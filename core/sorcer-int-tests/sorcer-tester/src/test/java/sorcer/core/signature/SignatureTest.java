@@ -21,7 +21,7 @@ import static sorcer.co.operator.value;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.inConn;
 import static sorcer.mo.operator.outConn;
-
+import static sorcer.so.operator.*;
 
 /**
  * @author Mike Sobolewski

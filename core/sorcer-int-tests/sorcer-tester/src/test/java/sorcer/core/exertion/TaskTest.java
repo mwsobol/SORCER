@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.so.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -41,7 +42,7 @@ public class TaskTest {
 		logger.info("get task: " + task);
 		logger.info("get context: " + context(task));
 		
-		Object val = operator.eval(task, inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+		Object val = eval(task, inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 				strategy(sig("add", AdderImpl.class), Access.PUSH, Wait.YES));
 		
 		logger.info("get eval: " + val);
@@ -70,7 +71,7 @@ public class TaskTest {
 		set(task, "result/y", Context.none);
 		print(task);
 		
-		double val = (Double) operator.eval(task);
+		double val = (Double) eval(task);
 		//logger.info("get eval: " + val);
 		assertTrue("Wrong eval for 100.0", val == 100.0);
 		//logger.info("act trace: " + trace(task));
@@ -132,7 +133,7 @@ public class TaskTest {
 						result("result/y")));
 
 		//logger.info("t4: " + eval(t4));
-		assertTrue(operator.eval(t4).equals(500.0));
+		assertTrue(eval(t4).equals(500.0));
 	}
 
 	@Test

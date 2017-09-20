@@ -43,6 +43,7 @@ import static sorcer.eo.operator.print;
 import static sorcer.eo.operator.put;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.*;
+import static sorcer.so.operator.*;
 
 /**
  * @author Mike Sobolewski

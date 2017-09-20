@@ -29,6 +29,7 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.po.operator.*;
 import static sorcer.mo.operator.*;
+import static sorcer.so.operator.*;
 
 
 /**

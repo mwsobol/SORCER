@@ -25,6 +25,9 @@ import static sorcer.mo.operator.inputs;
 import static sorcer.mo.operator.returnPath;
 import static sorcer.po.operator.ent;
 import static sorcer.po.operator.inoutVal;
+import static sorcer.so.operator.exec;
+import static sorcer.so.operator.exert;
+import static sorcer.so.operator.tagAssociation;
 
 /**
  * @author Mike Sobolewski

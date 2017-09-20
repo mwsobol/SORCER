@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.so.operator.eval;
+import static sorcer.so.operator.exert;
 
 /**
  * @author Mike Sobolewski
@@ -67,7 +69,7 @@ public class ServiceExertionTest {
 	@Test
 	public void exertJobTest() throws Exception {
 		// get eval from job's exerted context
-		assertTrue(operator.eval(eJob, "j1/t3/arg/x2").equals(100.0));
+		assertTrue(eval(eJob, "j1/t3/arg/x2").equals(100.0));
 		
 		// exert and then get the job's context (upcotext - a kind of supercontext)
 		Context out = upcontext(exert(eJob));

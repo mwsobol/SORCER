@@ -1016,7 +1016,7 @@ public class operator extends sorcer.operator {
 	}
 
 	public static <T> T value(Valuation<T> valuation) throws ContextException {
-		return valuation.get();
+		return valuation.value();
 	}
 
 	public static <T> T value(Context<T> context, Arg... args)

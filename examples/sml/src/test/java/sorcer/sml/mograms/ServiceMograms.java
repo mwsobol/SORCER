@@ -32,6 +32,7 @@ import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.result;
 import static sorcer.po.operator.*;
+import static sorcer.so.operator.*;
 
 /**
  * Created by Mike Sobolewski on 10/21/15.

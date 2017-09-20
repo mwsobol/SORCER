@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.putValue;
+import static sorcer.so.operator.*;
 
 /**
  * Created by Mike Sobolewski on 06/24/16.

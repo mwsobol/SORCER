@@ -31,6 +31,7 @@ import java.util.Collection;
 
 import static org.junit.Assert.*;
 import static sorcer.eo.operator.*;
+import static sorcer.so.operator.exert;
 
 /**
  * @author Dennis Reedy

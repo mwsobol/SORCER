@@ -16,6 +16,7 @@ import sorcer.service.Exertion;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.eo.operator.*;
+import static sorcer.so.operator.eval;
 
 /**
  * @author Mike Sobolewski

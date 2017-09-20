@@ -28,6 +28,7 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.opt;
 import static sorcer.po.operator.*;
+import static sorcer.so.operator.*;
 
 /**
  * @author Mike Sobolewski

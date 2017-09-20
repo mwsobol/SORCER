@@ -35,6 +35,7 @@ import static sorcer.po.operator.loop;
 import static sorcer.po.operator.opt;
 import static sorcer.po.operator.put;
 import static sorcer.mo.operator.*;
+import static sorcer.so.operator.*;
 
 /**
  * @author Mike Sobolewski

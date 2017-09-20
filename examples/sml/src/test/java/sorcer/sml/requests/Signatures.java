@@ -14,7 +14,6 @@ import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 import sorcer.service.Strategy.Shell;
-import sorcer.service.modeling.Modeling;
 
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
@@ -26,7 +25,7 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.mo.operator.inConn;
 import static sorcer.mo.operator.outConn;
-
+import static sorcer.so.operator.*;
 
 /**
  * @author Mike Sobolewski

@@ -32,8 +32,8 @@ import sorcer.util.ProviderLookup;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static sorcer.eo.operator.exert;
 import static sorcer.eo.operator.get;
+import static sorcer.so.operator.exert;
 
 /**
  * @author Dennis Reedy

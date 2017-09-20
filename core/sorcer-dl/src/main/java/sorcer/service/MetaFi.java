@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 6/27/16.
  */
-public class MetaFi extends Fidelity<Fi> implements Metafidelity, Item, Dependency, Arg, net.jini.core.entry.Entry {
+public class MetaFi extends Fidelity<Fi> implements Metafidelity, Dependency, Arg, net.jini.core.entry.Entry {
 
     static final long serialVersionUID = 1L;
 

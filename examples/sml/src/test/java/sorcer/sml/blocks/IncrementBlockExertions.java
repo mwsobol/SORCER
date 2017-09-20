@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.inVal;
 import static sorcer.eo.operator.*;
 import static sorcer.po.operator.*;
+import static sorcer.so.operator.eval;
 
 
 /**

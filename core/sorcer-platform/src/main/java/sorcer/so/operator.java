@@ -21,6 +21,7 @@ import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.Exerter;
@@ -67,11 +68,11 @@ public class operator extends sorcer.operator {
 //                    }
 //                } else
                 if (entry instanceof Valuation) {
-                    return (T) ((Valuation) entry).get(args);
+                    return (T) ((Valuation) entry).value();
                 } else if (entry instanceof Exertion) {
                     return (T) exec((Entry) entry, args);
                 } else if (((Entry) entry).asis() instanceof ServiceContext) {
-                    return (T) ((ServiceContext) ((Entry) entry).asis()).getValue(((Entry) entry).getName());
+                    return (T) ((ServiceContext) ((Entry) entry).asis()).getValue(entry.getName());
                 } else if (entry instanceof Incrementor) {
                     return ((Incrementor<T>) entry).next();
                 } else if (entry instanceof Evaluation) {
@@ -136,6 +137,40 @@ public class operator extends sorcer.operator {
         }
     }
 
+    public static Object eval(Model model, String selector,
+                              Arg... args) throws ContextException {
+        try {
+            return model.getValue(selector, args);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+    }
+
+    public static Context eval(Model model, Context context)
+            throws ContextException {
+        Context rc = null;
+        try {
+            rc = model.evaluate(context);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+        return rc;
+    }
+
+    public static Object eval(Model model, Arg... args)
+            throws ContextException {
+        try {
+            synchronized (model) {
+                if (model instanceof ProcModel) {
+                    return ((ProcModel) model).getValue(args);
+                } else {
+                    return ((ServiceContext) model).getValue(args);
+                }
+            }
+        } catch (Exception e) {
+            throw new ContextException(e);
+        }
+    }
 
     public static Object eval(Exertion exertion, String selector,
                               Arg... args) throws EvaluationException {

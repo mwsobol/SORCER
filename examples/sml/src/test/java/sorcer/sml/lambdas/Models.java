@@ -25,6 +25,7 @@ import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.inc;
 import static sorcer.po.operator.*;
+import static sorcer.so.operator.*;
 
 /**
  * @author Mike Sobolewski

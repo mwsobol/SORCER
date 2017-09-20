@@ -29,6 +29,7 @@ import static sorcer.eo.operator.get;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
 import static sorcer.po.operator.*;
+import static sorcer.so.operator.*;
 
 /**
  * Created by Mike Sobolewski on 4/15/15.

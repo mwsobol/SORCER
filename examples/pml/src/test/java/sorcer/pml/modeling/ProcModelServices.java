@@ -10,11 +10,13 @@ import sorcer.core.context.model.ent.ProcModel;
 import sorcer.pml.model.ProcModeler;
 import sorcer.service.Invocation;
 import sorcer.service.Task;
+import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.outPaths;
 import static sorcer.eo.operator.*;
 import static sorcer.po.operator.invoke;
+import static sorcer.so.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -37,7 +39,7 @@ public class ProcModelServices {
 	@Test
 	public void procObjectModelServiceTest() throws Exception {
 
-		ProcModel pm = ProcModeler.getProcModel();
+		Model pm = ProcModeler.getProcModel();
 		Task pmt = task(sig("invoke", pm),
 				context(result("invoke/result", outPaths("expr"))));
 
@@ -57,7 +59,6 @@ public class ProcModelServices {
 		assertTrue(eval(pmt).equals(60.0));
 		
 //		assertTrue(get(exert(pmt), "invoke/result").equals(60.0));
-
 	}
 	
 }
