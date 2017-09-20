@@ -3,11 +3,9 @@ package sorcer.fidelities;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.context.model.ent.Function;
 import sorcer.core.plexus.FiMap;
 import sorcer.core.service.Projection;
 import sorcer.service.*;
-import sorcer.service.modeling.Functionality;
 import sorcer.util.ModelTable;
 import sorcer.util.DataTable;
 
@@ -158,13 +156,13 @@ public class FidelityTest {
 
 	@Test
 	public void projectionTests() throws Exception {
-		MetaFi sFi1 = fi("job1", fi("net", "j1/j2"),
+		Metafidelity sFi1 = fi("job1", fi("net", "j1/j2"),
 				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"));
 
-		MetaFi sFi2 = fi("job2", fi("net", "j1/j2"),
+		Metafidelity sFi2 = fi("job2", fi("net", "j1/j2"),
 				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"), sFi1);
 
-		MetaFi sFi3 = fi("job3", fi("net", "j1/j2"),
+		Metafidelity sFi3 = fi("job3", fi("net", "j1/j2"),
 				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"), sFi1, sFi2);
 
 		Projection p1 = po(sFi1);

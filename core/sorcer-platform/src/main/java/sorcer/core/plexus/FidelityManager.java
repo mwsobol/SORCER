@@ -52,7 +52,7 @@ public class FidelityManager<T extends Service> implements FidelityManagement<T>
     protected Map<String, Fidelity> fidelities = new ConcurrentHashMap<>();
 
     // fidelities for fidelites
-    protected Map<String, Metafidelity> metafidelities = new ConcurrentHashMap<>();
+    protected Map<String, MetaFi> metafidelities = new ConcurrentHashMap<>();
 
     // fidelities for signatures and other selection of T
     protected Map<String, MorphFidelity> morphFidelities = new ConcurrentHashMap<>();
@@ -83,11 +83,11 @@ public class FidelityManager<T extends Service> implements FidelityManagement<T>
         this.mogram = mogram;
     }
 
-    public Map<String, Metafidelity> getMetafidelities() {
+    public Map<String, MetaFi> getMetafidelities() {
         return metafidelities;
     }
 
-    public void setMetafidelities(Map<String, Metafidelity> metafidelities) {
+    public void setMetafidelities(Map<String, MetaFi> metafidelities) {
         this.metafidelities = metafidelities;
     }
 
@@ -150,7 +150,7 @@ public class FidelityManager<T extends Service> implements FidelityManagement<T>
         }
     }
 
-    public void addMetafidelity(String path, Metafidelity fi) {
+    public void addMetafidelity(String path, MetaFi fi) {
         this.metafidelities.put(path, fi);
     }
 
@@ -178,7 +178,7 @@ public class FidelityManager<T extends Service> implements FidelityManagement<T>
        // implement is subclasses
     }
 
-    public void add( Metafidelity fidelity) {
+    public void add( MetaFi fidelity) {
         put(fidelity.getName(), fidelity);
     }
 
@@ -224,7 +224,7 @@ public class FidelityManager<T extends Service> implements FidelityManagement<T>
     @Override
     public void morph(String... fiNames)  throws EvaluationException {
         for (String fiName : fiNames) {
-            Metafidelity mFi = metafidelities.get(fiName);
+            MetaFi mFi = metafidelities.get(fiName);
             List<Fi> fis = mFi.getSelects();
             String name = null;
             String path = null;
@@ -353,18 +353,18 @@ public class FidelityManager<T extends Service> implements FidelityManagement<T>
         }
     }
 
-    public void add(Metafidelity... sysFis) {
-        for (Metafidelity sysFi : sysFis){
+    public void add(MetaFi... sysFis) {
+        for (MetaFi sysFi : sysFis){
             metafidelities.put(sysFi.getName(), sysFi);
         }
     }
 
-    public void put(String sysFiName, Metafidelity sysFi) {
+    public void put(String sysFiName, MetaFi sysFi) {
         metafidelities.put(sysFiName, sysFi);
     }
 
-    public void put(Entry<Metafidelity>... entries) {
-        for(Entry<Metafidelity> e : entries) {
+    public void put(Entry<MetaFi>... entries) {
+        for(Entry<MetaFi> e : entries) {
             metafidelities.put(e.getName(), e.getItem());
         }
     }

@@ -123,9 +123,9 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     protected String dbUrl;
 
     // service metafidelities for this mogram
-    protected Map<String, Metafidelity> serviceMetafidelities;
+    protected Map<String, MetaFi> serviceMetafidelities;
 
-    protected Metafidelity selectedMetafidelity;
+    protected MetaFi selectedMetafidelity;
 
     // service fidelities for this mogram
     protected Map<String, Fidelity> serviceFidelities;
@@ -764,7 +764,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.serviceFidelities = serviceFidelities;
     }
 
-    public Map<String, Metafidelity> getServiceMetafidelities() {
+    public Map<String, MetaFi> getServiceMetafidelities() {
         return serviceMetafidelities;
     }
 
@@ -776,7 +776,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.serviceMorphFidelity = morphFidelity;
     }
 
-    public void setServiceMetafidelities(Map<String, Metafidelity> serviceMetafidelities) {
+    public void setServiceMetafidelities(Map<String, MetaFi> serviceMetafidelities) {
         this.serviceMetafidelities = serviceMetafidelities;
     }
 
@@ -819,13 +819,13 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         serviceFidelities.put(name, fidelity);
     }
 
-    public void putMetafidelity(Metafidelity fidelity) {
+    public void putMetafidelity(MetaFi fidelity) {
         if (serviceMetafidelities == null)
             serviceMetafidelities = new HashMap<>();
         serviceMetafidelities.put(fidelity.getName(), fidelity);
     }
 
-    public void putMetafidelity(String name, Metafidelity fidelity) {
+    public void putMetafidelity(String name, MetaFi fidelity) {
         if (serviceMetafidelities == null) {
             serviceMetafidelities = new HashMap();
         }
@@ -985,11 +985,11 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
 
-    public Metafidelity getSelectedMetafidelity() {
+    public MetaFi getSelectedMetafidelity() {
         return selectedMetafidelity;
     }
 
-    public void setSelectedMetafidelity(Metafidelity metafidelity) {
+    public void setSelectedMetafidelity(MetaFi metafidelity) {
         selectedMetafidelity = metafidelity;
     }
 

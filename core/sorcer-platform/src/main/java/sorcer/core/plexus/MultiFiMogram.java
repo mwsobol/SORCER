@@ -72,14 +72,14 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
         if (fiManager == null)
             fiManager = new FidelityManager(name);
 
-        ((FidelityManager)fiManager).add((Metafidelity) morphFidelity.getFidelity());
+        ((FidelityManager)fiManager).add((MetaFi) morphFidelity.getFidelity());
         ((FidelityManager)fiManager).setMogram(this);
         ((FidelityManager)fiManager).addMorphedFidelity(morphFidelity.getName(), morphFidelity);
         ((FidelityManager)fiManager).addFidelity(morphFidelity.getName(), morphFidelity.getFidelity());
         morphFidelity.addObserver((FidelityManager)fiManager);
     }
 
-    public MultiFiMogram(String name, MetaFi fidelity) {
+    public MultiFiMogram(String name, Metafidelity fidelity) {
         super(name);
         requestFidelity = fidelity;
     }
@@ -94,7 +94,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
         scope = context;
     }
 
-    public MultiFiMogram(Context context, MetaFi fidelity) {
+    public MultiFiMogram(Context context, Metafidelity fidelity) {
         this(context.getName(), fidelity);
         scope = context;
     }
@@ -182,7 +182,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
         }
     }
 
-    public void setServiceFidelity(MetaFi requestFidelity) {
+    public void setServiceFidelity(Metafidelity requestFidelity) {
         this.requestFidelity = requestFidelity;
     }
 

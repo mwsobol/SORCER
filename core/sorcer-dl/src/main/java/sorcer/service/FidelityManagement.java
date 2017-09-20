@@ -34,7 +34,7 @@ public interface FidelityManagement<T extends Service> extends Service, RemoteEv
 
     public Map<String, Fidelity> getFidelities() throws RemoteException;
 
-    public  Map<String, Metafidelity> getMetafidelities() throws RemoteException;
+    public  Map<String, MetaFi> getMetafidelities() throws RemoteException;
 
     public void morph(String... fiNames) throws EvaluationException, RemoteException;
 

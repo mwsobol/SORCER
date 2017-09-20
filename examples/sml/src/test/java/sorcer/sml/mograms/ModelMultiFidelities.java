@@ -238,8 +238,8 @@ public class ModelMultiFidelities {
             }
         };
 
-        MetaFi fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        MetaFi fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        Metafidelity fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        Metafidelity fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -362,9 +362,9 @@ public class ModelMultiFidelities {
             }
         };
 
-        MetaFi fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        MetaFi fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-        MetaFi fi4 = fi("sysFi4", fi("mFi3", "average"));
+        Metafidelity fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        Metafidelity fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        Metafidelity fi4 = fi("sysFi4", fi("mFi3", "average"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -629,10 +629,10 @@ public class ModelMultiFidelities {
             }
         };
 
-        MetaFi fi2 = fi("sysFi2", mFi("mFi2", "ph4"), fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        MetaFi fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-        MetaFi fi4 = fi("sysFi4", fi("mFi3", "average"));
-        MetaFi fi5 = fi("sysFi5", fi("mFi4", "t4"));
+        Metafidelity fi2 = fi("sysFi2", mFi("mFi2", "ph4"), fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        Metafidelity fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        Metafidelity fi4 = fi("sysFi4", fi("mFi3", "average"));
+        Metafidelity fi5 = fi("sysFi5", fi("mFi4", "t4"));
 
         // four entry multifidelity model with morphers
         Model mdl = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),

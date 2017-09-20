@@ -374,8 +374,8 @@ public class operator {
         return paradigm;
     }
 
-    public static Mogram addProjection(Mogram mogram, Metafidelity... fidelities) {
-        for ( Metafidelity fi : fidelities) {
+    public static Mogram addProjection(Mogram mogram, MetaFi... fidelities) {
+        for ( MetaFi fi : fidelities) {
             ((FidelityManager)mogram.getFidelityManager()).put(fi.getName(), fi);
         }
         return mogram;

@@ -1397,8 +1397,8 @@ public class operator extends sorcer.operator {
 		return signature;
 	}
 
-	public static MetaFi fi(String name, Fidelity... selectors) {
-		MetaFi fi = new MetaFi(name, selectors);
+	public static Metafidelity fi(String name, Fidelity... selectors) {
+		Metafidelity fi = new Metafidelity(name, selectors);
 		fi.fiType = ServiceFidelity.Type.META;
 		return fi;
 	}
@@ -1463,14 +1463,14 @@ public class operator extends sorcer.operator {
 		((MultiFiMogram)mogram).selectFidelity(selection);
 	}
 
-	public static MultiFiMogram fiMog(MetaFi fidelity) {
+	public static MultiFiMogram fiMog(Metafidelity fidelity) {
 		return new MultiFiMogram(fidelity.getName(), fidelity);
 	}
 	public static MultiFiMogram fiMog(MorphFidelity fidelity) {
 		return new MultiFiMogram(fidelity.getName(), fidelity);
 	}
 
-	public static MultiFiMogram fiMog(String name, MetaFi fidelity) {
+	public static MultiFiMogram fiMog(String name, Metafidelity fidelity) {
 		return new MultiFiMogram(name, fidelity);
 	}
 
@@ -1482,7 +1482,7 @@ public class operator extends sorcer.operator {
 		return new MultiFiMogram(name, fidelity);
 	}
 
-	public static MultiFiMogram fiMog(MetaFi fidelity, Context context) {
+	public static MultiFiMogram fiMog(Metafidelity fidelity, Context context) {
 		return new MultiFiMogram(context, fidelity);
 	}
 
@@ -2307,7 +2307,7 @@ public class operator extends sorcer.operator {
 		}
 
 		if (metaFis.size() > 0) {
-			MetaFi metaFi = new MetaFi(name, metaFis);
+			Metafidelity metaFi = new Metafidelity(name, metaFis);
 			Fidelity first = metaFis.get(0);
 			metaFi.setSelect(first);
 			metaFi.setName(job.getName());
@@ -2316,7 +2316,7 @@ public class operator extends sorcer.operator {
 				((ServiceFidelity)fi).setPath(name);
 			}
 			job.putMetafidelity(job.getName(), metaFi);
-			job.setSelectedMetafidelity((Metafidelity) first);
+			job.setSelectedMetafidelity((MetaFi) first);
 		}
 
 		if (fm == Strategy.FidelityManagement.YES && job.getFidelityManager() == null
