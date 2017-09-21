@@ -45,7 +45,8 @@ import java.io.Serializable;
  */
 public interface Serviceableness {
 
-	public Signature getSiganture() throws ContextException;
+	public Service getService() throws ContextException;
 
-	public void setSignature(Signature signature);
+	public void setService(Service service);
+
 }

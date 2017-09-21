@@ -34,7 +34,8 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
 
     protected final String name;
 
-    protected Signature srvSignature;
+
+    protected Service service;
 
     protected Object srvValue;
 
@@ -301,12 +302,11 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
     }
 
     @Override
-    public Signature getSiganture() throws ContextException {
-        return srvSignature;
+    public Service getService() throws ContextException {
+        return service;
     }
-
     @Override
-    public void setSignature(Signature signature) {
-        this.srvSignature = signature;
+    public void setService(Service service) {
+        this.service = service;
     }
 }
