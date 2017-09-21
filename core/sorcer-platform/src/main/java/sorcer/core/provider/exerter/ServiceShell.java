@@ -72,7 +72,7 @@ import static sorcer.so.operator.eval;
 /**
  * @author Mike Sobolewski
  */
-public class ServiceShell implements Service, RemoteServiceShell, Client, Callable {
+public class ServiceShell implements Exerter, Client, Callable, RemoteServiceShell {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
 	private Service service;
 	private Mogram mogram;

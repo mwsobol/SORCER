@@ -28,5 +28,5 @@ import java.rmi.Remote;
  * 
  * @author Mike Sobolewski
  */
-public interface Jobber extends Service, Exerter, Remote {
+public interface Jobber extends Exerter, Remote {
 }

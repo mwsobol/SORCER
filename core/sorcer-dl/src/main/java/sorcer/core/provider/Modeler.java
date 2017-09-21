@@ -29,5 +29,5 @@ import java.rmi.Remote;
  *
  * @author Mike Sobolewski
  */
-public interface Modeler extends Service, Exerter, Remote {
+public interface Modeler extends Exerter, Remote {
 }
