@@ -27,6 +27,6 @@ import java.rmi.Remote;
  * @author Mike Sobolewski
  */
 
-public interface Rendezvous extends Jobber, Spacer, Concatenator, Remote {
+public interface Rendezvous extends Jobber, Spacer, Concatenator, Modeler, Remote {
 
 }

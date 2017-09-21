@@ -19,10 +19,7 @@ package sorcer.core.provider.rendezvous;
 import net.jini.config.ConfigurationException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.provider.Concatenator;
-import sorcer.core.provider.Jobber;
-import sorcer.core.provider.Rendezvous;
-import sorcer.core.provider.Spacer;
+import sorcer.core.provider.*;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 
@@ -36,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Mike Sobolewski
  */
-public class ServiceRendezvous extends SystemServiceBean implements Rendezvous, Spacer, Jobber, Concatenator {
+public class ServiceRendezvous extends SystemServiceBean implements Rendezvous, Spacer, Jobber, Concatenator, Modeler {
 	private Logger logger = LoggerFactory.getLogger(ServiceRendezvous.class.getName());
 
 	private boolean isConfigured = false;
