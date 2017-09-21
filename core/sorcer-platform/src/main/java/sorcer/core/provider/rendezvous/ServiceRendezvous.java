@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Mike Sobolewski
  */
-public class ServiceRendezvous extends ServiceBean implements Rendezvous, Spacer, Jobber, Concatenator {
+public class ServiceRendezvous extends SystemServiceBean implements Rendezvous, Spacer, Jobber, Concatenator {
 	private Logger logger = LoggerFactory.getLogger(ServiceRendezvous.class.getName());
 
 	private boolean isConfigured = false;

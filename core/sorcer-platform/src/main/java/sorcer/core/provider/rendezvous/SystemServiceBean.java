@@ -41,8 +41,8 @@ import java.util.Vector;
  * 
  * @author Mike Sobolewski
  */
-abstract public class ServiceBean implements Service, Exerter {
-	private Logger logger = LoggerFactory.getLogger(ServiceBean.class.getName());
+abstract public class SystemServiceBean implements Service, Exerter {
+	private Logger logger = LoggerFactory.getLogger(SystemServiceBean.class.getName());
 
 	protected ServiceProvider provider;
 
@@ -50,7 +50,7 @@ abstract public class ServiceBean implements Service, Exerter {
 	
 	//protected TaskManager threadManager;
 	
-	public ServiceBean() throws RemoteException {
+	public SystemServiceBean() throws RemoteException {
 		// do nothing
 	}
 	
