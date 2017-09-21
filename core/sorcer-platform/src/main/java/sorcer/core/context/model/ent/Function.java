@@ -36,7 +36,7 @@ import static sorcer.eo.operator.add;
 /**
  * @author Mike Sobolewski
  */
-public class Function<T> extends Entry<T> implements Evaluation<T>, Callable<T>, Dependency, Comparable<T>,
+public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, Comparable<T>,
 		EvaluationComponent, SupportComponent, Scopable, Setter, Reactive<T> {
 
 	private static final long serialVersionUID = 5168783170981015779L;

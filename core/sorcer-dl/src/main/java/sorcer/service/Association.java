@@ -184,13 +184,4 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
         return false;
     }
 
-    @Override
-    public Duo act(Arg... args) throws ServiceException, RemoteException {
-        return new Association<>(key, item);
-    }
-
-    @Override
-    public Duo act(String entryName, Arg... args) throws ServiceException, RemoteException {
-        return new Association<>(entryName, item);
-    }
 }

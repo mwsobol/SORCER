@@ -14,7 +14,7 @@ import sorcer.service.Context;
  * @author Daniel Kerr
  */
 
-public interface GroupManagement extends Remote, RemotePartner
+public interface GroupManagement extends RemotePartner
 {
 	//------------------------------------------------------------------------------------------------------------
 	

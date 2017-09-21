@@ -12,7 +12,7 @@ import java.net.URL;
 /**
  * @author Mike Sobolewski
  */
-public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, Identifiable, Arg, val<T> {
+public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, Arg, val<T> {
 
     // sequence number for unnamed mogram instances
     private static int count = 0;

@@ -13,7 +13,7 @@ import sorcer.util.url.sos.SdbUtil;
 import java.net.URL;
 import java.rmi.RemoteException;
 
-public class Entry<V> extends Association<String, V> implements Callable<V>, Setter, ent<V> {
+public class Entry<V> extends Association<String, V> implements Identifiable, Activity, Callable<V>, Setter, ent<V> {
 
     protected boolean negative;
 
@@ -146,25 +146,14 @@ public class Entry<V> extends Association<String, V> implements Callable<V>, Set
     }
 
 
-    public Object execute(Arg... args) throws ServiceException, RemoteException {
-        Domain cxt = Arg.getServiceModel(args);
-        if (cxt != null) {
-            // entry substitution
-            ((ServiceContext)cxt).putValue(key, item);
-            return cxt;
-        } else {
-            return item;
-        }
-    }
-
     @Override
     public Entry act(Arg... args) throws ServiceException, RemoteException {
-       Object result = this.execute(args);
-       if (result instanceof Entry) {
-           return (Entry)result;
-       } else {
-           return new Entry(key, result);
-       }
+        Object result = this.execute(args);
+        if (result instanceof Entry) {
+            return (Entry)result;
+        } else {
+            return new Entry(key, result);
+        }
     }
 
     @Override
@@ -174,6 +163,17 @@ public class Entry<V> extends Association<String, V> implements Callable<V>, Set
             return (Entry)result;
         } else {
             return new Entry(entryName, result);
+        }
+    }
+
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
+        Domain cxt = Arg.getServiceModel(args);
+        if (cxt != null) {
+            // entry substitution
+            ((ServiceContext)cxt).putValue(key, item);
+            return cxt;
+        } else {
+            return item;
         }
     }
 

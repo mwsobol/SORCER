@@ -68,8 +68,6 @@ public interface Functionality<T> extends Identifiable, Evaluation<T>, Perturbat
 
 	public Type getType();
 
-	public ApplicationDescription getDescription();
-
 	public Class<?> getValueType();
 
 	public ArgSet getArgs();

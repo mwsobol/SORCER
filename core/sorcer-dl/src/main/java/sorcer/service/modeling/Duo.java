@@ -18,6 +18,7 @@
 package sorcer.service.modeling;
 
 import sorcer.service.Activity;
+import sorcer.service.Data;
 
 
 /**
@@ -25,6 +26,6 @@ import sorcer.service.Activity;
  *
  * @author Mike Sobolewski
  */
-public interface Duo<V> extends Activity {
+public interface Duo<V> extends Data {
 
 }
