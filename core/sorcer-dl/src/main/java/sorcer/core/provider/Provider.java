@@ -40,7 +40,7 @@ import java.util.Properties;
  * @see Monitorable
  * @see Remote
  */
-public interface Provider extends Activity,  Exerter, Monitorable, AnalyticsProducer, Administrable, Remote {
+public interface Provider extends Exerter, Monitorable, AnalyticsProducer, Administrable, Remote {
 
 	public ServiceID getProviderID() throws RemoteException;
 
