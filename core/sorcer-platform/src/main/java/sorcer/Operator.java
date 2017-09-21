@@ -45,8 +45,4 @@ public class Operator implements Activity {
 		}
 	}
 
-	@Override
-	public String getName() {
-		return Operator.class.getName();
-	}
 }

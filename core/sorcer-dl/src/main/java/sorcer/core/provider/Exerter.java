@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
  * @author Mike Sobolewski
  */
 @FunctionalInterface
-public interface Exerter {
+public interface Exerter extends Activity {
 
 	/**
 	 * A generic service request as specified by a mogram - a generic compound service.

@@ -23,5 +23,5 @@ package sorcer.service;
  *
  * @author Mike Sobolewski
  */
-public interface Activity extends Service, Arg {
+public interface Activity extends Service  {
 }
