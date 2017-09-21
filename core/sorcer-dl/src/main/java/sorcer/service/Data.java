@@ -1,7 +1,7 @@
 /*
- * Copyright 2009 the original author or authors.
- * Copyright 2009 SorcerSoft.org.
- *  
+ * Copyright 2016 the original author or authors.
+ * Copyright 2016 SorcerSoft.org.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,25 +15,13 @@
  * limitations under the License.
  */
 
-package sorcer.service.modeling;
-
-import sorcer.service.Arg;
-import sorcer.service.ContextException;
-import sorcer.service.Request;
-
+package sorcer.service;
 
 /**
- * A generic combination of two or more things into one.
+ * An top-level common interface for all primitive service in SORCER.
+ * Items are copmponent services of compound services called mograms.
  *
  * @author Mike Sobolewski
  */
-public interface Union<V> extends Request {
-
-    /**
-     * Returns the current state of this union.
-     *
-     * @return the current state of this union
-     */
-    public V get(Arg... args) throws ContextException;
-
+public interface Data extends Service, Arg {
 }

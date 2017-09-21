@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 5/15/16.
  */
-public interface MetaFi extends Fi<Fi>, Item, Serializable {
+public interface MetaFi extends Fi<Fi>, Serializable {
 
     public String getName();
 

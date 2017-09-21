@@ -49,7 +49,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public interface Invocation<T> {
+public interface Invocation<T> extends Data {
 
 	public T invoke(Context<T> context, Arg... entries) throws ContextException, RemoteException;
 }

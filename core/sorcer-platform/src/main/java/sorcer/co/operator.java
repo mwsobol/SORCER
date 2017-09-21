@@ -20,6 +20,7 @@ import net.jini.id.Uuid;
 import org.rioproject.resolver.Artifact;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.resolver.ResolverHelper;
+import sorcer.Operator;
 import sorcer.co.tuple.*;
 import sorcer.core.Tag;
 import sorcer.core.SorcerConstants;
@@ -60,7 +61,7 @@ import static sorcer.po.operator.srv;
  * Created by Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class operator extends sorcer.operator {
+public class operator extends Operator {
 
 	private static int count = 0;
 

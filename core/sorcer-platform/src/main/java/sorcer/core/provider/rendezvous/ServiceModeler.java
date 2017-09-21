@@ -37,7 +37,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public class ServiceModeler extends RendezvousBean implements Modeler {
+public class ServiceModeler extends ServiceBean implements Modeler {
     private Logger logger = LoggerFactory.getLogger(ServiceModeler.class);
 
     public ServiceModeler() throws RemoteException {

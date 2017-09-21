@@ -18,6 +18,7 @@ package sorcer.so;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
+import sorcer.Operator;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Entry;
@@ -38,7 +39,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 9/10/20.
  */
-public class operator extends sorcer.operator {
+public class operator extends Operator {
 
     public static Entry act(Service service, Arg... args) throws ServiceException {
         try {
@@ -197,7 +198,7 @@ public class operator extends sorcer.operator {
         return context;
     }
 
-    public static Object execItem(Item item, Arg... args) throws ServiceException {
+    public static Object execItem(Data item, Arg... args) throws ServiceException {
         try {
             return item.execute(args);
         } catch (RemoteException e) {

@@ -20,7 +20,7 @@ import sorcer.core.service.Projection;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.modeling.Union;
+import sorcer.service.modeling.Duo;
 import sorcer.util.GenericUtil;
 import sorcer.util.Pool;
 import sorcer.util.Pools;
@@ -1103,7 +1103,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     @Override
-    public Union act(String entryName, Arg... args) throws ServiceException, RemoteException {
+    public Duo act(String entryName, Arg... args) throws ServiceException, RemoteException {
         Object result = this.execute(args);
         if (result instanceof Entry) {
             return (Entry)result;

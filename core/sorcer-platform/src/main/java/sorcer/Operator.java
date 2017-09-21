@@ -23,14 +23,14 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike  Sobolewski on 5/4/17.
  */
-public class operator implements Item {
-	private static operator op = new operator();
+public class Operator implements Data {
+	private static Operator op = new Operator();
 
-	public static operator getInstance() {
+	public static Operator getInstance() {
 		return op;
 	}
 
-	protected operator() {
+	protected Operator() {
 	}
 
 	@Override
@@ -47,6 +47,6 @@ public class operator implements Item {
 
 	@Override
 	public String getName() {
-		return operator.class.getName();
+		return Operator.class.getName();
 	}
 }

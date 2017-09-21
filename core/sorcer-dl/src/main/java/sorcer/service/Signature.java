@@ -21,7 +21,6 @@ import sorcer.core.provider.ProviderName;
 import sorcer.service.modeling.EvaluationComponent;
 import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.sig;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -49,7 +48,7 @@ import java.util.Arrays;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Signature extends Request, Comparable, Dependency, Identifiable,
+public interface Signature extends Activity, Comparable, Dependency, Identifiable,
 		EvaluationComponent, SupportComponent, Serializable {
 
 	/**

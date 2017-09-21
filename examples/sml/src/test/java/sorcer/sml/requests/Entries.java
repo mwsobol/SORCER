@@ -119,7 +119,7 @@ public class Entries {
 	public static class Doer implements Invocation<Double> {
 
         @Override
-        public Double invoke(Context<Double> cxt, Arg... entries) throws RemoteException, ContextException {
+        public Double invoke(Context<Double> cxt, Arg... args) throws RemoteException, ContextException {
             Entry<Double> x = proc("x", 20.0);
             Entry<Double> y = proc("y", 30.0);
             Entry<Double> z = proc("z", invoker("x - y", x, y));
@@ -129,6 +129,16 @@ public class Entries {
             if (value(cxt, "y") != null)
                 setValue(y, value(cxt, "y"));
             return eval(y) + eval(x) + eval(z);
+        }
+
+        @Override
+        public String getName() {
+            return getClass().getSimpleName();
+        }
+
+        @Override
+        public Object execute(Arg... args) throws ServiceException, RemoteException {
+            return invoke(null, args);
         }
     }
 

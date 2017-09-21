@@ -18,15 +18,13 @@
 package sorcer.service.modeling;
 
 import sorcer.service.*;
-import sorcer.service.modeling.EvaluationComponent;
-import sorcer.service.modeling.SupportComponent;
 
 import java.rmi.RemoteException;
 
 /**
  * Created by Mike Sobolewski on 7/26/16.
  */
-public interface Activation  extends Substitutable, Scopable, Item, EvaluationComponent, SupportComponent {
+public interface Activation  extends Substitutable, Scopable, Data, EvaluationComponent, SupportComponent {
 
     public Double activate(Arg... entries) throws EvaluationException, RemoteException;
 

@@ -18,6 +18,7 @@ package sorcer.po;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.Operator;
 import sorcer.co.tuple.*;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.*;
@@ -45,7 +46,7 @@ import static sorcer.eo.operator.context;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class operator extends sorcer.operator {
+public class operator extends Operator {
 
 	private static final Logger logger = LoggerFactory.getLogger(operator.class.getName());
 

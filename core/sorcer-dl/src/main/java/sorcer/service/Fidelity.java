@@ -1,7 +1,7 @@
 package sorcer.service;
 
 import sorcer.core.Tag;
-import sorcer.service.modeling.Union;
+import sorcer.service.modeling.Duo;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 6/27/16.
  */
-public class Fidelity<T> implements Fi<T>, Item, Dependency, net.jini.core.entry.Entry {
+public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry {
     static final long serialVersionUID = 1L;
 
 	protected static int count = 0;
@@ -67,9 +67,9 @@ public class Fidelity<T> implements Fi<T>, Item, Dependency, net.jini.core.entry
             this.selects.add((T) fi);
     }
 
-    public Fidelity(Union... entries) {
+    public Fidelity(Duo... entries) {
         fiType = Type.NAME;
-        for (Union fi : entries)
+        for (Duo fi : entries)
             this.selects.add((T) fi);
     }
 
@@ -175,20 +175,21 @@ public class Fidelity<T> implements Fi<T>, Item, Dependency, net.jini.core.entry
 		if(object == this) {
 			return true;
 		}
-		Boolean selectorEquality = true;
-		if  (((Fidelity)object).getSelect() != null && select != null)
-			selectorEquality = ((Fidelity) object).getSelect().equals(select);
 
+		if (object instanceof Fidelity) {
+			Boolean selectorEquality = true;
+			if  (((Fidelity)object).getSelect() != null && select != null) {
+				selectorEquality = ((Fidelity) object).getSelect().equals(select);
+			}
 
-		if (object instanceof Fidelity
-				&& ((Fidelity) object).getName().equals(fiName)
-				&& ((Fidelity) object).getPath().equals(path)
-				&& selectorEquality
-				&& ((Fidelity) object).getFiType().equals(fiType)) {
-			return true;
-		} else {
-			return false;
+			if (((Fidelity) object).getName().equals(fiName)
+					&& ((Fidelity) object).getPath().equals(path)
+					&& selectorEquality
+					&& ((Fidelity) object).getFiType().equals(fiType)) {
+				return true;
+			}
 		}
+		return false;
 	}
 
 	@Override
@@ -207,8 +208,8 @@ public class Fidelity<T> implements Fi<T>, Item, Dependency, net.jini.core.entry
 
     @Override
     public Object execute(Arg... args) throws ServiceException, RemoteException {
-        if (select instanceof Request) {
-            return ((Request)select).execute(args);
+        if (select instanceof Activity) {
+            return ((Activity)select).execute(args);
         } else {
             return select;
         }
@@ -236,12 +237,12 @@ public class Fidelity<T> implements Fi<T>, Item, Dependency, net.jini.core.entry
 	}
 
     @Override
-    public Union act(Arg... args) throws ServiceException, RemoteException {
+    public Duo act(Arg... args) throws ServiceException, RemoteException {
         return null;
     }
 
     @Override
-    public Union act(String entryName, Arg... args) throws ServiceException, RemoteException {
+    public Duo act(String entryName, Arg... args) throws ServiceException, RemoteException {
         return null;
     }
 }

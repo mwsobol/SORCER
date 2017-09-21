@@ -39,7 +39,7 @@ import static sorcer.eo.operator.rFi;
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public class FidelityManager<T extends Service> implements FidelityManagement<T>, Observer, Identifiable {
+public class FidelityManager<T extends Service> implements Service, FidelityManagement<T>, Observer, Identifiable {
 
     // sequence number for unnamed instances
     protected static int count = 0;

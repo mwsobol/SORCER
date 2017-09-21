@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Path implements Arg, Service  {
+public class Path implements Arg, Data {
 
 	private static final long serialVersionUID = 1L;
 

@@ -33,7 +33,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public class ServiceConcatenator extends RendezvousBean implements Concatenator {
+public class ServiceConcatenator extends ServiceBean implements Concatenator {
 	private Logger logger = LoggerFactory.getLogger(ServiceConcatenator.class.getName());
 
 	public ServiceConcatenator() throws RemoteException {

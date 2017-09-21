@@ -19,7 +19,6 @@ package sorcer.core.provider.rendezvous;
 import net.jini.config.ConfigurationException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.context.ControlContext;
 import sorcer.core.provider.Concatenator;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.Rendezvous;
@@ -32,12 +31,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ServiceJobber - The SORCER rendezvous service provider that provides
- * coordination for executing mograms using directly (PUSH) service providers.
+ * ServiceRendezvous - The SORCER rendezvous service provider that provides
+ * coordination for all of SORCER service types: blocks, jobs, and modesls
  * 
  * @author Mike Sobolewski
  */
-public class ServiceRendezvous extends RendezvousBean implements Rendezvous, Spacer, Jobber, Concatenator {
+public class ServiceRendezvous extends ServiceBean implements Rendezvous, Spacer, Jobber, Concatenator {
 	private Logger logger = LoggerFactory.getLogger(ServiceRendezvous.class.getName());
 
 	private boolean isConfigured = false;

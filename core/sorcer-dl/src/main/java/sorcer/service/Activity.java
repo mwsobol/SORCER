@@ -1,23 +1,32 @@
-/**
- * An top-level common interface for all service peers in SORCER.
- * Each service accepts a request for {@link Mogram} to exert
- * the federation of collaborating services as specified by the mogram.
+/*
+ * Copyright 2016 the original author or authors.
+ * Copyright 2016 SorcerSoft.org.
  *
- * @author Mike Sobolewski
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package sorcer.service;
 
-import sorcer.service.modeling.Union;
+import sorcer.service.modeling.Duo;
 
 import java.rmi.RemoteException;
 
 /**
- * Created by Mike Sobolewski.
+ * Created by Mike Sobolewski on 5/16/16.
  */
-public interface Activity extends Service {
+public interface Activity extends Service, Arg {
 
-    public Union act(Arg... args) throws ServiceException, RemoteException;
+    public Duo act(Arg... args) throws ServiceException, RemoteException;
 
-    public Union act(String entryName, Arg... args) throws ServiceException, RemoteException;
+    public Duo act(String entryName, Arg... args) throws ServiceException, RemoteException;
 
 }

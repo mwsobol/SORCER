@@ -19,7 +19,6 @@ package sorcer.service;
 
 import sorcer.service.modeling.EvaluationComponent;
 import sorcer.service.modeling.SupportComponent;
-import sorcer.service.modeling.Valuation;
 
 import java.rmi.RemoteException;
 
@@ -29,7 +28,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public interface  Evaluation <T> extends Substitutable, Scopable, Item, EvaluationComponent, SupportComponent {
+public interface  Evaluation <T> extends Substitutable, Scopable, Data, EvaluationComponent, SupportComponent {
 
 	/**
 	 * Returns the execute of the existing execute of this evaluation that might be invalid.

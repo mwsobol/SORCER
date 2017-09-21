@@ -23,7 +23,6 @@ import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.Contexts;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.exertion.ObjectBlock;
 import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.*;
@@ -42,8 +41,8 @@ import java.util.Vector;
  * 
  * @author Mike Sobolewski
  */
-abstract public class RendezvousBean implements Service, Exerter {
-	private Logger logger = LoggerFactory.getLogger(RendezvousBean.class.getName());
+abstract public class ServiceBean implements Service, Exerter {
+	private Logger logger = LoggerFactory.getLogger(ServiceBean.class.getName());
 
 	protected ServiceProvider provider;
 
@@ -51,7 +50,7 @@ abstract public class RendezvousBean implements Service, Exerter {
 	
 	//protected TaskManager threadManager;
 	
-	public RendezvousBean() throws RemoteException {
+	public ServiceBean() throws RemoteException {
 		// do nothing
 	}
 	

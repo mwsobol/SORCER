@@ -42,7 +42,7 @@ import java.util.Set;
  *
  * Created by Mike Sobolewski
  */
-public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
+public class MultiFiMogram extends ServiceMogram implements Fi<Activity> {
 
     protected Fidelity requestFidelity;
 
@@ -255,22 +255,22 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
     }
 
     @Override
-    public void setSelect(Request select) {
+    public void setSelect(Activity select) {
 
     }
 
     @Override
-    public Request getSelect() {
-        Request req = null;
+    public Activity getSelect() {
+        Activity req = null;
         Object select = getMultifidelity().getSelect();
         if (select instanceof Ref) {
             try {
-                req=  (Request) ((Ref) getMultifidelity().getSelect()).getValue();
+                req=  (Activity) ((Ref) getMultifidelity().getSelect()).getValue();
             } catch (EvaluationException | RemoteException e) {
                 e.printStackTrace();
             }
         } else{
-            req = (Request) getMultifidelity().getSelect();
+            req = (Activity) getMultifidelity().getSelect();
         }
         return req;
     }
@@ -281,7 +281,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
     }
 
     @Override
-    public void addSelect(Request fidelity) {
+    public void addSelect(Activity fidelity) {
         getMultifidelity().addSelect(fidelity);
     }
 

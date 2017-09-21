@@ -39,7 +39,7 @@ import static sorcer.util.StringUtils.tName;
  * 
  * @author Mike Sobolewski
  */
-public class ServiceSpacer extends RendezvousBean implements Spacer {
+public class ServiceSpacer extends ServiceBean implements Spacer {
     private Logger logger = LoggerFactory.getLogger(ServiceSpacer.class.getName());
 
     private LokiMemberUtil myMemberUtil;

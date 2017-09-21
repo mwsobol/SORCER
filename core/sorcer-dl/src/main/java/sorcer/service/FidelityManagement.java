@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * Created by Mike Sobolewski on 6/14/15.
  */
-public interface FidelityManagement<T extends Service> extends Service, RemoteEventListener, Serializable {
+public interface FidelityManagement<T extends Service> extends RemoteEventListener, Serializable {
 
     public Map<String, Fidelity> getFidelities() throws RemoteException;
 

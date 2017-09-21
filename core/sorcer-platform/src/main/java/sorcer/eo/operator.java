@@ -21,6 +21,7 @@ import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.Operator;
 import sorcer.co.operator.DataEntry;
 import sorcer.co.tuple.*;
 import sorcer.core.SorcerConstants;
@@ -72,7 +73,7 @@ import static sorcer.po.operator.srv;
  *
  * @author Mike Sobolewski
  */
-public class operator extends sorcer.operator {
+public class operator extends Operator {
 
 	protected static int count = 0;
 
@@ -1429,30 +1430,30 @@ public class operator extends sorcer.operator {
 		return morphFi;
 	}
 
-	public static MorphFidelity mFi(String name, Morpher morpher, Request... services) {
+	public static MorphFidelity mFi(String name, Morpher morpher, Activity... services) {
 		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
 		morphFi.setMorpher(morpher);
 		morphFi.setPath(name);
 		return morphFi;
 	}
 
-	public static MorphFidelity mFi(Request... services) {
+	public static MorphFidelity mFi(Activity... services) {
 		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(services));
 		return morphFi;
 	}
 
-	public static MorphFidelity mFi(String name, Request... services) {
+	public static MorphFidelity mFi(String name, Activity... services) {
 		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
 		return morphFi;
 	}
 
-	public static ServiceFidelity rFi(Request... services) {
+	public static ServiceFidelity rFi(Activity... services) {
 		ServiceFidelity srvFi = new ServiceFidelity(services);
 		srvFi.fiType = ServiceFidelity.Type.REQUEST;
 		return srvFi;
 	}
 
-	public static ServiceFidelity rFi(String name, Request... services) {
+	public static ServiceFidelity rFi(String name, Activity... services) {
 		ServiceFidelity srvFi = new ServiceFidelity(services);
 		srvFi.setPath(name);
 		srvFi.fiType = ServiceFidelity.Type.REQUEST;
@@ -1553,8 +1554,8 @@ public class operator extends sorcer.operator {
         return fi;
     }
 
-	public static Fidelity<Union> entFi(Union... entries) {
-		Fidelity<Union> fi = new Fidelity(entries);
+	public static Fidelity<Duo> entFi(Duo... entries) {
+		Fidelity<Duo> fi = new Fidelity(entries);
 		fi.fiType = ServiceFidelity.Type.ENTRY;
 		return fi;
 	}

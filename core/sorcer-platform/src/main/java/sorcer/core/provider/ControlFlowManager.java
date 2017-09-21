@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.exertion.*;
-import sorcer.core.provider.rendezvous.RendezvousBean;
+import sorcer.core.provider.rendezvous.ServiceBean;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceSpacer;
@@ -111,23 +111,23 @@ public class ControlFlowManager {
      *            Exertion
      * @param delegate
      *            ExerterDelegate
-     * @param rendezvousBean
+     * @param serviceBean
      *            Rendezvous
      * @throws ConfigurationException
      * @throws RemoteException
      */
     public ControlFlowManager(Exertion exertion, ProviderDelegate delegate,
-                              RendezvousBean rendezvousBean) throws RemoteException, ConfigurationException {
+                              ServiceBean serviceBean) throws RemoteException, ConfigurationException {
         this.delegate = delegate;
         this.exertion = exertion;
-        if (rendezvousBean instanceof Concatenator) {
-            concatenator = (Concatenator)rendezvousBean;
+        if (serviceBean instanceof Concatenator) {
+            concatenator = (Concatenator) serviceBean;
         }
-        else if (rendezvousBean instanceof Spacer){
-            spacer = (Spacer) rendezvousBean;
+        else if (serviceBean instanceof Spacer){
+            spacer = (Spacer) serviceBean;
         }
-        else if (rendezvousBean instanceof Jobber) {
-            jobber = (Jobber) rendezvousBean;
+        else if (serviceBean instanceof Jobber) {
+            jobber = (Jobber) serviceBean;
         }
         init();
     }

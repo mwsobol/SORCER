@@ -18,14 +18,14 @@
 package sorcer.service.modeling;
 
 
-import sorcer.service.Item;
+import sorcer.service.Data;
 
 /**
  * The functionality for all execute objects.
  * 
  * @author Mike Sobolewski
  */
-public interface Valuation<T> extends Item {
+public interface Valuation<T> extends Data {
 
 	/**
 	 * Returns the current execute of this valuation.
