@@ -28,5 +28,5 @@ import java.rmi.Remote;
  * JavaSpace in which several providers can retrieve relevant exertions from the
  * object space, execute them, and return the results back to the object space.
  */
-public interface Spacer extends Service, Exerter, Remote {
+public interface Spacer extends Exerter, Remote {
 }
