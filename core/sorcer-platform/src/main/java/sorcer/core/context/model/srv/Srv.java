@@ -105,11 +105,6 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
     }
 
     @Override
-    public ApplicationDescription getDescription() {
-        return null;
-    }
-
-    @Override
     public Class<?> getValueType() {
         return null;
     }

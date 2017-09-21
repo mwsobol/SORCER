@@ -23,7 +23,7 @@ import sorcer.service.modeling.SupportComponent;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-public interface Setter extends Data, EvaluationComponent, SupportComponent, Serializable {
+public interface Setter extends Activity, EvaluationComponent, SupportComponent, Serializable {
 
 	public String getName();
 

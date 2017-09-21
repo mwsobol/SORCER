@@ -14,14 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package sorcer.service;
 
+import sorcer.service.modeling.Duo;
+
+import java.rmi.RemoteException;
+
 /**
- * An top-level common interface for all primitive service in SORCER.
- * Items are copmponent services of compound services called mograms.
- *
- * @author Mike Sobolewski
+ * Created by Mike Sobolewski on 5/16/16.
  */
 public interface Data extends Service, Arg {
+
+    public Duo act(Arg... args) throws ServiceException, RemoteException;
+
+    public Duo act(String entryName, Arg... args) throws ServiceException, RemoteException;
+
 }

@@ -437,17 +437,6 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		return type;
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.vfe.Variability#getDescription()
-	 */
-	@Override
-	public ApplicationDescription getDescription() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see sorcer.vfe.Variability#getValueType()
-	 */
 	@Override
 	public Class getValueType() {
 		return item.getClass();

@@ -183,17 +183,6 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 		return type;
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.vfe.Variability#getDescription()
-	 */
-	@Override
-	public ApplicationDescription getDescription() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see sorcer.vfe.Variability#getValueType()
-	 */
 	@Override
 	public Class getValueType() {
 		return item.getClass();

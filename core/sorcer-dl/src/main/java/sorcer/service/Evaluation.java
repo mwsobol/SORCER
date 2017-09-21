@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public interface  Evaluation <T> extends Substitutable, Scopable, Data, EvaluationComponent, SupportComponent {
+public interface  Evaluation <T> extends Substitutable, Scopable, Activity, EvaluationComponent, SupportComponent {
 
 	/**
 	 * Returns the execute of the existing execute of this evaluation that might be invalid.

@@ -14,19 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package sorcer.service;
 
-import sorcer.service.modeling.Duo;
-
-import java.rmi.RemoteException;
-
 /**
- * Created by Mike Sobolewski on 5/16/16.
+ * An top-level common interface for all primitive service in SORCER.
+ * Actiities are defined by common interface types.
+ *
+ * @author Mike Sobolewski
  */
 public interface Activity extends Service, Arg {
-
-    public Duo act(Arg... args) throws ServiceException, RemoteException;
-
-    public Duo act(String entryName, Arg... args) throws ServiceException, RemoteException;
-
 }

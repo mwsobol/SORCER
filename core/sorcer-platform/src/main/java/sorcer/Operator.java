@@ -23,7 +23,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike  Sobolewski on 5/4/17.
  */
-public class Operator implements Data {
+public class Operator implements Activity {
 	private static Operator op = new Operator();
 
 	public static Operator getInstance() {

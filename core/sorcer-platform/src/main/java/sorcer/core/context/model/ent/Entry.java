@@ -13,7 +13,7 @@ import sorcer.util.url.sos.SdbUtil;
 import java.net.URL;
 import java.rmi.RemoteException;
 
-public class Entry<V> extends Association<String, V> implements Identifiable, Activity, Callable<V>, Setter, ent<V> {
+public class Entry<V> extends Association<String, V> implements Identifiable, Callable<V>, Setter, ent<V> {
 
     protected boolean negative;
 

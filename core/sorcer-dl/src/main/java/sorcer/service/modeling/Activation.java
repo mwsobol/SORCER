@@ -24,7 +24,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 7/26/16.
  */
-public interface Activation  extends Substitutable, Scopable, Data, EvaluationComponent, SupportComponent {
+public interface Activation  extends Substitutable, Scopable, Activity, EvaluationComponent, SupportComponent {
 
     public Double activate(Arg... entries) throws EvaluationException, RemoteException;
 

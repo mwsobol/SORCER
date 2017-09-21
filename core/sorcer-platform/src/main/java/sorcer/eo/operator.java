@@ -1430,30 +1430,30 @@ public class operator extends Operator {
 		return morphFi;
 	}
 
-	public static MorphFidelity mFi(String name, Morpher morpher, Activity... services) {
+	public static MorphFidelity mFi(String name, Morpher morpher, Data... services) {
 		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
 		morphFi.setMorpher(morpher);
 		morphFi.setPath(name);
 		return morphFi;
 	}
 
-	public static MorphFidelity mFi(Activity... services) {
+	public static MorphFidelity mFi(Data... services) {
 		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(services));
 		return morphFi;
 	}
 
-	public static MorphFidelity mFi(String name, Activity... services) {
+	public static MorphFidelity mFi(String name, Data... services) {
 		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
 		return morphFi;
 	}
 
-	public static ServiceFidelity rFi(Activity... services) {
+	public static ServiceFidelity rFi(Data... services) {
 		ServiceFidelity srvFi = new ServiceFidelity(services);
 		srvFi.fiType = ServiceFidelity.Type.REQUEST;
 		return srvFi;
 	}
 
-	public static ServiceFidelity rFi(String name, Activity... services) {
+	public static ServiceFidelity rFi(String name, Data... services) {
 		ServiceFidelity srvFi = new ServiceFidelity(services);
 		srvFi.setPath(name);
 		srvFi.fiType = ServiceFidelity.Type.REQUEST;
