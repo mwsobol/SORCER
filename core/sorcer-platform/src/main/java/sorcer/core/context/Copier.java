@@ -94,7 +94,6 @@ public class Copier implements Evaluation<Context> {
 		this.name = name;
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}

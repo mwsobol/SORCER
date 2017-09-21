@@ -1206,7 +1206,7 @@ public class operator extends Operator {
 	public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
         String path = null;
 		for (Evaluation d : dependers) {
-            path = d.getName();
+            path = ((Identifiable)d).getName();
             if (path != null && path.equals("self")) {
                 ((Entry)d).setKey(((Domain) dependee).getName());
             }
@@ -1220,7 +1220,7 @@ public class operator extends Operator {
 		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
 			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
 			for (Evaluation e : dependers) {
-				path = e.getName();
+				path = ((Identifiable)e).getName();
 				if (dm.get(path) != null) {
                     if (!dm.get(path).contains(e)) {
                         ((List) dm.get(path)).add(e);

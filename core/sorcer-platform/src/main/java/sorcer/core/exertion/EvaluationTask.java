@@ -48,7 +48,7 @@ public class EvaluationTask extends Task {
 	}
 
 	public EvaluationTask(Evaluation evaluator) throws ContextException, RemoteException {
-		super(evaluator.getName());
+		super(((Identifiable)evaluator).getName());
 		EvaluationSignature es = new EvaluationSignature(evaluator);
 		addSignature(es);
 		es.setEvaluator(evaluator);
@@ -148,11 +148,11 @@ public class EvaluationTask extends Task {
 			if (getProcessSignature().getReturnPath() != null)
 				dataContext.setReturnPath(getProcessSignature().getReturnPath());
 			dataContext.setReturnValue(result);
-			if (evaluator instanceof Scopable && ((ServiceContext)(((Scopable)evaluator).getScope())) != null) {
-				((ServiceContext)(((Scopable)evaluator).getScope())).putValue(dataContext.getReturnPath().path, result);
+			if (evaluator instanceof Scopable && evaluator.getScope() != null) {
+				((evaluator).getScope()).putValue(dataContext.getReturnPath().path, result);
 			}
 			if (evaluator instanceof Srv && dataContext.getScope() != null)
-				((ServiceContext)dataContext.getScope()).putValue(evaluator.getName(), result);
+				dataContext.getScope().putValue(((Identifiable)evaluator).getName(), result);
 		} catch (Exception e) {
 			e.printStackTrace();
 			dataContext.reportException(e);
@@ -177,7 +177,7 @@ public class EvaluationTask extends Task {
 				Context cxt = ((ServiceContext)getScope()).getDirectionalSubcontext(rp.inPaths);
 				out = ((ValueCallable)val).call(cxt);
 			} else {
-				out = ((ValueCallable) val).call((Context)getScope());
+				out = ((ValueCallable) val).call(getScope());
 			}
 			if (rp != null && rp.path != null)
 				putValue((evaluator).getReturnPath().path, out);

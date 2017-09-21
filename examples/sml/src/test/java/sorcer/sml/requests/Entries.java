@@ -132,11 +132,6 @@ public class Entries {
         }
 
         @Override
-        public String getName() {
-            return getClass().getSimpleName();
-        }
-
-        @Override
         public Object execute(Arg... args) throws ServiceException, RemoteException {
             return invoke(null, args);
         }

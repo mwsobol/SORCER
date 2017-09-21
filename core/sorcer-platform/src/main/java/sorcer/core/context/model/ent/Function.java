@@ -264,7 +264,7 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 		try {
 			if (item instanceof Evaluation && ((Evaluation) item).asis() != null) {
 				if (this == item) {
-					return "[" + key + "=" + ((Evaluation)item).getName() + "x]";  // loop
+					return "[" + key + "=" + ((Identifiable)item).getName() + "x]";  // loop
 				}
 				en = ((Evaluation) item).asis().toString();
 			} else {
