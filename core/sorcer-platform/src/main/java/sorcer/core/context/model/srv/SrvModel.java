@@ -376,8 +376,9 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                 for (DependencyEntry de : del) {
                     List<Path> dpl = de._2;
                     if (de.getType().equals(Variability.Type.FIDELITY)) {
-                        if (((Fidelity) de.annotation()).getOption().equals("IF")) {
-                            if (((Fidelity) entry.getSelectedFidelity()).getName().equals(((Fidelity) de.annotation()).getName())) {
+                        Fidelity deFi = (Fidelity) de.annotation();
+                        if (deFi.getOption() == Fi.Type.IF) {
+                            if (((Fidelity) entry.getSelectedFidelity()).getName().equals(deFi.getName())) {
                                 // apply only to matched fidelity
                                 if (dpl != null && dpl.size() > 0) {
                                     for (Path p : dpl) {
