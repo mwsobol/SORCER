@@ -1568,8 +1568,29 @@ public class operator extends Operator {
 
 	public static Fidelity ifFi(String name) {
 		Fidelity fi = new Fidelity(name);
-		fi.fiType = ServiceFidelity.Type.SELECT;
-		fi.setOption("IF");
+		fi.fiType = Fi.Type.SELECT;
+		fi.setOption(Fi.Type.IF);
+		return fi;
+	}
+
+    public static Fidelity ifFi(String name, String path) {
+        Fidelity fi = new Fidelity(name, path);
+        fi.fiType = Fi.Type.SELECT;
+        fi.setOption(Fi.Type.IF);
+        return fi;
+    }
+
+    public static Fidelity ifSoaFi(String name) {
+        Fidelity fi = new Fidelity(name);
+        fi.fiType = Fidelity.Type.SELECT;
+        fi.setOption(Fi.Type.IF_SOA);
+        return fi;
+    }
+
+	public static Fidelity ifSoaFi(String name, String path) {
+		Fidelity fi = new Fidelity(name, path);
+		fi.fiType = Fidelity.Type.SELECT;
+		fi.setOption(Fi.Type.IF_SOA);
 		return fi;
 	}
 
@@ -1655,6 +1676,7 @@ public class operator extends Operator {
 		fi.fiType = Fidelity.Type.SOA;
 		return fi;
 	}
+
 
 	public static Fidelity fi(String name, String path, String gradientName, Fidelity subFi) {
 		Fidelity fi = new Fidelity(name, path);
