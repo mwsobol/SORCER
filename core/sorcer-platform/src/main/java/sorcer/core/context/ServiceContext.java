@@ -372,7 +372,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	public Object getValue0(String path) throws ContextException {
 		Object result = get(path);
-		if (result instanceof ContextLink) {
+		if (result instanceof Value) {
+			return ((Value)result).getData();
+		} else if (result instanceof ContextLink) {
 			String offset = ((ContextLink) result).getOffset();
 			Context linkedCntxt = ((ContextLink) result).getContext();
 			result = linkedCntxt.getValue(offset);
@@ -1525,10 +1527,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 			// make sure the result is returned correctly
 			resultContext.putValue(returnPath, returnContext);
 			this.appendInout(returnContext);
-			this.setIsChanged(true);
+			this.setChanged(true);
 		} else {
 			this.appendInout(outcxt);
-			this.setIsChanged(true);
+			this.setChanged(true);
 		}
 		return resultContext;
 	}

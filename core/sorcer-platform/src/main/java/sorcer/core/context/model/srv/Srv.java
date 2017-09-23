@@ -32,8 +32,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
 
     private static Logger logger = LoggerFactory.getLogger(Srv.class.getName());
 
-    protected final String name;
-
+    protected String name;
 
     protected Service service;
 
@@ -43,16 +42,13 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
 
     protected ReturnPath returnPath;
 
-    // srv fidelities
-    protected Map<String, Object> fidelities;
-
     public Srv(String name) {
         super(name);
         this.name = name;
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String name, String path,  Service service, String[] paths) {
+    public Srv(String name, String path, Service service, String[] paths) {
         super(path, service);
         this.name = name;
         this.paths = paths;
@@ -65,15 +61,25 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String name, Object value, String[] paths) {
-        super(name, value);
+
+    public Srv(String name, Object value) {
+        if(name == null)
+            throw new IllegalArgumentException("name must not be null");
+        this.key = name;
         this.name = name;
-        this.paths = paths;
+        if (value instanceof Fidelity) {
+            multiFi = (Fidelity) value;
+            this.item = multiFi.get(0);
+        } else {
+            this.key = key;
+            this.item = value;
+        }
         type = Functionality.Type.SRV;
     }
-    public Srv(String name, Object value) {
-        super(name, value);
-        this.name = name;
+
+    public Srv(String name, Object value, String[] paths) {
+        this(name, value);
+        this.paths = paths;
         type = Functionality.Type.SRV;
     }
 
@@ -85,7 +91,6 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
     public Srv(String name, String path, Object value, ReturnPath returnPath) {
         super(path, value);
         this.returnPath = returnPath;
-        this.name = name;
         type = Functionality.Type.SRV;
     }
 
@@ -157,6 +162,10 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
     public Object getValue(Arg... entries) throws EvaluationException, RemoteException {
         if (srvValue != null && isValid) {
             return srvValue;
+        } else {
+            if (multiFi != null) {
+                item = multiFi.getSelect();
+            }
         }
         try {
             substitute(entries);
@@ -171,7 +180,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
                     }
                 } else if (((SignatureEntry) item).getContext() != null) {
                     try {
-                        return execSignature(((SignatureEntry) item).get(),
+                        return execSignature(((SignatureEntry) item).getItem(),
                                 ((SignatureEntry) item).getContext());
                     } catch (MogramException e) {
                         throw new EvaluationException(e);

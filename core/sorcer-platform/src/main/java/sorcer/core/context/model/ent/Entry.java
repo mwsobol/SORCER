@@ -27,17 +27,15 @@ public class Entry<V> extends Association<String, V> implements Identifiable, Ge
     }
 
     public Entry(String key, V item) {
-        if (key == null) {
-            throw new IllegalArgumentException("key must not be null");
-        }
-        this.key = key;
-        this.item = item;
+       super(key, item);
 
         if (sorcer.util.url.sos.SdbUtil.isSosURL(item)) {
             isPersistent = true;
         }
         if (item != null && item.getClass().getName().indexOf("Lambda") > 0) {
             type = Functionality.Type.LAMBDA;
+        } else {
+            type = Functionality.Type.ENT;
         }
     }
 
@@ -51,11 +49,14 @@ public class Entry<V> extends Association<String, V> implements Identifiable, Ge
     }
 
     public V getData(Arg... args) {
-        Object data = item;
-        if (item instanceof Entry && ((Entry)data).getKey().equals(key)) {
+        if (multiFi != null && multiFi.isChanged()) {
+            item = (V) multiFi.getSelect();
+            multiFi.setChanged(false);
+        }
+        if (item instanceof Entry && ((Entry)item).getKey().equals(key)) {
             return (V) ((Entry)item).getData();
         }
-        return (V) data;
+        return item;
     }
 
     @Override

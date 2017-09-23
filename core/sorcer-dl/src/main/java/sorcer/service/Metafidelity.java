@@ -13,11 +13,10 @@ public class Metafidelity extends Fidelity<Fi> implements MetaFi, Dependency, Ar
 
     static final long serialVersionUID = 1L;
 
-	public Type fiType = Type.MULTI;
-
 	public Metafidelity() {
 		super();
 		fiName = "fidelity" + count++;
+		fiType = Type.META;
 	}
 
 	public Metafidelity(String name) {
@@ -89,7 +88,7 @@ public class Metafidelity extends Fidelity<Fi> implements MetaFi, Dependency, Ar
 		return fiType;
 	}
 
-	public void setFiType(Type fiType) {
+	public void setType(Type fiType) {
 		this.fiType = fiType;
 	}
 
@@ -147,7 +146,7 @@ public class Metafidelity extends Fidelity<Fi> implements MetaFi, Dependency, Ar
 			if (((Fidelity) object).getName().equals(fiName)
 					&& ((Fidelity) object).getPath().equals(path)
 					&& selectorEquality
-					&& ((Fidelity) object).getFiType().equals(fiType)) {
+					&& ((Fidelity) object).getType().equals(fiType)) {
 				return true;
 			}
 		}

@@ -131,9 +131,9 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	/**
 	 * Creates and executed the script in the file <code>scriptFile</code>
 	 * 
-	 * @param cmdarray
+	 * @param argarray
 	 *            For example new String[] { "csh", "-f", "-c" };
-	 * @param script
+	 * @param scriptFile
 	 *            The content of the script to be executed
 	 * @param background
 	 *            true if the script to be run in background

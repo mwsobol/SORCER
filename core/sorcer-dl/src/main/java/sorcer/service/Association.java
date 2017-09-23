@@ -35,7 +35,7 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
 
 	protected I item = null;
 
-    protected Class valClass;
+    protected Fi multiFi;
 
     protected Functionality.Type type = Functionality.Type.VAL;
 
@@ -56,8 +56,15 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
     }
 
     public Association(K key, I item) {
-		this.key = key;
-		this.item = item;
+        if(key==null)
+            throw new IllegalArgumentException("key must not be null");
+        this.key = key;
+        if (item instanceof Fi) {
+            multiFi = (Fi) item;
+            this.item = (I)  ((Association)((Fidelity)multiFi).get(0)).getItem();
+        } else {
+            this.item = item;
+        }
 	}
 
     public K getKey() {
@@ -77,7 +84,13 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
 	}
 
 	public I getItem() {
-		return item;
+		if (!isValid && multiFi != null) {
+            item = (I) ((Association)multiFi.getSelect()).getItem();
+            isValid = true;
+            return item;
+        } else {
+            return item;
+        }
 	}
 
     public I get(Arg... args) throws ContextException {
@@ -131,16 +144,8 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
         this.type = type;
     }
 
-    public Class getValClass() {
-        return valClass;
-    }
-
     public Object getAnnotation() {
         return annotation;
-    }
-
-    public void setValClass(Class valClass) {
-        this.valClass = valClass;
     }
 
     public Context getScope() {
@@ -160,6 +165,14 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
         if (item  instanceof Association) {
             ((Association)item).isValid = state;
         }
+    }
+
+    public Fi getMultiFi() {
+        return multiFi;
+    }
+
+    public void setMultiFi(ServiceFidelity multiFi) {
+        this.multiFi = multiFi;
     }
 
     @Override

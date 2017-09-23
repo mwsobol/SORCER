@@ -260,6 +260,11 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Data> {
     }
 
     @Override
+    public Type getType() {
+        return Type.MULTI;
+    }
+
+    @Override
     public Data getSelect() {
         Data req = null;
         Object select = getMultifidelity().getSelect();
@@ -273,6 +278,16 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Data> {
             req = (Data) getMultifidelity().getSelect();
         }
         return req;
+    }
+
+    @Override
+    public Data get(int index) {
+        if (requestFidelity != null) {
+            return (Data) requestFidelity.get(index);
+        } else if (morphFidelity != null) {
+            return (Data) morphFidelity.get(index);
+        }
+        return null;
     }
 
     @Override

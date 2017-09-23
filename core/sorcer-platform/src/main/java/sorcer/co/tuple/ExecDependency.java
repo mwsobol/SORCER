@@ -33,11 +33,12 @@ public class ExecDependency extends Function<List<Path>> {
 
     @SuppressWarnings("unchecked")
     public ExecDependency(String path, List<Path> paths) {
-        super(path, paths);
+        key = path;
+        item = paths;
     }
 
     public ExecDependency(String path, Conditional condition, List<Path> paths) {
-        super(path, paths);
+        this(path, paths);
         this.condition = condition;
     }
 

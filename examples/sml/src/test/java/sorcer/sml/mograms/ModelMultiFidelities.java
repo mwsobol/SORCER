@@ -84,7 +84,6 @@ public class ModelMultiFidelities {
                 ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
                 ent("sFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                FidelityManagement.YES,
                 response("sFi", "arg/x1", "arg/x2"));
 
         logger.info("DEPS: " + printDeps(mdl));

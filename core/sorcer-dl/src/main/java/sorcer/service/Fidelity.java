@@ -23,6 +23,8 @@ public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry
 
 	protected T select;
 
+    protected boolean changed;
+
 	protected List<T> selects = new ArrayList<T>();
 
 	public Type fiType = Type.SELECT;
@@ -154,11 +156,21 @@ public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry
         return names;
     }
 
-    public Type getFiType() {
+    public Type getType() {
 		return fiType;
 	}
 
-	public void setFiType(Type fiType) {
+    @Override
+    public boolean isChanged() {
+        return changed;
+    }
+
+    @Override
+    public void setChanged(boolean state) {
+        changed = state;
+    }
+
+    public void setType(Type fiType) {
 		this.fiType = fiType;
 	}
 
@@ -185,7 +197,7 @@ public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry
 			if (((Fidelity) object).getName().equals(fiName)
 					&& ((Fidelity) object).getPath().equals(path)
 					&& selectorEquality
-					&& ((Fidelity) object).getFiType().equals(fiType)) {
+					&& ((Fidelity) object).getType().equals(fiType)) {
 				return true;
 			}
 		}

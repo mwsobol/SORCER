@@ -115,7 +115,7 @@ public interface SorcerConstants {
 
 	public static final String J_WORKERS_MAX = "providerWorkersMax";
 
-	public static final String P_DELAY_TIME = "provider.act.delay";
+	public static final String P_DELAY_TIME = "provider.exec.delay";
 
 	public static final String J_DELAY_TIME = "providerExecDelay";
 

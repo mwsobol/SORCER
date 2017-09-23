@@ -636,7 +636,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return isChanged;
     }
 
-    public void setIsChanged(boolean isChanged) {
+    public void setChanged(boolean isChanged) {
         this.isChanged = isChanged;
     }
 
@@ -1060,7 +1060,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
                    mdaFi = new Fidelity(((MdaEntry)mdaComponent).getName());
                    mdaFi.addSelect((MdaEntry) mdaComponent);
                } else if (mdaComponent instanceof ServiceFidelity
-                       && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
+                       && ((ServiceFidelity) mdaComponent).getType().equals(Fi.Type.MDA)) {
                    mdaFi = (Fidelity) mdaComponent;
                }
            }

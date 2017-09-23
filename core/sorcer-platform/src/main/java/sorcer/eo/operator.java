@@ -321,8 +321,8 @@ public class operator extends Operator {
 				execPath = (ExecPath) o;
 			} else if (o instanceof Function) {
 				funcEntryList.add((Function) o);
-			} else if (o instanceof Value) {
-				entryList.add((Value) o);
+			} else if (o instanceof Entry) {
+				entryList.add((Entry) o);
 			} else if (o instanceof Context.Type) {
 				types.add((Context.Type) o);
 			} else if (o instanceof String) {
@@ -584,7 +584,7 @@ public class operator extends Operator {
 				if (ent.isPersistent()) {
 					setProc(pcxt, ent, i);
 				} else {
-					pcxt.putOutValueAt(ent.getName(), ent.getItem(), ent.getValClass(), i + 1);
+					pcxt.putOutValueAt(ent.getName(), ent.getItem(), i + 1);
 				}
 			} else if (ent instanceof InoutValue || ent.getType() == Functionality.Type.INOUT) {
 				if (ent.isPersistent()) {
@@ -595,6 +595,8 @@ public class operator extends Operator {
 			} else if (ent instanceof Entry) {
 				if (ent.isPersistent()) {
 					setProc(pcxt, entryList.get(i), i);
+				} if  (ent.getMultiFi() != null) {
+					pcxt.putValueAt(ent.getName(), ent, i + 1);
 				} else {
 					if (ent.getItem() instanceof Scopable) {
 						((Scopable) ent.getItem()).setScope(pcxt);
@@ -1425,7 +1427,7 @@ public class operator extends Operator {
 	}
 
 	public static MorphFidelity mFi(Morpher morpher, Service... services) {
-		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity((Service[]) services));
+		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(services));
 		morphFi.setMorpher(morpher);
 		return morphFi;
 	}
@@ -2074,7 +2076,7 @@ public class operator extends Operator {
 	public static <M extends Domain> M model(Object... items) throws ContextException {
 		String name = "unknown" + count++;
 		boolean hasEntry = false;
-		boolean evalType = false;
+		boolean neoType = false;
 		boolean procType = false;
 		boolean srvType = false;
 		boolean hasExertion = false;
@@ -2094,8 +2096,8 @@ public class operator extends Operator {
 						procType = true;
 					else if (i instanceof Srv) {
 						srvType = true;
-					} else if (((Entry) i).asis() instanceof Evaluation) {
-						evalType = true;
+					} else if (i instanceof Neo) {
+						neoType = true;
 					}
 				} catch (Exception e) {
 					throw new ModelException(e);
@@ -2257,7 +2259,7 @@ public class operator extends Operator {
 			} else if (elems[i] instanceof MorphFidelity) {
 				mFi = (MorphFidelity) elems[i];
 			} else if (elems[i] instanceof ServiceFidelity) {
-				if (((ServiceFidelity) elems[i]).getFiType().equals(ServiceFidelity.Type.META)) {
+				if (((ServiceFidelity) elems[i]).getType().equals(ServiceFidelity.Type.META)) {
 					metaFis.add((ServiceFidelity) elems[i]);
 				} else {
 					fis.add(((ServiceFidelity) elems[i]));

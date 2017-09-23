@@ -224,7 +224,7 @@ public class operator extends Operator {
 
     public static Fidelity pFi(String name) {
         Fidelity fi =  new Fidelity(name);
-        fi.setFiType(Fi.Type.PROC);
+        fi.setType(Fi.Type.PROC);
         return fi;
     }
 
@@ -747,12 +747,7 @@ public class operator extends Operator {
 			return new Value(path, value);
 		} else if (value instanceof Context && args != null && args.length > 0) {
 			return (Entry<T>) new Neo(path, (Context)value, new Args(args));
-		}
-//		else if (execute instanceof Invocation || execute instanceof Evaluation) {
-//			entry = new Proc<T>(path, execute);
-//			entry.setType(Functionality.Type.PROC);
-//		}
-		else if (value instanceof Signature) {
+		} else if (value instanceof Signature) {
 			Mogram mog = Arg.getMogram(args);
 			Context cxt = null;
 			if (mog instanceof Context) {
@@ -764,9 +759,16 @@ public class operator extends Operator {
 				entry =  (Entry<T>) srv(path, (Identifiable) value, null, args);
 			}
 			entry.setType(Functionality.Type.SRV);
-		} else if (value instanceof ServiceFidelity) {
-			entry = (Entry<T>) new Srv(path, value);
-			entry.setType(Functionality.Type.FIDELITY);
+		} else if (value instanceof Fidelity) {
+			if (((Fi)value).getType() == Fi.Type.VAL) {
+				entry = new Value(path, value);
+			} else if (((Fi)value).getType() == Fi.Type.PROC) {
+				entry = new Proc(path, value);
+			} else if (((Fi)value).getType() == Fi.Type.ENTRY) {
+				entry = new Entry(path, value);
+			} else if (((Fi)value).getType() == Fi.Type.SRV) {
+				entry = (Entry<T>) new Srv(path, value);
+			}
 		} else if (value instanceof MultiFiMogram) {
 			try {
 				((MultiFiMogram)value).setUnifiedName(path);
@@ -822,7 +824,7 @@ public class operator extends Operator {
 //			throw new ConfigurationException("Misconfigured fidelity: " + srvFi + " for: " + selectFi);
 		}
 		Tuple2<Fidelity, Fidelity> assoc =  new Tuple2<>(selectFi, srvFi);
-		if (srvFi.getFiType().equals(Fi.Type.GRADIENT)) {
+		if (srvFi.getType().equals(Fi.Type.GRADIENT)) {
 			// if no path set use its name - no multifidelities
 			if (selectFi.getPath().equals("")) {
 				selectFi.setPath(selectFi.getName());
@@ -840,7 +842,7 @@ public class operator extends Operator {
 		srvFi.setName(selectFi.getName());
 		srvFi.setPath(selectFi.getPath());
 //		srvFi.setSelect((T) selectFi.getSelect());
-		selectFi.setFiType(srvFi.getFiType());
+		selectFi.setType(srvFi.getType());
 		return assoc;
 	}
 

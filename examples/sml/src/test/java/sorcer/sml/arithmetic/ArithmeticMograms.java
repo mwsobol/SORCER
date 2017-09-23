@@ -387,12 +387,12 @@ public class ArithmeticMograms {
         assertTrue(get(out, "mFi2").equals(9.0));
         assertTrue(get(out, "mFi3").equals(50.0));
 
-        // first closing the fidelity for mFi1
-        out = response(mod , fi("mFi1", "multiply"));
-        logger.info("out: " + out);
-        assertTrue(get(out, "mFi1").equals(900.0));
-        assertTrue(get(out, "mFi2").equals(50.0));
-        assertTrue(get(out, "mFi3").equals(9.0));
+//        // first closing the fidelity for mFi1
+//        out = response(mod , fi("mFi1", "multiply"));
+//        logger.info("out: " + out);
+//        assertTrue(get(out, "mFi1").equals(900.0));
+//        assertTrue(get(out, "mFi2").equals(50.0));
+//        assertTrue(get(out, "mFi3").equals(9.0));
     }
 }
 	

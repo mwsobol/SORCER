@@ -79,8 +79,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	}
 	
 	public Proc(Identifiable identifiable) {
-		super(identifiable.getName());
-		name = identifiable.getName();
+		this(identifiable.getName());
 		value = (T)identifiable;
 	}
 
@@ -126,7 +125,6 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		if (argument instanceof Scopable) {
 			((Scopable) argument).setScope(this.scope);
 		}
-		type = Functionality.Type.PROC;
 	}
 	
 	public Proc(Mappable map, String name, String path) {

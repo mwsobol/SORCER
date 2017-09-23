@@ -101,6 +101,16 @@ public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>,
         return false;
     }
 
+    @Override
+    public Type getType() {
+        return fidelity.getType();
+    }
+
+    @Override
+    public void setChanged(boolean state) {
+        fidelity.setChanged(state);
+    }
+
     public T getSelect(String name) {
         return fidelity.getSelect(name);
     }
@@ -166,6 +176,10 @@ public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>,
         if (fidelity.getSelect() instanceof Service) {
             return ((Service)fidelity.getSelect()).execute(args);
         } else return fidelity.getSelect();
+    }
+
+    public T get(int index) {
+        return fidelity.getSelects().get(index);
     }
 
     @Override

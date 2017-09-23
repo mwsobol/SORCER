@@ -65,20 +65,16 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 	}
 
 	public Function(final String path, final T value) {
-		if(path==null)
-			throw new IllegalArgumentException("path must not be null");
-		T v = value;
-		if (v == null)
-			v = (T)Context.none;
-
-		this.key = path;
-		if (SdbUtil.isSosURL(v)) {
-			isPersistent = true;
-		}
-		if (v.getClass().getName().indexOf("Lambda") > 0)
-			type = Functionality.Type.LAMBDA;
-
-		this.item = v;
+        if(path==null)
+            throw new IllegalArgumentException("path must not be null");
+        this.key = path;
+        if (value instanceof Fi) {
+            multiFi = (Fi) item;
+            this.item = (T)  ((Function)((Fidelity)multiFi).get(0)).getItem();
+        } else {
+            this.key = key;
+            this.item = item;
+        }
 	}
 
 	public Function(final String path, final T value, final int index) {

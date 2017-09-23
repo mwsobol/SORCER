@@ -91,7 +91,7 @@ public class operator {
                 proc.getScope().putValue(proc.getName(), value);
         }
 
-        ((ServiceMogram)model).setIsChanged(true);
+        ((ServiceMogram)model).setChanged(true);
         return model;
     }
 
@@ -382,23 +382,21 @@ public class operator {
     }
 
     public static Mogram reconfigure(Mogram mogram, Fidelity... fidelities) throws ContextException {
-        List<Fidelity> fis = new FidelityList();
-        Fidelity[] fiArray = null;
+        FidelityList fis = new FidelityList();
+        List<String> metaFis = new ArrayList<>();
         try {
             for (Fidelity fi : fidelities) {
-                if (fi instanceof ServiceFidelity) {
-                    List<Service> selects = ((ServiceFidelity) fi).getSelects();
-                    fiArray = new Fidelity[selects.size()];
-                    selects.toArray(fiArray);
-                    mogram.getFidelityManager().reconfigure(fiArray);
+                if (fi instanceof Metafidelity) {
+                    metaFis.add(fi.getName());
                 } else if (fi instanceof Fidelity) {
                     fis.add(fi);
                 }
             }
+            if (metaFis.size() > 0) {
+                ((FidelityManager)mogram.getFidelityManager()).morph(metaFis);
+            }
             if (fis.size() > 0) {
-                fiArray = new Fidelity[fis.size()];
-                fis.toArray(fiArray);
-                mogram.getFidelityManager().reconfigure(fiArray);
+                ((FidelityManager)mogram.getFidelityManager()).reconfigure(fis);
             }
         } catch (RemoteException e) {
             throw new ContextException(e);
@@ -437,6 +435,7 @@ public class operator {
         FidelityManager fiManager = null;
         List<Metafidelity> metaFis = new ArrayList<>();
         List<Srv> morphFiEnts = new ArrayList();
+        List<Fidelity> fis = new ArrayList<>();
         for (Object item : items) {
             if (item instanceof Signature) {
                 sigs.add((Signature)item);
@@ -446,20 +445,25 @@ public class operator {
                 model = ((SrvModel)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
-            } else if (item instanceof Srv && ((Entry)item).getItem() instanceof MorphFidelity) {
+            } else if (item instanceof Srv && ((Srv)item).getItem() instanceof MorphFidelity) {
                 morphFiEnts.add((Srv)item);
-            } else if (item instanceof Fidelity) {
-                if (((Fidelity) item).getFiType().equals(Fidelity.Type.META)) {
+            }else if (item instanceof Fidelity) {
+                if (item instanceof Metafidelity) {
                     metaFis.add((Metafidelity) item);
                 } else {
                     responsePaths = ((Fidelity) item);
                 }
+            } else if (item instanceof Entry && ((Entry)item).getMultiFi() != null) {
+                Fidelity fi = (Fidelity) ((Entry)item).getMultiFi();
+                fi.setName(((Entry)item).getName());
+                fi.setPath(((Entry)item).getName());
+                fis.add(fi);
             }
         }
         if (model == null)
             model = new SrvModel();
 
-        if (morphFiEnts != null || metaFis != null) {
+        if (morphFiEnts != null || metaFis != null || fis != null) {
            if (fiManager == null)
                fiManager = new FidelityManager(model);
         }
@@ -467,6 +471,7 @@ public class operator {
             fiManager.setMogram(model);
             model.setFidelityManager(fiManager);
             fiManager.init(metaFis);
+            fiManager.add(fis);
             MorphFidelity mFi = null;
             if ((morphFiEnts.size() > 0)) {
                 for (Srv morphFiEnt : morphFiEnts) {
@@ -474,7 +479,7 @@ public class operator {
                     fiManager.addMorphedFidelity(morphFiEnt.getName(), mFi);
                     fiManager.addFidelity(morphFiEnt.getName(), mFi.getFidelity());
                     mFi.setPath(morphFiEnt.getName());
-                    mFi.setSelect((Service) mFi.getSelects().get(0));
+                    mFi.setSelect(mFi.getSelects().get(0));
                     mFi.addObserver(fiManager);
                     if (mFi.getMorpherFidelity() != null) {
                         // set the default morpher

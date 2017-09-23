@@ -221,6 +221,11 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         return sessions;
     }
 
+    public void morph(List<String> fiNames)  throws EvaluationException {
+        String[] array = new String[fiNames.size()];
+        morph(fiNames.toArray(array));
+    }
+
     @Override
     public void morph(String... fiNames)  throws EvaluationException {
         for (String fiName : fiNames) {
@@ -300,6 +305,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
                 fi = getFidelity(fiNames[0]);
             }
             fi.setSelect(fiNames[0]);
+            fi.setChanged(true);
             if (isTraced) {
                 ServiceFidelity nsf = new ServiceFidelity(fiNames[0]);
                 nsf.setPath(name);
@@ -335,21 +341,26 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         if (fidelities == null || fidelities.length == 0) {
             return;
         }
-        if (this.fidelities.size() > 0) {
-            for (Fidelity fi : fidelities) {
-                Fidelity sFi = this.fidelities.get(fi.getName());
-                if (sFi != null) {
-                    sFi.setSelect(fi.getPath());
-                    if (mogram instanceof Exertion) {
-                        ((ServiceMogram)mogram).setSelectedFidelity((ServiceFidelity) sFi.getSelect());
-                        if (mogram.getClass()==Task.class) {
-                            ((Task)mogram).setDelegate(null);
-                        }
+        for (Fidelity fi : fidelities) {
+            Fidelity sFi = this.fidelities.get(fi.getName());
+            if (sFi != null) {
+                sFi.setSelect(fi.getPath());
+                sFi.setChanged(true);
+                if (mogram instanceof Exertion) {
+                    ((ServiceMogram)mogram).setSelectedFidelity((ServiceFidelity) sFi.getSelect());
+                    if (mogram.getClass()==Task.class) {
+                        ((Task)mogram).setDelegate(null);
                     }
                 }
-                if (isTraced)
-                    fiTrace.add(fi);
             }
+            if (isTraced)
+                fiTrace.add(fi);
+        }
+    }
+
+    public void add(List<Fidelity> fis) {
+        for (Fidelity fi : fis){
+            fidelities.put(fi.getName(), fi);
         }
     }
 

@@ -155,11 +155,17 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             }
 
             if (val instanceof Srv) {
-                if (isChanged())
+                Fi srvFi = ((Srv)val).getMultiFi();
+                if (isChanged()) {
                     ((Srv) val).isValid(false);
+                }
                 Object carrier = ((Srv) val).asis();
-                if (carrier instanceof SignatureEntry) {
-                    // return the calculated eval
+                if (srvFi != null && srvFi.isChanged()) {
+                    carrier = ((Srv)val).getData();
+                }
+                if (carrier instanceof Signature) {
+                        return evalSignature((Signature) carrier, path, args);
+                } else if (carrier instanceof SignatureEntry){
                     if (((Srv) val).getSrvValue() != null && ((Srv) val).isValueCurrent() && !isChanged())
                         return ((Srv) val).getSrvValue();
                     else {
@@ -268,6 +274,8 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                         return getValue(((Srv) val).getName());
                     }
                 }
+            } else if (val instanceof Entry) {
+                return  ((Entry)val).getData();
             } else {
                 return super.getValue(path, args);
             }
