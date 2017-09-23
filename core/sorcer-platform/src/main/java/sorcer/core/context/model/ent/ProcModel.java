@@ -34,7 +34,7 @@ import java.util.*;
 /*
  * Copyright 2013 the original author or authors.
  * Copyright 20 SorcerSoft.org.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,7 +55,7 @@ import java.util.*;
  * arguments are subroutines (invokers), so that, each time the subroutine is
  * called, its arguments for that call can be assigned to the corresponding
  * parameters of invokers.
- * 
+ *
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
@@ -157,7 +157,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see sorcer.service.Evaluation#execute(sorcer.core.context.Path.Entry[])
 	 */
 	@Override
@@ -173,7 +173,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			throw new EvaluationException(e);
 		}
 	}
-	
+
 	@Override
 	public Object putValue(String path, Object value) throws ContextException {
 		isChanged = true;
@@ -201,7 +201,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		else
 			return new Proc(name, asis(name), this);
 	}
-	
+
 	public Function bindEntry(Function ent) throws ContextException, RemoteException {
 		ArgSet args = ent.getArgs();
 		if (args != null) {
@@ -212,7 +212,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		}
 		return ent;
 	}
-	
+
 	public ProcModel add(List<Identifiable> objects) throws RemoteException, ContextException {
 		Identifiable[] objs = new Identifiable[objects.size()];
 		objects.toArray(objs);
@@ -225,7 +225,9 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		Proc p = null;
 		boolean changed = false;
 		for (Arg obj : objects) {
-			if (obj instanceof Proc) {
+			if (obj instanceof Fi) {
+				continue;
+			} else if (obj instanceof Proc) {
 				p = (Proc) obj;
 			} else if (obj instanceof Entry) {
 				putValue((String) ((Entry) obj).key(),
@@ -240,12 +242,13 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 				changed = true;
 			}
 		}
+
 		if (changed) {
-			isChanged = true;
-			updateEvaluations();
-		}
-		return this;
+		isChanged = true;
+		updateEvaluations();
 	}
+		return this;
+}
 
 	@Override
 	public Domain add(Identifiable... objects) throws ContextException, RemoteException {
@@ -265,7 +268,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			} else {
 				putValue(pn, obj);
 			}
-			
+
 			if (p != null) {
 				addProc(p);
 				changed = true;
@@ -291,7 +294,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see sorcer.service.Invocation#invoke(sorcer.service.Context,
 	 * sorcer.service.Args[])
 	 */
@@ -402,7 +405,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		}
 		throw new ContextException("No such variability in context: " + name);
 	}
-	
+
 	private Proc putVar(String path, Functionality value) throws ContextException {
 		putValue(path, value);
 		markVar(this, path, value);
@@ -429,7 +432,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 
 	/**
 	 * Returns an enumeration of all path marking variable nodes.
-	 * 
+	 *
 	 * @return enumeration of marked variable nodes.
 	 * @throws ContextException
 	 */
@@ -444,7 +447,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		return outpaths.elements();
 
 	}
-	
+
 	public static Functionality[] getMarkedVariables(Context sc,
                                                      String association) throws ContextException {
 		String[] paths = Contexts.getMarkedPaths(sc, association);
@@ -459,7 +462,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		nodes.toArray(nodeArray);
 		return nodeArray;
 	}
-	
+
 	/**
 	 * set context type as variable
 	 * In ServiceContexr#init()

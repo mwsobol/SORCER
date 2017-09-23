@@ -374,8 +374,8 @@ public class operator {
         return paradigm;
     }
 
-    public static Mogram addProjection(Mogram mogram, MetaFi... fidelities) {
-        for ( MetaFi fi : fidelities) {
+    public static Mogram addProjection(Mogram mogram, Metafidelity... fidelities) {
+        for ( Metafidelity fi : fidelities) {
             ((FidelityManager)mogram.getFidelityManager()).put(fi.getName(), fi);
         }
         return mogram;
@@ -435,7 +435,7 @@ public class operator {
         Fidelity<Path> responsePaths = null;
         SrvModel model = null;
         FidelityManager fiManager = null;
-        List<ServiceFidelity> metaFis = new ArrayList<>();
+        List<Metafidelity> metaFis = new ArrayList<>();
         List<Srv> morphFiEnts = new ArrayList();
         for (Object item : items) {
             if (item instanceof Signature) {
@@ -446,11 +446,11 @@ public class operator {
                 model = ((SrvModel)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
-            } else if (item instanceof Srv && ((Function)item).getItem() instanceof MorphFidelity) {
+            } else if (item instanceof Srv && ((Entry)item).getItem() instanceof MorphFidelity) {
                 morphFiEnts.add((Srv)item);
             } else if (item instanceof Fidelity) {
                 if (((Fidelity) item).getFiType().equals(Fidelity.Type.META)) {
-                    metaFis.add((ServiceFidelity) item);
+                    metaFis.add((Metafidelity) item);
                 } else {
                     responsePaths = ((Fidelity) item);
                 }
@@ -464,9 +464,9 @@ public class operator {
                fiManager = new FidelityManager(model);
         }
         if (fiManager != null) {
+            fiManager.setMogram(model);
             model.setFidelityManager(fiManager);
             fiManager.init(metaFis);
-            fiManager.setMogram(model);
             MorphFidelity mFi = null;
             if ((morphFiEnts.size() > 0)) {
                 for (Srv morphFiEnt : morphFiEnts) {

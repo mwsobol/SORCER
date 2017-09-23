@@ -61,17 +61,8 @@ public class operator extends Operator {
             throws EvaluationException {
         try {
             synchronized (entry) {
-//                if (entry instanceof Entry) {
-//                    try {
-//                        return (T) ((Entry)entry).getValue(args);
-//                    } catch (RemoteException e) {
-//                        throw new EvaluationException(e);
-//                    }
-//                } else
                 if (entry instanceof Valuation) {
-                    return (T) ((Valuation) entry).value();
-                } else if (entry instanceof Exertion) {
-                    return (T) exec((Entry) entry, args);
+                    return (T) ((Valuation) entry).get(args);
                 } else if (((Entry) entry).asis() instanceof ServiceContext) {
                     return (T) ((ServiceContext) ((Entry) entry).asis()).getValue(entry.getName());
                 } else if (entry instanceof Incrementor) {
@@ -86,29 +77,6 @@ public class operator extends Operator {
             throw new EvaluationException(e);
         }
     }
-
-//        public static <T> T eval(Evaluation<T> evaluation, Arg... args)
-//            throws EvaluationException {
-//        try {
-//            synchronized (evaluation) {
-//                if (evaluation instanceof Exertion) {
-//                    return (T) act(evaluation, args);
-//                } else if (evaluation instanceof Entry){
-//                    if (evaluation.asis() instanceof ServiceContext) {
-//                        return (T) ((ServiceContext)evaluation.asis()).execute(evaluation.getName());
-//                    } else {
-//                        return evaluation.execute(args);
-//                    }
-//                } else if (evaluation instanceof Incrementor){
-//                    return ((Incrementor<T>) evaluation).next();
-//                } else {
-//                    return (T) ((Evaluation)evaluation).execute(args);
-//                }
-//            }
-//        } catch (Exception e) {
-//            throw new EvaluationException(e);
-//        }
-//    }
 
     public static Object eval(Mogram mogram, Arg... args) throws MogramException {
         try {

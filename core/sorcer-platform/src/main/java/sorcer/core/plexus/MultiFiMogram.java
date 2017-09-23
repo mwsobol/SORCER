@@ -72,7 +72,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Data> {
         if (fiManager == null)
             fiManager = new FidelityManager(name);
 
-        ((FidelityManager)fiManager).add((MetaFi) morphFidelity.getFidelity());
+        ((FidelityManager)fiManager).add((Metafidelity) morphFidelity.getFidelity());
         ((FidelityManager)fiManager).setMogram(this);
         ((FidelityManager)fiManager).addMorphedFidelity(morphFidelity.getName(), morphFidelity);
         ((FidelityManager)fiManager).addFidelity(morphFidelity.getName(), morphFidelity.getFidelity());

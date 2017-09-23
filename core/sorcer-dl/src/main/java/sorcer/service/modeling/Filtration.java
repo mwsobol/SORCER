@@ -27,7 +27,12 @@ import java.rmi.RemoteException;
  */
 public interface Filtration<T> extends Activity, EvaluationComponent, SupportComponent {
 
+    public String getName();
+
+    public Object getTarget();
+
     /**
+     *
      * Returns the filtered out execute from the given input.
      *
      * @return the filtered out execute
@@ -36,5 +41,4 @@ public interface Filtration<T> extends Activity, EvaluationComponent, SupportCom
      */
     public Object doFilter(Object input) throws FilterException, RemoteException;
 
-    public Object getTarget();
 }

@@ -25,7 +25,7 @@ import sorcer.service.Activity;
  * 
  * @author Mike Sobolewski
  */
-public interface Valuation<T> extends Activity {
+public interface Valuation<T> extends Activity, Getter {
 
 	/**
 	 * Returns the current execute of this valuation.

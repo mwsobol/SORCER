@@ -316,9 +316,10 @@ public class NetJobExertions implements SorcerConstants {
 	public void arithmeticJobNetExerter() throws Exception {
 
 		// get the current eval of the exertlet
-		Exerter exerter = task("eval", sig("execute", Evaluation.class, prvName("Arithmetic Exerter")));
-//		logger.info("j1/t3/result/y: " + eval(task, "j1/t3/result/y"));
+		Exerter exerter = task("exert", sig("exert", Exerter.class, prvName("Arithmetic Exerter")));
+//		Exerter exerter = task("exec", sig("execute", Service.class, prvName("Arithmetic Exerter")));
 		Context out = exert(exerter, context());
+		logger.info("out: " + out);
 		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 
 		// update inputs contexts

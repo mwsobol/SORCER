@@ -3,17 +3,14 @@ package sorcer.core.context.model.ent;
 import sorcer.core.context.ContextSelection;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
-import sorcer.service.modeling.Duo;
-import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Valuation;
-import sorcer.service.modeling.ent;
+import sorcer.service.modeling.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.net.URL;
 import java.rmi.RemoteException;
 
-public class Entry<V> extends Association<String, V> implements Identifiable, Callable<V>, Setter, ent<V> {
+public class Entry<V> extends Association<String, V> implements Identifiable, Getter, Callable<V>, Setter, ent<V> {
 
     protected boolean negative;
 

@@ -135,24 +135,23 @@ public class Metafidelity extends Fidelity<Fi> implements MetaFi, Dependency, Ar
 
 	@Override
 	public boolean equals(Object object) {
-
 		if(object == this) {
 			return true;
 		}
-		Boolean selectorEquality = true;
-		if  (((Fidelity)object).getSelect() != null && select != null)
-			selectorEquality = ((Fidelity) object).getSelect().equals(select);
 
+		if (object instanceof Fidelity) {
+			boolean selectorEquality = true;
+			if  (((Fidelity)object).getSelect() != null && select != null)
+				selectorEquality = ((Fidelity) object).getSelect().equals(select);
 
-		if (object instanceof Fidelity
-				&& ((Fidelity) object).getName().equals(fiName)
-				&& ((Fidelity) object).getPath().equals(path)
-				&& selectorEquality
-				&& ((Fidelity) object).getFiType().equals(fiType)) {
-			return true;
-		} else {
-			return false;
+			if (((Fidelity) object).getName().equals(fiName)
+					&& ((Fidelity) object).getPath().equals(path)
+					&& selectorEquality
+					&& ((Fidelity) object).getFiType().equals(fiType)) {
+				return true;
+			}
 		}
+		return false;
 	}
 
 	@Override

@@ -373,7 +373,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             Function entry = entry(path);
             if (del != null && del.size() > 0) {
                 for (ExecDependency de : del) {
-                    List<Path> dpl = de.get();
+                    List<Path> dpl = de.getItem();
                     if (de.getType().equals(Functionality.Type.FIDELITY)) {
                         Fidelity deFi = (Fidelity) de.annotation();
                         if (deFi.getOption() == Fi.Type.IF) {

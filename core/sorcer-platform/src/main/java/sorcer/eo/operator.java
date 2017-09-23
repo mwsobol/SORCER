@@ -1400,7 +1400,7 @@ public class operator extends Operator {
 
 	public static Metafidelity fi(String name, Fidelity... selectors) {
 		Metafidelity fi = new Metafidelity(name, selectors);
-		fi.fiType = ServiceFidelity.Type.META;
+		fi.fiType = Fi.Type.META;
 		return fi;
 	}
 
@@ -1449,14 +1449,14 @@ public class operator extends Operator {
 
 	public static ServiceFidelity rFi(Data... services) {
 		ServiceFidelity srvFi = new ServiceFidelity(services);
-		srvFi.fiType = ServiceFidelity.Type.REQUEST;
+		srvFi.fiType = Fi.Type.REQUEST;
 		return srvFi;
 	}
 
 	public static ServiceFidelity rFi(String name, Data... services) {
 		ServiceFidelity srvFi = new ServiceFidelity(services);
 		srvFi.setPath(name);
-		srvFi.fiType = ServiceFidelity.Type.REQUEST;
+		srvFi.fiType = Fi.Type.REQUEST;
 		return srvFi;
 	}
 
@@ -1520,49 +1520,49 @@ public class operator extends Operator {
 
 	public static ServiceFidelity sFi(Signature... signatures) {
 		ServiceFidelity fi = new ServiceFidelity(signatures);
-		fi.fiType = ServiceFidelity.Type.SIG;
+		fi.fiType = Fi.Type.SIG;
 		return fi;
 	}
 
 	public static ServiceFidelity entFi(String fiName, Value... entries) {
 		ServiceFidelity fi = new ServiceFidelity(fiName, entries);
-		fi.fiType = ServiceFidelity.Type.ENTRY;
+		fi.fiType = Fi.Type.ENTRY;
 		return fi;
 	}
 
 	public static ServiceFidelity mnFi(NeoFidelity... fidelities) {
 		ServiceFidelity fi = new ServiceFidelity(fidelities);
-		fi.fiType = ServiceFidelity.Type.NEO;
+		fi.fiType = Fi.Type.NEO;
 		return fi;
 	}
 
     public static NeoFidelity nFi(String name, Args args, Context<Float> weights, Value... entries) {
         NeoFidelity fi = new NeoFidelity(name, weights, args, entries);
-        fi.fiType = ServiceFidelity.Type.NEO;
+        fi.fiType = Fi.Type.NEO;
         return fi;
     }
 
     public static NeoFidelity nFi(String name, Args args, Value... entries) {
         NeoFidelity fi = new NeoFidelity(name, null, args, entries);
-        fi.fiType = ServiceFidelity.Type.NEO;
+        fi.fiType = Fi.Type.NEO;
         return fi;
     }
 
     public static NeoFidelity nFi(String name, Context<Float> weights, Value... entries) {
         NeoFidelity fi = new NeoFidelity(name, weights, entries);
-        fi.fiType = ServiceFidelity.Type.NEO;
+        fi.fiType = Fi.Type.NEO;
         return fi;
     }
 
-	public static Fidelity<Duo> entFi(Duo... entries) {
-		Fidelity<Duo> fi = new Fidelity(entries);
-		fi.fiType = ServiceFidelity.Type.ENTRY;
+	public static Fidelity<Entry> entFi(Entry... entries) {
+		Fidelity<Entry> fi = new Fidelity(entries);
+		fi.fiType = Fi.Type.ENTRY;
 		return fi;
 	}
 
 	public static Fidelity fi(String name) {
 		Fidelity fi = new Fidelity(name);
-		fi.fiType = ServiceFidelity.Type.SELECT;
+		fi.fiType = Fi.Type.SELECT;
 		return fi;
 	}
 
@@ -1582,14 +1582,14 @@ public class operator extends Operator {
 
     public static Fidelity ifSoaFi(String name) {
         Fidelity fi = new Fidelity(name);
-        fi.fiType = Fidelity.Type.SELECT;
+        fi.fiType = Fi.Type.SELECT;
         fi.setOption(Fi.Type.IF_SOA);
         return fi;
     }
 
 	public static Fidelity ifSoaFi(String name, String path) {
 		Fidelity fi = new Fidelity(name, path);
-		fi.fiType = Fidelity.Type.SELECT;
+		fi.fiType = Fi.Type.SELECT;
 		fi.setOption(Fi.Type.IF_SOA);
 		return fi;
 	}
@@ -1661,26 +1661,26 @@ public class operator extends Operator {
 
 	public static Fidelity<String> fi(String name, String path, String gradient) {
 		Fidelity<String> fi = new Fidelity(name, path, gradient);
-		fi.fiType = Fidelity.Type.GRADIENT;
+		fi.fiType = Fi.Type.GRADIENT;
 		return fi;
 	}
 
 	public static Fidelity fi(String name, String path) {
 		Fidelity fi = new Fidelity(name, path);
-		fi.fiType = Fidelity.Type.SELECT;
+		fi.fiType = Fi.Type.SELECT;
 		return fi;
 	}
 
 	public static Fidelity soaFi(String name, String path) {
 		Fidelity fi = new Fidelity(name, path);
-		fi.fiType = Fidelity.Type.SOA;
+		fi.fiType = Fi.Type.SOA;
 		return fi;
 	}
 
 
 	public static Fidelity fi(String name, String path, String gradientName, Fidelity subFi) {
 		Fidelity fi = new Fidelity(name, path);
-		fi.fiType = Fidelity.Type.GRADIENT;
+		fi.fiType = Fi.Type.GRADIENT;
 		fi.setSelect(gradientName);
         fi.setOption(subFi);
         return fi;
@@ -1688,7 +1688,7 @@ public class operator extends Operator {
 
 	public static Fidelity fi(String name, String path, Fidelity subFi) {
 		Fidelity fi = new Fidelity(name, path);
-		fi.fiType = Fidelity.Type.SELECT;
+		fi.fiType = Fi.Type.SELECT;
         fi.setOption(subFi);
 		return fi;
 	}
@@ -1698,34 +1698,34 @@ public class operator extends Operator {
 		ServiceFidelity fi = new ServiceFidelity(name, path(path));
 		fi.setPath(path);
 		fi.setSelect(path);
-		fi.fiType = ServiceFidelity.Type.SELECT;
+		fi.fiType = Fi.Type.SELECT;
 		return fi;
 	}
 
 	public static Fidelity<String> mFi(String name, String path) {
 		Fidelity<String> fi = new Fidelity(name);
 		fi.setPath(path);
-		fi.fiType = ServiceFidelity.Type.MORPH;
+		fi.fiType = Fi.Type.MORPH;
 		return fi;
 	}
 
 	public static ServiceFidelity sFi(String name, Signature... signatures) {
 		ServiceFidelity fi = new ServiceFidelity(name, signatures);
 		fi.setSelect(signatures[0]);
-		fi.fiType = ServiceFidelity.Type.SIG;
+		fi.fiType = Fi.Type.SIG;
 		return fi;
 	}
 
 	public static ServiceFidelity sFi(String name, Ref... references) {
 		ServiceFidelity fi = new ServiceFidelity(name, references);
 		fi.setSelect(references[0]);
-		fi.fiType = ServiceFidelity.Type.REF;
+		fi.fiType = Fi.Type.REF;
 		return fi;
 	}
 
 	public static ServiceFidelity sFi(Ref... references) {
 		ServiceFidelity fi = new ServiceFidelity(references);
-		fi.fiType = ServiceFidelity.Type.REF;
+		fi.fiType = Fi.Type.REF;
 		return fi;
 	}
 

@@ -26,7 +26,7 @@ import java.rmi.RemoteException;
 /**
  * Copier copies values of args from one Context to another one.
  */
-public class Copier implements Evaluation<Context> {
+public class Copier implements Evaluation<Context>, Identifiable {
 	private String name;
 	private Context fromContext;
 	private Arg[] fromEntries;
@@ -92,6 +92,11 @@ public class Copier implements Evaluation<Context> {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public Object getId() {
+		return name;
 	}
 
 	public String getName() {

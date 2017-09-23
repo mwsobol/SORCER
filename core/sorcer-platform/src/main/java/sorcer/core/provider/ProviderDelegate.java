@@ -74,6 +74,7 @@ import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.jobber.JobberAccessor;
 import sorcer.service.Domain;
+import sorcer.service.modeling.Model;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.*;
@@ -1067,20 +1068,22 @@ public class ProviderDelegate {
             Method m = null;
             try {
                 // select the proper method for the bean type
-                if (selector.equals("invoke") && (bean instanceof Exertion || bean instanceof ProcModel)) {
-                    m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
+                if (selector.equals("exert") && (bean instanceof Domain
+                        ||  bean instanceof Exertion)) {
+                    m = bean.getClass().getMethod(selector, Mogram.class, Transaction.class, Arg[].class);
                     isContextual = true;
-                } else if (selector.equals("evaluate") && bean instanceof Domain) {
+                } else if (selector.equals("invoke") && (bean instanceof Exertion || bean instanceof Context)) {
                     m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
                     isContextual = true;
                 } else if (selector.equals("exert") && bean instanceof ServiceShell) {
                     m = bean.getClass().getMethod(selector, Mogram.class, Arg[].class);
                     isContextual = false;
-                } else if (selector.equals("execute") && bean instanceof Evaluation) {
+                } else if (selector.equals("execute") && bean instanceof Service) {
                     m = bean.getClass().getMethod(selector, Arg[].class);
                     isContextual = false;
-                } else
-                    m = bean.getClass().getMethod(selector, argTypes);
+                } else {
+					m = bean.getClass().getMethod(selector, argTypes);
+				}
                 if(logger.isTraceEnabled())
                     logger.trace("Executing service bean method: {} by: {} isContextual: {}",
                             m, config.getProviderName(), isContextual);
@@ -1117,12 +1120,11 @@ public class ProviderDelegate {
 	private Context execContextualBean(Method m, Task task, Object impl, Arg... args)
 			throws ContextException, IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException, RemoteException {
-		Context result;
-		result = task.getContext();
+		Context result = task.getContext();
 		String selector = task.getProcessSignature().getSelector();
 		Object[] pars = new Object[] { task.getContext() };
 		if (selector.equals("invoke")
-				&& (impl instanceof Exertion || impl instanceof ProcModel)) {
+				&& (impl instanceof Exertion || impl instanceof Context)) {
 			Object obj = m.invoke(impl, new Object[] { pars[0], args });
 
 			if (obj instanceof Job)
@@ -1138,9 +1140,9 @@ public class ProviderDelegate {
 				task.getControlContext().getExceptions().addAll(((Exertion) obj).getExceptions());
 				task.getTrace().addAll(((Exertion) obj).getTrace());
 			}
-		} else if (impl instanceof Domain && selector.equals("evaluate")) {
-			result = (Context) m.invoke(impl, new Object[] { pars[0], args });
-		} else {
+		} else if (impl instanceof Mogram && selector.equals("exert")) {
+            result = ((Mogram)m.invoke(impl, new Object[] { pars[0], null, args })).getContext();
+        } else {
 			logger.debug("getProviderName: {} invoking: {}" + getProviderName(), m);
 			logger.debug("imp: {} args: {}" + impl, Arrays.toString(pars));
 			result = (Context) m.invoke(impl, pars);

@@ -21,7 +21,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
 
     protected Class valClass;
 
-    protected ServiceFidelity multiFi;
+    protected Fi multiFi;
 
     public Value() {
         key = "unknown" + count++;
@@ -33,9 +33,9 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
 
     public Value(final String path, final T value) {
         super(path, value);
-        if (value instanceof ServiceFidelity) {
-            multiFi = (ServiceFidelity) value;
-            item = (T) ((Value) multiFi.get(0)).getItem();
+        if (value instanceof Fi) {
+            multiFi = (Fi) value;
+            item = (T) ((Value) ((Fidelity)multiFi).get(0)).getItem();
         }
     }
 
@@ -78,7 +78,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
         return isPersistent;
     }
 
-    public ServiceFidelity getMultiFi() {
+    public Fi getMultiFi() {
         return multiFi;
     }
 

@@ -52,7 +52,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     protected Map<String, Fidelity> fidelities = new ConcurrentHashMap<>();
 
     // fidelities for fidelites
-    protected Map<String, MetaFi> metafidelities = new ConcurrentHashMap<>();
+    protected Map<String, Metafidelity> metafidelities = new ConcurrentHashMap<>();
 
     // fidelities for signatures and other selection of T
     protected Map<String, MorphFidelity> morphFidelities = new ConcurrentHashMap<>();
@@ -83,11 +83,11 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         this.mogram = mogram;
     }
 
-    public Map<String, MetaFi> getMetafidelities() {
+    public Map<String, Metafidelity> getMetafidelities() {
         return metafidelities;
     }
 
-    public void setMetafidelities(Map<String, MetaFi> metafidelities) {
+    public void setMetafidelities(Map<String, Metafidelity> metafidelities) {
         this.metafidelities = metafidelities;
     }
 
@@ -150,7 +150,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         }
     }
 
-    public void addMetafidelity(String path, MetaFi fi) {
+    public void addMetafidelity(String path, Metafidelity fi) {
         this.metafidelities.put(path, fi);
     }
 
@@ -178,17 +178,17 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
        // implement is subclasses
     }
 
-    public void add( MetaFi fidelity) {
+    public void add( Metafidelity fidelity) {
         put(fidelity.getName(), fidelity);
     }
 
-    public void init(List<ServiceFidelity> fidelities) {
+    public void init(List<Metafidelity> fidelities) {
         if (fidelities == null || fidelities.size() == 0) {
             initialize();
             return;
         }
-        for (ServiceFidelity fi : fidelities) {
-            this.fidelities.put(fi.getName(), fi);
+        for (Metafidelity fi : fidelities) {
+            this.metafidelities.put(fi.getName(), fi);
         }
     }
 
@@ -224,7 +224,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     @Override
     public void morph(String... fiNames)  throws EvaluationException {
         for (String fiName : fiNames) {
-            MetaFi mFi = metafidelities.get(fiName);
+            Metafidelity mFi = metafidelities.get(fiName);
             List<Fi> fis = mFi.getSelects();
             String name = null;
             String path = null;
@@ -353,24 +353,24 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         }
     }
 
-    public void add(MetaFi... sysFis) {
-        for (MetaFi sysFi : sysFis){
+    public void add(Metafidelity... sysFis) {
+        for (Metafidelity sysFi : sysFis){
             metafidelities.put(sysFi.getName(), sysFi);
         }
     }
 
-    public void put(String sysFiName, MetaFi sysFi) {
+    public void put(String sysFiName, Metafidelity sysFi) {
         metafidelities.put(sysFiName, sysFi);
     }
 
-    public void put(Entry<MetaFi>... entries) {
-        for(Entry<MetaFi> e : entries) {
+    public void put(Entry<Metafidelity>... entries) {
+        for(Entry<Metafidelity> e : entries) {
             metafidelities.put(e.getName(), e.getItem());
         }
     }
 
     public String getProjectionFi(String projectionName) {
-        return ((Identifiable)metafidelities.get(projectionName).getSelects().get(0)).getName();
+        return metafidelities.get(projectionName).getSelects().get(0).getName();
     }
 
     public boolean isTraced() {
