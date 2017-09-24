@@ -60,7 +60,7 @@ public class ArithmeticMograms {
 
 	@Test
 	public void dynamicLambdaModel() throws Exception {
-		// change scope at runtime for a selected entry ("multiply") in the model
+		// the scope changed at runtime for an entry ("multiply") in the model
 
 		Domain mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 				ent("add/x1", 20.0), ent("add/x2", 80.0),
@@ -82,6 +82,7 @@ public class ArithmeticMograms {
 				response("subtract", "multiply2", "add"));
 
 		dependsOn(mo, dep("subtract", paths("multiply2", "add")));
+
 		Object val = asis(mo, "subtract");
 		if (val instanceof Srv) {
 			Srv srv = ((Srv)val);
@@ -90,6 +91,7 @@ public class ArithmeticMograms {
 				logger.info("class: " + ctx.getClass());
 			}
 		}
+
 		Context out = response(mo);
 		logger.info("model response: " + out);
 		assertTrue(get(out, "subtract").equals(900.0));

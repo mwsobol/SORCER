@@ -440,9 +440,9 @@ public class ServiceShell implements Exerter, Client, Callable, RemoteServiceShe
 				// lookup proxy
 				/*if (provider == null) {
 					long t0 = System.currentTimeMillis();
-					provider = Accessor.get().getService(signature);
+					provider = Accessor.get().selectService(signature);
 					if (logger.isDebugEnabled())
-					 logger.info("Return from Accessor.getService(), round trip: {} millis",
+					 logger.info("Return from Accessor.selectService(), round trip: {} millis",
 							 (System.currentTimeMillis() - t0));
 				}*/
 			}

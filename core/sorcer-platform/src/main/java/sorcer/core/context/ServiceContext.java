@@ -2900,7 +2900,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (obj instanceof Reactive && ((Reactive)obj).isReactive()) {
 				if (obj instanceof Entry && ((Entry)obj).get() instanceof Scopable)
 					((Scopable)((Entry)obj).get()).setScope(this);
-				obj = (T) ((Evaluation) obj).getValue(entries);
+				obj = (T) ((Entry) obj).get(entries);
 			}
 			if (scope != null && (obj == Context.none || obj == null ))
 				obj = (T ) scope.getValue(path, entries);
@@ -3481,7 +3481,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public Object execute(Arg... args) throws MogramException, RemoteException {
-		Context cxt = (Context) Arg.getServiceModel(args);
+		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt != null) {
 			scope = cxt;
 			return getResponse(args);

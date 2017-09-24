@@ -596,7 +596,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 
 	@Override
 	public Object execute(Arg... args) throws MogramException, RemoteException {
-		Context cxt = (Context)Arg.getServiceModel(args);
+		Context cxt = (Context)Arg.selectDomain(args);
 		if (cxt !=null) {
 			invokeContext = cxt;
 			return getValue(args);

@@ -91,7 +91,7 @@ public class ProviderLookup extends ServiceAccessor {
 		try {
 			type = Class.forName(serviceType);
 		} catch (ClassNotFoundException cnfe) {
-			//logger.error("ProviderLookup", "getService", cnfe);
+			//logger.error("ProviderLookup", "selectService", cnfe);
 			return null;
 		}
 		return getService(providerName, type);

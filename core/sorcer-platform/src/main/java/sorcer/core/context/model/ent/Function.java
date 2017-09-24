@@ -37,7 +37,7 @@ import static sorcer.eo.operator.add;
  * @author Mike Sobolewski
  */
 public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, Comparable<T>,
-		EvaluationComponent, SupportComponent, Scopable, Setter, Reactive<T> {
+		EvaluationComponent, SupportComponent, Scopable, Setter {
 
 	private static final long serialVersionUID = 5168783170981015779L;
 
@@ -46,11 +46,6 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 	protected boolean negative;
 
 	protected Object annotation;
-
-	// if reactive then its values are evaluated if active (either Evaluation or Invocation type)
-	protected boolean isReactive = false;
-
-	protected ContextSelection contextSelector;
 
 	// dependency management for this Entry
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
@@ -109,7 +104,7 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 					this.item = (T)url;
 				}
 			} else if (val instanceof Invocation) {
-				Context cxt = (Context) Arg.getServiceModel(args);
+				Context cxt = (Context) Arg.selectDomain(args);
 				val = (T) ((Invocation) val).invoke(cxt, args);
 			} else if (val instanceof Evaluation) {
 				val = ((Evaluation<T>) val).getValue(args);
@@ -277,16 +272,6 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 	public Function(String path, T value, boolean isPersistant, int index) {
 		this(path, value, index);
 		this.isPersistent = isPersistant;
-	}
-
-	@Override
-	public boolean isReactive() {
-		return isReactive;
-	}
-
-	public Function<T> setReactive(boolean isReactive) {
-		this.isReactive = isReactive;
-		return this;
 	}
 
 	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws TransactionException,

@@ -35,7 +35,7 @@ public class TX {
 
     synchronized public static Transaction.Created createTransaction(long transactionLeaseTimeout) {
         try {
-            //TransactionManager tManager = Accessor.getService(TransactionManager.class);
+            //TransactionManager tManager = Accessor.selectService(TransactionManager.class);
             TransactionManager tManager = TransactionManagerAccessor.getTransactionManager();
             if (tManager == null) {
                 return null;

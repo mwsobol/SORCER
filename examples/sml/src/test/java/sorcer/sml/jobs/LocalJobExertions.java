@@ -69,8 +69,8 @@ public class LocalJobExertions implements SorcerConstants {
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
-				context("subtract", in(ent("arg/x1")), in(ent("arg/x2")),
-						out(ent("result/y"))));
+				context("subtract", in(val("arg/x1")), in(val("arg/x2")),
+						out(val("result/y"))));
 
 		Task t4 = task(
 				"t4",

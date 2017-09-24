@@ -392,7 +392,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 
 	@Override
 	public Object execute(Arg... args) throws MogramException, RemoteException {
-		Mogram mog = Arg.getMogram(args);
+		Mogram mog = Arg.selectMogram(args);
 		if (mog == null && returnPath != null) {
 			mog = returnPath.getDataContext();
 		}

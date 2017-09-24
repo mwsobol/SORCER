@@ -21,6 +21,8 @@ import sorcer.core.Tag;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Any named configuration parameter execute in particular a free variable.
@@ -30,7 +32,7 @@ public interface Arg extends Serializable {
 	
 	public String getName();
 
-	public static Domain getServiceModel(Arg[] args) {
+	public static Domain selectDomain(Arg[] args) {
 		  for (Arg arg : args) {
 			  if (arg instanceof Domain)
 			   return (Domain)arg;
@@ -38,7 +40,7 @@ public interface Arg extends Serializable {
 		return null;
 	}
 
-	public static Exertion getExertion(Arg[] args) {
+	public static Exertion selectExertion(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Exertion)
 				return (Exertion)arg;
@@ -46,7 +48,7 @@ public interface Arg extends Serializable {
 		return null;
 	}
 
-	public static Mogram getMogram(Arg[] args) {
+	public static Mogram selectMogram(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Mogram)
 				return (Mogram)arg;
@@ -54,7 +56,16 @@ public interface Arg extends Serializable {
 		return null;
 	}
 
-	public static Service getService(Arg[] args) {
+	public static List<Fidelity> selectFidelities(Arg[] args) {
+		List<Fidelity> fiList = new ArrayList<>();
+		for (Arg arg : args) {
+			if (arg instanceof Fidelity)
+				fiList.add((Fidelity)arg);
+		}
+		return fiList;
+	}
+
+	public static Service selectService(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Service)
 				return (Service)arg;
@@ -62,7 +73,7 @@ public interface Arg extends Serializable {
 		return null;
 	}
 
-	public static Path getPath(Arg[] args) {
+	public static Path selectPath(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Path)
 				return (Path)arg;

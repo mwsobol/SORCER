@@ -364,7 +364,7 @@ public class CollectionOperators {
 		put(cxt, rvEnt("arg/x6", ent("overwrite", 20.0)));
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 		urvEnt(cxt, "arg/x6");
-		assertTrue(eval((Function)value(cxt, "arg/x6")).equals(20.0));
+		assertTrue(eval((Entry)value(cxt, "arg/x6")).equals(20.0));
 		rrvEnt(cxt, "arg/x6");
 		assertTrue(value(cxt, "arg/x6").equals(20.0));
 
@@ -376,7 +376,8 @@ public class CollectionOperators {
 		logger.info("x3: " + value(cxt, "arg/x3"));
 
 		assertTrue(asis(cxt, "arg/x7") instanceof Invocation);
-		assertEquals(4.0, value(cxt, "arg/x7"));
+		// value returns invoker - repacking
+		assertEquals(4.0, eval(ent("arg/x7", value(cxt, "arg/x7"))));
 
 	}
 

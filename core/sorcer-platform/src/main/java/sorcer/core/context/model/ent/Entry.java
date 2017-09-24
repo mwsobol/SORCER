@@ -10,12 +10,16 @@ import sorcer.util.url.sos.SdbUtil;
 import java.net.URL;
 import java.rmi.RemoteException;
 
-public class Entry<V> extends Association<String, V> implements Identifiable, Getter, Callable<V>, Setter, ent<V> {
+public class Entry<V> extends Association<String, V>
+        implements Identifiable, Getter, Callable<V>, Setter, Reactive<V>, ent<V> {
 
     protected boolean negative;
 
     // its arguments is persisted
     protected boolean isPersistent = false;
+
+    // if reactive then its values are evaluated if active (either Evaluation or Invocation type)
+    protected boolean isReactive = false;
 
     protected ContextSelection contextSelector;
 
@@ -82,7 +86,7 @@ public class Entry<V> extends Association<String, V> implements Identifiable, Ge
                     item = (V)url;
                 }
             } else if (val instanceof Invocation) {
-                Context cxt = (Context) Arg.getServiceModel(args);
+                Context cxt = (Context) Arg.selectDomain(args);
                 val = (V) ((Invocation) val).invoke(cxt, args);
             } else if (val instanceof Evaluation) {
                 if (val instanceof Entry && ((Entry)val).getName().equals(key)) {
@@ -127,6 +131,16 @@ public class Entry<V> extends Association<String, V> implements Identifiable, Ge
         return (V) out;
     }
 
+    @Override
+    public boolean isReactive() {
+        return isReactive;
+    }
+
+    public Entry<V> setReactive(boolean isReactive) {
+        this.isReactive = isReactive;
+        return this;
+    }
+
     public boolean isPersistent() {
         return isPersistent;
     }
@@ -165,7 +179,7 @@ public class Entry<V> extends Association<String, V> implements Identifiable, Ge
     }
 
     public Object execute(Arg... args) throws ServiceException, RemoteException {
-        Domain cxt = Arg.getServiceModel(args);
+        Domain cxt = Arg.selectDomain(args);
         if (cxt != null) {
             // entry substitution
             ((ServiceContext)cxt).putValue(key, item);

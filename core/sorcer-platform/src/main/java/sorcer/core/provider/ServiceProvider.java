@@ -589,7 +589,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	@Override
 	public Object execute(Arg... args) throws MogramException, RemoteException {
-		Mogram srv = Arg.getMogram(args);
+		Mogram srv = Arg.selectMogram(args);
 		if (srv != null) {
 			return service(srv);
 		}

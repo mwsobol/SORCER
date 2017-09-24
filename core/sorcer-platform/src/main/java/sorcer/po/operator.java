@@ -748,7 +748,7 @@ public class operator extends Operator {
 		} else if (value instanceof Context && args != null && args.length > 0) {
 			return (Entry<T>) new Neo(path, (Context)value, new Args(args));
 		} else if (value instanceof Signature) {
-			Mogram mog = Arg.getMogram(args);
+			Mogram mog = Arg.selectMogram(args);
 			Context cxt = null;
 			if (mog instanceof Context) {
 				cxt = (Context)mog;
@@ -794,7 +794,7 @@ public class operator extends Operator {
 
 		Context cxt = null;
 		for (Arg arg : args) {
-			cxt = (Context) Arg.getServiceModel(args);
+			cxt = (Context) Arg.selectDomain(args);
 		}
 		try {
 			// special cases of procedural attachmnet

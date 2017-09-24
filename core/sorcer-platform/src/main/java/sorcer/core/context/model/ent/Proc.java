@@ -680,7 +680,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 
 	@Override
 	public Object execute(Arg... args) throws MogramException, RemoteException {
-		Context cxt = (Context) Arg.getServiceModel(args);
+		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt != null) {
 			scope = cxt;
 			return getValue(args);

@@ -82,7 +82,7 @@ public class Copier implements Evaluation<Context>, Identifiable {
 
 	@Override
 	public Object execute(Arg... args) throws MogramException, RemoteException {
-		Domain cxt = Arg.getServiceModel(args);
+		Domain cxt = Arg.selectDomain(args);
 		if (cxt != null) {
 			fromContext = (Context) cxt;
 			return getValue(args);

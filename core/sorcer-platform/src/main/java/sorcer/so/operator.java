@@ -189,7 +189,7 @@ public class operator extends Operator {
             } else if (service instanceof Evaluation) {
                 return ((Evaluation) service).getValue(args);
             } else if (service instanceof Modeling) {
-                Domain cxt = Arg.getServiceModel(args);
+                Domain cxt = Arg.selectDomain(args);
                 if (cxt != null) {
                     return ((Modeling) service).evaluate((ServiceContext)cxt);
                 } else {

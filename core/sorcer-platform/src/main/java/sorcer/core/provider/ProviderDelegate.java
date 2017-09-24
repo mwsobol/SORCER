@@ -3037,12 +3037,12 @@ public class ProviderDelegate {
 				// } catch (MalformedURLException e1) {
 				// logger.throwing(
 				// ServiceAccessor.class.getName(),
-				// "getService", e1);
+				// "selectService", e1);
 				// clazz = null;
 				// } catch (ClassNotFoundException e2) {
 				// logger.throwing(
 				// ServiceAccessor.class.getName(),
-				// "getService", e2);
+				// "selectService", e2);
 				// clazz = null;
 				// }
 				// }

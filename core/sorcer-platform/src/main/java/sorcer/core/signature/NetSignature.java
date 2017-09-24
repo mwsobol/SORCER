@@ -394,8 +394,8 @@ public class NetSignature extends ObjectSignature implements sig {
 
 	@Override
 	public Object execute(Arg... args) throws MogramException, RemoteException {
-		Exertion mog = Arg.getExertion(args);
-		Context cxt = (Context) Arg.getServiceModel(args);
+		Exertion mog = Arg.selectExertion(args);
+		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt == null && returnPath != null) {
 			cxt = returnPath.getDataContext();
 		}

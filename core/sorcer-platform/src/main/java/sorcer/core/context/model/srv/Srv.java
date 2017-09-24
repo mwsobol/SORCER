@@ -49,14 +49,16 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
     }
 
     public Srv(String name, String path, Service service, String[] paths) {
-        super(path, service);
+        key = path;
+        item = service;
         this.name = name;
         this.paths = paths;
         type = Functionality.Type.SRV;
     }
 
     public Srv(String name, String path, Client service) {
-        super(path, service);
+        key = path;
+        item = service;
         this.name = name;
         type = Functionality.Type.SRV;
     }
@@ -266,7 +268,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
 
     @Override
     public Object execute(Arg... args) throws ServiceException, RemoteException {
-        Domain mod = Arg.getServiceModel(args);
+        Domain mod = Arg.selectDomain(args);
         if (mod != null) {
             if (mod instanceof SrvModel && item instanceof ValueCallable) {
                 return ((ValueCallable) item).call((Context) mod);

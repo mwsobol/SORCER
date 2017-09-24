@@ -500,16 +500,15 @@ public class operator extends Operator {
 		return dependencies;
 	}
 
-	public static <T> Function<T> rvEnt(String path, T value) {
-		Function<T> e = new Function<T>(path, value);
+	public static <T> Entry<T> rvEnt(String path, T value) {
+		Entry<T> e = new Entry<T>(path, value);
 		return e.setReactive(true);
 	}
 
-	public static <T> Function<T> urvEnt(String path, T value) {
-		Function<T> e = new Function<T>(path, value);
+	public static <T> Entry<T> urvEnt(String path, T value) {
+		Entry<T> e = new Entry<T>(path, value);
 		return e.setReactive(false);
 	}
-
 
 	public static <T> Reactive<T> rrvEnt(Context<T> cxt, String path) throws ContextException {
 		T obj = cxt.asis(path);
@@ -527,8 +526,8 @@ public class operator extends Operator {
 			throw new ContextException("No Entry at path: " + path);
 	}
 
-	public static Function<Object> val(String path) {
-		Function ent = new Function(path, null);
+	public static Value<Object> val(String path) {
+		Value ent = new Value(path, null);
 		ent.setType(Functionality.Type.VAL);
 		return ent;
 	}

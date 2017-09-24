@@ -28,6 +28,7 @@ import sorcer.co.tuple.Tuple2;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.invoker.Observer;
+import sorcer.eo.operator;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -332,8 +333,9 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         return null;
     }
 
-    public void reconfigure(FidelityList fiList) throws ContextException, RemoteException {
-        reconfigure(fiList.toFidelityArray());
+    public void reconfigure(List<Fidelity> fiList) throws ContextException, RemoteException {
+        Fidelity[] list =  new Fidelity[fiList.size()];
+        reconfigure(fiList.toArray(list));
     }
 
     @Override

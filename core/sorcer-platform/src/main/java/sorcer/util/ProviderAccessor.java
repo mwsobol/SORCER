@@ -51,8 +51,8 @@ import static sorcer.core.SorcerConstants.ANY;
  * infrastructure services. It extends the <code>ServiceAccessor</code>
  * functionality.
  *
- * The <code>getService</code> methods directly use ServiceAccessor calls while
- * the <code>getService</code> methods use a SORCER Cataloger's cached services
+ * The <code>selectService</code> methods directly use ServiceAccessor calls while
+ * the <code>selectService</code> methods use a SORCER Cataloger's cached services
  * with round robin load balancing.
  *
  * The individual SORCER services should be accessed using this utility since it
@@ -151,7 +151,7 @@ public class ProviderAccessor extends ServiceAccessor {
         }
 
 		try {
-			//servicer = (Service)ProviderLookup.getService(providerName, serviceType);
+			//servicer = (Service)ProviderLookup.selectService(providerName, serviceType);
 			cataloger = getLocalCataloger();
 			if (cataloger != null) {
                 long t0 = System.currentTimeMillis();
@@ -179,7 +179,7 @@ public class ProviderAccessor extends ServiceAccessor {
                 servicer = (Provider) super.getService(providerName, serviceType);
             }
 		} catch (Throwable ex) {
-			logger.error("getService {} {}", providerName, serviceType==null?"<null>": serviceType.getName(), ex);
+			logger.error("selectService {} {}", providerName, serviceType==null?"<null>": serviceType.getName(), ex);
 		}
 		return (T) servicer;
 	}
@@ -201,7 +201,7 @@ public class ProviderAccessor extends ServiceAccessor {
 			else
 				return super.getService(serviceID);
 		} catch (Exception ex) {
-			logger.error(ProviderAccessor.class.getName(), "getService", ex);
+			logger.error(ProviderAccessor.class.getName(), "selectService", ex);
 			return null;
 		}
 	}

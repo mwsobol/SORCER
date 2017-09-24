@@ -196,7 +196,7 @@ abstract public class SystemServiceBean implements Exerter {
 
 	@Override
 	public Object execute(Arg... args) throws MogramException, RemoteException {
-		Mogram mog = Arg.getMogram(args);
+		Mogram mog = Arg.selectMogram(args);
 		if (mog != null)
 			try {
 				return exert(mog, null, args);

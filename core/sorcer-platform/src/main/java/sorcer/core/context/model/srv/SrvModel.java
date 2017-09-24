@@ -30,6 +30,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.ServiceInvoker;
+import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.rendezvous.ServiceModeler;
@@ -156,6 +157,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
 
             if (val instanceof Srv) {
                 Fi srvFi = ((Srv)val).getMultiFi();
+                ((FidelityManager)fiManager).reconfigure(Arg.selectFidelities(args));
                 if (isChanged()) {
                     ((Srv) val).isValid(false);
                 }
@@ -276,16 +278,10 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                 }
             } else if (val instanceof Entry) {
                 return  ((Entry)val).getData();
+            } else if (val instanceof ServiceFidelity) {
+                return ((Entry)((ServiceFidelity)val).getSelect()).get(args);
             } else {
                 return super.getValue(path, args);
-            }
-
-            // the same entry in entry
-            if (val instanceof Entry) {
-                return ((Entry) val).getData();
-            }
-            if (val instanceof ServiceFidelity) {
-                return ((Entry)((ServiceFidelity)val).getSelect()).get(args);
             }
         } catch (Exception e) {
             throw new EvaluationException(e);

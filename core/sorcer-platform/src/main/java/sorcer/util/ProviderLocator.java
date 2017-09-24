@@ -367,7 +367,7 @@ public class ProviderLocator {
     /*
  	* (non-Javadoc)
  	*
- 	* @see sorcer.service.DynamicAccessor#getService(sorcer.service.Signature)
+ 	* @see sorcer.service.DynamicAccessor#selectService(sorcer.service.Signature)
  	*/
     public <T> T getProvider(String serviceName, Class<T> serviceType) {
         try {
