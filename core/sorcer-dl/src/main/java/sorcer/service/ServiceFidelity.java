@@ -160,7 +160,7 @@ public class ServiceFidelity extends Fidelity<Service> {
 			for (Object s : selects) {
 				try {
 					((Reference)s).setScope(scope);
-					ss.add(((Reference)s).getValue());
+					ss.add(((Reference)s).get());
 				} catch (Exception e) {
 					throw new ContextException(e);
 				}

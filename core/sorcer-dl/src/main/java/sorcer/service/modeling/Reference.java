@@ -37,6 +37,6 @@ public interface Reference<T>  extends Scopable {
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */
-	public T getValue(Arg... entries) throws EvaluationException, RemoteException;
+	public T get(Arg... entries) throws EvaluationException, RemoteException;
 	
 }

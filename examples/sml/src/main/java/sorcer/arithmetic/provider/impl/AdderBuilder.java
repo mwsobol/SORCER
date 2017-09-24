@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 
 import static sorcer.eo.operator.args;
 import static sorcer.po.operator.*;
+import static sorcer.mo.operator.*;
 
 /**
  * @author Mike Sobolewski

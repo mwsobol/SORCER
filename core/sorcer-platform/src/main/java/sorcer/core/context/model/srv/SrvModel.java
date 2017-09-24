@@ -29,6 +29,7 @@ import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.ProcModel;
+import sorcer.core.context.model.ent.Ref;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
@@ -155,7 +156,9 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     val = super.getValue(path, args);
             }
 
-            if (val instanceof Srv) {
+            if (val instanceof Number) {
+                return val;
+            } else if (val instanceof Srv) {
                 Fi srvFi = ((Srv)val).getMultiFi();
                 ((FidelityManager)fiManager).reconfigure(Arg.selectFidelities(args));
                 if (isChanged()) {
@@ -168,20 +171,20 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                 if (carrier instanceof Signature) {
                         return evalSignature((Signature) carrier, path, args);
                 } else if (carrier instanceof SignatureEntry){
-                    if (((Srv) val).getSrvValue() != null && ((Srv) val).isValueCurrent() && !isChanged())
-                        return ((Srv) val).getSrvValue();
+                    if (((Srv) val).getOut() != null && ((Srv) val).isValueCurrent() && !isChanged())
+                        return ((Srv) val).getOut();
                     else {
                         Signature sig = ((SignatureEntry) ((Srv) val).asis()).getItem();
-                        return evalSignature(sig, path, args);
+                        val = evalSignature(sig, path, args);
                     }
                 } else if (carrier instanceof ServiceFidelity) {
                     Object selection = getFi((ServiceFidelity) carrier, args, path);
                     if (selection instanceof Signature) {
-                        return evalSignature((Signature) selection, path, args);
+                        val = evalSignature((Signature) selection, path, args);
                     } else if (selection instanceof Evaluation) {
-                        return ((Evaluation)selection).getValue(args);
+                        val = ((Evaluation)selection).getValue(args);
                     } else {
-                        return selection;
+                        val = selection;
                     }
                 } else if (carrier instanceof MorphFidelity) {
                     Object obj = getFi((ServiceFidelity)((MorphFidelity) carrier).getFidelity(), args, path);
@@ -194,9 +197,9 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     }
                     ((MorphFidelity) carrier).setChanged();
                     ((MorphFidelity) carrier).notifyObservers(out);
-                    return out;
+                    val =  out;
                 } else if (carrier instanceof MogramEntry) {
-                    return evalMogram((MogramEntry)carrier, path, args);
+                    val = evalMogram((MogramEntry)carrier, path, args);
                 } else if (carrier instanceof ValueCallable && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
                     ReturnPath rp = ((Srv) val).getReturnPath();
                     Object obj = null;
@@ -206,10 +209,10 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     } else {
                         obj = ((ValueCallable) carrier).call(this);
                     }
-                    ((Srv) get(path)).setSrvValue(obj);
+                    ((Srv) get(path)).setOut(obj);
                     if (rp != null && rp.path != null)
                         putValue(((Srv) val).getReturnPath().path, obj);
-                    return obj;
+                    val = obj;
                 }  else if (carrier instanceof MultiFiMogram) {
                     Object out = ((MultiFiMogram)carrier).exert(args);
                     Context cxt = null;
@@ -219,41 +222,39 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                         if (rt != null && rt.getPath() != null) {
                             Object obj = cxt.getReturnValue();
                             putInoutValue(rt.getPath(), obj);
-                            ((Srv) get(path)).setSrvValue(obj);
-                            return obj;
+                            ((Srv) get(path)).setOut(obj);
+                            out = obj;
                         } else {
-                            ((Srv) get(path)).setSrvValue(cxt);
-                            return cxt;
+                            ((Srv) get(path)).setOut(cxt);
+                            out = cxt;
                         }
                     }
-                    ((Srv) get(path)).setSrvValue(cxt);
-                    return out;
+                    ((Srv) get(path)).setOut(cxt);
+                    val = out;
                 } else if (carrier instanceof Client && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
                     // get target entry for this cal
                     String entryPath = ""+((Function)val).getKey();
                     Object out = ((Client)carrier).exec((Service) this.asis(entryPath), this, args);
-                    ((Srv) get(path)).setSrvValue(out);
-                    return out;
+                    ((Srv) get(path)).setOut(out);
+                    val = out;
                 } else if (carrier instanceof EntryCollable && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
                     Entry entry = ((EntryCollable)carrier).call(this);
-                    ((Srv) get(path)).setSrvValue(entry.get());
+                    ((Srv) get(path)).setOut(entry.get());
                     if (path != entry.getName())
                         putValue(entry.getName(), entry.get());
                     else if (asis(entry.getName()) instanceof Srv) {
-                        ((Srv)asis(entry.getName())).setSrvValue(entry.get());
+                        ((Srv)asis(entry.getName())).setOut(entry.get());
                     }
-                    return entry;
+                    val = entry;
                 } else if (carrier instanceof Closure) {
                     Function entry = (Function) ((Closure)carrier).call(this);
-                    ((Srv) get(path)).setSrvValue(entry.get());
+                    ((Srv) get(path)).setOut(entry.get());
                     putValue(path, entry.get());
                     if (path != entry.getName())
                         putValue(entry.getName(), entry.get());
-                    return entry;
+                    val = entry;
                 } else if (carrier instanceof ServiceInvoker) {
                     val =  ((ServiceInvoker)carrier).invoke(args);
-                    ((Srv) get(path)).setSrvValue(val);
-                    return val;
                 } else if (carrier instanceof Service && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
                     String[] paths = ((Srv)val).getPaths();
                     Arg[] nargs = null;
@@ -269,15 +270,32 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                         }
                     }
                     Object out = ((Service)carrier).execute(nargs);
-                    ((Srv) get(path)).setSrvValue(out);
-                    return out;
+                    ((Srv) get(path)).setOut(out);
+                    val = out;
                 } else {
                     if (carrier == Context.none) {
-                        return getValue(((Srv) val).getName());
+                        val = getValue(((Srv) val).getName());
                     }
                 }
             } else if (val instanceof Entry) {
-                return  ((Entry)val).getData();
+                // getData applies current fidelity
+                if (((Entry)val).getData() instanceof Ref) {
+                    // dereferencing Ref and executing
+                    Ref ref = ((Ref)((Entry)val).getItem());
+                    ref.setScope(this);
+                    Object deref = ref.get();
+                    if (deref instanceof Evaluation) {
+                        if (deref instanceof Scopable) {
+                            ((Scopable)deref).setScope(this);
+                        }
+                        val = ((Evaluation) deref).getValue(args);
+                    } else {
+                        // assume default dereference of Entry is inner Entry
+                        val = ((Entry) deref).get(args);
+                    }
+                } else {
+                    val = ((Entry)val).get(args);
+                }
             } else if (val instanceof ServiceFidelity) {
                 return ((Entry)((ServiceFidelity)val).getSelect()).get(args);
             } else {
@@ -286,6 +304,8 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         } catch (Exception e) {
             throw new EvaluationException(e);
         }
+
+        ((Entry)get(path)).setOut(val);
         return val;
     }
 
@@ -296,7 +316,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             if (obj == null)
                 obj = out.getValue(path);
             if (obj != null) {
-                ((Srv)get(path)).setSrvValue(obj);
+                ((Srv)get(path)).setOut(obj);
                 return obj;
             } else {
                 logger.warn("no eval for return path: {} in: {}", ((ReturnPath)sig.getReturnPath()).path, out);
@@ -316,13 +336,13 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             Context outCxt = out.getContext();
             if (outCxt.getReturnPath() != null) {
                 Object obj = outCxt.getReturnValue();
-                ((Srv)get(path)).setSrvValue(obj);
+                ((Srv)get(path)).setOut(obj);
                 return obj;
             } else if (outCxt.asis(Context.RETURN) != null) {
-				((Srv)get(path)).setSrvValue(outCxt.asis(Context.RETURN));
+				((Srv)get(path)).setOut(outCxt.asis(Context.RETURN));
 				return outCxt.asis(Context.RETURN);
 			} else {
-                ((Srv) get(path)).setSrvValue(outCxt);
+                ((Srv) get(path)).setOut(outCxt);
                 return outCxt;
             }
         } else if (out instanceof Model) {

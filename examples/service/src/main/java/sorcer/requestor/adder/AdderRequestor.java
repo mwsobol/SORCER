@@ -10,7 +10,7 @@ import java.io.File;
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.mo.operator.response;
+import static sorcer.mo.operator.*;
 import static sorcer.po.operator.ent;
 
 public class AdderRequestor extends ServiceRequestor {

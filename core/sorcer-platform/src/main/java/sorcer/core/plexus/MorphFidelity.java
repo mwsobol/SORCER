@@ -65,11 +65,7 @@ public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>,
         T select = null;
 
         if (obj instanceof Ref) {
-            try {
-                select = (T) ((Ref) obj).getValue();
-            } catch (EvaluationException | RemoteException e) {
-                e.printStackTrace();
-            }
+            select = (T) ((Ref) obj).get();
         } else{
             select = (T) obj;
         }

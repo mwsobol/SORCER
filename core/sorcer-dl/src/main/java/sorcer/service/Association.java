@@ -61,7 +61,7 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
         this.key = key;
         if (item instanceof Fi) {
             multiFi = (Fi) item;
-            this.item = (I)  ((Association)((Fidelity)multiFi).get(0)).getItem();
+            this.item = (I) multiFi.get(0);
         } else {
             this.item = item;
         }

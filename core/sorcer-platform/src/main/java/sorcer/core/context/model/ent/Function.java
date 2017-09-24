@@ -105,6 +105,9 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 				}
 			} else if (val instanceof Invocation) {
 				Context cxt = (Context) Arg.selectDomain(args);
+				if (val instanceof Scopable) {
+                    ((Scopable)val).setScope(scope);
+                }
 				val = (T) ((Invocation) val).invoke(cxt, args);
 			} else if (val instanceof Evaluation) {
 				val = ((Evaluation<T>) val).getValue(args);

@@ -1444,7 +1444,7 @@ public class operator extends Operator {
 		return morphFi;
 	}
 
-	public static MorphFidelity mFi(String name, Data... services) {
+	public static MorphFidelity mFi(String name, Service... services) {
 		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
 		return morphFi;
 	}
@@ -1558,6 +1558,7 @@ public class operator extends Operator {
 
 	public static Fidelity<Entry> entFi(Entry... entries) {
 		Fidelity<Entry> fi = new Fidelity(entries);
+		fi.setSelect(entries[0]);
 		fi.fiType = Fi.Type.ENTRY;
 		return fi;
 	}
@@ -2071,66 +2072,6 @@ public class operator extends Operator {
 		return task;
 	}
 
-
-
-	public static <M extends Domain> M model(Object... items) throws ContextException {
-		String name = "unknown" + count++;
-		boolean hasEntry = false;
-		boolean neoType = false;
-		boolean procType = false;
-		boolean srvType = false;
-		boolean hasExertion = false;
-		boolean hasSignature = false;
-		boolean autoDeps = true;
-		for (Object i : items) {
-			if (i instanceof String) {
-				name = (String) i;
-			} else if (i instanceof Exertion) {
-				hasExertion = true;
-			} else if (i instanceof Signature) {
-				hasSignature = true;
-			} else if (i instanceof Entry) {
-				try {
-					hasEntry = true;
-					if (i instanceof Proc)
-						procType = true;
-					else if (i instanceof Srv) {
-						srvType = true;
-					} else if (i instanceof Neo) {
-						neoType = true;
-					}
-				} catch (Exception e) {
-					throw new ModelException(e);
-				}
-			} else if (i.equals(Strategy.Flow.EXPLICIT)) {
-				autoDeps = false;
-			}
-		}
-		if ((hasEntry || hasSignature && hasEntry) && !hasExertion) {
-			Domain mo = null;
-			if (srvType) {
-				mo = srvModel(items);
-			} else if (procType) {
-				try {
-					return (M) sorcer.po.operator.procModel(name, items);
-				} catch (Exception e) {
-					throw new ModelException(e);
-				}
-			} else {
-				mo = sorcer.mo.operator.procModel(items);
-			}
-
-			mo.setName(name);
-			if (mo instanceof SrvModel && autoDeps)
-                try {
-                    mo = new SrvModelAutoDeps((SrvModel)mo).get();
-                } catch (SortingException e) {
-                    throw new ContextException(e);
-                }
-            return (M) mo;
-		}
-		throw new ModelException("do not know what model to create");
-	}
 
 	public static List<Mogram> mograms(Mogram mogram) {
 		if (mogram instanceof Exertion)

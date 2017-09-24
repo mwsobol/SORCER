@@ -15,9 +15,8 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.printDeps;
-import static sorcer.mo.operator.response;
+import static sorcer.mo.operator.*;
 import static sorcer.po.operator.ent;
-import static sorcer.po.operator.srv;
 
 /**
  * Created by pol on 24.11.15.

@@ -57,14 +57,12 @@ public class Ref<T> extends Entry<T> implements Reference, SupportComponent {
 	}
 
 	@Override
-	public T getValue(Arg... args) throws EvaluationException, RemoteException {
-		T out = null;
-		if (item != null) {
-			out = item;
-		} else {
-			out = this.item = (T) scope.asis(key);
+	public T get(Arg... args) {
+		if (item == null) {
+			// resolve reference
+			item = (T) scope.asis(key);
 		}
-		return out;
+		return item;
 	}
 
 }

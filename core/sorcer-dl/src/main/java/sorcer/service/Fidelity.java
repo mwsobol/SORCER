@@ -58,8 +58,9 @@ public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry
     public Fidelity(String... names) {
         this.fiName = "";
         fiType = Type.NAME;
-        for (String s : names)
+        for (String s : names) {
             this.selects.add((T) new Tag(s));
+        }
     }
 
     public Fidelity(String name, List<Fi> fis) {

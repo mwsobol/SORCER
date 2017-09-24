@@ -38,6 +38,7 @@ import sorcer.service.Signature.ReturnPath;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static sorcer.co.operator.instance;
@@ -48,6 +49,8 @@ import static sorcer.eo.operator.context;
  * Created by Mike Sobolewski on 4/26/15.
  */
 public class operator {
+
+    protected static int count = 0;
 
     public static ServiceFidelity mdlFi(Domain... models) {
         ServiceFidelity fi = new ServiceFidelity(models);
@@ -299,6 +302,8 @@ public class operator {
                     paths.add((Path) item);
                 } if (item instanceof String) {
                     paths.add(new Path((String) item));
+                } else if (item instanceof FidelityList) {
+                    argl.addAll((Collection<? extends Arg>) item);
                 } else if (item instanceof List
                     && ((List) item).size() > 0
                     && ((List) item).get(0) instanceof Path) {
@@ -312,6 +317,7 @@ public class operator {
             }
             Arg[] args = new Arg[argl.size()];
             argl.toArray(args);
+            ((FidelityManager)model.getFidelityManager()).reconfigure(Arg.selectFidelities(args));
             return (ServiceContext) model.getResponse(args);
         } catch (RemoteException e) {
             throw new ContextException(e);
@@ -359,10 +365,6 @@ public class operator {
     public static ReturnPath returnPath(String path) {
         return  new ReturnPath<>(path);
     }
-
-//    public static ServiceFidelity response(String... paths) {
-//        return  new ServiceFidelity(paths);
-//    }
 
     public static Paradigmatic modeling(Paradigmatic paradigm) {
         paradigm.setModeling(true);
@@ -427,9 +429,90 @@ public class operator {
         return model;
     }
 
+    public static <M extends Domain> M model(Object... items) throws ContextException {
+        String name = "unknown" + count++;
+        boolean hasEntry = false;
+        boolean neoType = false;
+        boolean procType = false;
+        boolean srvType = false;
+        boolean hasExertion = false;
+        boolean hasSignature = false;
+        boolean isFidelity = false;
+        boolean autoDeps = true;
+        for (Object i : items) {
+            if (i instanceof String) {
+                name = (String) i;
+            } else if (i instanceof Exertion) {
+                hasExertion = true;
+            } else if (i instanceof Signature) {
+                hasSignature = true;
+            } else if (i instanceof Entry) {
+                try {
+                    hasEntry = true;
+                    if (i instanceof Proc)
+                        procType = true;
+                    else if (i instanceof Srv) {
+                        srvType = true;
+                    } else if (i instanceof Neo) {
+                        neoType = true;
+                    }
+                } catch (Exception e) {
+                    throw new ModelException(e);
+                }
+            } else if (i.equals(Strategy.Flow.EXPLICIT)) {
+                autoDeps = false;
+            } else if (i instanceof Fidelity) {
+
+            }
+        }
+        if ((hasEntry || hasEntry) && !hasExertion) {
+            Domain mo = null;
+            if (srvType) {
+                mo = srvModel(items);
+            } else if (procType) {
+                if (isFidelity) {
+                    mo = srvModel(procModel(items));
+                } else {
+                    mo = procModel(items);
+                }
+            }
+            mo.setName(name);
+            if (mo instanceof SrvModel && autoDeps)
+                try {
+                    mo = new SrvModelAutoDeps((SrvModel)mo).get();
+                } catch (SortingException e) {
+                    throw new ContextException(e);
+                }
+            return (M) mo;
+        }
+        throw new ModelException("do not know what model to create");
+    }
+
+    public static ProcModel neoModel(String name, Object... objects)
+            throws ContextException, RemoteException {
+        return procModel(name, objects);
+    }
+
+    public static ProcModel procModel(String name, Object... objects)
+            throws RemoteException, ContextException {
+        ProcModel pm = new ProcModel(name);
+        for (Object o : objects) {
+            if (o instanceof Identifiable)
+                pm.add((Identifiable)o);
+        }
+        return pm;
+    }
+
+    public static Object get(ProcModel pm, String parname, Arg... parametrs)
+            throws ContextException, RemoteException {
+        Object obj = pm.asis(parname);
+        if (obj instanceof Proc)
+            obj = ((Proc)obj).getValue(parametrs);
+        return obj;
+    }
+
     public static Model srvModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
-        List<Signature> sigs = new ArrayList<>();
         Fidelity<Path> responsePaths = null;
         SrvModel model = null;
         FidelityManager fiManager = null;
@@ -437,9 +520,7 @@ public class operator {
         List<Srv> morphFiEnts = new ArrayList();
         List<Fidelity> fis = new ArrayList<>();
         for (Object item : items) {
-            if (item instanceof Signature) {
-                sigs.add((Signature)item);
-            } else if (item instanceof sorcer.eo.operator.Complement) {
+            if (item instanceof sorcer.eo.operator.Complement) {
                 complement = (sorcer.eo.operator.Complement)item;
             } else if (item instanceof Model) {
                 model = ((SrvModel)item);
@@ -447,11 +528,13 @@ public class operator {
                 fiManager = ((FidelityManager)item);
             } else if (item instanceof Srv && ((Srv)item).getItem() instanceof MorphFidelity) {
                 morphFiEnts.add((Srv)item);
-            }else if (item instanceof Fidelity) {
+            } else if (item instanceof Fidelity) {
                 if (item instanceof Metafidelity) {
                     metaFis.add((Metafidelity) item);
                 } else {
-                    responsePaths = ((Fidelity) item);
+                    if (((Fidelity)item).getType() == Fi.Type.RESPONSE){
+                        responsePaths = (Fidelity<Path>) item;
+                    }
                 }
             } else if (item instanceof Entry && ((Entry)item).getMultiFi() != null) {
                 Fidelity fi = (Fidelity) ((Entry)item).getMultiFi();
@@ -502,8 +585,11 @@ public class operator {
         return (Model)context(dest);
     }
 
-    public static Fidelity<Arg> response(String... paths) {
-        return  new Fidelity(paths);
+    public static Fidelity<Path> response(String... paths) {
+        Fidelity resp = new Fidelity("RESPONSE");
+        resp.setSelects(Path.getPathList(paths));
+        resp.setType(Fi.Type.RESPONSE);
+        return resp;
     }
 
     public static void update(Mogram mogram, Setup... entries) throws ContextException {

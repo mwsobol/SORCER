@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
-import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.plexus.MorphFidelity;
@@ -19,7 +18,6 @@ import sorcer.service.modeling.func;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 import static sorcer.eo.operator.task;
@@ -35,8 +33,6 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
     protected String name;
 
     protected Service service;
-
-    protected Object srvValue;
 
     protected String[] paths;
 
@@ -143,7 +139,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
 
     @Override
     public void valueChanged(Object obj) throws EvaluationException {
-        srvValue = obj;
+        out = obj;
     }
 
     public Mogram exert(Mogram mogram) throws TransactionException, MogramException, RemoteException {
@@ -161,16 +157,18 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
     }
 
     @Override
-    public Object getValue(Arg... entries) throws EvaluationException, RemoteException {
-        if (srvValue != null && isValid) {
-            return srvValue;
-        } else {
-            if (multiFi != null) {
-                item = multiFi.getSelect();
-            }
+    public Object getValue(Arg... args) throws EvaluationException, RemoteException {
+        
+        if (item instanceof Invocation) {
+            return super.getValue(args);
+        } else if (out != null && isValid) {
+            return out;
+        } else if (multiFi != null) {
+            item = multiFi.getSelect();
         }
+
         try {
-            substitute(entries);
+            substitute(args);
             if (item instanceof Callable) {
                 return ((Callable) item).call();
             } else if (item instanceof SignatureEntry) {
@@ -190,7 +188,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
                 }
                 throw new EvaluationException("No model available for entry: " + this);
             } else if (item instanceof MogramEntry) {
-                Context cxt = ((MogramEntry) item).get().exert(entries).getContext();
+                Context cxt = ((MogramEntry) item).get().exert(args).getContext();
                 Object val = cxt.getValue(Context.RETURN);
                 if (val != null) {
                     return val;
@@ -198,9 +196,9 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
                     return cxt;
                 }
             } else if (item instanceof MorphFidelity) {
-                return execMorphFidelity((MorphFidelity) item, entries);
+                return execMorphFidelity((MorphFidelity) item, args);
             } else {
-                return super.getValue(entries);
+                return super.getValue(args);
             }
         } catch (Exception e) {
             throw new EvaluationException(e);
@@ -272,8 +270,8 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
         if (mod != null) {
             if (mod instanceof SrvModel && item instanceof ValueCallable) {
                 return ((ValueCallable) item).call((Context) mod);
-            } else if  (mod instanceof Context && item instanceof SignatureEntry) {
-                return ((ServiceContext)mod).execSignature(((SignatureEntry) item).get(args));
+            } else if (mod instanceof Context && item instanceof SignatureEntry) {
+                return ((ServiceContext) mod).execSignature(((SignatureEntry) item).get(args));
             } else {
                 item = mod;
                 return getValue(args);
@@ -281,15 +279,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
         }
         return null;
     }
-
-    public Object getSrvValue() {
-        return srvValue;
-    }
-
-    public void setSrvValue(Object srvValue) {
-        this.srvValue = srvValue;
-    }
-
+    
     public ReturnPath getReturnPath() {
         return returnPath;
     }

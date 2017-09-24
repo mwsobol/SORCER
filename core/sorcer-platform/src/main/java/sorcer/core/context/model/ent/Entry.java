@@ -13,6 +13,8 @@ import java.rmi.RemoteException;
 public class Entry<V> extends Association<String, V>
         implements Identifiable, Getter, Callable<V>, Setter, Reactive<V>, ent<V> {
 
+    protected Object out;
+
     protected boolean negative;
 
     // its arguments is persisted
@@ -41,6 +43,14 @@ public class Entry<V> extends Association<String, V>
         } else {
             type = Functionality.Type.ENT;
         }
+    }
+
+    public Object getOut() {
+        return out;
+    }
+
+    public void setOut(Object out) {
+        this.out = out;
     }
 
     @Override
@@ -96,6 +106,16 @@ public class Entry<V> extends Association<String, V>
                 }
             } else if (val instanceof Valuation) {
                 val = (V) ((Valuation) val).value();
+            } else if (val instanceof Ref) {
+                Object deref = ((Ref)val).get();
+                if (deref instanceof  Evaluation) {
+                    if (deref instanceof Scopable) {
+                        ((Scopable)deref).setScope(((Ref)val).getScope());
+                    }
+                    val = (V) ((Evaluation)deref).getValue(args);
+                } else {
+                    val = (V) ((Entry)deref).get(args);
+                }
             } else if (val instanceof ServiceFidelity) {
                 // return the selected fidelity of this entry
                 for (Arg arg : args) {
@@ -110,7 +130,7 @@ public class Entry<V> extends Association<String, V>
             } else if (val instanceof Callable) {
                 val = (V) ((Callable)val).call(args);
             } else if (val instanceof Service) {
-                out = (V) ((Service)val).execute(args);
+                val = (V) ((Service)val).execute(args);
             }
             out = val;
         } catch (Exception e) {

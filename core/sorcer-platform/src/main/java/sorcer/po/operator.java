@@ -234,29 +234,6 @@ public class operator extends Operator {
         return fi;
     }
 
-    public static ProcModel neoModel(String name, Object... objects)
-            throws ContextException, RemoteException {
-	    return procModel(name, objects);
-    }
-
-	public static ProcModel procModel(String name, Object... objects)
-			throws RemoteException, ContextException {
-		ProcModel pm = new ProcModel(name);
-		for (Object o : objects) {
-			if (o instanceof Identifiable)
-				pm.add((Identifiable)o);
-		}
-		return pm;
-	}
-
-	public static Object get(ProcModel pm, String parname, Arg... parametrs)
-			throws ContextException, RemoteException {
-		Object obj = pm.asis(parname);
-		if (obj instanceof Proc)
-			obj = ((Proc)obj).getValue(parametrs);
-		return obj;
-	}
-
 	public static Invocation invoker(Mappable mappable, String path)
 			throws ContextException {
 		Object obj = mappable.asis(path);
@@ -765,6 +742,7 @@ public class operator extends Operator {
 			} else if (((Fi)value).getType() == Fi.Type.PROC) {
 				entry = new Proc(path, value);
 			} else if (((Fi)value).getType() == Fi.Type.ENTRY) {
+                ((Fidelity)value).setName(path);
 				entry = new Entry(path, value);
 			} else if (((Fi)value).getType() == Fi.Type.SRV) {
 				entry = (Entry<T>) new Srv(path, value);

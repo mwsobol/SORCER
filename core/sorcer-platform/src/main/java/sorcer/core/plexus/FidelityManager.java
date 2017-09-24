@@ -179,10 +179,6 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
        // implement is subclasses
     }
 
-    public void add( Metafidelity fidelity) {
-        put(fidelity.getName(), fidelity);
-    }
-
     public void init(List<Metafidelity> fidelities) {
         if (fidelities == null || fidelities.size() == 0) {
             initialize();
@@ -366,8 +362,14 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         }
     }
 
-    public void add(Metafidelity... sysFis) {
-        for (Metafidelity sysFi : sysFis){
+    public void add(Fidelity... fidelities) {
+        for (Fidelity fi : fidelities){
+           this.fidelities.put(fi.getName(), fi);
+        }
+    }
+
+    public void add(Metafidelity... metaFidelities) {
+        for (Metafidelity sysFi : metaFidelities){
             metafidelities.put(sysFi.getName(), sysFi);
         }
     }

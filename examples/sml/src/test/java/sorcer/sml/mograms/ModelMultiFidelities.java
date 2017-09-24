@@ -139,17 +139,16 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("x1", 10.0), inVal("x2", 90.0),
-                val("eval1", invoker("add", "x1 + x2", ents("x1", "x2"))),
-                val("eval2", invoker("multiply", "x1 * x2", ents("x1", "x2"))),
-
+                ent("eval1", invoker("add", "x1 + x2", args("x1", "x2"))),
+                srv("eval2", invoker("multiply", "x1 * x2", args("x1", "x2"))),
                 ent("mFi", entFi(ref("eval1"), ref("eval2"))),
                 response("mFi", "x1", "x2"));
 
-        Context out = response(mod, fi("mFi", "add"));
+        Context out = response(mod, fi("mFi", "eval1"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi").equals(100.0));
 
-        out = response(mod, fi("mFi", "multiply"));
+        out = response(mod, fi("mFi", "eval2"));
         logger.info("out2: " + out);
         assertTrue(get(out, "mFi").equals(900.0));
     }
@@ -499,20 +498,18 @@ public class ModelMultiFidelities {
     @Test
     public void selectMultiFiRequest() throws Exception {
 
-        Task t4 = task(
-                "t4",
+        Task t4 = task("t4",
                 sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
                         outVal("result/y")));
 
-        Task t5 = task(
-                "t5",
+        Task t5 = task("t5",
                 sig("add", AdderImpl.class),
                 context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
                         outVal("result/y")));
 
 
-        MultiFiMogram mfs = fiMog(mFi("takFi", t5, t4));
+        MultiFiMogram mfs = fiMog(mFi("taskFi", t5, t4));
         Mogram mog = exert(mfs);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(100.0));

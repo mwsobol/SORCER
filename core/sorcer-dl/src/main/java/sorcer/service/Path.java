@@ -101,6 +101,14 @@ public class Path implements Arg, Data {
 		return sl;
 	}
 
+	public static List<Path> getPathList(String[] paths) {
+		List<Path> sl = new ArrayList(paths.length);
+		for (int i = 0; i < paths.length; i++)
+			sl.add(new Path(paths[i]));
+
+		return sl;
+	}
+
 	public static List<Path> getPathList(List<String> paths) {
 		ArrayList pal = new ArrayList(paths.size());
 		for(int i = 0; i < paths.size(); ++i) {
