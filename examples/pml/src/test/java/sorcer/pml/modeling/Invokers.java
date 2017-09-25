@@ -72,7 +72,7 @@ public class Invokers {
 	};
 
 	@Before
-	public void initParModel() throws Exception {
+	public void initProcModel() throws Exception {
 		pm = new ProcModel();
 		x = proc("x", 10.0);
 		y = proc("y", 20.0);
