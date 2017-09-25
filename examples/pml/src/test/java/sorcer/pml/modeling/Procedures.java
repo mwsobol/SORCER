@@ -93,9 +93,9 @@ public class Procedures {
 
 
 	@Test
-	public void contextScope() throws Exception {
+	public void modelScope() throws Exception {
 
-		Context<Double> cxt = context(proc("x", 20.0), proc("y", 30.0));
+		Context<Double> cxt = model(proc("x", 20.0), proc("y", 30.0));
 		Proc add = proc("add", invoker("x + y", args("x", "y")), cxt);
 
 		// adding a proc to the context updates proc's scope
@@ -166,8 +166,8 @@ public class Procedures {
 		
 		Proc multi = proc("multi",
 				pFi(ent("init/eval"),
-				dbp,
-				proc("invoke", invoker("x + y", args("x", "y")))));
+				    dbp,
+				    proc("invoke", invoker("x + y", args("x", "y")))));
 		
 		Context<Double> cxt = context(proc("x", 10.0),
 				proc("y", 20.0), proc("init/eval", 49.0));
@@ -190,18 +190,18 @@ public class Procedures {
 		// add an active proc, no scope
 		add(pm, invoker("add1", "x + y", args("x", "y")));
 		// add a proc with own scope
-		add(pm, proc(invoker("add2", "x + y", args("x", "y")), context(proc("x", 30), proc("y", 40.0))
-		));
+		add(pm, proc(invoker("add2", "x + y", args("x", "y")),
+				context(proc("x", 30.0), proc("y", 40.0))));
 		
-		assertEquals(value(pm, "add1"), 30.0);
+		assertEquals(eval(pm, "add1"), 30.0);
 		// change the scope of add1
 		setValue(pm, "x", 20.0);
-		assertEquals(value(pm, "add1"), 40.0);
+		assertEquals(eval(pm, "add1"), 40.0);
 
-		assertEquals(value(pm, "add2"), 70.0);
+		assertEquals(eval(pm, "add2"), 70.0);
 		// x is changed but add2 eval is the same, has its own scope
 		setValue(pm, "x", 20.0);
-		assertEquals(value(pm, "add2"), 70.0);
+		assertEquals(eval(pm, "add2"), 70.0);
 		
 	}
 }

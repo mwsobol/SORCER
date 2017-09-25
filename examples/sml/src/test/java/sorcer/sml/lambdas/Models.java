@@ -188,8 +188,8 @@ public class Models {
 
 		Double delta = 0.5;
 
-		EntryCollable<Double> entFunction = (Context<Double> cxt) -> {
-			double out = value(cxt, "multiply");
+		EntryCollable entFunction = (Model mdl) -> {
+			double out = (double) eval(mdl, "multiply");
 			out = out + 1000.0 + delta;
 			return ent("out", out);
 		};
@@ -219,15 +219,15 @@ public class Models {
 	@Test
 	public void entryReturnValueWithSubstitution() throws Exception {
 
-		EntryCollable<Double> callTask = (Context<Double> context) -> {
+		EntryCollable callTask = (Model mdl) -> {
 			Context out = null;
 			Double value = null;
-			Task task = (Task)get(context, "task/multiply");
+			Task task = (Task)get(mdl, "task/multiply");
 			put(context(task), "arg/x1", 20.0);
 			put(context(task), "arg/x2", 100.0);
 			out = context(exert(task));
 			value = (Double)get(out, "multiply/result");
-			// owerite the original eval with a new task
+			// overwrite the original eval with a new task
 			return val("multiply/out", value);
 		};
 
@@ -254,7 +254,7 @@ public class Models {
 
 		add(mdl, innerTask);
 		add(mdl, lambda("lambda", callTask));
-		responseDown(mdl, "multiply");
+//		responseDown(mdl, "multiply");
 		responseUp(mdl, "lambda");
 
 		Context out = response(mdl);
@@ -278,6 +278,7 @@ public class Models {
 					Double out = value(cxt, "sum") + (Double) eval(ti);
 					putValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
 					return out; }))));
+
 		lb = exert(lb);
 
 		assertTrue(value(context(lb), "sum").equals(31050.0));

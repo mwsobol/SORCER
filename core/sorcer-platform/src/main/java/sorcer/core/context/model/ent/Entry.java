@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
 public class Entry<V> extends Association<String, V>
         implements Identifiable, Getter, Callable<V>, Setter, Reactive<V>, ent<V> {
 
-    protected Object out;
+    protected V out;
 
     protected boolean negative;
 
@@ -49,7 +49,7 @@ public class Entry<V> extends Association<String, V>
         return out;
     }
 
-    public void setOut(Object out) {
+    public void setOut(V out) {
         this.out = out;
     }
 

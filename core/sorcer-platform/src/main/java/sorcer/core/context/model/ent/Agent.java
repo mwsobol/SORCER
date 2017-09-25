@@ -121,18 +121,18 @@ public class Agent<T> extends Proc<T> implements Serializable {
 							+ e.getLocalizedMessage());
 		}
 		try {
-			value = (T)invoker.invoke(entries);
+			out = (T)invoker.invoke(entries);
 		} catch (RemoteException e) {
 			throw new EvaluationException();
 		}
 		invoker.valueValid(true);
-		return value;
+		return out;
 	}
 	
 	@Override
 	public T getValue(Arg... args) throws EvaluationException, RemoteException {
-		if (value != null && invoker != null && invoker.valueValid())
-			return value;
+		if (out != null && invoker != null && invoker.valueValid())
+			return out;
 		else
 			return (T)evaluate(args);
 	}

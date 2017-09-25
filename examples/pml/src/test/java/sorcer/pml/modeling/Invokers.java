@@ -76,7 +76,7 @@ public class Invokers {
 		pm = new ProcModel();
 		x = proc("x", 10.0);
 		y = proc("y", 20.0);
-		z = proc("z", invoker("x - y", x, y));
+		z = proc("z", invoker("x - y", args("x", "y")));
 	}
 
 	@Test

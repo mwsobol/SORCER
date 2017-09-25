@@ -118,15 +118,26 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 				}
 			}
 
-			if ((val instanceof Proc) && (((Proc) val).asis() instanceof Function)) {
+			if (val instanceof Entry) {
+				val = ((Entry)val).getItem();
+			}
+			if (val instanceof Number) {
+				return val;
+			} else if ((val instanceof Proc) && (((Proc) val).asis() instanceof Function)) {
 				bindEntry((Function) ((Proc)val).asis());
 			} else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
 				((Scopable)val).getScope().setScope(this);
-			} else if (val instanceof Function && (((Function)val).asis() instanceof Scopable)) {
-				((Scopable) ((Function)val).asis()).setScope(this);
+			} else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
+				((Scopable) ((Entry)val).asis()).setScope(this);
 			}
 
-			if (val != null && val instanceof Evaluation) {
+			if (val != null && val instanceof Invocation) {
+				if (get(path) instanceof Proc) {
+					return ((Invocation) val).invoke(((Entry) get(path)).getScope(), args);
+				} else {
+					return ((Invocation) val).invoke(this, args);
+				}
+			} else if (val != null && val instanceof Evaluation) {
 				return ((Evaluation) val).getValue(args);
 			}   if (val instanceof ServiceFidelity) {
 				return new Function(path, val).getValue(args);

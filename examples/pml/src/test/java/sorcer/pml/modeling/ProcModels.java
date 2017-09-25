@@ -95,7 +95,7 @@ public class ProcModels {
 
 //		eval(model, "j1", proc("x1", 10.0), proc("x2", 50.0)).equals(400.0);
 
-		assertTrue(eval(model, "j1", proc("x1", 10.0), proc("x2", 50.0)).equals(400.0));
+		assertTrue(eval(model, "j1", val("x1", 10.0), val("x2", 50.0)).equals(400.0));
 
 //		// equivalent to the above line
 //		assertEquals(
@@ -159,7 +159,7 @@ public class ProcModels {
 		logger.info("add eval: " + eval(pm, "add"));
 		assertTrue(eval(pm, "add").equals(300.0));
 
-		assertTrue(eval(pm, proc("x", 200.0), proc("y", 300.0)).equals(500.0));
+		assertTrue(eval(pm, val("x", 200.0), val("y", 300.0)).equals(500.0));
 
 	}
 

@@ -22,6 +22,7 @@ import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.provider.Exerter;
+import sorcer.core.provider.Provider;
 
 import java.rmi.RemoteException;
 import java.security.Principal;
@@ -105,6 +106,14 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
      * @return ThrowableTrace list
      */
     public List<ThrowableTrace> getExceptions() throws RemoteException;
+
+    public void reportException(String message, Throwable t);
+
+    public void reportException(String message, Throwable t, ProviderInfo info);
+
+    public void reportException(String message, Throwable t, Provider provider);
+
+    public void reportException(String message, Throwable t, Provider provider,  ProviderInfo info);
 
     /**
      * Returns the list of traces left by collborating services.

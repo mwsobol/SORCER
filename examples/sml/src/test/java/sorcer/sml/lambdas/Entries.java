@@ -6,9 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Function;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ent;
 import sorcer.util.GenericUtil;
 
 import static java.lang.Math.pow;
@@ -34,12 +36,12 @@ public class Entries {
     @Test
     public void lambdaValue() throws Exception {
 
-        // a context execute provided by a lambda expression with no change to the context
-        Context cxt = context(ent("x1", 10.0), ent("x2", 20.0),
-                lambda("x3", ((Context<Double> context) -> ent("x5", value(context, "x2") + 100.0))));
+        // the model execute a lambda expression with no model state altered
+        Model mdl = model(ent("x1", 10.0), ent("x2", 20.0),
+                lambda("x3", (Model model) -> ent("x5", (double)eval(model, "x2") + 100.0)));
 
-        logger.info("x3: " + value(cxt, "x3"));
-        assertEquals(120.0, value(cxt, "x3"));
+        logger.info("x3: " + eval(mdl, "x3"));
+        assertEquals(120.0, eval((ent)eval(mdl, "x3")));
 
     }
 
@@ -71,13 +73,13 @@ public class Entries {
         }
 
         // a lambda as a EntryCollable used to enhance the behavior of a model
-        EntryCollable verifyExitValue = (Context cxt) -> {
-            CmdResult out = (CmdResult)value(cxt, "cmd");
+        EntryCollable verifyExitValue = (Model mdl) -> {
+            CmdResult out = (CmdResult)eval(mdl, "cmd");
             int code = out.getExitValue();
             ent("cmd/exitValue", code);
             if (code == -1) {
                 EvaluationException ex = new EvaluationException();
-                cxt.reportException("cmd failed for lambda", ex);
+                mdl.reportException("cmd failed for lambda", ex);
                 throw ex;
             } else
                 return ent("cmd/out", out.getOut());

@@ -959,13 +959,13 @@ public class operator extends Operator {
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
-        if (entry instanceof Proc) {
-            Proc procEntry = (Proc)entry;
-            if (procEntry.getScope() != null && procEntry.getContextable() == null) {
-                procEntry.getScope().putValue(procEntry.getName(), value);
-            }
-        }
-        entry.isValid(false);
+//        if (entry instanceof Proc) {
+//            Proc procEntry = (Proc)entry;
+//            if (procEntry.getScope() != null && procEntry.getContextable() == null) {
+//                procEntry.getScope().putValue(procEntry.getName(), value);
+//            }
+//        }
+        entry.isValid(true);
         return entry;
     }
 
@@ -985,6 +985,11 @@ public class operator extends Operator {
 		return table.getValueAt(row, column);
 	}
 
+	public static <T> T v(Context<T> context, String path,
+							  Arg... args) throws ContextException {
+		return value(context, path, args);
+	}
+
 	public static <T> T value(Context<T> context, String path,
 							  Arg... args) throws ContextException {
 		try {
@@ -992,15 +997,15 @@ public class operator extends Operator {
 			if (context instanceof DataContext) {
 				return (T) val;
 			} else if (val instanceof Value) {
-			    return (T) ((Value)val).getData();
-            }
+				return (T) ((Value)val).getData();
+			}
 			val = ((ServiceContext) context).getValue(path, args);
 			if (SdbUtil.isSosURL(val)) {
 				return (T) ((URL) val).getContent();
 			} else if (((ServiceContext)context).getType().equals(Functionality.Type.MADO)) {
 				return (T)((ServiceContext)context).getEvalValue(path);
 			} else if (val instanceof Srv && ((Srv)val).asis() instanceof  EntryCollable) {
-				Entry entry = ((EntryCollable)((Srv)val).asis()).call(context);
+				Entry entry = ((EntryCollable)((Srv)val).asis()).call((Model)context);
 				return (T) entry.asis();
 			} else {
 				return (T) val;
@@ -1011,8 +1016,8 @@ public class operator extends Operator {
 		}
 	}
 
-	public static <T> T v(Context<T> context, String path, Arg... args) throws ContextException {
-		return value(context, path, args);
+	public static Object eval(Domain domain, String path, Arg... args) throws ContextException {
+		return value((Context)domain, path, args);
 	}
 
 	public static <T> T value(Valuation<T> valuation) throws ContextException {

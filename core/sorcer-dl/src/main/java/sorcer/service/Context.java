@@ -309,18 +309,6 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	 */
 	public void setSubject(String path, Object value);
 
-	public void reportException(Throwable t);
-
-	public void reportException(String message, Throwable t);
-
-	public void reportException(String message, Throwable t, ProviderInfo info);
-
-	public void reportException(String message, Throwable t, Provider provider);
-
-	public void reportException(String message, Throwable t, Provider provider,  ProviderInfo info);
-
-	public void appendTrace(String footprint);
-
 	public Context append(Context context) throws ContextException;
 
 	public Context<T> updateEntries(Domain context) throws ContextException;
@@ -911,8 +899,6 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 	 * @throws ContextException
 	 */
 	public List<String> getAttributes(String path) throws ContextException;
-
-//	public Map<String, T> getData();
 
 	public int size();
 

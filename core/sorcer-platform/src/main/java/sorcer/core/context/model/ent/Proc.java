@@ -19,13 +19,12 @@ package sorcer.core.context.model.ent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
-import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Valuation;
 import sorcer.service.modeling.VariabilityModeling;
-import sorcer.service.modeling.ent;
 import sorcer.service.modeling.func;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
@@ -56,8 +55,6 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	
 	private Principal principal;
 
-	protected T value;
-
 	// data store URL for this proc
 	private URL dbURL;
 
@@ -71,49 +68,48 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	// proc fidelities for this proc
 	protected ServiceFidelity fidelities;
 
-	public Proc(String parname) {
-		super(parname);
-		name = parname;
-		value = null;
+	public Proc(String name) {
+		super(name);
+		this.name = name;
+		out = null;
 		type = Functionality.Type.PROC;
 	}
 	
 	public Proc(Identifiable identifiable) {
 		this(identifiable.getName());
-		value = (T)identifiable;
+		out = (T)identifiable;
 	}
 
-	public Proc(String path, T argument) {
+	public Proc(String path, T entity) {
 		super(path);
 		name = path;
 
-		if (argument instanceof ServiceFidelity) {
-			fidelities = (ServiceFidelity)argument;
-            selectedFidelity = (Function) ((ServiceFidelity) argument).getSelects().get(0);
-			value = (T) selectedFidelity;
-		} else if (argument instanceof Evaluation || argument instanceof Invocation) {
-			if (argument instanceof ConditionalInvocation) {
-				Context cxt = ((ServiceInvoker) argument).getScope();
+		if (entity instanceof ServiceFidelity) {
+			fidelities = (ServiceFidelity)entity;
+            selectedFidelity = (Function) ((ServiceFidelity) entity).getSelects().get(0);
+			item = (T) selectedFidelity;
+		} else if (entity instanceof Evaluation || entity instanceof Invocation) {
+			if (entity instanceof ConditionalInvocation) {
+				Context cxt = ((ServiceInvoker) entity).getScope();
 				if (cxt != null) {
 					scope = cxt;
-					Condition condition = ((ConditionalInvocation) argument).getCondition();
+					Condition condition = ((ConditionalInvocation) entity).getCondition();
 					if (condition != null) {
 						condition.setConditionalContext(cxt);
 					}
 				}
 			}
-			value = argument;
+			item = entity;
 		} else {
-			item = argument;
-			value = argument;
+			item = entity;
 		}
 		type = Functionality.Type.PROC;
 	}
 
-	public Proc(String path, Object argument, Object scope)
+	public Proc(String path, Object entity, Object scope)
 			throws ContextException {
-		this(path, (T) argument);
-		if (argument instanceof String && scope instanceof Service) {
+		this(path, (T) entity);
+		if (entity instanceof String && scope instanceof Service) {
 			mappable = (Mappable) scope;
 			if (scope instanceof Context) {
 				if (((ServiceContext) scope).containsPath(Condition._closure_))
@@ -122,14 +118,14 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 
 			}
 		}
-		if (argument instanceof Scopable) {
-			((Scopable) argument).setScope(this.scope);
+		if (entity instanceof Scopable) {
+			((Scopable) entity).setScope(this.scope);
 		}
 	}
 	
 	public Proc(Mappable map, String name, String path) {
 		this(name);
-		value =  (T)path;
+		item =  (T)path;
 		mappable = map;
 	}
 	
@@ -144,10 +140,10 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	public void setValue(Object value) throws SetterException {
 		if (isPersistent && mappable == null) {
 			try {
-				if (SdbUtil.isSosURL(this.value)) {
-					SdbUtil.update((URL)this.value, value);
+				if (SdbUtil.isSosURL(this.out)) {
+					SdbUtil.update((URL)this.out, value);
 				} else  {
-					this.value = (T)SdbUtil.store(value);
+					this.out = (T)SdbUtil.store(value);
 				}
 			} catch (Exception e) {
 				throw new SetterException(e);
@@ -164,12 +160,12 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 						SdbUtil.update((URL)val, value);
 					} else {
 						URL url = SdbUtil.store(value);
-						Proc p = new Proc((String)this.value, url);
+						Proc p = new Proc((String)this.out, url);
 						p.setPersistent(true);
 						if (mappable instanceof ServiceContext) {
-							((ServiceContext) mappable).put((String) this.value, p);
+							((ServiceContext) mappable).put((String) this.out, p);
 						} else {
-							mappable.putValue((String) this.value, p);
+							mappable.putValue((String) this.out, p);
 						}
 					}
 				} else {
@@ -179,24 +175,24 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 				throw new SetterException(e);
 			}
 		} else if (value instanceof Evaluation) {
-			this.value = (T) value;
+			this.out = (T) value;
 		} else {
-			this.value = (T)value;
+			this.out = (T)value;
 			item = (T) value;
 		}
 	}
 
 	@Override
 	public T get(Arg... args) {
-		return value;
+		return out;
 	}
 
 	/* (non-Javadoc)
          * @see sorcer.service.Evaluation#getAsis()
          */
 	public T asis() {
-		if (value != null) {
-			return value;
+		if (out != null) {
+			return out;
 		} else {
 			return item;
 		}
@@ -208,18 +204,20 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	@Override
 	public T getValue(Arg... args) throws EvaluationException, RemoteException {
 		// check for a constant or cached eval
-		if (value instanceof Incrementor || ((value instanceof ServiceInvoker) &&
-				scope != null && (scope instanceof ProcModel) && ((ProcModel)scope).isChanged()))
+		if (item instanceof Number) {
+			return item;
+		} else if (item instanceof Incrementor || ((item instanceof ServiceInvoker) &&
+				scope != null && (scope instanceof ProcModel) && ((ProcModel)scope).isChanged())) {
 			isValid = false;
+		}
+
 		if (item != null && isValid && args.length == 00 && !isPersistent) {
 			try {
 				if (item instanceof String
 						&& mappable != null && mappable.getValue((String)item) != null)
-                    return (T) mappable.getValue((String) item);
-                else if (item instanceof Entry) {
-					return (T) ((Entry)item).getData();
-				} else {
-					return item;
+					return (T) mappable.getValue((String) item);
+				else if (item instanceof Value) {
+					return (T) ((Value)item).getData();
 				}
 			} catch (ContextException e) {
 				throw new EvaluationException(e);
@@ -233,34 +231,35 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 				if (!isFidelityValid(selectedFidelity)) {
                     obj = scope.asis(selectedFidelity.getName());
 				}
-                value = (T)obj;
+                out = (T)obj;
 			}
-			if (mappable != null && value instanceof String) {
-				Object obj = mappable.asis((String) value);
+			if (mappable != null && out instanceof String) {
+				Object obj = mappable.asis((String) out);
 				if (obj instanceof Proc && ((Proc)obj).isPersistent())
 					return (T)((Proc)obj).getValue();
 				else
-					val = (T) mappable.getValue((String) value);
-			} else if (value == null && scope != null) {
+					val = (T) mappable.getValue((String) out);
+			} else if (item == null && scope != null) {
 				val = (T) ((ServiceContext<T>) scope).get(name);
 			} else {
-				val = value;
+				val = item;
 			}
 			if (val instanceof Evaluation) {
-				if (val instanceof Proc && ((Proc)val).asis() == null && value == null) {
+				if (val instanceof Proc && ((Proc)val).asis() == null && out == null) {
 					logger.warn("undefined proc: " + val);
 					return null;
 				}
 				// direct scope
-				if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
-					if (scope instanceof VariabilityModeling) {
-						((Scopable)val).getScope().setScope(scope);
+				if (val instanceof Scopable) {
+					if (((Scopable)val).getScope() == null || ((Scopable)val).getScope().size() == 0) {
+						((Scopable)val).setScope(scope);
 					} else {
 						((Scopable) val).getScope().append(scope);
 					}
 				}
-				// indirect scope for entry values
-				if (val instanceof Entry) {
+
+                if (val instanceof Entry) {
+                    // indirect scope for entry values
 					Object ev = ((Entry)val).asis();
 					if (ev instanceof Scopable && ((Scopable)ev).getScope() != null) {
 						if (scope instanceof VariabilityModeling) {
@@ -269,8 +268,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 							((Scopable)ev).getScope().append(scope);
 						}
 					}
-				}
-				if (val instanceof Exertion) {
+				} else if (val instanceof Exertion) {
 					// TODO context binding for all mograms, works for tasks only
 					Context cxt = ((Exertion)val).getDataContext();
 					List<String> paths = cxt.getPaths();
@@ -283,8 +281,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 						}
 					}
 				}
-				val = ((Evaluation<T>) val).getValue(args);
-				item = val;
+				out = ((Evaluation<T>) val).getValue(args);
 				isValid = true;
 			}
 
@@ -302,16 +299,16 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 				} else {
 					URL url = SdbUtil.store(val);
 					Proc p = null;
-					if (mappable != null && this.value instanceof String
-							&& mappable.asis((String) this.value) != null) {
-						p = new Proc((String) this.value, url);
+					if (mappable != null && this.out instanceof String
+							&& mappable.asis((String) this.out) != null) {
+						p = new Proc((String) this.out, url);
 						p.setPersistent(true);
-						mappable.putValue((String) this.value, p);
-					} else if (this.value instanceof Identifiable) {
-						p = new Proc(((Identifiable) this.value).getName(), url);
+						mappable.putValue((String) this.out, p);
+					} else if (this.out instanceof Identifiable) {
+						p = new Proc(((Identifiable) this.out).getName(), url);
 						p.setPersistent(true);
 					} else {
-						this.value = (T)url;
+						this.out = (T)url;
 						item = null;
 					}
 				}
@@ -323,7 +320,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 			e.printStackTrace();
 			throw new EvaluationException(e);
 		}
-		return val;
+		return out;
 	}
 	
 	/* (non-Javadoc)
@@ -335,12 +332,16 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 			return;
 		for (Arg arg : args) {
 			try {
-				if (arg instanceof Proc) {
-					if (name.equals(((Proc<T>) arg).name)) {
-						value = ((Proc<T>) arg).value;
-						if (((Proc<T>) arg).getScope() != null)
-							scope.append(((Proc<T>) arg).getScope());
-
+				if (arg instanceof Entry) {
+					if (name.equals(arg.getName())) {
+                        out = ((Entry<T>) arg).getData();
+                    } else {
+					    if (scope == null) {
+					        scope = new ServiceContext();
+                        }
+                        ((ServiceContext)scope).put(arg.getName(), ((Entry)arg).getData());
+//						if (((Entry<T>) arg).getScope() != null)
+//							scope.append(((Entry<T>) arg).getScope());
 					}
 				} else if (arg instanceof Fidelity && fidelities != null) {
 					selectedFidelity = (Entry) fidelities.getSelect(arg.getName());
@@ -352,7 +353,6 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 						scope.append((Context) arg);
 				}
 			} catch (ContextException e) {
-				e.printStackTrace();
 				throw new SetterException(e);
 			}
 		}
@@ -395,16 +395,16 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	@Override
 	public String toString() {
         String ps = "";
-        if (value instanceof Evaluation) {
+        if (out instanceof Evaluation) {
             try {
-                ps = "" + ((Evaluation) value).asis();
+                ps = "" + ((Evaluation) out).asis();
             } catch (EvaluationException e) {
                 e.printStackTrace();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         } else {
-            ps = "" + value;
+            ps = "" + out;
         }
 
         return "proc [name: " + name + ", eval: " + ps + ", path: " + key + "]";
@@ -512,9 +512,9 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	public URL getURL() throws ContextException {
 		if (isPersistent) {
 			if (mappable != null)
-				return (URL)mappable.asis((String)value);
+				return (URL)mappable.asis((String) out);
 			else
-				return (URL)value;
+				return (URL) out;
 		}
 		return null;
 	}
@@ -602,7 +602,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		String[] attributes = path.split(SorcerConstants.CPS);
 		if (attributes[0].equals(name)) {
 			if (attributes.length == 1)
-				return value;
+				return out;
 			else if (mappable != null)
 				return (T)mappable.asis(path.substring(name.length()));
 		}
@@ -617,7 +617,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		String[] attributes = path.split(SorcerConstants.CPS);
 		if (attributes[0].equals(name)) {
 			if (attributes.length == 1)
-				this.value = (T)value;
+				this.out = (T)value;
 			else if (mappable != null)
 				mappable.putValue(path.substring(name.length()), value);
 		}

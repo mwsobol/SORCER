@@ -928,7 +928,7 @@ public class operator extends Operator {
 		return srv;
 	}
 
-	public static <T> Srv lambda(String path, EntryCollable<T> call) {
+	public static <T> Srv lambda(String path, EntryCollable call) {
 		Srv srv = new Srv(path, call);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;

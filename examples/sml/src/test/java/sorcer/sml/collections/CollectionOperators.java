@@ -376,7 +376,7 @@ public class CollectionOperators {
 		logger.info("x3: " + value(cxt, "arg/x3"));
 
 		assertTrue(asis(cxt, "arg/x7") instanceof Invocation);
-		// value returns invoker - repacking
+		// out returns invoker - repacking
 		assertEquals(4.0, eval(ent("arg/x7", value(cxt, "arg/x7"))));
 
 	}

@@ -22,6 +22,7 @@ import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Ref;
+import sorcer.core.provider.Provider;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;

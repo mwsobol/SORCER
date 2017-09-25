@@ -1112,4 +1112,24 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         }
     }
 
+    @Override
+    public void reportException(String message, Throwable t) {
+
+    }
+
+    @Override
+    public void reportException(String message, Throwable t, ProviderInfo info) {
+
+    }
+
+    @Override
+    public void reportException(String message, Throwable t, Provider provider) {
+
+    }
+
+    @Override
+    public void reportException(String message, Throwable t, Provider provider, ProviderInfo info) {
+
+    }
+
 }

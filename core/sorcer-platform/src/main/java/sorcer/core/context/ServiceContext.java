@@ -2842,23 +2842,28 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return getValue(path);
 	}
 
-	public T getValue(String path, Arg... entries)
+	public T getValue(String path, Arg... args)
 			throws ContextException {
-		// first managed dependencies
-		String currentPath = path;
-		if (((ModelStrategy)mogramStrategy).dependers != null
-				&& ((ModelStrategy)mogramStrategy).dependers.size() > 0) {
-			for (Evaluation eval : ((ModelStrategy)mogramStrategy).dependers)  {
-				try {
-					eval.getValue(entries);
-				} catch (RemoteException e) {
-					throw new ContextException(e);
-				}
-			}
-		}
-		T obj = null;
+        // first managed dependencies
+        String currentPath = path;
+        if (((ModelStrategy) mogramStrategy).dependers != null
+                && ((ModelStrategy) mogramStrategy).dependers.size() > 0) {
+            for (Evaluation eval : ((ModelStrategy) mogramStrategy).dependers) {
+                try {
+                    eval.getValue(args);
+                } catch (RemoteException e) {
+                    throw new ContextException(e);
+                }
+            }
+        }
+        T obj = get(path);
+        if (obj instanceof Number) {
+            return obj;
+        } else if (obj instanceof Entry) {
+            return (T) ((Entry)obj).getData();
+        }
 		try {
-			substitute(entries);
+			substitute(args);
 			if (currentPath == null) {
 				if (((ModelStrategy)mogramStrategy).responsePaths != null
 						&& ((ModelStrategy)mogramStrategy).responsePaths.size()>0) {
@@ -2868,9 +2873,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 						return (T) getResponse();
 				}
 				else if (returnPath != null)
-					return getReturnValue(entries);
-				else if (entries.length == 1 && entries[0] instanceof Signature.Out) {
-					return (T) getSubcontext(((Signature.Out)entries[0]).getExtPaths());
+					return getReturnValue(args);
+				else if (args.length == 1 && args[0] instanceof Signature.Out) {
+					return (T) getSubcontext(((Signature.Out)args[0]).getExtPaths());
 				} else {
 					return (T) this;
 				}
@@ -2891,19 +2896,19 @@ public class ServiceContext<T> extends ServiceMogram implements
 							&& ((Function)obj).get() instanceof Scopable) {
 						((Scopable)((Function)obj).asis()).setScope(this);
 					}
-					obj = ((Evaluation<T>)obj).getValue(entries);
+					obj = ((Evaluation<T>)obj).getValue(args);
 				} else if ((obj instanceof Paradigmatic)
 						&& ((Paradigmatic) obj).isModeling()) {
-					obj = ((Evaluation<T>)obj).getValue(entries);
+					obj = ((Evaluation<T>)obj).getValue(args);
 				}
 			}
 			if (obj instanceof Reactive && ((Reactive)obj).isReactive()) {
 				if (obj instanceof Entry && ((Entry)obj).get() instanceof Scopable)
 					((Scopable)((Entry)obj).get()).setScope(this);
-				obj = (T) ((Entry) obj).get(entries);
+				obj = (T) ((Entry) obj).get(args);
 			}
 			if (scope != null && (obj == Context.none || obj == null ))
-				obj = (T ) scope.getValue(path, entries);
+				obj = (T ) scope.getValue(path, args);
 
 			return (T) obj;
 		} catch (Throwable e) {

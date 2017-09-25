@@ -65,10 +65,10 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
         this.key = path;
         if (value instanceof Fi) {
             multiFi = (Fi) item;
-            this.item = (T)  ((Function)((Fidelity)multiFi).get(0)).getItem();
+            this.item = (T)  multiFi.get(0);
         } else {
-            this.key = key;
-            this.item = item;
+            this.key = path;
+            this.item = value;
         }
 	}
 

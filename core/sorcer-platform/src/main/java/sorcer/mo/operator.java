@@ -465,7 +465,8 @@ public class operator {
 
             }
         }
-        if ((hasEntry || hasEntry) && !hasExertion) {
+
+        if ((hasEntry|| hasSignature && hasEntry) && !hasExertion) {
             Domain mo = null;
             if (srvType) {
                 mo = srvModel(items);
@@ -475,6 +476,10 @@ public class operator {
                 } else {
                     mo = procModel(items);
                 }
+            }
+            // default model
+            if (mo == null) {
+                mo = procModel(items);
             }
             mo.setName(name);
             if (mo instanceof SrvModel && autoDeps)
