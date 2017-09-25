@@ -64,7 +64,7 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
             throw new IllegalArgumentException("path must not be null");
         this.key = path;
         if (value instanceof Fi) {
-            multiFi = (Fi) item;
+            multiFi = (Fi) value;
             this.item = (T)  multiFi.get(0);
         } else {
             this.key = path;

@@ -224,13 +224,13 @@ public class operator extends Operator {
 
     public static Fidelity pFi(String name) {
         Fidelity fi =  new Fidelity(name);
-        fi.setType(Fi.Type.PROC);
+        fi.setType(Fi.Type.SELECT);
         return fi;
     }
 
-    public static ServiceFidelity pFi(Function... entries) {
-        ServiceFidelity fi = new ServiceFidelity(entries);
-        fi.fiType = ServiceFidelity.Type.PROC;
+    public static Fidelity pFi(Function... entries) {
+        Fidelity fi = new Fidelity(entries);
+        fi.fiType = ServiceFidelity.Type.SELECT;
         return fi;
     }
 

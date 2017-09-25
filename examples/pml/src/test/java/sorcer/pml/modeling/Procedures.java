@@ -168,16 +168,15 @@ public class Procedures {
 				pFi(ent("init/eval"),
 				    dbp,
 				    proc("invoke", invoker("x + y", args("x", "y")))));
-		
+
 		Context<Double> cxt = context(proc("x", 10.0),
 				proc("y", 20.0), proc("init/eval", 49.0));
-		
+
 		setValue(dbp, 50.0);
+		assertTrue(eval(dbp).equals(50.0));
 
 		assertTrue(eval(multi, cxt, pFi("shared/eval")).equals(50.0));
-
 		assertTrue(eval(multi, cxt, pFi("init/eval")).equals(49.0));
-
 		assertTrue(eval(multi, cxt, pFi("invoke")).equals(30.0));
 
 	}

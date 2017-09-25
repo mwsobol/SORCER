@@ -60,18 +60,12 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 
 	// A context returning eval at the path
 	// that is this proc name
-	// Sorcer Mappable: Context, Exertion, or Var args
+	// Sorcer Mappable: Context, Exertion, or Entry args
 	protected Mappable mappable;
-
-	protected Entry selectedFidelity;
-
-	// proc fidelities for this proc
-	protected ServiceFidelity fidelities;
 
 	public Proc(String name) {
 		super(name);
 		this.name = name;
-		out = null;
 		type = Functionality.Type.PROC;
 	}
 	
@@ -81,14 +75,10 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	}
 
 	public Proc(String path, T entity) {
-		super(path);
+		super(path, entity);
 		name = path;
 
-		if (entity instanceof ServiceFidelity) {
-			fidelities = (ServiceFidelity)entity;
-            selectedFidelity = (Function) ((ServiceFidelity) entity).getSelects().get(0);
-			item = (T) selectedFidelity;
-		} else if (entity instanceof Evaluation || entity instanceof Invocation) {
+		if (entity instanceof Evaluation || entity instanceof Invocation) {
 			if (entity instanceof ConditionalInvocation) {
 				Context cxt = ((ServiceInvoker) entity).getScope();
 				if (cxt != null) {
@@ -99,11 +89,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 					}
 				}
 			}
-			item = entity;
-		} else {
-			item = entity;
 		}
-		type = Functionality.Type.PROC;
 	}
 
 	public Proc(String path, Object entity, Object scope)
@@ -204,7 +190,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	@Override
 	public T getValue(Arg... args) throws EvaluationException, RemoteException {
 		// check for a constant or cached eval
-		if (item instanceof Number) {
+		if (item instanceof Number && !isPersistent) {
 			return item;
 		} else if (item instanceof Incrementor || ((item instanceof ServiceInvoker) &&
 				scope != null && (scope instanceof ProcModel) && ((ProcModel)scope).isChanged())) {
@@ -226,12 +212,11 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		T val = null;
 		try {
 			substitute(args);
-			if (selectedFidelity != null) {
-                Object obj = fidelities.getSelect();
-				if (!isFidelityValid(selectedFidelity)) {
-                    obj = scope.asis(selectedFidelity.getName());
+			if (multiFi != null) {
+			    val = getData();
+			    if (val instanceof String) {
+                    return (T) scope.asis(val.toString());
 				}
-                out = (T)obj;
 			}
 			if (mappable != null && out instanceof String) {
 				Object obj = mappable.asis((String) out);
@@ -308,8 +293,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 						p = new Proc(((Identifiable) this.out).getName(), url);
 						p.setPersistent(true);
 					} else {
-						this.out = (T)url;
-						item = null;
+						item = (T) url;
 					}
 				}
 			}
@@ -340,12 +324,9 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 					        scope = new ServiceContext();
                         }
                         ((ServiceContext)scope).put(arg.getName(), ((Entry)arg).getData());
-//						if (((Entry<T>) arg).getScope() != null)
-//							scope.append(((Entry<T>) arg).getScope());
 					}
-				} else if (arg instanceof Fidelity && fidelities != null) {
-					selectedFidelity = (Entry) fidelities.getSelect(arg.getName());
-                    fidelities.setSelect(arg.getName());
+				} else if (arg instanceof Fidelity && multiFi != null) {
+					multiFi.setSelect(arg.getName());
 				} else if (arg instanceof Context) {
 					if (scope == null)
 						scope = (Context) arg;
@@ -356,17 +337,6 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 				throw new SetterException(e);
 			}
 		}
-	}
-
-	private boolean isFidelityValid(Object fidelity) throws EvaluationException {
-		if (fidelity == null || fidelity == Context.none)
-			return false;
-		if (fidelity instanceof Function) {
-			Object obj = null;
-			obj = ((Function)fidelity).asis();
-			if (obj == null || obj == Context.none) return false;
-		}
-		 return true;
 	}
 
 	public Context getScope() {
@@ -546,19 +516,6 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	public boolean isMappable() {
 		return (mappable != null);
 	}
-
-	public ServiceFidelity getFidelities() {
-		return fidelities;
-	}
-
-	@Override
-	public Object getSelectedFidelity() {
-		return selectedFidelity;
-	}
-
-	public void setSelectedFidelity(Function selectedFidelity) {
-		this.selectedFidelity = selectedFidelity;
-	}
 	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Invocation#invoke(sorcer.service.Context, sorcer.service.Arg[])
@@ -663,15 +620,6 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		this.scope = (Context)scope;
 		
 	}
-
-	public void selectFidelity(String name) throws EntException {
-		selectedFidelity = (Entry) fidelities.getSelect(name);
-	}
-
-	public void setFidelities(ServiceFidelity fidelities) {
-		this.fidelities = fidelities;
-	}
-	
 
 	@Override
 	public boolean isReactive() {
