@@ -72,8 +72,8 @@ public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>,
         return select;
     }
 
-    public void setSelect(String name) {
-        fidelity.setSelect(name);
+    public T setSelect(String name) {
+        return fidelity.setSelect(name);
     }
 
     public void setMorpherSelect(String name) {

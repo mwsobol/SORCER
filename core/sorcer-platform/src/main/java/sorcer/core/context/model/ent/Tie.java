@@ -7,7 +7,7 @@ public class Tie extends Entry<String> {
 
     public Tie(String domain, String entry) {
         key = domain;
-        item = entry;
+        out = entry;
     }
 
     public String domain() {
@@ -15,7 +15,7 @@ public class Tie extends Entry<String> {
     }
 
     public String entry() {
-        return item;
+        return out;
     }
 
 
@@ -26,12 +26,12 @@ public class Tie extends Entry<String> {
 
     public String entry(String entry) {
         item = entry;
-        return item;
+        return out;
     }
 
     @Override
     public String toString() {
-        return  key + ":" + item;
+        return  key + ":" + out;
     }
 
     @Override
@@ -43,15 +43,15 @@ public class Tie extends Entry<String> {
     @Override
     public boolean equals(Object object) {
         if (object instanceof Tie) {
-            if (item != null && ((Tie) object).item == null) {
+            if (item != null && ((Tie) object).out == null) {
                 return false;
-            } else if (item == null && ((Tie) object).item != null) {
+            } else if (out == null && ((Tie) object).out != null) {
                 return false;
             } else if (((Tie) object).key.equals(key)
-                    && ((Tie) object).item == item) {
+                    && ((Tie) object).out == out) {
                 return true;
             } else if (((Tie) object).key.equals(key)
-                    && ((Tie) object).item.equals(item)) {
+                    && ((Tie) object).out.equals(out)) {
                 return true;
             }
         }

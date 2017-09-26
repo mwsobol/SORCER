@@ -184,7 +184,7 @@ public class SrvModelAutoDeps {
                 Object entryVal = ((Entry)entry).getItem();
                 ReturnPath rp = null;
                 if (entryVal instanceof SignatureEntry) {
-                    Signature signature = ((SignatureEntry)entryVal).getItem();
+                    Signature signature = (Signature) ((SignatureEntry)entryVal).getItem();
                     if (signature!=null) rp = (ReturnPath)signature.getReturnPath();
                 } else if (entry instanceof Srv) {
                     rp = ((Srv) entry).getReturnPath();
@@ -216,7 +216,7 @@ public class SrvModelAutoDeps {
                 ReturnPath rp = null;
                 Object entryVal = ((Entry)entry).getItem();
                 if (entryVal instanceof SignatureEntry) {
-                    Signature signature = ((SignatureEntry)entryVal).getItem();
+                    Signature signature = (Signature) ((SignatureEntry)entryVal).getItem();
                     rp =  (ReturnPath)signature.getReturnPath();
                 } else if (entry instanceof Srv) {
                     rp = ((Srv)entry).getReturnPath();

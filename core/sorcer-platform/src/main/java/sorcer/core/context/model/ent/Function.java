@@ -45,6 +45,8 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 
 	protected boolean negative;
 
+	protected String name;
+
 	protected Object annotation;
 
 	// dependency management for this Entry
@@ -57,12 +59,14 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");
 		this.key = path;
+        this.name = path;
 	}
 
 	public Function(final String path, final T value) {
         if(path==null)
             throw new IllegalArgumentException("path must not be null");
         this.key = path;
+        this.name = key;
         if (value instanceof Fi) {
             multiFi = (Fi) value;
             this.item = (T)  multiFi.get(0);
@@ -83,8 +87,14 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 	}
 
 	@Override
+	public String getName() {
+		return name;
+	}
+
+
+	@Override
 	public T getValue(Arg... args) throws EvaluationException, RemoteException {
-		T val = this.item;
+		Object val = this.item;
 		URL url = null;
 		try {
 			substitute(args);
@@ -92,7 +102,7 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 				if (SdbUtil.isSosURL(val)) {
 					Object out = ((URL)val).getContent();
 					if (out instanceof UuidObject)
-						val = (T) ((UuidObject) val).getObject();
+						out = (T) ((UuidObject) val).getObject();
 				} else {
 					if (val instanceof UuidObject) {
 						url = SdbUtil.store(val);
@@ -101,16 +111,16 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 						uo.setName(key);
 						url = SdbUtil.store(uo);
 					}
-					this.item = (T)url;
+					out = (T)url;
 				}
 			} else if (val instanceof Invocation) {
 				Context cxt = (Context) Arg.selectDomain(args);
 				if (val instanceof Scopable) {
                     ((Scopable)val).setScope(scope);
                 }
-				val = (T) ((Invocation) val).invoke(cxt, args);
+				out = (T) ((Invocation) val).invoke(cxt, args);
 			} else if (val instanceof Evaluation) {
-				val = ((Evaluation<T>) val).getValue(args);
+				out = ((Evaluation<T>) val).getValue(args);
 			} else if (val instanceof ServiceFidelity) {
 				// return the selected fidelity of this entry
 				for (Arg arg : args) {
@@ -121,18 +131,18 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 						}
 					}
 				}
-				val = (T) ((Entry)((ServiceFidelity) val).getSelect()).get(args);
+				out = (T) ((Entry)((ServiceFidelity) val).getSelect()).get(args);
 			} else if (val instanceof Callable) {
-				val = (T) ((Callable)val).call(args);
+				out = (T) ((Callable)val).call(args);
 			} else if (val instanceof Service) {
-				val = (T) ((Service)val).execute(args);
+				out = (T) ((Service)val).execute(args);
 			}
 		} catch (Exception e) {
 			throw new EvaluationException(e);
 		}
 		if (contextSelector != null) {
 			try {
-				val = (T) contextSelector.doSelect(val);
+				out = (T) contextSelector.doSelect(val);
 			} catch (ContextException e) {
 				throw new EvaluationException(e);
 			}
@@ -140,9 +150,9 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 		if (val instanceof Number && negative) {
 			Number result = (Number) val;
 			Double rd = result.doubleValue() * -1;
-			val = (T) rd;
+			out = (T) rd;
 		}
-		return val;
+		return out;
 	}
 
 	@Override
@@ -173,7 +183,7 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 				throw new SetterException(e);
 			}
 		} else {
-			this.item = (T) value;
+			this.out = (T) value;
 		}
 	}
 
@@ -307,7 +317,12 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 		return out;
 	}
 
-	public boolean isNegative() {
+    @Override
+    public boolean isReactive() {
+        return true;
+    }
+
+    public boolean isNegative() {
 		return negative;
 	}
 

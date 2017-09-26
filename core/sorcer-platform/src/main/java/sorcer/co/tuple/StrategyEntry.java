@@ -19,6 +19,7 @@ package sorcer.co.tuple;
 
 import sorcer.service.Arg;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.service.ContextException;
 import sorcer.service.Strategy;
 
 import java.io.IOException;
@@ -44,14 +45,15 @@ public class StrategyEntry extends Entry<Strategy> implements Arg {
 		url = strategy;
 	}
 
-	public Strategy strategy() {
+	@Override
+	public Strategy getData(Arg... args) throws ContextException {
 		if (url != null) {
 			try {
-				return (Strategy) url.getContent();
+				out = (Strategy) url.getContent();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		return item;
+		return out;
 	}
 }

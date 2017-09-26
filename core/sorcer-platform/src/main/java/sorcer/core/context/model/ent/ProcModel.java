@@ -132,6 +132,9 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			}
 
 			if (val != null && val instanceof Invocation) {
+				if (isChanged && val instanceof ServiceInvoker) {
+					((ServiceInvoker)val).valueValid(false);
+				}
 				if (get(path) instanceof Proc) {
 					return ((Invocation) val).invoke(((Entry) get(path)).getScope(), args);
 				} else {

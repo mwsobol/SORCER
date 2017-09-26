@@ -39,6 +39,7 @@ import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Functionality.Type;
 import sorcer.service.modeling.Valuation;
+import sorcer.service.modeling.func;
 import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
@@ -353,13 +354,24 @@ public class operator extends Operator {
 	}
 
 	public static <T> Value<T> val(String path, T value) {
-		Value ent = new Value<T>(path, value);
-		ent.setType(Type.VAL);
-		return ent;
+		Value ent = null;
+		if (value instanceof Value) {
+            ent = new Value<T>(path, (T) ((Value)value).getOut());
+        } else {
+            ent = new Value<T>(path, value);
+        }
+        ent.setType(Type.VAL);
+        return ent;
 	}
 
 	public static <T> Value<T> val(Path path, T value) {
-		Value ent = new Value<T>(path.path, value);
+        Value ent = null;
+        if (value instanceof Value) {
+            ent = new Value<T>(path.path, (T) ((Value)value).getOut());
+            ent.setItem(value);
+        } else {
+            ent = new Value<T>(path.path, value);
+        }
 		ent.annotation(path.info.toString());
 		ent.setType(Type.VAL);
 		return ent;
@@ -494,36 +506,6 @@ public class operator extends Operator {
 		de.annotation(fi);
 		de.setType(Functionality.Type.FIDELITY);
 		return de;
-	}
-
-	public static ExecDependency[] deps(ExecDependency... dependencies) {
-		return dependencies;
-	}
-
-	public static <T> Entry<T> rvEnt(String path, T value) {
-		Entry<T> e = new Entry<T>(path, value);
-		return e.setReactive(true);
-	}
-
-	public static <T> Entry<T> urvEnt(String path, T value) {
-		Entry<T> e = new Entry<T>(path, value);
-		return e.setReactive(false);
-	}
-
-	public static <T> Reactive<T> rrvEnt(Context<T> cxt, String path) throws ContextException {
-		T obj = cxt.asis(path);
-		if (obj instanceof Reactive)
-			return ((Reactive<T>) obj).setReactive(true);
-		else
-			throw new ContextException("No Entry at path: " + path);
-	}
-
-	public static <T> Reactive<T> urvEnt(Context<T> cxt, String path) throws ContextException {
-		T obj = cxt.asis(path);
-		if (obj instanceof Reactive)
-			return ((Reactive<T>) obj).setReactive(false);
-		else
-			throw new ContextException("No Entry at path: " + path);
 	}
 
 	public static Value<Object> val(String path) {
@@ -824,8 +806,8 @@ public class operator extends Operator {
 		return entry.value();
 	}
 
-	public static <V> V val(Entry<V> entry) {
-		return entry.getItem();
+	public static <V> V val(Entry<V> entry) throws ContextException {
+		return entry.getData();
 	}
 
 	public static <V> String key(Entry<V> entry) {
@@ -994,11 +976,16 @@ public class operator extends Operator {
 							  Arg... args) throws ContextException {
 		try {
 			Object val = context.get(path);
-			if (context instanceof DataContext) {
-				return (T) val;
-			} else if (val instanceof Value) {
-				return (T) ((Value)val).getData();
+            if (context instanceof DataContext) {
+                if (val instanceof Number) {
+                    return (T) val;
+                } else if (val instanceof Value) {
+                    return (T) ((Value)val).getData();
+                } else {
+                    return (T) val;
+                }
 			}
+			// legacy support
 			val = ((ServiceContext) context).getValue(path, args);
 			if (SdbUtil.isSosURL(val)) {
 				return (T) ((URL) val).getContent();
@@ -1118,10 +1105,10 @@ public class operator extends Operator {
 		return map;
 	}
 
-	public static <K, V> Map<K, V> map(Association<K, V>... entries) {
+	public static <K, V> Map<K, V> map(Association<K, V>... entries) throws ContextException {
 		Map<K, V> map = new HashMap<K, V>();
 		for (Association<K, V> entry : entries) {
-			map.put(entry.getKey(), entry.getItem());
+			map.put(entry.getKey(), entry.getData());
 		}
 		return map;
 	}
@@ -1140,12 +1127,17 @@ public class operator extends Operator {
 		return rasis(entry);
 	}
 
-	public static Object asis(Function entry)
+	public static Object item(Entry entry)
+			throws ContextException {
+		return entry.getItem();
+	}
+
+	public static Object asis(Entry entry)
 			throws ContextException {
 		return entry.asis();
 	}
 
-	public static Object asis(Entry entry)
+	public static Object asis(Function entry)
 			throws ContextException {
 		return entry.asis();
 	}

@@ -110,14 +110,14 @@ public class ServiceFidelity extends Fidelity<Service> {
 		this.fiName = name;
 	}
 
-	public void setSelect(String fiName) {
+	public Service setSelect(String fiName) {
 		for (Service item : selects) {
-			if (((Identifiable)item).getName().equals(fiName)) {
+			if (((Identifiable) item).getName().equals(fiName)) {
 				this.select = item;
-				return;
+				break;
 			}
-
 		}
+		return select;
 	}
 
 	public String getPath(String fidelityName) {

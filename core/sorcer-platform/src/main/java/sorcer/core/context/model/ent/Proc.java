@@ -23,7 +23,6 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Valuation;
 import sorcer.service.modeling.VariabilityModeling;
 import sorcer.service.modeling.func;
 import sorcer.util.bdb.objects.UuidObject;
@@ -50,8 +49,6 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	private static final long serialVersionUID = 7495489980319169695L;
 	 
 	private static Logger logger = LoggerFactory.getLogger(Proc.class.getName());
-
-	protected final String name;
 	
 	private Principal principal;
 
@@ -77,6 +74,10 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	public Proc(String path, T entity) {
 		super(path, entity);
 		name = path;
+		if (entity instanceof  Number || entity instanceof  String || entity instanceof  Date
+                || entity instanceof  List || entity instanceof  Map || entity.getClass().isArray()) {
+		    out = entity;
+        }
 
 		if (entity instanceof Evaluation || entity instanceof Invocation) {
 			if (entity instanceof ConditionalInvocation) {
@@ -95,6 +96,10 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	public Proc(String path, Object entity, Object scope)
 			throws ContextException {
 		this(path, (T) entity);
+        if (entity instanceof  Number || entity instanceof  String || entity instanceof  Date
+                || entity instanceof  List || entity instanceof  Map || entity.getClass().isArray()) {
+            out = (T) entity;
+        }
 		if (entity instanceof String && scope instanceof Service) {
 			mappable = (Mappable) scope;
 			if (scope instanceof Context) {
@@ -113,14 +118,6 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		this(name);
 		item =  (T)path;
 		mappable = map;
-	}
-	
-	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluation#getName()
-	 */
-	@Override
-	public String getName() {
-		return name;
 	}
 
 	public void setValue(Object value) throws SetterException {
@@ -172,17 +169,6 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	public T get(Arg... args) {
 		return out;
 	}
-
-	/* (non-Javadoc)
-         * @see sorcer.service.Evaluation#getAsis()
-         */
-	public T asis() {
-		if (out != null) {
-			return out;
-		} else {
-			return item;
-		}
-	}
 	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Evaluation#execute(sorcer.co.tuple.Parameter[])
@@ -191,9 +177,9 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	public T getValue(Arg... args) throws EvaluationException, RemoteException {
 		// check for a constant or cached eval
 		if (item instanceof Number && !isPersistent) {
-			return item;
+			return (T) item;
 		} else if (item instanceof Incrementor || ((item instanceof ServiceInvoker) &&
-				scope != null && (scope instanceof ProcModel) && ((ProcModel)scope).isChanged())) {
+				scope != null && scope.isChanged())) {
 			isValid = false;
 		}
 
@@ -209,7 +195,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 				throw new EvaluationException(e);
 			}
 		}
-		T val = null;
+		Object val = null;
 		try {
 			substitute(args);
 			if (multiFi != null) {
@@ -321,7 +307,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
                         out = ((Entry<T>) arg).getData();
                     } else {
 					    if (scope == null) {
-					        scope = new ServiceContext();
+					        scope = new ProcModel();
                         }
                         ((ServiceContext)scope).put(arg.getName(), ((Entry)arg).getData());
 					}
@@ -636,4 +622,5 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 			return getValue(args);
 		}
 	}
+
 }

@@ -54,7 +54,7 @@ public class MdaEntry extends Entry<Mda> implements Mda {
     }
 
     public Mda getMda() {
-        return item;
+        return out;
     }
 
     public Signature getSignature() {
@@ -64,12 +64,12 @@ public class MdaEntry extends Entry<Mda> implements Mda {
     @Override
     public void analyze(Model model, Context context) throws EvaluationException {
         try {
-            if (item != null && item instanceof Mda) {
-                item.analyze(model, context);
+            if (out != null && out instanceof Mda) {
+                out.analyze(model, context);
             } else if (signature != null) {
-                item = (Mda) ((ObjectSignature)signature).initInstance();
-                item.analyze(model, context);
-            } else if (item == null) {
+                out = (Mda) ((ObjectSignature)signature).initInstance();
+                out.analyze(model, context);
+            } else if (out == null) {
                 throw new InvocationException("No MDA anslysis available!");
             }
         } catch (ContextException | SignatureException e) {

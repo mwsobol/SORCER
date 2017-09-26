@@ -38,6 +38,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import static sorcer.eo.operator.context;
@@ -578,9 +579,9 @@ public class operator extends Operator {
 	}
 
 	public static MethodInvoker methodInvoker(String selector, Object methodObject,
-											  Context context, Args... args) {
+											  Domain context, Args... args) {
 		MethodInvoker mi = new MethodInvoker(selector, methodObject, selector, args);
-		Context cxt = context;
+		Domain cxt = context;
 		if (context == null) {
 			cxt = new ServiceContext();
 		}
@@ -719,8 +720,8 @@ public class operator extends Operator {
 
     public static <T> Entry<T> ent(String path, T value, Arg... args) {
 		Entry<T> entry = null;
-		if (value instanceof Number ||  value instanceof String ||
-				value instanceof Date) {
+		if (value instanceof  Number || value instanceof  String || value instanceof  Date
+				|| value instanceof  List || value instanceof Map || value.getClass().isArray()) {
 			return new Value(path, value);
 		} else if (value instanceof Context && args != null && args.length > 0) {
 			return (Entry<T>) new Neo(path, (Context)value, new Args(args));

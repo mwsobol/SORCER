@@ -13,8 +13,6 @@ import java.rmi.RemoteException;
 public class Entry<V> extends Association<String, V>
         implements Identifiable, Getter, Callable<V>, Setter, Reactive<V>, ent<V> {
 
-    protected V out;
-
     protected boolean negative;
 
     // its arguments is persisted
@@ -62,21 +60,33 @@ public class Entry<V> extends Association<String, V>
         this.contextSelector = contextSelector;
     }
 
-    public V getData(Arg... args) {
-        if (multiFi != null && multiFi.isChanged()) {
-            item = (V) multiFi.getSelect();
-            multiFi.setChanged(false);
+    public V getData(Arg... args) throws ContextException {
+        if (out != null) {
+            if (multiFi == null && isValid) {
+                return out;
+            } else if (!multiFi.isChanged() && isValid) {
+                return out;
+            }
+        } else {
+            out = get(args);
+            isValid = true;
         }
-        if (item instanceof Entry && ((Entry)item).getKey().equals(key)) {
-            return (V) ((Entry)item).getData();
-        }
-        return item;
+        return out;
     }
 
     @Override
     public V get(Arg... args) throws ContextException {
-        V val = item;
-        Object out = null;
+        if (multiFi != null && multiFi.isChanged()) {
+            item = multiFi.getSelect();
+            multiFi.setChanged(false);
+        }
+        if (item instanceof Entry && ((Entry)item).getKey().equals(key)) {
+            out = (V) ((Entry)item).getData(args);
+            isValid = true;
+            return out;
+        }
+
+        Object val = item;
         URL url = null;
         try {
             substitute(args);
@@ -84,7 +94,7 @@ public class Entry<V> extends Association<String, V>
                 if (SdbUtil.isSosURL(val)) {
                     out = (V) ((URL) val).getContent();
                     if (out instanceof UuidObject)
-                        val = (V) ((UuidObject) val).getObject();
+                        out = (V) ((UuidObject) val).getObject();
                 } else {
                     if (val instanceof UuidObject) {
                         url = SdbUtil.store(val);
@@ -93,28 +103,29 @@ public class Entry<V> extends Association<String, V>
                         uo.setName(key);
                         url = SdbUtil.store(uo);
                     }
-                    item = (V)url;
+                    item = url;
+                    out = null;
                 }
             } else if (val instanceof Invocation) {
                 Context cxt = (Context) Arg.selectDomain(args);
-                val = (V) ((Invocation) val).invoke(cxt, args);
+                out = (V) ((Invocation) val).invoke(cxt, args);
             } else if (val instanceof Evaluation) {
                 if (val instanceof Entry && ((Entry)val).getName().equals(key)) {
-                    val = (V) ((Entry)val).get(args);
+                    out = (V) ((Entry)val).get(args);
                 } else {
-                    val = ((Evaluation<V>) val).getValue(args);
+                    out = ((Evaluation<V>) val).getValue(args);
                 }
             } else if (val instanceof Valuation) {
-                val = (V) ((Valuation) val).value();
+                out = (V) ((Valuation) val).value();
             } else if (val instanceof Ref) {
                 Object deref = ((Ref)val).get();
                 if (deref instanceof  Evaluation) {
                     if (deref instanceof Scopable) {
                         ((Scopable)deref).setScope(((Ref)val).getScope());
                     }
-                    val = (V) ((Evaluation)deref).getValue(args);
+                    out = (V) ((Evaluation)deref).getValue(args);
                 } else {
-                    val = (V) ((Entry)deref).get(args);
+                    out = (V) ((Entry)deref).get(args);
                 }
             } else if (val instanceof ServiceFidelity) {
                 // return the selected fidelity of this entry
@@ -126,13 +137,12 @@ public class Entry<V> extends Association<String, V>
                         }
                     }
                 }
-                val = (V) ((Entry)((ServiceFidelity) val).getSelect()).get(args);
+                out = (V) ((Entry)((ServiceFidelity) val).getSelect()).get(args);
             } else if (val instanceof Callable) {
-                val = (V) ((Callable)val).call(args);
+                out = (V) ((Callable)val).call(args);
             } else if (val instanceof Service) {
-                val = (V) ((Service)val).execute(args);
+                out = (V) ((Service)val).execute(args);
             }
-            out = val;
         } catch (Exception e) {
             throw new ContextException(e);
         }

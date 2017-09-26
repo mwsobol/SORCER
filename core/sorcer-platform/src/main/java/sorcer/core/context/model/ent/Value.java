@@ -31,15 +31,18 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
 
     public Value(final String path, final T value) {
         super(path, value);
+        out = value;
     }
 
     public Value(String path, T value, int index) {
         this(path, value);
+        this.out = value;
         this.index = index;
     }
 
     public Value(String path, T value, boolean isPersistant, int index) {
         this(path, value, index);
+        this.out = value;
         this.isPersistent = isPersistant;
     }
 
@@ -47,7 +50,8 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
         if (isPersistent) {
             try {
                 if (SdbUtil.isSosURL(value)) {
-                    this.item = (T) value;
+                    this.out = (T) value;
+                    this.item = value;
                 } else if (SdbUtil.isSosURL(this.item)) {
                     if (((URL) this.item).getRef() == null) {
                         this.item = (T) SdbUtil.store(value);
@@ -118,7 +122,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
     }
 
     @Override
-    public T value() {
+    public T value() throws ContextException {
         return getData();
     }
 
@@ -127,15 +131,21 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
             for (Arg arg : args) {
                 if (arg instanceof Fidelity && multiFi != null) {
                     if (((Fidelity) arg).getPath() == null || ((Fidelity) arg).getPath().equals(key)) {
-                        multiFi.setSelect(arg.getName());
-                        item = (T) ((Value) multiFi.getSelect()).get(args);
+                        item = multiFi.setSelect(arg.getName());
+                        out = (T) ((Entry)item).getData(args);
+                        multiFi.setChanged(false);
+                        isValid = true;
                     }
                 }
             }
         } else if (item instanceof Entry) {
-            return (T) ((Entry)item).getData(args);
+            out = (T) ((Entry)item).get(args);
+            isValid = true;
+        } else {
+            out = (T) item;
+            isValid = true;
         }
-        return item;
+        return out;
     }
 
 

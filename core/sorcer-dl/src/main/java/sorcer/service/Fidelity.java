@@ -126,14 +126,14 @@ public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry
 		this.select = select;
 	}
 
-	public void setSelect(String fiName) {
+	public T setSelect(String fiName) {
 		for (T item : selects) {
 			if (((Identifiable)item).getName().equals(fiName)) {
 				this.select = item;
-				return;
+				break;
 			}
-
 		}
+		return select;
 	}
 
 	public T getSelect(String name) {

@@ -132,30 +132,10 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 					}
 				}
 			}
-//			TODO testing
-//			printedEntries(args);
 		} catch (Exception e) {
 			logger.error("Error Occurred in Groovy Shell: " + e.getMessage());
 		}
 		return (T) result;
-	}
-
-	private void printedEntries(Arg... entries) throws EvaluationException {
-		if(expression.equals("_print_")) {
-			List<Path> paths = new ArrayList<Path>();
-			for (Arg a : entries) {
-				if (a instanceof Path) {
-					paths.add((Path) a);
-				}
-			}
-			for (Path p : paths)
-				try {
-					System.out.println("entry: " + p + "="
-                            + invokeContext.getValue(p.getName()));
-				} catch (ContextException e) {
-					throw new EvaluationException(e);
-				}
-		}
 	}
 
 	private void initBindings() throws RemoteException, ContextException {

@@ -360,24 +360,18 @@ public class CollectionOperators {
 		assertTrue(get(cxt, "arg/x6").equals(1.6));
 		assertTrue(asis(cxt, "arg/x7") instanceof Invocation);
 
-		// aliasing args with reactive execute args - rvEnt
-		put(cxt, rvEnt("arg/x6", ent("overwrite", 20.0)));
-		assertTrue(value(cxt, "arg/x6").equals(20.0));
-		urvEnt(cxt, "arg/x6");
-		assertTrue(eval((Entry)value(cxt, "arg/x6")).equals(20.0));
-		rrvEnt(cxt, "arg/x6");
-		assertTrue(value(cxt, "arg/x6").equals(20.0));
-
-		// aliasing args, args are always reactive
-		put(cxt, ent("arg/x6", ent("overwrite", 40.0)));
+		// reusing value entries
+		put(cxt, val("arg/x6", val("overwrite", 40.0)));
 		assertTrue(value(cxt, "arg/x6").equals(40.0));
 
-		logger.info("x1: " + value(cxt, "arg/x1"));
-		logger.info("x3: " + value(cxt, "arg/x3"));
-
+		// eval and val on data context is the same
+		// however use eval for functions and val for data
 		assertTrue(asis(cxt, "arg/x7") instanceof Invocation);
-		// out returns invoker - repacking
-		assertEquals(4.0, eval(ent("arg/x7", value(cxt, "arg/x7"))));
+		logger.info("x7a: " + eval(cxt, "arg/x7"));
+		logger.info("x7b: " + value(cxt, "arg/x7"));
+		assertTrue(eval(cxt, "arg/x7") instanceof Proc);
+		assertTrue(value(cxt, "arg/x7") instanceof Proc);
+
 
 	}
 
@@ -388,7 +382,6 @@ public class CollectionOperators {
 		add(pm, ent("x", 10.0), ent("y", 20.0));
 		add(pm, invoker("add", "x + y", args("x", "y")));
 
-//		logger.info("adder eval: " + eval(pm, "add"));
 		assertEquals(eval(pm, "John/weight"), 180.0);
 		assertEquals(eval(pm, "add"), 30.0);
 		setValue(pm, "x", 20.0);

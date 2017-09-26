@@ -34,6 +34,7 @@ public class ExecDependency extends Function<List<Path>> {
     @SuppressWarnings("unchecked")
     public ExecDependency(String path, List<Path> paths) {
         key = path;
+        name = path;
         item = paths;
     }
 

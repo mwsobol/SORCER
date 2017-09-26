@@ -170,7 +170,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 		if (o == null)
 			throw new NullPointerException();
 		if (o instanceof Double)
-			return item.compareTo(o);
+			return out.compareTo(o);
 		else
 			return -1;
 	}
@@ -211,9 +211,9 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
     @Override
     public Double getValue(Arg... args) throws EvaluationException, RemoteException {
 	    if (activator.getArgs().size() > 0) {
-            item = activator.activate(args);
+            out = activator.activate(args);
         }
-        return item;
+        return out;
     }
 
 	@Override
@@ -264,10 +264,10 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
             if (fidelities != null) {
                activator.setFidelities(fidelities);
             } else if (activator.getArgs().size() == 0) {
-                return item;
+                return out;
             }
             item = activator.activate(args);
-            return item;
+            return out;
         } catch (Exception e) {
             throw new InvocationException(e);
         }

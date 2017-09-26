@@ -19,6 +19,7 @@ package sorcer.service.modeling;
 
 
 import sorcer.service.Activity;
+import sorcer.service.ContextException;
 
 /**
  * The functionality for all execute objects.
@@ -32,7 +33,7 @@ public interface Valuation<T> extends Activity, Getter {
 	 * 
 	 * @return the current execute of this valuation
 	 */
-	public T value();
+	public T value() throws ContextException;
 
 	/**
 	 * Sets the current execute of this valuation.

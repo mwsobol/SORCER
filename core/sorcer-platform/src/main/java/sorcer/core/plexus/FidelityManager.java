@@ -378,9 +378,9 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         metafidelities.put(sysFiName, sysFi);
     }
 
-    public void put(Entry<Metafidelity>... entries) {
+    public void put(Entry<Metafidelity>... entries) throws ContextException {
         for(Entry<Metafidelity> e : entries) {
-            metafidelities.put(e.getName(), e.getItem());
+            metafidelities.put(e.getName(), e.getData());
         }
     }
 

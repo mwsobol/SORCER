@@ -12,6 +12,7 @@ import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.Value;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.func;
 import sorcer.util.GenericUtil;
 
 import java.rmi.RemoteException;
@@ -42,6 +43,10 @@ public class Entries {
 	@Test
 	public void directionalEntries() throws Exception {
 
+        Entry x0 = ent("arg/x0", 10.0);
+        assertEquals(10.0, eval(x0));
+        assertTrue(direction(x0) == null);
+
         Function x1 = proc("arg/x1", 100.0);
         assertEquals(100.0, eval(x1));
         assertTrue(direction(x1) == null);
@@ -58,7 +63,7 @@ public class Entries {
 		Entry x4 = inoutVal("arg/x4", x3);
 		assertEquals(eval(x3), eval(x4));
         assertTrue(direction(x4) == Direction.INOUT);
-		assertEquals(name(asis(x4)), "arg/x3");
+		assertEquals(name(item(x4)), "arg/x3");
         assertTrue(direction(x4) == Direction.INOUT);
     }
 
@@ -112,7 +117,7 @@ public class Entries {
 
 		Function y = proc("y", expr("x1 + x2", args("x1", "x2")));
 
-		assertTrue(eval(y, proc("x1", 10.0), proc("x2", 20.0)).equals(30.0));
+		assertTrue(eval(y, val("x1", 10.0), val("x2", 20.0)).equals(30.0));
 	}
 
 
@@ -137,8 +142,8 @@ public class Entries {
         }
     }
 
-	@Test
-	public void methodEntry() throws Exception {
+    @Test
+    public void methodInvokerContext() throws Exception {
 
         Object obj = new Doer();
 
@@ -147,7 +152,23 @@ public class Entries {
         assertEquals(eval(m1), 40.0);
 
         // method invocation with a scope
-        Context scope = context(proc("x", 200.0), proc("y", 300.0));
+        Context scope = context(val("x", 200.0), val("y", 300.0));
+        m1 = proc("m1", methodInvoker("invoke", obj, scope));
+        assertEquals(eval(m1), 400.0);
+    }
+
+
+    @Test
+	public void methodInvokerModel() throws Exception {
+
+        Object obj = new Doer();
+
+        // no scope for invocation
+        Entry m1 = proc("m1", methodInvoker("invoke", obj));
+        assertEquals(eval(m1), 40.0);
+
+        // method invocation with a scope
+        Model scope = model(proc("x", 200.0), proc("y", 300.0));
         m1 = proc("m1", methodInvoker("invoke", obj, scope));
         assertEquals(eval(m1), 400.0);
     }
@@ -209,22 +230,39 @@ public class Entries {
     }
 
 	@Test
-	public void getConditionalProcValue() throws Exception {
+	public void getConditionalProcValueContextScope() throws Exception {
 
-		Function y1 = proc("y1", alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
-			opt(condition((Context<Double> cxt) -> value(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
-			context(proc("x1", 10.0), proc("x2", 20.0)));
+		func y1 = proc("y1", alt(opt(condition((Context<Double> cxt)
+                        -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
+			opt(condition((Context<Double> cxt) -> value(cxt, "x1")
+                    <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
+			context(val("x1", 10.0), val("x2", 20.0)));
 
 //        logger.info("out eval: {}", eval(y1));
 		assertEquals(30.0,  eval(y1));
 	}
 
+    @Test
+    public void getConditionalProcValueModelScopel() throws Exception {
+
+        func y1 = proc("y1", alt(opt(condition((Context<Double> cxt)
+                        -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
+                opt(condition((Context<Double> cxt) -> value(cxt, "x1")
+                        <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
+                model(proc("x1", 10.0), proc("x2", 20.0)));
+
+//        logger.info("out eval: {}", eval(y1));
+        assertEquals(30.0,  eval(y1));
+    }
+
 	@Test
 	public void getConditionalProc2Value() throws Exception {
 
-		Function y1 = proc("y1", alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
-			opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
-			context(proc("x1", 20.0), proc("x2", 10.0)));
+		func y1 = proc("y1", alt(opt(condition((Context<Double> cxt)
+                        -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
+			opt(condition((Context<Double> cxt) -> v(cxt, "x1")
+                    <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
+			model(proc("x1", 20.0), proc("x2", 10.0)));
 
 //        logger.info("out eval: {}", eval(y1));
 		assertEquals(200.0,  eval(y1));
@@ -233,21 +271,24 @@ public class Entries {
 	@Test
 	public void getConditionalProc3Value() throws Exception {
 
-		Function y1 = proc("y1", alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
+		func y1 = proc("y1", alt(opt(condition((Context<Double> cxt)
+                        -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
 			opt(30.0)),
-			context(proc("x1", 10.0), proc("x2", 20.0)));
+			model(proc("x1", 10.0), proc("x2", 20.0)));
 
 //        logger.info("out eval: {}", eval(y1));
 		assertEquals(30.0,  eval(y1));
 	}
 
 	@Test
-	public void getConditionalValueParModel() throws Exception {
+	public void getConditionalValueProcModel() throws Exception {
 
 		Model mdl = model(
 			proc("x1", 10.0), proc("x2", 20.0),
-			proc("y1", alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
-				opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
+			proc("y1", alt(opt(condition((Context<Double> cxt)
+                            -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
+				opt(condition((Context<Double> cxt)
+                        -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
 
 //        logger.info("out eval: {}", eval(mdl, "y1"));
 		assertEquals(30.0,  eval(mdl, "y1"));
@@ -257,8 +298,10 @@ public class Entries {
     public void getConditionalBlockSrvValue() throws Exception {
 
         Function y1 = srv("y1", block(context(proc("x1", 10.0), proc("x2", 20.0)),
-            alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))),
-                opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
+            alt(opt(condition((Context<Double> cxt)
+                            -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))),
+                opt(condition((Context<Double> cxt)
+                        -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
 
 //        logger.info("out eval: {}", eval(y1));
         assertEquals(30.0,  eval(y1));
@@ -269,8 +312,10 @@ public class Entries {
 
         Model mdl = model(
             proc("x1", 10.0), proc("x2", 20.0),
-            srv("y1", block(alt(opt(condition((Context<Double> cxt) -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
-                    opt(condition((Context<Double> cxt) -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))))));
+            srv("y1", block(alt(opt(condition((Context<Double> cxt)
+                            -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
+                    opt(condition((Context<Double> cxt) -> v(cxt, "x1")
+                            <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))))));
 
 //        logger.info("out eval: {}", eval(mdl, "y1"));
         assertEquals(30.0,  eval(mdl, "y1"));

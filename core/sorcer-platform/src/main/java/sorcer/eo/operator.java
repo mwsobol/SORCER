@@ -376,12 +376,12 @@ public class operator extends Operator {
 				cxt = new SharedAssociativeContext(name);
 			} else if (types.contains(Context.Type.ASSOCIATIVE)) {
 				if (subject != null)
-					cxt = new ServiceContext(name, subject.getName(), subject.getItem());
+					cxt = new DataContext(name, subject.getName(), subject.getItem());
 				else
-					cxt = new ServiceContext(name);
+					cxt = new DataContext(name);
 			} else if (customContextClass != null) {
 				try {
-					cxt = (ServiceContext) customContextClass.newInstance();
+					cxt = (DataContext) customContextClass.newInstance();
 				} catch (Exception e) {
 					throw new ContextException(e);
 				}
@@ -391,10 +391,10 @@ public class operator extends Operator {
 					cxt.setName(name);
 			} else {
 				if (subject != null) {
-					cxt = new PositionalContext(name, subject.getName(),
+					cxt = new DataContext(name, subject.getName(),
 							subject.getItem());
 				} else {
-					cxt = new PositionalContext(name);
+					cxt = new DataContext(name);
 				}
 			}
 		}
@@ -659,7 +659,8 @@ public class operator extends Operator {
 		return context;
 	}
 
-	public static Context add(Domain model, Identifiable... objects) throws ContextException, RemoteException {
+	public static Context add(Domain model, Identifiable... objects)
+			throws ContextException, RemoteException {
 		return add((Context) model, objects);
 	}
 
@@ -696,7 +697,7 @@ public class operator extends Operator {
 					}
 				} else {
 					if (i instanceof Value) {
-						pc.putValueAt(i.getName(), ((Entry) i).getItem(), pc.getTally() + 1);
+						pc.putValueAt(i.getName(), ((Entry) i).getOut(), pc.getTally() + 1);
 					} else {
 						if (context instanceof ProcModel || isReactive) {
 							pc.putValueAt(i.getName(), i, pc.getTally() + 1);
@@ -2636,7 +2637,7 @@ public class operator extends Operator {
 
 		public Range(Integer from, Integer to) {
 			this.key = from;
-			this.item = to;
+			this.out = to;
 		}
 
 		public Range(Integer[] range) {
@@ -2652,14 +2653,14 @@ public class operator extends Operator {
 		}
 
 		public int to() {
-			return item;
+			return out;
 		}
 
 		public String toString() {
 			if (range != null)
 				return Arrays.toString(range);
 			else
-				return "[" + key + "-" + item + "]";
+				return "[" + key + "-" + out + "]";
 		}
 	}
 

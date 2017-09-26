@@ -164,7 +164,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                 if (isChanged()) {
                     ((Srv) val).isValid(false);
                 }
-                Object carrier = ((Srv) val).asis();
+                Object carrier = ((Srv) val).getItem();
                 if (srvFi != null && srvFi.isChanged()) {
                     carrier = ((Srv)val).getData();
                 }
@@ -174,7 +174,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     if (((Srv) val).getOut() != null && ((Srv) val).isValueCurrent() && !isChanged())
                         return ((Srv) val).getOut();
                     else {
-                        Signature sig = ((SignatureEntry) ((Srv) val).asis()).getItem();
+                        Signature sig = (Signature) ((SignatureEntry)carrier).getItem();
                         val = evalSignature(sig, path, args);
                     }
                 } else if (carrier instanceof ServiceFidelity) {
@@ -329,7 +329,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
 
     private Object evalMogram(MogramEntry mogramEntry, String path, Arg... entries)
             throws MogramException, RemoteException, TransactionException {
-        Mogram mogram = mogramEntry.asis();
+        Mogram mogram = (Mogram) mogramEntry.getItem();
 		mogram.setScope(this);
         Mogram out = mogram.exert(entries);
         if (out instanceof Exertion){
@@ -397,7 +397,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             Function entry = entry(path);
             if (del != null && del.size() > 0) {
                 for (ExecDependency de : del) {
-                    List<Path> dpl = de.getItem();
+                    List<Path> dpl = (List<Path>) de.getItem();
                     if (de.getType().equals(Functionality.Type.FIDELITY)) {
                         Fidelity deFi = (Fidelity) de.annotation();
                         if (deFi.getOption() == Fi.Type.IF) {

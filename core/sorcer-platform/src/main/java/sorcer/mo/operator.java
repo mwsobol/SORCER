@@ -85,7 +85,7 @@ public class operator {
                 e.printStackTrace();
             }
         } else {
-            ((ServiceContext)model).putValue(entName, value);
+            ((ServiceContext)model).put(entName, value);
         }
 
         if (entry instanceof Proc) {
@@ -93,7 +93,6 @@ public class operator {
             if (proc.getScope() != null && proc.getContextable() == null)
                 proc.getScope().putValue(proc.getName(), value);
         }
-
         ((ServiceMogram)model).setChanged(true);
         return model;
     }
@@ -317,7 +316,9 @@ public class operator {
             }
             Arg[] args = new Arg[argl.size()];
             argl.toArray(args);
-            ((FidelityManager)model.getFidelityManager()).reconfigure(Arg.selectFidelities(args));
+            if (model.getFidelityManager() != null) {
+                ((FidelityManager) model.getFidelityManager()).reconfigure(Arg.selectFidelities(args));
+            }
             return (ServiceContext) model.getResponse(args);
         } catch (RemoteException e) {
             throw new ContextException(e);

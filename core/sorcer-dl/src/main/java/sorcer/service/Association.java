@@ -31,9 +31,12 @@ import java.rmi.RemoteException;
 public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Serializable, Identifiable, Arg {
 	private  static final long serialVersionUID =  1L;
 
-	protected K key = null;
+	protected K key;
 
-	protected I item = null;
+    protected I out;
+
+    // carrier of out
+	protected Object item;
 
     protected Fi multiFi;
 
@@ -83,9 +86,9 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
 		this.key = key;
 	}
 
-	public I getItem() {
+	public Object getItem() {
 		if (!isValid && multiFi != null) {
-            item = (I) ((Association)multiFi.getSelect()).getItem();
+            item = ((Association)multiFi.getSelect()).getItem();
             isValid = true;
             return item;
         } else {
@@ -94,18 +97,26 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
 	}
 
     public I get(Arg... args) throws ContextException {
-        return item;
+        return out;
+    }
+
+    public I getData(Arg... args) throws ContextException {
+        if (out != null) {
+            return out;
+        } else {
+            return (I) item;
+        }
     }
 
     public I asis() {
-        return item;
+        return out;
     }
 
-    public void setItem(I item) {
+    public void setItem(Object item) {
 		this.item = item;
 	}
 
-    public void set(I item) {
+    public void set(Object item) {
         this.item = item;
     }
 

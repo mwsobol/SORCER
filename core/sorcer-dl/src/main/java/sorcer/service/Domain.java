@@ -120,4 +120,6 @@ public interface Domain extends Mogram, Dependency, mog {
 
 	public Domain add(Identifiable... objects) throws ContextException,
 			RemoteException;
+
+	public boolean isChanged();
 }

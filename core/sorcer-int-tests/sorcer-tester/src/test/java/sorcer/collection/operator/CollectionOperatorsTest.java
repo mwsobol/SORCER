@@ -50,7 +50,7 @@ public class CollectionOperatorsTest {
 	}
 
 	@Test
-	public void mapOperatorTest() throws EvaluationException {
+	public void mapOperatorTest() throws Exception {
 		Map<Object, Object> map1 = dictionary(ent("name", "Mike"), ent("height", 174.0));
 				
 		Map<String, Double> map2 = map(ent("length", 248.0), ent("width", 2.0), ent("height", 17.0));
@@ -88,7 +88,7 @@ public class CollectionOperatorsTest {
 	}
 
 	@Test
-	public void tableOperatorTest() throws EvaluationException {
+	public void tableOperatorTest() throws Exception {
 		DataTable table = dataTable(
 				list(1.1, 1.2, 1.3, 1.4, 1.5),
 				list(2.1, 2.2, 2.3, 2.4, 2.5),

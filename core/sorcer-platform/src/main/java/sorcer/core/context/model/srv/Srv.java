@@ -180,7 +180,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
                     }
                 } else if (((SignatureEntry) item).getContext() != null) {
                     try {
-                        return execSignature(((SignatureEntry) item).getItem(),
+                        return execSignature((Signature) ((SignatureEntry) item).getItem(),
                                 ((SignatureEntry) item).getContext());
                     } catch (MogramException e) {
                         throw new EvaluationException(e);

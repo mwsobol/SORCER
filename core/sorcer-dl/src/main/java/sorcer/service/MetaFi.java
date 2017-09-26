@@ -31,7 +31,7 @@ public interface MetaFi extends Fi<Fi>, Serializable {
 
     public Fi getSelect();
 
-    public void setSelect(String name);
+    public Fi setSelect(String name);
 
     public void addSelect(Fi fidelity);
 

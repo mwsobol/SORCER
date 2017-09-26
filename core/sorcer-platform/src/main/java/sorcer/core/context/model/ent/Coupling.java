@@ -9,7 +9,7 @@ public class Coupling extends Association<Tie, Tie> {
 
     public Coupling(Tie from, Tie to) {
         key = from;
-        item = to;
+        out = to;
     }
 
     public Tie from() {
@@ -17,7 +17,7 @@ public class Coupling extends Association<Tie, Tie> {
     }
 
     public Tie to() {
-        return item;
+        return out;
     }
 
     public Tie from(Tie from) {
@@ -27,11 +27,11 @@ public class Coupling extends Association<Tie, Tie> {
 
     public Tie to(Tie to) {
         item = to;
-        return item;
+        return out;
     }
 
     @Override
     public String toString() {
-        return "[" + key + "->" + item + "]";
+        return "[" + key + "->" + out + "]";
     }
 }

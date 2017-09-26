@@ -49,10 +49,6 @@ public class DataModels {
         assertTrue(get(cxt, "arg/x1").equals(1.1));
         assertTrue(asis(cxt, "arg/x1").equals(1.1));
 
-        // aliasing with an reactive eval entry - rvEnt
-        put(cxt, rvEnt("arg/x1", value(cxt, "arg/x5")));
-        assertTrue(value(cxt, "arg/x1").equals(1.5));
-
         Context<Double> subcxt = context(cxt, list("arg/x4", "arg/x5"));
         logger.info("subcontext: " + subcxt);
         assertNull(get(subcxt, "arg/x1"));

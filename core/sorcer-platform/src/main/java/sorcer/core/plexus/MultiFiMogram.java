@@ -288,8 +288,8 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Data> {
     }
 
     @Override
-    public void setSelect(String name) {
-        getMultifidelity().setSelect(name);
+    public Fi setSelect(String name) {
+        return (Fi) getMultifidelity().setSelect(name);
     }
 
     @Override

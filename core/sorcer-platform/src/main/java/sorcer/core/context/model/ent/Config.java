@@ -34,39 +34,39 @@ public class Config extends Entry<List<Setup>> {
 
 	public Config(String path, List<Setup> setups) {
 		key = path;
-		item = setups;
+		out = setups;
 	}
 
 	public Config(String path, Setup[] setups) {
 		key = path;
 		item = new ArrayList(setups.length);
 		for (Setup s :setups) {
-			item.add(s);
+			out.add(s);
 		}
 	}
 
 	public List<Setup> getSetups() {
-		return item;
+		return out;
 	}
 
 	public void add(Setup setup) throws ContextException {
-		item.add(setup);
+		out.add(setup);
 		isValid(false);
 	}
 
 	public void addAll(List<Setup> list) throws ContextException {
-		item.addAll(list);
+		out.addAll(list);
 		isValid(false);
 	}
 
 	public Setup remove(String name) throws ContextException {
 		Setup deleted = null;
-		for (Setup s : item) {
+		for (Setup s : out) {
 			if (s.getName().equals(name)) {
 				deleted = s;
 			}
 		}
-		item.remove(deleted);
+		out.remove(deleted);
 		return deleted;
 	}
 

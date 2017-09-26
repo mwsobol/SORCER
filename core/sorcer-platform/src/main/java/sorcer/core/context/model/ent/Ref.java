@@ -58,11 +58,11 @@ public class Ref<T> extends Entry<T> implements Reference, SupportComponent {
 
 	@Override
 	public T get(Arg... args) {
-		if (item == null) {
+		if (out == null) {
 			// resolve reference
-			item = (T) scope.asis(key);
+			out = (T) scope.asis(key);
 		}
-		return item;
+		return out;
 	}
 
 }
