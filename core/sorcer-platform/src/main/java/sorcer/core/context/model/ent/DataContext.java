@@ -22,6 +22,7 @@ import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.service.*;
 
+import java.rmi.RemoteException;
 import java.util.Date;
 
 public class DataContext<T> extends PositionalContext<T> {

@@ -1015,7 +1015,7 @@ public class operator extends Operator {
 			throws ContextException {
 		try {
 			synchronized (context) {
-				return (T) ((ServiceContext)context).getValue(args);
+				return (T) ((DataContext)context).getValue(args);
 			}
 		} catch (Exception e) {
 			throw new ContextException(e);

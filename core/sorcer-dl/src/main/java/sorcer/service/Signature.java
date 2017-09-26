@@ -404,7 +404,7 @@ public interface Signature extends Data, Comparable, Dependency, Identifiable,
             }
         }
 
-        public String[] getPaths() {
+        public String[] toStringArray() {
             String[] paths = new String[size()];
             for (int i = 0; i < size(); i++)
                 paths[i] = get(i).path();
@@ -412,24 +412,19 @@ public interface Signature extends Data, Comparable, Dependency, Identifiable,
             return paths;
         }
 
-        public boolean containsPath(String path) {
-            for (Path p : this) {
-                if (p.getName().equals(path)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public Path[] getExtPaths() {
+        public Path[] toPathArray() {
             Path[] paths = new Path[size()];
             return this.toArray(paths);
         }
 
-        public Path[] getSigPaths() {
-            Path[] paths = new Path[size()];
-            return this.toArray(paths);
-        }
+		public boolean containsPath(String path) {
+			for (Path p : this) {
+				if (p.getName().equals(path)) {
+					return true;
+				}
+			}
+			return false;
+		}
 
         @Override
         public String getName() {

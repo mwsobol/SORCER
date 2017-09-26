@@ -146,8 +146,8 @@ public class LocalMograms {
 		assertEquals(100.0, eval(t5));
 
 		// get the output subcontext from the context
-		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				eval(t5, result(outPaths("arg/x1", "result/y")))));
 	}
 
 	@Test
@@ -163,7 +163,7 @@ public class LocalMograms {
 	}
 
 	@Test
-	public void filterSingleOutPathContext() throws Exception {
+	public void singletonOutPathContext() throws Exception {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), outVal("out/val"),
@@ -179,7 +179,7 @@ public class LocalMograms {
 		// three entry model
 		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
 				ent(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
-				sorcer.mo.operator.response("add", "arg/x1", "arg/x2"));
+					response("add", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);
 		assertTrue(get(out, "add").equals(100.0));

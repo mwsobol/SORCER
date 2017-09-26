@@ -415,7 +415,7 @@ public class operator extends Operator {
 			throws ContextException {
 		ArgSet ps = new ArgSet();
 		for (String name : parnames) {
-			ps.add(pm.getPar(name));
+			ps.add(pm.getProc(name));
 		}
 		return ps.toArray();
 	}

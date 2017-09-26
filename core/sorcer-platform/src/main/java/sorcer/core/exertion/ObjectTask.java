@@ -149,8 +149,7 @@ public class ObjectTask extends Task {
 
 			if (result == null) {
 				if (getArgs() == null) {
-					// assume this task context is used by the signature's
-					// provider
+					// assume this task context is used by the signature's provider
 					if (dataContext != null) {
 						evaluator.setContext(dataContext);
 					}
@@ -163,11 +162,16 @@ public class ObjectTask extends Task {
 			if (result instanceof Context) {
 				ReturnPath rp = dataContext.getReturnPath();
 				if (rp != null) {
-					if (((Context) result).getValue(rp.path) != null) {
+					if (rp.path!= null && ((Context) result).getValue(rp.path) != null) {
 						dataContext.setReturnValue(((Context) result).getValue(rp.path));
 					} else if (rp.outPaths != null && rp.outPaths.length > 0) {
 						Context out = dataContext.getDirectionalSubcontext(rp.outPaths);
-						dataContext.setReturnValue(out);
+						if (rp.outPaths.length == 1) {
+							dataContext.setReturnValue(out.get(rp.outPaths[0].getName()));
+						} else {
+							dataContext.setReturnValue(out);
+						}
+						dataContext.setFinalized(true);
 					} else {
 						dataContext = (ServiceContext)result;
 					}

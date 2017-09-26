@@ -765,13 +765,18 @@ public class ServiceShell implements Exerter, Client, Callable, RemoteServiceShe
 					}
 					return val;
 				} else if (rPath.outPaths.length > 1) {
-					Object result = acxt.getValue(rPath.path);
-					if (result instanceof Context)
-						return result;
-					else {
+					if (rPath.path != null) {
+						Object result = acxt.getValue(rPath.path);
+						if (result instanceof Context) {
+							return result;
+						}
+					} else {
 						Context cxtOut = ((ServiceContext) acxt).getSubcontext(rPath.outPaths);
-						cxtOut.putValue(rPath.path, result);
-						return cxtOut;
+						if (rPath.outPaths.length == 1) {
+							return cxtOut.get(rPath.outPaths[0].getName());
+						} else {
+							return cxtOut;
+						}
 					}
 				}
 			}

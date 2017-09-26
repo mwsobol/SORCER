@@ -61,8 +61,8 @@ public class NetMograms {
 		assertTrue(eval(t5).equals(100.0));
 
 		// get the subcontext output from the exertion
-		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-				eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				eval(t5, outPaths("arg/x1", "result/y"))));
 
 	}
 

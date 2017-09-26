@@ -208,7 +208,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		return super.put(path, value);
 	}
 
-	public Proc getPar(String name) throws ContextException {
+	public Proc getProc(String name) throws ContextException {
 		Object obj = get(name);
 		if (obj instanceof Proc)
 			return (Proc) obj;

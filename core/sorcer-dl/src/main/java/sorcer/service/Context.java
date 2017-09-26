@@ -333,7 +333,7 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 
 	public Arg addProc(String path, Object value) throws ContextException;
 
-	public Arg getPar(String path) throws ContextException, RemoteException;
+	public Arg getProc(String path) throws ContextException, RemoteException;
 
 	public Object putValue(String path, Object value, String association)
 			throws ContextException;

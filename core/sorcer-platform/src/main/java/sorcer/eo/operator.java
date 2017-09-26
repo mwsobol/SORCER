@@ -469,14 +469,14 @@ public class operator extends Operator {
 			if (cxt.getReturnPath() == null) {
 				cxt.setReturnPath(new ReturnPath(outPaths));
 			} else {
-				cxt.getReturnPath().outPaths = (outPaths).getExtPaths();
+				cxt.getReturnPath().outPaths = (outPaths).toPathArray();
 			}
 		}
 		if (inPaths instanceof In) {
 			if (cxt.getReturnPath() == null) {
 				cxt.setReturnPath(new ReturnPath(inPaths));
 			} else {
-				cxt.getReturnPath().inPaths = inPaths.getSigPaths();
+				cxt.getReturnPath().inPaths = inPaths.toPathArray();
 			}
 		}
 		if (accessType != null)
@@ -1172,13 +1172,13 @@ public class operator extends Operator {
 					if (sig.getReturnPath() == null) {
 						sig.setReturnPath(new ReturnPath((In) o));
 					} else {
-						((ReturnPath)sig.getReturnPath()).inPaths = ((In) o).getSigPaths();
+						((ReturnPath)sig.getReturnPath()).inPaths = ((In) o).toPathArray();
 					}
 				} else if (o instanceof Out) {
 					if (sig.getReturnPath() == null) {
 						sig.setReturnPath(new ReturnPath((Out) o));
 					} else {
-						((ReturnPath)sig.getReturnPath()).outPaths = ((Out) o).getExtPaths();
+						((ReturnPath)sig.getReturnPath()).outPaths = ((Out) o).toPathArray();
 					}
 				} else if (o instanceof ServiceDeployment) {
 					((ServiceSignature) sig).setDeployment((ServiceDeployment) o);

@@ -638,7 +638,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		 * Allow adding to non context-leaf nodes // Check if this is a
 		 * context-leaf node; throw exception otherwise; // this policy ensures
 		 * namespace uniqueness; otherwise, rules for // aliased or shadowed
-		 * paths must be devised. Enumeration e = getPaths(); String path; int
+		 * paths must be devised. Enumeration e = toStringArray(); String path; int
 		 * len; while (e.hasMoreElements()) { path = (String)e.nextElement(); if
 		 * (path.startsWith(key)) { len = path.length(); if
 		 * (path.indexOf(CPS,len) == len) { throw new ContextException("ERROR:
@@ -2204,19 +2204,20 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (returnPath == null)
 			returnPath = new ReturnPath(Context.RETURN);
 
-		if (returnPath.path != null) {
-			if (value == null)
-				putValue(returnPath.path, (T)none);
-			else
-				putValue(returnPath.path, value);
-
-			if (returnPath.direction == Direction.IN)
-				Contexts.markIn(this, returnPath.path);
-			else if (returnPath.direction == Direction.OUT)
-				Contexts.markOut(this, returnPath.path);
-			if (returnPath.direction == Direction.INOUT)
-				Contexts.markInout(this, returnPath.path);
+		if (returnPath.path == null) {
+			returnPath.path = Context.RETURN;
 		}
+		if (value == null)
+			putValue(returnPath.path, (T)none);
+		else
+			putValue(returnPath.path, value);
+
+		if (returnPath.direction == Direction.IN)
+			Contexts.markIn(this, returnPath.path);
+		else if (returnPath.direction == Direction.OUT)
+			Contexts.markOut(this, returnPath.path);
+		if (returnPath.direction == Direction.INOUT)
+			Contexts.markInout(this, returnPath.path);
 	}
 
 	public ReturnPath getReturnJobPath() {
@@ -2825,16 +2826,21 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
-	public Proc getPar(String path) throws ContextException, RemoteException {
+	public Proc getProc(String path) throws ContextException, RemoteException {
 		return new Proc(path, this);
 	}
 
-	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
+	public T getValue(Arg... args) throws EvaluationException, RemoteException {
 		try {
-			return getValue(null, entries);
+			if (args[0] instanceof Signature.ReturnPath) {
+				return (T) getReturnValue(args);
+			} else if (args[0] instanceof Signature.Out) {
+				return (T) getSubcontext(((Signature.Out)args[0]).toPathArray());
+			}
 		} catch (ContextException e) {
 			throw new EvaluationException(e);
 		}
+		return null;
 	}
 
 	public Object getEvalValue(String path) throws ContextException {
@@ -2875,7 +2881,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				else if (returnPath != null)
 					return getReturnValue(args);
 				else if (args.length == 1 && args[0] instanceof Signature.Out) {
-					return (T) getSubcontext(((Signature.Out)args[0]).getExtPaths());
+					return (T) getSubcontext(((Signature.Out)args[0]).toPathArray());
 				} else {
 					return (T) this;
 				}
@@ -2893,8 +2899,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 							((Scopable)obj).getScope().append(this);
 						}
 					} else if (obj instanceof Entry
-							&& ((Function)obj).get() instanceof Scopable) {
-						((Scopable)((Function)obj).asis()).setScope(this);
+							&& ((Entry)obj).get() instanceof Scopable) {
+						((Scopable)((Entry)obj).asis()).setScope(this);
 					}
 					obj = ((Evaluation<T>)obj).getValue(args);
 				} else if ((obj instanceof Paradigmatic)
