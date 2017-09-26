@@ -28,6 +28,8 @@ import sorcer.service.modeling.Functionality;
  */
 public class MdaEntry extends Entry<Mda> implements Mda {
 
+    private static final long serialVersionUID = 1L;
+
     private String name;
 
     private Domain model;

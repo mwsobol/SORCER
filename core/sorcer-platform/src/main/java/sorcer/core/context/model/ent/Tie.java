@@ -5,6 +5,8 @@ package sorcer.core.context.model.ent;
  */
 public class Tie extends Entry<String> {
 
+    private static final long serialVersionUID = 1L;
+
     public Tie(String domain, String entry) {
         key = domain;
         out = entry;

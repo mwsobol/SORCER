@@ -189,19 +189,19 @@ public class CollectionOperators {
 		assertEquals(flow(se1), Strategy.Flow.PAR);
 		assertEquals(access(se1), Strategy.Access.PULL);
 
-//		// store the argument of entry (parameter)
-//		URL se1Url = storeArg(se1);
-//		Strategy st1 = (Strategy)content(se1Url);
-//		assertTrue(isPersistent(se1));
-//		assertTrue(asis(se1) instanceof URL);
-//		assertTrue(flow(se1).equals(flow(st1)));
-//		assertTrue(access(se1).equals(access(st1)));
-//
-//		// store an object
-//		store(eval(se1));
-//		Strategy st2 = (Strategy)content(se1Url);
-//		assertTrue(flow(se1).equals(flow(st2)));
-//		assertTrue(access(se1).equals(access(st2)));
+		// store the argument of entry (parameter)
+		URL se1Url = storeArg(se1);
+		Strategy st1 = (Strategy)content(se1Url);
+		assertTrue(isPersistent(se1));
+		assertTrue(asis(se1) instanceof URL);
+		assertTrue(flow(se1).equals(flow(st1)));
+		assertTrue(access(se1).equals(access(st1)));
+
+		// store an object
+		store(eval(se1));
+		Strategy st2 = (Strategy)content(se1Url);
+		assertTrue(flow(se1).equals(flow(st2)));
+		assertTrue(access(se1).equals(access(st2)));
 
 	}
 
@@ -270,7 +270,7 @@ public class CollectionOperators {
 	}
 
 	@Test
-	public void dbProcOperator() throws Exception {
+	public void dbEntOperator() throws Exception {
 
 		// persist values of args
 		Entry dbp1 = persistent(ent("design/in", 25.0));

@@ -27,7 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FidelityEntry extends Entry<ServiceFidelity> {
-	private static final long serialVersionUID = -508307270964254478L;
+
+	private static final long serialVersionUID = -1L;
 
 	// fidelities for this entry
 	protected Map<String, ServiceFidelity> fidelities;

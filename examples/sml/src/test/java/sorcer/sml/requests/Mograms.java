@@ -170,8 +170,8 @@ public class Mograms {
         assertEquals(100.0, exec(t5));
 
         // get the subcontext output from the the result path
-        assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-                exec(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+        assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+                exec(t5, outPaths("arg/x1", "result/y"))));
     }
 
 

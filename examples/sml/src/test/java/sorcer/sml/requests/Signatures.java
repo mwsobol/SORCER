@@ -494,24 +494,29 @@ public class Signatures {
 				inVal("y2", 80.0),
 				result("result/y"));
 
+		// in connector reads output context of an exertion
 		Context inc = inConn(inVal("arg/x1", "y1"),
 				inVal("arg/x2", "y2"));
 
+//		Signature ps = sig("add", AdderImpl.class, inc);
 		Signature ps = sig("add", Adder.class, prvName("Adder"), inc);
 
 		// request the remote service
-		Task as = task("as", ps, cxt);
+		Task in = task("as", ps, cxt);
 
-		logger.info("input context: " + context(as));
+		logger.info("input context: " + context(in));
+		assertEquals(20.0, value(context(in), "y1"));
+		assertEquals(80.0, value(context(in), "y2"));
 
-		Task task = exert(as);
+		// exert service provider
+		Task out = exert(in);
 
-		logger.info("input context: " + context(task));
+		logger.info("out context: " + context(out));
 
-		// input context for provider remapped as then is returned as-is
-		assertEquals(20.0, value(context(task), "arg/x1"));
-		assertEquals(80.0, value(context(task), "arg/x2"));
-		assertEquals(100.0, value(context(task), "result/y"));
+		// the input context for provider is reconnected to as requested
+		assertEquals(20.0, value(context(out), "arg/x1"));
+		assertEquals(80.0, value(context(out), "arg/x2"));
+		assertEquals(100.0, value(context(out), "result/y"));
 	}
 
 }

@@ -116,8 +116,8 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
 		this.item = item;
 	}
 
-    public void set(Object item) {
-        this.item = item;
+    public void set(I value) {
+        this.out = value;
     }
 
 	@Override

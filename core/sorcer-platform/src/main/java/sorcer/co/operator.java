@@ -624,22 +624,18 @@ public class operator extends Operator {
 	public static URL storeArg(Object object) throws EvaluationException {
 		URL dburl = null;
 		try {
-			if (object instanceof Evaluation) {
-				Evaluation entry = (Evaluation)	object;
-				Object obj = entry.asis();
+			if (object instanceof Entry) {
+				Entry entry = (Entry)	object;
+				Object obj = entry.getItem();
 				if (SdbUtil.isSosURL(obj))
 					dburl = (URL) obj;
 				else {
-					if (entry instanceof Setter) {
-						((Setter) entry).setPersistent(true);
-						dburl = SdbUtil.store(obj);
-						((Setter)entry).setValue(dburl);
-						if (object instanceof Proc) {
-							// its eval is now persisted
-							((Proc)object).set(null);
-						}
-						return dburl;
-					}
+					entry.setPersistent(true);
+					dburl = SdbUtil.store(obj);
+					entry.setValue(dburl);
+					// its out is now persisted
+					((Entry)object).set(null);
+					return dburl;
 				}
 			}
 		} catch (Exception e) {
@@ -1015,7 +1011,7 @@ public class operator extends Operator {
 			throws ContextException {
 		try {
 			synchronized (context) {
-				return (T) ((DataContext)context).getValue(args);
+				return (T) ((ServiceContext)context).getValue(args);
 			}
 		} catch (Exception e) {
 			throw new ContextException(e);

@@ -39,7 +39,7 @@ import static sorcer.eo.operator.add;
 public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, Comparable<T>,
 		EvaluationComponent, SupportComponent, Scopable, Setter {
 
-	private static final long serialVersionUID = 5168783170981015779L;
+	private static final long serialVersionUID = 1L;
 
 	public int index;
 

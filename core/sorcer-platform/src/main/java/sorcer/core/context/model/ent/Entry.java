@@ -1,5 +1,8 @@
 package sorcer.core.context.model.ent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sorcer.core.context.ContextLink;
 import sorcer.core.context.ContextSelection;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
@@ -7,11 +10,16 @@ import sorcer.service.modeling.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
+import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 
 public class Entry<V> extends Association<String, V>
         implements Identifiable, Getter, Callable<V>, Setter, Reactive<V>, ent<V> {
+
+    private static final long serialVersionUID = 1L;
+
+    protected static Logger logger = LoggerFactory.getLogger(Entry.class.getName());
 
     protected boolean negative;
 
@@ -51,6 +59,39 @@ public class Entry<V> extends Association<String, V>
         this.out = out;
     }
 
+    public Object getItem() {
+        if (!isValid && multiFi != null) {
+            item = ((Entry)multiFi.getSelect()).getItem();
+            isValid = true;
+            return item;
+        } else if (isPersistent) {
+            Object val = item;
+            URL url = null;
+            try {
+                if (SdbUtil.isSosURL(val)) {
+                    val = ((URL) val).getContent();
+                    if (val instanceof UuidObject)
+                        val = ((UuidObject) val).getObject();
+                } else {
+                    if (val instanceof UuidObject) {
+                        url = SdbUtil.store(val);
+                    } else {
+                        UuidObject uo = new UuidObject(val);
+                        uo.setName(key);
+                        url = SdbUtil.store(uo);
+                    }
+                    item = url;
+                    out = null;
+                }
+                return val;
+            } catch (IOException | MogramException | SignatureException e) {
+                logger.warn("Persisting item of entry failed: "  + this, e);
+                e.printStackTrace();
+            }
+        }
+        return item;
+    }
+
     @Override
     public void setValue(Object value) throws SetterException, RemoteException {
         item = (V) value;
@@ -85,16 +126,15 @@ public class Entry<V> extends Association<String, V>
             isValid = true;
             return out;
         }
-
         Object val = item;
         URL url = null;
         try {
             substitute(args);
             if (isPersistent) {
                 if (SdbUtil.isSosURL(val)) {
-                    out = (V) ((URL) val).getContent();
-                    if (out instanceof UuidObject)
-                        out = (V) ((UuidObject) val).getObject();
+                    val = (V) ((URL) val).getContent();
+                    if (val instanceof UuidObject)
+                        val = (V) ((UuidObject) val).getObject();
                 } else {
                     if (val instanceof UuidObject) {
                         url = SdbUtil.store(val);
@@ -106,6 +146,7 @@ public class Entry<V> extends Association<String, V>
                     item = url;
                     out = null;
                 }
+                return (V) val;
             } else if (val instanceof Invocation) {
                 Context cxt = (Context) Arg.selectDomain(args);
                 out = (V) ((Invocation) val).invoke(cxt, args);
@@ -235,6 +276,14 @@ public class Entry<V> extends Association<String, V>
                     setContextSelector((ContextSelection) a);
                 }
             }
+        }
+    }
+
+    public V asis() {
+        if (out == null && item != null) {
+            return (V) item;
+        } else {
+            return out;
         }
     }
 }

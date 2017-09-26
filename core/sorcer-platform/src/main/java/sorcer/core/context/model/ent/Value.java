@@ -7,12 +7,15 @@ import sorcer.service.modeling.val;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
+import java.io.IOException;
 import java.net.URL;
 
 /**
  * @author Mike Sobolewski
  */
 public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, Arg, val<T> {
+
+    private static final long serialVersionUID = 1L;
 
     // sequence number for unnamed mogram instances
     private static int count = 0;
@@ -127,6 +130,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
     }
 
     public T get(Arg... args) throws ContextException {
+//        substitute(args);
         if (args != null && args.length > 0) {
             for (Arg arg : args) {
                 if (arg instanceof Fidelity && multiFi != null) {
@@ -138,6 +142,30 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
                     }
                 }
             }
+        }
+        if (isPersistent) {
+            Object val = item;
+            URL url = null;
+            try {
+                if (SdbUtil.isSosURL(val)) {
+                    val = ((URL) val).getContent();
+                    if (val instanceof UuidObject)
+                        val = ((UuidObject) val).getObject();
+                } else {
+                    if (val instanceof UuidObject) {
+                        url = SdbUtil.store(val);
+                    } else {
+                        UuidObject uo = new UuidObject(val);
+                        uo.setName(key);
+                        url = SdbUtil.store(uo);
+                    }
+                    item = url;
+                    out = null;
+                }
+                return (T) val;
+            } catch (IOException | MogramException | SignatureException e) {
+                throw new ContextException(e);
+            }
         } else if (item instanceof Entry) {
             out = (T) ((Entry)item).get(args);
             isValid = true;
@@ -147,6 +175,5 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
         }
         return out;
     }
-
 
 }

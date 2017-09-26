@@ -19,6 +19,7 @@ package sorcer.co.tuple;
 import sorcer.core.context.model.ent.Entry;
 
 public class TagEntry<T> extends Entry<T> {
+
     private static final long serialVersionUID = 1L;
 
     public TagEntry(String association) {

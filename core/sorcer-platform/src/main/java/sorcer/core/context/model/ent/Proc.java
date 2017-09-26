@@ -28,6 +28,7 @@ import sorcer.service.modeling.func;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -257,18 +258,15 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 			}
 
 			if (isPersistent) {
-				if (val == null && item!= null) {
-					val = item;
-				}
+				val = item;
+				URL url = null;
 				if (SdbUtil.isSosURL(val)) {
-					Object out = ((URL) val).getContent();
-					if (out instanceof UuidObject) {
-						val = (T) ((UuidObject) val).getObject();
-					} else {
-						val = (T) out;
+					val = ((URL) val).getContent();
+					if (val instanceof UuidObject) {
+						val = ((UuidObject) val).getObject();
 					}
 				} else {
-					URL url = SdbUtil.store(val);
+					url = SdbUtil.store(val);
 					Proc p = null;
 					if (mappable != null && this.out instanceof String
 							&& mappable.asis((String) this.out) != null) {
@@ -278,19 +276,20 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 					} else if (this.out instanceof Identifiable) {
 						p = new Proc(((Identifiable) this.out).getName(), url);
 						p.setPersistent(true);
-					} else {
-						item = (T) url;
 					}
+					item = (T) url;
+					out = null;
 				}
+				return (T) val;
 			}
-		} catch (Exception e) {
+			return out;
+		} catch (IOException | MogramException | SignatureException e) {
 			// make the cache invalid
 			item = null;
 			isValid = false;
 			e.printStackTrace();
 			throw new EvaluationException(e);
 		}
-		return out;
 	}
 	
 	/* (non-Javadoc)

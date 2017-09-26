@@ -1384,11 +1384,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * @throws ContextException
 	 */
 	public List<Object> getInValues() throws ContextException {
-		List<?> inpaths = Contexts.getInPaths(this);
+		List<String> inpaths = Contexts.getInPaths(this);
 		List<Object> list = new ArrayList<Object>(inpaths.size());
-		for (Object path : inpaths)
+		for (String path : inpaths)
 			try {
-				list.add(getValue((String) path));
+		    Object val = getValue(path);
+		    if (val != null) {
+				list.add(val);
+            }
 			} catch (Exception e) {
 				throw new ContextException(e);
 			}
@@ -2837,10 +2840,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 			} else if (args[0] instanceof Signature.Out) {
 				return (T) getSubcontext(((Signature.Out)args[0]).toPathArray());
 			}
+            return null;
 		} catch (ContextException e) {
 			throw new EvaluationException(e);
 		}
-		return null;
 	}
 
 	public Object getEvalValue(String path) throws ContextException {
