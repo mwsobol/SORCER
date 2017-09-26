@@ -16,6 +16,8 @@
  */
 package sorcer.service;
 
+import sorcer.core.provider.Provider;
+
 import java.util.List;
 
 /**
@@ -54,4 +56,5 @@ public interface MogramStrategy {
     public Strategy.Flow getFlowType();
 
     public Strategy.Opti getOpti();
+
 }
