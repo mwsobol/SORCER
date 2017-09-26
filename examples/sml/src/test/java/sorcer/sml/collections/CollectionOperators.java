@@ -390,7 +390,7 @@ public class CollectionOperators {
 	}
 
 	@Test
-	public void serviceMogramming() throws Exception {
+	public void mogramsAsProcedures() throws Exception {
 
 		Context c4 = context("multiply", inVal("arg/x1"), inVal("arg/x2"),
 				outVal("result/y"));
