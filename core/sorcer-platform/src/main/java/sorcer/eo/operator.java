@@ -2466,9 +2466,7 @@ public class operator extends Operator {
     public static Object content(URL url) throws EvaluationException {
         try {
             if (url instanceof URL) {
-				Object obj = url.getContent();
-				return obj;
-//                return url.getContent();
+                return url.getContent();
             } else {
                 throw new EvaluationException("Expected URL for its content");
             }
@@ -2720,11 +2718,11 @@ public class operator extends Operator {
 	}
 
 	public static Flow flow(Entry entry) throws ContextException {
-		return ((Strategy) entry.getItem()).getFlowType();
+		return ((Strategy) entry.getData()).getFlowType();
 	}
 
 	public static Access access(Entry entry) throws ContextException {
-		return ((Strategy) entry.getItem()).getAccessType();
+		return ((Strategy) entry.getData()).getAccessType();
 	}
 
 	public static Flow flow(Strategy strategy) {

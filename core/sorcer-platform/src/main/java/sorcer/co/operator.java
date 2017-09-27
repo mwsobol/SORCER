@@ -621,28 +621,30 @@ public class operator extends Operator {
 		return setter.isPersistent();
 	}
 
-	public static URL storeArg(Object object) throws EvaluationException {
+	public static URL storeVal(Object object) throws EvaluationException {
 		URL dburl = null;
+		Entry entry = null;
 		try {
 			if (object instanceof Entry) {
-				Entry entry = (Entry)	object;
+				entry = (Entry)	object;
 				Object obj = entry.getItem();
-				if (SdbUtil.isSosURL(obj))
+				if (SdbUtil.isSosURL(obj)) {
 					dburl = (URL) obj;
+					SdbUtil.update(dburl, entry.getOut());
+				}
 				else {
 					entry.setPersistent(true);
-					dburl = SdbUtil.store(obj);
-					entry.setValue(dburl);
-					// its out is now persisted
-					((Entry)object).set(null);
-					return dburl;
+					dburl = SdbUtil.store(entry.getOut());
 				}
 			}
+			entry.setValue(entry.getOut());
+			entry.setItem(dburl);
+			entry.isValid(true);
+			return dburl;
 		} catch (Exception e) {
 			throw new EvaluationException(e);
-		}	return dburl;
+		}
 	}
-
 
 	public static URL store(Object object) throws EvaluationException {
 		try {
@@ -756,16 +758,17 @@ public class operator extends Operator {
 		return e;
 	}
 
-    public static URL storeArg(Context context, String path) throws EvaluationException {
+    public static URL storeVal(Context context, String path) throws EvaluationException {
 		URL dburl = null;
 		try {
 			Object v = context.asis(path);
-			if (v instanceof URL)
+			if (SdbUtil.isSosURL(v))
 				return (URL) v;
 			else if (v instanceof Setter && v instanceof Evaluation) {
 				Object nv = ((Evaluation)v).asis();
-				if (nv instanceof URL)
+				if (SdbUtil.isSosURL(nv)) {
 					return (URL) nv;
+				}
 				((Setter) v).setPersistent(true);
 				((Evaluation)v).getValue();
 				dburl = (URL) ((Evaluation)v).asis();
@@ -971,30 +974,32 @@ public class operator extends Operator {
 	public static <T> T value(Context<T> context, String path,
 							  Arg... args) throws ContextException {
 		try {
-			Object val = context.get(path);
-            if (context instanceof DataContext) {
-                if (val instanceof Number) {
-                    return (T) val;
-                } else if (val instanceof Value) {
-                    return (T) ((Value)val).getData();
-                } else {
-                    return (T) val;
-                }
-			}
-			// legacy support
-			val = ((ServiceContext) context).getValue(path, args);
-			if (SdbUtil.isSosURL(val)) {
-				return (T) ((URL) val).getContent();
-			} else if (((ServiceContext)context).getType().equals(Functionality.Type.MADO)) {
-				return (T)((ServiceContext)context).getEvalValue(path);
-			} else if (val instanceof Srv && ((Srv)val).asis() instanceof  EntryCollable) {
-				Entry entry = ((EntryCollable)((Srv)val).asis()).call((Model)context);
-				return (T) entry.asis();
+			Object obj = context.get(path);
+			if (obj != null) {
+				if (obj instanceof Number || obj instanceof Number
+						|| obj.getClass().isArray() || obj instanceof Collection) {
+					return (T) obj;
+				} else if (obj instanceof Value) {
+					return (T) ((Value) obj).getData();
+				} else if (SdbUtil.isSosURL(obj)) {
+					return (T) ((URL) obj).getContent();
+				} else if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
+					return (T) ((ServiceContext) context).getEvalValue(path);
+				} else if (obj instanceof Srv && ((Srv) obj).asis() instanceof EntryCollable) {
+					Entry entry = ((EntryCollable) ((Srv) obj).asis()).call((Model) context);
+					return (T) entry.asis();
+				} else if (obj instanceof Entry) {
+					// by default no functional entries in DataContext
+					return context.getValue(path, args);
+				} else {
+					// linked contexts and other special case of ServiceContext
+					return context.getValue(path, args);
+				}
 			} else {
-				return (T) val;
+				// linked contexts and other special case of ServiceContext
+				return context.getValue(path, args);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (MogramException | IOException e) {
 			throw new ContextException(e);
 		}
 	}

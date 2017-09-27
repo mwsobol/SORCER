@@ -200,8 +200,8 @@ public class ProcModelTest {
 		assertTrue(asis(c4, "arg/x1") instanceof Proc);
 		assertEquals(asis(c4, "arg/x2"), 50.0);
 
-		assertTrue(storeArg(c4, "arg/x1") instanceof URL);
-		assertTrue(storeArg(c4, "arg/x2") instanceof URL);
+		assertTrue(storeVal(c4, "arg/x1") instanceof URL);
+		assertTrue(storeVal(c4, "arg/x2") instanceof URL);
 
 		c4.putValue("arg/x1", 110.0);
 		c4.putValue("arg/x2", 150.0);
@@ -227,12 +227,12 @@ public class ProcModelTest {
 		assertTrue(asis(c4, "arg/x1") instanceof Proc);
 		assertTrue(asis(c4, "arg/x2") instanceof Proc);
 		
-		logger.info("arg/x0 URL: " + storeArg(c4, "arg/x0"));
-		logger.info("arg/x1 URL: " + storeArg(c4, "arg/x1"));
-		logger.info("arg/x2 URL: " + storeArg(c4, "arg/x2"));
-		assertTrue(storeArg(c4, "arg/x0") instanceof URL);
-		assertTrue(storeArg(c4, "arg/x1") instanceof URL);
-		assertTrue(storeArg(c4, "arg/x2") instanceof URL);
+		logger.info("arg/x0 URL: " + storeVal(c4, "arg/x0"));
+		logger.info("arg/x1 URL: " + storeVal(c4, "arg/x1"));
+		logger.info("arg/x2 URL: " + storeVal(c4, "arg/x2"));
+		assertTrue(storeVal(c4, "arg/x0") instanceof URL);
+		assertTrue(storeVal(c4, "arg/x1") instanceof URL);
+		assertTrue(storeVal(c4, "arg/x2") instanceof URL);
 		
 		c4.putValue("arg/x0", 11.0);
 		c4.putValue("arg/x1", 110.0);
@@ -264,8 +264,8 @@ public class ProcModelTest {
 		assertTrue(asis(dbp2) instanceof URL);
 
 		// store proc args in the data store
-		URL url1 = storeArg(proc("design/in", 30.0));
-		URL url2 = storeArg(proc("url", "myUrl2"));
+		URL url1 = storeVal(proc("design/in", 30.0));
+		URL url2 = storeVal(proc("url", "myUrl2"));
 		
 		assertEquals(content(url1), 30.0);
 		assertEquals(content(url2), "myUrl2");

@@ -26,10 +26,7 @@ import sorcer.co.tuple.ExecDependency;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ModelStrategy;
-import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Function;
-import sorcer.core.context.model.ent.ProcModel;
-import sorcer.core.context.model.ent.Ref;
+import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
@@ -264,7 +261,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                         nargs = new Arg[paths.length];
                         for (int i = 0; i < paths.length; i++) {
                             if (!(asis(paths[i]) instanceof Arg))
-                                nargs[i] = new Entry(paths[i], asis(paths[i]));
+                                nargs[i] = new Value(paths[i], asis(paths[i]));
                             else
                                 nargs[i] = (Arg) asis(paths[i]);
                         }

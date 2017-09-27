@@ -189,11 +189,11 @@ public class CollectionOperators {
 		assertEquals(flow(se1), Strategy.Flow.PAR);
 		assertEquals(access(se1), Strategy.Access.PULL);
 
-		// store the argument of entry (parameter)
-		URL se1Url = storeArg(se1);
+		// store the value of the entry (parameter)
+		URL se1Url = storeVal(se1);
 		Strategy st1 = (Strategy)content(se1Url);
 		assertTrue(isPersistent(se1));
-		assertTrue(asis(se1) instanceof URL);
+		assertTrue(item(se1) instanceof URL);
 		assertTrue(flow(se1).equals(flow(st1)));
 		assertTrue(access(se1).equals(access(st1)));
 
@@ -206,7 +206,7 @@ public class CollectionOperators {
 	}
 
 	@Test
-	public void dbEntryOperator() throws Exception {
+	public void dbValandStoreValOperators() throws Exception {
 
 		// create a persistent entry
 		Entry<Double> de = dbVal("x3", 110.0);
@@ -220,22 +220,21 @@ public class CollectionOperators {
 		assertTrue(asis(e).equals(10.0));
 		assertFalse(asis(e) instanceof URL);
 
-		// make a persistent entry
-		// 'storeArg' operator makes the entry eval persisted
-		URL valUrl = storeArg(e);
+		// store the value of entry
+		URL valUrl = storeVal(e);
 		assertTrue(eval(e).equals(10.0));
-		assertTrue(asis(e) instanceof URL);
+		assertTrue(item(e) instanceof URL);
 
 		// create a persistent entry with URL
-		Entry<?> urle = dbVal("x2", valUrl);
+		Entry urle = dbVal("x2", valUrl);
 		assertTrue(eval(urle).equals(10.0));
-		assertTrue(asis(urle) instanceof URL);
+		assertTrue(item(urle) instanceof URL);
 
 		// assign a given URL
 		Entry<Object> dbe = dbVal("y1", 1.0);
 		setValue(dbe, valUrl);
 		assertTrue(eval(dbe).equals(10.0));
-		assertTrue(asis(dbe) instanceof URL);
+		assertTrue(item(dbe) instanceof URL);
 
 	}
 
@@ -364,14 +363,13 @@ public class CollectionOperators {
 		put(cxt, val("arg/x6", val("overwrite", 40.0)));
 		assertTrue(value(cxt, "arg/x6").equals(40.0));
 
-		// eval and val on data context is the same
-		// however use eval for functions and val for data
+		// eval of functional entries in DataContexts is not possible
+		// use models (active contexts) created with the model operator
 		assertTrue(asis(cxt, "arg/x7") instanceof Invocation);
 		logger.info("x7a: " + eval(cxt, "arg/x7"));
 		logger.info("x7b: " + value(cxt, "arg/x7"));
 		assertTrue(eval(cxt, "arg/x7") instanceof Proc);
 		assertTrue(value(cxt, "arg/x7") instanceof Proc);
-
 
 	}
 

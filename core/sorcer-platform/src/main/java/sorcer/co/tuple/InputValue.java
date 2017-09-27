@@ -20,6 +20,7 @@ import sorcer.core.context.model.ent.Value;
 import sorcer.service.ServiceFidelity;
 import sorcer.service.Signature;
 import sorcer.service.modeling.Functionality;
+import sorcer.util.url.sos.SdbUtil;
 
 public class InputValue<T> extends Value<T> {
 
@@ -41,6 +42,10 @@ public class InputValue<T> extends Value<T> {
     public InputValue(String path, T value, boolean isPersistent, int index) {
         super(path, value);
         this.isPersistent = isPersistent;
+        if (SdbUtil.isSosURL(value)) {
+            item = value;
+            out = null;
+        }
         this.index = index;
         annotation = Signature.Direction.IN;
         type = Functionality.Type.INPUT;

@@ -286,8 +286,8 @@ public class ProcModels {
 		URL sUrl = new URL("http://sorcersoft.org");
 		Proc p1 = proc("design/in", 30.0);
 		Proc p2 = proc("url", sUrl);
-		URL url1 = storeArg(p1);
-		URL url2 = storeArg(p2);
+		URL url1 = storeVal(p1);
+		URL url2 = storeVal(p2);
 //
 //		assertTrue(asis(p1) instanceof URL);
 //		assertEquals(content(url1), 30.0);

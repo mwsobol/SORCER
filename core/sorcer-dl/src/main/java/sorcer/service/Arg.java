@@ -83,16 +83,19 @@ public interface Arg extends Serializable {
 
 	public static Object get(Arg[] args, String path) throws EvaluationException, RemoteException {
 		for (Arg arg : args) {
-			if (arg instanceof Callable && arg.getName().equals(path))
-				return ((Callable)arg).call(args);
+			if (arg instanceof Callable && arg.getName().equals(path)) {
+				return ((Callable) arg).call(args);
+			}
 		}
 		return null;
 	}
-	public static void set(Arg[] args, String path, Object value) throws SetterException, RemoteException {
+
+	public static Object set(Arg[] args, String path, Object value) throws SetterException, RemoteException {
 		for (Arg arg : args) {
 			if (arg instanceof Callable && arg.getName().equals(path))
 				((Setter)arg).setValue(value);
 		}
+		return value;
 	}
 
 	public static Callable entry(Arg[] args, String name) {

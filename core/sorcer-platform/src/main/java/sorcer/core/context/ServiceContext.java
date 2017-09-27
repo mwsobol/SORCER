@@ -2762,27 +2762,28 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public T asis(String path) {
-		T val = null;
-		synchronized (this) {
-			if (isRevaluable == true) {
-				isRevaluable = false;
-				val = get(path);
-				isRevaluable = true;
-			} else {
-				val = get(path);
-			}
-		}
-		// potentially context link
-		if (val == null) {
-			try {
-				return (T) getValue0(path);
-			} catch (ContextException e) {
-				e.printStackTrace();
-			}
-			return null;
-		} else {
-			return val;
-		}
+        T val = null;
+        synchronized (this) {
+            if (isRevaluable == true) {
+                isRevaluable = false;
+                val = get(path);
+                isRevaluable = true;
+            } else {
+                val = get(path);
+            }
+        }
+        // potentially context link
+        if (val == null) {
+            try {
+                return (T) getValue0(path);
+            } catch (ContextException e) {
+                e.printStackTrace();
+            }
+            return null;
+        } else if (val instanceof Entry) {
+            return (T) ((Entry) val).asis();
+        }
+        return val;
 	}
 
 	@Override
@@ -2814,10 +2815,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	@Override
 	public T get(String path) {
-		if (path != null)
-			return data.get(path);
-		else
-			return (T) Context.none;
+		if (path != null) {
+            return data.get(path);
+        } else {
+            return (T) Context.none;
+        }
 	}
 
 	public Context setOutValues(Context<T> context) throws ContextException,

@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.service.Context;
@@ -139,8 +138,8 @@ public class Procedures {
 		assertTrue(asis(dbp1).equals(25.0));
 		assertEquals(asis(dbp2).getClass(), URL.class);
 			
-		URL dbp1Url = storeArg(dbp1);
-		URL dbp2Url = storeArg(dbp2);
+		URL dbp1Url = storeVal(dbp1);
+		URL dbp2Url = storeVal(dbp2);
 
 		assertTrue(content(dbp1Url).equals(25.0));
 		assertEquals(content(dbp2Url), "http://sorcersoft.org/sobol");
@@ -152,8 +151,8 @@ public class Procedures {
 		setValue(dbp1, 30.0);
 		setValue(dbp2, "http://sorcersoft.org");
 	
-		assertTrue(content(storeArg(dbp1)).equals(30.0));
-		assertEquals(content(storeArg(dbp2)), "http://sorcersoft.org");
+		assertTrue(content(storeVal(dbp1)).equals(30.0));
+		assertEquals(content(storeVal(dbp2)), "http://sorcersoft.org");
 
 		assertEquals(asis(dbp1).getClass(), URL.class);
 		assertEquals(asis(dbp2).getClass(), URL.class);

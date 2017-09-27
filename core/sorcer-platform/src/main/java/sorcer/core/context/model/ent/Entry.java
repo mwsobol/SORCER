@@ -2,7 +2,6 @@ package sorcer.core.context.model.ent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.context.ContextLink;
 import sorcer.core.context.ContextSelection;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
@@ -10,7 +9,6 @@ import sorcer.service.modeling.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
-import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 
@@ -40,7 +38,6 @@ public class Entry<V> extends Association<String, V>
 
     public Entry(String key, V item) {
        super(key, item);
-
         if (sorcer.util.url.sos.SdbUtil.isSosURL(item)) {
             isPersistent = true;
         }
@@ -63,38 +60,13 @@ public class Entry<V> extends Association<String, V>
         if (!isValid && multiFi != null) {
             item = ((Entry)multiFi.getSelect()).getItem();
             isValid = true;
-            return item;
-        } else if (isPersistent) {
-            Object val = item;
-            URL url = null;
-            try {
-                if (SdbUtil.isSosURL(val)) {
-                    val = ((URL) val).getContent();
-                    if (val instanceof UuidObject)
-                        val = ((UuidObject) val).getObject();
-                } else {
-                    if (val instanceof UuidObject) {
-                        url = SdbUtil.store(val);
-                    } else {
-                        UuidObject uo = new UuidObject(val);
-                        uo.setName(key);
-                        url = SdbUtil.store(uo);
-                    }
-                    item = url;
-                    out = null;
-                }
-                return val;
-            } catch (IOException | MogramException | SignatureException e) {
-                logger.warn("Persisting item of entry failed: "  + this, e);
-                e.printStackTrace();
-            }
         }
         return item;
     }
 
     @Override
     public void setValue(Object value) throws SetterException, RemoteException {
-        item = (V) value;
+        out = (V) value;
     }
 
     public void setContextSelector(ContextSelection contextSelector) {
@@ -183,7 +155,13 @@ public class Entry<V> extends Association<String, V>
                 out = (V) ((Callable)val).call(args);
             } else if (val instanceof Service) {
                 out = (V) ((Service)val).execute(args);
-            }
+            } else
+                // item is just the out
+                // it is recommended to set out and item to the same value
+                // when the item is implementation of the out value
+                if (out == null && item != null) {
+                    out = (V) item;
+                }
         } catch (Exception e) {
             throw new ContextException(e);
         }
@@ -263,7 +241,7 @@ public class Entry<V> extends Association<String, V>
     @Override
     public V call(Arg... args) throws EvaluationException, RemoteException {
         try {
-            return get(args);
+            return getData(args);
         } catch (ContextException e) {
             throw new EvaluationException(e);
         }
@@ -280,10 +258,10 @@ public class Entry<V> extends Association<String, V>
     }
 
     public V asis() {
-        if (out == null && item != null) {
-            return (V) item;
+        if (item != null && item instanceof Entry) {
+            return (V) ((Entry)item).asis();
         } else {
-            return out;
+            return (V) item;
         }
     }
 }

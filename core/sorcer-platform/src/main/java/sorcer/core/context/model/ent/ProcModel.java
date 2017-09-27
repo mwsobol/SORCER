@@ -25,6 +25,7 @@ import sorcer.service.*;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Valuation;
 import sorcer.util.Response;
 import sorcer.service.Signature.ReturnPath;
 
@@ -118,11 +119,8 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 				}
 			}
 
-			if (val instanceof Entry) {
-				val = ((Entry)val).getItem();
-			}
-			if (val instanceof Number) {
-				return val;
+			if (val instanceof Value) {
+				return ((Value)val).value();
 			} else if ((val instanceof Proc) && (((Proc) val).asis() instanceof Function)) {
 				bindEntry((Function) ((Proc)val).asis());
 			} else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {

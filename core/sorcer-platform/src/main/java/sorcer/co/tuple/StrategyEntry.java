@@ -29,31 +29,34 @@ public class StrategyEntry extends Entry<Strategy> implements Arg {
 
 	private static final long serialVersionUID = 1L;
 
-	private URL url;
-
 	public StrategyEntry(String path, Strategy strategy) {
-		super(path);
-		item = strategy;
+		super(path, strategy);
+		out = strategy;
 	};
 
 	public StrategyEntry(String path, URL strategy) {
 		super(path);
-		url = strategy;
+		item = strategy;
+		out = null;
 	};
-
-	public void setStrategy(URL strategy) {
-		url = strategy;
-	}
 
 	@Override
 	public Strategy getData(Arg... args) throws ContextException {
-		if (url != null) {
+		if (isValid && out != null) {
+			return out;
+		} else {
 			try {
-				out = (Strategy) url.getContent();
+				out = (Strategy) ((URL)item).getContent();
+				isValid = true;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		return out;
+	}
+
+	public void setStrategy(Strategy strategy) {
+		out = strategy;
+		isValid = false;
 	}
 }

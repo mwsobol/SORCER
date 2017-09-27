@@ -66,6 +66,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
                 throw new SetterException(e);
             }
         } else {
+            this.out = (T) value;
             this.item = (T) value;
         }
     }
@@ -176,4 +177,11 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
         return out;
     }
 
+    public T asis() {
+        if (out == null && item != null) {
+            return (T) item;
+        } else {
+            return out;
+        }
+    }
 }

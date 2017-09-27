@@ -256,7 +256,7 @@ public class DataModels {
                 inVal("arg3/eval", 100.0));
 
         // make arg1/eval persistent
-        URL a1vURL = storeArg(ac, "arg1/eval");
+        URL a1vURL = storeVal(ac, "arg1/eval");
 
         // make arg1/eval in mc the same as in ac
         Context mc = context("multiply",
@@ -264,8 +264,12 @@ public class DataModels {
                 inVal("arg2/eval", 70.0),
                 inVal("arg3/eval", 200.0));
 
+        logger.info("ZZZZZZZZZZ: " + value(ac, "arg1/eval"));
         // sharing arg1/eval from mc in ac
         assertTrue(value(ac, "arg1/eval").equals(90.0));
+
+        logger.info("ZZZZZZZZZZ: " + value(mc, "arg1/eval"));
+
         assertTrue(value(mc, "arg1/eval").equals(90.0));
 
         put(mc, "arg1/eval", 200.0);
@@ -276,7 +280,7 @@ public class DataModels {
         // sharing arg3/eval from ac in mc
         assertTrue(value(ac, "arg3/eval").equals(100.0));
         assertTrue(value(mc, "arg3/eval").equals(200.0));
-        URL a3vURL = storeArg(mc, "arg3/eval");
+        URL a3vURL = storeVal(mc, "arg3/eval");
         add(ac, ent("arg3/eval", a3vURL));
 
         put(ac, "arg1/eval", 300.0);

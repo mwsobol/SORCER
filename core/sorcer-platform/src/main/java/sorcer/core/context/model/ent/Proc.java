@@ -168,7 +168,17 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 
 	@Override
 	public T get(Arg... args) {
-		return out;
+		try {
+			Domain context = Arg.selectDomain(args);
+			if (context != null) {
+				return invoke((ServiceContext) context, args);
+			} else {
+				return getValue(args);
+			}
+		} catch (EvaluationException | RemoteException e) {
+			logger.warn("Proc evaluation failed", e);
+		}
+		return null;
 	}
 	
 	/* (non-Javadoc)
