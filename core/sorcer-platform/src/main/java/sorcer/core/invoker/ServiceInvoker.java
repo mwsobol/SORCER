@@ -343,7 +343,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		}
 	}
 	
-	public T invoke(Context context, Arg... entries)
+	public T invoke(Context context, Arg... args)
 			throws RemoteException, InvocationException {
 		try {
 			if (invokeContext == null)
@@ -357,7 +357,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		if (evaluator != null)
 			return (T) invokeEvaluator();
 		else
-			return invoke(entries);
+			return invoke(args);
 	}
 	
 	public T invoke(Arg... entries) throws RemoteException, InvocationException {

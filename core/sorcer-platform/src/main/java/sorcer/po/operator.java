@@ -718,13 +718,13 @@ public class operator extends Operator {
 		return cr;
 	}
 
-    public static <T> Entry<T> ent(String path, T value, Arg... args) {
-		Entry<T> entry = null;
+    public static Entry ent(String path, Object value, Arg... args) {
+		Entry entry = null;
 		if (value instanceof  Number || value instanceof  String || value instanceof  Date
 				|| value instanceof  List || value instanceof Map || value.getClass().isArray()) {
 			return new Value(path, value);
 		} else if (value instanceof Context && args != null && args.length > 0) {
-			return (Entry<T>) new Neo(path, (Context)value, new Args(args));
+			return new Neo(path, (Context)value, new Args(args));
 		} else if (value instanceof Signature) {
 			Mogram mog = Arg.selectMogram(args);
 			Context cxt = null;
@@ -732,9 +732,9 @@ public class operator extends Operator {
 				cxt = (Context)mog;
 			}
 			if (cxt != null) {
-				entry = (Entry<T>) srv(path, (Identifiable) value, cxt, args);
+				entry = srv(path, (Identifiable) value, cxt, args);
 			} else {
-				entry =  (Entry<T>) srv(path, (Identifiable) value, null, args);
+				entry = srv(path, (Identifiable) value, null, args);
 			}
 			entry.setType(Functionality.Type.SRV);
 		} else if (value instanceof Fidelity) {
@@ -746,7 +746,7 @@ public class operator extends Operator {
                 ((Fidelity)value).setName(path);
 				entry = new Entry(path, value);
 			} else if (((Fi)value).getType() == Fi.Type.SRV) {
-				entry = (Entry<T>) new Srv(path, value);
+				entry = new Srv(path, value);
 			}
 		} else if (value instanceof MultiFiMogram) {
 			try {
@@ -754,20 +754,20 @@ public class operator extends Operator {
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-			entry = (Entry<T>) new Srv(path, value);
+			entry = new Srv(path, value);
 		} else if (value instanceof List && ((List)value).get(0) instanceof Path) {
-			entry =  (Entry<T>) new ExecDependency(path, (List)value);
+			entry = new ExecDependency(path, (List)value);
 		} else if (value instanceof ServiceMogram) {
-			entry = (Entry<T>) new MogramEntry(path, (Mogram) value);
+			entry = new MogramEntry(path, (Mogram) value);
 			entry.setType(Functionality.Type.MOGRAM);
 		} else if (value instanceof Service) {
-			entry = (Entry<T>) new Proc(path, value);
+			entry = new Proc(path, value);
 			entry.setType(Functionality.Type.PROC);
 		} else if (value.getClass() == Tuple2.class) {
-			entry = (Entry<T>) new Function(path, value);
+			entry = new Function(path, value);
 			entry.setType(Functionality.Type.CONSTANT);
 		} else {
-			entry = new Entry<T>(path, value);
+			entry = new Entry(path, value);
 			entry.setType(Functionality.Type.ENT);
 		}
 

@@ -65,14 +65,14 @@ public class ContextModels {
 	}
 
 	@Test
-	public void modelingTarget() throws Exception {
+	public void modelingInputsResponses() throws Exception {
 
 		Model mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
-		add(mdl, ent("invoke", invoker("x1 + x3", operator.ents("x1", "x3"))));
+		add(mdl, ent("invoke", invoker("x1 + x3", args("x1", "x3"))));
 
-		// declare the modeling target
+		// declare the modeling responses
 		responseUp(mdl, "invoke");
 		// evaluate the model
 		eval(mdl);
@@ -83,9 +83,8 @@ public class ContextModels {
 		assertTrue(result.equals(5.0));
 
 		// evaluate the model with new inputs
-		add(mdl, ent("invoke", invoker("x6 * x7 + x1", operator.ents("x1", "x6", "x7"))));
+		add(mdl, ent("invoke", invoker("x6 * x7 + x1", args("x1", "x6", "x7"))));
 		result = (Double) eval(mdl, ent("arg/x6", 6.0), ent("arg/x7", 7.0));
-		logger.info("ZZZZZZZZZ: " + result);
 		assertTrue(result.equals(44.0));
 	}
 
@@ -184,7 +183,7 @@ public class ContextModels {
 
 		Function se = ent(sig("add", AdderImpl.class, result("add", inPaths("y1", "y2"))));
 		Context result = (Context) exec(se, sm);
-		assertEquals(100.0, value(result, "add"));
+        assertEquals(100.0, value(result, "add"));
 	}
 
 	@Test

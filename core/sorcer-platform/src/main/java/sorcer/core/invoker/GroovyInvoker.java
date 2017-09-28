@@ -100,22 +100,14 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 			RemoteException {
 		Object result = null;
 		shell = new GroovyShell(Thread.currentThread().getContextClassLoader());
-		if (entries != null) {
-			for (Arg a : entries)
-				try {
+		try {
+			if (entries != null) {
+				for (Arg a : entries)
 					if (a instanceof Entry) {
 						invokeContext.putValue(a.getName(), ((Entry) a).get());
 					}
-				} catch (Exception e) {
-					throw new InvocationException(e);
-				}
-		}
-		try {
+			}
 			initBindings();
-		} catch (ContextException ex) {
-			throw new InvocationException(ex);
-		}
-		try {
 			synchronized (shell) {
 				if (scriptFile != null) {
 					try {
@@ -127,19 +119,16 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 					StringBuilder sb = new StringBuilder(staticImports.toString());
 					sb.append(expression);
 					logger.debug(sb.toString());
-					synchronized (shell) {
-						result = shell.evaluate(sb.toString());
-					}
+					result = shell.evaluate(sb.toString());
 				}
 			}
-		} catch (Exception e) {
+		} catch (ContextException e) {
 			logger.error("Error Occurred in Groovy Shell: " + e.getMessage());
 		}
 		return (T) result;
 	}
 
 	private void initBindings() throws RemoteException, ContextException {
-//		logger.info("invokeContext keys: " + invokeContext.keySet() + "\nfor: " + expression);
 		if (invokeContext != null) {
 			if (args != null && args.size() > 0) {
 				for (Arg p : args) {

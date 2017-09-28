@@ -101,12 +101,12 @@ public class OptInvoker<T> extends ServiceInvoker<T> implements ConditionalInvoc
 		}
 	}
 
-	public T invoke(Context context, Arg... entries)
+	public T invoke(Context context, Arg... args)
 			throws RemoteException, InvocationException {
 		try {
 			checkInvokeContext();
 			if (condition.isTrue())
-				return target.invoke(context, entries);
+				return target.invoke(context, args);
 			else 
 				return null;
 		} catch (ContextException e) {

@@ -59,10 +59,10 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
     }
 
     @Override
-    public Double invoke(Context context, Arg... entries)
+    public Double invoke(Context context, Arg... args)
             throws RemoteException, InvocationException {
         try {
-            return activate(entries);
+            return activate(args);
         } catch (Exception e) {
             throw new InvocationException(e);
         }

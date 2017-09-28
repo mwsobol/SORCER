@@ -58,7 +58,7 @@ public class RunnableInvoker<T> extends ServiceInvoker<T> {
 	}
 	
 	@Override
-	public T invoke(Context context, Arg... entries)
+	public T invoke(Context context, Arg... args)
 			throws RemoteException, InvocationException {
 		try {
 			invokeContext.append(context);

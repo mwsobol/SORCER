@@ -72,12 +72,12 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		out = (T)identifiable;
 	}
 
-	public Proc(String path, T entity) {
-		super(path, entity);
+	public Proc(String path, Object entity) {
+		super(path);
 		name = path;
 		if (entity instanceof  Number || entity instanceof  String || entity instanceof  Date
                 || entity instanceof  List || entity instanceof  Map || entity.getClass().isArray()) {
-		    out = entity;
+		    out = (T) entity;
         }
 
 		if (entity instanceof Evaluation || entity instanceof Invocation) {
@@ -92,11 +92,12 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 				}
 			}
 		}
+		this.item = entity;
 	}
 
 	public Proc(String path, Object entity, Object scope)
 			throws ContextException {
-		this(path, (T) entity);
+		this(path);
         if (entity instanceof  Number || entity instanceof  String || entity instanceof  Date
                 || entity instanceof  List || entity instanceof  Map || entity.getClass().isArray()) {
             out = (T) entity;
@@ -113,11 +114,12 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		if (entity instanceof Scopable) {
 			((Scopable) entity).setScope(this.scope);
 		}
+		this.item= entity;
 	}
 	
 	public Proc(Mappable map, String name, String path) {
 		this(name);
-		item =  (T)path;
+		item =  path;
 		mappable = map;
 	}
 

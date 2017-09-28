@@ -177,7 +177,7 @@ public class operator extends Operator {
     public static Object exec(Service service, Arg... args) throws ServiceException, RemoteException {
         try {
             if (service instanceof Entry || service instanceof Signature ) {
-                return service.execute(args);
+                    return service.execute(args);
             } else if (service instanceof Context || service instanceof MultiFiMogram) {
                 if (service instanceof Model) {
                     return ((Model)service).getResponse(args);

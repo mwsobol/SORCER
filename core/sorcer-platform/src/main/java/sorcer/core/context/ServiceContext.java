@@ -557,14 +557,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			obj = put(path, (T)none);
 		else {
 			obj = get(path);
-//			if (SdbUtil.isSosURL(obj)) {
-//				try {
-//				SdbUtil.update((URL)obj, eval);
-//			} catch (Exception ex) {
-//				throw new ContextException(ex);
-//			}
-//		} else
-			if (obj instanceof Reactive && obj instanceof Setter) {
+			if (!(obj instanceof Reactive) && obj instanceof Setter) {
 				try {
 					((Setter)obj).setValue(value);
 				} catch (RemoteException ex) {
@@ -1688,6 +1681,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 		return this;
 	}
+
+    public Context<T> append(Arg... args) throws ContextException {
+        for (Arg arg : args) {
+            put(arg.getName(), (T) ((Entry) arg).getOut());
+        }
+        return this;
+    }
+
 	/* (non-Javadoc)
 	 * @see sorcer.service.Context#append(sorcer.service.Context)
 	 */
@@ -3228,7 +3229,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			return false;
 
 		for (String  path : keySet()) {
-			if (!asis(path).equals(((ServiceContext) object).asis(path)))
+			if (!get(path).equals(((ServiceContext) object).get(path)))
 				return false;
 		}
 		return true;

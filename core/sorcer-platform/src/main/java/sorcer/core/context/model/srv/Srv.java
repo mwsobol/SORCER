@@ -7,6 +7,7 @@ import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Function;
+import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
@@ -268,10 +269,10 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
     public Object execute(Arg... args) throws ServiceException, RemoteException {
         Domain mod = Arg.selectDomain(args);
         if (mod != null) {
-            if (mod instanceof SrvModel && item instanceof ValueCallable) {
+            if (mod instanceof ProcModel && item instanceof ValueCallable) {
                 return ((ValueCallable) item).call((Context) mod);
             } else if (mod instanceof Context && item instanceof SignatureEntry) {
-                return ((ServiceContext) mod).execSignature(((SignatureEntry) item).get(args));
+                return ((ServiceContext) mod).execSignature((Signature) ((SignatureEntry) item).getItem(), args);
             } else {
                 item = mod;
                 return getValue(args);

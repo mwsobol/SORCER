@@ -232,8 +232,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		return this;
 	}
 
-	public ProcModel append(Arg... objects) throws ContextException,
-			RemoteException {
+	public ProcModel append(Arg... objects) throws ContextException {
 		Proc p = null;
 		boolean changed = false;
 		for (Arg obj : objects) {
@@ -243,7 +242,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 				p = (Proc) obj;
 			} else if (obj instanceof Entry) {
 				putValue((String) ((Entry) obj).key(),
-						((Entry) obj).get());
+						((Entry) obj).getOut());
 			} else if (obj instanceof Identifiable) {
 				String pn = obj.getName();
 				p = new Proc(pn, obj, new ProcModel(pn).append(this));

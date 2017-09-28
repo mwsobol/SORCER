@@ -744,7 +744,7 @@ public class operator extends Operator {
 				}
 			}
 		}
-		((ServiceContext)context).isChanged();
+		context.isChanged();
 		return context;
 	}
 

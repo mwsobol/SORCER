@@ -58,9 +58,14 @@ public class Entry<V> extends Association<String, V>
 
     public Object getItem() {
         if (!isValid && multiFi != null) {
-            item = ((Entry)multiFi.getSelect()).getItem();
-            isValid = true;
+            Object select = multiFi.getSelect();
+            if (select instanceof Entry) {
+                item = ((Entry) multiFi.getSelect()).getItem();
+            } else {
+                item = (multiFi.getSelect());
+            }
         }
+        isValid = true;
         return item;
     }
 
