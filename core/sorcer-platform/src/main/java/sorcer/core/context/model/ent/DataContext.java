@@ -21,7 +21,11 @@ import net.jini.id.UuidFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.service.*;
+import sorcer.util.bdb.objects.UuidObject;
+import sorcer.util.url.sos.SdbUtil;
 
+import java.io.IOException;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Date;
 
@@ -78,7 +82,35 @@ public class DataContext<T> extends PositionalContext<T> {
      */
     @Override
     public T getValue(String path, Arg... args) throws ContextException {
-        return data.get(path);
+        Object obj = data.get(path);
+        if (obj instanceof Entry && ((Entry)obj).isPersistent()) {
+            Object val = ((Entry)obj).getItem();
+            URL url = null;
+            try {
+                if (SdbUtil.isSosURL(val)) {
+                    val = ((URL) val).getContent();
+                    if (val instanceof UuidObject)
+                        val = ((UuidObject) val).getObject();
+                } else {
+                    if (val instanceof UuidObject) {
+                        url = SdbUtil.store(val);
+                    } else {
+                        UuidObject uo = new UuidObject(val);
+                        uo.setName(path);
+                        url = SdbUtil.store(uo);
+                    }
+                    ((Entry)obj).setItem(url);
+                    ((Entry)obj).setItem(val);
+                    ((Entry)obj).isValid(true);
+                    return (T) val;
+                }
+                return (T) val;
+            } catch (IOException | MogramException | SignatureException e) {
+                throw new ContextException(e);
+            }
+        } else {
+            return data.get(path);
+        }
     }
 
     @Override

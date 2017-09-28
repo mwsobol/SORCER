@@ -223,7 +223,7 @@ public class operator {
     }
 
     public static Object get(Domain model, String path) throws ContextException {
-        return ((ServiceContext)((ServiceContext)model).getMogramStrategy().getOutcome()).get(path);
+        return model.get(path);
     }
 
     public static  ServiceContext substitute(ServiceContext model, Function... entries) throws ContextException {

@@ -988,9 +988,6 @@ public class operator extends Operator {
 				} else if (obj instanceof Srv && ((Srv) obj).asis() instanceof EntryCollable) {
 					Entry entry = ((EntryCollable) ((Srv) obj).asis()).call((Model) context);
 					return (T) entry.asis();
-				} else if (obj instanceof Entry) {
-					// by default no functional entries in DataContext
-					return context.getValue(path, args);
 				} else {
 					// linked contexts and other special case of ServiceContext
 					return context.getValue(path, args);
@@ -1131,6 +1128,21 @@ public class operator extends Operator {
 	public static Object item(Entry entry)
 			throws ContextException {
 		return entry.getItem();
+	}
+
+	public static Object item(Model context, String path)
+			throws ContextException {
+		return item((ServiceContext) context,  path);
+	}
+
+	public static Object item(Context context, String path)
+			throws ContextException {
+		Object obj = context.get(path);
+		if (obj instanceof Entry) {
+			return ((Entry)context.get(path)).getItem();
+		} else {
+			return null;
+		}
 	}
 
 	public static Object asis(Entry entry)

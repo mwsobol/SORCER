@@ -16,6 +16,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.po.operator;
 import sorcer.service.Context;
 import sorcer.service.Domain;
+import sorcer.service.Invocation;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
@@ -58,9 +59,9 @@ public class ContextModels {
 		add(mdl, ent("arg/x7", invoker("x1 + x3", operator.ents("x1", "x3"))));
 
 		assertTrue(eval(mdl, "arg/x7").equals(4.0));
-		assertTrue(asis(mdl, "arg/x7") instanceof Function);
-		assertTrue(asis(mdl, "arg/x7") instanceof Proc);
-		assertTrue(asis(asis(mdl, "arg/x7")) instanceof ServiceInvoker);
+		assertTrue(get(mdl, "arg/x7") instanceof Function);
+		assertTrue(get(mdl, "arg/x7") instanceof Proc);
+		assertTrue(item(mdl, "arg/x7") instanceof Invocation);
 	}
 
 	@Test
@@ -84,6 +85,7 @@ public class ContextModels {
 		// evaluate the model with new inputs
 		add(mdl, ent("invoke", invoker("x6 * x7 + x1", operator.ents("x1", "x6", "x7"))));
 		result = (Double) eval(mdl, ent("arg/x6", 6.0), ent("arg/x7", 7.0));
+		logger.info("ZZZZZZZZZ: " + result);
 		assertTrue(result.equals(44.0));
 	}
 

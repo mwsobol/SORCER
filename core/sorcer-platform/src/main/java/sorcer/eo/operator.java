@@ -751,7 +751,7 @@ public class operator extends Operator {
 	public static Context put(Context context, String path, Object value)
 			throws ContextException {
 		try {
-			Object val = context.asis(path);
+			Object val = context.get(path);
 			if (val instanceof Proc && ((Proc)val).isPersistent())
 				val = ((Proc)val).asis();
 			if (SdbUtil.isSosURL(val)) {

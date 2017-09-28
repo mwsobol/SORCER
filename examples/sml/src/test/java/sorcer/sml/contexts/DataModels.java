@@ -264,16 +264,11 @@ public class DataModels {
                 inVal("arg2/eval", 70.0),
                 inVal("arg3/eval", 200.0));
 
-        logger.info("ZZZZZZZZZZ: " + value(ac, "arg1/eval"));
         // sharing arg1/eval from mc in ac
         assertTrue(value(ac, "arg1/eval").equals(90.0));
-
-        logger.info("ZZZZZZZZZZ: " + value(mc, "arg1/eval"));
-
         assertTrue(value(mc, "arg1/eval").equals(90.0));
 
         put(mc, "arg1/eval", 200.0);
-
         assertTrue(value(ac, "arg1/eval").equals(200.0));
         assertTrue(value(mc, "arg1/eval").equals(200.0));
 
