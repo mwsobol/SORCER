@@ -596,7 +596,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	@Override
 	public int hashCode() {
 		int hash = name.length() + 1;
-		return hash = hash * 31 + name.hashCode();
+		return hash * 31 + name.hashCode();
 	}
 	
 	@Override
@@ -632,4 +632,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		}
 	}
 
+	public String gePath() {
+		return key;
+	}
 }

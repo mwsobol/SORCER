@@ -257,6 +257,16 @@ public class Entry<V> extends Association<String, V>
         }
     }
 
+    @Override
+    public String getName() {
+        return key;
+    }
+
+
+    public String getKey() {
+        return key;
+    }
+
     public V asis() {
         if (item != null && item instanceof Entry) {
             return (V) ((Entry)item).asis();

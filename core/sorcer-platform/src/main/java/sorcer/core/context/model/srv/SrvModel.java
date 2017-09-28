@@ -230,8 +230,8 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     val = out;
                 } else if (carrier instanceof Client && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
                     // get target entry for this cal
-                    String entryPath = ""+((Function)val).getKey();
-                    Object out = ((Client)carrier).exec((Service) this.asis(entryPath), this, args);
+                    String entryPath = ((Srv)val).getPath();
+                    Object out = ((Client)carrier).exec((Service) get(entryPath), this, args);
                     ((Srv) get(path)).setOut(out);
                     val = out;
                 } else if (carrier instanceof EntryCollable && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
@@ -507,5 +507,16 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                 subcntxt.putInoutValueAt(paths[i], getValue(paths[i]), tally + 1);
         }
         return subcntxt;
+    }
+
+
+    public Object getItem(String path) {
+        Object obj = get(path);
+        if (obj instanceof Entry) {
+            return ((Entry) obj).getItem();
+        }
+        else {
+            return null;
+        }
     }
 }

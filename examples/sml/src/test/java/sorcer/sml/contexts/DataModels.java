@@ -255,7 +255,7 @@ public class DataModels {
                 inVal("arg2/eval", 110.0),
                 inVal("arg3/eval", 100.0));
 
-        // make arg1/eval persistent
+        // make arg1/eval persistent in the network
         URL a1vURL = storeVal(ac, "arg1/eval");
 
         // make arg1/eval in mc the same as in ac
