@@ -162,9 +162,6 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     ((Srv) val).isValid(false);
                 }
                 Object carrier = ((Srv) val).getItem();
-                if (srvFi != null && srvFi.isChanged()) {
-                    carrier = ((Srv)val).getData();
-                }
                 if (carrier instanceof Signature) {
                         return evalSignature((Signature) carrier, path, args);
                 } else if (carrier instanceof SignatureEntry){
