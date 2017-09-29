@@ -18,7 +18,6 @@
 package sorcer.core.invoker;
 
 import java.rmi.RemoteException;
-import java.util.concurrent.locks.*;
 
 import sorcer.service.*;
 import sorcer.service.Condition;
@@ -70,14 +69,14 @@ public class OptInvoker<T> extends ServiceInvoker<T> implements ConditionalInvoc
 	}
 
 	@Override
-	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
+	public T evaluate(Arg... entries) throws EvaluationException, RemoteException {
 		try {
 			if (value != null) {
 				return value;
 			}
 			checkInvokeContext();
 			if (condition == null || condition.isTrue())
-				return target.getValue(entries);
+				return target.evaluate(entries);
 			else {
 				return null;
 			}

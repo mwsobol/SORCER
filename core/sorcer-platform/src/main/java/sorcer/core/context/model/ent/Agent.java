@@ -59,7 +59,7 @@ public class Agent<T> extends Proc<T> implements Serializable {
 		this.agentURLs = agentURLs;
 	}
 
-	public T evaluate(Arg... entries) throws EvaluationException {
+	public T process(Arg... entries) throws EvaluationException {
 		try {
 			if (invoker != null) {
 				return (T) invoker.invoke(getPars(entries));
@@ -130,11 +130,11 @@ public class Agent<T> extends Proc<T> implements Serializable {
 	}
 	
 	@Override
-	public T getValue(Arg... args) throws EvaluationException, RemoteException {
+	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
 		if (out != null && invoker != null && invoker.valueValid())
 			return out;
 		else
-			return (T)evaluate(args);
+			return (T)process(args);
 	}
 	
 	/* (non-Javadoc)

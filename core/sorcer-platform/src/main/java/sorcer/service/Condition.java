@@ -21,7 +21,6 @@ import groovy.lang.Closure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.exertion.AltMogram;
 import sorcer.core.exertion.LoopMogram;
@@ -165,7 +164,7 @@ import java.util.Map;
 				for (int i = 0; i < pars.length; i++) {
 					args[i] = ((ServiceContext) conditionalContext).getValueEndsWith(pars[i]);
 					if (args[i] instanceof Evaluation)
-						args[i] = ((Evaluation) args[i]).getValue();
+						args[i] = ((Evaluation) args[i]).evaluate();
 				}
 				obj = closure.call(args);
 			}
@@ -194,7 +193,7 @@ import java.util.Map;
 			args[i] = conditionalContext.getValue(pars[i]);
 			if (args[i] instanceof Evaluation)
 				try {
-					args[i] = ((Evaluation) args[i]).getValue();
+					args[i] = ((Evaluation) args[i]).evaluate();
 				} catch (RemoteException e) {
 					throw new ContextException(e);
 				}
@@ -213,14 +212,14 @@ import java.util.Map;
 	 */
 	@Override
 	public Object asis() throws EvaluationException, RemoteException {
-		return getValue();
+		return evaluate();
 	}
 
 	/* (non-Javadoc)
 	 * @see sorcer.service.Evaluation#execute(sorcer.service.Parameter[])
 	 */
 	@Override
-	public Object getValue(Arg... entries) throws EvaluationException,
+	public Object evaluate(Arg... entries) throws EvaluationException,
 			RemoteException {
 		try {
 			return isTrue();

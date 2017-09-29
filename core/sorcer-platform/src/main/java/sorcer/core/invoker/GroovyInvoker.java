@@ -25,9 +25,7 @@ import sorcer.service.*;
 
 import java.io.*;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author Mike Sobolewski
@@ -96,7 +94,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	}
 
 	@Override
-	public T getValue(Arg... entries) throws InvocationException,
+	public T evaluate(Arg... entries) throws InvocationException,
 			RemoteException {
 		Object result = null;
 		shell = new GroovyShell(Thread.currentThread().getContextClassLoader());
@@ -150,10 +148,10 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		String key = null;
 		while (i.hasNext()) {
 			Arg entry = i.next();
-			val = ((Evaluation)entry).getValue();
+			val = ((Evaluation)entry).evaluate();
 			key = entry.getName();
 			if (val instanceof Evaluation) {
-				val = ((Evaluation) val).getValue();
+				val = ((Evaluation) val).evaluate();
 			}
 			shell.setVariable(key, val);
 		}

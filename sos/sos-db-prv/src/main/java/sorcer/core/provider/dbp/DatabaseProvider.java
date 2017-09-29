@@ -695,7 +695,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
         try {
             return getDatabaseURL(type, uuid);
         } catch (MalformedURLException e) {
-            throw new IllegalStateException("Couldn't evaluate object URL", e);
+            throw new IllegalStateException("Couldn't process object URL", e);
         }
     }
 

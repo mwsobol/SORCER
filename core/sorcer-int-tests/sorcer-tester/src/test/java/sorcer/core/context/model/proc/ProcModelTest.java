@@ -91,15 +91,15 @@ public class ProcModelTest {
 		ProcModel pm = new ProcModel("arithmetic-model");
 		pm.add(x, y, add);
 
-		assertEquals(x.getValue(), 10.0);
+		assertEquals(x.evaluate(), 10.0);
 		assertEquals(pm.getValue("x"), 10.0);
 
-		assertEquals(y.getValue(), 20.0);
+		assertEquals(y.evaluate(), 20.0);
 		assertEquals(pm.getValue("y"), 20.0);
 
 		logger.info("add context eval: " + pm.getValue("add"));
-		logger.info("add proc eval: " + add.getValue());
-		assertEquals(add.getValue(), 30.0);
+		logger.info("add proc eval: " + add.evaluate());
+		assertEquals(add.evaluate(), 30.0);
 		assertEquals(pm.getValue("add"), 30.0);
 
 		responseUp(pm, "add");
@@ -109,9 +109,9 @@ public class ProcModelTest {
 		x = pm.getProc("x");
 		y = pm.getProc("y");
 		add = pm.getProc("add");
-		assertEquals(x.getValue(), 10.0);
-		assertEquals(y.getValue(), 20.0);
-		assertEquals(add.getValue(), 30.0);
+		assertEquals(x.evaluate(), 10.0);
+		assertEquals(y.evaluate(), 20.0);
+		assertEquals(add.evaluate(), 30.0);
 	}
 
 	@Test
@@ -457,11 +457,11 @@ public class ProcModelTest {
 
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
-		assertEquals(eval.getValue(), false);
+		assertEquals(eval.evaluate(), false);
 
 		pm.putValue("x", 20.0);
 		pm.putValue("y", 10.0);
-		assertEquals(eval.getValue(), true);
+		assertEquals(eval.evaluate(), true);
 	}
 
 	@Test

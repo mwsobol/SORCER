@@ -176,7 +176,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     if (selection instanceof Signature) {
                         val = evalSignature((Signature) selection, path, args);
                     } else if (selection instanceof Evaluation) {
-                        val = ((Evaluation)selection).getValue(args);
+                        val = ((Evaluation)selection).evaluate(args);
                     } else {
                         val = selection;
                     }
@@ -187,7 +187,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                         out = evalSignature((Signature)obj, path);
                     else if (obj instanceof Entry) {
                         ((Function)obj).setScope(this);
-                        out = ((Function) obj).getValue(args);
+                        out = ((Function) obj).evaluate(args);
                     }
                     ((MorphFidelity) carrier).setChanged();
                     ((MorphFidelity) carrier).notifyObservers(out);
@@ -282,7 +282,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                         if (deref instanceof Scopable) {
                             ((Scopable)deref).setScope(this);
                         }
-                        val = ((Evaluation) deref).getValue(args);
+                        val = ((Evaluation) deref).evaluate(args);
                     } else {
                         // assume default dereference of Entry is inner Entry
                         val = ((Entry) deref).get(args);
@@ -470,7 +470,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                 Exertion xrt = out.exert();
                 return xrt.getDataContext();
             } else {
-                // evaluate model response
+                // process model response
                 getResponse(entries);
                 return this;
             }

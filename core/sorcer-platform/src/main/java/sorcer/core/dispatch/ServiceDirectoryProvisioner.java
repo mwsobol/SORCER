@@ -70,7 +70,7 @@ public class ServiceDirectoryProvisioner implements Provisioner {
             try {
                 undeployIdleTime = Integer.parseInt(propIdleTime);
             } catch (NumberFormatException ne) {
-                logger.warn("Could not evaluate property: provisioning.idle.time: " + propIdleTime + " using default idle time of 60 seconds");
+                logger.warn("Could not process property: provisioning.idle.time: " + propIdleTime + " using default idle time of 60 seconds");
             }
         }
     }
@@ -193,7 +193,7 @@ public class ServiceDirectoryProvisioner implements Provisioner {
             removeFromQueueAndThrowException(provT, pe.getMessage(), pe);
         } catch (Exception e) {
             logger.warn("OpString Error", e);
-            removeFromQueueAndThrowException(provT, "Could not evaluate operational string", e);
+            removeFromQueueAndThrowException(provT, "Could not process operational string", e);
         }
         if (service != null) {
             provisioningQueue.remove(provT);

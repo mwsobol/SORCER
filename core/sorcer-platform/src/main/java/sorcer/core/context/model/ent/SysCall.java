@@ -69,7 +69,7 @@ public class SysCall extends Proc<Context> implements Serializable {
             invoker.setCmdarray(cmdarray);
     }
 
-    public Context getValue(Arg... args) throws RemoteException,
+    public Context evaluate(Arg... args) throws RemoteException,
             InvocationException {
         Context out = invoker.getScope();
         if (out == null)

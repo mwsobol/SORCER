@@ -90,7 +90,7 @@ public class operator extends Operator {
 	public static Proc dbEnt(String path, Object argument) throws EvaluationException, RemoteException {
 		Proc p = new Proc(path, argument);
 		p.setPersistent(true);
-		p.getValue();
+		p.evaluate();
 		return p;
 	}
 
@@ -389,7 +389,7 @@ public class operator extends Operator {
 //				procModel.getScope().putValue(parname, out);
 				return out;
 			} else if (obj instanceof Agent) {
-				return ((Agent)obj).getValue(parameters);
+				return ((Agent)obj).evaluate(parameters);
 			} else {
 				throw new InvocationException("No invoker for: " + parname);
 			}

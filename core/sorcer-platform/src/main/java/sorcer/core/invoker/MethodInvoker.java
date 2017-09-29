@@ -186,7 +186,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 	}
 
 	@Override
-	public T getValue(Arg... args) throws EvaluationException {
+	public T evaluate(Arg... args) throws EvaluationException {
 		Object[] parameters = getParameters();
 		Object val;
 		Class<?> evalClass = null;

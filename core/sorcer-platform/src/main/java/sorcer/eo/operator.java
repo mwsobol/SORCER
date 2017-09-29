@@ -97,7 +97,7 @@ public class operator extends Operator {
 		Object obj = sorcer.co.operator.value(context, path, entries);
 		if (obj instanceof Evaluation) {
             try {
-                obj = ((Evaluation) obj).getValue(entries);
+                obj = ((Evaluation) obj).evaluate(entries);
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }
@@ -1315,7 +1315,7 @@ public class operator extends Operator {
 
 	public static Signature defaultSig(Class<?> serviceType) throws SignatureException {
 		if (Modeling.class.isAssignableFrom(serviceType)) {
-			return sig("evaluate", serviceType);
+			return sig("process", serviceType);
 		} else if (Service.class.isAssignableFrom(serviceType)) {
 			return sig("exert", serviceType);
 		} else {
@@ -2395,7 +2395,7 @@ public class operator extends Operator {
 		try {
 			synchronized (variability) {
 				variability.valueChanged(null);
-				V val = variability.getValue();
+				V val = variability.evaluate();
 				variability.valueChanged(null);
 				return val;
 			}

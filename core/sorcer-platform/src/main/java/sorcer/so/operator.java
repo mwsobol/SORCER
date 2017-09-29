@@ -68,7 +68,7 @@ public class operator extends Operator {
                 } else if (entry instanceof Incrementor) {
                     return ((Incrementor<T>) entry).next();
                 } else if (entry instanceof Evaluation) {
-                    return (T) ((Evaluation) entry).getValue(args);
+                    return (T) ((Evaluation) entry).evaluate(args);
                 } else {
                     return (T) ((Entry) entry).get(args);
                 }
@@ -187,7 +187,7 @@ public class operator extends Operator {
             } else if (service instanceof Exertion) {
                 return new ServiceShell().evaluate((Mogram) service, args);
             } else if (service instanceof Evaluation) {
-                return ((Evaluation) service).getValue(args);
+                return ((Evaluation) service).evaluate(args);
             } else if (service instanceof Modeling) {
                 Domain cxt = Arg.selectDomain(args);
                 if (cxt != null) {

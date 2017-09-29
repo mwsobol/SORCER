@@ -189,7 +189,7 @@ public class ArgList extends ArrayList<Arg> {
 			Object obj = get(i);
 			if (obj instanceof Evaluation)
 				try {
-					values.add(((Evaluation)obj).getValue());
+					values.add(((Evaluation)obj).evaluate());
 				} catch (ContextException e) {
 					throw new EvaluationException(e);
 				}

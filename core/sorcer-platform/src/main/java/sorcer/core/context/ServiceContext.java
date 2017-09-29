@@ -357,10 +357,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 		}
 		if (val instanceof Evaluation && isRevaluable) {
-			val = ((Evaluation<T>) val).getValue(entries);
+			val = ((Evaluation<T>) val).evaluate(entries);
 		} else if ((val instanceof Paradigmatic)
 				&& ((Paradigmatic) val).isModeling()) {
-			val = ((Evaluation<T>) val).getValue(entries);
+			val = ((Evaluation<T>) val).evaluate(entries);
 		}
 		return val;
 	}
@@ -478,7 +478,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				val = entry.getValue();
 				if (val instanceof Evaluation && isRevaluable)
 					try {
-						val = ((Evaluation<T>) val).getValue();
+						val = ((Evaluation<T>) val).evaluate();
 					} catch (ContextException e) {
 						throw new EvaluationException(e);
 					}
@@ -498,7 +498,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				val = entry.getValue();
 				if (val instanceof Evaluation && isRevaluable)
 					try {
-						val = ((Evaluation) val).getValue();
+						val = ((Evaluation) val).evaluate();
 					} catch (ContextException e) {
 						throw new EvaluationException(e);
 					}
@@ -2694,7 +2694,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				if (e instanceof Entry) {
 					Object val = null;
 					if (((Entry) e).get() instanceof Evaluation) {
-						val = ((Evaluation) ((Entry) e).get()).getValue();
+						val = ((Evaluation) ((Entry) e).get()).evaluate();
 					} else  {
 						val = ((Entry) e).get();
 					}
@@ -2862,7 +2862,7 @@ public class ServiceContext<T> extends ServiceMogram implements
                 && ((ModelStrategy) mogramStrategy).dependers.size() > 0) {
             for (Evaluation eval : ((ModelStrategy) mogramStrategy).dependers) {
                 try {
-                    eval.getValue(args);
+                    eval.evaluate(args);
                 } catch (RemoteException e) {
                     throw new ContextException(e);
                 }
@@ -2908,10 +2908,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 							&& ((Entry)obj).get() instanceof Scopable) {
 						((Scopable)((Entry)obj).asis()).setScope(this);
 					}
-					obj = ((Evaluation<T>)obj).getValue(args);
+					obj = ((Evaluation<T>)obj).evaluate(args);
 				} else if ((obj instanceof Paradigmatic)
 						&& ((Paradigmatic) obj).isModeling()) {
-					obj = ((Evaluation<T>)obj).getValue(args);
+					obj = ((Evaluation<T>)obj).evaluate(args);
 				}
 			}
 			if (obj instanceof Reactive && ((Reactive)obj).isReactive()) {
@@ -3290,7 +3290,7 @@ public class ServiceContext<T> extends ServiceMogram implements
                     handleExertOutput(task, out);
                     return (T) task;
                 } else if (Evaluation.class.isAssignableFrom(serviceType)) {
-                    Object out = ((Evaluation)this).getValue(args);
+                    Object out = ((Evaluation)this).evaluate(args);
                     handleExertOutput(task, out);
                     return (T) task;
                 }

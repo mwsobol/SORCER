@@ -142,7 +142,7 @@ public class EvaluationTask extends Task {
 			if (evaluator instanceof Srv) {
 				result = handleSrvEntry((Srv)evaluator, args);
 			} else {
-				result = evaluator.getValue(args);
+				result = evaluator.evaluate(args);
 			}
 
 			if (getProcessSignature().getReturnPath() != null)

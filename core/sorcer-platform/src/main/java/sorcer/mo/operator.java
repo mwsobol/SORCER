@@ -513,7 +513,7 @@ public class operator {
             throws ContextException, RemoteException {
         Object obj = pm.asis(parname);
         if (obj instanceof Proc)
-            obj = ((Proc)obj).getValue(parametrs);
+            obj = ((Proc)obj).evaluate(parametrs);
         return obj;
     }
 

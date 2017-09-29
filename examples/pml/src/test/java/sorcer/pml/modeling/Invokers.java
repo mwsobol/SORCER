@@ -10,7 +10,6 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.model.ent.Neo;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.AltInvoker;
@@ -321,7 +320,7 @@ public class Invokers {
 				return (Boolean) conditionalContext.getValue("condition");
 			}
 		};
-		assertEquals(eval.getValue(), true);
+		assertEquals(eval.evaluate(), true);
 	}
 
 	@Test
@@ -340,12 +339,12 @@ public class Invokers {
 		logger.info("y: " + value(pm, "y"));
 		logger.info("opt" + value(pm, "opt"));
 		
-		assertEquals(opt.getValue(), null);
+		assertEquals(opt.evaluate(), null);
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		logger.info("opt eval: " + opt.getValue());
-		assertEquals(opt.getValue(), 500.0);
+		logger.info("opt eval: " + opt.evaluate());
+		assertEquals(opt.evaluate(), 500.0);
 	}
 
 	@Test

@@ -1105,7 +1105,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 			public void actionPerformed(ActionEvent evt) {
 				// sortWindows();
 				int nw = _windows.size();
-				// first evaluate to Maximized windows
+				// first process to Maximized windows
 				for (int i = 0; i < nw; i++) {
 					final JFrame jf = (JFrame) _windows.get(i);
 					jf.setState(Frame.NORMAL);

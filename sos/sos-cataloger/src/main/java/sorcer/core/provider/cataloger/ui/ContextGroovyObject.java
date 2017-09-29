@@ -27,7 +27,7 @@ import groovy.lang.GroovyShell;
 /**
  * This class is used to represent a Groovy Object stored in a context. A special class was created
  * because compilation issues can occur if the Groovy libraries are not linked properly. This
- * class also includes methods to evaluate the Groovy expression.
+ * class also includes methods to process the Groovy expression.
  * 
  * More information can be found at: http://groovy.codehaus.org/
  * 

@@ -123,7 +123,7 @@ public class ArgSet extends TreeSet<Arg> {
 		 while (i.hasNext()) {
 			 Object val = i.next();
 			 if (val instanceof Evaluation) {
-				 values.add(((Evaluation)val).getValue());
+				 values.add(((Evaluation)val).evaluate());
 			 } else
 				 values.add(null);
 		 }

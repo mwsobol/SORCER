@@ -93,7 +93,7 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 
 
 	@Override
-	public T getValue(Arg... args) throws EvaluationException, RemoteException {
+	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
 		Object val = this.item;
 		URL url = null;
 		try {
@@ -120,7 +120,7 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
                 }
 				out = (T) ((Invocation) val).invoke(cxt, args);
 			} else if (val instanceof Evaluation) {
-				out = ((Evaluation<T>) val).getValue(args);
+				out = ((Evaluation<T>) val).evaluate(args);
 			} else if (val instanceof ServiceFidelity) {
 				// return the selected fidelity of this entry
 				for (Arg arg : args) {
@@ -348,7 +348,7 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 
 	@Override
 	public T call(Arg... args) throws EvaluationException, RemoteException {
-		return getValue(args);
+		return evaluate(args);
 	}
 
 }

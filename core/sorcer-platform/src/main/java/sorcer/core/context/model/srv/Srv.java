@@ -158,10 +158,10 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
     }
 
     @Override
-    public Object getValue(Arg... args) throws EvaluationException, RemoteException {
+    public Object evaluate(Arg... args) throws EvaluationException, RemoteException {
         
         if (item instanceof Invocation) {
-            return super.getValue(args);
+            return super.evaluate(args);
         } else if (out != null && isValid) {
             return out;
         } else if (multiFi != null) {
@@ -199,7 +199,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
             } else if (item instanceof MorphFidelity) {
                 return execMorphFidelity((MorphFidelity) item, args);
             } else {
-                return super.getValue(args);
+                return super.evaluate(args);
             }
         } catch (Exception e) {
             throw new EvaluationException(e);
@@ -215,7 +215,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
             isValid(false);
         }
         if (obj instanceof Function) {
-            out = ((Function) obj).getValue(entries);
+            out = ((Function) obj).evaluate(entries);
         } else if (obj instanceof Mogram) {
             Context cxt = ((Mogram)obj).exert(entries).getContext();
             Object val = cxt.getValue(Context.RETURN);
@@ -275,7 +275,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
                 return ((ServiceContext) mod).execSignature((Signature) ((SignatureEntry) item).getItem(), args);
             } else {
                 item = mod;
-                return getValue(args);
+                return evaluate(args);
             }
         }
         return null;

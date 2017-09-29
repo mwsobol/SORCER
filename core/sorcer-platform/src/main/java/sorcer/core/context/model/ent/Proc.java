@@ -175,7 +175,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 			if (context != null) {
 				return invoke((ServiceContext) context, args);
 			} else {
-				return getValue(args);
+				return evaluate(args);
 			}
 		} catch (EvaluationException | RemoteException e) {
 			logger.warn("Proc evaluation failed", e);
@@ -187,7 +187,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	 * @see sorcer.service.Evaluation#execute(sorcer.co.tuple.Parameter[])
 	 */
 	@Override
-	public T getValue(Arg... args) throws EvaluationException, RemoteException {
+	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
 		// check for a constant or cached eval
 		if (item instanceof Number && !isPersistent) {
 			return (T) item;
@@ -220,7 +220,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 			if (mappable != null && out instanceof String) {
 				Object obj = mappable.asis((String) out);
 				if (obj instanceof Proc && ((Proc)obj).isPersistent())
-					return (T)((Proc)obj).getValue();
+					return (T)((Proc)obj).evaluate();
 				else
 					val = (T) mappable.getValue((String) out);
 			} else if (item == null && scope != null) {
@@ -265,7 +265,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 						}
 					}
 				}
-				out = ((Evaluation<T>) val).getValue(args);
+				out = ((Evaluation<T>) val).evaluate(args);
 				isValid = true;
 			}
 
@@ -523,7 +523,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		try {
 			if (context != null)
 				scope.append(context);
-			return getValue(args);
+			return evaluate(args);
 		} catch (Exception e) {
 			throw new InvocationException(e);
 		}
@@ -538,7 +538,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		if (attributes[0].equals(name)) {
 			if (attributes.length == 1)
 				try {
-					return (T)getValue(args);
+					return (T) evaluate(args);
 				} catch (RemoteException e) {
 					throw new ContextException(e);
 				}
@@ -628,9 +628,9 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt != null) {
 			scope = cxt;
-			return getValue(args);
+			return evaluate(args);
 		} else {
-			return getValue(args);
+			return evaluate(args);
 		}
 	}
 

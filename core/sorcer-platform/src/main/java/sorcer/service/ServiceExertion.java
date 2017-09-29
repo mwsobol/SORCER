@@ -32,7 +32,6 @@ import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.eo.operator;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
@@ -129,7 +128,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     exertion.setService(null);
                     return (T) exertion;
                 } else if (Evaluation.class.isAssignableFrom(serviceType)) {
-                    Object out = this.getValue(args);
+                    Object out = this.evaluate(args);
                     handleExertOutput(exertion, out);
                     return (T) exertion;
                 }
@@ -836,7 +835,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      *
      * @see sorcer.service.Evaluation#execute()
      */
-    public Object getValue(Arg... entries) throws EvaluationException,
+    public Object evaluate(Arg... entries) throws EvaluationException,
             RemoteException {
         Context cxt = null;
         try {
@@ -902,7 +901,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * @see sorcer.service.Evaluation#getAsIs()
      */
     public Object asis() throws EvaluationException, RemoteException {
-        return getValue();
+        return evaluate();
     }
 
     public Object asis(String path) throws ContextException {

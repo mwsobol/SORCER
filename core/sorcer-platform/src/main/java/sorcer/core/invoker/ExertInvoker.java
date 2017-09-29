@@ -60,7 +60,7 @@ public class ExertInvoker extends ServiceInvoker implements ExertionInvoking {
 	 * @see sorcer.service.Evaluation#execute(sorcer.service.Args[])
 	 */
 	@Override
-	public Object getValue(Arg... entries) throws InvocationException,
+	public Object evaluate(Arg... entries) throws InvocationException,
 			RemoteException {
 		Context cxt = null;
 		try {

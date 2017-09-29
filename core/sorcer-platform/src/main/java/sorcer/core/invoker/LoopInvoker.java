@@ -97,12 +97,12 @@ public class LoopInvoker<V> extends ServiceInvoker<V> implements ConditionalInvo
 	}
 
 	@Override
-	public V getValue(Arg... entries) throws EvaluationException, RemoteException {
+	public V evaluate(Arg... entries) throws EvaluationException, RemoteException {
 		V obj = null;
 		try {
 			if (condition == null) {
 				for (int i = 0; i < max - min; i++) {
-					obj = target.getValue(entries);
+					obj = target.evaluate(entries);
 				}
 				return obj;
 			} else if (condition != null && max - min == 0) {
@@ -112,17 +112,17 @@ public class LoopInvoker<V> extends ServiceInvoker<V> implements ConditionalInvo
 					condition.setConditionalContext(invokeContext);
 				}
 				while (condition.isTrue()) {
-					obj = target.getValue(entries);
+					obj = target.evaluate(entries);
 				}
 			} else if (condition != null && max - min > 0) {
 				// exert min times
 				for (int i = 0; i < min; i++) {
-					obj = target.getValue(entries);
+					obj = target.evaluate(entries);
 				}
 				for (int i = 0; i < max - min; i++) {
-					obj = target.getValue(entries);
+					obj = target.evaluate(entries);
 					if (condition.isTrue())
-						obj = target.getValue(entries);
+						obj = target.evaluate(entries);
 					else
 						return obj;
 				}

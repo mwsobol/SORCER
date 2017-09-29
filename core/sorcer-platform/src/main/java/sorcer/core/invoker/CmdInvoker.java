@@ -160,7 +160,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	 * @see sorcer.service.Evaluation#execute(sorcer.service.Arg[])
 	 */
 	@Override
-	public CmdResult getValue(Arg... entries) throws EvaluationException,
+	public CmdResult evaluate(Arg... entries) throws EvaluationException,
 			RemoteException {
 		CmdResult out = null;
 		if (scriptFile != null) {

@@ -17,7 +17,6 @@
 
 package sorcer.core.context;
 
-import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.service.Domain;
 
@@ -48,7 +47,7 @@ public class Copier implements Evaluation<Context>, Identifiable {
 	}
 
 	@Override
-	public Context getValue(Arg... entries) throws EvaluationException, RemoteException {
+	public Context evaluate(Arg... entries) throws EvaluationException, RemoteException {
 		try {
 			for (int i = 0; i < fromEntries.length; i++) {
 				toContext.putValue(toEntries[i].getName(), fromContext.getValue(fromEntries[i].getName()));
@@ -85,7 +84,7 @@ public class Copier implements Evaluation<Context>, Identifiable {
 		Domain cxt = Arg.selectDomain(args);
 		if (cxt != null) {
 			fromContext = (Context) cxt;
-			return getValue(args);
+			return evaluate(args);
 		}
 		return null;
 	}

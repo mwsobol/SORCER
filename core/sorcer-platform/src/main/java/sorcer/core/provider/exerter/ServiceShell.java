@@ -686,7 +686,7 @@ public class ServiceShell implements Exerter, Client, Callable, RemoteServiceShe
 				}
 				return finalize((Exertion) out, args);
 			} catch (Exception e) {
-				logger.error("Failed in evaluate", e);
+				logger.error("Failed in process", e);
 				throw new ExertionException(e);
 			}
 		} else {
@@ -868,7 +868,7 @@ public class ServiceShell implements Exerter, Client, Callable, RemoteServiceShe
                 return (T) prv.exert(mogram, txn).getContext();
             } else if (service instanceof Proc) {
                 ((Proc)service).setScope(mogram);
-                Object val =((Proc)service).getValue();
+                Object val =((Proc)service).evaluate();
                 ((Context)mogram).putValue(((Proc)service).getName(), val);
                 return (T) mogram;
             }

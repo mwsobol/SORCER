@@ -25,7 +25,6 @@ import sorcer.service.*;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Valuation;
 import sorcer.util.Response;
 import sorcer.service.Signature.ReturnPath;
 
@@ -139,9 +138,9 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 					return ((Invocation) val).invoke(this, args);
 				}
 			} else if (val != null && val instanceof Evaluation) {
-				return ((Evaluation) val).getValue(args);
+				return ((Evaluation) val).evaluate(args);
 			}   if (val instanceof ServiceFidelity) {
-				return new Function(path, val).getValue(args);
+				return new Function(path, val).evaluate(args);
 			} else if (path == null && val == null
 					&& ((ModelStrategy)mogramStrategy).getResponsePaths() != null) {
 				if (((ModelStrategy)mogramStrategy).getResponsePaths().size() == 1)
@@ -341,7 +340,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 								((Agent) o).setScope(this);
 							else
 								((Agent) o).getScope().append(this);
-							result = ((Agent) o).getValue(entries);
+							result = ((Agent) o).evaluate(entries);
 						} else {
 							Object i = ((Proc) get(((ServiceContext) context)
 									.getExecPath().path())).asis();
@@ -432,7 +431,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 					if (depender instanceof Invocation) {
 						((Invocation) depender).invoke(this, entries);
 					} else {
-						((Evaluation) depender).getValue(entries);
+						((Evaluation) depender).evaluate(entries);
 					}
 				} catch (Exception e) {
 					throw new ExertionException(e);

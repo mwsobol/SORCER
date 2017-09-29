@@ -173,7 +173,7 @@ public class ProcModels {
 		assertTrue(eval(pm, "y").equals(20.0));
 		assertTrue(eval(pm, "add").equals(30.0));
 
-		// now evaluate model for its target       
+		// now process model for its target
         responseUp(pm, "add");
 		assertEquals(eval(pm), 30.0);
 	}
@@ -530,11 +530,11 @@ public class ProcModels {
 
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
-		assertEquals(eval.getValue(), false);
+		assertEquals(eval.evaluate(), false);
 
 		pm.putValue("x", 20.0);
 		pm.putValue("y", 10.0);
-		assertEquals(eval.getValue(), true);
+		assertEquals(eval.evaluate(), true);
 
 	}
 
@@ -568,9 +568,9 @@ public class ProcModels {
 		Callable update = new Callable() {
 			public Double call() throws ContextException,
 					InterruptedException, RemoteException {
-				while ((Double) x.getValue() < 60.0) {
-					x.setValue((Double) x.getValue() + 1.0);
-					y.setValue((Double) y.getValue() + 1.0);
+				while ((Double) x.evaluate() < 60.0) {
+					x.setValue((Double) x.evaluate() + 1.0);
+					y.setValue((Double) y.evaluate() + 1.0);
 				}
 				return (Double) eval(x) + (Double) eval(y) + (Double)eval(pm, "z");
 			}
@@ -594,9 +594,9 @@ public class ProcModels {
 		// anonymous local class implementing Callable interface
 		Callable update = new Callable() {
 			public Double call() throws Exception {
-				while (x.getValue() < (Double)value(pm, "limit")) {
-					x.setValue(x.getValue() + 1.0);
-					y.setValue(y.getValue() + 1.0);
+				while (x.evaluate() < (Double)value(pm, "limit")) {
+					x.setValue(x.evaluate() + 1.0);
+					y.setValue(y.evaluate() + 1.0);
 				}
 				return eval(x) + eval(y) + (Double)value(pm, "z");
 			}
@@ -611,12 +611,12 @@ public class ProcModels {
 	public class Config implements Callable {
 
 		public Double call() throws Exception {
-			while (x.getValue() < (Double)value(pm, "limit")) {
-				x.setValue(x.getValue() + 1.0);
-				y.setValue(y.getValue() + 1.0);
+			while (x.evaluate() < (Double)value(pm, "limit")) {
+				x.setValue(x.evaluate() + 1.0);
+				y.setValue(y.evaluate() + 1.0);
 			}
-			logger.info("x: " + x.getValue());
-			logger.info("y: " + y.getValue());
+			logger.info("x: " + x.evaluate());
+			logger.info("y: " + y.evaluate());
 			logger.info("z: " + value(pm, "z"));
 			return eval(x) + eval(y) + (Double)value(pm, "z");
 		}

@@ -39,7 +39,6 @@ import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Functionality.Type;
 import sorcer.service.modeling.Valuation;
-import sorcer.service.modeling.func;
 import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
@@ -770,7 +769,7 @@ public class operator extends Operator {
 					return (URL) nv;
 				}
 				((Setter) v).setPersistent(true);
-				((Evaluation)v).getValue();
+				((Evaluation)v).evaluate();
 				dburl = (URL) ((Evaluation)v).asis();
 			}
 			else if (context.asis(path) instanceof Entry) {

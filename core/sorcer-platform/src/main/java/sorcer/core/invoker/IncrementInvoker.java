@@ -71,7 +71,7 @@ public abstract class IncrementInvoker<T> extends ServiceInvoker<T> implements I
 	}
 
 	@Override
-	public T getValue(Arg... entries) throws EvaluationException {
+	public T evaluate(Arg... entries) throws EvaluationException {
 		try {
 			if (value == null && target != null)
 				value = target.invoke(null, entries);
@@ -115,7 +115,7 @@ public abstract class IncrementInvoker<T> extends ServiceInvoker<T> implements I
 	@Override
 	public T next()  {
 		try {
-			return getValue();
+			return evaluate();
 		} catch (Exception e) {
 			throw new NoSuchElementException(e.getMessage());
 		}

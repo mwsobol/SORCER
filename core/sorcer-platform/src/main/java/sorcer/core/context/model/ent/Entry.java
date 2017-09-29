@@ -131,7 +131,7 @@ public class Entry<V> extends Association<String, V>
                 if (val instanceof Entry && ((Entry)val).getName().equals(key)) {
                     out = (V) ((Entry)val).get(args);
                 } else {
-                    out = ((Evaluation<V>) val).getValue(args);
+                    out = ((Evaluation<V>) val).evaluate(args);
                 }
             } else if (val instanceof Valuation) {
                 out = (V) ((Valuation) val).value();
@@ -141,7 +141,7 @@ public class Entry<V> extends Association<String, V>
                     if (deref instanceof Scopable) {
                         ((Scopable)deref).setScope(((Ref)val).getScope());
                     }
-                    out = (V) ((Evaluation)deref).getValue(args);
+                    out = (V) ((Evaluation)deref).evaluate(args);
                 } else {
                     out = (V) ((Entry)deref).get(args);
                 }

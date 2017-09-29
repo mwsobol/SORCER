@@ -18,11 +18,9 @@ package sorcer.core.context.model.ent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.context.ApplicationDescription;
 import sorcer.core.invoker.Activator;
 import sorcer.eo.operator;
 import sorcer.service.*;
-import sorcer.service.modeling.Activation;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.func;
 
@@ -209,7 +207,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 	}
 
     @Override
-    public Double getValue(Arg... args) throws EvaluationException, RemoteException {
+    public Double evaluate(Arg... args) throws EvaluationException, RemoteException {
 	    if (activator.getArgs().size() > 0) {
             out = activator.activate(args);
         }
@@ -318,9 +316,9 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt != null) {
 			scope = cxt;
-			return getValue(args);
+			return evaluate(args);
 		} else {
-			return getValue(args);
+			return evaluate(args);
 		}
 	}
 

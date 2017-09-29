@@ -101,7 +101,7 @@ public class Procedures {
 		// adding a proc to the context updates proc's scope
 		add(cxt, add);
 
-		// evaluate the entry of the context
+		// process the entry of the context
 		logger.info("context add eval: " + value(cxt, "add"));
 		assertTrue(value(cxt, "add").equals(50.0));
 
@@ -124,7 +124,7 @@ public class Procedures {
 
 		Context<Double> cxt = context(val("x", 10.0), val("y", 20.0));
 		logger.info("proc eval: " + eval(add, cxt));
-		// evaluate a proc
+		// process a proc
 		assertTrue(eval(add, cxt).equals(30.0));
 
 	}

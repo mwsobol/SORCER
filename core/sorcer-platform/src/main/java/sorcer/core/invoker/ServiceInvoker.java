@@ -231,7 +231,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	 * @throws RemoteException 
 	 */
 	@Override
-	public T getValue(Arg... entries) throws EvaluationException, RemoteException {
+	public T evaluate(Arg... entries) throws EvaluationException, RemoteException {
 			if (lambda != null || evaluator != null)
 				return (T) invokeEvaluator(entries);
 			else
@@ -287,7 +287,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			((ServiceContext)invokeContext).put(((Proc) par).getName(), par);
 			if (((Proc) par).asis() instanceof ServiceInvoker) {
 				try {
-					((ServiceInvoker) ((Proc) par).getValue()).addObserver(this);
+					((ServiceInvoker) ((Proc) par).evaluate()).addObserver(this);
 					args.add((Proc) par);
 					value = null;
 					setChanged();
@@ -382,7 +382,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 				} else if (evaluator != null)
 					value = (T) invokeEvaluator(entries);
 				else
-					value = getValue(entries);
+					value = evaluate(entries);
 
 				valueIsValid = true;
 			}
@@ -400,7 +400,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 				return lambda.call(invokeContext);
 			} else if (evaluator != null) {
 				evaluator.addArgs(this.args);
-				return evaluator.getValue(entries);
+				return evaluator.evaluate(entries);
 			}
 		} catch (Exception e) {
 			throw new InvocationException(e);
@@ -521,10 +521,10 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluator#evaluate(sorcer.service.Arg[])
+	 * @see sorcer.service.Evaluator#process(sorcer.service.Arg[])
 	 */
 	@Override
-	public T evaluate(Arg... entries) throws EvaluationException, RemoteException {
+	public T process(Arg... entries) throws EvaluationException, RemoteException {
 		return invoke(entries);
 	}
 
@@ -599,7 +599,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		Context cxt = (Context)Arg.selectDomain(args);
 		if (cxt !=null) {
 			invokeContext = cxt;
-			return getValue(args);
+			return evaluate(args);
 		}
 		return null;
 	}

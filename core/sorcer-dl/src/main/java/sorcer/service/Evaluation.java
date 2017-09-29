@@ -47,7 +47,7 @@ public interface  Evaluation <T> extends Substitutable, Scopable, Activity, Eval
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */
-	public T getValue(Arg... entries) throws EvaluationException, RemoteException;
+	public T evaluate(Arg... entries) throws EvaluationException, RemoteException;
 
 
 	public void setNegative(boolean negative);

@@ -384,7 +384,7 @@ public class InvokerTest {
 				return (Boolean) conditionalContext.getValue("condition");
 			}
 		};
-		assertEquals(eval.getValue(), true);
+		assertEquals(eval.evaluate(), true);
 	}
 
 	@Test
@@ -399,12 +399,12 @@ public class InvokerTest {
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
 
-		assertEquals(opt.getValue(), null);
+		assertEquals(opt.evaluate(), null);
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		logger.info("opt eval: " + opt.getValue());
-		assertEquals(opt.getValue(), 500.0);
+		logger.info("opt eval: " + opt.evaluate());
+		assertEquals(opt.evaluate(), 500.0);
 	}
 
 	@Test
@@ -420,12 +420,12 @@ public class InvokerTest {
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
 
-		assertEquals(opt.getValue(), null);
+		assertEquals(opt.evaluate(), null);
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		logger.info("opt eval: " + opt.getValue());
-		assertEquals(opt.getValue(), 500.0);
+		logger.info("opt eval: " + opt.evaluate());
+		assertEquals(opt.evaluate(), 500.0);
 	}
 
 	@Test

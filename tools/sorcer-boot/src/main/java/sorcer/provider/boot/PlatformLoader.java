@@ -76,7 +76,7 @@ public class PlatformLoader {
                                     parsePlatform(file.toURI().toURL()));
                             } catch (Exception e) {
                                 logger.warn(
-                                           "Could not evaluate ["+file.getAbsolutePath()+"], " +
+                                           "Could not process ["+file.getAbsolutePath()+"], " +
                                            "continue building platform",
                                            e);
                             }

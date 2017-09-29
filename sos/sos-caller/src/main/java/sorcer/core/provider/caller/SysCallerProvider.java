@@ -46,6 +46,6 @@ public class SysCallerProvider extends ServiceProvider implements SysCaller {
 		if (name == null)
 			name = context.getName();
         SysCall caller = new SysCall(name, context);
-        return caller.getValue();
+        return caller.evaluate();
 	}
 }
