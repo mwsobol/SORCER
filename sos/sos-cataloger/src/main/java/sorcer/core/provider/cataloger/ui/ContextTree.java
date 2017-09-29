@@ -391,7 +391,7 @@ public class ContextTree extends JPanel {
 	/**
 	 * Add child to the tree under parent, and setValue the visibility of it. If
 	 * parent is incorrect the child will be added under the root. This method
-	 * enforces rules prevents any item from appears as a child to a datanode,
+	 * enforces rules prevents any impl from appears as a child to a datanode,
 	 * also only allows one data node for path.
 	 * 
 	 * 

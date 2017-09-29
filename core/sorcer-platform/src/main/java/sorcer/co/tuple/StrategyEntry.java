@@ -36,7 +36,7 @@ public class StrategyEntry extends Entry<Strategy> implements Arg {
 
 	public StrategyEntry(String path, URL strategy) {
 		super(path);
-		item = strategy;
+		impl = strategy;
 		out = null;
 	};
 
@@ -46,7 +46,7 @@ public class StrategyEntry extends Entry<Strategy> implements Arg {
 			return out;
 		} else {
 			try {
-				out = (Strategy) ((URL)item).getContent();
+				out = (Strategy) ((URL) impl).getContent();
 				isValid = true;
 			} catch (IOException e) {
 				e.printStackTrace();

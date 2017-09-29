@@ -27,7 +27,7 @@ public class Tie extends Entry<String> {
     }
 
     public String entry(String entry) {
-        item = entry;
+        impl = entry;
         return out;
     }
 
@@ -39,13 +39,13 @@ public class Tie extends Entry<String> {
     @Override
     public int hashCode() {
         int hash = key.length() + key.length() + 1;
-        return hash * 31 + key.hashCode() + item.hashCode();
+        return hash * 31 + key.hashCode() + impl.hashCode();
     }
 
     @Override
     public boolean equals(Object object) {
         if (object instanceof Tie) {
-            if (item != null && ((Tie) object).out == null) {
+            if (impl != null && ((Tie) object).out == null) {
                 return false;
             } else if (out == null && ((Tie) object).out != null) {
                 return false;

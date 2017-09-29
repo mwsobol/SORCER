@@ -209,7 +209,7 @@ public class operator {
             out = new Entry(entry.getName(), ((ServiceContext)entry.asis()).getValue(entry.getName()));
             return out;
         } else {
-            out = new Entry(entry.getName(), entry.getItem());
+            out = new Entry(entry.getName(), entry.getImpl());
         }
         return out;
     }
@@ -532,7 +532,7 @@ public class operator {
                 model = ((SrvModel)item);
             } else if (item instanceof FidelityManager) {
                 fiManager = ((FidelityManager)item);
-            } else if (item instanceof Srv && ((Srv)item).getItem() instanceof MorphFidelity) {
+            } else if (item instanceof Srv && ((Srv)item).getImpl() instanceof MorphFidelity) {
                 morphFiEnts.add((Srv)item);
             } else if (item instanceof Fidelity) {
                 if (item instanceof Metafidelity) {
@@ -564,7 +564,7 @@ public class operator {
             MorphFidelity mFi = null;
             if ((morphFiEnts.size() > 0)) {
                 for (Srv morphFiEnt : morphFiEnts) {
-                    mFi = (MorphFidelity) morphFiEnt.getItem() ;
+                    mFi = (MorphFidelity) morphFiEnt.getImpl() ;
                     fiManager.addMorphedFidelity(morphFiEnt.getName(), mFi);
                     fiManager.addFidelity(morphFiEnt.getName(), mFi.getFidelity());
                     mFi.setPath(morphFiEnt.getName());
@@ -572,7 +572,7 @@ public class operator {
                     mFi.addObserver(fiManager);
                     if (mFi.getMorpherFidelity() != null) {
                         // set the default morpher
-                        mFi.setMorpher((Morpher) ((Function)mFi.getMorpherFidelity().get(0)).getItem());
+                        mFi.setMorpher((Morpher) ((Function)mFi.getMorpherFidelity().get(0)).getImpl());
                     }
                 }
             }

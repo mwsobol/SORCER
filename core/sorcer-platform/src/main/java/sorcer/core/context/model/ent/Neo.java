@@ -58,7 +58,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 
        public Neo(String name, double value) {
         this(name);
-        item = value;
+        impl = value;
     }
 
     public Neo(String name, operator.Args args) {
@@ -73,7 +73,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 
     public Neo(String name, double value, Context<Function> signals) {
         this(name);
-        item = value;
+        impl = value;
         activator.setScope(signals);
     }
 
@@ -91,7 +91,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 
 	public Neo(String name, double value, Context<Value> signals, Context<Float> weights) {
         this(name);
-		item = value;
+		impl = value;
         activator.setScope(signals);
 
     }
@@ -183,7 +183,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 
 	@Override
 	public Class getValueType() {
-		return item.getClass();
+		return impl.getClass();
 	}
 
 	/* (non-Javadoc)
@@ -264,7 +264,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
             } else if (activator.getArgs().size() == 0) {
                 return out;
             }
-            item = activator.activate(args);
+            impl = activator.activate(args);
             return out;
         } catch (Exception e) {
             throw new InvocationException(e);

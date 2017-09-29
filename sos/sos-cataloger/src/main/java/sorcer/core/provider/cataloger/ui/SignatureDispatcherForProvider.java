@@ -237,7 +237,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 
 	/**
 	 * Gets the list of providers, since we are on a provider this returns one
-	 * item, and is ignored in the view.
+	 * impl, and is ignored in the view.
 	 * 
 	 * @return String array of the provider names
 	 */

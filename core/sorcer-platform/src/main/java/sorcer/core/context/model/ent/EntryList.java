@@ -134,7 +134,7 @@ public class EntryList extends ArrayList<Entry> {
 	public List<Object> getValues() throws EvaluationException, RemoteException {
 		List<Object> values = new ArrayList<Object>(size());
 		for (int i = 0; i < size(); i++) {
-			values.add(get(i).getItem());
+			values.add(get(i).getImpl());
 		}
 		return values;
 	}

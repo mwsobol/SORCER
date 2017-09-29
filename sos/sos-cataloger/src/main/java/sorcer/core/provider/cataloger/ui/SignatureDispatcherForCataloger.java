@@ -456,7 +456,7 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 		try {
 			return ((ContextManagement)catalog).getSavedContextList(model.getSelectedProvider(),
 					model.getSelectedInterfaceName());
-			// sorcer.core.Provider temp=(sorcer.core.Provider)item;
+			// sorcer.core.Provider temp=(sorcer.core.Provider)impl;
 			// return temp.currentContextList(model.getSelectedInterface());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -513,7 +513,7 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 		try {
 			return ((ContextManagement)catalog).deleteContext(model.getSelectedProvider(), model
 					.getSelectedInterfaceName(), methodName);
-			// sorcer.core.Provider temp=(sorcer.core.Provider)item;
+			// sorcer.core.Provider temp=(sorcer.core.Provider)impl;
 			// return temp.currentContextList(model.getSelectedInterface());
 		} catch (Exception e) {
 			e.printStackTrace();

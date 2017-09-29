@@ -54,9 +54,9 @@ public class NeoFidelity extends Fidelity<Context<Float>> {
         this.weights = weights;
         for (Value e : entries) {
             if (e.getType() == Functionality.Type.THRESHOLD) {
-                threshold = (double) e.getItem();
+                threshold = (double) e.getImpl();
             } else if (e.getType() == Functionality.Type.BIAS) {
-                bias = (double) e.getItem();
+                bias = (double) e.getImpl();
             }
         }
     }

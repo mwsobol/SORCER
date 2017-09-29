@@ -69,10 +69,10 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
         this.name = key;
         if (value instanceof Fi) {
             multiFi = (Fi) value;
-            this.item = (T)  multiFi.get(0);
+            this.impl = (T)  multiFi.get(0);
         } else {
             this.key = path;
-            this.item = value;
+            this.impl = value;
         }
 	}
 
@@ -94,7 +94,7 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 
 	@Override
 	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
-		Object val = this.item;
+		Object val = this.impl;
 		URL url = null;
 		try {
 			substitute(args);
@@ -171,12 +171,12 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 		if (isPersistent) {
 			try {
 				if (SdbUtil.isSosURL(value)) {
-					this.item = (T) value;
-				} else if (SdbUtil.isSosURL(this.item)) {
-					if (((URL) this.item).getRef() == null) {
-						this.item = (T) SdbUtil.store(value);
+					this.impl = (T) value;
+				} else if (SdbUtil.isSosURL(this.impl)) {
+					if (((URL) this.impl).getRef() == null) {
+						this.impl = (T) SdbUtil.store(value);
 					} else {
-						SdbUtil.update((URL) this.item, value);
+						SdbUtil.update((URL) this.impl, value);
 					}
 				}
 			} catch (Exception e) {
@@ -226,15 +226,15 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof Function) {
-			if (item != null && ((Function) object).item == null) {
+			if (impl != null && ((Function) object).impl == null) {
 				return false;
-			} else if (item == null && ((Function) object).item != null) {
+			} else if (impl == null && ((Function) object).impl != null) {
 				return false;
 			} else if (((Function) object).key.equals(key)
-					&& ((Function) object).item == item) {
+					&& ((Function) object).impl == impl) {
 				return true;
 			} else if (((Function) object).key.equals(key)
-					&& ((Function) object).item.equals(item)) {
+					&& ((Function) object).impl.equals(impl)) {
 				return true;
 			}
 		}
@@ -266,13 +266,13 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 	public String toString() {
 		String en = "";
 		try {
-			if (item instanceof Evaluation && ((Evaluation) item).asis() != null) {
-				if (this == item) {
-					return "[" + key + "=" + ((Identifiable)item).getName() + "x]";  // loop
+			if (impl instanceof Evaluation && ((Evaluation) impl).asis() != null) {
+				if (this == impl) {
+					return "[" + key + "=" + ((Identifiable) impl).getName() + "x]";  // loop
 				}
-				en = ((Evaluation) item).asis().toString();
+				en = ((Evaluation) impl).asis().toString();
 			} else {
-				en = "" + item;
+				en = "" + impl;
 			}
 		}catch (EvaluationException e) {
 			e.printStackTrace();
@@ -292,25 +292,25 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 		Context cxt = null;
 		Context out = new ServiceContext();
 		if (mogram instanceof ProcModel) {
-			if (item != null && item != Context.none)
+			if (impl != null && impl != Context.none)
 				add((Context)mogram, this);
 			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Path(key));
 			out = (Context) ((Model)mogram).getResponse();
 		} else if (mogram instanceof ServiceContext) {
-			if (item == null || item == Context.none) {
+			if (impl == null || impl == Context.none) {
 				out.putValue(key, ((Context)mogram).getValue(key));
 			} else {
-				if (item instanceof Evaluation) {
+				if (impl instanceof Evaluation) {
 					this.setReactive(true);
 					((ServiceContext)mogram).putValue(key, this);
 				} else {
-					((ServiceContext)mogram).putValue(key, item);
+					((ServiceContext)mogram).putValue(key, impl);
 				}
 				out.putValue(key, ((ServiceContext) mogram).getValue(key));
 			}
 		} else if (mogram instanceof Exertion) {
-			if (item != null && item != Context.none)
-				mogram.getContext().putValue(key, item);
+			if (impl != null && impl != Context.none)
+				mogram.getContext().putValue(key, impl);
 			cxt =  mogram.exert(txn).getContext();
 			out.putValue(key, cxt.getValue(key));
 		}
@@ -331,7 +331,7 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 	}
 
 	public ServiceFidelity getServiceFidelity() {
-		return (ServiceFidelity)item;
+		return (ServiceFidelity) impl;
 	}
 
 	public String fiName() {

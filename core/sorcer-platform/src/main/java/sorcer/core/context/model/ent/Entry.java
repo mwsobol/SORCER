@@ -56,17 +56,17 @@ public class Entry<V> extends Association<String, V>
         this.out = out;
     }
 
-    public Object getItem() {
+    public Object getImpl() {
         if (!isValid && multiFi != null) {
             Object select = multiFi.getSelect();
             if (select instanceof Entry) {
-                item = ((Entry) multiFi.getSelect()).getItem();
+                impl = ((Entry) multiFi.getSelect()).getImpl();
             } else {
-                item = (multiFi.getSelect());
+                impl = (multiFi.getSelect());
             }
         }
         isValid = true;
-        return item;
+        return impl;
     }
 
     @Override
@@ -95,15 +95,15 @@ public class Entry<V> extends Association<String, V>
     @Override
     public V get(Arg... args) throws ContextException {
         if (multiFi != null && multiFi.isChanged()) {
-            item = multiFi.getSelect();
+            impl = multiFi.getSelect();
             multiFi.setChanged(false);
         }
-        if (item instanceof Entry && ((Entry)item).getKey().equals(key)) {
-            out = (V) ((Entry)item).getData(args);
+        if (impl instanceof Entry && ((Entry) impl).getKey().equals(key)) {
+            out = (V) ((Entry) impl).getData(args);
             isValid = true;
             return out;
         }
-        Object val = item;
+        Object val = impl;
         URL url = null;
         try {
             substitute(args);
@@ -120,7 +120,7 @@ public class Entry<V> extends Association<String, V>
                         uo.setName(key);
                         url = SdbUtil.store(uo);
                     }
-                    item = url;
+                    impl = url;
                     out = null;
                 }
                 return (V) val;
@@ -161,11 +161,11 @@ public class Entry<V> extends Association<String, V>
             } else if (val instanceof Service) {
                 out = (V) ((Service)val).execute(args);
             } else
-                // item is just the out
-                // it is recommended to set out and item to the same value
-                // when the item is implementation of the out value
-                if (out == null && item != null) {
-                    out = (V) item;
+                // impl is just the out
+                // it is recommended to set out and impl to the same value
+                // when the impl is implementation of the out value
+                if (out == null && impl != null) {
+                    out = (V) impl;
                 }
         } catch (Exception e) {
             throw new ContextException(e);
@@ -236,10 +236,10 @@ public class Entry<V> extends Association<String, V>
         Domain cxt = Arg.selectDomain(args);
         if (cxt != null) {
             // entry substitution
-            ((ServiceContext)cxt).putValue(key, item);
+            ((ServiceContext)cxt).putValue(key, impl);
             return cxt;
         } else {
-            return item;
+            return impl;
         }
     }
 
@@ -273,10 +273,10 @@ public class Entry<V> extends Association<String, V>
     }
 
     public V asis() {
-        if (item != null && item instanceof Entry) {
-            return (V) ((Entry)item).asis();
+        if (impl != null && impl instanceof Entry) {
+            return (V) ((Entry) impl).asis();
         } else {
-            return (V) item;
+            return (V) impl;
         }
     }
 }

@@ -157,7 +157,7 @@ public class Agent<T> extends Proc<T> implements Serializable {
 	private String getClassName(Arg... entries) {
 		for (Arg p : entries) {
 			if (p instanceof Entry && p.getName().equals("class"))
-				return (String)((Entry)p).getItem();
+				return (String)((Entry)p).getImpl();
 		}
 		return null;
 	}

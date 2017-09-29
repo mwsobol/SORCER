@@ -428,14 +428,14 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 
 		for (out = 1; out < tally; out++) // out is dividing line
 		{
-			String temp = list[out]; // remove marked item
+			String temp = list[out]; // remove marked impl
 			in = out; // start shifts at out
 			// until one is smaller
 			while (in > 0 && getIndex((String) list[in - 1]) >= getIndex(temp)) {
-				list[in] = list[in - 1]; // shift item right,
+				list[in] = list[in - 1]; // shift impl right,
 				--in; // go left one position
 			}
-			// insert marked item
+			// insert marked impl
 			list[in] = temp;
 		} // end for
 		return list;

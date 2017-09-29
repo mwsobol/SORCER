@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 /**
- * An pair of objects as an identifiable item.
+ * An pair of objects as an identifiable impl.
  *
  * @author Mike Sobolewski
  */
@@ -36,7 +36,7 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
     protected I out;
 
     // carrier of out
-	protected Object item;
+	protected Object impl;
 
     protected Fi multiFi;
 
@@ -64,9 +64,9 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
         this.key = key;
         if (item instanceof Fi) {
             multiFi = (Fi) item;
-            this.item = (I) multiFi.get(0);
+            this.impl = (I) multiFi.get(0);
         } else {
-            this.item = item;
+            this.impl = item;
         }
 	}
 
@@ -86,13 +86,13 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
 		this.key = key;
 	}
 
-	public Object getItem() {
+	public Object getImpl() {
 		if (!isValid && multiFi != null) {
-            item = ((Association)multiFi.getSelect()).getItem();
+            impl = ((Association)multiFi.getSelect()).getImpl();
             isValid = true;
-            return item;
+            return impl;
         } else {
-            return item;
+            return impl;
         }
 	}
 
@@ -104,7 +104,7 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
         if (out != null) {
             return out;
         } else {
-            return (I) item;
+            return (I) impl;
         }
     }
 
@@ -112,8 +112,8 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
         return out;
     }
 
-    public void setItem(Object item) {
-		this.item = item;
+    public void setImpl(Object impl) {
+		this.impl = impl;
 	}
 
     public void set(I value) {
@@ -122,11 +122,11 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
 
 	@Override
 	public String toString() {
-		return "[" + key + ":" + item + "]";
+		return "[" + key + ":" + impl + "]";
 	}
 
 	public Object execute(Arg... entries) throws ServiceException, RemoteException {
-		return item;
+		return impl;
 	}
 
 	@Override
@@ -173,8 +173,8 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
 
     public void isValid(boolean state) {
         isValid = state;
-        if (item  instanceof Association) {
-            ((Association)item).isValid = state;
+        if (impl instanceof Association) {
+            ((Association) impl).isValid = state;
         }
     }
 
@@ -188,20 +188,20 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
 
     @Override
     public int hashCode() {
-        return 2 * 31 + key.hashCode() + item.hashCode();
+        return 2 * 31 + key.hashCode() + impl.hashCode();
     }
 
     public boolean equals(Object object) {
         if (object instanceof Association) {
-            if (item != null && ((Association) object).item == null) {
+            if (impl != null && ((Association) object).impl == null) {
                 return false;
-            } else if (item == null && ((Association) object).item != null) {
+            } else if (impl == null && ((Association) object).impl != null) {
                 return false;
             } else if (((Association) object).key.equals(key)
-                    && ((Association) object).item == item) {
+                    && ((Association) object).impl == impl) {
                 return true;
             } else if (((Association) object).key.equals(key)
-                    && ((Association) object).item.equals(item)) {
+                    && ((Association) object).impl.equals(impl)) {
                 return true;
             }
         }
@@ -210,11 +210,11 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
 
     @Override
     public Duo act(Arg... args) throws ServiceException, RemoteException {
-        return new Association<>(key, item);
+        return new Association<>(key, impl);
     }
 
     @Override
     public Duo act(String entryName, Arg... args) throws ServiceException, RemoteException {
-        return new Association<>(entryName, item);
+        return new Association<>(entryName, impl);
     }
 }

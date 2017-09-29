@@ -47,7 +47,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
 
     public Srv(String name, String path, Service service, String[] paths) {
         key = path;
-        item = service;
+        impl = service;
         this.name = name;
         this.paths = paths;
         type = Functionality.Type.SRV;
@@ -55,7 +55,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
 
     public Srv(String name, String path, Client service) {
         key = path;
-        item = service;
+        impl = service;
         this.name = name;
         type = Functionality.Type.SRV;
     }
@@ -68,10 +68,10 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
         this.name = name;
         if (value instanceof Fidelity) {
             multiFi = (Fidelity) value;
-            this.item = multiFi.get(0);
+            this.impl = multiFi.get(0);
         } else {
             this.key = key;
-            this.item = value;
+            this.impl = value;
         }
         type = Functionality.Type.SRV;
     }
@@ -160,44 +160,44 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
     @Override
     public Object evaluate(Arg... args) throws EvaluationException, RemoteException {
         
-        if (item instanceof Invocation) {
+        if (impl instanceof Invocation) {
             return super.evaluate(args);
         } else if (out != null && isValid) {
             return out;
         } else if (multiFi != null) {
-            item = multiFi.getSelect();
+            impl = multiFi.getSelect();
         }
 
         try {
             substitute(args);
-            if (item instanceof Callable) {
-                return ((Callable) item).call();
-            } else if (item instanceof SignatureEntry) {
+            if (impl instanceof Callable) {
+                return ((Callable) impl).call();
+            } else if (impl instanceof SignatureEntry) {
                 if (scope != null && scope instanceof SrvModel) {
                     try {
-                        return ((SrvModel) scope).evalSignature(((SignatureEntry) item).get(), getKey());
+                        return ((SrvModel) scope).evalSignature(((SignatureEntry) impl).get(), getKey());
                     } catch (Exception e) {
                         throw new EvaluationException(e);
                     }
-                } else if (((SignatureEntry) item).getContext() != null) {
+                } else if (((SignatureEntry) impl).getContext() != null) {
                     try {
-                        return execSignature((Signature) ((SignatureEntry) item).getItem(),
-                                ((SignatureEntry) item).getContext());
+                        return execSignature((Signature) ((SignatureEntry) impl).getImpl(),
+                                ((SignatureEntry) impl).getContext());
                     } catch (MogramException e) {
                         throw new EvaluationException(e);
                     }
                 }
                 throw new EvaluationException("No model available for entry: " + this);
-            } else if (item instanceof MogramEntry) {
-                Context cxt = ((MogramEntry) item).get().exert(args).getContext();
+            } else if (impl instanceof MogramEntry) {
+                Context cxt = ((MogramEntry) impl).get().exert(args).getContext();
                 Object val = cxt.getValue(Context.RETURN);
                 if (val != null) {
                     return val;
                 } else {
                     return cxt;
                 }
-            } else if (item instanceof MorphFidelity) {
-                return execMorphFidelity((MorphFidelity) item, args);
+            } else if (impl instanceof MorphFidelity) {
+                return execMorphFidelity((MorphFidelity) impl, args);
             } else {
                 return super.evaluate(args);
             }
@@ -269,12 +269,12 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
     public Object execute(Arg... args) throws ServiceException, RemoteException {
         Domain mod = Arg.selectDomain(args);
         if (mod != null) {
-            if (mod instanceof ProcModel && item instanceof ValueCallable) {
-                return ((ValueCallable) item).call((Context) mod);
-            } else if (mod instanceof Context && item instanceof SignatureEntry) {
-                return ((ServiceContext) mod).execSignature((Signature) ((SignatureEntry) item).getItem(), args);
+            if (mod instanceof ProcModel && impl instanceof ValueCallable) {
+                return ((ValueCallable) impl).call((Context) mod);
+            } else if (mod instanceof Context && impl instanceof SignatureEntry) {
+                return ((ServiceContext) mod).execSignature((Signature) ((SignatureEntry) impl).getImpl(), args);
             } else {
-                item = mod;
+                impl = mod;
                 return evaluate(args);
             }
         }

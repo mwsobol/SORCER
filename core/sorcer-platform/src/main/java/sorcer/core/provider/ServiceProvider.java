@@ -976,7 +976,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/**
 	 * Returns an array of additional service UI descriptors to be included in a
-	 * Jini service item that is registerd with lookup services. By default a
+	 * Jini service impl that is registerd with lookup services. By default a
 	 * generic ServiceProvider service UI is provided with: attribute viewer,
 	 * context and task editor for this service provider.
 	 *

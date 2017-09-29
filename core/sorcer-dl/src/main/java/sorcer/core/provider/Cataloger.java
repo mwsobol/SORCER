@@ -91,8 +91,8 @@ public interface Cataloger extends Service, Remote {
 	 * Returns at most maxMatches items matching the template, plus the total
 	 * number of items that match the template. The return execute is never null,
 	 * and the returned items array is only null if maxMatches is zero. For each
-	 * returned item, if the service object cannot be deserialized, the service
-	 * field of the item is set to null and no exception is thrown. Similarly,
+	 * returned impl, if the service object cannot be deserialized, the service
+	 * field of the impl is set to null and no exception is thrown. Similarly,
 	 * if an attribute set cannot be deserialized, that element of the
 	 * attributeSets array is set to null and no exception is thrown.
 	 * 

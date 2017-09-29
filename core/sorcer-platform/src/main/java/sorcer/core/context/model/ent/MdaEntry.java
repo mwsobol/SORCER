@@ -38,7 +38,7 @@ public class MdaEntry extends Entry<Mda> implements Mda {
 
     public MdaEntry(String name, Mda mda) throws EvaluationException {
         this.name = name;
-        this.item = mda;
+        this.impl = mda;
         this.type = Functionality.Type.MDA;
     }
 
@@ -51,7 +51,7 @@ public class MdaEntry extends Entry<Mda> implements Mda {
     public MdaEntry(String name, Mda mda, Context context) throws EvaluationException {
         this.name = name;
         scope = context;
-        this.item = mda;
+        this.impl = mda;
         this.type = Functionality.Type.MDA;
     }
 

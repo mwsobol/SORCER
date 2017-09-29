@@ -359,12 +359,12 @@ public class operator extends Operator {
 		if (cxt == null) {
 			if (types.contains(Context.Type.ARRAY)) {
 				if (subject != null)
-					cxt = new ArrayContext(name, subject.getName(), subject.getItem());
+					cxt = new ArrayContext(name, subject.getName(), subject.getImpl());
 				else
 					cxt = new ArrayContext(name);
 			} else if (types.contains(Context.Type.LIST)) {
 				if (subject != null)
-					cxt = new ListContext(name, subject.getName(), subject.getItem());
+					cxt = new ListContext(name, subject.getName(), subject.getImpl());
 				else
 					cxt = new ListContext(name);
 			} else if (types.contains(Context.Type.SCOPE)) {
@@ -376,7 +376,7 @@ public class operator extends Operator {
 				cxt = new SharedAssociativeContext(name);
 			} else if (types.contains(Context.Type.ASSOCIATIVE)) {
 				if (subject != null)
-					cxt = new DataContext(name, subject.getName(), subject.getItem());
+					cxt = new DataContext(name, subject.getName(), subject.getImpl());
 				else
 					cxt = new DataContext(name);
 			} else if (customContextClass != null) {
@@ -386,13 +386,13 @@ public class operator extends Operator {
 					throw new ContextException(e);
 				}
 				if (subject != null)
-					cxt.setSubject(subject.getName(), subject.getItem());
+					cxt.setSubject(subject.getName(), subject.getImpl());
 				else
 					cxt.setName(name);
 			} else {
 				if (subject != null) {
 					cxt = new DataContext(name, subject.getName(),
-							subject.getItem());
+							subject.getImpl());
 				} else {
 					cxt = new DataContext(name);
 				}
@@ -564,33 +564,33 @@ public class operator extends Operator {
 			Entry ent = entryList.get(i);
 			if (ent instanceof Srv) {
 				if (ent.asis() instanceof Scopable) {
-					if (((Scopable) ent.getItem()).getScope() != null)
-						((Scopable) ent.getItem()).getScope().setScope(pcxt);
+					if (((Scopable) ent.getImpl()).getScope() != null)
+						((Scopable) ent.getImpl()).getScope().setScope(pcxt);
 					else
-						((Scopable) ent.getItem()).setScope(pcxt);
+						((Scopable) ent.getImpl()).setScope(pcxt);
 				}
 				pcxt.putInoutValueAt(ent.getName(), ent, i + 1);
 			} else if (ent instanceof InputValue || ent.getType() == Functionality.Type.INPUT) {
-				Object par = ent.getItem();
+				Object par = ent.getImpl();
 				if (par instanceof Scopable) {
 					((Scopable) par).setScope(pcxt);
 				}
 				if (ent.isPersistent()) {
 					setProc(pcxt, ent, i);
 				} else {
-					pcxt.putInValueAt(ent.getName(), ent.getItem(), i + 1);
+					pcxt.putInValueAt(ent.getName(), ent.getImpl(), i + 1);
 				}
 			} else if (ent instanceof OutputValue || ent.getType() == Functionality.Type.OUTPUT) {
 				if (ent.isPersistent()) {
 					setProc(pcxt, ent, i);
 				} else {
-					pcxt.putOutValueAt(ent.getName(), ent.getItem(), i + 1);
+					pcxt.putOutValueAt(ent.getName(), ent.getImpl(), i + 1);
 				}
 			} else if (ent instanceof InoutValue || ent.getType() == Functionality.Type.INOUT) {
 				if (ent.isPersistent()) {
 					setProc(pcxt, ent, i);
 				} else {
-					pcxt.putInoutValueAt(ent.getName(), ent.getItem(), i + 1);
+					pcxt.putInoutValueAt(ent.getName(), ent.getImpl(), i + 1);
 				}
 			} else if (ent instanceof Entry) {
 				if (ent.isPersistent()) {
@@ -598,13 +598,13 @@ public class operator extends Operator {
 				} if  (ent.getMultiFi() != null) {
 					pcxt.putValueAt(ent.getName(), ent, i + 1);
 				} else {
-					if (ent.getItem() instanceof Scopable) {
-						((Scopable) ent.getItem()).setScope(pcxt);
+					if (ent.getImpl() instanceof Scopable) {
+						((Scopable) ent.getImpl()).setScope(pcxt);
 					}
-					pcxt.putValueAt(ent.getName(), ent.getItem(), i + 1);
+					pcxt.putValueAt(ent.getName(), ent.getImpl(), i + 1);
 				}
 			} else if (ent instanceof DataEntry) {
-				pcxt.putValueAt(Context.DSD_PATH, ent.getItem(), i + 1);
+				pcxt.putValueAt(Context.DSD_PATH, ent.getImpl(), i + 1);
 			}
 		}
 	}
@@ -623,28 +623,28 @@ public class operator extends Operator {
 				if (ent.isPersistent()) {
 					setProc(cxt, ent);
 				} else {
-					cxt.putInValue(ent.getName(), ent.getItem());
+					cxt.putInValue(ent.getName(), ent.getImpl());
 				}
 			} else if (ent instanceof OutputValue || ent.getType().equals(Functionality.Type.OUTPUT)) {
 				if (ent.isPersistent()) {
 					setProc(cxt, ent);
 				} else {
-					cxt.putOutValue(ent.getName(), ent.getItem());
+					cxt.putOutValue(ent.getName(), ent.getImpl());
 				}
 			} else if (entryList.get(i) instanceof InoutValue || ent.getType().equals(Functionality.Type.INOUT)) {
 				if (ent.isPersistent()) {
 					setProc(cxt, ent);
 				} else {
-					cxt.putInoutValue(ent.getName(), ent.getItem());
+					cxt.putInoutValue(ent.getName(), ent.getImpl());
 				}
 			} else if (entryList.get(i) instanceof Function) {
 				if (ent.isPersistent()) {
 					setProc(cxt, ent);
 				} else {
-					cxt.putValue(ent.getName(), ent.getItem());
+					cxt.putValue(ent.getName(), ent.getImpl());
 				}
 			} else if (entryList.get(i) instanceof DataEntry) {
-				cxt.putValue(Context.DSD_PATH, ent.getItem());
+				cxt.putValue(Context.DSD_PATH, ent.getImpl());
 			}
 		}
 	}
@@ -681,19 +681,19 @@ public class operator extends Operator {
 					if (isReactive) {
 						pc.putInValueAt(i.getName(), i, pc.getTally() + 1);
 					} else {
-						pc.putInValueAt(i.getName(), ((Entry) i).getItem(), pc.getTally() + 1);
+						pc.putInValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
 					}
 				} else if (i instanceof OutputValue) {
 					if (isReactive) {
 						pc.putOutValueAt(i.getName(), i, pc.getTally() + 1);
 					} else {
-						pc.putOutValueAt(i.getName(), ((Entry) i).getItem(), pc.getTally() + 1);
+						pc.putOutValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
 					}
 				} else if (i instanceof InoutValue) {
 					if (isReactive) {
 						pc.putInoutValueAt(i.getName(), i, pc.getTally() + 1);
 					} else {
-						pc.putInoutValueAt(i.getName(), ((Entry) i).getItem(), pc.getTally() + 1);
+						pc.putInoutValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
 					}
 				} else {
 					if (i instanceof Value) {
@@ -702,7 +702,7 @@ public class operator extends Operator {
 						if (context instanceof ProcModel || isReactive) {
 							pc.putValueAt(i.getName(), i, pc.getTally() + 1);
 						} else {
-							pc.putValueAt(i.getName(), ((Entry) i).getItem(), pc.getTally() + 1);
+							pc.putValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
 						}
 					}
 				}
@@ -711,25 +711,25 @@ public class operator extends Operator {
 					if (i instanceof Reactive) {
 						context.putInValue(i.getName(), i);
 					} else {
-						context.putInValue(i.getName(), ((Function) i).getItem());
+						context.putInValue(i.getName(), ((Function) i).getImpl());
 					}
 				} else if (i instanceof OutputValue) {
 					if (isReactive) {
 						context.putOutValue(i.getName(), i);
 					} else {
-						context.putOutValue(i.getName(), ((Function) i).getItem());
+						context.putOutValue(i.getName(), ((Function) i).getImpl());
 					}
 				} else if (i instanceof InoutValue) {
 					if (isReactive) {
 						context.putInoutValue(i.getName(), i);
 					} else {
-						context.putInoutValue(i.getName(), ((Function) i).getItem());
+						context.putInoutValue(i.getName(), ((Function) i).getImpl());
 					}
 				} else {
 					if (context instanceof ProcModel || isReactive) {
 						context.putValue(i.getName(), i);
 					} else {
-						context.putValue(i.getName(), ((Entry) i).getItem());
+						context.putValue(i.getName(), ((Entry) i).getImpl());
 					}
 				}
 			}
@@ -816,7 +816,7 @@ public class operator extends Operator {
 
 	protected static void setProc(PositionalContext pcxt, Entry entry, int i)
 			throws ContextException {
-		Proc p = new Proc(entry.getName(), entry.getItem());
+		Proc p = new Proc(entry.getName(), entry.getImpl());
 		p.setPersistent(true);
 		if (entry instanceof InputValue)
 			pcxt.putInValueAt(entry.getName(), p, i + 1);
@@ -830,7 +830,7 @@ public class operator extends Operator {
 
 	protected static void setProc(Context cxt, Entry entry)
 			throws ContextException {
-		Proc p = new Proc(entry.getName(), entry.getItem());
+		Proc p = new Proc(entry.getName(), entry.getImpl());
 		p.setPersistent(true);
 		if (entry instanceof InputValue)
 			cxt.putInValue(entry.getName(), p);
@@ -2784,16 +2784,16 @@ public class operator extends Operator {
 
 		result(String path, Class returnType) {
 			this.key = path;
-			this.item = returnType;
+			this.impl = returnType;
 		}
 
 		public Class returnPath() {
-			return (Class) this.item;
+			return (Class) this.impl;
 		}
 
 		@Override
 		public String toString() {
-			return "return path: " + item;
+			return "return path: " + impl;
 		}
 	}
 
@@ -3006,7 +3006,7 @@ public class operator extends Operator {
 
 		Complement(String path, T value) {
 			this.key = path;
-			this.item = value;
+			this.impl = value;
 		}
 	}
 

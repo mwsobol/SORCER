@@ -1611,7 +1611,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (val instanceof Context) {
 				subcntxt.append((Context) val);
 			} else if (val instanceof Entry) {
-				Object v = ((Entry)val).getItem();
+				Object v = ((Entry)val).getImpl();
 				subcntxt.putValue(path, v);
 				if (path != ((Entry)val).getName())
 					subcntxt.putValue(((Entry)val).getName(), v);

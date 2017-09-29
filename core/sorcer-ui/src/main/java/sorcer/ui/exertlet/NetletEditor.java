@@ -53,7 +53,7 @@ public class NetletEditor extends JPanel {
     	setLayout(new BorderLayout());
 		try {
 			this.item = (ServiceItem) obj;
-			logger.info("ProviderUI>>item.service:" + item.service);
+			logger.info("ProviderUI>>impl.service:" + item.service);
 			if (item.service instanceof Outer) {
 				Object inner;
 				inner = ((Outer) item.service).getInner();

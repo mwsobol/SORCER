@@ -41,7 +41,7 @@ public class Filters {
      *
      * @param items  {@link ServiceItem}s to look in
      * @param filter {@link ServiceItemFilter} to match
-     * @return first item matching the filter
+     * @return first impl matching the filter
      */
     public static ServiceItem firstMatching(ServiceItem[] items, ServiceItemFilter filter) {
         for (ServiceItem item : items) {

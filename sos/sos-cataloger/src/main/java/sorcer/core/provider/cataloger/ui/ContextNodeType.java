@@ -91,7 +91,7 @@ public class ContextNodeType {
 	}
 
 	/**
-	 * Indicates if the current item is a data node or not.
+	 * Indicates if the current impl is a data node or not.
 	 * 
 	 * @return Boolean indicating if it is a data node
 	 */

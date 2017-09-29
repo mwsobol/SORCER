@@ -191,7 +191,7 @@ public class DataStorageCmd extends ShellCmd {
 				Context cxt = null;
 
 				store("test-only");
-//				out.println("XXXXXXXXXXXXX service item: " + dataStorers[selectedDataStorer]);
+//				out.println("XXXXXXXXXXXXX service impl: " + dataStorers[selectedDataStorer]);
 //				out.println("XXXXXXXXXXXXX service: " + (DatabaseStorer) dataStorers[selectedDataStorer].service);
 //				out.println("XXXXXXXXXXXXX interfaces: " + Arrays.toString(dataStorers[selectedDataStorer].service.getClass().getInterfaces()));
 //				out.println("XXXXXXXXXXXXX name: " + ((Provider) dataStorers[selectedDataStorer].service).getProviderName());

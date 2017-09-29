@@ -41,7 +41,7 @@ import sorcer.core.context.node.ContextNode;
 /**
  * This class is used for the edit window displayed when a path or data node is
  * modified. The view is rendered differently depending on if the currently
- * selected item is a path or if it is a data node.
+ * selected impl is a path or if it is a data node.
  * 
  * <li>For paths user can specify the pathname and direction. <li>For data nodes
  * the user can select the data type and act the types eval
@@ -342,7 +342,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 	/**
 	 * This class acts as a ActionListener for the DataType field on the form.
 	 * This class's purpose is to update the instruction label based on the
-	 * currently selected item in the DataType field. This allows the user to
+	 * currently selected impl in the DataType field. This allows the user to
 	 * instructions that are specific to current data type. The class also
 	 * updates the current size of the window so that the instructions fit
 	 * properly. The edit field is modified to allowing for a more accurate

@@ -50,7 +50,7 @@ public class ProviderUI extends JPanel {
 		getAccessibleContext().setAccessibleName("Provider");
 		try {
 			this.item = (ServiceItem) obj;
-			logger.info("ProviderUI>>item.service:" + item.service);
+			logger.info("ProviderUI>>impl.service:" + item.service);
 			if (item.service instanceof Outer) {
 				Object inner = ((Outer) item.service).getInner();
 				logger.info("ProviderUI>>inner:" + inner);

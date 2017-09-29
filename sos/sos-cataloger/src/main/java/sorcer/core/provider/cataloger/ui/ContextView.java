@@ -136,7 +136,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 	 */
 	private static String ADD_DATA = "addData";
 	/**
-	 * String command for removing an item
+	 * String command for removing an impl
 	 */
 	private static String REMOVE_NODE = "remove";
 	/**

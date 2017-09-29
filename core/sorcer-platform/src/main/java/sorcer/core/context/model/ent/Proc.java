@@ -92,7 +92,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 				}
 			}
 		}
-		this.item = entity;
+		this.impl = entity;
 	}
 
 	public Proc(String path, Object entity, Object scope)
@@ -114,12 +114,12 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		if (entity instanceof Scopable) {
 			((Scopable) entity).setScope(this.scope);
 		}
-		this.item= entity;
+		this.impl = entity;
 	}
 	
 	public Proc(Mappable map, String name, String path) {
 		this(name);
-		item =  path;
+		impl =  path;
 		mappable = map;
 	}
 
@@ -136,9 +136,9 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 			}
 			return;
 		}
-		if (mappable != null && this.item instanceof String ) {
+		if (mappable != null && this.impl instanceof String ) {
 			try {
-				Object val = mappable.asis((String)item);
+				Object val = mappable.asis((String) impl);
 				if (val instanceof Proc) {
 					((Proc)val).setValue(value);
 				} else if (isPersistent) {
@@ -155,7 +155,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 						}
 					}
 				} else {
-					mappable.putValue((String)item, value);
+					mappable.putValue((String) impl, value);
 				}
 			} catch (Exception e) {
 				throw new SetterException(e);
@@ -164,7 +164,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 			this.out = (T) value;
 		} else {
 			this.out = (T)value;
-			item = (T) value;
+			impl = (T) value;
 		}
 	}
 
@@ -189,20 +189,20 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	@Override
 	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
 		// check for a constant or cached eval
-		if (item instanceof Number && !isPersistent) {
-			return (T) item;
-		} else if (item instanceof Incrementor || ((item instanceof ServiceInvoker) &&
+		if (impl instanceof Number && !isPersistent) {
+			return (T) impl;
+		} else if (impl instanceof Incrementor || ((impl instanceof ServiceInvoker) &&
 				scope != null && scope.isChanged())) {
 			isValid = false;
 		}
 
-		if (item != null && isValid && args.length == 00 && !isPersistent) {
+		if (impl != null && isValid && args.length == 00 && !isPersistent) {
 			try {
-				if (item instanceof String
-						&& mappable != null && mappable.getValue((String)item) != null)
-					return (T) mappable.getValue((String) item);
-				else if (item instanceof Value) {
-					return (T) ((Value)item).getData();
+				if (impl instanceof String
+						&& mappable != null && mappable.getValue((String) impl) != null)
+					return (T) mappable.getValue((String) impl);
+				else if (impl instanceof Value) {
+					return (T) ((Value) impl).getData();
 				}
 			} catch (ContextException e) {
 				throw new EvaluationException(e);
@@ -223,10 +223,10 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 					return (T)((Proc)obj).evaluate();
 				else
 					val = (T) mappable.getValue((String) out);
-			} else if (item == null && scope != null) {
+			} else if (impl == null && scope != null) {
 				val = (T) ((ServiceContext<T>) scope).get(name);
 			} else {
-				val = item;
+				val = impl;
 			}
 			if (val instanceof Evaluation) {
 				if (val instanceof Proc && ((Proc)val).asis() == null && out == null) {
@@ -270,7 +270,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 			}
 
 			if (isPersistent) {
-				val = item;
+				val = impl;
 				URL url = null;
 				if (SdbUtil.isSosURL(val)) {
 					val = ((URL) val).getContent();
@@ -289,7 +289,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 						p = new Proc(((Identifiable) this.out).getName(), url);
 						p.setPersistent(true);
 					}
-					item = (T) url;
+					impl = (T) url;
 					out = null;
 				}
 				return (T) val;
@@ -297,7 +297,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 			return out;
 		} catch (IOException | MogramException | SignatureException e) {
 			// make the cache invalid
-			item = null;
+			impl = null;
 			isValid = false;
 			e.printStackTrace();
 			throw new EvaluationException(e);
@@ -404,7 +404,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 
 	@Override
 	public Class getValueType() {
-		return item.getClass();
+		return impl.getClass();
 	}
 
 	/* (non-Javadoc)

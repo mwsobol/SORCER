@@ -295,7 +295,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 			if (sItem != null && (sItem.service instanceof Provider))
 				return (Provider) sItem.service;
 		} catch (Exception t) {
-            logger.warn("Error while getting service item: " + t.getMessage());
+            logger.warn("Error while getting service impl: " + t.getMessage());
         } finally {
             if (mdcRemoteCall != null)
                 MDC.put(MDC_SORCER_REMOTE_CALL, mdcRemoteCall);
@@ -1253,8 +1253,8 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	 * Returns at most maxMatches items matching the template, plus the total
 	 * number of items that match the template. The return eval is never null,
 	 * and the returned items array is only null if maxMatches is zero. For each
-	 * returned item, if the service object cannot be deserialized, the service
-	 * field of the item is setValue to null and no exception is thrown. Similarly,
+	 * returned impl, if the service object cannot be deserialized, the service
+	 * field of the impl is setValue to null and no exception is thrown. Similarly,
 	 * if an attribute setValue cannot be deserialized, that element of the
 	 * attributeSets array is setValue to null and no exception is thrown.
 	 * 

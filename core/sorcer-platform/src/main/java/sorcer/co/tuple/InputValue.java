@@ -17,7 +17,6 @@
 package sorcer.co.tuple;
 
 import sorcer.core.context.model.ent.Value;
-import sorcer.service.ServiceFidelity;
 import sorcer.service.Signature;
 import sorcer.service.modeling.Functionality;
 import sorcer.util.url.sos.SdbUtil;
@@ -43,7 +42,7 @@ public class InputValue<T> extends Value<T> {
         super(path, value);
         this.isPersistent = isPersistent;
         if (SdbUtil.isSosURL(value)) {
-            item = value;
+            impl = value;
             out = null;
         }
         this.index = index;

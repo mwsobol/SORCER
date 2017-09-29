@@ -54,12 +54,12 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
             try {
                 if (SdbUtil.isSosURL(value)) {
                     this.out = (T) value;
-                    this.item = value;
-                } else if (SdbUtil.isSosURL(this.item)) {
-                    if (((URL) this.item).getRef() == null) {
-                        this.item = (T) SdbUtil.store(value);
+                    this.impl = value;
+                } else if (SdbUtil.isSosURL(this.impl)) {
+                    if (((URL) this.impl).getRef() == null) {
+                        this.impl = (T) SdbUtil.store(value);
                     } else {
-                        SdbUtil.update((URL) this.item, value);
+                        SdbUtil.update((URL) this.impl, value);
                     }
                 }
             } catch (MogramException | SignatureException e) {
@@ -67,7 +67,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
             }
         } else {
             this.out = (T) value;
-            this.item = (T) value;
+            this.impl = (T) value;
         }
     }
 
@@ -122,7 +122,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
 
     @Override
     public String toString() {
-        return "[" + key + "=" + item + "]";
+        return "[" + key + "=" + impl + "]";
     }
 
     @Override
@@ -136,8 +136,8 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
             for (Arg arg : args) {
                 if (arg instanceof Fidelity && multiFi != null) {
                     if (((Fidelity) arg).getPath() == null || ((Fidelity) arg).getPath().equals(key)) {
-                        item = multiFi.setSelect(arg.getName());
-                        out = (T) ((Entry)item).getData(args);
+                        impl = multiFi.setSelect(arg.getName());
+                        out = (T) ((Entry) impl).getData(args);
                         multiFi.setChanged(false);
                         isValid = true;
                     }
@@ -145,7 +145,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
             }
         }
         if (isPersistent) {
-            Object val = item;
+            Object val = impl;
             URL url = null;
             try {
                 if (SdbUtil.isSosURL(val)) {
@@ -160,26 +160,26 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
                         uo.setName(key);
                         url = SdbUtil.store(uo);
                     }
-                    item = url;
+                    impl = url;
                     out = null;
                 }
                 return (T) val;
             } catch (IOException | MogramException | SignatureException e) {
                 throw new ContextException(e);
             }
-        } else if (item instanceof Entry) {
-            out = (T) ((Entry)item).get(args);
+        } else if (impl instanceof Entry) {
+            out = (T) ((Entry) impl).get(args);
             isValid = true;
         } else {
-            out = (T) item;
+            out = (T) impl;
             isValid = true;
         }
         return out;
     }
 
     public T asis() {
-        if (out == null && item != null) {
-            return (T) item;
+        if (out == null && impl != null) {
+            return (T) impl;
         } else {
             return out;
         }

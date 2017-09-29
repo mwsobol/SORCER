@@ -152,7 +152,7 @@ public class EntrySet extends TreeSet<Entry> {
 		List<Object> values = new ArrayList<Object>(size());
 		Iterator<Entry> i = iterator();
 		while (i.hasNext()) {
-			values.add(i.next().getItem());
+			values.add(i.next().getImpl());
 		}
 		return values;
 	}

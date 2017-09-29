@@ -252,7 +252,7 @@ public class ServiceShell implements Exerter, Client, Callable, RemoteServiceShe
 			for (Arg a : entries) {
 				if (a instanceof Entry) {
 					exertion.getContext().putValue(
-							a.getName(), ((Entry) a).getItem());
+							a.getName(), ((Entry) a).getImpl());
 				}
 			}
 		}

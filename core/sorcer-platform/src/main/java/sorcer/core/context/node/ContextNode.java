@@ -655,8 +655,8 @@ public class ContextNode implements Serializable {
 		if (itemDataVect == null)
 			throw new ContextNodeException(
 					"Cannot getItemValue() in ContextNode \"" + toString()
-							+ "\" for data item \"" + itemName
-							+ "\"; no such data item.");
+							+ "\" for data impl \"" + itemName
+							+ "\"; no such data impl.");
 		Object obj = null;
 		if (itemDataVect.elementAt(0).equals("File")) {
 			int line = (Integer) itemDataVect.elementAt(2);

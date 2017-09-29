@@ -95,7 +95,7 @@ public class ServiceAccessor implements DynamicAccessor {
 	}
 
 	/**
-	 * Returns a service item containing a service matching providerName and
+	 * Returns a service impl containing a service matching providerName and
 	 * serviceInfo using Jini lookup service.
 	 *
 	 * @param providerName name
@@ -118,7 +118,7 @@ public class ServiceAccessor implements DynamicAccessor {
 	}
 
 	/**
-	 * Returns a service item matching a service template and passing a filter
+	 * Returns a service impl matching a service template and passing a filter
 	 * with Jini registration groups. Note that template matching is a remote
 	 * operation - matching is done by lookup services while passing a filter is
 	 * done on the client side. Clients should provide a service filter, usually

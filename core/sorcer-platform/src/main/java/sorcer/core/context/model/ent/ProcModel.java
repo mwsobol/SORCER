@@ -296,7 +296,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		while (i.hasNext()) {
 			Map.Entry<String, Object> entry = i.next();
 			Object val = entry.getValue();
-			if (val instanceof Entry && ((Entry)val).getItem() instanceof Evaluation) {
+			if (val instanceof Entry && ((Entry)val).getImpl() instanceof Evaluation) {
 				((Entry) val).isValid(false);
 			}
 		}

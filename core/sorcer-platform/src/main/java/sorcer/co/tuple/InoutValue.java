@@ -44,7 +44,7 @@ public class InoutValue<T> extends Value<T> {
 
     public InoutValue(String path, T value, boolean isPersistent, int index) {
         super(path);
-        this.item = value;
+        this.impl = value;
         this.isPersistent = isPersistent;
         this.index = index;
         type = Functionality.Type.INOUT;

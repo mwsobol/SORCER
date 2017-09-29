@@ -114,20 +114,20 @@ public class FiltersView extends JPanel{
 		"//   that you want to filter on for example\n"+
 		"//   net.jini.event.EventMailbox\n"+
 		"//   net.jini.space.JavaSpace\n\n"+
-		"//   Use one line for each item\n";
+		"//   Use one line for each impl\n";
 		
 		_interfaces.setText(infText);
 		String grpText="//  Lookup service filters\n"+
 		"//  Use PUBLIC for the public group\n"+
 		"//  ALL_GROUPS for all groups\n"+
-		"//   Use one line for each item\n\n"+
+		"//   Use one line for each impl\n\n"+
 		"ALL_GROUPS";
 		
 		_groups.setText(grpText);
 		String locText="//  Specify your LookupLocators as full Jini URLS\n"+
 		"//  For example\n"+
 		"//  jini://dev.incax.com\n\n"+
-		"//   Use one line for each item\n//  Please note: This filter overrides all other filters\n";
+		"//   Use one line for each impl\n//  Please note: This filter overrides all other filters\n";
 		
 		_lookupLocators.setText(locText);
 		
@@ -135,7 +135,7 @@ public class FiltersView extends JPanel{
 		"//   that you want to filter on for example\n"+
 		"//   My JavaSpace\n"+
 		"//   Peters JavaSpace\n\n"+
-		"//   Use one line for each item\n//  Please note: This filter overrides the Interfaces filter\n";
+		"//   Use one line for each impl\n//  Please note: This filter overrides the Interfaces filter\n";
 		
 		_nameAttributes.setText(nameText);
 		ListSelectionModel lsm=_plugins.getSelectionModel();

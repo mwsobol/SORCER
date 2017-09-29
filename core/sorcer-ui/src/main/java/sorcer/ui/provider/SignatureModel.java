@@ -74,7 +74,7 @@ public class SignatureModel extends Observable {
 
 		// interfaceModel = new DefaultComboBoxModel();
 		// interfaces = null;
-		// interfaces = item.service.getClass().getInterfaces();
+		// interfaces = impl.service.getClass().getInterfaces();
 
 		// for (int i = 0; i < interfaces.length; i++)
 		// {

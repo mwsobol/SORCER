@@ -26,7 +26,6 @@ import sorcer.util.url.sos.SdbUtil;
 
 import java.io.IOException;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.Date;
 
 public class DataContext<T> extends PositionalContext<T> {
@@ -84,7 +83,7 @@ public class DataContext<T> extends PositionalContext<T> {
     public T getValue(String path, Arg... args) throws ContextException {
         Object obj = data.get(path);
         if (obj instanceof Entry && ((Entry)obj).isPersistent()) {
-            Object val = ((Entry)obj).getItem();
+            Object val = ((Entry)obj).getImpl();
             URL url = null;
             try {
                 if (SdbUtil.isSosURL(val)) {
@@ -99,8 +98,8 @@ public class DataContext<T> extends PositionalContext<T> {
                         uo.setName(path);
                         url = SdbUtil.store(uo);
                     }
-                    ((Entry)obj).setItem(url);
-                    ((Entry)obj).setItem(val);
+                    ((Entry)obj).setImpl(url);
+                    ((Entry)obj).setImpl(val);
                     ((Entry)obj).isValid(true);
                     return (T) val;
                 }

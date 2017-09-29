@@ -17,12 +17,8 @@
 
 package sorcer.co.tuple;
 
-import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.Value;
 import sorcer.service.*;
-
-import java.net.URL;
-import java.rmi.RemoteException;
 
 @SuppressWarnings("unchecked")
 public class AnnotatedValue<T> extends Value<T> implements Arg {
@@ -34,7 +30,7 @@ public class AnnotatedValue<T> extends Value<T> implements Arg {
 
 	public AnnotatedValue(String path, String anotation, T value) {
 		key = path;
-		item = value;
+		impl = value;
 		this.annotation = anotation;
 	}
 		
@@ -44,7 +40,7 @@ public class AnnotatedValue<T> extends Value<T> implements Arg {
 			v = (T)Context.none;
 
 		key = path;
-		this.item = v;
+		this.impl = v;
 	}
 	
 	public AnnotatedValue(String path, T value, int index) {
@@ -53,12 +49,12 @@ public class AnnotatedValue<T> extends Value<T> implements Arg {
 			v = (T)Context.none;
 
 		key = path;
-		this.item = v;
+		this.impl = v;
 		this.index = index;
 	}
 
     @Override
 	public String toString() {
-		return "[" + key + ":" + item + ":" + annotation + "]";
+		return "[" + key + ":" + impl + ":" + annotation + "]";
 	}
 }

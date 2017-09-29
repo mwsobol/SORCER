@@ -286,7 +286,7 @@ public class operator extends Operator {
 
 	public static ProcModel put(ProcModel procModel, Entry... entries) throws ContextException {
 		for (Entry e : entries) {
-			procModel.putValue(e.getName(), e.getItem());
+			procModel.putValue(e.getName(), e.getImpl());
 		}
 		procModel.setContextChanged(true);
 		return procModel;

@@ -44,7 +44,7 @@ public class SignatureEntry extends Entry<Signature> {
 
     public SignatureEntry(String path, Signature value, Context context) {
         key = path;
-        item = value;
+        impl = value;
         this.context = context;
     }
 

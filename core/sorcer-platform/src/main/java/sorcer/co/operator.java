@@ -367,7 +367,7 @@ public class operator extends Operator {
         Value ent = null;
         if (value instanceof Value) {
             ent = new Value<T>(path.path, (T) ((Value)value).getOut());
-            ent.setItem(value);
+            ent.setImpl(value);
         } else {
             ent = new Value<T>(path.path, value);
         }
@@ -626,7 +626,7 @@ public class operator extends Operator {
 		try {
 			if (object instanceof Entry) {
 				entry = (Entry)	object;
-				Object obj = entry.getItem();
+				Object obj = entry.getImpl();
 				if (SdbUtil.isSosURL(obj)) {
 					dburl = (URL) obj;
 					SdbUtil.update(dburl, entry.getOut());
@@ -637,7 +637,7 @@ public class operator extends Operator {
 				}
 			}
 			entry.setValue(entry.getOut());
-			entry.setItem(dburl);
+			entry.setImpl(dburl);
 			entry.isValid(true);
 			return dburl;
 		} catch (Exception e) {
@@ -1055,7 +1055,7 @@ public class operator extends Operator {
 	public static Map<Object, Object> dictionary(Entry... entries) {
 		Map<Object, Object> map = new HashMap<Object, Object>();
 		for (Entry entry : entries) {
-			map.put(entry.getName(), entry.getItem());
+			map.put(entry.getName(), entry.getImpl());
 		}
 		return map;
 	}
@@ -1126,7 +1126,7 @@ public class operator extends Operator {
 
 	public static Object item(Entry entry)
 			throws ContextException {
-		return entry.getItem();
+		return entry.getImpl();
 	}
 
 	public static Object item(Model context, String path)
@@ -1138,7 +1138,7 @@ public class operator extends Operator {
 			throws ContextException {
 		Object obj = context.get(path);
 		if (obj instanceof Entry) {
-			return ((Entry)context.get(path)).getItem();
+			return ((Entry)context.get(path)).getImpl();
 		} else {
 			return null;
 		}

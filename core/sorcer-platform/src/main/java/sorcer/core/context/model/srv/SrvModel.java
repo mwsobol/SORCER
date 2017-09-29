@@ -161,14 +161,14 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                 if (isChanged()) {
                     ((Srv) val).isValid(false);
                 }
-                Object carrier = ((Srv) val).getItem();
+                Object carrier = ((Srv) val).getImpl();
                 if (carrier instanceof Signature) {
                         return evalSignature((Signature) carrier, path, args);
                 } else if (carrier instanceof SignatureEntry){
                     if (((Srv) val).getOut() != null && ((Srv) val).isValueCurrent() && !isChanged())
                         return ((Srv) val).getOut();
                     else {
-                        Signature sig = (Signature) ((SignatureEntry)carrier).getItem();
+                        Signature sig = (Signature) ((SignatureEntry)carrier).getImpl();
                         val = evalSignature(sig, path, args);
                     }
                 } else if (carrier instanceof ServiceFidelity) {
@@ -275,7 +275,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                 // getData applies current fidelity
                 if (((Entry)val).getData() instanceof Ref) {
                     // dereferencing Ref and executing
-                    Ref ref = ((Ref)((Entry)val).getItem());
+                    Ref ref = ((Ref)((Entry)val).getImpl());
                     ref.setScope(this);
                     Object deref = ref.get();
                     if (deref instanceof Evaluation) {
@@ -323,7 +323,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
 
     private Object evalMogram(MogramEntry mogramEntry, String path, Arg... entries)
             throws MogramException, RemoteException, TransactionException {
-        Mogram mogram = (Mogram) mogramEntry.getItem();
+        Mogram mogram = (Mogram) mogramEntry.getImpl();
 		mogram.setScope(this);
         Mogram out = mogram.exert(entries);
         if (out instanceof Exertion){
@@ -391,7 +391,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             Function entry = entry(path);
             if (del != null && del.size() > 0) {
                 for (ExecDependency de : del) {
-                    List<Path> dpl = (List<Path>) de.getItem();
+                    List<Path> dpl = (List<Path>) de.getImpl();
                     if (de.getType().equals(Functionality.Type.FIDELITY)) {
                         Fidelity deFi = (Fidelity) de.annotation();
                         if (deFi.getOption() == Fi.Type.IF) {
@@ -484,7 +484,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         while (i.hasNext()) {
             Map.Entry e = i.next();
             if (e.getValue() instanceof Srv) {
-                ((Srv) e.getValue()).setItem(null);
+                ((Srv) e.getValue()).setImpl(null);
             } else if (e.getValue() instanceof Function && ((Function)e.getValue()).asis() instanceof Evaluation) {
                 ((Function)e.getValue()).isValid(false);
             }
@@ -510,7 +510,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
     public Object getItem(String path) {
         Object obj = get(path);
         if (obj instanceof Entry) {
-            return ((Entry) obj).getItem();
+            return ((Entry) obj).getImpl();
         }
         else {
             return null;

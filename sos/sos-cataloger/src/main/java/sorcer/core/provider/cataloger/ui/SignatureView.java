@@ -202,7 +202,7 @@ public class SignatureView extends JPanel implements Observer {
 			listModel.clear();
 			for (int i = 0; i < list.length; i++)
 				listModel.addElement(list[i]);
-			if (list.length == 1) // autoselect if only one item
+			if (list.length == 1) // autoselect if only one impl
 				provider_l.setSelectedIndex(0);
 		}
 		if (updated_interface.toString().equals(BrowserModel.INTERFACE_UPDATED)) {
@@ -210,14 +210,14 @@ public class SignatureView extends JPanel implements Observer {
 			list = model.getInterfaces();
 			interface_l.setListData(list);
 
-			if (list.length == 1) // auto select if only one item
+			if (list.length == 1) // auto select if only one impl
 				interface_l.setSelectedIndex(0);
 		}
 		if (updated_interface.toString().equals(BrowserModel.METHOD_UPDATED)) {
 			BrowserModel model = (BrowserModel) observable;
 			list = model.getMethods();
 			method_l.setListData(list);
-			if (list.length == 1) // auto select if only one item
+			if (list.length == 1) // auto select if only one impl
 			{
 				method_l.setSelectedIndex(0);
 				model.setSelectedMethod(list[0]);

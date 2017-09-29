@@ -26,7 +26,7 @@ public class Coupling extends Association<Tie, Tie> {
     }
 
     public Tie to(Tie to) {
-        item = to;
+        impl = to;
         return out;
     }
 

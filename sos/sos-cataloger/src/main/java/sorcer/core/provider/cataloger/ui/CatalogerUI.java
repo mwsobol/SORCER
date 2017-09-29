@@ -37,7 +37,7 @@ public class CatalogerUI extends JFrame {
 
 	private static final long serialVersionUID = -3403132166362362358L;
 
-	/** the current service item */
+	/** the current service impl */
 	private ServiceItem item;
 
 	/** the cataloger service, which we can call to perform remote operations */

@@ -2364,7 +2364,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 						_logger.info("Updating service attributes from event ["
 								+ sn + "]");
 						sn.updateServiceItem(item, true); // = new
-						// ServiceNode(item);
+						// ServiceNode(impl);
 						serviceNode.setUserObject(sn);
 					} else {
 						_logger

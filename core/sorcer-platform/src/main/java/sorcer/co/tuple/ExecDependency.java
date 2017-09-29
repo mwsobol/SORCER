@@ -35,7 +35,7 @@ public class ExecDependency extends Function<List<Path>> {
     public ExecDependency(String path, List<Path> paths) {
         key = path;
         name = path;
-        item = paths;
+        impl = paths;
     }
 
     public ExecDependency(String path, Conditional condition, List<Path> paths) {
