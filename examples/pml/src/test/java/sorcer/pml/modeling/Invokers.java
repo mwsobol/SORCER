@@ -193,7 +193,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void invokeParJob() throws Exception {
+	public void invokeProcJob() throws Exception {
 		Context c4 = context("multiply", inVal("arg/x1"), inVal("arg/x2"),
 				result("result/y"));
 		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),

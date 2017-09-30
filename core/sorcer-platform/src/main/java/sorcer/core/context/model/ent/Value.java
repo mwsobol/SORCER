@@ -123,7 +123,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
     }
 
     @Override
-    public T value() throws ContextException {
+    public T valuate() throws ContextException {
         return getData();
     }
 

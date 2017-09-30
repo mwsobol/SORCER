@@ -690,6 +690,12 @@ public class operator extends Operator {
 	public static <T extends Service> Srv ent(String name, MorphFidelity fidelity) {
         fidelity.setPath(name);
         fidelity.getFidelity().setPath(name);
+		fidelity.getFidelity().setName(name);
+		for (Object item : fidelity.getSelects()) {
+			if (item instanceof Fidelity && ((Fidelity)item).getName() == null) {
+				((Fidelity)item).setName(name);
+			}
+		}
         return srv(name, fidelity);
     }
 

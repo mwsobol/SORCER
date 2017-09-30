@@ -189,7 +189,7 @@ public class CollectionOperators {
 		assertEquals(flow(se1), Strategy.Flow.PAR);
 		assertEquals(access(se1), Strategy.Access.PULL);
 
-		// store the value of the entry (parameter)
+		// store the valuate of the entry (parameter)
 		URL se1Url = storeVal(se1);
 		Strategy st1 = (Strategy)content(se1Url);
 		assertTrue(isPersistent(se1));
@@ -220,7 +220,7 @@ public class CollectionOperators {
 		assertTrue(asis(e).equals(10.0));
 		assertFalse(asis(e) instanceof URL);
 
-		// store the value of entry
+		// store the valuate of entry
 		URL valUrl = storeVal(e);
 		assertTrue(eval(e).equals(10.0));
 		assertTrue(impl(e) instanceof URL);
@@ -359,7 +359,7 @@ public class CollectionOperators {
 		assertTrue(get(cxt, "arg/x6").equals(1.6));
 		assertTrue(asis(cxt, "arg/x7") instanceof Invocation);
 
-		// reusing value entries
+		// reusing valuate entries
 		put(cxt, val("arg/x6", val("overwrite", 40.0)));
 		assertTrue(value(cxt, "arg/x6").equals(40.0));
 

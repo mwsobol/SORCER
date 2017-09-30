@@ -942,7 +942,7 @@ public class operator extends Operator {
 //        if (entry instanceof Proc) {
 //            Proc procEntry = (Proc)entry;
 //            if (procEntry.getScope() != null && procEntry.getContextable() == null) {
-//                procEntry.getScope().putValue(procEntry.getName(), value);
+//                procEntry.getScope().putValue(procEntry.getName(), valuate);
 //            }
 //        }
         entry.isValid(true);
@@ -1005,7 +1005,7 @@ public class operator extends Operator {
 	}
 
 	public static <T> T value(Valuation<T> valuation) throws ContextException {
-		return valuation.value();
+		return valuation.valuate();
 	}
 
 	public static <T> T value(Context<T> context, Arg... args)

@@ -33,7 +33,7 @@ public interface Valuation<T> extends Activity, Getter {
 	 * 
 	 * @return the current execute of this valuation
 	 */
-	public T value() throws ContextException;
+	public T valuate() throws ContextException;
 
 	/**
 	 * Sets the current execute of this valuation.

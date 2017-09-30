@@ -77,7 +77,7 @@ public class InvokerTest {
 	};
 
 	@Before
-	public void initParModel() throws Exception {
+	public void initProcModel() throws Exception {
 		pm = new ProcModel();
 		x = proc("x", 10.0);
 		y = proc("y", 20.0);
@@ -207,7 +207,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void invokeParJobTest() throws RemoteException, ContextException,
+	public void invokeProcJobTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
 		Context c4 = context("multiply", inVal("arg/x1"), inVal("arg/x2"),
 				result("result/y"));
@@ -243,7 +243,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void invokeParTest() throws RemoteException, ContextException,
+	public void invokeProcTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
 
 		Proc<Double> x1 = proc("x1", 1.0);
@@ -252,7 +252,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void invokeParArgTest() throws RemoteException, ContextException,
+	public void invokeProcArgTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
 		Proc x1, x2, y;
 		x1 = proc("x1", 1.0);
@@ -558,7 +558,7 @@ public class InvokerTest {
 
 		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
 		add(pm, iloop);
-		assertEquals(value(pm, "iloop"), 48);
+		assertEquals(eval(pm, "iloop"), 48);
 
 	}
 
@@ -570,7 +570,7 @@ public class InvokerTest {
 		add(pm, proc("z", inc(invoker(pm, "y"))));
 
 		for (int i = 0; i < 10; i++) {
-			logger.info("" + value(pm, "z"));
+			logger.info("" + eval(pm, "z"));
 		}
 		assertTrue(value(pm, "z").equals(13));
 	}
@@ -583,8 +583,8 @@ public class InvokerTest {
 		add(pm, proc("z", inc(invoker(pm, "y"), 2)));
 
 		for (int i = 0; i < 10; i++) {
-			logger.info("" + value(pm, "z"));
+			logger.info("" + eval(pm, "z"));
 		}
-		assertEquals(value(pm, "z"), 24);
+		assertEquals(eval(pm, "z"), 24);
 	}
 }

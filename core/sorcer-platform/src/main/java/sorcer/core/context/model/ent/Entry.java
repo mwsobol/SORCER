@@ -134,7 +134,7 @@ public class Entry<V> extends Association<String, V>
                     out = ((Evaluation<V>) val).evaluate(args);
                 }
             } else if (val instanceof Valuation) {
-                out = (V) ((Valuation) val).value();
+                out = (V) ((Valuation) val).valuate();
             } else if (val instanceof Ref) {
                 Object deref = ((Ref)val).get();
                 if (deref instanceof  Evaluation) {
@@ -162,8 +162,8 @@ public class Entry<V> extends Association<String, V>
                 out = (V) ((Service)val).execute(args);
             } else
                 // impl is just the out
-                // it is recommended to set out and impl to the same value
-                // when the impl is implementation of the out value
+                // it is recommended to set out and impl to the same valuate
+                // when the impl is implementation of the out valuate
                 if (out == null && impl != null) {
                     out = (V) impl;
                 }

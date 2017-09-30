@@ -119,7 +119,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			}
 
 			if (val instanceof Value) {
-				return ((Value)val).value();
+				return ((Value)val).valuate();
 			} else if ((val instanceof Proc) && (((Proc) val).asis() instanceof Function)) {
 				bindEntry((Function) ((Proc)val).asis());
 			} else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {

@@ -63,19 +63,25 @@ public class Procedures {
 		Object o2 = value(v1);
 		Object o3 = eval(f1);
         Object o4 = eval(e1);
-		Object o5 = value(context(), "path");
-		Object o6 = response(model(), "path");
-		cxt c3 = response((Model) model());
-		Object o7 = eval(t1);
-		Object o8 = eval(block());
-		Object o9 = eval(job());
+		Object o5 = eval(t1);
+		Object o6 = eval(block());
+		Object o7 = eval(job());
+		Object o8 = exec(m1);
+		Object o9 = value(context(), "path");
+		Object o10 = response(model(), "path");
 
+		// returning entries
+		ent e2 = act(v1);
+		ent e3 = act(f1);
+		ent e4 = act(context(), "path");
+
+		// processing mograms
+		cxt c3 = response((Model) model());
 		mog m3 = exert(task());
 		mog m4 = exert(job());
 		mog m5 = exert(model());
-		cxt c4 = context(exert(job()));
-		Object o10= exec(m3);
-		Object o11 = exec(m5);
+		cxt c4 = context(job());
+		cxt c5 = context(exert(job()));
 
 	}
 

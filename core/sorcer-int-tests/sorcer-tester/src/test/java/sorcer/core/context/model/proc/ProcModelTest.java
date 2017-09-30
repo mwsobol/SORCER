@@ -83,7 +83,7 @@ public class ProcModelTest {
 	
 
 	@Test
-	public void parModelTest() throws RemoteException, ContextException {
+	public void procModelTest() throws RemoteException, ContextException {
 		Proc x = new Proc("x", 10.0);
 		Proc y = new Proc("y", 20.0);
 		Proc add = new Proc("add", invoker("x + y", args("x", "y")));
@@ -130,7 +130,7 @@ public class ProcModelTest {
 	}
 	
 	@Test
-	public void mutateParModeltTest() throws RemoteException,
+	public void mutateProcModeltTest() throws RemoteException,
 			ContextException { 
 		ProcModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
 				proc("add", invoker("x + y", args("x", "y"))));
@@ -171,7 +171,7 @@ public class ProcModelTest {
 	}
 		
 	@Test
-	public void contextParsTest() throws RemoteException,
+	public void contextProcTest() throws RemoteException,
 			ContextException {
 		Context cxt = context(proc("url", "myUrl"), proc("design/in", 25.0));
 
@@ -320,7 +320,7 @@ public class ProcModelTest {
 	}
 	
 	@Test
-	public void exertionParsTest() throws Exception {
+	public void exertionProcTest() throws Exception {
 
 		Context c4 = context("multiply", inVal("arg/x1"), inVal("arg/x2"),
 				outVal("result/y"));
