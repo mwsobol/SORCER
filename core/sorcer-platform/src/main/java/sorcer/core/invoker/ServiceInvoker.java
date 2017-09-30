@@ -87,7 +87,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	// invocation delegate to
 	Evaluator evaluator;
 
-	private boolean valueIsCurrent = false;
+	private boolean isCurrent = false;
 
 	private boolean isReactive = false;
 
@@ -552,9 +552,8 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		// implemented by subclasses
 	}
 
-	@Override
-	public void setValueIsCurrent(boolean state) {
-		valueIsCurrent = state;
+	public void setValueCurrent(boolean state) {
+		isCurrent = state;
 	}
 
 	@Override
@@ -572,7 +571,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	}
 
 	public boolean isValueCurrent() {
-		return valueIsCurrent;
+		return isCurrent;
 	}
 
 	@Override

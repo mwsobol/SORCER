@@ -379,7 +379,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 		} else if (params != null) {
 			try {
 				if (params.length == 1 && params[0] instanceof Context) {
-					params = (Object[]) ((ServiceContext) params[0]).getArgs();
+					params = ((ServiceContext) params[0]).getArgs();
 				}
 			} catch (ContextException e) {
 				e.printStackTrace();

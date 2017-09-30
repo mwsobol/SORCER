@@ -32,20 +32,17 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
         this.key = path;
     }
 
-    public Value(final String path, final T value) {
-        super(path, value);
-        out = value;
+    public Value(final String path, Object item) {
+        super(path, item);
     }
 
-    public Value(String path, T value, int index) {
-        this(path, value);
-        this.out = value;
+    public Value(final String path,  Object item, int index) {
+        this(path, item);
         this.index = index;
     }
 
-    public Value(String path, T value, boolean isPersistant, int index) {
-        this(path, value, index);
-        this.out = value;
+    public Value(final String path, Object item, boolean isPersistant, int index) {
+        this(path, item, index);
         this.isPersistent = isPersistant;
     }
 

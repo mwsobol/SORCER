@@ -12,7 +12,6 @@ import sorcer.core.context.Copier;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Function;
-import sorcer.core.invoker.ServiceInvoker;
 import sorcer.po.operator;
 import sorcer.service.Context;
 import sorcer.service.Domain;
@@ -61,7 +60,7 @@ public class ContextModels {
 		assertTrue(eval(mdl, "arg/x7").equals(4.0));
 		assertTrue(get(mdl, "arg/x7") instanceof Function);
 		assertTrue(get(mdl, "arg/x7") instanceof Proc);
-		assertTrue(item(mdl, "arg/x7") instanceof Invocation);
+		assertTrue(impl(mdl, "arg/x7") instanceof Invocation);
 	}
 
 	@Test

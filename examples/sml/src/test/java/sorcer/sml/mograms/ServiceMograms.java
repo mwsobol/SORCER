@@ -6,10 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.provider.Adder;
-import sorcer.arithmetic.provider.Averager;
-import sorcer.arithmetic.provider.Multiplier;
-import sorcer.arithmetic.provider.Subtractor;
+import sorcer.arithmetic.provider.*;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.Modeler;
@@ -101,7 +98,7 @@ public class ServiceMograms {
     @Test
     public void incrementer() throws Exception {
 
-        IncrementerImpl incrementer = new IncrementerImpl(100.0);
+        Incrementer incrementer = new IncrementerImpl(100.0);
 
         Model model = model(
                 inVal("by", 10.0),
@@ -114,8 +111,6 @@ public class ServiceMograms {
         logger.info("out context: " + exerted);
         assertTrue(eval(exerted, "out").equals(110.0));
 
-        ((SrvModel) exerted).clearOutputs();
-
         exerted = exert(model);
         logger.info("out context: " + exerted);
         assertTrue(eval(exerted, "out").equals(120.0));
@@ -124,7 +119,7 @@ public class ServiceMograms {
     @Test
     public void loopWithModel() throws Exception {
 
-        IncrementerImpl incrementer = new IncrementerImpl(100.0);
+        Incrementer incrementer = new IncrementerImpl(100.0);
 
         Model mdl = model(
                 inVal("by", entFi(inVal("by-10", 10.0), inVal("by-20", 20.0))), inVal("out", 0.0),
@@ -132,8 +127,10 @@ public class ServiceMograms {
                 ent("multiply", invoker("add * out", ents("add", "out"))));
 
         responseUp(mdl, "increment", "out", "multiply", "by");
-//        Domain exerted = exert(model);
+//        Context out = response(mdl, val("add", 100.0));
+//        Model exerted = exert(mdl);
 //        logger.info("out context: " + exerted);
+//        assertTrue(eval(exerted, "multiply").equals(11000));
 //        assertTrue(eval(exerted, "out").equals(110.0));
 
         logger.info("DEPS: " + printDeps(mdl));
@@ -142,10 +139,9 @@ public class ServiceMograms {
                 context(inVal("template", "URL")),
                 task(sig("add", AdderImpl.class),
                         context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("add"))),
-                loop(condition(cxt -> (double) value(cxt, "out") < 1000.0),
-                        mdl));
+                loop(condition(cxt ->
+                                (double) eval(cxt, "out") < 1000.0), mdl));
 
-//        logger.info("DEPS: " + printDeps(looping));
         looping = exert(looping, fi("by-20", "by"));
         logger.info("block context: " + context(looping));
         logger.info("result: " + value(context(looping), "out"));

@@ -120,7 +120,7 @@ public class LoopMogram extends ConditionalMogram {
 
 			if (condition == null) {
 				for (int i = 0; i < max - min; i++) {
-					target = target.exert(txn);
+					target = target.exert(txn, args);
 					if (rp != null && rp.path != null) {
 						scope.putValue(target.getName(), target.getContext().getReturnValue());
 					}

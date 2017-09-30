@@ -63,7 +63,7 @@ public class Entries {
 		Entry x4 = inoutVal("arg/x4", x3);
 		assertEquals(eval(x3), eval(x4));
         assertTrue(direction(x4) == Direction.INOUT);
-		assertEquals(name(item(x4)), "arg/x3");
+		assertEquals(name(impl(x4)), "arg/x3");
         assertTrue(direction(x4) == Direction.INOUT);
     }
 

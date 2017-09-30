@@ -38,11 +38,11 @@ public class InputValue<T> extends Value<T> {
     }
 
 
-    public InputValue(String path, T value, boolean isPersistent, int index) {
-        super(path, value);
+    public InputValue(String path, Object item, boolean isPersistent, int index) {
+        super(path, item);
         this.isPersistent = isPersistent;
-        if (SdbUtil.isSosURL(value)) {
-            impl = value;
+        if (SdbUtil.isSosURL(item)) {
+            impl = item;
             out = null;
         }
         this.index = index;

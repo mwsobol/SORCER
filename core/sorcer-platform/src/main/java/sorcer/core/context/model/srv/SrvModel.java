@@ -353,7 +353,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         for (Fidelity sfi : fiList) {
             if (sfi.getName().equals(path)) {
                 selected = sfi;
-                ((Function) asis(path)).isValid(false);
+                ((Entry) get(path)).isValid(false);
                 isChanged();
                 break;
             }
@@ -483,10 +483,9 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         Iterator<Map.Entry<String, Object>> i = entryIterator();
         while (i.hasNext()) {
             Map.Entry e = i.next();
-            if (e.getValue() instanceof Srv) {
-                ((Srv) e.getValue()).setImpl(null);
-            } else if (e.getValue() instanceof Function && ((Function)e.getValue()).asis() instanceof Evaluation) {
-                ((Function)e.getValue()).isValid(false);
+            if (e.getValue() instanceof Entry) {
+                ((Entry) e.getValue()).setOut(null);
+                ((Entry)e.getValue()).isValid(false);
             }
         }
         return this;

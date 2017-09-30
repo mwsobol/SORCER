@@ -36,8 +36,7 @@ public interface  Evaluator <T> extends Evaluation<T> {
 	 * @throws RemoteException
 	 */
 	public T process(Arg... entries) throws EvaluationException, RemoteException;
-	
-	
+
 	public void addArgs(ArgSet set) throws EvaluationException, RemoteException;
 	
 	public ArgSet getArgs();
@@ -45,8 +44,6 @@ public interface  Evaluator <T> extends Evaluation<T> {
 	public void setParameterTypes(Class<?>[] types);
 	
 	public void setParameters(Object... args);
-
-	public void setValueIsCurrent(boolean state);
 
 	public void update(Setup... entries) throws ContextException;
 

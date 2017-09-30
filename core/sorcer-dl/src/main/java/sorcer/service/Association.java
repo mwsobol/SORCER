@@ -58,14 +58,15 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
         this.key = key;
     }
 
-    public Association(K key, I item) {
+    public Association(K key, Object item) {
         if(key==null)
             throw new IllegalArgumentException("key must not be null");
         this.key = key;
         if (item instanceof Fi) {
             multiFi = (Fi) item;
-            this.impl = (I) multiFi.get(0);
+            this.impl = multiFi.get(0);
         } else {
+            this.out = (I) item;
             this.impl = item;
         }
 	}

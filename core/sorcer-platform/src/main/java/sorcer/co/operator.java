@@ -1124,23 +1124,33 @@ public class operator extends Operator {
 		return rasis(entry);
 	}
 
-	public static Object item(Entry entry)
+	public static Object impl(Entry entry)
 			throws ContextException {
 		return entry.getImpl();
 	}
 
-	public static Object item(Model context, String path)
+	public static Object impl(Model context, String path)
 			throws ContextException {
-		return item((ServiceContext) context,  path);
+		return impl((ServiceContext) context,  path);
 	}
 
-	public static Object item(Context context, String path)
+	public static Object rimpl(Context context, String path)
 			throws ContextException {
 		Object obj = context.get(path);
 		if (obj instanceof Entry) {
 			return ((Entry)context.get(path)).getImpl();
 		} else {
 			return null;
+		}
+	}
+
+	public static Object impl(Context context, String path)
+			throws ContextException {
+		Object obj = context.get(path);
+		if (obj instanceof Association) {
+			return ((Entry)obj).getImpl();
+		} else {
+			return obj;
 		}
 	}
 

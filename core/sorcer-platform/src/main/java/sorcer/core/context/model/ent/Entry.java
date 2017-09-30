@@ -36,7 +36,7 @@ public class Entry<V> extends Association<String, V>
         this.key = key;
     }
 
-    public Entry(String key, V item) {
+    public Entry(String key, Object item) {
        super(key, item);
         if (sorcer.util.url.sos.SdbUtil.isSosURL(item)) {
             isPersistent = true;

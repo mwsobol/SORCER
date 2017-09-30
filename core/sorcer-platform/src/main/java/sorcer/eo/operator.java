@@ -578,31 +578,48 @@ public class operator extends Operator {
 				if (ent.isPersistent()) {
 					setProc(pcxt, ent, i);
 				} else {
-					pcxt.putInValueAt(ent.getName(), ent.getImpl(), i + 1);
+					if (ent.getMultiFi() != null) {
+						pcxt.putInValueAt(ent.getName(), ent, i + 1);
+					} else {
+						pcxt.putInValueAt(ent.getName(), ent.getImpl(), i + 1);
+					}
 				}
 			} else if (ent instanceof OutputValue || ent.getType() == Functionality.Type.OUTPUT) {
 				if (ent.isPersistent()) {
 					setProc(pcxt, ent, i);
 				} else {
-					pcxt.putOutValueAt(ent.getName(), ent.getImpl(), i + 1);
+					if (ent.getMultiFi() != null) {
+						pcxt.putOutValueAt(ent.getName(), ent, i + 1);
+					} else {
+						pcxt.putOutValueAt(ent.getName(), ent.getImpl(), i + 1);
+
+					}
 				}
 			} else if (ent instanceof InoutValue || ent.getType() == Functionality.Type.INOUT) {
 				if (ent.isPersistent()) {
 					setProc(pcxt, ent, i);
 				} else {
-					pcxt.putInoutValueAt(ent.getName(), ent.getImpl(), i + 1);
+					if (ent.getMultiFi() != null) {
+						pcxt.putInoutValueAt(ent.getName(), ent, i + 1);
+					} else {
+						pcxt.putInoutValueAt(ent.getName(), ent.getImpl(), i + 1);
+
+					}
 				}
 			} else if (ent instanceof Entry) {
 				if (ent.isPersistent()) {
 					setProc(pcxt, entryList.get(i), i);
-				} if  (ent.getMultiFi() != null) {
-					pcxt.putValueAt(ent.getName(), ent, i + 1);
 				} else {
-					if (ent.getImpl() instanceof Scopable) {
-						((Scopable) ent.getImpl()).setScope(pcxt);
+					if  (ent.getMultiFi() != null) {
+						pcxt.putValueAt(ent.getName(), ent, i + 1);
+					} else {
+						pcxt.putValueAt(ent.getName(), ent.getImpl(), i + 1);
+						if (ent.getImpl() instanceof Scopable) {
+							((Scopable) ent.getImpl()).setScope(pcxt);
+						}
 					}
-					pcxt.putValueAt(ent.getName(), ent.getImpl(), i + 1);
 				}
+
 			} else if (ent instanceof DataEntry) {
 				pcxt.putValueAt(Context.DSD_PATH, ent.getImpl(), i + 1);
 			}
@@ -2409,33 +2426,27 @@ public class operator extends Operator {
 	}
 
 
-    public static Object get(Service mogram, String path)
-            throws ContextException {
-        Object obj = null;
-        if (mogram instanceof ServiceContext) {
-            obj = ((ServiceContext) mogram).get(path);
+	public static Object get(Service mogram, String path)
+			throws ContextException {
+		Object obj = null;
+		if (mogram instanceof Context) {
+			obj = ((ServiceContext) mogram).get(path);
 
-            if (obj != null && obj instanceof Mappable) {
-                while (obj instanceof Mappable ||
-                        (obj instanceof Reactive && ((Reactive) obj).isReactive())) {
-                    try {
-                        obj = ((Evaluation) obj).asis();
-                    } catch (RemoteException e) {
-                        throw new ContextException(e);
-                    }
-                }
-            }
-            if (obj instanceof Entry) {
-                obj = ((Entry) obj).getData();
-            }
-            return obj;
-        } else if (mogram instanceof Exertion) {
-            return (((Exertion) mogram).getContext()).asis(path);
-        } else if (mogram instanceof Model) {
-            return rasis((ServiceContext) mogram, path);
-        }
-        return obj;
-    }
+			if (obj != null && obj instanceof Mappable) {
+				while (obj instanceof Mappable ||
+						(obj instanceof Reactive && ((Reactive) obj).isReactive())) {
+					try {
+						obj = ((Evaluation) obj).asis();
+					} catch (RemoteException e) {
+						throw new ContextException(e);
+					}
+				}
+			}
+		} else if (mogram instanceof Mogram) {
+			obj = (((Mogram) mogram).getContext()).asis(path);
+		}
+		return obj;
+	}
 
 	public static Object get(Exertion exertion, String component, String path)
 			throws ExertionException {
