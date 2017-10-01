@@ -32,7 +32,6 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.pipe;
-import static sorcer.po.operator.add;
 import static sorcer.po.operator.alt;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.get;

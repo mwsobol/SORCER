@@ -3,7 +3,6 @@ package edu.pjatk.inn.requestor;
 import edu.pjatk.inn.coffeemaker.CoffeeService;
 import edu.pjatk.inn.coffeemaker.Delivery;
 import sorcer.core.requestor.ServiceRequestor;
-import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.Domain;
 
@@ -12,8 +11,7 @@ import java.io.File;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.paths;
 import static sorcer.eo.operator.*;
-import static sorcer.mo.operator.responseUp;
-import static sorcer.mo.operator.srvModel;
+import static sorcer.mo.operator.*;
 import static sorcer.po.operator.*;
 import static sorcer.so.operator.exert;
 

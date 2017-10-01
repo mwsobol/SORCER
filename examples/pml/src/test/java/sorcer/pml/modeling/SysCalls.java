@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
 import static sorcer.so.operator.*;
 
@@ -94,7 +93,7 @@ public class SysCalls {
                 + Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
                 + Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-        ProcModel pm = procModel(ent("x", 10.0), args("y"),
+        Model pm = procModel(ent("x", 10.0), args("y"),
                 proc("multiply", invoker("x * y", args("x", "y"))),
                 proc("add", invoker("x + y", args("x", "y"))));
 
@@ -103,7 +102,7 @@ public class SysCalls {
 				outVal("cylinder/height")));
         add(pm, caller);
 
-		Context result = (Context) value(pm, "volume");
+		Context result = (Context) eval(pm, "volume");
 //		Context result = (Context) invoke(pm, "volume");
         // get from the result the volume of cylinder and assign to y parameter
         assertTrue("EXPECTED '0' return eval, GOT: "+value(result, "exit/eval"),
@@ -111,12 +110,12 @@ public class SysCalls {
 
 		setValue(pm, "y", new Double((String)value(result, "cylinder/volume")));
 
-        logger.info("cylinder/radius:" + value(result, "cylinder/radius"));
-		logger.info("cylinder/height:" + value(result, "cylinder/height"));
-		logger.info("x eval:" + value(pm, "x"));
-		logger.info("y eval:" + value(pm, "y"));
-        logger.info("multiply eval:" + value(pm, "add"));
-        assertTrue(value(pm, "add").equals(47.69911184307752));
+        logger.info("cylinder/radius:" + eval(result, "cylinder/radius"));
+		logger.info("cylinder/height:" + eval(result, "cylinder/height"));
+		logger.info("x eval:" + eval(pm, "x"));
+		logger.info("y eval:" + eval(pm, "y"));
+        logger.info("multiply eval:" + eval(pm, "add"));
+        assertTrue(eval(pm, "add").equals(47.69911184307752));
     }
 
 	@Test

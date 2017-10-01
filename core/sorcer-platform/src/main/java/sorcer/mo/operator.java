@@ -17,8 +17,12 @@
 
 package sorcer.mo;
 
+import sorcer.co.tuple.InoutValue;
+import sorcer.co.tuple.InputValue;
+import sorcer.co.tuple.OutputValue;
 import sorcer.core.context.MapContext;
 import sorcer.core.context.ModelStrategy;
+import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.srv.Srv;
@@ -44,6 +48,7 @@ import java.util.List;
 import static sorcer.co.operator.instance;
 import static sorcer.co.operator.list;
 import static sorcer.eo.operator.context;
+import static sorcer.po.operator.srv;
 
 /**
  * Created by Mike Sobolewski on 4/26/15.
@@ -71,7 +76,7 @@ public class operator {
 
     public static Model setValue(Model model, String entName, Object value)
         throws ContextException {
-        Object entry = model.asis(entName);
+        Object entry = model.get(entName);
         if (entry == null)
             try {
                 model.add(sorcer.po.operator.ent(entName, value));
@@ -84,7 +89,8 @@ public class operator {
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-        } else {
+        }
+        else {
             ((ServiceContext)model).put(entName, value);
         }
 
@@ -452,10 +458,8 @@ public class operator {
                     hasEntry = true;
                     if (i instanceof Proc)
                         procType = true;
-                    else if (i instanceof Srv) {
+                    else if (i instanceof Srv || i instanceof Neo) {
                         srvType = true;
-                    } else if (i instanceof Neo) {
-                        neoType = true;
                     }
                 } catch (Exception e) {
                     throw new ModelException(e);
@@ -494,9 +498,101 @@ public class operator {
         throw new ModelException("do not know what model to create");
     }
 
-    public static ProcModel neoModel(String name, Object... objects)
+    public static Context add(Domain model, Identifiable... objects)
             throws ContextException, RemoteException {
-        return procModel(name, objects);
+        return add((Context)model, objects);
+    }
+
+    public static Context add(Context context, Identifiable... objects)
+            throws RemoteException, ContextException {
+        if (context instanceof Model) {
+            return (Context) context.add(objects);
+        }
+        boolean isReactive = false;
+        for (Identifiable i : objects) {
+            if (i instanceof Reactive && ((Reactive) i).isReactive()) {
+                isReactive = true;
+            }
+            if (i instanceof Mogram) {
+                ((Mogram) i).setScope(context);
+                i = srv(i);
+            }
+            if (context instanceof PositionalContext) {
+                PositionalContext pc = (PositionalContext) context;
+                if (i instanceof InputValue) {
+                    if (isReactive) {
+                        pc.putInValueAt(i.getName(), i, pc.getTally() + 1);
+                    } else {
+                        pc.putInValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
+                    }
+                } else if (i instanceof OutputValue) {
+                    if (isReactive) {
+                        pc.putOutValueAt(i.getName(), i, pc.getTally() + 1);
+                    } else {
+                        pc.putOutValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
+                    }
+                } else if (i instanceof InoutValue) {
+                    if (isReactive) {
+                        pc.putInoutValueAt(i.getName(), i, pc.getTally() + 1);
+                    } else {
+                        pc.putInoutValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
+                    }
+                } else {
+                    if (i instanceof Value) {
+                        pc.putValueAt(i.getName(), ((Entry) i).getOut(), pc.getTally() + 1);
+                    } else {
+                        if (context instanceof ProcModel || isReactive) {
+                            pc.putValueAt(i.getName(), i, pc.getTally() + 1);
+                        } else {
+                            pc.putValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
+                        }
+                    }
+                }
+            } else if (context instanceof ServiceContext) {
+                if (i instanceof InputValue) {
+                    if (i instanceof Reactive) {
+                        context.putInValue(i.getName(), i);
+                    } else {
+                        context.putInValue(i.getName(), ((Function) i).getImpl());
+                    }
+                } else if (i instanceof OutputValue) {
+                    if (isReactive) {
+                        context.putOutValue(i.getName(), i);
+                    } else {
+                        context.putOutValue(i.getName(), ((Function) i).getImpl());
+                    }
+                } else if (i instanceof InoutValue) {
+                    if (isReactive) {
+                        context.putInoutValue(i.getName(), i);
+                    } else {
+                        context.putInoutValue(i.getName(), ((Function) i).getImpl());
+                    }
+                } else {
+                    if (context instanceof ProcModel || isReactive) {
+                        context.putValue(i.getName(), i);
+                    } else {
+                        context.putValue(i.getName(), ((Entry) i).getImpl());
+                    }
+                }
+            }
+
+            if (i instanceof Entry) {
+                Entry e = (Entry) i;
+                if (e.getAnnotation() != null) {
+                    context.mark(e.getName(), e.annotation().toString());
+                }
+                if (e.asis() instanceof Scopable) {
+                    ((Scopable) e.asis()).setScope(context);
+                }
+            }
+        }
+        context.isChanged();
+        return context;
+    }
+
+    public static Model neoModel(String name, Object... objects)
+            throws ContextException, RemoteException {
+        return srvModel(name, objects);
     }
 
     public static ProcModel procModel(String name, Object... objects)

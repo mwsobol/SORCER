@@ -12,6 +12,7 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
+import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.invoker.AltInvoker;
 import sorcer.core.invoker.Updater;
 import sorcer.core.invoker.OptInvoker;
@@ -26,7 +27,6 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.pipe;
-import static sorcer.po.operator.add;
 import static sorcer.po.operator.alt;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.get;
@@ -113,46 +113,46 @@ public class Invokers {
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
 		logger.info("invoke eval: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
-		logger.info("get eval: " + value(pm, "expr"));
-		assertTrue(value(pm, "expr").equals(60.0));
+		logger.info("get eval: " + eval(pm, "expr"));
+		assertTrue(eval(pm, "expr").equals(60.0));
 	}
 
 	@Test
 	public void serviceNeurons() throws Exception {
-		ProcModel pm = neoModel("neural-model");
-		add(pm, neo("x1", 10.0), neo("x2", 20.0));
-		add(pm, neo("x3", weights(val("x1", 2.0), val("x2", 10.0)), signals("x1", "x2")));
+		Model nm = neoModel("neural-model");
+		add(nm, neo("x1", 10.0), neo("x2", 20.0));
+		add(nm, neo("x3", weights(val("x1", 2.0), val("x2", 10.0)), signals("x1", "x2")));
 
-//        logger.info("activate x1: " + activate(pm, "x1"));
-        assertEquals(activate(pm, "x1"), 10.0);
+////        logger.info("activate x1: " + activate(pm, "x1"));
+//        assertEquals(activate(nm, "x1"), 10.0);
 
 //        logger.info("activate x3: " + activate(pm, "x3"));
-        assertEquals(activate(pm, "x3"), 220.0);
+        assertEquals(activate(nm, "x3"), 220.0);
 
-//        logger.info("activate x3: " + activate(pm, "x3", th("x3", 200.0)));
-        assertEquals(activate(pm, "x3", th("x3", 200.0)), 1.0);
-
-//        logger.info("activate x3: " + activate(pm, "x3", th("x3", 0.0), bias("x3", 50.0)));
-        assertEquals(activate(pm, "x3", th("x3", 0.0), bias("x3", 50.0)), 270.0);
+////        logger.info("activate x3: " + activate(pm, "x3", th("x3", 200.0)));
+//        assertEquals(activate(nm, "x3", th("x3", 200.0)), 1.0);
+//
+////        logger.info("activate x3: " + activate(pm, "x3", th("x3", 0.0), bias("x3", 50.0)));
+//        assertEquals(activate(nm, "x3", th("x3", 0.0), bias("x3", 50.0)), 270.0);
 	}
 
 	@Test
 	public void serviceNeuronFidelities() throws Exception {
-		ProcModel pm = neoModel("neural-model");
-		add(pm, neo("x1", 10.0), neo("x2", 20.0));
-		add(pm, neo("x3", weights(val("x1", 2.0), val("x2", 5.0)), signals("x1", "x2")));
-		add(pm, neo("x4", mnFi(
-				nFi("n1", signals("x1", "x2"), weights(val("x1", 1.5), val("x2", 10.0))),
-				nFi("n2", signals("x1", "x2"), weights(val("x1", 2.0), val("x2", 12.0))))));
+		Model nm = model("neural-model",
+			neo("x1", 10.0), neo("x2", 20.0),
+			neo("x3", weights(val("x1", 2.0), val("x2", 5.0)), signals("x1", "x2")),
+			neo("x4", mnFi(
+					nFi("n1", signals("x1", "x2"), weights(val("x1", 1.5), val("x2", 10.0))),
+					nFi("n2", signals("x1", "x2"), weights(val("x1", 2.0), val("x2", 12.0))))));
 
-//      logger.info("activate1 x4: " + activate(pm, "x4", fi("x4", "n1")));
-		assertEquals(activate(pm, "x4", fi("x4", "n1")), 215.0);
-//
+//      logger.info("activate1 x4: " + activate(nm, "x4", fi("x4", "n1")));
+		assertEquals(activate(nm, "x4", fi("x4", "n1")), 215.0);
+
 //		logger.info("activate2 x4: " + activate(pm, "x4", th("x4", 200.0), fi("x4", "n1")));
-		assertEquals(activate(pm, "x4", th("x4", 200.0), fi("x4", "n1")), 1.0);
+		assertEquals(activate(nm, "x4", th("n1", 200.0), fi("x4", "n1")), 1.0);
 
 //      logger.info("activate3 x4: " + activate(pm, "x4", th("x4", 0.0), fi("x4", "n2")));
-        assertEquals(activate(pm, "x4", th("x4", 0.0), fi("x4", "n2")), 260.0);
+        assertEquals(activate(nm, "x4", th("n2", 0.0), fi("x4", "n2")), 260.0);
 	}
 
 	@Test

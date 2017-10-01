@@ -34,6 +34,7 @@ import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.exertion.*;
+import sorcer.core.invoker.Activator;
 import sorcer.core.invoker.IncrementInvoker;
 import sorcer.core.plexus.*;
 import sorcer.core.provider.*;
@@ -159,7 +160,7 @@ public class operator extends Operator {
 
 	public static void add(Exertion exertion, Identifiable... entries)
 			throws ContextException, RemoteException {
-		add(exertion.getContext(), entries);
+		sorcer.mo.operator.add(exertion.getContext(), entries);
 	}
 
 	public static void put(Exertion exertion, Identifiable... entries)
@@ -673,95 +674,6 @@ public class operator extends Operator {
 	public Context remove(Model model, String path) {
 		ServiceContext context = (ServiceContext) model;
 		context.getData().remove(path);
-		return context;
-	}
-
-	public static Context add(Domain model, Identifiable... objects)
-			throws ContextException, RemoteException {
-		return add((Context) model, objects);
-	}
-
-	public static Context add(Context context, Identifiable... objects)
-			throws RemoteException, ContextException {
-		boolean isReactive = false;
-		for (Identifiable i : objects) {
-			if (i instanceof Reactive && ((Reactive) i).isReactive()) {
-				isReactive = true;
-			}
-			if (i instanceof Mogram) {
-				((Mogram) i).setScope(context);
-				i = srv(i);
-			}
-			if (context instanceof PositionalContext) {
-				PositionalContext pc = (PositionalContext) context;
-				if (i instanceof InputValue) {
-					if (isReactive) {
-						pc.putInValueAt(i.getName(), i, pc.getTally() + 1);
-					} else {
-						pc.putInValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
-					}
-				} else if (i instanceof OutputValue) {
-					if (isReactive) {
-						pc.putOutValueAt(i.getName(), i, pc.getTally() + 1);
-					} else {
-						pc.putOutValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
-					}
-				} else if (i instanceof InoutValue) {
-					if (isReactive) {
-						pc.putInoutValueAt(i.getName(), i, pc.getTally() + 1);
-					} else {
-						pc.putInoutValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
-					}
-				} else {
-					if (i instanceof Value) {
-						pc.putValueAt(i.getName(), ((Entry) i).getOut(), pc.getTally() + 1);
-					} else {
-						if (context instanceof ProcModel || isReactive) {
-							pc.putValueAt(i.getName(), i, pc.getTally() + 1);
-						} else {
-							pc.putValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
-						}
-					}
-				}
-			} else if (context instanceof ServiceContext) {
-				if (i instanceof InputValue) {
-					if (i instanceof Reactive) {
-						context.putInValue(i.getName(), i);
-					} else {
-						context.putInValue(i.getName(), ((Function) i).getImpl());
-					}
-				} else if (i instanceof OutputValue) {
-					if (isReactive) {
-						context.putOutValue(i.getName(), i);
-					} else {
-						context.putOutValue(i.getName(), ((Function) i).getImpl());
-					}
-				} else if (i instanceof InoutValue) {
-					if (isReactive) {
-						context.putInoutValue(i.getName(), i);
-					} else {
-						context.putInoutValue(i.getName(), ((Function) i).getImpl());
-					}
-				} else {
-					if (context instanceof ProcModel || isReactive) {
-						context.putValue(i.getName(), i);
-					} else {
-						context.putValue(i.getName(), ((Entry) i).getImpl());
-					}
-				}
-			}
-
-			if (i instanceof Entry) {
-				Entry e = (Entry) i;
-				if (e.getAnnotation() != null) {
-					context.mark(e.getName(), e.annotation().toString());
-				}
-				if (e.asis() instanceof Scopable) {
-					((Scopable) e.asis()).setScope(context);
-				}
-			}
-		}
-		context.isChanged();
 		return context;
 	}
 
@@ -1550,27 +1462,24 @@ public class operator extends Operator {
 		return fi;
 	}
 
-	public static ServiceFidelity mnFi(NeoFidelity... fidelities) {
-		ServiceFidelity fi = new ServiceFidelity(fidelities);
+	public static ServiceFidelity mnFi(Activation... activations) {
+		ServiceFidelity fi = new ServiceFidelity(activations);
 		fi.fiType = Fi.Type.NEO;
 		return fi;
 	}
 
-    public static NeoFidelity nFi(String name, Args args, Context<Float> weights, Value... entries) {
-        NeoFidelity fi = new NeoFidelity(name, weights, args, entries);
-        fi.fiType = Fi.Type.NEO;
-        return fi;
+    public static Activator nFi(String name, Args args, Context<Float> weights, Value... entries) {
+        Activator activator = new Activator(name, args, weights, entries);
+        return activator;
     }
 
-    public static NeoFidelity nFi(String name, Args args, Value... entries) {
-        NeoFidelity fi = new NeoFidelity(name, null, args, entries);
-        fi.fiType = Fi.Type.NEO;
-        return fi;
+    public static Activator nFi(String name, Args args, Value... entries) {
+        Activator activator = new Activator(name, args, null, entries);
+        return activator;
     }
 
-    public static NeoFidelity nFi(String name, Context<Float> weights, Value... entries) {
-        NeoFidelity fi = new NeoFidelity(name, weights, entries);
-        fi.fiType = Fi.Type.NEO;
+    public static Activator nFi(String name, Context<Float> weights, Value... entries) {
+        Activator fi = new Activator(name, null, weights, entries);
         return fi;
     }
 

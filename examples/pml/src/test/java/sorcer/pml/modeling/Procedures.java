@@ -172,8 +172,8 @@ public class Procedures {
 		
 		Proc multi = proc("multi",
 				pFi(ent("init/eval"),
-				    dbp,
-				    proc("invoke", invoker("x + y", args("x", "y")))));
+                dbp,
+				proc("invoke", invoker("x + y", args("x", "y")))));
 
 		Context<Double> cxt = context(proc("x", 10.0),
 				proc("y", 20.0), proc("init/eval", 49.0));

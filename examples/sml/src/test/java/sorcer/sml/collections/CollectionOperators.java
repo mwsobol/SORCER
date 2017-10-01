@@ -36,7 +36,6 @@ import static sorcer.co.operator.path;
 import static sorcer.co.operator.persistent;
 import static sorcer.co.operator.set;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.add;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.print;

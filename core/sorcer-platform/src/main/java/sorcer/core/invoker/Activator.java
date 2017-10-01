@@ -18,7 +18,9 @@
 package sorcer.core.invoker;
 
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.NeoFidelity;
+import sorcer.core.context.model.ent.Neo;
+import sorcer.core.context.model.ent.Value;
+import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Activation;
 import sorcer.service.modeling.Functionality;
@@ -38,8 +40,6 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
         defaultName = "activator-";
     }
 
-    protected ServiceFidelity fidelities;
-
     // linear transformation of the input vector
     double bias = 0.0;
 
@@ -56,6 +56,13 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
 
     public Activator(String name) {
         super(name);
+    }
+
+
+    public Activator(String name, operator.Args signals, Context<Float> weights, Value... entries) {
+        this.name = name;
+        this.weights = weights;
+        this.args = signals.argSet();
     }
 
     @Override
@@ -95,13 +102,8 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
     }
 
     public Double activate(Arg... entries) throws EvaluationException, RemoteException {
-        List<String> names = args.getNames();
         for (Arg arg : entries) {
-            if (arg instanceof Fidelity) {
-                if (arg.getName().equals(name)) {
-                    fidelities.setSelect(((Fidelity) arg).getPath());
-                }
-            } else if (arg instanceof Entry) {
+           if (arg instanceof Entry) {
                 if (((Entry) arg).getType() == Functionality.Type.THRESHOLD
                         && name.equals(arg.getName())) {
                     threshold = (double) ((Entry) arg).getImpl();
@@ -113,12 +115,10 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
             }
         }
 
-        if (fidelities != null && fidelities.getSelect() != null) {
-            applyFidelity();
-        }
         double sum = 0.0;
         for (String name : args.getNames()) {
-            double in = (double) ((Entry)invokeContext.get(name)).getImpl();
+            double in = 0;
+            in = (double) ((Entry)invokeContext.get(name)).getOut();
             double wt = (double) weights.get(name);
             sum = sum + (in * wt);
         }
@@ -137,30 +137,6 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
             }
         }
         return sum;
-    }
-
-    public ServiceFidelity getFidelities() {
-        return fidelities;
-    }
-
-    public void setFidelities(ServiceFidelity fidelities) {
-        this.fidelities = fidelities;
-    }
-
-    private void applyFidelity() {
-        NeoFidelity fi = (NeoFidelity) fidelities.getSelect();
-        if (fi.getWeights() != null) {
-            weights = fi.getWeights();
-        }
-        if (fi.getArgs() != null && fi.getArgs().size() > 0) {
-            args = fi.getArgs().argSet();
-        }
-        if (fi.getThreshold() != null) {
-            threshold = fi.getThreshold();
-        }
-        if (fi.getBias() != null) {
-            bias = fi.getBias();
-        }
     }
 
 }

@@ -25,6 +25,7 @@ import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.*;
+import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.service.*;
@@ -71,14 +72,14 @@ public class operator extends Operator {
 		return new Neo(path, fidelities);
 	}
 
-    public static Function th(String path, double threshold) {
-	    Function e = new Function(path, threshold);
+    public static Entry th(String path, double threshold) {
+        Entry e = new Entry(path, threshold);
 	    e.setType(Functionality.Type.THRESHOLD);
         return e;
     }
 
-    public static Function bias(String path, double bias) {
-        Function e = new Function(path, bias);
+    public static Entry bias(String path, double bias) {
+        Entry e = new Entry(path, bias);
         e.setType(Functionality.Type.BIAS);
         return e;
     }
@@ -266,12 +267,6 @@ public class operator extends Operator {
 		return new ProcModel(objects);
 	}
 
-	public static ProcModel add(ProcModel procModel, Identifiable... objects)
-			throws RemoteException, ContextException {
-		procModel.add(objects);
-		return procModel;
-	}
-
 	public static ProcModel append(ProcModel parContext, Arg... objects)
 			throws RemoteException, ContextException {
 		parContext.append(objects);
@@ -357,15 +352,26 @@ public class operator extends Operator {
 		return invoker.invoke(context, parameters);
 	}
 
-    public static Object activate(ProcModel procModel, String parname, Arg... parameters)
-            throws RemoteException, InvocationException {
-	    return invoke(procModel, parname, parameters);
+    public static Object activate(Model model, String path, Arg... args) throws InvocationException {
+        Neo neo = (Neo) model.get(path);
+        try {
+            if (neo.getMultiFi() != null) {
+                List<Fidelity> fiList = Arg.selectFidelities(args);
+                ((FidelityManager) model.getFidelityManager()).reconfigure(fiList);
+                return invoke((ProcModel) model, path, args);
+
+            } else {
+                return invoke((ProcModel) model, path, args);
+            }
+        } catch (RemoteException | ContextException e) {
+            throw new InvocationException(e);
+        }
     }
 
 	public static Object invoke(ProcModel procModel, String parname, Arg... parameters)
 			throws RemoteException, InvocationException {
 		try {
-			Object obj = procModel.asis(parname);
+			Object obj = procModel.get(parname);
 			Context scope = null;
 			// assume that the first argument is always context if provided
 			if (parameters.length > 0 && parameters[0] instanceof Context)
@@ -384,9 +390,6 @@ public class operator extends Operator {
 					out = ((Invocation) obj).invoke(scope, parameters);
 				else
 					out = ((Invocation) obj).invoke(null, parameters);
-//				if (procModel.getScope() == null)
-//					procModel.setScope(new ServiceContext());
-//				procModel.getScope().putValue(parname, out);
 				return out;
 			} else if (obj instanceof Agent) {
 				return ((Agent)obj).evaluate(parameters);

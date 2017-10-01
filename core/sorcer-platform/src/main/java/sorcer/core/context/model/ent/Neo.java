@@ -19,6 +19,7 @@ package sorcer.core.context.model.ent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.invoker.Activator;
+import sorcer.core.plexus.FidelityManager;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
@@ -27,6 +28,7 @@ import sorcer.service.modeling.func;
 
 import java.rmi.RemoteException;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * In service-based modeling, a service neuron (for short a neo) is a special kind of
@@ -45,65 +47,60 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 
 	protected double bias;
 
-	protected Activator activator;
-
-	protected ServiceFidelity fidelities;
-
-
 	public Neo(String name) {
 		super(name);
-        activator = new Activator(name);
+        impl = new Activator(name);
 		type = Type.NEURON;
 	}
 
        public Neo(String name, double value) {
         this(name);
-        impl = value;
+        out = value;
     }
 
     public Neo(String name, operator.Args args) {
         this(name);
-        activator.setArgs(args.argSet());
+		((Activator)impl).setArgs(args.argSet());
     }
 
     public Neo(String name, Context<Float> weights, operator.Args args) {
         this(name, args);
-        activator.setWeights(weights);
+		((Activator)impl).setWeights(weights);
     }
 
     public Neo(String name, double value, Context<Function> signals) {
         this(name);
         impl = value;
-        activator.setScope(signals);
+		((Activator)impl).setScope(signals);
     }
 
 	public Neo(String name, Context<Value> signals, Context<Float> weights, operator.Args args) {
 		this(name, args);
-		activator.setScope(signals);
+		((Activator)impl).setScope(signals);
 
 	}
 
 	public Neo(String name, Context<Value> signals, Context<Float> weights) {
 		this(name);
-		activator.setScope(signals);
+		((Activator)impl).setScope(signals);
 
 	}
 
 	public Neo(String name, double value, Context<Value> signals, Context<Float> weights) {
         this(name);
 		impl = value;
-        activator.setScope(signals);
+		((Activator)impl).setScope(signals);
 
     }
 
 	public Neo(String name, Context<Float> weights, Arg... args) {
 		this(name, new operator.Args(args));
-		activator.setWeights(weights);
+		((Activator)impl).setWeights(weights);
 	}
 
 	public Neo(String name, ServiceFidelity fidelities) {
 		this(name);
-		this.fidelities= fidelities;
+		this.multiFi= fidelities;
 	}
 
     /* (non-Javadoc)
@@ -121,8 +118,8 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 							scope.append(((Neo) p).getScope());
 
 					}
-				} else if (p instanceof Fidelity && fidelities != null) {
-                    fidelities.setSelect(p.getName());
+				} else if (p instanceof Fidelity && multiFi != null) {
+                    multiFi.setSelect(p.getName());
 				} else if (p instanceof Context) {
 					if (scope == null)
 						scope = (Context) p;
@@ -154,8 +151,8 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 	public void setScope(Context scope) {
 		if (scope != null) {
             this.scope = scope;
-            if (activator != null) {
-                activator.setScope(scope);
+            if (impl != null) {
+				((Activator)impl).setScope(scope);
             }
         }
 	}
@@ -208,8 +205,8 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 
     @Override
     public Double evaluate(Arg... args) throws EvaluationException, RemoteException {
-	    if (activator.getArgs().size() > 0) {
-            out = activator.activate(args);
+	    if (((Activator)impl).getArgs().size() > 0) {
+            out = ((Activator)impl).activate(args);
         }
         return out;
     }
@@ -253,18 +250,19 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
             InvocationException {
         try {
             if (context != null) {
-                if (activator.getScope() == null)
-                    activator.setScope(context);
+                if (((Activator)impl).getScope() == null)
+					((Activator)impl).setScope(context);
                 else {
-                    activator.getScope().append(context);
+					((Activator)impl).getScope().append(context);
                 }
             }
-            if (fidelities != null) {
-               activator.setFidelities(fidelities);
-            } else if (activator.getArgs().size() == 0) {
+            if (multiFi != null) {
+				impl = multiFi.getSelect();
+            } else if (((Activator)impl).getArgs().size() == 0) {
                 return out;
             }
-            impl = activator.activate(args);
+            ((Activator)impl).setScope(scope);
+            out = ((Activator)impl).activate(args);
             return out;
         } catch (Exception e) {
             throw new InvocationException(e);
@@ -280,7 +278,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 		while (i.hasNext()) {
 			Neo procEntry = (Neo)i.next();
 			try {
-				activator.getScope().putValue(procEntry.getName(), procEntry.asis());
+				((Activator)impl).getScope().putValue(procEntry.getName(), procEntry.asis());
 			} catch (Exception e) {
 				throw new EvaluationException(e);
 			} 
@@ -322,17 +320,9 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 		}
 	}
 
-	public ServiceFidelity getFidelities() {
-			return fidelities;
-	}
-
-	public void setFidelities(ServiceFidelity fidelities) {
-			this.fidelities = fidelities;
-    }
-
     @Override
 	public Double getPerturbedValue(String varName) throws EvaluationException, RemoteException {
-        return (Double)(activator.getScope().get(varName)) + bias;
+        return (Double)(((Activator)impl).getScope().get(varName)) + bias;
     }
 
     @Override

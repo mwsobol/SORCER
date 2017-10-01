@@ -31,7 +31,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static sorcer.eo.operator.add;
+import static sorcer.mo.operator.add;
 
 /**
  * @author Mike Sobolewski
@@ -291,9 +291,9 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 			MogramException, RemoteException {
 		Context cxt = null;
 		Context out = new ServiceContext();
-		if (mogram instanceof ProcModel) {
+		if (mogram instanceof Model) {
 			if (impl != null && impl != Context.none)
-				add((Context)mogram, this);
+				add((Domain) mogram, this);
 			((ServiceContext)mogram).getMogramStrategy().getResponsePaths().add(new Path(key));
 			out = (Context) ((Model)mogram).getResponse();
 		} else if (mogram instanceof ServiceContext) {
