@@ -123,17 +123,17 @@ public class Invokers {
 		add(nm, neo("x1", 10.0), neo("x2", 20.0));
 		add(nm, neo("x3", weights(val("x1", 2.0), val("x2", 10.0)), signals("x1", "x2")));
 
-////        logger.info("activate x1: " + activate(pm, "x1"));
-//        assertEquals(activate(nm, "x1"), 10.0);
+//        logger.info("activate x1: " + activate(pm, "x1"));
+        assertEquals(activate(nm, "x1"), 10.0);
 
 //        logger.info("activate x3: " + activate(pm, "x3"));
         assertEquals(activate(nm, "x3"), 220.0);
 
-////        logger.info("activate x3: " + activate(pm, "x3", th("x3", 200.0)));
-//        assertEquals(activate(nm, "x3", th("x3", 200.0)), 1.0);
-//
-////        logger.info("activate x3: " + activate(pm, "x3", th("x3", 0.0), bias("x3", 50.0)));
-//        assertEquals(activate(nm, "x3", th("x3", 0.0), bias("x3", 50.0)), 270.0);
+//        logger.info("activate x3: " + activate(pm, "x3", th("x3", 200.0)));
+        assertEquals(activate(nm, "x3", th("x3", 200.0)), 1.0);
+
+//        logger.info("activate x3: " + activate(pm, "x3", th("x3", 0.0), bias("x3", 50.0)));
+        assertEquals(activate(nm, "x3", th("x3", 0.0), bias("x3", 50.0)), 270.0);
 	}
 
 	@Test
