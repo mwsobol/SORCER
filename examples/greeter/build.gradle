@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-version = '1.0'
+version = sorcerVersion
 
 dependencies {
+    compile project(':sorcer-platform')
     testCompile project(':sorcer-test')
     testRuntime libs.slf4j
     testRuntime libs.logback
