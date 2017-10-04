@@ -71,7 +71,7 @@ public class SpaceCmd extends ShellCmd {
 				+ "\n  <exertion index>   select the exertion given <exertion index>"
 				+ "\n  -xrt set the 'exertion' mode"
 				+ "\n  -v   print the selected Space service/exertion"
-				+ "\n  -x   clear the selection of Space service/exertion"
+				+ "\n  -x   clearSessions the selection of Space service/exertion"
 				+ "\n  -t   take the selected exertion from the Space"
 				+ "\n  -ta   take all mograms from the Space"
 				+ "\n  -e   show the selected exertion"
@@ -397,7 +397,7 @@ public class SpaceCmd extends ShellCmd {
 		Entry[] attributeSets = item.attributeSets;
 		for (int i = 0; i < attributeSets.length; i++) {
 			if (attributeSets[i] instanceof Name) {
-				out.println("Name: " + ((Name) attributeSets[i]).name);
+				out.println("Tag: " + ((Name) attributeSets[i]).name);
 				return;
 			}
 		}

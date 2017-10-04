@@ -25,7 +25,7 @@ public interface ServiceDirectory extends Remote {
          *
          * @param type    Type of service. Required parameter.
          * @param version Version of service artifact. The default is the latest version.
-         * @param name    Name of the service. If null, return random, matching type and version.
+         * @param name    Tag of the service. If null, return random, matching type and version.
          * @return Operational String as a String.
          * @throws java.lang.IllegalArgumentException when the service is configured to require version (the default)
          *                                            and version is not passed

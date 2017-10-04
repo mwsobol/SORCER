@@ -17,7 +17,7 @@
 
 package sorcer.core.provider.cataloger.ui;
 
-//Main Browser Model
+//Main Browser Domain
 import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
@@ -134,7 +134,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Stores the selected Provider and the list of interfaces into the Model.<br />
+	 * Stores the selected Provider and the list of interfaces into the Domain.<br />
 	 * Erases the old methodList and contextList.<br />
 	 * Erases the old selectedInterface and selectedMethod.<br />
 	 * Updates the Observer that a change has taken place.
@@ -161,7 +161,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Stores the selected Provider and the list of interfaces into the Model.<br />
+	 * Stores the selected Provider and the list of interfaces into the Domain.<br />
 	 * Erases the old methodList and contextList.<br />
 	 * Erases the old selectedInterface and selectedMethod.<br />
 	 * Updates the Observer that a change has taken place. If searched is true,
@@ -190,7 +190,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Stores the selected Interface and the list of methods to the Model.<br />
+	 * Stores the selected Interface and the list of methods to the Domain.<br />
 	 * Erases the old contextList and old selectedMethod.<br />
 	 * Updates the Observer that a change has taken place.
 	 * 
@@ -211,7 +211,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Stores the selected Interface and the list of methods to the Model.<br />
+	 * Stores the selected Interface and the list of methods to the Domain.<br />
 	 * Erases the old contextList and old selectedMethod.<br />
 	 * Updates the Observer that a change has taken place. <br />
 	 * searched indicates if backup list should be changed.
@@ -236,7 +236,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Stores the selected Method and the list of contexts to the Model.<br />
+	 * Stores the selected Method and the list of contexts to the Domain.<br />
 	 * Updates the Observer that a change has taken place.
 	 * 
 	 * @param selMeth

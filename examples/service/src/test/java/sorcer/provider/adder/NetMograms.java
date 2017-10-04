@@ -1,11 +1,13 @@
 package sorcer.provider.adder;
 
+import net.jini.id.Uuid;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.core.provider.SessionManagement;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Wait;
@@ -16,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.response;
 import static sorcer.po.operator.ent;
 
@@ -49,31 +50,94 @@ public class NetMograms {
 				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
-    @Test
-    public void valueTask() throws SignatureException, ExertionException, ContextException  {
+	@Test
+	public void valueTask() throws SignatureException, ExertionException, ContextException  {
 
-        Task t5 = task("t5", sig("add", Adder.class),
-                cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+		Task t5 = task("t5", sig("add", Adder.class),
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-        // get the result eval
-        assertTrue(eval(t5).equals(100.0));
+		// get the result eval
+		assertTrue(eval(t5).equals(100.0));
 
-        // get the subcontext output from the exertion
-        assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
-                eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
+		// get the subcontext output from the exertion
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/z", 100.0)).equals(
+				eval(t5, result("result/z", outPaths("arg/x1", "result/z")))));
 
-    }
+	}
 
     @Test
     public void sessionTask() throws SignatureException, ExertionException, ContextException  {
 
-        Task sum = task("t6", sig("sum", Adder.class),
+        Task sum = task("t6", sig("sum", Adder.class, prvName("Adder")),
                 cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		assertTrue(eval(sum).equals(100.0));
-		assertTrue(eval(sum).equals(200.0));
-		assertTrue(eval(sum).equals(300.0));
+        assertTrue(eval(sum).equals(100.0));
+        assertTrue(eval(sum).equals(200.0));
+        assertTrue(eval(sum).equals(300.0));
     }
+
+    @Test
+	public void beanValueTask() throws Exception  {
+
+		Task t5 = task("t5", sig("add", Adder.class, prvName("Session Adder")),
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+
+        Uuid cid = id(context(t5));
+		Context out = context(exert(t5));
+		assertTrue(value(out, "result/y").equals(100.0));
+		assertTrue(id(out).equals(cid));
+	}
+
+	@Test
+	public void beanMultipleSessions() throws Exception  {
+
+		SessionManagement provider = (SessionManagement) provider(sig(Adder.class, prvName("Session Adder")));
+		provider.clearSessions();
+
+		Task t5 = task("t5", sig("add", Adder.class, prvName("Session Adder")),
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+
+		t5.setContext(cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+		Context out = context(exert(t5));
+		assertTrue(value(out, "result/y").equals(100.0));
+		assertTrue(provider.getSessionIds().size() == 1);
+
+		t5.setContext(cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+		exert(t5);
+		assertTrue(provider.getSessionIds().size() == 2);
+
+		t5.setContext(cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+		exert(t5);
+		assertTrue(provider.getSessionIds().size() == 3);
+
+		provider.clearSessions();
+		assertTrue(provider.getSessionIds().size() == 0);
+	}
+
+	@Test
+	public void beanSessionIdTask() throws Exception  {
+
+		SessionManagement provider = (SessionManagement) provider(sig(Adder.class, prvName("Session Adder")));
+		provider.clearSessions();
+
+		Task t5 = task("t5", sig("add", Adder.class, prvName("Session Adder")),
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+
+		Uuid cid = id(context(t5));
+		Context out = context(exert(t5));
+		assertTrue(value(out, "result/y").equals(100.0));
+		assertTrue(id(out).equals(cid));
+		assertTrue(provider.getSessionIds().size() == 1);
+
+		context(exert(t5));
+		assertTrue(provider.getSessionIds().size() == 1);
+
+		context(exert(t5));
+		assertTrue(provider.getSessionIds().size() == 1);
+
+		provider.clearSessions();
+		assertTrue(provider.getSessionIds().size() == 0);
+	}
 
     @Test
 	public void spaceTask() throws Exception {
@@ -96,7 +160,7 @@ public class NetMograms {
 
 		// three entry model
 		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-				ent(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+				ent(sig("add", Adder.class, prvName("Adder"), result("result/y", inPaths("arg/x1", "arg/x2")))),
 				sorcer.mo.operator.response("add", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);

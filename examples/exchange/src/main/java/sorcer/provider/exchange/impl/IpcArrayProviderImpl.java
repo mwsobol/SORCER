@@ -15,6 +15,7 @@ import java.rmi.RemoteException;
 /**
  * Created by sobolemw on 9/21/15.
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class IpcArrayProviderImpl extends ServiceTasker {
 
     private int BB_SIZE = 1024;

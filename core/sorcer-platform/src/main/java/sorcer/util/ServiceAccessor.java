@@ -99,7 +99,7 @@ public class ServiceAccessor implements DynamicAccessor {
 	 * serviceInfo using Jini lookup service.
 	 *
 	 * @param providerName name
-	 * @param serviceType type
+	 * @param serviceType fiType
 	 * @return A ServiceItem
 	 */
 	public ServiceItem getServiceItem(String providerName, Class serviceType) {
@@ -214,14 +214,14 @@ public class ServiceAccessor implements DynamicAccessor {
 	 * passes a provided filter.
 	 *
 	 * @param attributes   attributes of the requested provider
-	 * @param serviceType type of the requested provider
+	 * @param serviceType fiType of the requested provider
      *
 	 * @return The discovered service or null
 	 */
     @SuppressWarnings("unchecked")
 	public <T>T getService(Class<T> serviceType, Entry[] attributes, ServiceItemFilter filter) {
 		if (serviceType == null) {
-			throw new IllegalArgumentException("Missing service type for a ServiceTemplate");
+			throw new IllegalArgumentException("Missing service fiType for a ServiceTemplate");
 		}
         ServiceTemplate tmpl = new ServiceTemplate(null, new Class[] { serviceType }, attributes);
 		ServiceItem si = getServiceItem(tmpl, filter);
@@ -250,7 +250,7 @@ public class ServiceAccessor implements DynamicAccessor {
 				logger.error("Failed trying to get {} {}", name, serviceType.getName(), e);
 			}
 		}
-		logger.info("got LUS service [type={} name={}]: {}", serviceType.getName(), name, proxy);
+		logger.info("got LUS service [fiType={} name={}]: {}", serviceType.getName(), name, proxy);
 		return proxy;
 	}
 
@@ -354,7 +354,7 @@ public class ServiceAccessor implements DynamicAccessor {
     }
 
 	static String formatServiceTemplate(ServiceTemplate template) {
-		return String.format("name: %s, type: %s",  getNames(template.attributeSetTemplates), getTypes(template.serviceTypes));
+		return String.format("name: %s, fiType: %s",  getNames(template.attributeSetTemplates), getTypes(template.serviceTypes));
     }
 
     static String getNames(Entry[] entries) {

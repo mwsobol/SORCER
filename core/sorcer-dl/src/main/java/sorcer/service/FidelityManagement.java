@@ -36,13 +36,13 @@ public interface FidelityManagement<T extends Arg> extends Service, RemoteEventL
 
     public Map<String, ServiceFidelity<Fidelity>> getMetafidelities() throws RemoteException;
 
-    public void morph(String... fiNames) throws RemoteException;
+    public void morph(String... fiNames) throws EvaluationException, RemoteException;
 
-    public void reconfigure(String... fiNames) throws RemoteException;
+    public void reconfigure(String... fiNames) throws EvaluationException, RemoteException;
 
-    public void reconfigure(Fidelity... fidelities) throws RemoteException, ContextException;
+    public void reconfigure(Fidelity... fidelities) throws EvaluationException, RemoteException;
 
-    public List<Fidelity> getDefaultFidelities() throws ContextException, RemoteException;
+    public List<Fidelity> getDefaultFidelities() throws RemoteException;
 
     public Mogram getMogram() throws RemoteException;
 

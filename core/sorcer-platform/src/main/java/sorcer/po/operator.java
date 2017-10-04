@@ -25,11 +25,12 @@ import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.*;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.FiMogram;
+import sorcer.core.plexus.MultiFiMogram;
 import sorcer.service.*;
+import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ServiceModel;
 import sorcer.eo.operator.Args;
+import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.Variability;
 
 import java.net.URL;
@@ -43,10 +44,37 @@ import static sorcer.eo.operator.context;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class operator {
+public class operator extends sorcer.operator {
 
 	private static final Logger logger = LoggerFactory.getLogger(operator.class.getName());
 
+	public static Neo neo(String path, double signal) {
+		return new Neo(path, signal);
+	}
+
+    public static Neo neo(String path, Args signals) {
+        return new Neo(path, signals);
+    }
+
+    public static Neo neo(String path, Args signals, Context<Float> weights) {
+        return new Neo(path, signals, weights);
+    }
+
+	public static Neo neo(String path, ServiceFidelity<NeoFidelity> fidelities) {
+		return new Neo(path, fidelities);
+	}
+
+    public static Entry th(String path, double threshold) {
+	    Entry e = new Entry(path, threshold);
+	    e.setType(Variability.Type.THRESHOLD);
+        return e;
+    }
+
+    public static Entry bias(String path, double bias) {
+        Entry e = new Entry(path, bias);
+        e.setType(Variability.Type.BIAS);
+        return e;
+    }
 
 	public static <T> Proc<T> proc(String path, T argument) throws EvaluationException, RemoteException {
 		return new Proc(path, argument);
@@ -61,12 +89,9 @@ public class operator {
 
 	public static Proc proc(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
 		Proc p = new Proc(identifiable.getName(), identifiable);
-		if (identifiable instanceof Scopable)
-			try {
-				((Scopable)identifiable).setScope(context);
-			} catch (ContextException e) {
-				throw new EvaluationException(e);
-			}
+		if (identifiable instanceof Scopable) {
+			((Scopable) identifiable).setScope(context);
+		}
 		p.setScope(context);
 		return p;
 	}
@@ -191,23 +216,22 @@ public class operator {
 		return parameter;
 	}
 
-	public static EntryList procFi(String name, Entry... entries) {
-		return new EntryList(name, entries);
-	}
+    public static Fidelity pFi(String name) {
+        Fidelity fi =  new Fidelity(name);
+        fi.setFiType(Fi.Type.PROC);
+        return fi;
+    }
 
-	public static EntryList procFi(Entry... entries) {
-		return new EntryList(entries);
-	}
+    public static ServiceFidelity<Proc> pFi(Entry... entries) {
+        ServiceFidelity<Proc> fi = new ServiceFidelity(entries);
+        fi.fiType = ServiceFidelity.Type.PROC;
+        return fi;
+    }
 
-	public static ServiceFidelity<Arg> procFi(String name) {
-		return new ServiceFidelity(name);
-	}
-
-	public static Entry procFi(Proc procEntry) {
-		Entry fi = new Entry(procEntry.getSelectedFidelity(), procEntry.getFidelities()
-				.get(procEntry.getSelectedFidelity()));
-		return fi;
-	}
+    public static ProcModel neoModel(String name, Object... objects)
+            throws ContextException, RemoteException {
+	    return procModel(name, objects);
+    }
 
 	public static ProcModel procModel(String name, Object... objects)
 			throws RemoteException, ContextException {
@@ -323,6 +347,11 @@ public class operator {
 			throws ContextException, RemoteException {
 		return invoker.invoke(context, parameters);
 	}
+
+    public static Object activate(ProcModel procModel, String parname, Arg... parameters)
+            throws RemoteException, InvocationException {
+	    return invoke(procModel, parname, parameters);
+    }
 
 	public static Object invoke(ProcModel procModel, String parname, Arg... parameters)
 			throws RemoteException, InvocationException {
@@ -454,6 +483,12 @@ public class operator {
 		return new GroovyInvoker(expression, args);
 	}
 
+	public static ServiceInvoker invoker(String name, String expression, Arg... args) {
+		GroovyInvoker gi = new GroovyInvoker(expression, args);
+		gi.setName(name);
+		return gi;
+	}
+
     public static SysCall sysCall(String name, Context context) throws ContextException {
         return new SysCall(name, context);
     }
@@ -471,7 +506,7 @@ public class operator {
     }
 
     public static ServiceInvoker invoker(Args args) {
-        return new CmdInvoker(args.argsToStrings());
+        return new CmdInvoker(args.getNameArray());
     }
     public static IncrementInvoker inc(String path) {
 		return new IntegerIncrementor(path, 1);
@@ -626,7 +661,7 @@ public class operator {
 		return new ExecPath(name, invoker);
 	}
 
-	public static ServiceModel scope(Proc procEntry) {
+	public static Domain scope(Proc procEntry) {
 		return procEntry.getScope();
 	}
 
@@ -663,7 +698,22 @@ public class operator {
 		return entry;
 	}
 
-	public static <T> Entry<T> ent(String path, T value, Arg... args) {
+	public static <T> Ref<T> ref(SupportComponent component) {
+		Ref cr = new Ref();
+		cr._2 = component;
+		return cr;
+	}
+
+	public static <T> Ref<T> ref(String path, Arg... args) {
+		Ref cr = new Ref(path, args);
+		return cr;
+	}
+
+//    public static Entry ent(String path, Domain model) {
+//        return new Entry(path, model);
+//    }
+
+    public static <T> Entry<T> ent(String path, T value, Arg... args) {
 		Entry<T> entry = null;
 		if (value instanceof Invocation || value instanceof Evaluation) {
 			entry = new Proc<T>(path, value);
@@ -673,12 +723,16 @@ public class operator {
 			if (mog instanceof Context) {
 				cxt = (Context)mog;
 			}
-			entry = (Entry<T>) srv(path, (Identifiable)value, cxt, args);
+			if (cxt != null) {
+				entry = (Entry<T>) srv(path, (Identifiable) value, cxt, args);
+			} else {
+				entry =  (Entry<T>) srv(path, (Identifiable) value, null, args);
+			}
 		} else if (value instanceof ServiceFidelity) {
 			entry = (Entry<T>) new Srv(path, value);
-		} else if (value instanceof FiMogram) {
+		} else if (value instanceof MultiFiMogram) {
 			try {
-				((FiMogram)value).setUnifiedName(path);
+				((MultiFiMogram)value).setUnifiedName(path);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
@@ -689,6 +743,8 @@ public class operator {
 			entry = (Entry<T>) new Srv(path, value);
 		} else if (value instanceof Service) {
 			entry = (Entry<T>) new Proc(path, value);
+		} else if (value.getClass() == Tuple2.class) {
+			return new Entry(path, value);
 		} else {
 			entry = new Entry<T>(path, value);
 		}
@@ -717,6 +773,35 @@ public class operator {
 
 	public static Srv ent(Signature sig) {
 		return srv(sig);
+	}
+
+	public static <T> Tuple2<Fidelity, Fidelity> ent(Fidelity selectFi, Fidelity srvFi) throws ConfigurationException {
+		if (!srvFi.isValid()) {
+			String msg = "Misconfigured entry fidelity: " + srvFi + " for: " + selectFi;
+			logger.warn(msg);
+//			throw new ConfigurationException("Misconfigured fidelity: " + srvFi + " for: " + selectFi);
+		}
+		Tuple2<Fidelity, Fidelity> assoc =  new Tuple2<>(selectFi, srvFi);
+		if (srvFi.getFiType().equals(Fi.Type.GRADIENT)) {
+			// if no path set use its name - no multifidelities
+			if (selectFi.getPath().equals("")) {
+				selectFi.setPath(selectFi.getName());
+			}
+			// use a select gradient name if declared
+			if (selectFi.getSelect() == null) {
+				if (srvFi.getSelect() != null) {
+					selectFi.setSelect(srvFi.getSelect());
+				} else {
+					selectFi.setSelect((T) selectFi.getName());
+					srvFi.setSelect((T) selectFi.getName());
+				}
+			}
+		}
+		srvFi.setName(selectFi.getName());
+		srvFi.setPath(selectFi.getPath());
+//		srvFi.setSelect((T) selectFi.getSelect());
+		selectFi.setFiType(srvFi.getFiType());
+		return assoc;
 	}
 
 	public static Entry ent(String path) {
@@ -769,13 +854,13 @@ public class operator {
 	}
 
 	public static Srv lambda(String path, Service service, Args args) {
-		Srv srv = new Srv(path, path, service, args.argsToStrings());
+		Srv srv = new Srv(path, path, service, args.getNameArray());
 		srv.setType(Variability.Type.LAMBDA);
 		return srv;
 	}
 
 	public static Srv lambda(String path, Service service, String name, Args args) {
-		Srv srv = new Srv(name, path, service,  args.argsToStrings());
+		Srv srv = new Srv(name, path, service,  args.getNameArray());
 		srv.setType(Variability.Type.LAMBDA);
 		return srv;
 	}
@@ -799,7 +884,7 @@ public class operator {
 	}
 
 	public static <T> Srv lambda(String path, ValueCallable<T> call, Args args) {
-		Srv srv = new Srv(path, call, args.argsToStrings());
+		Srv srv = new Srv(path, call, args.getNameArray());
 		srv.setType(Variability.Type.LAMBDA);
 		return srv;
 	}

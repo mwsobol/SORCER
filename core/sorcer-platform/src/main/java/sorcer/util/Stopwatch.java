@@ -24,7 +24,7 @@ import java.io.Serializable;
  */
 
 public final class Stopwatch implements Serializable {
-	public String name; // Name of this stopwatch
+	public String name; // Tag of this stopwatch
 	private long startTime; // Time when this stopwatch started
 	private long stopTime; // Time when it stopped
 	private boolean running; // Flag to indicate run state

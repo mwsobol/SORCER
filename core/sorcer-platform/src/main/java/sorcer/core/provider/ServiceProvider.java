@@ -54,6 +54,7 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.proxy.Outer;
 import sorcer.core.proxy.Partner;
 import sorcer.core.proxy.Partnership;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.scratch.ScratchManager;
 import sorcer.scratch.ScratchManagerSupport;
 import sorcer.service.*;
@@ -171,7 +172,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public static final String COMPONENT = ServiceProvider.class.getName();
 
 	/** Logger for logging information about this instance */
-	private static final Logger logger = LoggerFactory.getLogger(COMPONENT);
+	protected static final Logger logger = LoggerFactory.getLogger(COMPONENT);
 
 	static {
 		try {
@@ -213,9 +214,12 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	private final AtomicBoolean running = new AtomicBoolean(true);
 
-	private Map<Uuid, ProviderSession> sessions;
+	protected Map<Uuid, ServiceSession> sessions;
 
 	protected ScheduledExecutorService scheduler;
+
+	// a service bean used for local execution in this container
+	protected Object bean;
 
 	/** MBean for JMX access*/
 	private ProviderAdmin providerAdmin;
@@ -224,7 +228,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		providers.add(this);
 		delegate = new ProviderDelegate();
 		delegate.provider = this;
-		sessions = new ConcurrentHashMap<Uuid, ProviderSession>();
+		sessions = new ConcurrentHashMap<Uuid, ServiceSession>();
 		logger.info("\n\t<init> providers.size() = " + providers.size()
 				+ "\n\t<init> providers = " + providers
 				+ "\n\t<init> this.getName = " + this.getName());
@@ -1249,7 +1253,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
 	@Override
 	public boolean mutualExclusion() {
-		return delegate.mutualExclusion;
+		if (delegate != null) {
+			return delegate.mutualExclusion;
+		} else {
+			return false;
+		}
 	}
 
 	@Override public Map<String, MethodAnalytics> getMethodAnalytics() {
@@ -1507,11 +1515,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				cxt = (ServiceContext) mogram.getDataContext();
 				cxt.updateContextWith(mogram.getProcessSignature().getInConnector());
 				Uuid id = cxt.getId();
-				ProviderSession ps = sessions.get(id);
+				// a created session to be used in the implementation class of the bean itself
+				ProviderSession ps = (ProviderSession) sessions.get(id);
 				if (ps == null) {
 					ps = new ProviderSession(id);
 					sessions.put(id, ps);
 				}
+				if (bean != null) {
+                    return delegate.exertBeanTask((Task) mogram, bean, args);
+                }
 			} catch (ContextException e) {
 				e.printStackTrace();
 			}
@@ -1569,6 +1581,10 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				dataContext.removePath((String) e.getKey());
 			}
 		}
+	}
+
+	public Map<Uuid, ServiceSession> getSessions() {
+		return sessions;
 	}
 
 	public ServiceSession getSession(Context context) throws ContextException {
@@ -2001,10 +2017,10 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 					Thread.sleep(ProviderDelegate.KEEP_ALIVE_TIME);
 
 					// remove inactive sessions
-					Iterator<Map.Entry<Uuid, ProviderSession>> si = sessions.entrySet().iterator();
+					Iterator<Map.Entry<Uuid, ServiceSession>> si = sessions.entrySet().iterator();
 					while (si.hasNext())  {
-						Map.Entry<Uuid, ProviderSession> se = si.next();
-						ProviderSession ss = se.getValue();
+						Map.Entry<Uuid, ServiceSession> se = si.next();
+						ProviderSession ss = (ProviderSession)se.getValue();
 						long now = System.currentTimeMillis();
 						if (now - ss.getLastAccessedTime() > ss.getMaxInactiveInterval() * 1000) {
 							si.remove();
@@ -2148,5 +2164,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 
 		throw new UnsupportedOperationException("Cannot list files for URL " + dirURL);
+	}
+
+	public Object getBean() {
+		return bean;
+	}
+
+	public void setBean(Object bean) {
+		this.bean = bean;
 	}
 }

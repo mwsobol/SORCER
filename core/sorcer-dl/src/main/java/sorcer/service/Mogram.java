@@ -39,7 +39,7 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
     /**
      * Exerts this mogram by the assigned service provider if it is set. If a service
      * provider is not set then at runtime it bounds to any available provider
-     * that matches this mogram's signature of the <code>PROCESS</code> type.
+     * that matches this mogram's signature of the <code>PROCESS</code> fiType.
      * Service exertions and models are instances of mograms.
      *
      * @param txn
@@ -63,6 +63,8 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
      */
     public Uuid getId();
 
+    public void setId(Uuid id);
+
     public int getIndex();
 
     public void setIndex(int i);
@@ -73,6 +75,7 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
 
     public Signature getProcessSignature();
 
+    public Mogram deploy(List<Signature> builders) throws MogramException, ConfigurationException;
     /**
      * Returns a status of this mogram.
      *
@@ -83,6 +86,15 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
     public void setStatus(int value);
 
     public Context getContext() throws ContextException;
+
+    /**
+     * Returns a value of the component at the key
+     *
+     * @param key
+     *            the component name
+     * @return the componet at the path
+     */
+    public Object get(String key);
 
     public Mogram clearScope() throws MogramException;
 
@@ -146,6 +158,11 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
      * Returns a fdelity manager for of this exertion.
      */
     public FidelityManagement getFidelityManager();
+
+    /**
+     * Returns a fdelity manager for of this exertion.
+     */
+    public FidelityManagement getRemoteFidelityManager() throws RemoteException;
 
     /**
      * Returns <code>true</code> if this exertion should be monitored for its
@@ -287,18 +304,32 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
     public Context getDataContext() throws ContextException;
 
     /**
-     * Reconfigure this model with given fudelities.
+     * Reconfigure this mogram with given fudelities.
      *
      * @param fidelities
      */
     public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException;
 
     /**
-     * Reconfigure this model with given names of metafidelities.
+     * Reconfigure this mmogramodel with given names of metafidelities.
      *
      * @param metaFiNames
      */
-    public void morph(String... metaFiNames) throws RemoteException;
+    public void morph(String... metaFiNames) throws ContextException, RemoteException;
+
+    /**
+     * Update this mogram with given setup context entries.
+     *
+     * @param contextEntries
+     */
+    public void update(Setup... contextEntries) throws ContextException, RemoteException;
+
+    /**
+     * Returns the first fidelity name of a given projection.
+     *
+     * @param projectionName
+     */
+    public String getProjectionFi(String projectionName) throws ContextException, RemoteException;
 
     /**
      * Check if this context is export controlled, accessible to principals from
@@ -319,11 +350,11 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
      */
     public Signature getBuilder(Arg... args) throws MogramException;
 
+    public void applyFidelity(String name);
+
     public MogramStrategy getMogramStrategy();
 
     public void setBuilder(Signature builder) throws MogramException;
-
-    Object get(String component) throws ServiceException;
 
     public String describe();
 }

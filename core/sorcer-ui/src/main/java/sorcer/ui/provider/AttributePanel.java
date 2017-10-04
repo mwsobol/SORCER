@@ -281,10 +281,10 @@ public class AttributePanel extends JPanel {
 	}
 
 	public void refreshTree() {
-		// clear all selections
+		// clearSessions all selections
 		tree.clearSelection();
 
-		// clear all nodes and notify it
+		// clearSessions all nodes and notify it
 		root.removeAllChildren();
 		model.nodeStructureChanged(root);
 

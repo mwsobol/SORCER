@@ -43,7 +43,7 @@ public class CalculatorUI extends JPanel implements ActionListener {
 			buttonOpar, // This button call open parentheses
 			buttonCpar, // This button call close parentheses
 			buttonPoint, // This button to pass . to panel
-			buttonClear; // This button clear panel
+			buttonClear; // This button clearSessions panel
 
 	private int flag, // Record the state after calculating
 			errLevel; // State the error level
@@ -230,7 +230,7 @@ public class CalculatorUI extends JPanel implements ActionListener {
 				flag = 1;
 			} else {
 				if (flag == 1) {
-					clearPanel(); // clear panel after calculation
+					clearPanel(); // clearSessions panel after calculation
 					flag = 0;
 				}
 				displayEx(clickedButton);

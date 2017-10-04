@@ -60,6 +60,8 @@ import sorcer.core.proxy.Partnership;
 import sorcer.core.proxy.ProviderProxy;
 import sorcer.core.service.Configurer;
 import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.jini.jeri.RecordingInvocationDispatcher;
 import sorcer.jini.jeri.SorcerILFactory;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
@@ -71,6 +73,7 @@ import sorcer.security.sign.TaskAuditor;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.jobber.JobberAccessor;
+import sorcer.service.Domain;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.*;
@@ -206,7 +209,7 @@ public class ProviderDelegate {
 
 	protected sorcer.core.provider.Provider provider;
 
-	protected boolean mutualExclusion = true;
+	protected boolean mutualExclusion = false;
 
 	// all exported services with corresponding exporter
 	// <Remote, Exporter> or <service bean, service provider>
@@ -214,7 +217,11 @@ public class ProviderDelegate {
 
 	protected Object providerProxy;
 
-	private long eventID = 0, seqNum = 0;
+    private ServiceSignature beanSignature;
+
+    private Object sessionBean;
+
+    private long eventID = 0, seqNum = 0;
 
 	private List<Entry> extraLookupAttributes = new Vector<Entry>();
 
@@ -280,8 +287,8 @@ public class ProviderDelegate {
 	private Object[] serviceBeans;
 
 	/**
-	 * Exposed service type components. A key is an interface and a eval its
-	 * implementing service-object.
+	 * Exposed service beans as a map. A key is an a service bean interface
+	 * and a value is a service bean implementing the interface.
 	 */
 	private Map<Class<?>, Object> serviceComponents;
 
@@ -978,65 +985,134 @@ public class ProviderDelegate {
 				}
 			}
 		}
-		if (impl != null) {
-			if (task.getProcessSignature().getReturnPath() != null) {
-				((ServiceContext) task.getContext()).setReturnPath(task
-						.getProcessSignature().getReturnPath());
-			}
-			// determine args and parameterTpes from the context
-			Class[] argTypes = new Class[] { Context.class };
-			ServiceContext cxt = (ServiceContext) task.getContext();
-			boolean isContextual = true;
-			if (cxt.getParameterTypes() != null & cxt.getArgs() != null) {
-				argTypes = cxt.getParameterTypes();
-				isContextual = false;
-			} 
-			Method m = null;
-			try {
-				// select the proper method for the bean type
-				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof ProcModel)) {
-					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
-					isContextual = true;
-				} else if (selector.equals("exert") && impl instanceof ServiceShell) {
-					m = impl.getClass().getMethod(selector, Mogram.class, Arg[].class);
-					isContextual = false;
-				} else if (selector.equals("getValue") && impl instanceof Evaluation) {
-					m = impl.getClass().getMethod(selector, Arg[].class);
-					isContextual = false;
-				} else
-					m = impl.getClass().getMethod(selector, argTypes);
-				if(logger.isTraceEnabled())
-					logger.trace("Executing service bean method: {} by: {} isContextual: {}",
-								 m, config.getProviderName(), isContextual);
-				task.getContext().setExertion(task);
-				((ServiceContext) task.getContext()).getMogramStrategy().setCurrentSelector(selector);
-				String pf = task.getProcessSignature().getPrefix();
-				if (pf != null)
-					((ServiceContext) task.getContext()).setCurrentPrefix(pf);
+        return exertBeanTask(task, impl, args);
+//        if (impl != null) {
+//			if (task.getProcessSignature().getReturnPath() != null) {
+//				((ServiceContext) task.getContext()).setReturnPath(task
+//						.getProcessSignature().getReturnPath());
+//			}
+//			// determine args and parameterTpes from the context
+//			Class[] argTypes = new Class[] { Context.class };
+//			ServiceContext cxt = (ServiceContext) task.getContext();
+//			boolean isContextual = true;
+//			if (cxt.getParameterTypes() != null & cxt.getArgs() != null) {
+//				argTypes = cxt.getParameterTypes();
+//				isContextual = false;
+//			}
+//			Method m = null;
+//			try {
+//				// select the proper method for the bean type
+//				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof ProcModel)) {
+//					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
+//					isContextual = true;
+//				} else if (selector.equals("evaluate") && impl instanceof Domain) {
+//					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
+//					isContextual = true;
+//				} else if (selector.equals("exert") && impl instanceof ServiceShell) {
+//					m = impl.getClass().getMethod(selector, Mogram.class, Arg[].class);
+//					isContextual = false;
+//				} else if (selector.equals("getValue") && impl instanceof Evaluation) {
+//					m = impl.getClass().getMethod(selector, Arg[].class);
+//					isContextual = false;
+//				} else
+//					m = impl.getClass().getMethod(selector, argTypes);
+//				if(logger.isTraceEnabled())
+//					logger.trace("Executing service bean method: {} by: {} isContextual: {}",
+//								 m, config.getProviderName(), isContextual);
+//				task.getContext().setExertion(task);
+//				((ServiceContext) task.getContext()).getMogramStrategy().setCurrentSelector(selector);
+//				String pf = task.getProcessSignature().getPrefix();
+//				if (pf != null)
+//					((ServiceContext) task.getContext()).setCurrentPrefix(pf);
+//
+//				Context result = task.getContext();
+//				if (isContextual)
+//					result = execContextualBean(m, task, impl, args);
+//				else
+//					result = execParametricBean(m, task, impl, args);
+//
+//				// clearSessions task in the context
+//				result.setExertion(null);
+//				task.setContext(result);
+//				task.setStatus(Exec.DONE);
+//				return task;
+//            } catch (InvocationTargetException e){
+//                Throwable t = e.getCause();
+//                task.reportException(t);
+//                logger.warn("Error while executing: " + m + " " + t.getMessage());
+//			} catch (Exception e) {
+//				task.reportException(e);
+//                logger.warn("Error while executing: " + m + " " + e.getMessage());
+//			}
+//		}
+//		task.setStatus(Exec.FAILED);
+//		return task;
+	}
 
-				Context result = task.getContext();
-				if (isContextual) 
-					result = execContextualBean(m, task, impl, args);
-				else
-					result = execParametricBean(m, task, impl, args);
+    Task exertBeanTask(Task task, Object bean, Arg... args) throws ContextException {
+        String selector = task.getProcessSignature().getSelector();
+        if (bean != null) {
+            if (task.getProcessSignature().getReturnPath() != null) {
+                ((ServiceContext) task.getContext()).setReturnPath(task
+                        .getProcessSignature().getReturnPath());
+            }
+            // determine args and parameterTpes from the context
+            Class[] argTypes = new Class[] { Context.class };
+            ServiceContext cxt = (ServiceContext) task.getContext();
+            boolean isContextual = true;
+            if (cxt.getParameterTypes() != null & cxt.getArgs() != null) {
+                argTypes = cxt.getParameterTypes();
+                isContextual = false;
+            }
+            Method m = null;
+            try {
+                // select the proper method for the bean type
+                if (selector.equals("invoke") && (bean instanceof Exertion || bean instanceof ProcModel)) {
+                    m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
+                    isContextual = true;
+                } else if (selector.equals("evaluate") && bean instanceof Domain) {
+                    m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
+                    isContextual = true;
+                } else if (selector.equals("exert") && bean instanceof ServiceShell) {
+                    m = bean.getClass().getMethod(selector, Mogram.class, Arg[].class);
+                    isContextual = false;
+                } else if (selector.equals("getValue") && bean instanceof Evaluation) {
+                    m = bean.getClass().getMethod(selector, Arg[].class);
+                    isContextual = false;
+                } else
+                    m = bean.getClass().getMethod(selector, argTypes);
+                if(logger.isTraceEnabled())
+                    logger.trace("Executing service bean method: {} by: {} isContextual: {}",
+                            m, config.getProviderName(), isContextual);
+                task.getContext().setExertion(task);
+                ((ServiceContext) task.getContext()).getMogramStrategy().setCurrentSelector(selector);
+                String pf = task.getProcessSignature().getPrefix();
+                if (pf != null)
+                    ((ServiceContext) task.getContext()).setCurrentPrefix(pf);
 
-				// clear task in the context
-				result.setExertion(null);
-				task.setContext(result);
-				task.setStatus(Exec.DONE);
-				return task;
+                Context result = task.getContext();
+                if (isContextual)
+                    result = execContextualBean(m, task, bean, args);
+                else
+                    result = execParametricBean(m, task, bean, args);
+
+                // clearSessions task in the context
+                result.setExertion(null);
+                task.setContext(result);
+                task.setStatus(Exec.DONE);
+                return task;
             } catch (InvocationTargetException e){
                 Throwable t = e.getCause();
                 task.reportException(t);
                 logger.warn("Error while executing: " + m + " " + t.getMessage());
-			} catch (Exception e) {
-				task.reportException(e);
+            } catch (Exception e) {
+                task.reportException(e);
                 logger.warn("Error while executing: " + m + " " + e.getMessage());
-			}
-		}
-		task.setStatus(Exec.FAILED);
-		return task;
-	}
+            }
+        }
+        task.setStatus(Exec.FAILED);
+        return task;
+    }
 
 	private Context execContextualBean(Method m, Task task, Object impl, Arg... args)
 			throws ContextException, IllegalArgumentException,
@@ -1062,6 +1138,8 @@ public class ProviderDelegate {
 				task.getControlContext().getExceptions().addAll(((Exertion) obj).getExceptions());
 				task.getTrace().addAll(((Exertion) obj).getTrace());
 			}
+		} else if (impl instanceof Domain && selector.equals("evaluate")) {
+			result = (Context) m.invoke(impl, new Object[] { pars[0], args });
 		} else {
 			logger.debug("getProviderName: {} invoking: {}" + getProviderName(), m);
 			logger.debug("imp: {} args: {}" + impl, Arrays.toString(pars));
@@ -1263,7 +1341,7 @@ public class ProviderDelegate {
 				} else if (task.getDataContext().getScope() != null) {
 					task.getDataContext().getScope().append(cxt);
 				}
-				// clear the exertion and the context
+				// clearSessions the exertion and the context
 				cxt.setExertion(null);
 				task.setService(null);
 				logger.debug("CONTEXT GOING OUT: " + cxt);
@@ -2190,7 +2268,7 @@ public class ProviderDelegate {
                     // properties
                     Sorcer.updateFromProperties(props);
                 }
-//					logger.debug("*** loaded provider properties: /configs/" + filename + ":\n"
+//				logger.info("*** loaded provider properties: /configs/" + filename + ":\n"
 //							+ GenericUtil.getPropertiesString(props));
             } catch (Exception ex) {
                 logger.warn("Not able to load provider's properties: " + filename, ex);
@@ -2612,165 +2690,203 @@ public class ProviderDelegate {
 	 * 
 	 * @param config the configuration to use for supplying the exporter
 	 */
-	private void getExporters(Configuration config) {
-		try {
+    private void getExporters(Configuration config) {
+        List<Object> allBeans = new ArrayList<>();
+        try {
             String exporterInterface = Sorcer.getProperty(P_EXPORTER_INTERFACE);
             try {
                 exporterInterface = (String) config.getEntry(ServiceProvider.COMPONENT,
-                                                             EXPORTER_INTERFACE,
-                                                             String.class,
-                                                             SorcerEnv.getLocalHost().getHostAddress());
-			} catch (Exception e) {
-				// do nothng
-			}
-			logger.info(">>>>> exporterInterface: {}", exporterInterface);
+                        EXPORTER_INTERFACE,
+                        String.class,
+                        SorcerEnv.getLocalHost().getHostAddress());
+            } catch (Exception e) {
+                // do nothng
+            }
+            logger.info(">>>>> exporterInterface: {}", exporterInterface);
 
-			int exporterPort;
-			String port = Sorcer.getProperty(P_EXPORTER_PORT);
-			if (port != null)
-				exporterPort = Integer.parseInt(port);
+            int exporterPort;
+            String port = Sorcer.getProperty(P_EXPORTER_PORT);
+            if (port != null)
+                exporterPort = Integer.parseInt(port);
             else
                 exporterPort = (Integer) config.getEntry(ServiceProvider.COMPONENT,
-                                                         EXPORTER_PORT,
-                                                         Integer.class,
-                                                         0);
-			logger.info(">>>>> exporterPort: {}", exporterPort);
+                        EXPORTER_PORT,
+                        Integer.class,
+                        0);
+            logger.info(">>>>> exporterPort: {}", exporterPort);
 
-			try {
-				// check if not setValue by the provider
-				if (smartProxy == null) {
-					// initialize smart proxy
-					smartProxy = config.getEntry(ServiceProvider.COMPONENT,
-												 SMART_PROXY,
-												 Object.class,
-												 null);
-				}
-			} catch (Exception e) {
-				logger.warn(">>>>> NO SMART PROXY specified", e);
-				smartProxy = null;
-			}
-
-			List<Object> allBeans = new ArrayList<>();
-            // find it out if service bean instances are available
-            Object[] beans = (Object[]) Config.getNonNullEntry(config,
-                                                               ServiceProvider.COMPONENT,
-                                                               BEANS,
-                                                               Object[].class,
-                                                               new Object[] {});
-			if (beans.length > 0) {
-				logger.debug("*** service beans by {}\nfor: {}", getProviderName(), Arrays.toString(beans));
-                for (Object bean : beans) {
-					initBean(bean);
-					allBeans.add(bean);
-                    exports.put(bean, this);
+            try {
+                // check if not setValue by the provider
+                if (smartProxy == null) {
+                    // initialize smart proxy
+                    smartProxy = config.getEntry(ServiceProvider.COMPONENT,
+                            SMART_PROXY,
+                            Object.class,
+                            null);
                 }
-			}
-
-            // find it out if data service bean instances are available
-            Object[] dataBeans = (Object[]) Config.getNonNullEntry(config,
-                                                                   ServiceProvider.COMPONENT,
-                                                                   DATA_BEANS,
-                                                                   Object[].class,
-                                                                   new Object[] {},
-                                                                   getProviderProperties());
-            if (dataBeans.length > 0) {
-				logger.debug("*** data service beans by {}\nfor: {}", getProviderName(), Arrays.toString(dataBeans));
-                for (Object dataBean : dataBeans) {
-                    initBean(dataBean);
-                    allBeans.add(dataBean);
-                    exports.put(dataBean, this);
-                }
-			}
-
-            // find it out if service classes are available
-            Class[] beanClasses = (Class[]) Config.getNonNullEntry(config,
-                                                                   ServiceProvider.COMPONENT,
-                                                                   BEAN_CLASSES,
-                                                                   Class[].class,
-                                                                   new Class[] {});
-			if (beanClasses.length > 0) {
-				logger.debug("*** service bean classes by {} for: \n{}", getProviderName(), Arrays.toString(beanClasses));
-                for (Class beanClass : beanClasses)
-                    allBeans.add(instantiate(beanClass));
-			}
-
-			// find it out if Groovy scripts are available
-            String[] scriptlets = (String[]) Config.getNonNullEntry(config,
-                                                                    ServiceProvider.COMPONENT,
-                                                                    SCRIPTLETS,
-                                                                    String[].class,
-                                                                    new String[] {});
-            if (scriptlets.length > 0) {
-				logger.debug("*** service scriptlets by {} for: \n{}", getProviderName(), Arrays.toString(scriptlets));
-                for (String scriptlet : scriptlets)
-                    allBeans.add(instantiateScriplet(scriptlet));
-			}
+            } catch (Exception e) {
+                logger.warn(">>>>> NO SMART PROXY specified", e);
+                smartProxy = null;
+            }
 
             exporterFactory = (AbstractExporterFactory) config.getEntry(ServiceProvider.COMPONENT,
-                                                                        "exporterFactory",
-                                                                        AbstractExporterFactory.class,
-                                                                        null);
+                    "exporterFactory",
+                    AbstractExporterFactory.class,
+                    null);
             if (exporterFactory == null)
                 exporterFactory = ExporterFactories.EXPORTER;
 
-			analyticsRecorder = new AnalyticsRecorder(getHostName(),
-													  getServiceID(),
-													  getProviderName(),
-													  System.getProperty("user.name"));
+            analyticsRecorder = new AnalyticsRecorder(getHostName(),
+                    getServiceID(),
+                    getProviderName(),
+                    System.getProperty("user.name"));
 
+            // find it out if service bean signature are available
+            Signature signature = (Signature) config.getEntry(ServiceProvider.COMPONENT,
+                    BEAN_SIG,
+                    Signature.class,
+                    null);
+            if (signature != null) {
+                logger.debug("*** service bean signature by {}\nfor: {}", getProviderName(), signature);
+                beanSignature = (ServiceSignature) signature;
+                logger.info("session bean signature: {} \nfor: {}", signature, getProviderName());
+                // non session bean to be exported, session beans are created by BeanSessionProvider
+                Object bean = sorcer.co.operator.instance(beanSignature);
+                initBean(bean);
+                allBeans.add(bean);
+                exports.put(bean, this);
+				logger.warn("session bean: {} \nfor: {}", beanSignature, getProviderName());
+			} else {
+                // find it out if session service bean is available
+                sessionBean = config.getEntry(ServiceProvider.COMPONENT,
+                        SESSION_BEAN,
+                        Object.class,
+                        null);
+                if (sessionBean != null) {
+                    initBean(sessionBean);
+                    allBeans.add(sessionBean);
+                    exports.put(sessionBean, this);
+					logger.warn("session bean: {} \nfor: {}", sessionBean, getProviderName());
+				} else {
+                    otherServiceBeans(config, allBeans);
+                }
+            }
 
-			if (allBeans.size() > 0) {
-				logger.debug("*** all beans by: {} for: \n{}", getProviderName(), allBeans);
-				serviceBeans = allBeans.toArray();
-				initServiceBeans(serviceBeans);
+            if (allBeans.size() > 0) {
+                logger.debug("*** all beans by: {} for: \n{}", getProviderName(), allBeans);
+                serviceBeans = allBeans.toArray();
+                initServiceBeans(serviceBeans);
                 SorcerILFactory ilFactory = new SorcerILFactory(serviceComponents, implClassLoader, analyticsRecorder);
                 ilFactory.setRemoteLogging(remoteLogging);
                 //ilFactory.setMonitoringBeanHandler(new DefaultMonitoringBeanHandler(config, this));
                 outerExporter = exporterFactory.get(ilFactory);
                 logger.info("{}, {}", outerExporter, ((BasicJeriExporter)outerExporter).getInvocationLayerFactory().getClass().getName());
-			} else {
-				logger.warn("*** NO beans used by {}", getProviderName());
+            } else {
+                logger.warn("*** NO beans used by {}", getProviderName());
                 outerExporter = (Exporter) config.getEntry(ServiceProvider.COMPONENT,
-                                                           EXPORTER,
-                                                           Exporter.class,
-                                                           null);
-				if (outerExporter == null) {
-					InvocationLayerFactory ilF = new BasicILFactory() {
-						@Override
-						protected InvocationDispatcher createInvocationDispatcher(Collection methods,
-																				  Remote impl,
-																				  ServerCapabilities caps) throws ExportException {
-							return new RecordingInvocationDispatcher(methods,
-																	 caps,
-																	 getServerConstraints(),
-																	 getPermissionClass(),
-																	 implClassLoader,
-																	 analyticsRecorder);
-						}
-					};
-					outerExporter = exporterFactory.get(ilF);
-				}
+                        EXPORTER,
+                        Exporter.class,
+                        null);
+                if (outerExporter == null) {
+                    InvocationLayerFactory ilF = new BasicILFactory() {
+                        @Override
+                        protected InvocationDispatcher createInvocationDispatcher(Collection methods,
+                                                                                  Remote impl,
+                                                                                  ServerCapabilities caps) throws ExportException {
+                            return new RecordingInvocationDispatcher(methods,
+                                    caps,
+                                    getServerConstraints(),
+                                    getPermissionClass(),
+                                    implClassLoader,
+                                    analyticsRecorder);
+                        }
+                    };
+                    outerExporter = exporterFactory.get(ilF);
+                }
                 logger.info("current exporter: {}", outerExporter.toString());
-                try {
-                    partnerExporter = (Exporter) Config.getNonNullEntry(config,
-                                                                        ServiceProvider.COMPONENT, SERVER_EXPORTER,
-                                                                        Exporter.class);
-					if (partnerExporter == null) {
-						logger.warn("NO provider inner exporter defined!!!");
-					} else {
-						logger.debug("your partner exporter: {}", partnerExporter);
-					}
-				} catch (ConfigurationException e) {
-					// do nothing
-				}
-			}
-		} catch (Exception ex) {
-			logger.warn("Error getting exporters", ex);
-			// ignore missing exporters and use default configurations for exporters
-		}
-	}
 
-	/**
+                partnerExporter = (Exporter) config.getEntry(ServiceProvider.COMPONENT,
+                        SERVER_EXPORTER,
+                        Exporter.class,
+                        null);
+                if (partnerExporter != null) {
+                    logger.warn("your partner exporter: {}", partnerExporter);
+                }
+            }
+        } catch (Exception ex) {
+            logger.warn("Error getting exporters", ex);
+            // ignore missing exporters and use default configurations for exporters
+        }
+    }
+
+	private void otherServiceBeans(Configuration config, List<Object> allBeans) throws Exception {
+        // find it out if service bean instances are available
+        Object[] beans = (Object[]) Config.getNonNullEntry(config,
+                ServiceProvider.COMPONENT,
+                BEANS,
+                Object[].class,
+                new Object[]{});
+        if (beans.length > 0) {
+            logger.debug("*** service beans by {}\nfor: {}", getProviderName(), Arrays.toString(beans));
+            for (Object bean : beans) {
+                initBean(bean);
+                allBeans.add(bean);
+                exports.put(bean, this);
+            }
+        }
+
+        // find it out if data service bean instances are available
+        Object[] dataBeans = (Object[]) Config.getNonNullEntry(config,
+                ServiceProvider.COMPONENT,
+                DATA_BEANS,
+                Object[].class,
+                new Object[]{},
+                getProviderProperties());
+        if (dataBeans.length > 0) {
+            logger.debug("*** data service beans by {}\nfor: {}", getProviderName(), Arrays.toString(dataBeans));
+            for (Object dataBean : dataBeans) {
+                initBean(dataBean);
+                allBeans.add(dataBean);
+                exports.put(dataBean, this);
+            }
+        }
+
+        // find it out if service classes are available
+        Class[] beanClasses = (Class[]) Config.getNonNullEntry(config,
+                ServiceProvider.COMPONENT,
+                BEAN_CLASSES,
+                Class[].class,
+                new Class[]{});
+        if (beanClasses.length > 0) {
+            logger.debug("*** service bean classes by {} for: \n{}", getProviderName(), Arrays.toString(beanClasses));
+            for (Class beanClass : beanClasses)
+                allBeans.add(instantiate(beanClass));
+        }
+
+        // find it out if Groovy scripts are available
+        String[] scriptlets = (String[]) Config.getNonNullEntry(config,
+                ServiceProvider.COMPONENT,
+                SCRIPTLETS,
+                String[].class,
+                new String[]{});
+        if (scriptlets.length > 0) {
+            logger.debug("*** service scriptlets by {} for: \n{}", getProviderName(), Arrays.toString(scriptlets));
+            for (String scriptlet : scriptlets)
+                allBeans.add(instantiateScriplet(scriptlet));
+        }
+
+    }
+
+    public Signature getBeanSignature() {
+        return beanSignature;
+    }
+
+
+    public Object getSessionBean() {
+        return sessionBean;
+    }
+
+    /**
 	 * Use javax.inject.Provider implementations as factory objects
 	 */
 	private static void callProviders(Object[] serviceBeans) {
@@ -2854,7 +2970,7 @@ public class ProviderDelegate {
 		return createBean(clazz);
 	}
 
-	private Object createBean(Class beanClass) throws Exception {
+	protected Object createBean(Class beanClass) throws Exception {
 		Object bean = beanClass.newInstance();
 		initBean(bean);
 		return bean;
@@ -3125,6 +3241,10 @@ public class ProviderDelegate {
 	public final static String SCRIPTLETS = "scriptlets";
 
 	public final static String BEAN_CLASSES = "beanClasses";
+
+    public final static String BEAN_SIG = "beanSignature";
+
+    public final static String SESSION_BEAN = "sessionBean";
 
 	public final static String CONTEXT_MANAGER = "contextManager";
 

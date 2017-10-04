@@ -14,7 +14,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.po.operator;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
+import sorcer.service.Domain;
 
 import static edu.pjatk.inn.coffeemaker.impl.Recipe.getRecipe;
 import static org.junit.Assert.assertEquals;
@@ -22,7 +22,6 @@ import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.result;
-import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.result;
 import static sorcer.po.operator.ent;
@@ -132,7 +131,7 @@ public class CoffeeServiceTest {
 		exert(cmt);
 
 		// order espresso with delivery
-		Model mod = model(
+		Domain mod = model(
 				ent("recipe/name", "espresso"),
 				ent("paid$", 120),
 				ent("location", "PJATK"),

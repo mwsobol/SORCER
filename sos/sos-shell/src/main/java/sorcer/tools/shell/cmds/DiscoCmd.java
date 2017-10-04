@@ -44,7 +44,7 @@ public class DiscoCmd extends ShellCmd {
 		COMMAND_HELP = "List all lookup services discovered for provided groups;"
 			+ "\n\twith <registrar index> select the specified registrar as a default one"
 			+ "\n\t-v   print the default registrar info"
-			+ "\n\t-x   clear the selected registrar and start discovery";
+			+ "\n\t-x   clearSessions the selected registrar and start discovery";
 	}
 
 	static private List<ServiceRegistrar> registrars;

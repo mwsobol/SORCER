@@ -29,10 +29,9 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.provider.exerter.ServiceShell;
-import sorcer.service.Exertion;
 import sorcer.service.Mogram;
 import sorcer.service.MogramException;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.Domain;
 
 import java.rmi.RemoteException;
 
@@ -91,7 +90,7 @@ public class ScripterThread extends Thread {
                 evalScript();
             }
 
-            if (target instanceof ServiceModel &&  !isExerted) {
+            if (target instanceof Domain &&  !isExerted) {
                 result = ((ServiceContext)target).getResponse();
                 logger.info(">>>>>>>>>>> model eval result: " + result);
             } else if (target instanceof Mogram) {

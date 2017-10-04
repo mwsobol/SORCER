@@ -33,17 +33,17 @@ public interface Variability<T> extends Identifiable, Evaluation<T>, Setter, Per
 
 	/**
 	 * Types allow for grouping in the functional model so all variables of a
-	 * particular type can be retrieved as a functional collection, e.g.,
+	 * particular fiType can be retrieved as a functional collection, e.g.,
 	 * DESIGN, RESPONSE, DERIVATIVE or GRADIENT. Selected types can be used to
 	 * define the nature of the variable (to the clients) by grouping them in in
-	 * a list of types called kinds - addKind(Type). FUNDMENTAL - if scalar has
+	 * a list of types called kinds - addKind(Type). FUNDAMENTAL - if scalar has
 	 * meaning to the client
 	 */
 	public enum Type {
-		INPUT, CONSTANT, INVARIANT, OUTPUT, INOUT, RESPONSE, DESIGN, PARAMETER, LINKED, CONSTRAINT, OBJECTIVE,
-		DERIVATIVE, GRADIENT, RANDOM, BOUNDED, FUNDMENTAL, RAW, DELEGATION, COMPOSITION, 
-		FILTER, PERSISTER, EVALUATOR, EVALUATION, PRODUCT, WATCHABLE, ENT, PROC, VAR, SRV, LAMBDA, VAL,
-		DATA, CONTEXT, MODEL, EXERTION, SELF, FIDELITY, LOCATOR, ARG, PATH, NONE
+		INPUT, CONSTANT, DOMAIN_CONSTANT, INVARIANT, OUTPUT, INOUT, RESPONSE, DESIGN, PARAMETER, LINKED, CONSTRAINT, OBJECTIVE,
+		DERIVATIVE, GRADIENT, RANDOM, BOUNDED, FUNDAMENTAL, RAW, DELEGATION, COMPOSITION, MULTIVAL, DOMAIN, PRED, DOMAIN_PRED,
+		FILTER, PERSISTER, EVALUATOR, EVALUATION, PRODUCT, WATCHABLE, ENT, PROC, NEURON, VAR, SRV, LAMBDA, VAL, THRESHOLD, BIAS,
+		DATA, CONTEXT, ARRAY, LIST, MODEL, EXERTION, SELF, CONDITION, FIDELITY, LOCATOR, ARG, PATH, CONFIG, PROXY, COUPLED, MDA, MADO, NONE
 	}
 
 	public enum MathType {

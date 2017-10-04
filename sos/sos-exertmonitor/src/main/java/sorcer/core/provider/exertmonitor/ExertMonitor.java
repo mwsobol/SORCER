@@ -382,7 +382,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
     public EventRegistration register(Principal principal, RemoteEventListener listener, long duration)
         throws LeaseDeniedException, RemoteException {
         if(principal!=null && !(principal instanceof SorcerPrincipal)) {
-            throw new LeaseDeniedException("supplied principal is not the correct type, must be "+
+            throw new LeaseDeniedException("supplied principal is not the correct fiType, must be "+
                                            SorcerPrincipal.class.getName());
         }
         return eventHandler.register(this.getProxy(), listener, (SorcerPrincipal)principal, duration);

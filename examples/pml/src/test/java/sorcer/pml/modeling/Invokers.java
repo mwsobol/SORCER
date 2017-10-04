@@ -10,6 +10,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.core.context.model.ent.Neo;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.AltInvoker;
@@ -19,17 +20,13 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ServiceModel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.setValue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.value;
-import static sorcer.mo.operator.setValue;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.alt;
 import static sorcer.po.operator.*;
@@ -37,7 +34,7 @@ import static sorcer.po.operator.get;
 import static sorcer.po.operator.loop;
 import static sorcer.po.operator.opt;
 import static sorcer.po.operator.put;
-
+import static sorcer.mo.operator.*;
 
 /**
  * @author Mike Sobolewski
@@ -118,6 +115,44 @@ public class Invokers {
 		assertEquals(invoke(pm, "expr"), 60.0);
 		logger.info("get eval: " + value(pm, "expr"));
 		assertTrue(value(pm, "expr").equals(60.0));
+	}
+
+	@Test
+	public void serviceNeurons() throws Exception {
+		ProcModel pm = neoModel("neural-model");
+		add(pm, neo("x1", 10.0), neo("x2", 20.0));
+		add(pm, neo("x3", signals("x1", "x2"), weights(val("x1", 2.0), val("x2", 10.0))));
+
+//        logger.info("activate x1: " + activate(pm, "x1"));
+        assertEquals(activate(pm, "x1"), 10.0);
+
+//        logger.info("activate x3: " + activate(pm, "x3"));
+        assertEquals(activate(pm, "x3"), 220.0);
+
+//        logger.info("activate x3: " + activate(pm, "x3", th("x3", 200.0)));
+        assertEquals(activate(pm, "x3", th("x3", 200.0)), 1.0);
+
+//        logger.info("activate x3: " + activate(pm, "x3", th("x3", 0.0), bias("x3", 50.0)));
+        assertEquals(activate(pm, "x3", th("x3", 0.0), bias("x3", 50.0)), 270.0);
+	}
+
+	@Test
+	public void serviceNeuronFidelities() throws Exception {
+		ProcModel pm = neoModel("neural-model");
+		add(pm, neo("x1", 10.0), neo("x2", 20.0));
+		add(pm, neo("x3", signals("x1", "x2"), weights(val("x1", 2.0), val("x2", 5.0))));
+		add(pm, neo("x4", mnFi(
+				nFi("n1", signals("x1", "x2"), weights(val("x1", 1.5), val("x2", 10.0))),
+				nFi("n2", signals("x1", "x2"), weights(val("x1", 2.0), val("x2", 12.0))))));
+
+//      logger.info("activate1 x4: " + activate(pm, "x4", fi("x4", "n1")));
+		assertEquals(activate(pm, "x4", fi("x4", "n1")), 215.0);
+//
+//		logger.info("activate2 x4: " + activate(pm, "x4", th("x4", 200.0), fi("x4", "n1")));
+		assertEquals(activate(pm, "x4", th("x4", 200.0), fi("x4", "n1")), 1.0);
+
+//      logger.info("activate3 x4: " + activate(pm, "x4", th("x4", 0.0), fi("x4", "n2")));
+        assertEquals(activate(pm, "x4", th("x4", 0.0), fi("x4", "n2")), 260.0);
 	}
 
 	@Test

@@ -205,7 +205,7 @@ public class MulticastView extends JFrame {
 				try {
 					socket.receive(packet);
 
-					// System.out.println("Received packet "+type);
+					// System.out.println("Received packet "+fiType);
 
 					if (type == 0) {
 						processAnn(buf);

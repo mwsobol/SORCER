@@ -16,16 +16,15 @@
  */
 package sorcer.co;
 
+import net.jini.id.Uuid;
 import org.rioproject.resolver.Artifact;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.resolver.ResolverHelper;
 import sorcer.co.tuple.*;
+import sorcer.core.Tag;
 import sorcer.core.SorcerConstants;
-import sorcer.core.context.Copier;
-import sorcer.core.context.ListContext;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Proc;
-import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.*;
+import sorcer.core.context.model.ent.*;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
@@ -33,7 +32,7 @@ import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
 import sorcer.service.modeling.Variability.Type;
@@ -55,7 +54,7 @@ import java.util.concurrent.Callable;
 import static sorcer.po.operator.invoker;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class operator {
+public class operator extends sorcer.operator {
 
 	private static int count = 0;
 
@@ -63,19 +62,7 @@ public class operator {
 		return new Tuple1<T1>( x1 );
 	}
 
-	public static <T1> Tuple1<T1> t(T1 x1 ){
-		return new Tuple1<T1>( x1 );
-	}
-
 	public static <T1,T2> Tuple2<T1,T2> x(T1 x1, T2 x2 ){
-		return new Tuple2<T1,T2>( x1, x2 );
-	}
-
-	public static <T1,T2> Tuple2<T1,T2> t(T1 x1, T2 x2 ){
-		return new Tuple2<T1,T2>( x1, x2 );
-	}
-
-	public static <T1,T2> Tuple2<T1,T2> kv(T1 x1, T2 x2 ){
 		return new Tuple2<T1,T2>( x1, x2 );
 	}
 
@@ -83,15 +70,7 @@ public class operator {
 		return new Tuple3<T1,T2,T3>( x1, x2, x3 );
 	}
 
-	public static <T1,T2,T3> Tuple3<T1,T2,T3> t(T1 x1, T2 x2, T3 x3 ){
-		return new Tuple3<T1,T2,T3>( x1, x2, x3 );
-	}
-
 	public static <T1,T2,T3,T4> Tuple4<T1,T2,T3,T4> x(T1 x1, T2 x2, T3 x3, T4 x4 ){
-		return new Tuple4<T1,T2,T3,T4>( x1, x2, x3, x4 );
-	}
-
-	public static <T1,T2,T3,T4> Tuple4<T1,T2,T3,T4> t(T1 x1, T2 x2, T3 x3, T4 x4 ){
 		return new Tuple4<T1,T2,T3,T4>( x1, x2, x3, x4 );
 	}
 
@@ -111,7 +90,23 @@ public class operator {
 		return new Tuple6<T1,T2,T3,T4,T5,T6>( x1, x2, x3, x4, x5, x6 );
 	}
 
-	public static <T> List<T> inCotextValues(Context<T> context) throws ContextException {
+	public static Tie tie(String discipline, String var) {
+		return new Tie(discipline, var);
+	}
+
+    public static Tie tie(String discipline) {
+        return new Tie(discipline, null);
+    }
+
+    public static Coupling cplg( String var, String fromDiscipline, String toDiscipline) {
+        return new Coupling(tie(fromDiscipline, var), tie(toDiscipline, var));
+    }
+
+    public static Coupling cplg(Tie from, Tie to) {
+		return new Coupling(from, to);
+	}
+
+    public static <T> List<T> inCotextValues(Context<T> context) throws ContextException {
 		return ((ServiceContext)context).getInValues();
 	}
 
@@ -141,6 +136,58 @@ public class operator {
 	}
 
 	public static ServiceSignature.In inPaths(Object... elems) {
+		List<Path> pl = new ArrayList(elems.length);
+		for (Object o : elems) {
+			if (o instanceof String) {
+				pl.add(new Path((String)o));
+			} else if  (o instanceof Path) {
+				pl.add(((Path)o));
+			}
+		}
+		Path[]  pa = new Path[pl.size()];
+		return new ServiceSignature.In(pl.toArray(pa));
+	}
+
+	public static ServiceSignature.Read read(Object... elems) {
+		List<Path> pl = new ArrayList(elems.length);
+		for (Object o : elems) {
+			if (o instanceof String) {
+				pl.add(new Path((String)o));
+			} else if  (o instanceof Path) {
+				pl.add(((Path)o));
+			}
+		}
+		Path[]  pa = new Path[pl.size()];
+		return new ServiceSignature.Read(pl.toArray(pa));
+	}
+
+	public static ServiceSignature.Write write(Object... elems) {
+		List<Path> pl = new ArrayList(elems.length);
+		for (Object o : elems) {
+			if (o instanceof String) {
+				pl.add(new Path((String)o));
+			} else if  (o instanceof Path) {
+				pl.add(((Path)o));
+			}
+		}
+		Path[]  pa = new Path[pl.size()];
+		return new ServiceSignature.Write(pl.toArray(pa));
+	}
+
+	public static ServiceSignature.Append append(Object... elems) {
+		List<Path> pl = new ArrayList(elems.length);
+		for (Object o : elems) {
+			if (o instanceof String) {
+				pl.add(new Path((String)o));
+			} else if  (o instanceof Path) {
+				pl.add(((Path)o));
+			}
+		}
+		Path[]  pa = new Path[pl.size()];
+		return new ServiceSignature.Append(pl.toArray(pa));
+	}
+
+    public static Signature.State state(Object... elems) {
         List<Path> pl = new ArrayList(elems.length);
         for (Object o : elems) {
             if (o instanceof String) {
@@ -150,8 +197,8 @@ public class operator {
             }
         }
         Path[]  pa = new Path[pl.size()];
-		return new ServiceSignature.In(pl.toArray(pa));
-	}
+        return new Signature.State(pl.toArray(pa));
+    }
 
 	public static Path filePath(String filename) {
 		if(Artifact.isArtifact(filename)) {
@@ -171,6 +218,14 @@ public class operator {
 	}
 
 	public static <T> T[] array(T... elems) {
+		return elems;
+	}
+
+	public static double[] vector(double... elems) {
+		return elems;
+	}
+
+	public static int[] vector(int... elems) {
 		return elems;
 	}
 
@@ -270,23 +325,90 @@ public class operator {
 		return new Path(path, info, Path.Type.MAP);
 	}
 
+	public static <T> Entry<T> init(String domain, String path, T value) {
+		Entry ent = new Entry<T>(path, value);
+		ent.annotation(domain);
+		ent.setType(Type.DOMAIN_PRED);
+		return ent;
+	}
+
+	public static <T> Entry<T> init(String path, T value) {
+		Entry ent = new Entry<T>(path, value);
+		ent.setType(Type.PRED);
+		return ent;
+	}
+
+	public static <T> Entry<T> val(String domain, String path, T value) {
+		Entry ent = new Entry<T>(path, value);
+		ent.annotation(domain);
+		ent.setType(Type.DOMAIN_CONSTANT);
+		return ent;
+	}
+
 	public static <T> Entry<T> val(Path path, T value) {
 		Entry ent = new Entry<T>(path.path, value);
 		ent.annotation(path.info.toString());
-		ent.setType(Type.INPUT);
+		ent.setType(Type.CONSTANT);
 		return ent;
 	}
 
 	public static <T> Entry<T> val(String path, T value) {
 		Entry ent = new Entry<T>(path, value);
-		ent.setType(Type.INPUT);
+		ent.setType(Type.CONSTANT);
 		return ent;
 	}
 
-    public static Entry db(Entry entry) {
-		entry.setPersistent(true);
-		return entry;
+	public static Config config(Object path, Setup... entries) {
+		Config ent = new Config(path.toString(), entries);
+		ent.isValid(false);
+		ent.setType(Type.CONFIG);
+		return ent;
 	}
+
+	public static Setup setup(Object aspect, Context value) {
+		Setup ent = new Setup(aspect.toString(), value);
+		ent.isValid(false);
+//		ent.setType(Type.INPUT);
+		return ent;
+	}
+
+	public static Setup setup(Object aspect, Entry... entries) throws ContextException {
+		return setup(aspect, null, null, entries);
+	}
+
+	public static Setup setup(Object aspect, String entryName, Entry... entries) throws ContextException {
+		return setup(aspect, entryName, null, entries);
+	}
+
+	public static Setup setup(Object aspect, String entryName, String fiName, Entry... entries) throws ContextException {
+		if (entries != null && entries.length > 0) {
+			ServiceContext cxt;
+			if (entryName == null)
+				cxt = new ServiceContext(aspect.toString());
+			else
+				cxt = new ServiceContext(entryName);
+
+			if (fiName != null) {
+				cxt.setSubjectPath(fiName);
+			}
+
+			for (Entry e : entries) {
+				cxt.put((String) e._1, e.get());
+			}
+			cxt.isValid(false);
+			return new Setup(aspect.toString(), cxt);
+		} else {
+			return new Setup(aspect.toString(), null);
+		}
+	}
+
+    public static Uuid id(Mogram mogram) {
+        return mogram.getId();
+    }
+
+    public static void setId(Mogram mogram, Uuid id) {
+	    mogram.setId(id);
+    }
 
 	public static Entry in(Entry... entries) {
 		for (Entry  entry : entries) {
@@ -336,8 +458,35 @@ public class operator {
 		return new DependencyEntry(path, Arrays.asList(paths));
 	}
 
+	public static DependencyEntry dep(String path, Conditional condition, Path... paths) {
+        DependencyEntry de = new DependencyEntry(path, condition, Arrays.asList(paths));
+        de.setType(Type.CONDITION);
+        return de;
+	}
+
+	public static DependencyEntry dep(String path, Fidelity fi, Path... paths) {
+		DependencyEntry de = new DependencyEntry(path, Arrays.asList(paths));
+		de.annotation(fi);
+		de.setType(Variability.Type.FIDELITY);
+        return de;
+	}
+
+	public static DependencyEntry dep(String path, Conditional condition, List<Path> paths) {
+        DependencyEntry de = new DependencyEntry(path, condition, paths);
+        de.setType(Type.CONDITION);
+        return de;
+	}
+
 	public static DependencyEntry dep(String path, List<Path> paths) {
 		return new DependencyEntry(path, paths);
+	}
+
+
+	public static DependencyEntry dep(String path, Fidelity fi, List<Path> paths) {
+		DependencyEntry de = new DependencyEntry(path, paths);
+		de.annotation(fi);
+		de.setType(Variability.Type.FIDELITY);
+		return de;
 	}
 
 	public static DependencyEntry[] deps(DependencyEntry... dependencies) {
@@ -375,6 +524,10 @@ public class operator {
 		Entry ent = new Entry(path, null);
 		ent.setType(Variability.Type.VAL);
 		return ent;
+	}
+
+	public static Object val(Setup ent, String path) throws ContextException {
+		return  ent.getContextValue(path);
 	}
 
     public static <T> OutputEntry<T> outVal(String path, T value) {
@@ -489,6 +642,18 @@ public class operator {
 			}
 		}
 		entry.isValid(false);
+		return entry;
+	}
+
+	public static Setup setValue(Setup entry, String contextPath, Object value) throws ContextException {
+		entry.setEntry(contextPath, value);
+		return entry;
+	}
+
+	public static Setup setValue(Setup entry, Entry... entries) throws ContextException {
+		for (Entry e :  entries) {
+				entry.setEntry(e.getName(), e.get());
+		}
 		return entry;
 	}
 
@@ -691,7 +856,35 @@ public class operator {
 		return out;
 	}
 
-	public static DataTable fiColumnName(DataTable table, String name) {
+	public static OutType out(Type type) {
+		return new OutType(type);
+	}
+
+	public static FilterId fId(String id) {
+		return filterId(id);
+	}
+
+	public static FilterId filtId(String id) {
+		return filterId(id);
+	}
+
+	public static FilterId filterId(String id) {
+		return fId(id, null);
+	}
+
+	public static FilterId fId(String id, Object info) {
+		return new FilterId(id, info);
+	}
+
+    public static String fi(Object object) {
+	    if (object instanceof Entry) {
+	        return ((Entry)object).fiName();
+        } else {
+            return object.toString();
+        }
+    }
+
+    public static DataTable fiColumnName(DataTable table, String name) {
 		table.setFiColumnName(name);
 		return table;
 	}
@@ -787,6 +980,40 @@ public class operator {
 		return map;
 	}
 
+	public static <T extends Identifiable> Pool<String, T> pool(Fi.Type type, T... entries) {
+		Pool<String, T> map = new Pool<>();
+		map.setFiType(type);
+		for (T entry : entries) {
+			map.put(entry.getName(), entry);
+		}
+		return map;
+	}
+
+	public static <T extends Identifiable> Pool<String, T> pool(T... entries) {
+		Pool<String, T> map = new Pool<>();
+		for (T entry : entries) {
+			map.put(entry.getName(), entry);
+		}
+		return map;
+	}
+
+	public static <K, V> Pool<K, V> entPool(Fi.Type type, Tuple2<K, V>... entries) {
+		Pool<K, V> map = new Pool<>();
+		map.setFiType(type);
+		for (Tuple2<K, V> entry : entries) {
+			map.put(entry._1, entry._2);
+		}
+		return map;
+	}
+
+	public static <K, V> Pool<K, V> entPool(Tuple2<K, V>... entries) {
+		Pool<K, V> map = new Pool<>();
+		for (Tuple2<K, V> entry : entries) {
+			map.put(entry._1, entry._2);
+		}
+		return map;
+	}
+
 	public static <K, V> Map<K, V> map(Tuple2<K, V>... entries) {
 		Map<K, V> map = new HashMap<K, V>();
 		for (Tuple2<K, V> entry : entries) {
@@ -832,7 +1059,7 @@ public class operator {
 			return (T)o;
 	}
 
-	public static <T> T asis(Model model, String path)
+	public static <T> T asis(Domain model, String path)
 			throws ContextException {
 		return  ((ServiceContext<T>)model).asis(path);
 	}
@@ -842,8 +1069,8 @@ public class operator {
         return  mappable.asis(path);
     }
 
-    public static Copier copier(ServiceModel fromContext, Arg[] fromEntries,
-								ServiceModel toContext, Arg[] toEntries) throws EvaluationException {
+    public static Copier copier(Domain fromContext, Arg[] fromEntries,
+                                Domain toContext, Arg[] toEntries) throws EvaluationException {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
@@ -871,31 +1098,43 @@ public class operator {
 			parModel.getData().remove(path);
 	}
 
-	public static Model dependsOn(Model model, Entry... entries) {
-        Map<String, List<Path>> dm = ((ServiceContext)model).getMogramStrategy().getDependentPaths();
-        String path = null;
-        Object dependentPaths = null;
-        for (Entry e : entries) {
-            dependentPaths = e.value();
-            if (dependentPaths instanceof List) {
-                path = e.getName();
-                dependentPaths =  e.value();
-                dm.put(path, (List<Path>) dependentPaths);
-            }
-        }
-		return model;
-    }
-
-    public static Map<String, List<Path>> dependencies(Model model) {
+    public static Map<String, List<DependencyEntry>> dependencies(Domain model) {
          return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
-    
-    public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
-        for (Evaluation d : dependers)
-            	dependee.getDependers().add(d);
-        
-        return dependee;
-    }
+
+	public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
+        String path = null;
+		for (Evaluation d : dependers) {
+            path = d.getName();
+            if (path != null && path.equals("self")) {
+                ((Entry)d)._1 = (((Domain) dependee).getName());
+            }
+            if (d instanceof DependencyEntry && ((DependencyEntry)d).getType().equals(Type.CONDITION)) {
+                ((DependencyEntry)d).getCondition().setConditionalContext((Context)dependee);
+                }
+			if (!dependee.getDependers().contains(d)) {
+                dependee.getDependers().add(d);
+
+
+            }
+		}
+		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof DependencyEntry) {
+			Map<String, List<DependencyEntry>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
+			for (Evaluation e : dependers) {
+				path = e.getName();
+				if (dm.get(path) != null) {
+                    if (!dm.get(path).contains(e)) {
+                        ((List) dm.get(path)).add(e);
+                    }
+				} else {
+					List<DependencyEntry> del = new ArrayList();
+					del.add((DependencyEntry)e);
+					dm.put(path, del);
+				}
+			}
+		}
+		return dependee;
+	}
 
 	public static Dependency dependsOn(Dependency dependee, Context scope, Evaluation... dependers)
 			throws ContextException {
@@ -982,6 +1221,10 @@ public class operator {
 		return signature.build(context);
 	}
 
+	public static <T> T build(ServiceMogram mogram) throws SignatureException {
+		return mogram.getInstance();
+	}
+
 	/**
 	 * Returns an instance by constructor method initialization or by
 	 * instance/class method initialization.
@@ -1015,18 +1258,50 @@ public class operator {
 			return ((ObjectSignature) signature).initInstance();
 	}
 
-	public static ServiceModel model(Signature signature) throws SignatureException {
+	public static Object created(Signature signature) throws SignatureException {
+		return instance(signature);
+	}
+
+	public static Domain model(Signature signature) throws SignatureException {
 		Object model = instance(signature);
-		if (!(model instanceof ServiceModel)) {
-			throw new SignatureException("Signature does not specify te ServiceModel: " + signature);
+		if (!(model instanceof Domain)) {
+			throw new SignatureException("Signature does not specify te Domain: " + signature);
 		}
 		if (model instanceof Model) {
 			((Model)model).setBuilder(signature);
 		}
-		return (ServiceModel) model;
+		return (Domain) model;
+	}
+
+	public static Mogram instance(Mogram mogram, Arg... args) throws SignatureException, MogramException {
+		Signature builder = mogram.getBuilder(args);
+		if (builder == null) {
+			throw new SignatureException("No signature builder for: " + mogram.getName());
+		}
+		Mogram mog = (Mogram) sorcer.co.operator.instance(builder);
+		mog.setBuilder(builder);
+		Tag name = (Arg.getName(args));
+		if (name != null)
+			mog.setName(name.getName());
+		return mog;
+	}
+
+	public static Tag tag(Object object) {
+		return new Tag(object.toString());
+	}
+
+	public static String name(Object identifiable) {
+		if (identifiable instanceof Identifiable) {
+			return ((Identifiable) identifiable).getName();
+		} else if (identifiable instanceof Arg) {
+			return ((Arg) identifiable).getName();
+		} else {
+			return identifiable.toString();
+		}
 	}
 
 	public static URL url(String urlName) throws MalformedURLException {
 		return new URL(urlName);
 	}
+
 }

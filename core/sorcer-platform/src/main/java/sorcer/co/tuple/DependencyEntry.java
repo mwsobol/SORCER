@@ -18,6 +18,7 @@
 package sorcer.co.tuple;
 
 import sorcer.core.context.model.ent.Entry;
+import sorcer.service.Conditional;
 import sorcer.service.Path;
 
 import java.util.List;
@@ -28,8 +29,24 @@ import java.util.List;
 public class DependencyEntry extends Entry<List<Path>> {
     private static final long serialVersionUID = 1L;
 
+    private Conditional condition;
+
     @SuppressWarnings("unchecked")
     public DependencyEntry(String path, List<Path> paths) {
         super(path, paths);
     }
+
+    public DependencyEntry(String path, Conditional condition, List<Path> paths) {
+        super(path, paths);
+        this.condition = condition;
+    }
+
+    public Conditional getCondition() {
+        return condition;
+    }
+
+    public void setCondition(Conditional condition) {
+        this.condition = condition;
+    }
+
 }

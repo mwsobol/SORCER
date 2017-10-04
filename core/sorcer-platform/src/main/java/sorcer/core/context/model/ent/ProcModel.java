@@ -17,12 +17,13 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.core.context.Contexts;
+import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
+import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Variability;
 import sorcer.util.Response;
 import sorcer.service.Signature.ReturnPath;
@@ -59,7 +60,7 @@ import java.util.*;
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
 public class ProcModel extends PositionalContext<Object> implements Model, Invocation<Object>,
-		Mappable<Object>, Contexter<Object>, EntModeling {
+		Mappable<Object>, Contexter<Object> {
 
     private static final long serialVersionUID = -6932730998474298653L;
 
@@ -70,12 +71,11 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 	}
 
     public ProcModel() {
-        super();
-        name = PAR_MODEL;
-        setSubject("proc/model", new Date());
+		super();
+		name = PROC_MODEL;
+		setSubject("proc/model", new Date());
 		isRevaluable = true;
-
-    }
+	}
 
     public ProcModel(String name) {
         super(name);
@@ -89,7 +89,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 
     public ProcModel(Context context) throws RemoteException, ContextException {
         super(context);
-        name = PAR_MODEL;
+        name = PROC_MODEL;
         setSubject("proc/model", new Date());
 		isRevaluable = true;
 	}
@@ -100,7 +100,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
         add(objects);
     }
 
-	public Object getValue(String path, Arg... args) throws EvaluationException {
+	public Object getValue(String path, Arg... args) throws EvaluationException, ContextException {
 		try {
 			append(args);
 			Object val = null;
@@ -110,9 +110,9 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 				ReturnPath rp = Arg.getReturnPath(args);
 				if (rp != null)
 					val = getReturnValue(rp);
-				else if (mogramStrategy.getResponsePaths() != null
-						&& mogramStrategy.getResponsePaths().size() == 1) {
-					val = asis(mogramStrategy.getResponsePaths().get(0).getName());
+				else if (((ModelStrategy)mogramStrategy).getResponsePaths() != null
+						&& ((ModelStrategy)mogramStrategy).getResponsePaths().size() == 1) {
+					val = asis(((ModelStrategy)mogramStrategy).getResponsePaths().get(0).getName());
 				} else {
 					val = super.getValue(path, args);
 				}
@@ -130,9 +130,10 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 				return ((Evaluation) val).getValue(args);
 			}   if (val instanceof ServiceFidelity) {
 				return new Entry(path, val).getValue(args);
-			} else if (path == null && val == null && mogramStrategy.getResponsePaths() != null) {
-				if (mogramStrategy.getResponsePaths().size() == 1)
-					return getValue(mogramStrategy.getResponsePaths().get(0).getName(), args);
+			} else if (path == null && val == null
+					&& ((ModelStrategy)mogramStrategy).getResponsePaths() != null) {
+				if (((ModelStrategy)mogramStrategy).getResponsePaths().size() == 1)
+					return getValue(((ModelStrategy)mogramStrategy).getResponsePaths().get(0).getName(), args);
 				else
 					return getResponse();
 			} else {
@@ -191,7 +192,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 					}
 				}
 			}
-			return super.putValue(path, value);
+			return super.put(path, value);
 		} catch (RemoteException e) {
 			throw new ContextException(e);
 		}
@@ -251,14 +252,14 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 	}
 
 	@Override
-	public ServiceModel add(Identifiable... objects) throws ContextException, RemoteException {
+	public Domain add(Identifiable... objects) throws ContextException, RemoteException {
 		Proc p = null;
 		boolean changed = false;
 		for (Identifiable obj : objects) {
 			String pn = obj.getName();
 			if (obj instanceof Proc) {
 				p = (Proc) obj;
-			} else if (obj instanceof Variability) {
+			} else if (obj instanceof Variability || obj instanceof Setup) {
 				putValue(pn, obj);
 			} else if (obj instanceof Entry) {
 				putValue(pn, ((Entry)obj).asis());
@@ -377,7 +378,20 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 	public void setContextChanged(boolean contextChanged) {
 		this.isChanged = contextChanged;
 	}
-	
+
+	@Override
+	public Entry entry(String path) {
+		Object entry = null;
+		if (path != null) {
+			entry = data.get(path);
+		}
+		if (entry instanceof Entry) {
+			return (Entry)entry;
+		} else {
+			return null;
+		}
+	}
+
 	public Variability getVar(String name) throws ContextException {
 		String key;
 		Object val = null;

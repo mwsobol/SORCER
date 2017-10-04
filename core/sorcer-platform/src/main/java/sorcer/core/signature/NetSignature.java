@@ -75,10 +75,9 @@ public class NetSignature extends ObjectSignature {
 
 	public NetSignature(ServiceSignature signature) throws SignatureException {
 		this.name = signature.name;
-		this.operation.selector = signature.operation.selector;
+		this.operation = signature.operation;
 		this.providerName =  signature.providerName;
 		this.serviceType = signature.serviceType;
-		this.providerType = signature.providerType;
 		this.deployment = signature.deployment;
 		this.returnPath = signature.returnPath;
 	}
@@ -382,14 +381,18 @@ public class NetSignature extends ObjectSignature {
 	}
 
 	public String toString() {
-		return this.getClass() + ":" + providerName + ";" + execType + ";"
-				+ serviceType + ";" + operation.selector
-					+ (prefix !=null ? "#" + prefix : "") 
-					+ (returnPath != null ? ";"  + "result " + returnPath : "");
+
+		return this.getClass().getSimpleName() + ":" + providerName + ":"
+				+ serviceType + "." + operation.selector
+				+ (prefix != null ? "#" + prefix : "")
+				+ (returnPath != null ? "; result: " + returnPath : "")
+				+ ("; provisionable: " + operation.isProvisionable)
+				+ ((deployment != null && deployment.getConfig() != null)
+					? "; config: " + deployment.getConfig() : "");
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+	public Object exec(Arg... args) throws MogramException, RemoteException {
 		Exertion mog = Arg.getExertion(args);
 		Context cxt = (Context) Arg.getServiceModel(args);
 		if (cxt == null && returnPath != null) {

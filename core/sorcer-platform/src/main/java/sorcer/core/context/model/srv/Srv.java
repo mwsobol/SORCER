@@ -11,7 +11,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Variability;
 
@@ -25,7 +25,7 @@ import static sorcer.eo.operator.task;
 /**
  * Created by Mike Sobolewski on 4/14/15.
  */
-public class Srv extends Entry<Object> implements Variability<Object>, Arg,
+public class Srv extends Entry<Object> implements Variability<Object>,
         Comparable<Object>, Reactive<Object>, Serializable {
 
     private static Logger logger = LoggerFactory.getLogger(Srv.class.getName());
@@ -257,7 +257,7 @@ public class Srv extends Entry<Object> implements Variability<Object>, Arg,
 
     @Override
     public Object exec(Arg... args) throws ServiceException, RemoteException {
-        ServiceModel mod = Arg.getServiceModel(args);
+        Domain mod = Arg.getServiceModel(args);
         if (mod != null) {
             if (mod instanceof SrvModel && _2 instanceof ValueCallable) {
                 return ((ValueCallable) _2).call((Context) mod);

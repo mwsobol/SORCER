@@ -25,14 +25,14 @@ public class Path implements Arg  {
 	private static final long serialVersionUID = 1L;
 
 	public enum Type {
-		PATH, MAP, ENT
+		PATH, MAP, ENT, CONTEXT, ARRAY, OUT
 	}
 
 	public String path = null;
 
 	public Object info = null;
 
-	private Type type = Type.PATH;
+	protected Type type = Type.PATH;
 
 	public Path() {
 	}
@@ -118,6 +118,26 @@ public class Path implements Arg  {
 
 		return sa;
 	}
+
+
+	@Override
+	public int hashCode() {
+		int hash = path.length() + 1;
+		return hash * 31 + path.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if ((object instanceof Path)
+			&& ((Path) object).path.equals(path)) {
+//				&&   ((Path) object).info.equals(info)
+//				&& ((Path) object).fiType.equals(fiType))
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 
 	public static String[] getPathNames(List<Path> paths) {
 		String[] sa = new String[paths.size()];

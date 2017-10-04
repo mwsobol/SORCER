@@ -178,7 +178,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
        // implement is subclasses
     }
 
-    public void init(ServiceFidelity<Fidelity> fidelity) {
+    public void add(ServiceFidelity<Fidelity> fidelity) {
         put(fidelity.getName(), fidelity);
     }
 
@@ -221,7 +221,8 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         return sessions;
     }
 
-    public void morph(String... fiNames) {
+    @Override
+    public void morph(String... fiNames)  throws EvaluationException {
         for (String fiName : fiNames) {
             ServiceFidelity<Fidelity> mFi = metafidelities.get(fiName);
             List<Fidelity> fis = mFi.getSelects();
@@ -241,6 +242,13 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
                             morphFidelities.get(name).setMorpherSelect(path);
                         }
                         fiEnt.getValue().setSelect(path);
+                        mogram.applyFidelity(name);
+                    } else if (fiEnt.getKey().equals(path)) {
+                        if (morphFidelities.get(path) != null) {
+                            morphFidelities.get(path).setMorpherSelect(path);
+                        }
+                        fiEnt.getValue().setSelect(name);
+                        mogram.applyFidelity(path);
                     }
                 }
             }
@@ -268,7 +276,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
     @Override
-    public FidelityList getDefaultFidelities() throws ContextException, RemoteException {
+    public FidelityList getDefaultFidelities() throws RemoteException {
         FidelityList fl = new FidelityList();
 		Iterator<Map.Entry<String, ServiceFidelity<T>>> it = fidelities.entrySet().iterator();
 		while (it.hasNext()) {
@@ -289,7 +297,7 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         if (fidelities.size() == 1 && fiNames.length == 1) {
             ServiceFidelity fi = fidelities.get(name);
             if (fi == null) {
-                fi = selectFidelity(fiNames[0]);
+                fi = getFidelity(fiNames[0]);
             }
             fi.setSelect(fiNames[0]);
             if (isTraced) {
@@ -301,10 +309,14 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
     }
 
 
-    private ServiceFidelity selectFidelity(String name) {
+    private ServiceFidelity getFidelity(String name) {
         ServiceFidelity fi = fidelities.get(name);
         if (fi == null) {
-            ServiceFidelity sf = fidelities.get(0);
+            // get unknown fidelity
+            Set<String> keys = fidelities.keySet();
+            Iterator<String> i = keys.iterator();
+            String key = i.next();
+            ServiceFidelity sf = fidelities.get(key);
             List<ServiceFidelity> sfl = sf.getSelects();
             for (ServiceFidelity f : sfl) {
                 if (f.getName().equals(name))
@@ -314,8 +326,12 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         return null;
     }
 
+    public void reconfigure(FidelityList fiList) throws ContextException, RemoteException {
+        reconfigure(fiList.toFidelityArray());
+    }
+
     @Override
-    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
+    public void reconfigure(Fidelity... fidelities) throws EvaluationException, RemoteException {
         if (fidelities == null || fidelities.length == 0) {
             return;
         }
@@ -357,6 +373,10 @@ public class FidelityManager<T extends Arg> implements FidelityManagement<T>, Ob
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getProjectionFi(String projectionName) {
+        return metafidelities.get(projectionName).getSelects().get(0).getName();
     }
 
     public boolean isTraced() {

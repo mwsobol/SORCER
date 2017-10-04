@@ -56,7 +56,7 @@ public class EmxCmd extends ShellCmd {
 				+ "\n  ('emx' mode) show EMX services or ('xrt' mode) print the selected exertion"
 				+ "\n  <EMX index>   select the EMX given <EMX index>"
 				+ "\n  -v   print the selected EMX service/exertion"
-				+ "\n  -x   clear the selection of MX service/exertion"
+				+ "\n  -x   clearSessions the selection of MX service/exertion"
 				+ "\n  -a   show all monitored mograms"
 				+ "\n  -d   show done monitored mograms"
 				+ "\n  -f   show failed monitored mograms"
@@ -119,7 +119,7 @@ public class EmxCmd extends ShellCmd {
 				xrtType = getStatus(next);
 				printMonitoredExertions(xrtType);
 			} else if (next.equals("-x")) {
-				// clear monitor select
+				// clearSessions monitor select
 				selectedMonitor = -1;
 			} else if (next.equals("-e")) {
 				isEmxMode = false;

@@ -18,7 +18,7 @@
 
     <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
         <!-- in the absence of the class attribute, it is assumed that the
-             desired discriminator type is
+             desired discriminafiTypetype is
              ch.qos.logback.classic.sift.MDCBasedDiscriminator -->
         <discriminator>
             <key>prvName</key>

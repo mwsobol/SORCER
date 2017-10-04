@@ -49,17 +49,75 @@ public final class OperationalStringFactory {
         return deploymentIds;
     }
 
-    /**
-     * Create {@link OperationalString}s from an {@code Exertion}.
-     *
-     * @param exertion The exertion, must not be {@code null}.
-     *
-     * @return An {@code Map} of {@code Deployment.Type} keys with{@code List<OperationalString> values composed of
-     * services created from {@link ServiceSignature}s. If there are no services, return and empty {@code Map}.
-     *
-     * @throws IllegalArgumentException if the {@code exertion} is {@code null}.
-     * @throws Exception if there are configuration issues, if the iGrid opstring cannot be loaded
-     */
+    public static Map<ServiceDeployment.Unique, List<OperationalString>> create(List<Signature> signatures) throws Exception {
+        List<Signature> netSignatures = signatures;
+        List<Signature> selfies = new ArrayList<>();
+        List<Signature> federated = new ArrayList<>();
+
+        List<OperationalString> uniqueOperationalStrings = new ArrayList<>();
+
+        for(Signature netSignature : netSignatures) {
+            if(netSignature.getDeployment()==null)
+                continue;
+            if(netSignature.getDeployment().getType()==ServiceDeployment.Type.SELF) {
+                selfies.add(netSignature);
+            } else if(netSignature.getDeployment().getType()==ServiceDeployment.Type.FED) {
+                federated.add(netSignature);
+            }
+        }
+
+        List<OperationalString> operationalStrings = new ArrayList<>();
+
+        for(Signature self : selfies) {
+            ServiceElement service = ServiceElementFactory.create((ServiceSignature)self);
+            OpString opString = new OpString(createDeploymentID(service), null);
+            service.setOperationalStringName(opString.getName());
+            opString.addService(service);
+            opString.setUndeployOption(getUndeployOption((ServiceDeployment)self.getDeployment()));
+            if(self.getDeployment().getUnique()== ServiceDeployment.Unique.YES) {
+                uniqueOperationalStrings.add(opString);
+            } else {
+                operationalStrings.add(opString);
+            }
+        }
+
+        List<ServiceElement> services = new ArrayList<>();
+        int idle = 0;
+        for(Signature signature : federated) {
+            services.add(ServiceElementFactory.create((ServiceSignature)signature));
+            if(signature.getDeployment().getIdle()>idle) {
+                idle = signature.getDeployment().getIdle();
+            }
+        }
+        if(services.isEmpty()) {
+            logger.warn("No services configured for signatures: {}", signatures);
+            return null;
+        }
+        OpString opString = new OpString(DeploymentIdFactory.create(netSignatures), null);
+        for(ServiceElement service : services) {
+            service.setOperationalStringName(opString.getName());
+            opString.addService(service);
+        }
+        opString.setUndeployOption(getUndeployOption(idle));
+        operationalStrings.add(opString);
+
+        Map<ServiceDeployment.Unique, List<OperationalString>> opStringMap = new HashMap<>();
+        opStringMap.put(ServiceDeployment.Unique.YES, uniqueOperationalStrings);
+        opStringMap.put(ServiceDeployment.Unique.NO, operationalStrings);
+        return opStringMap;
+    }
+
+        /**
+         * Create {@link OperationalString}s from an {@code Exertion}.
+         *
+         * @param exertion The exertion, must not be {@code null}.
+         *
+         * @return An {@code Map} of {@code Deployment.Type} keys with{@code List<OperationalString> values composed of
+         * services created from {@link ServiceSignature}s. If there are no services, return and empty {@code Map}.
+         *
+         * @throws IllegalArgumentException if the {@code exertion} is {@code null}.
+         * @throws Exception if there are configuration issues, if the iGrid opstring cannot be loaded
+         */
     public static Map<ServiceDeployment.Unique, List<OperationalString>> create(final Exertion exertion) throws Exception {
         if(exertion==null)
             throw new IllegalArgumentException("exertion is null");

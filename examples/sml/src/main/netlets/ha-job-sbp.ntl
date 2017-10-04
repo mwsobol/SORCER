@@ -37,7 +37,7 @@ Task f3 = task("f3", sig("subtract", Subtractor.class,
                 deploy(maintain(2, perNode(2)),
                         idle(1),
                         configuration(configDir+"/subtractor-prv.config"))),
-        context("subtract", inEnt("arg/x5"),
+        context("subtract", inVal("arg/x5"),
                 inVal("arg/x6"), result("result/y3")));
 
 job("f1", sig("exert", Jobber.class, deploy(idle(1))),

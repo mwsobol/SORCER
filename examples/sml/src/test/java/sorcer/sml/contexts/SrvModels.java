@@ -11,15 +11,14 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.AveragerImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Block;
 import sorcer.service.Context;
 import sorcer.service.Job;
 import sorcer.service.Strategy.Flow;
 import sorcer.service.Task;
-import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Model;
+import sorcer.service.Domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -27,7 +26,6 @@ import static sorcer.co.operator.*;
 import static sorcer.co.operator.asis;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.invoker;
 import static sorcer.po.operator.*;
@@ -168,7 +166,7 @@ public class SrvModels {
         // two response paths declared
         responseUp(m, "add", "multiply");
         // exert the model
-        ServiceModel model = exert(m);
+        Domain model = exert(m);
         logger.info("model: " + model);
 
         assertTrue(response(model, "add").equals(4.0));

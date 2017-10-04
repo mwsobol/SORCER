@@ -76,7 +76,7 @@ public class ServiceRendezvous extends RendezvousBean implements Rendezvous, Spa
 					.getBean(Concatenator.class);
 			return concatenator.exert(exertion, txn, args);
 		}
-		throw new ExertionException("now rendevous service available for exertion of this type: " + exertion.getClass());
+		throw new ExertionException("now rendevous service available for exertion of this fiType: " + exertion.getClass());
 	}
 
 	@SuppressWarnings("unchecked")

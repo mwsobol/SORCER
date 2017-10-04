@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.System.out;
-import static sorcer.po.operator.ent;
 import static sorcer.eo.operator.*;
 
 @SuppressWarnings("rawtypes")

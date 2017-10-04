@@ -15,7 +15,6 @@ import sorcer.arithmetic.tester.volume.Volume;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.util.Sorcer;
@@ -33,7 +32,6 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.value;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.alt;
 import static sorcer.po.operator.*;
@@ -144,8 +142,8 @@ public class InvokerTest {
 				proc(invoker("lambda", cxt -> (double) value(cxt, "x")
 									+ (double) value(cxt, "y")
 									+ 30)));
-		logger.info("invoke eval: " + operator.eval(mo, "lambda"));
-		assertEquals(operator.eval(mo, "lambda"), 60.0);
+		logger.info("invoke eval: " + eval(mo, "lambda"));
+		assertEquals(eval(mo, "lambda"), 60.0);
 	}
 
 	@Test
@@ -163,8 +161,8 @@ public class InvokerTest {
 					},
 				scope,
 				args("x", "y", "y1"))));
-		logger.info("invoke eval: " + operator.eval(mo, "lambda"));
-		assertEquals(operator.eval(mo, "lambda"), 100.0);
+		logger.info("invoke eval: " + eval(mo, "lambda"));
+		assertEquals(eval(mo, "lambda"), 100.0);
 	}
 
 	@Test
@@ -265,7 +263,7 @@ public class InvokerTest {
 
 		invoke(y, proc("x1", 10.0), proc("x2", 20.0));
 //		logger.info("y: " + eval(y));
-		assertTrue(operator.eval(y).equals(30.0));
+		assertTrue(eval(y).equals(30.0));
 
 //		logger.info("y scope: " + scope(y));
 		assertEquals(scope(y), null);
@@ -476,21 +474,21 @@ public class InvokerTest {
 		AltInvoker alt = new AltInvoker("alt", opt1, opt2, opt3, opt4);
 		add(pm, opt1, opt2, opt3, opt4, alt);
 
-		logger.info("opt1 eval: " + operator.eval(opt1));
-		assertEquals(operator.eval(opt1), 60.0);
-		logger.info("opt2 eval: " + operator.eval(opt2));
-		assertEquals(operator.eval(opt2), 70.0);
-		logger.info("opt3 eval: " + operator.eval(opt3));
-		assertEquals(operator.eval(opt3), 80.0);
-		logger.info("opt4 eval: " + operator.eval(opt4));
-		assertEquals(operator.eval(opt4), 90.0);
-		logger.info("alt eval: " + operator.eval(alt));
-		assertEquals(operator.eval(alt), 60.0);
+		logger.info("opt1 eval: " + eval(opt1));
+		assertEquals(eval(opt1), 60.0);
+		logger.info("opt2 eval: " + eval(opt2));
+		assertEquals(eval(opt2), 70.0);
+		logger.info("opt3 eval: " + eval(opt3));
+		assertEquals(eval(opt3), 80.0);
+		logger.info("opt4 eval: " + eval(opt4));
+		assertEquals(eval(opt4), 90.0);
+		logger.info("alt eval: " + eval(alt));
+		assertEquals(eval(alt), 60.0);
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		logger.info("opt eval: " + operator.eval(alt));
-		assertEquals(operator.eval(alt), 510.0);
+		logger.info("opt eval: " + eval(alt));
+		assertEquals(eval(alt), 510.0);
 
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
@@ -499,12 +497,12 @@ public class InvokerTest {
 		pm.putValue("x3", 50.0);
 		pm.putValue("y3", 60.0);
 		logger.info("opt eval: " + alt.invoke());
-		assertEquals(operator.eval(alt), 70.0);
+		assertEquals(eval(alt), 70.0);
 
 		pm.putValue("x2", 50.0);
 		pm.putValue("y2", 40.0);
 		logger.info("opt eval: " + alt.invoke());
-		assertEquals(operator.eval(alt), 50.0);
+		assertEquals(eval(alt), 50.0);
 	}
 
 	@Test
@@ -535,17 +533,17 @@ public class InvokerTest {
 		assertEquals(value(pm, "opt3"), null);
 		logger.info("opt4 eval: " + value(pm, "opt4"));
 		assertEquals(value(pm, "opt4"), 70.0);
-		logger.info("alt eval: " + operator.eval(alt));
-		assertEquals(operator.eval(alt), 50.0);
+		logger.info("alt eval: " + eval(alt));
+		assertEquals(eval(alt), 50.0);
 
 		put(pm, proc("x", 300.0), proc("y", 200.0));
-		logger.info("alt eval: " + operator.eval(alt));
-		assertEquals(operator.eval(alt), 510.0);
+		logger.info("alt eval: " + eval(alt));
+		assertEquals(eval(alt), 510.0);
 
 		put(pm, proc("x", 10.0), proc("y", 20.0), proc("x2", 40.0),
 				proc("y2", 50.0), proc("x3", 50.0), proc("y3", 60.0));
-		logger.info("alt eval: " + operator.eval(alt));
-		assertEquals(operator.eval(alt), 70.0);
+		logger.info("alt eval: " + eval(alt));
+		assertEquals(eval(alt), 70.0);
 	}
 
 	@Test

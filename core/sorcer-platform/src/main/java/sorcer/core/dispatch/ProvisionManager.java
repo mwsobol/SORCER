@@ -49,6 +49,7 @@ import java.util.concurrent.*;
 public class ProvisionManager {
 	private static final Logger logger = LoggerFactory.getLogger(ProvisionManager.class.getName());
 	private final Exertion exertion;
+    final List<Signature> signatures;
     private final List<String> deploymentNames = new ArrayList<>();
     private final ProvisionMonitorCache provisionMonitorCache;
 	private volatile DeployAdmin deployAdmin;
@@ -56,8 +57,15 @@ public class ProvisionManager {
 
 	public ProvisionManager(final Exertion exertion) throws DispatcherException {
 		this.exertion = exertion;
+		this.signatures = null;
         provisionMonitorCache = ProvisionMonitorCache.getInstance();
 	}
+
+    public ProvisionManager(final List<Signature> signatures) throws DispatcherException {
+        this.exertion = null;
+        this.signatures = signatures;
+        provisionMonitorCache = ProvisionMonitorCache.getInstance();
+    }
 
     public DeployAdmin getDeployAdmin() {
         return deployAdmin;
@@ -143,23 +151,33 @@ public class ProvisionManager {
                             deploymentNames.add(deployment.getName());
                     }
                 }
-                ServiceDeployment deployment = (ServiceDeployment)exertion.getProcessSignature().getDeployment();
-                if(deployment!=null) {
-                    deployment.setDeployedNames(deploymentNames);
-                } else {
-                    logger.warn("There was no ServiceDeployment for {}, " +
+
+                if (exertion != null) {
+                    ServiceDeployment deployment = (ServiceDeployment) exertion.getProcessSignature().getDeployment();
+                    if (deployment != null) {
+                        deployment.setDeployedNames(deploymentNames);
+                    } else {
+                        logger.warn("There was no ServiceDeployment for {}, " +
                                         "try and load all NetSignatures and set deployment names",
                                 exertion.getName());
-                    for (Signature netSignature : getNetSignatures()) {
-                        if (netSignature.getDeployment() == null)
-                            continue;
-                        ((ServiceDeployment) netSignature.getDeployment()).setDeployedNames(deploymentNames);
+                        for (Signature netSignature : getNetSignatures()) {
+                            if (netSignature.getDeployment() == null)
+                                continue;
+                            ((ServiceDeployment) netSignature.getDeployment()).setDeployedNames(deploymentNames);
+                        }
                     }
                 }
             } else {
-                String message = String.format("Unable to obtain a ProvisionMonitor for %s using %s",
-                                               exertion.getName(),
-                                               getDiscoveryInfo());
+                String message = this.getClass().getSimpleName();
+                if (exertion != null) {
+                    message = String.format("Unable to obtain a ProvisionMonitor for %s using %s",
+                            exertion.getName(),
+                            getDiscoveryInfo());
+                } else if (signatures != null) {
+                    message = String.format("Unable to obtain a ProvisionMonitor for %s using %s",
+                            signatures.toString(),
+                            getDiscoveryInfo());
+                }
                 logger.warn(message);
                 throw new DispatcherException(message);
             }
@@ -167,8 +185,13 @@ public class ProvisionManager {
             if(e instanceof DispatcherException)
                 throw (DispatcherException)e;
 
-            logger.warn("Unable to process deployment for {}", exertion.getName(), e);
-            throw new DispatcherException(String.format("While trying to provision exertion %s", exertion.getName()), e);
+            if (exertion != null) {
+                logger.warn("Unable to process deployment for {}", exertion.getName(), e);
+                throw new DispatcherException(String.format("While trying to provision exertion %s", exertion.getName()), e);
+            } else {
+                logger.warn("Unable to process deployment for {}", signatures, e);
+                throw new DispatcherException(String.format("While trying to provision signatures %s", signatures.toString()), e);
+            }
         }
         return true;
     }
@@ -195,9 +218,13 @@ public class ProvisionManager {
         }
     }
     private Map<ServiceDeployment.Unique, List<OperationalString>> createDeployments() throws DispatcherException {
-        Map<ServiceDeployment.Unique, List<OperationalString>> deployments;
+        Map<ServiceDeployment.Unique, List<OperationalString>> deployments = null;
         try {
-            deployments = OperationalStringFactory.create(exertion);
+            if (exertion != null) {
+                deployments = OperationalStringFactory.create(exertion);
+            } else if (signatures != null) {
+                deployments = OperationalStringFactory.create(signatures);
+            }
         } catch (Exception e) {
             throw new DispatcherException(String.format("While trying to create deployment for exertion %s",
                                                         exertion.getName()),

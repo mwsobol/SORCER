@@ -50,16 +50,16 @@ public class LookupCmd extends ShellCmd {
 		NOT_LOADED_MSG = "***command not loaded due to conflict";
 
 		COMMAND_USAGE = "lup  [-s | -p | <service index> | -v | -x] | --d <service index>" 
-				+ "\n\t\t\t  | ( -p | -s ) [-n <name attribute eval>] [-i <service type name>] ";
+				+ "\n\t\t\t  | ( -p | -s ) [-n <name attribute eval>] [-i <service fiType name>] ";
 
 		COMMAND_HELP = "Performs lookup on a default lookup service (disco <registrar index>);"
 			+ "\n  -s   show all services registered with the default lookup service" 
 			+ "\n  -p   show services based on the " + Provider.class.getName() + " interface" 
 			+ "\n  <service index>   show and select the fetched <service index> provider"
 			+ "\n  -v   show the selected provider"
-			+ "\n  -x   clear the selected provider"
+			+ "\n  -x   clearSessions the selected provider"
 			+ "\n  -n   show service based on the name attribute eval"
-			+ "\n  -t   show services based on the type name"
+			+ "\n  -t   show services based on the fiType name"
 			+ "\n  --d <service index>	  destroy the <provider index> provider";
 
 	}
@@ -210,7 +210,7 @@ public class LookupCmd extends ShellCmd {
 			myAttrib[0] = new Name(attr);
 		}
 		if (idx >= 0)
-			out.println("Performing lookup on lookup service # " + idx + " Name=\""
+			out.println("Performing lookup on lookup service # " + idx + " Tag=\""
 				+ attr + "\":");
 		try {
 			ServiceTemplate myTmpl = null;
@@ -265,7 +265,7 @@ public class LookupCmd extends ShellCmd {
 		Entry[] attributeSets = item.attributeSets;
 		for (int i = 0; i < attributeSets.length; i++) {
 			if (attributeSets[i] instanceof Name) {
-				out.println(ansi().render("Name: @|green " +((Name) attributeSets[i]).name + "|@"));
+				out.println(ansi().render("Tag: @|green " +((Name) attributeSets[i]).name + "|@"));
 				return;
 			}
 		}

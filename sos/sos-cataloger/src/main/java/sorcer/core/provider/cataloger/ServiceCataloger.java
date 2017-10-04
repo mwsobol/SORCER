@@ -966,7 +966,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 			Object service;
 			String serviceName = null;
 			net.jini.core.entry.Entry[] attributes;
-			logger.info("Provider Name " + providerName + " interface name "
+			logger.info("Provider Tag " + providerName + " interface name "
 					+ interfaceName);
 			for (Map.Entry<InterfaceList, List<ServiceItem>> entry : interfaceListMap
 					.entrySet()) {

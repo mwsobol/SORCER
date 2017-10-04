@@ -91,7 +91,7 @@ public class ServiceDeployment implements Serializable, Deployment {
             }
             String type = temp.getType();
             if(type==null || !type.equals("config")) {
-                logger.debug("Setting type to \"config\" for {}", temp.getGAV());
+                logger.debug("Setting fiType to \"config\" for {}", temp.getGAV());
                 type = "config";
             }
             this.config = new Artifact(temp.getGroupId(),
@@ -319,7 +319,7 @@ public class ServiceDeployment implements Serializable, Deployment {
     @Override
     public String toString() {
         return "Deployment {" +
-               "type=" + type +
+               "fiType=" + type +
                ", unique=" + unique +
                ", maxPerCybernode=" + maxPerCybernode +
                ", name='" + name + '\'' +

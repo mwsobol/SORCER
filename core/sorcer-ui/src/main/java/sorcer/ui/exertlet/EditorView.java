@@ -360,7 +360,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				return;
 			} else if (EXERT_LABEL.equals(command)) {
 				String script = editPane.getText();
-				// clear the previous feedback
+				// clearSessions the previous feedback
 				feedbackPane.setText("");
 				if (model != null) {
 					runTaskScript(script);
@@ -523,22 +523,26 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		}
 
 		try {
-			Class<?>[] interfaces = provider.getClass().getInterfaces();
-			for (int i = 0; i < interfaces.length; i++) {
-				if (interfaces[i] == mogram.getProcessSignature()
-						.getServiceType()) {
-					out = provider.exert(mogram, null);
-					//logger.debug(">>> done by " + provider);
-					done = true;
-					break;
-				}
-			}
-			if (!done) {
-				logger.debug(">> executing by exert: " + mogram.getName());
-				// inspect class loader tree
-				//com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
-				out = mogram.exert();
-			}
+			if (provider != null) {
+                Class<?>[] interfaces = provider.getClass().getInterfaces();
+                for (int i = 0; i < interfaces.length; i++) {
+                    if (interfaces[i] == mogram.getProcessSignature()
+                            .getServiceType()) {
+                        out = provider.exert(mogram, null);
+                        //logger.debug(">>> done by " + provider);
+                        done = true;
+                        break;
+                    }
+                }
+                if (!done) {
+                    logger.debug(">> executing by exert: " + mogram.getName());
+                    // inspect class loader tree
+                    //com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
+                    out = mogram.exert();
+                }
+            } else {
+                out = mogram.exert();
+            }
 		} catch (RemoteException | SignatureException |TransactionException | ExertionException e) {
 			openOutPanel(SorcerUtil.stackTraceToString(e));
 			logger.warn("Error while processing mogram", e);

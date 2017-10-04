@@ -13,4 +13,6 @@ public interface Adder {
 	Context add(Context context) throws RemoteException, ContextException;
 
 	Context sum(Context context) throws RemoteException, ContextException;
+
+	Context nothing(Context context) throws RemoteException, ContextException;
 }

@@ -55,7 +55,7 @@ public class ObjectSignature extends ServiceSignature {
 	private static Logger logger = LoggerFactory.getLogger(ObjectSignature.class);
 
 	public ObjectSignature() {
-		this.providerType = Object.class;
+		this.serviceType.providerType = Object.class;
 	}
 
 	public ObjectSignature(ServiceSignature signature) throws SignatureException {
@@ -63,7 +63,7 @@ public class ObjectSignature extends ServiceSignature {
         this.operation = signature.operation;
         this.providerName =  signature.providerName;
         this.serviceType = signature.serviceType;
-        this.providerType = signature.providerType;
+        this.serviceType.providerType = signature.serviceType.providerType;
         this.returnPath = signature.returnPath;
 	}
 
@@ -79,13 +79,18 @@ public class ObjectSignature extends ServiceSignature {
 		this(null, object, initSelector, argTypes, args);
 	}
 
+	public ObjectSignature(Class<?> clazz, String initSelector) throws InstantiationException,
+			IllegalAccessException {
+		this.serviceType.providerType = clazz;
+		setInitSelector(initSelector);
+	}
+
 	public ObjectSignature(String selector, Object object, String initSelector, Class<?>[] argTypes,
 						   Object... args) throws InstantiationException,
 			IllegalAccessException {
 		this();
 		if (object instanceof Class) {
 			this.serviceType.providerType = (Class<?>) object;
-			this.providerType = (Class<?>) object;
 		} else if (object instanceof Signature) {
 			targetSignature = (Signature)object;
 		} else {
@@ -102,7 +107,6 @@ public class ObjectSignature extends ServiceSignature {
 
 	public ObjectSignature(String selector, Class<?> providerClass) {
 		this.serviceType.providerType = providerClass;
-		this.providerType = providerClass;
 		setSelector(selector);
 	}
 
@@ -140,8 +144,8 @@ public class ObjectSignature extends ServiceSignature {
 	 *
 	 * @return the providerClass
 	 */
-	public Class<?> getProviderType() {
-		return providerType;
+	public Class getProviderType() {
+		return serviceType.providerType;
 	}
 
 	/**
@@ -150,7 +154,7 @@ public class ObjectSignature extends ServiceSignature {
 	 * </p>
 	 */
 	public void setProviderType(Class<?> providerType) {
-		this.providerType = providerType;
+		this.serviceType.providerType = providerType;
 	}
 
 	/**
@@ -259,12 +263,12 @@ public class ObjectSignature extends ServiceSignature {
 	 */
 	public Object initInstance() throws SignatureException {
 		Object obj = null;
-		Method m;
+		Method m = null;
 
 		try {
 			if(operation.selector!=null) {
 				try {
-					Method selectorMethod = providerType.getDeclaredMethod(operation.selector, argTypes);
+					Method selectorMethod = serviceType.providerType.getDeclaredMethod(operation.selector, argTypes);
 					if(Modifier.isStatic(selectorMethod.getModifiers())) {
 						return  selectorMethod.invoke(null, args);
 					}
@@ -272,33 +276,34 @@ public class ObjectSignature extends ServiceSignature {
 					//skip;
 				}
 			}
-			if (initSelector == null || initSelector.equals("new")) {
-				obj = providerType.newInstance();
+			if ((initSelector == null || initSelector.equals("new")) && args == null) {
+				obj = serviceType.providerType.newInstance();
 				return obj;
 			}
 
-			if (argTypes != null)
-				m = providerType.getMethod(initSelector, argTypes);
-			else  {
+			if (argTypes != null) {
 				if (initSelector != null)
-					m = providerType.getMethod(initSelector);
+					m = serviceType.providerType.getMethod(initSelector, argTypes);
+				else if (operation.selector != null)
+					m = serviceType.providerType.getMethod(operation.selector, argTypes);
+			} else  {
+				if (initSelector != null)
+					m = serviceType.providerType.getMethod(initSelector);
 				else
-					m = providerType.getMethod(operation.selector);
+					m = serviceType.providerType.getMethod(operation.selector);
 			}
 			if (args != null) {
 				obj = m.invoke(obj, args);
-			}
-			else if (argTypes != null && argTypes.length == 1) {
+			} else if (argTypes != null && argTypes.length == 1) {
 				obj = m.invoke(obj, new Object[] { null });
-			}
-			else {
+			} else {
 				obj = m.invoke(obj);
 			}
 		} catch (Exception e) {
 			logger.error("initInstance failed", e);
 			try {
 				// check if that is SORCER service bean signature
-				m = providerType.getMethod(operation.selector, Context.class);
+				m = serviceType.providerType.getMethod(operation.selector, Context.class);
 				if (m.getReturnType() == Context.class)
 					return obj;
 				else
@@ -385,37 +390,42 @@ public class ObjectSignature extends ServiceSignature {
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+	public Object exec(Arg... args) throws MogramException, RemoteException {
 		Mogram mog = Arg.getMogram(args);
 		if (mog == null && returnPath != null) {
 			mog = returnPath.getDataContext();
 		}
-		if (mog != null) {
-			if (serviceType.providerType == ServiceShell.class) {
-				ServiceShell shell = new ServiceShell(mog);
-				return context(shell.exert(args));
-			} else if (mog instanceof Context) {
-				argTypes = new Class[] { Context.class };
-				Context out = null;
-				ReturnPath rp = returnPath;
-				if (rp == null) {
-					rp = (ReturnPath)((Context) mog).getReturnPath();;
-				}
-				if (rp != null && rp.path != null) {
-					((Context) mog).setReturnPath(rp);
+		Context out = null;
+		try {
+			if (mog != null) {
+				if (serviceType.providerType == ServiceShell.class) {
+					ServiceShell shell = new ServiceShell(mog);
+					out = context(shell.exert(args));
+				} else if (mog instanceof Context) {
+					argTypes = new Class[]{Context.class};
+					ReturnPath rp = returnPath;
+					if (rp == null) {
+						rp = (ReturnPath) ((Context) mog).getReturnPath();
+					}
+					if (rp != null && rp.path != null) {
+						((Context) mog).setReturnPath(rp);
+						out = exert(task(this, mog));
+						return out.getValue(rp.path);
+					}
 					out = exert(task(this, mog));
-					return out.getValue(rp.path);
 				}
-				out = exert(task(this, mog));
-				return out;
+			} else {
+				out = exert(task(this));
 			}
+		} catch (TransactionException e) {
+			e.printStackTrace();
 		}
-		return null;
+		return out;
 	}
 
 	public String toString() {
 		return this.getClass() + ";" + execType + ";"
-				+ (providerType == null ? "" : providerType + ";") + operation.selector
+				+ (serviceType.providerType == null ? "" : serviceType.providerType + ";") + operation.selector
 				+ (prefix !=null ? "#" + prefix : "")
 				+ (returnPath != null ? ";"  + "result " + returnPath : "");
 	}

@@ -22,13 +22,15 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.co.tuple.DependencyEntry;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
+import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.FiMogram;
+import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
@@ -44,7 +46,7 @@ import java.util.*;
 import static sorcer.eo.operator.*;
 
 /**
- * A ServiceModel is a schematic description or representation of something, especially a system, 
+ * A Domain is a schematic description or representation of something, especially a system,
  * phenomenon, or service, that accounts for its properties and is used to study its characteristics.
  * Properties of a service model are represented by path of Context with values that depend
  * on other properties and can be evaluated as specified by ths model. Evaluations of the service 
@@ -54,7 +56,7 @@ import static sorcer.eo.operator.*;
  *   
  * Created by Mike Sobolewski on 1/29/15.
  */
-public class SrvModel extends ProcModel implements Model, Invocation<Object> {
+public class SrvModel extends ProcModel implements Invocation<Object> {
     private static final Logger logger = LoggerFactory.getLogger(SrvModel.class);
 
     public static SrvModel instance(Signature builder) throws SignatureException {
@@ -65,25 +67,26 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
 
     public SrvModel() {
         super();
-        isRevaluable = true;
+        name = SRV_MODEL;
         setSignature();
+        setSubject("srv/model", new Date());
+        isRevaluable = true;
     }
 
     public SrvModel(String name) {
         super(name);
-        isRevaluable = true;
         setSignature();
+        setSubject("srv/model", new Date());
+        isRevaluable = true;
     }
 
     public SrvModel(Signature signature) {
-        super();
-//        setSignature(signature.getName(), signature);
+        this();
         addSignature(signature);
     }
 
     public SrvModel(String name, Signature signature) {
         this(name);
-//        setSignature(signature.getName(), signature);
         addSignature(signature);
     }
 
@@ -116,17 +119,18 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
         return true;
     }
 
-    public Object getValue(String path, Arg... args) throws EvaluationException {
+    @Override
+    public Object getValue(String path, Arg... args) throws ContextException {
         return getSrvValue(path, args);
     }
 
     // calls from VarModels to call Srv args of Vars
-    public Object getSrvValue(String path, Srv srv, Arg... args) throws EvaluationException {
+    public Object getSrvValue(String path, Srv srv, Arg... args) throws ContextException {
         try {
             putValue(path, srv);
         } catch (ContextException e) {
             data.remove(path);
-            return new EvaluationException(e);
+            throw e;
         }
         Object out = getSrvValue(path, args);
         data.remove(path);
@@ -197,8 +201,8 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
                     if (rp != null && rp.path != null)
                         putValue(((Srv) val).getReturnPath().path, obj);
                     return obj;
-                }  else if (val2 instanceof FiMogram) {
-                    Object out = ((FiMogram)val2).exert(args);
+                }  else if (val2 instanceof MultiFiMogram) {
+                    Object out = ((MultiFiMogram)val2).exert(args);
                     Context cxt = null;
                     if (out instanceof Exertion) {
                         cxt = ((Exertion) out).getContext();
@@ -338,7 +342,7 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
             }
         }
 
-        List<T> choices = fi.getSelects();
+        List<T> choices = fi.getSelects(this);
         for (T s : choices) {
             if (selected == null && fi.getSelect() != null)
                 return fi.getSelect();
@@ -364,13 +368,49 @@ public class SrvModel extends ProcModel implements Model, Invocation<Object> {
     }
 
     protected void execDependencies(String path, Arg... args) throws ContextException {
-        Map<String, List<Path>> dpm = mogramStrategy.getDependentPaths();
-        List<Path> dpl = dpm.get(path);
-        if (dpl != null && dpl.size() > 0) {
-            for (Path p : dpl) {
-                getValue(p.path, args);
-            }
+        Map<String, List<DependencyEntry>> dpm = ((ModelStrategy)mogramStrategy).getDependentPaths();
+        if (dpm != null && dpm.get(path) != null) {
+            List<DependencyEntry> del = dpm.get(path);
+            Entry entry = entry(path);
+            if (del != null && del.size() > 0) {
+                for (DependencyEntry de : del) {
+                    List<Path> dpl = de._2;
+                    if (de.getType().equals(Variability.Type.FIDELITY)) {
+                        Fidelity deFi = (Fidelity) de.annotation();
+                        if (deFi.getOption() == Fi.Type.IF) {
+                            if (((Fidelity) entry.getSelectedFidelity()).getName().equals(deFi.getName())) {
+                                // apply only to matched fidelity
+                                if (dpl != null && dpl.size() > 0) {
+                                    for (Path p : dpl) {
+                                        getValue(p.path, args);
+                                    }
+                                }
+                            }
+                            continue;
+                        } else {
+                            // first select the requested fidelity
+                            entry.getServiceFidelity().setSelect(((Fidelity) de.annotation()).getName());
+                        }
+                    } else if (de.getType().equals(Variability.Type.CONDITION)) {
+                        Conditional condition = de.getCondition();
+                        if (condition.isTrue()) {
+                            // apply only if condition is true
+                            if (dpl != null && dpl.size() > 0) {
+                                for (Path p : dpl) {
+                                    getValue(p.path, args);
+                                }
+                            }
+                        }
+                        continue;
+                    }
+                    if (dpl != null && dpl.size() > 0) {
+                        for (Path p : dpl) {
+                            getValue(p.path, args);
+                        }
+                    }
 
+                }
+            }
         }
     }
 

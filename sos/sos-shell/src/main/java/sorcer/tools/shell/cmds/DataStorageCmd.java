@@ -53,8 +53,8 @@ public class DataStorageCmd extends ShellCmd {
 				+ "\n  -s   show data storage services"
 				+ "\n  -s   <storage index>   select the data storage given <storage index>"
 				+ "\n  -v   print the selected storage service"
-				+ "\n  -x   clear the selection of data storage service"
-				+ "\n  -l   [<store type>] list all storage records or of a given type"
+				+ "\n  -x   clearSessions the selection of data storage service"
+				+ "\n  -l   [<store fiType>] list all storage records or of a given fiType"
 				+ "\n  -r   print the selected record"
 				+ "\n  -s   save the selected record in a given file ";
 
@@ -101,7 +101,7 @@ public class DataStorageCmd extends ShellCmd {
 			} else if (next.equals("-r")) {
 				if (selectedRecord >= 0) {
 					ObjectInfo recordInfo = recordInfos[selectedRecord];
-//					printRecord(recordInfo.uuid, recordInfo.type);
+//					printRecord(recordInfo.uuid, recordInfo.fiType);
 				}
 			} else {
 				try {
@@ -147,7 +147,7 @@ public class DataStorageCmd extends ShellCmd {
 				if (selectedRecord >= 0
 						&& selectedRecord < recordInfos.length) {
 					ObjectInfo recordInfo = recordInfos[selectedRecord];
-//					printRecord(recordInfo.uuid, recordInfo.type);
+//					printRecord(recordInfo.uuid, recordInfo.fiType);
 				} else
 					out.println("No such Record for: " + selectedRecord);
 			}
@@ -185,7 +185,7 @@ public class DataStorageCmd extends ShellCmd {
 					+ AttributesUtil
 							.getHostName(dataStorers[selectedDataStorer].attributeSets));
 //			all = ((StorageManagement) dataStorers[selectedDataStorer].service)
-//					.getMonitorableExertionInfo(type,
+//					.getMonitorableExertionInfo(fiType,
 //							NetworkShell.getPrincipal());
 			
 			Context cxt = null;
@@ -235,7 +235,7 @@ public class DataStorageCmd extends ShellCmd {
 								.getHostName(dataStorers[i].attributeSets));
 
 				DatabaseStorer emx = (DatabaseStorer) dataStorers[i].service;
-//				ri = emx.getMonitorableExertionInfo(type,
+//				ri = emx.getMonitorableExertionInfo(fiType,
 //						NetworkShell.getPrincipal());
 				if (ri != null && ri.size() > 0) {
 					all.putAll(ri);

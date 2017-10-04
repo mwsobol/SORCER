@@ -21,6 +21,7 @@ package sorcer.core.exertion;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
+import sorcer.core.provider.Provider;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
@@ -87,8 +88,9 @@ public class ObjectTask extends Task {
 	}
 
 	public Task doTask(Transaction txn, Arg... args) throws SignatureException, RemoteException, MogramException {
-		if (delegate != null)
+		if (delegate != null) {
 			return delegate.doTask(txn);
+		}
 
 		MethodInvoker evaluator = null;
 		ObjectSignature os = (ObjectSignature) getProcessSignature();
@@ -111,11 +113,22 @@ public class ObjectTask extends Task {
 			Object result = null;
 			if (evaluator == null) {
 				// create a provider of this object signature
-				Object prv = provider(os);
+				Object prv = null;
+				if (os.getInitSelector() == null) {
+					if (os.getTargetSignature() != null) {
+						prv = ((ObjectSignature)os.getTargetSignature()).getProviderType().newInstance();
+					} else {
+						prv = os.getProviderType().newInstance();
+					}
+				} else {
+					prv = provider(os);
+				}
 				Object target = os.getTarget();
 				if (target != null) {
 					if (target instanceof Method) {
 						result = invokeMethod((Method)target, os);
+					} else if (target instanceof Provider) {
+						result = ((Provider) target).exert(this, null).getDataContext();
 					} else {
 						evaluator = new MethodInvoker(target, os.getSelector());
 					}
@@ -124,7 +137,13 @@ public class ObjectTask extends Task {
 					evaluator = new MethodInvoker(prv, os.getSelector());
 				}
 			}
-			evaluator.setParameterTypes(new Class[] { Context.class });
+			if (evaluator != null) {
+				if (os.getSelector().equals("evaluate") || os.getSelector().equals("explore")) {
+					evaluator.setParameterTypes(new Class[]{Context.class, Arg[].class});
+				} else {
+					evaluator.setParameterTypes(new Class[]{Context.class});
+				}
+			}
 			if (os.getReturnPath() != null)
 				dataContext.setReturnPath(os.getReturnPath());
 
@@ -134,7 +153,6 @@ public class ObjectTask extends Task {
 					// provider
 					if (dataContext != null) {
 						evaluator.setContext(dataContext);
-						evaluator.setParameterTypes(new Class[] { Context.class });
 					}
 				} else if (dataContext.getArgsPath() != null) {
 					evaluator.setArgs(getParameterTypes(), (Object[]) getArgs());
@@ -150,6 +168,8 @@ public class ObjectTask extends Task {
 					} else if (rp.outPaths != null && rp.outPaths.length > 0) {
 						Context out = dataContext.getDirectionalSubcontext(rp.outPaths);
 						dataContext.setReturnValue(out);
+					} else {
+						dataContext = (ServiceContext)result;
 					}
 				} else if (dataContext.getScope() != null) {
 					dataContext.getScope().append((Context)result);

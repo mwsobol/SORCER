@@ -23,13 +23,10 @@ import sorcer.core.context.ApplicationDescription;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
-import sorcer.service.modeling.Modeling;
-import sorcer.service.modeling.ServiceModel;
 import sorcer.service.modeling.Variability;
 import sorcer.service.modeling.VariabilityModeling;
 import sorcer.util.url.sos.SdbUtil;
 
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -46,7 +43,7 @@ import java.util.*;
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
 public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
-		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, Serializable {
+		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T> {
 
 	private static final long serialVersionUID = 7495489980319169695L;
 	 
@@ -66,10 +63,10 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	// Sorcer Mappable: Context, Exertion, or Var args
 	protected Mappable mappable;
 
-	protected String selectedFidelity;
+	protected Entry selectedFidelity;
 
 	// proc fidelities for this proc
-	protected Map<String, Object> fidelities;
+	protected ServiceFidelity<Entry> fidelities;
 
 	public Proc(String parname) {
 		super(parname);
@@ -88,16 +85,10 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		super(path);
 		name = path;
 
-		if (argument instanceof EntryList) {
-			if (fidelities == null)
-				fidelities = new HashMap<String, Object>();
-			for (Entry e : (EntryList) argument) {
-				fidelities.put(e.getName(), e);
-			}
-
-			Entry first = ((EntryList) argument).get(0);
-			selectedFidelity = first.getName();
-			value = (T) first;
+		if (argument instanceof ServiceFidelity) {
+			fidelities = (ServiceFidelity)argument;
+            selectedFidelity = (Entry) ((ServiceFidelity) argument).getSelects().get(0);
+			value = (T) selectedFidelity;
 		} else if (argument instanceof Evaluation || argument instanceof Invocation) {
 			if (argument instanceof ConditionalInvocation) {
 				Context cxt = ((ServiceInvoker) argument).getScope();
@@ -234,11 +225,11 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		try {
 			substitute(args);
 			if (selectedFidelity != null) {
-				Object obj = fidelities.get(selectedFidelity);
-				if (!isFidelityValid(obj)) {
-					obj = scope.asis(selectedFidelity);
+                Object obj = fidelities.getSelect();
+				if (!isFidelityValid(selectedFidelity)) {
+                    obj = scope.asis(selectedFidelity.getName());
 				}
-				value = (T)obj;
+                value = (T)obj;
 			}
 			if (mappable != null && value instanceof String) {
 				Object obj = mappable.asis((String) value);
@@ -344,8 +335,9 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 							scope.append(((Proc<T>) p).getScope());
 
 					}
-				} else if (p instanceof ServiceFidelity && fidelities != null) {
-					selectedFidelity = p.getName();
+				} else if (p instanceof Fidelity && fidelities != null) {
+					selectedFidelity = fidelities.getSelect(((Fidelity)p).getName());
+                    fidelities.setSelect(((Fidelity)p).getName());
 				} else if (p instanceof Context) {
 					if (scope == null)
 						scope = (Context) p;
@@ -433,7 +425,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.vfe.Variability#getType()
+	 * @see sorcer.vfe.Variability#getFiType()
 	 */
 	@Override
 	public Type getType() {
@@ -453,7 +445,7 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 	 */
 	@Override
 	public Class getValueType() {
-		return null;
+		return _2.getClass();
 	}
 
 	/* (non-Javadoc)
@@ -564,15 +556,16 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		return (mappable != null);
 	}
 
-	public Map<String, Object> getFidelities() {
+	public ServiceFidelity<Entry> getFidelities() {
 		return fidelities;
 	}
 
-	public String getSelectedFidelity() {
+	@Override
+	public Object getSelectedFidelity() {
 		return selectedFidelity;
 	}
 
-	public void setSelectedFidelity(String selectedFidelity) {
+	public void setSelectedFidelity(Entry selectedFidelity) {
 		this.selectedFidelity = selectedFidelity;
 	}
 	
@@ -680,27 +673,11 @@ public class Proc<T> extends Entry<T> implements Variability<T>, Mappable<T>,
 		
 	}
 
-	public void putFidelity(EntryList fidelity) throws EvaluationException,
-			RemoteException {
-		if (fidelities == null)
-			fidelities = new HashMap<String, Object>();
-		for (Entry e : fidelity)
-			fidelities.put(e.getName(), e.asis());
-	}
-
-	public void addFidelity(EntryList fidelity) throws EvaluationException,
-			RemoteException {
-		putFidelity(fidelity);
-	}
-
 	public void selectFidelity(String name) throws EntException {
-		if (fidelities.containsKey(name))
-			value = (T) fidelities.get(name);
-		else
-			throw new EntException("no such service fidelity: " + name + " at: " + this);
+		selectedFidelity = fidelities.getSelect(name);
 	}
 
-	public void setFidelities(Map<String, Object> fidelities) {
+	public void setFidelities(ServiceFidelity<Entry> fidelities) {
 		this.fidelities = fidelities;
 	}
 	

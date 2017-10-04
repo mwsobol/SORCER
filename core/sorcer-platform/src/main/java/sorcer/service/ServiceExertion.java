@@ -118,7 +118,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 Class serviceType = exertion.getServiceType();
                 if (provider != null) {
                     Task out = ((ServiceProvider)provider).getDelegate().doTask((Task) exertion, txn, args);
-                    // clear provider execution scope
+                    // clearSessions provider execution scope
                     out.getContext().setScope(null);
                     return (T) out;
                 } else if (Invocation.class.isAssignableFrom(serviceType)) {
@@ -1036,7 +1036,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     .append("[SORCER Service Exertion]\n")
                     .append("\tExertion Type:        " + getClass().getName()
                             + "\n")
-                    .append("\tExertion Name:        " + name + "\n")
+                    .append("\tExertion Tag:        " + name + "\n")
                     .append("\tExertion Status:      " + status + "\n")
                     .append("\tExertion ID:          " + mogramId + "\n")
                     .append("\tCreation Date:        " + sdf.format(creationDate) + "\n")
@@ -1055,7 +1055,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     .append("\tAccess Class:         " + accessClass + "\n")
                     .append("\tIs Export Controlled: " + isExportControlled + "\n")
                     .append("\tPriority:             " + priority + "\n")
-                    .append("\tProvider Name:        "
+                    .append("\tProvider Tag:        "
                             + getProcessSignature().getProviderName() + "\n")
                     .append("\tService Type:         "
                             + getProcessSignature().getServiceType() + "\n")
@@ -1071,5 +1071,10 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             info.append("\nExecution Time = " + time + "\n" + stdoutSep);
         }
         return info.toString();
+    }
+
+    @Override
+    public void setNegative(boolean negative) {
+        // do nothing
     }
 }

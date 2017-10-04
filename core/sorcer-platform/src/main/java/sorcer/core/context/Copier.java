@@ -18,7 +18,7 @@
 package sorcer.core.context;
 
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.Domain;
 
 import java.rmi.RemoteException;
 
@@ -32,7 +32,7 @@ public class Copier implements Evaluation<Context> {
 	private Context toContext;
 	private Arg[] toEntries;
 
-	public Copier(ServiceModel fromContext, Arg[] fromEntries, ServiceModel toContext, Arg[] toEntries) throws EvaluationException {
+	public Copier(Domain fromContext, Arg[] fromEntries, Domain toContext, Arg[] toEntries) throws EvaluationException {
 		this.fromContext = (Context)fromContext;
 		this.fromEntries = fromEntries;
 		this.toContext = (Context)toContext;
@@ -60,13 +60,28 @@ public class Copier implements Evaluation<Context> {
 	}
 
 	@Override
+	public void setNegative(boolean negative) {
+		// do nothing
+	}
+
+	@Override
+	public Context getScope() {
+		return fromContext;
+	}
+
+	@Override
+	public void setScope(Context context) {
+		fromContext = context;
+	}
+
+	@Override
 	public void substitute(Arg... entries) throws SetterException {
         ((ServiceContext)toContext).substitute(entries);
 	}
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {
-		ServiceModel cxt = Arg.getServiceModel(args);
+		Domain cxt = Arg.getServiceModel(args);
 		if (cxt != null) {
 			fromContext = (Context) cxt;
 			return getValue(args);

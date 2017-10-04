@@ -45,5 +45,10 @@ public interface  Evaluator <T> extends Evaluation<T> {
 	public void setParameterTypes(Class<?>[] types);
 	
 	public void setParameters(Object... args);
-	
+
+	public void setValueIsCurrent(boolean state);
+
+	public void update(Setup... entries) throws ContextException;
+
+	public void setNegative(boolean negative);
 }

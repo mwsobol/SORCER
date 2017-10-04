@@ -106,7 +106,7 @@ public class Task extends ServiceExertion {
 	public Task(String name, String description, List<Signature> signatures) {
 		this(name, description);
 		this.selectedFidelity = new ServiceFidelity(name);
-		this.selectedFidelity.type = ServiceFidelity.Type.SIG;
+		this.selectedFidelity.fiType = ServiceFidelity.Type.SIG;
 		this.selectedFidelity.selects.addAll(signatures);
 		this.selectedFidelity.select = signatures.get(0);
 	}
@@ -309,7 +309,7 @@ public class Task extends ServiceExertion {
 	 * for thin clients that do not use RMI or Jini.
 	 * 
 	 * @param type
-	 *            the type of needed task format
+	 *            the fiType of needed task format
 	 * @return
 	 */
 	public Exertion getUpdatedExertion(int type) {
@@ -419,8 +419,8 @@ public class Task extends ServiceExertion {
 	}
 
 	public void correctBatchSignatures() {
-		// if all signatures are of service process SRV type make all
-		// except the last one of preprocess PRE type
+		// if all signatures are of service process SRV fiType make all
+		// except the last one of preprocess PRE fiType
 		List<Signature> alls = selectedFidelity.selects;
 		if (alls.size() > 1) {
 			Signature lastSig = alls.get(alls.size() - 1);
@@ -442,7 +442,7 @@ public class Task extends ServiceExertion {
 	}
 
 	@Override
-	public Object get(String component) throws ServiceException {
+	public Object get(String component) {
 		return getFidelities().get(component);
 	}
 

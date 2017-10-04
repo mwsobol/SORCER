@@ -20,7 +20,6 @@ package sorcer.core.requestor;
 import groovy.lang.GroovyShell;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import org.codehaus.groovy.control.CompilationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
@@ -28,8 +27,6 @@ import sorcer.core.provider.RemoteLogger;
 import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.core.provider.logger.RemoteLoggerListener;
 import sorcer.netlet.ServiceScripter;
-import sorcer.netlet.util.NetletClassLoader;
-import sorcer.netlet.util.ScripterThread;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.tools.webster.InternalWebster;
@@ -49,6 +46,7 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 	/** Logger for logging information about this instance */
 	protected static final Logger logger = LoggerFactory.getLogger(ServiceRequestor.class.getName());
 
+    protected String name;
 	protected Properties props;
 	static protected Class target;
 	static protected String[] args;
@@ -75,12 +73,15 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 		requestor.postprocess();
 	}
 
-	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+	public Object exec(Arg... args) throws MogramException, RemoteException {
 		prepareToRun();
 		requestor.preprocess(Arg.asStrings(args));
 		try {
-			if (requestor.jobberName != null) {
+			if (args.length == 1 && args[0] instanceof Signature) {
+				// requestor services
+				Signature rs = (Signature) args[0];
+				return rs.exec(rs);
+			} else if (requestor.jobberName != null) {
 				Arg[] ext = new Arg[args.length+1];
 				System.arraycopy(args,  0, ext,  1, args.length);
 				ext[0] = prvName(requestor.jobberName);
@@ -357,4 +358,8 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 		}
 
 	}
+	
+    public String getName() {
+        return name;
+    }
 }

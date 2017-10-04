@@ -29,7 +29,7 @@ public interface Requestor extends Service, Client {
 	public void preprocess(String... args) throws MogramException, ContextException;
 
 	public void process(String... args) throws MogramException, ContextException;
-	
+
 	public void postprocess(String... args) throws MogramException, ContextException;
 
 }

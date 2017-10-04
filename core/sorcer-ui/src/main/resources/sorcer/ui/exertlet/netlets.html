@@ -1,4 +1,4 @@
-<style type="text/css">
+<style fiType="text/css">
 <!--
 .basicText {
 	font-family: Verdana, Geneva, sans-serif;
@@ -35,7 +35,7 @@ green {
   	    	</code><span class="light-blue"><code>&nbsp; &nbsp; context</code></span><code>("multiply", <span class="light-blue">inEnt</span>("arg/x1", 10.0),
   	    	<span class="light-blue">inEnt</span>("arg/x2", 50.0), <span class="light-blue"><br /> &nbsp; &nbsp; outEnt</span>("result/y1")));  </code></p>
 </blockquote>
-<p class="basicText">In the above task the operation is  specified by  <code>"multiply"</code> which is defined by the service type <code>Multiplier.class</code>. Service types are Java <em>interface types</em> that define the functionality  of services. Three basic types of context args are distinguished: <code>inEnt</code>, <code>outEnt</code>, and <code>inoutEnt</code>. Additional attributes identifying the service, for example a <em>service name</em>,  can be associated with the operator <code>sig</code> using the <code>prvName</code> operator.  </p>
+<p class="basicText">In the above task the operation is  specified by  <code>"multiply"</code> which is defined by the service fiType <code>Multiplier.class</code>. Service types are Java <em>interface types</em> that define the functionality  of services. Three basic types of context args are distinguished: <code>inEnt</code>, <code>outEnt</code>, and <code>inoutEnt</code>. Additional attributes identifying the service, for example a <em>service name</em>,  can be associated with the operator <code>sig</code> using the <code>prvName</code> operator.  </p>
 <p class="basicText">A <em>job exertion</em> is a hierarchical composition of exertion tasks, blocks, and other jobs that defines a service composition. For example, the service composition
   <code>f1(f2(f4,f5),f3)</code> can be defined as follows: <br />
   execution of <code>f2</code> (<code>f4=x1*x2 and f5=x3+x4</code> in parallel) and then <code>f3=f4-f5</code>.</p>
@@ -104,7 +104,7 @@ A  <em>block</em> is a concatenation of exertions with control-flow exertions to
 <p class="basicText">
     <span class="green"><span class="light-green"><code>@Load(group='xxxxx.xxxxxx', module='yyyy', version='vv.vv' [,classifier='zz'])</code></span></span>
     - a jar file that will be loaded from local or remote maven repository <br>
-    <span class="green"><span class="light-green"><code>@Load('group:module[:type:classifier]:version')</code></span></span>
+    <span class="green"><span class="light-green"><code>@Load('group:module[:fiType:classifier]:version')</code></span></span>
     - in a shorter notation
 </p>
 <p class="basicText">If you want to use these external classes in the elements that are being sent to remote providers please use the @Codebase annotation instead of @Load:
@@ -112,7 +112,7 @@ A  <em>block</em> is a concatenation of exertions with control-flow exertions to
 <p class="basicText">
     <span class="green"><span class="light-green"><code>@Codebase(group='xxxxx.xxxxxx', module='yyyy', version='vv.vv' [,classifier='zz'])</code></span></span>
     - a jar file that will be loaded from local or remote maven repository <br>
-    <span class="green"><span class="light-green"><code>@Codebase('group:module[:type:classifier]:version')</code></span></span>
+    <span class="green"><span class="light-green"><code>@Codebase('group:module[:fiType:classifier]:version')</code></span></span>
     - in a shorter notation
 </p>
 

@@ -2,7 +2,7 @@ package sorcer.core.context;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.Name;
+import sorcer.co.tuple.DependencyEntry;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
@@ -11,10 +11,7 @@ import sorcer.util.FileURLHandler;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Mike Sobolewski
@@ -52,7 +49,7 @@ public class ModelStrategy implements MogramStrategy, Serializable {
     // mapping from paths of this context to input paths of requestors
     protected Context outConnector;
 
-    protected Map<String, List<Path>> dependentPaths;
+    protected Map<String, List<DependencyEntry>> dependentPaths;
 
     protected ServiceFidelity<Arg> selectedFidelity;
 
@@ -62,10 +59,10 @@ public class ModelStrategy implements MogramStrategy, Serializable {
     // evaluated model response args
     protected Context outcome;
 
-    protected Exec.State execState = Exec.State.INITIAL;
+    protected Exec.State execState = Exec.State.NULL;
 
     // reponse paths of the runtime model
-    protected List<Arg> responsePaths = new ArrayList<Arg>();
+    protected List<Path> responsePaths = new ArrayList<Path>();
 
     public ModelStrategy(Mogram service) {
         target = service;
@@ -143,9 +140,9 @@ public class ModelStrategy implements MogramStrategy, Serializable {
         return getExceptions();
     }
 
-    public Map<String, List<Path>> getDependentPaths() {
+    public Map<String, List<DependencyEntry>> getDependentPaths() {
         if (dependentPaths == null) {
-            dependentPaths = new HashMap<String, List<Path>>();
+            dependentPaths = new HashMap<String, List<DependencyEntry>>();
         }
         return dependentPaths;
     }
@@ -200,11 +197,23 @@ public class ModelStrategy implements MogramStrategy, Serializable {
         outcome.putValue(path, value);
     }
 
-    public List<Arg> getResponsePaths() {
+    public List<Path> getResponsePaths() {
         return responsePaths;
     }
 
-    public void setResponsePaths(List<Arg> responsePaths) {
+    public void setResponsePaths(String... paths) {
+        List<Path> list = new ArrayList<>();
+        for (String s : paths) {
+            list.add(new Path(s));
+        }
+        this.responsePaths = list;
+    }
+
+    public void setResponsePaths(Path[] responsePaths) {
+        this.responsePaths = Arrays.asList(responsePaths);
+    }
+
+    public void setResponsePaths(List<Path> responsePaths) {
         this.responsePaths = responsePaths;
     }
 
@@ -270,6 +279,10 @@ public class ModelStrategy implements MogramStrategy, Serializable {
 
     public Exec.State getExecState() {
         return execState;
+    }
+
+    public void setExecState(Exec.State state) {
+        execState = state;
     }
 
 }

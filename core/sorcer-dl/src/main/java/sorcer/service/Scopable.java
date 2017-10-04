@@ -17,10 +17,6 @@
 
 package sorcer.service;
 
-import sorcer.service.modeling.ServiceModel;
-
-import java.rmi.RemoteException;
-
 /**
  * @author Mike Sobolewski
  */
@@ -28,6 +24,6 @@ public interface Scopable {
 
 	public Context getScope();
 	
-	public void setScope(Context scope) throws ContextException;
+	public void setScope(Context scope);
 
 }

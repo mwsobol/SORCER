@@ -142,7 +142,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 	/**
 	 * String command for clearing the context
 	 */
-	private static String CLEAR_CONTEXT = "clear";
+	private static String CLEAR_CONTEXT = "clearSessions";
 	/**
 	 * String command for saving the context
 	 */
@@ -682,7 +682,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 			}
 			this.setVisible(true); // show it
 
-			// clear input and output and create tree for new input
+			// clearSessions input and output and create tree for new input
 			treePanelInput.clear();
 			theContext = model.getContext();
 			buildTreeFromContext(treePanelInput, theContext);

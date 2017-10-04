@@ -61,7 +61,7 @@ import java.util.Map;
 
 	private String name;
 
-	protected Context<?> conditionalContext;
+	protected Context conditionalContext;
 
 	protected String evaluationPath;
 
@@ -226,7 +226,22 @@ import java.util.Map;
 		}
 	}
 
-    @Override
+	@Override
+	public void setNegative(boolean negative) {
+		// do nothing
+	}
+
+	@Override
+	public Context getScope() {
+		return conditionalContext;
+	}
+
+	@Override
+	public void setScope(Context scope) {
+		conditionalContext = scope;
+	}
+
+	@Override
     public void substitute(Arg... entries)
 			throws SetterException {
         ((ServiceContext)conditionalContext).substitute(entries);
@@ -321,7 +336,7 @@ import java.util.Map;
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+	public Object exec(Arg... args) throws MogramException, RemoteException {
 		Context cxt = (Context) Arg.getServiceModel(args);
 		if (cxt != null) {
 			conditionalContext = cxt;

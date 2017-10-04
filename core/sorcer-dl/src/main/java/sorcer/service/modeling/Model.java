@@ -26,7 +26,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Model extends ServiceModel, Mogram, Dependency {
+public interface Model extends Domain {
 
     /**
      * Returns a model current response context.
@@ -38,28 +38,10 @@ public interface Model extends ServiceModel, Mogram, Dependency {
     public Object getResult() throws ContextException, RemoteException;
 
     /**
-     * Returns a requested evaluation context with a provided input context.
-     *
-     * @param inputContext a context for this evaluation
-     * @return the result context of this evaluation
-     * @throws ContextException
-     * @throws RemoteException
-     */
-    public Context evaluate(Context inputContext) throws ContextException, RemoteException;
-
-    /**
      * Sets a buider of this model to be used for replication when needed.
      *
      * @param signature
      */
     public void setBuilder(Signature signature);
-
-    /**
-     * Returns a model controller for this model.
-     *
-     * @return this model control strategy
-     * @throws ModelException
-     */
-    public MogramStrategy getMogramStrategy();
 
 }

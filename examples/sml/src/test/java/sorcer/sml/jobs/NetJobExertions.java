@@ -26,7 +26,6 @@ import static sorcer.co.operator.input;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.pipe;
-import static sorcer.eo.operator.value;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.put;
 

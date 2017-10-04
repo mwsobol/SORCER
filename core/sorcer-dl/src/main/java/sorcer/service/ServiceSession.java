@@ -24,7 +24,7 @@ import java.util.Iterator;
  * Created by Mike Sobolewski
  */
 public interface ServiceSession {
-    
+
         /**
          * Returns the last time the requestor sent a request associated with this
          * session, as the number of milliseconds since midnight January 1, 1970

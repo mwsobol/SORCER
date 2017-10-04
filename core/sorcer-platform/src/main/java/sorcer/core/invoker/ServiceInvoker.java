@@ -66,7 +66,7 @@ import java.util.List;
  * of the context.
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ServiceInvoker<T> extends Observable implements Identifiable, Scopable, Evaluator<T>, Invocation<T>, Reactive<T>, Observer, Serializable {
+public class ServiceInvoker<T> extends Observable implements  Invocation<T>, Identifiable, Scopable, Evaluator<T>, Reactive<T>, Observer, Serializable {
 
 	private static final long serialVersionUID = -2007501128660915681L;
 	
@@ -81,9 +81,13 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 
 	//the cached eval
 	protected T value;
-		
+
+	protected boolean negative;
+
 	// invocation delegate to
 	Evaluator evaluator;
+
+	private boolean valueIsCurrent = false;
 
 	private boolean isReactive = false;
 
@@ -102,7 +106,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 			.getName());
 
 	public ServiceInvoker() {
-		this("invoker-" + count++);
+		this((String) null);
 	}
 	
 	public ServiceInvoker(String name) {
@@ -390,7 +394,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 		try {
 			init(this.args);
 			if (lambda != null) {
-				return lambda.call((Context)invokeContext);
+				return lambda.call(invokeContext);
 			} else if (evaluator != null) {
 				evaluator.addArgs(this.args);
 				return evaluator.getValue(entries);
@@ -449,7 +453,7 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	 * @see sorcer.service.Scopable#setScope(java.lang.Object)
 	 */
 	@Override
-	public void setScope(Context scope) throws ContextException {
+	public void setScope(Context scope) {
 		invokeContext = scope;
 	}
 	
@@ -544,6 +548,29 @@ public class ServiceInvoker<T> extends Observable implements Identifiable, Scopa
 	@Override
 	public void setParameters(Object... args) {
 		// implemented by subclasses
+	}
+
+	@Override
+	public void setValueIsCurrent(boolean state) {
+		valueIsCurrent = state;
+	}
+
+	@Override
+	public void update(Setup... entries) throws ContextException {
+		// implement in subclasses
+	}
+
+	public boolean isNegative() {
+		return negative;
+	}
+
+	@Override
+	public void setNegative(boolean negative) {
+		this.negative = negative;
+	}
+
+	public boolean isValueCurrent() {
+		return valueIsCurrent;
 	}
 
 	@Override

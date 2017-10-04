@@ -14,6 +14,7 @@ import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 import sorcer.service.Strategy.Shell;
+import sorcer.service.modeling.Modeling;
 
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
@@ -23,7 +24,6 @@ import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.value;
 import static sorcer.mo.operator.inConn;
 import static sorcer.mo.operator.outConn;
 
@@ -36,13 +36,18 @@ import static sorcer.mo.operator.outConn;
 public class Signatures {
 	private final static Logger logger = LoggerFactory.getLogger(Signatures.class);
 
-	@Test
-	public void newInstance() throws Exception {
+	public void instantiationWithSignature() throws Exception {
 
 		// Object orientation
 		Signature s = sig("new", Date.class);
 		// create a new instance
 		Object obj = instance(s);
+		logger.info("provider of s: " + obj);
+		assertTrue(obj instanceof Date);
+
+		s = sig(Date.class);
+		// create a new instance
+		obj = instance(s);
 		logger.info("provider of s: " + obj);
 		assertTrue(obj instanceof Date);
 
@@ -89,7 +94,7 @@ public class Signatures {
 		Object prv = provider(s);
 		logger.info("provider of s: " + prv);
 		logger.info("selector of s: " + selector(s));
-		logger.info("service type of s: " + type(s));
+		logger.info("service fiType of s: " + type(s));
 		assertTrue(prv instanceof Date);
 //		logger.info("time: " + exec(xrt("time", s)));
 		assertTrue(exec(xrt("time", s)) instanceof Long);
@@ -189,7 +194,7 @@ public class Signatures {
 	}
 
 	@Test
-	public void localArgSigService() throws Exception {
+	public void localSigServiceWithArg() throws Exception {
 
 		// request the local service
 		Signature ss = sig("add", AdderImpl.class);
@@ -476,12 +481,11 @@ public class Signatures {
 		logger.info("task context: " + context(task));
 
 		// the input context used by provides as-is
-		// but ouput context from provider remapped
+		// but output context from provider remapped
 		assertEquals(20.0, value(context(task), "arg/x1"));
 		assertEquals(80.0, value(context(task), "arg/x2"));
 		assertEquals(100.0, value(context(task), "result/y"));
 	}
-
 
 	@Test
 	public void remoteSigInConnector() throws Exception {

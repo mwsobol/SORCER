@@ -17,7 +17,6 @@
 
 package sorcer.mo;
 
-import sorcer.core.Name;
 import sorcer.core.context.MapContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
@@ -26,13 +25,15 @@ import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
+import sorcer.core.dispatch.DispatcherException;
+import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
-import sorcer.service.modeling.ServiceModel;
+import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
 
@@ -42,6 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static sorcer.co.operator.instance;
+import static sorcer.co.operator.list;
 import static sorcer.eo.operator.context;
 
 /**
@@ -49,12 +51,59 @@ import static sorcer.eo.operator.context;
  */
 public class operator {
 
+    public static Object eval(Model model, String selector,
+                              Arg... args) throws ContextException {
+        try {
+            return model.getValue(selector, args);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+    }
+
+    public static Context eval(Model model, Context context)
+            throws ContextException {
+        Context rc = null;
+        try {
+            rc = model.evaluate(context);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+        return rc;
+    }
+
+    public static Object eval(Model model, Arg... args)
+            throws ContextException {
+        try {
+            synchronized (model) {
+                if (model instanceof ProcModel) {
+                    return ((ProcModel) model).getValue(args);
+                } else {
+                    return ((ServiceContext) model).getValue(args);
+                }
+            }
+        } catch (Exception e) {
+            throw new ContextException(e);
+        }
+    }
+
+    public static ServiceFidelity<Domain> mdlFi(Domain... models) {
+        ServiceFidelity<Domain> fi = new ServiceFidelity(models);
+        fi.fiType = ServiceFidelity.Type.MODEL;
+        return fi;
+    }
+
+    public static ServiceFidelity<Domain> mdlFi(String fiName, Domain... models) {
+        ServiceFidelity<Domain> fi = new ServiceFidelity(fiName, models);
+        fi.fiType = ServiceFidelity.Type.MODEL;
+        return fi;
+    }
+
     public static <T> T putValue(Context<T> context, String path, T value) throws ContextException {
         context.putValue(path, value);
         return value;
     }
 
-    public static Object setValue(Model model, String entName, Object value)
+    public static Model setValue(Model model, String entName, Object value)
         throws ContextException {
         Object entry = model.asis(entName);
         if (entry == null)
@@ -80,7 +129,33 @@ public class operator {
         }
 
         ((ServiceMogram)model).setIsChanged(true);
-        return value;
+        return model;
+    }
+
+    public static Model setValue(Model model, String entName, String path, Object value)
+        throws ContextException {
+        Object entry = model.asis(entName);
+        if (entry instanceof Setup) {
+            ((Setup) entry).setEntry(path, value);
+        } else {
+            throw new ContextException("A Setup is required with: " + path);
+        }
+        return model;
+    }
+
+    public static Model setValue(Model model, String entName, Entry... entries)
+            throws ContextException {
+        Object entry = model.asis(entName);
+        if (entry != null) {
+            if (entry instanceof Setup) {
+                for (Entry e : entries) {
+                    ((Setup) entry).getContext().putValue(e.getName(), e.get());
+                }
+            }
+            ((Setup)entry).isValid(false);
+//            ((Setup)entry).getEvaluation().setValueIsCurrent(false);
+        }
+        return model;
     }
 
     public static Model setValue(Model model, Entry... entries) throws ContextException {
@@ -144,20 +219,22 @@ public class operator {
         return model;
     }
 
-    public static ServiceModel responseUp(ServiceModel model, String... responsePaths) throws ContextException {
+    public static Domain responseUp(Domain model, String... responsePaths) throws ContextException {
         for (String path : responsePaths)
-            ((ServiceContext)model).getMogramStrategy().getResponsePaths().add(new Name(path));
+            ((ServiceContext)model).getMogramStrategy().getResponsePaths().add(new Path(path));
         return model;
     }
 
-    public static ServiceModel responseDown(ServiceModel model, String... responsePaths) throws ContextException {
-        for (String path : responsePaths)
-            ((ServiceContext)model).getMogramStrategy().getResponsePaths().remove(new Name(path));
+    public static Domain clearResponse(Domain model) throws ContextException {
+        ((ServiceContext) model).getMogramStrategy().getResponsePaths().clear();
         return model;
     }
 
-    public static Entry ent(String path, ServiceModel model) {
-        return new Entry(path, model);
+    public static Domain responseDown(Domain model, String... responsePaths) throws ContextException {
+        for (String path : responsePaths) {
+            ((ServiceContext) model).getMogramStrategy().getResponsePaths().remove(new Path(path));
+        }
+        return model;
     }
 
     public static Entry result(Entry entry) throws ContextException {
@@ -176,15 +253,15 @@ public class operator {
         }
     }
 
-    public static Context result(ServiceModel model) throws ContextException {
+    public static Context result(Domain model) throws ContextException {
         return ((ServiceContext)model).getMogramStrategy().getOutcome();
     }
 
-    public static Object result(ServiceModel model, String path) throws ContextException {
+    public static Object result(Domain model, String path) throws ContextException {
         return ((ServiceContext)model).getMogramStrategy().getOutcome().asis(path);
     }
 
-    public static Object get(ServiceModel model, String path) throws ContextException {
+    public static Object get(Domain model, String path) throws ContextException {
         return ((ServiceContext)((ServiceContext)model).getMogramStrategy().getOutcome()).get(path);
     }
 
@@ -193,11 +270,11 @@ public class operator {
         return model;
     }
 
-    public static Context ins(ServiceModel model) throws ContextException {
+    public static Context ins(Domain model) throws ContextException {
         return inputs(model);
     }
 
-    public static Context allInputs(ServiceModel model) throws ContextException {
+    public static Context allInputs(Domain model) throws ContextException {
         try {
             return model.getAllInputs();
         } catch (RemoteException e) {
@@ -205,7 +282,7 @@ public class operator {
         }
     }
 
-    public static Context inputs(ServiceModel model) throws ContextException {
+    public static Context inputs(Domain model) throws ContextException {
         try {
             return model.getInputs();
         } catch (RemoteException e) {
@@ -213,11 +290,11 @@ public class operator {
         }
     }
 
-    public static Context outs(ServiceModel model) throws ContextException {
+    public static Context outs(Domain model) throws ContextException {
         return outputs(model);
     }
 
-    public static Context outputs(ServiceModel model) throws ContextException {
+    public static Context outputs(Domain model) throws ContextException {
         try {
             return model.getOutputs();
         } catch (RemoteException e) {
@@ -225,11 +302,11 @@ public class operator {
         }
     }
 
-    public static Object resp(ServiceModel model, String path) throws ContextException {
+    public static Object resp(Domain model, String path) throws ContextException {
         return response(model, path);
     }
 
-    public static Object response(ServiceModel model, String path) throws ContextException {
+    public static Object response(Domain model, String path) throws ContextException {
         try {
             return ((ServiceContext)model).getResponseAt(path);
         } catch (RemoteException e) {
@@ -237,30 +314,42 @@ public class operator {
         }
     }
 
-    public static Context resp(ServiceModel model) throws ContextException {
+    public static Context resp(Domain model) throws ContextException {
         return response(model);
     }
 
     public static Context response(Signature signature, Arg... args) throws ContextException {
         try {
-            return (Context) ((ServiceModel)instance(signature)).getResponse(args);
+            return (Context) ((Domain)instance(signature)).getResponse(args);
         } catch (RemoteException | SignatureException e) {
             throw new ContextException(e);
         }
     }
 
-    public static Context response(ServiceModel model, Object... items) throws ContextException {
+    public static Domain setResponse(Domain model, String... modelPaths) throws ContextException {
+        ((ModelStrategy)((Mogram)model).getMogramStrategy()).setResponsePaths(modelPaths);
+        return model;
+    }
+
+
+    public static Context response(Domain model, Object... items) throws ContextException {
         try {
             List<Arg> argl = new ArrayList();
-            List<Arg> paths = null;
+            List<Path> paths = new ArrayList();;
             for (Object item : items) {
-                if (item instanceof Arg) {
+                if (item instanceof Path) {
+                    paths.add((Path) item);
+                } if (item instanceof String) {
+                    paths.add(new Path((String) item));
+                } else if (item instanceof List
+                    && ((List) item).size() > 0
+                    && ((List) item).get(0) instanceof Path) {
+                    paths.addAll((List<Path>) item);
+                } else if (item instanceof Arg) {
                     argl.add((Arg) item);
-                } else if (item instanceof List) {
-                    paths = (List<Arg>) item;
                 }
             }
-            if (paths != null) {
+            if (paths != null && paths.size() > 0) {
                 ((ModelStrategy)((Mogram)model).getMogramStrategy()).setResponsePaths(paths);
             }
             Arg[] args = new Arg[argl.size()];
@@ -327,6 +416,61 @@ public class operator {
         return paradigm;
     }
 
+    public static Mogram addProjection(Mogram mogram, ServiceFidelity<Fidelity>... fidelities) {
+        for ( ServiceFidelity<Fidelity> fi : fidelities) {
+            ((FidelityManager)mogram.getFidelityManager()).put(fi.getName(), fi);
+        }
+        return mogram;
+    }
+
+    public static Mogram reconfigure(Mogram mogram, Fidelity... fidelities) throws ContextException {
+        List<Fidelity> fis = new FidelityList();
+        Fidelity[] fiArray = null;
+        try {
+            for (Fidelity fi : fidelities) {
+                if (fi instanceof ServiceFidelity) {
+                    List<Fidelity> selects = ((ServiceFidelity) fi).getSelects();
+                    fiArray = new Fidelity[selects.size()];
+                    selects.toArray(fiArray);
+                    mogram.getFidelityManager().reconfigure(fiArray);
+                } else if (fi instanceof Fidelity) {
+                    fis.add(fi);
+                }
+            }
+            if (fis.size() > 0) {
+                fiArray = new Fidelity[fis.size()];
+                fis.toArray(fiArray);
+                mogram.getFidelityManager().reconfigure(fiArray);
+            }
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+        return mogram;
+    }
+
+    public static Mogram reconfigure(Mogram model, List fiList) throws ContextException {
+        try {
+            if (fiList instanceof FidelityList) {
+                ((FidelityManager) model.getFidelityManager()).reconfigure((FidelityList) fiList);
+            } else {
+                throw new ContextException("A list of fidelities is required for reconfigurartion");
+            }
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+        return model;
+    }
+
+    public static Mogram morph(Mogram model, String... fiNames) throws ContextException {
+//        ((FidelityManager)model.getFidelityManager()).morph(fiNames);
+        try {
+            model.morph(fiNames);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+        return model;
+    }
+
     public static Model srvModel(Object... items) throws ContextException {
         sorcer.eo.operator.Complement complement = null;
         List<Signature> sigs = new ArrayList<>();
@@ -347,7 +491,7 @@ public class operator {
             } else if (item instanceof Srv && ((Entry)item)._2 instanceof MorphFidelity) {
                 morphFiEnts.add((Srv)item);
             } else if (item instanceof Fidelity) {
-                if (((Fidelity) item).getType().equals(Fidelity.Type.META)) {
+                if (((Fidelity) item).getFiType().equals(Fidelity.Type.META)) {
                     metaFis.add((ServiceFidelity<Fidelity>) item);
                 } else {
                     responsePaths = ((Fidelity) item);
@@ -395,12 +539,24 @@ public class operator {
         return (Model)context(dest);
     }
 
+    public static void update(Mogram mogram, Setup... entries) throws ContextException {
+        try {
+            mogram.update(entries);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+    }
+
     public static void run(sorcer.util.Runner runner, Arg... args) throws SignatureException, MogramException {
         runner.exec(args);
     }
 
-    public static String printDeps(Mogram model) throws SortingException {
+    public static String printDeps(Mogram model) throws SortingException, ContextException {
         return new SrvModelAutoDeps((SrvModel)model).printDeps();
     }
 
+    public static boolean provision(Signature... signatures) throws  DispatcherException {
+        ProvisionManager provisionManager = new ProvisionManager(Arrays.asList(signatures));
+        return provisionManager.deployServices();
+    }
 }

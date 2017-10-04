@@ -21,8 +21,6 @@ package sorcer.service;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Provider;
 
-import sorcer.service.modeling.ServiceModel;
-
 import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -75,7 +73,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
+public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter<T>, Paradigmatic {
 
 	/** parameter (proc) */
 	final static String PATH_PAR = "proc";
@@ -103,10 +101,10 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 	/** context nameID (cid) */
 	final static String CONTEXT_ID = "cid";
 
-	/** SORCER type (ft) */
+	/** SORCER fiType (ft) */
 	final static String DATA_NODE_TYPE = "dnt";
 
-	/** SORCER type */
+	/** SORCER fiType */
 	final static String VAR_NODE_TYPE = "vnt";
 
 	final static String APPLICATION = "appl";
@@ -130,7 +128,7 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 	/** a variable mark */
 	final static String VAR = "var";
 
-	/** a type variable type */
+	/** a fiType variable fiType */
 	final static String VT = "vt";
 
 	/** directional attribute values */
@@ -150,7 +148,13 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 
 	final static String SERVICE_CONTEXT = "cxt";
 
-	final static String PAR_MODEL = "Par Model";
+	final static String SRV_MODEL = "Service Domain";
+
+	final static String PROC_MODEL = "Procedural Domain";
+
+	final static String PAR_MODEL = "Parametric Domain";
+
+	final static String DATA_MODEL = "Data Domain";
 
 	/** EMPTY LEAF NODE i.e. node with no data and not empty string */
 	final static String EMPTY_LEAF = ":Empty";
@@ -168,6 +172,12 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 	final static String JOB_COMMENTS = "job" + SorcerConstants.CPS + "comments";
 
 	final static String JOB_FEEDBACK = "job" + SorcerConstants.CPS + "feedback";
+
+	// Domain Predictio Data Path
+	final static String PRED_PATH = "model" + SorcerConstants.CPS + "prediction"
+			+ SorcerConstants.CPS + "data";
+	final static String MDA_PATH = "model" + SorcerConstants.CPS + "mda"
+			+ SorcerConstants.CPS + "component";
 
 	// Domain Specific Data Path
 	final static String DSD_PATH = "domain" + SorcerConstants.CPS + "specific"
@@ -312,7 +322,7 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 
 	public Context append(Context context) throws ContextException;
 
-	public Context<T> updateEntries(ServiceModel context) throws ContextException;
+	public Context<T> updateEntries(Domain context) throws ContextException;
 	/**
 	 * Returns this context within its cuureent scope.
 	 *
@@ -320,17 +330,6 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 	 * @throws ContextException
 	 */
 	public Context getCurrentContext() throws ContextException;
-
-	/**
-	 * Returns a value of the object at the path as is
-	 * (no evaluation or invocation on this object).
-	 *
-	 * @param path
-	 *            the key (path)
-	 * @return this context value at the path
-	 * @throws ContextException
-	 */
-	public T asis(String path);
 
 	public void setReturnValue(Object value) throws ContextException;
 
@@ -492,7 +491,7 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 	/**
 	 * Returns boolean value designating if <code>attributeName</code> is an
 	 * attribute in the top-level context. Does not descend into linked
-	 * contexts. Is true if attribute is singleton or metaattribute type.
+	 * contexts. Is true if attribute is singleton or metaattribute fiType.
 	 *
 	 * @see #isLocalSingletonAttribute
 	 * @see #isLocalMetaattribute
@@ -833,7 +832,7 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 	 * descend into linked contexts to retrieve attributes (see
 	 * {@link #getAttributes} which does look in linked contexts).
 	 *
-	 * @return List of singleton attributes (all of type
+	 * @return List of singleton attributes (all of fiType
 	 *         <code>String</code>)
 	 * @see #getAttributes
 	 */
@@ -844,7 +843,7 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 	 * contexts to retrieve underlying singleton attributes (see
 	 * {@link #getAttributes} which does not look in linked contexts).
 	 *
-	 * @return List of meta attributes (all of type <code>String</code>)
+	 * @return List of meta attributes (all of fiType <code>String</code>)
 	 * @throws ContextException
 	 * @see #getAttributes
 	 */
@@ -856,7 +855,7 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 	 *
 	 * @param path
 	 *            the location in the context
-	 * @return List of meta associations (of type <code>String</code>)
+	 * @return List of meta associations (of fiType <code>String</code>)
 	 * @throws ContextException
 	 */
 	public List<String> metaassociations(String path) throws ContextException;
@@ -864,7 +863,7 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 	/**
 	 * Returns all locally defined attributes in this context (metacontext).
 	 *
-	 * @return Set of local attributes (all of type <code>String</code>)
+	 * @return Set of local attributes (all of fiType <code>String</code>)
 	 * @see #getAttributes
 	 */
 	public Set<String> localAttributes();
@@ -874,7 +873,7 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 	 * descend into linked contexts to retrieve meta attributes (see
 	 * {@link #compositeAttributes} which does look in linked contexts).
 	 *
-	 * @return List of meta attributes (all of type <code>String</code>)
+	 * @return List of meta attributes (all of fiType <code>String</code>)
 	 * @see #compositeAttributes
 	 */
 	public List<String> localCompositeAttributes();
@@ -885,7 +884,7 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 	 * {@link #localCompositeAttributes} which does not look in linked
 	 * contexts).
 	 *
-	 * @return List of meta attributes (all of type <code>String</code>)
+	 * @return List of meta attributes (all of fiType <code>String</code>)
 	 * @throws ContextException
 	 * @see #getAttributes
 	 */
@@ -897,7 +896,7 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 	 * {@link #localCompositeAttributes} or {@link #getAttributes} which do not
 	 * look in linked contexts).
 	 *
-	 * @return List of attributes (all of type <code>String</code>)
+	 * @return List of attributes (all of fiType <code>String</code>)
 	 * @throws ContextException
 	 */
 	public List<String> getAttributes() throws ContextException;
@@ -907,7 +906,7 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 	 *
 	 * @param path
 	 *            the location in the context
-	 * @return List of attributes (all of type <code>String</code>)
+	 * @return List of attributes (all of fiType <code>String</code>)
 	 * @throws ContextException
 	 */
 	public List<String> getAttributes(String path) throws ContextException;
@@ -916,7 +915,13 @@ public interface Context<T> extends ServiceModel, Mogram, Dependency, Mappable<T
 
 	public int size();
 
+	Context getDomain(String name) throws ContextException;
+
 	SignatureReturnPath getReturnPath();
+
+	public boolean compareTo(Object context);
+
+	public boolean compareTo(Object context, double delta);
 
 	Context setReturnPath(SignatureReturnPath returnPath);
 

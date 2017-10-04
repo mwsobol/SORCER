@@ -1,5 +1,6 @@
 package sorcer.service;
 
+import net.jini.config.*;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
@@ -7,13 +8,20 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ContextSelector;
+import sorcer.core.context.model.ent.Coupling;
+import sorcer.core.context.model.ent.MdaEntry;
 import sorcer.core.monitor.MonitoringSession;
+import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.provider.Provider;
+import sorcer.core.provider.ServiceProvider;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
+import sorcer.util.GenericUtil;
+import sorcer.util.Pool;
+import sorcer.util.Pools;
 
 import javax.security.auth.Subject;
 import java.io.Serializable;
@@ -69,6 +77,12 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     protected Projection projection;
 
     protected MogramStrategy mogramStrategy;
+
+    protected Differentiator differentiator;
+
+    protected ServiceFidelity<MdaEntry> mdaFi;
+
+    protected List<Coupling> couplings;
 
     protected ContextSelector contextSelector;
     /**
@@ -152,10 +166,12 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     //protected boolean isValid = true;
 
+    protected String configFilename;
+
     protected transient Provider provider;
 
     protected ServiceMogram() {
-        this(null);
+        this((String) null);
     }
 
     public ServiceMogram(String name) {
@@ -231,7 +247,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     public void trimAllNotSerializableSignatures() throws SignatureException {
         trimNotSerializableSignatures();
         for (Mogram m : getAllMograms()) {
-            ((ServiceMogram)m).trimNotSerializableSignatures();
+            ((ServiceMogram) m).trimNotSerializableSignatures();
         }
     }
 
@@ -415,24 +431,24 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return (priority == null) ? MIN_PRIORITY : priority;
     }
 
-	public Signature getProcessSignature() {
+    public Signature getProcessSignature() {
         if (selectedFidelity.select != null) {
             return selectedFidelity.select;
         }
 
-		Signature sig = null;
-		for (Signature s : selectedFidelity.selects) {
-			if (s.getType() == Signature.Type.PROC) {
-				sig = s;
-				break;
-			}
-		}
+        Signature sig = null;
+        for (Signature s : selectedFidelity.selects) {
+            if (s.getType() == Signature.Type.PROC) {
+                sig = s;
+                break;
+            }
+        }
         if (sig != null) {
             // a select is just a process signature for the selection
             selectedFidelity.select = sig;
         }
-		return sig;
-	}
+        return sig;
+    }
 
     public void trimNotSerializableSignatures() throws SignatureException {
         if (serviceFidelities != null) {
@@ -445,8 +461,8 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         }
     }
 
-	private void trimNotSerializableSignatures(ServiceFidelity<Signature> fidelity) throws SignatureException {
-        if (fidelity.getSelects().get(0)  instanceof Signature){
+    private void trimNotSerializableSignatures(ServiceFidelity<Signature> fidelity) throws SignatureException {
+        if (fidelity.getSelects().get(0) instanceof Signature) {
             Iterator<Signature> i = fidelity.getSelects().iterator();
             while (i.hasNext()) {
                 Class prvType = i.next().getServiceType();
@@ -457,7 +473,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
                 }
             }
         }
-	}
+    }
 
     public List<Signature> getApdProcessSignatures() {
         List<Signature> sl = new ArrayList<Signature>();
@@ -643,7 +659,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     public void setSelectedFidelity(ServiceFidelity fidelity) {
-        this.selectedFidelity =  fidelity;
+        this.selectedFidelity = fidelity;
     }
 
     public ContextSelector getContextSelector() {
@@ -657,7 +673,13 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     public Mogram getComponentMogram(String path) {
         return this;
     }
+
     abstract public Mogram clearScope() throws MogramException;
+
+    @Override
+    public void applyFidelity(String name) {
+        // implement in subclasses
+    }
 
     /**
      * <p>
@@ -709,8 +731,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
      * Assigns a monitor session for this mograms.
      * </p>
      *
-     * @param monitorSession
-     *            the monitorSession to setValue
+     * @param monitorSession the monitorSession to setValue
      */
     public void setMonitorSession(MonitoringSession monitorSession) {
         this.monitorSession = monitorSession;
@@ -763,10 +784,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     /**
-     * Initialization by a service provider when used as as a service bean.
+     * Initialization by a service provider (container)
+     * when this mogram is used as as a service bean.
      */
     public void init(Provider provider) {
         this.provider = provider;
+        logger.info("*** provider init properties:\n"
+                + GenericUtil.getPropertiesString(((ServiceProvider)provider).getProviderProperties()));
+        System.getProperties().putAll(((ServiceProvider)provider).getProviderProperties());
     }
 
     public void setBuilder(Signature builder) {
@@ -809,6 +834,10 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return fiManager;
     }
 
+    public FidelityManagement getRemoteFidelityManager() throws RemoteException {
+        return getFidelityManager();
+    }
+
     public void setFidelityManager(FidelityManagement fiManager) {
         this.fiManager = fiManager;
     }
@@ -821,15 +850,15 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.projection = projection;
     }
 
-    public ServiceFidelity selectFidelity(Arg... entries)  {
+    public ServiceFidelity selectFidelity(Arg... entries) {
         ServiceFidelity fi = null;
         if (entries != null && entries.length > 0) {
             for (Arg a : entries)
-                if (a instanceof Fidelity && ((Fidelity)a).type == Fidelity.Type.SELECT) {
+                if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.SELECT) {
                     fi = selectFidelity(a.getName());
-                } else if (a instanceof Fidelity && ((Fidelity)a).type == Fidelity.Type.COMPONENT) {
+                } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.COMPONENT) {
                     fi = selectComponentFidelity((Fidelity) a);
-                } else if (a instanceof ServiceFidelity && ((ServiceFidelity)a).type == ServiceFidelity.Type.META) {
+                } else if (a instanceof ServiceFidelity && ((ServiceFidelity) a).fiType == ServiceFidelity.Type.META) {
                     fi = selectCompositeFidelity((ServiceFidelity) a);
                 }
         }
@@ -846,16 +875,16 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
                 logger.warn("no such service fidelity: {} for: {}", selector, this);
         }
         if (option != null && option instanceof ServiceFidelity) {
-            ServiceFidelity sf = (ServiceFidelity)option;
-            if (sf.type == ServiceFidelity.Type.SIG) {
+            ServiceFidelity sf = (ServiceFidelity) option;
+            if (sf.fiType == ServiceFidelity.Type.SIG) {
                 selectedFidelity = (ServiceFidelity<Signature>) sf;
                 serviceFidelitySelector = selector;
-            } else if (sf.type == ServiceFidelity.Type.META) {
+            } else if (sf.fiType == ServiceFidelity.Type.META) {
                 selectCompositeFidelity(sf);
             }
         } else if (option instanceof Signature) {
             selectedFidelity = serviceFidelities.get(name);
-            selectedFidelity.select = (Signature)option;
+            selectedFidelity.select = (Signature) option;
         }
         return selectedFidelity;
     }
@@ -866,7 +895,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         ServiceFidelity cf = ext.getFidelities().get(fn);
         if (cf != null) {
             this.setSelectedFidelity(cf);
-			((ServiceMogram)ext).setSelectedFidelitySelector(fn);
+            ((ServiceMogram) ext).setSelectedFidelitySelector(fn);
         } else {
             logger.warn("no such fidelity for {}" + componentFidelity);
         }
@@ -874,10 +903,10 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     public ServiceFidelity selectCompositeFidelity(ServiceFidelity fidelity) {
-        if (fidelity.type == ServiceFidelity.Type.META) {
+        if (fidelity.fiType == ServiceFidelity.Type.META) {
             for (Object obj : fidelity.selects) {
                 if (obj instanceof ServiceFidelity) {
-                    if (((ServiceFidelity) obj).type == ServiceFidelity.Type.COMPONENT)
+                    if (((ServiceFidelity) obj).fiType == ServiceFidelity.Type.COMPONENT)
                         selectComponentFidelity((ServiceFidelity) obj);
                     else
                         selectFidelity(((ServiceFidelity) obj).getName());
@@ -887,7 +916,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return fidelity;
     }
 
-    public ServiceFidelity selectFidelity()  {
+    public ServiceFidelity selectFidelity() {
         if (serviceFidelitySelector != null && serviceFidelities != null
                 && serviceFidelities.get(name).getSelectNames().contains(serviceFidelitySelector)) {
             ServiceFidelity sf = (ServiceFidelity) serviceFidelities.get(name).getSelect(serviceFidelitySelector);
@@ -909,14 +938,24 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     @Override
     public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
-        if (fiManager != null)
+        if (fiManager != null) {
+            if (fidelities.length == 1 && fidelities[0] instanceof ServiceFidelity) {
+                List<Fidelity> fiList = ((ServiceFidelity) fidelities[0]).getSelects();
+                Fidelity[] fiArray = new Fidelity[fiList.size()];
+                fiList.toArray(fiArray);
+                fiManager.reconfigure(fiArray);
+            }
             fiManager.reconfigure(fidelities);
+        }
     }
 
     @Override
-    public void morph(String... metaFiNames) throws RemoteException {
-        if (fiManager != null)
+    public void morph(String... metaFiNames) throws ContextException, RemoteException {
+        if (fiManager != null) {
             fiManager.morph(metaFiNames);
+        } else {
+            throw new ContextException("No fiManager available in " + this.getClass().getName());
+        }
     }
 
     public void removeSignature(int index) {
@@ -955,4 +994,104 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     public void setSelectedMetafidelity(ServiceFidelity<ServiceFidelity> metafidelity) {
         selectedMetafidelity = metafidelity;
     }
+
+    public void setConfigFilename(String configFilename) {
+        this.configFilename = configFilename;
+    }
+
+    public void loadFiPool() {
+        if (configFilename == null) {
+            logger.warn("No mogram configuration file available for: {}", name);
+        } else {
+            initConfig(new String[]{configFilename});
+        }
+    }
+
+    public void initConfig(String[] args) {
+        Configuration config;
+        try {
+            config = ConfigurationProvider.getInstance(args, getClass()
+                    .getClassLoader());
+
+            Pool[] pools = (Pool[]) config.getEntry(Pools.COMPONENT, Pools.FI_POOL, Pool[].class);
+            Pool<Fidelity, Fidelity> pool = new Pool<>();
+            for (int i = 0; i < pools.length; i++) {
+                pool.putAll((Map<? extends Fidelity, ? extends ServiceFidelity>) pools[i]);
+            }
+            Pools.putFiPool(this, pool);
+
+            List[] projections = (List[]) config.getEntry(Pools.COMPONENT, Pools.FI_PROJECTIONS, List[].class);
+            Map<String, ServiceFidelity<Fidelity>> metafidelities =
+                    ((FidelityManager) getFidelityManager()).getMetafidelities();
+            for (int i = 0; i < projections.length; i++) {
+                for (Projection po : (List<Projection>) projections[i]) {
+                    metafidelities.put(po.getName(), po);
+                }
+            }
+        } catch (net.jini.config.ConfigurationException e) {
+            logger.warn("configuratin failed for: " + configFilename);
+            e.printStackTrace();
+        }
+        logger.debug("config fiPool: " + Pools.getFiPool(mogramId));
+    }
+
+    public <T> T getInstance() throws SignatureException {
+        if (builder != null) {
+            ServiceMogram mogram = (ServiceMogram) sorcer.co.operator.instance(builder);
+            Class<T> clazz;
+            clazz = (Class<T>) mogram.getClass();
+            return (T) clazz.cast(mogram);
+        } else {
+            throw new SignatureException("No mogram builder available");
+        }
+    }
+
+    public List<Coupling> getCouplings() {
+        return couplings;
+    }
+
+    public void setCouplings(List<Coupling> couplings) {
+        this.couplings = couplings;
+    }
+
+    public ServiceFidelity<MdaEntry> setMdaFi(Context context) throws ContextException {
+       if(mdaFi == null) {
+           Object mdaComponent = context.get(Context.MDA_PATH);
+           if (mdaComponent != null) {
+               if (mdaComponent instanceof MdaEntry) {
+                   mdaFi = new ServiceFidelity(((MdaEntry)mdaComponent).getName());
+                   mdaFi.addSelect((MdaEntry) mdaComponent);
+               } else if (mdaComponent instanceof ServiceFidelity
+                       && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
+                   mdaFi = (ServiceFidelity) mdaComponent;
+               }
+           }
+       }
+       return mdaFi;
+    }
+
+    @Override
+    public String getProjectionFi(String projectionName) throws ContextException, RemoteException {
+        return ((FidelityManager)fiManager).getProjectionFi(projectionName);
+    }
+
+    public Differentiator getDifferentiator() {
+        return differentiator;
+    }
+
+    public void setDifferentiator(Differentiator mogramDifferentiator) {
+        this.differentiator = mogramDifferentiator;
+    }
+
+    @Override
+    public Mogram deploy(List<Signature> builders) throws ConfigurationException {
+        // to be implemented in subclasses
+        return this;
+    }
+
+    @Override
+    public void update(Setup... contextEntries) throws ContextException, RemoteException {
+        // implement in subclasses
+    }
+
 }

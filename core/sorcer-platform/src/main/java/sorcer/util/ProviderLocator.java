@@ -180,7 +180,7 @@ public class ProviderLocator {
 	 * @param serviceClass
 	 *            The class object representing the interface of the service
 	 * @param serviceName
-	 *            The Name attribute of the service
+	 *            The Tag attribute of the service
 	 * @throws IOException
 	 * @throws InterruptedException
 	 * @return
@@ -324,7 +324,6 @@ public class ProviderLocator {
 		throw new SignatureException("Not implemented by this service accessor");
 	}
 
-	
 	public static Service getService(Signature signature) throws SignatureException {
 		Object proxy = null;
 		try {
@@ -365,12 +364,11 @@ public class ProviderLocator {
         return (Provider)getService(signature);
     }
 
-
     /*
- * (non-Javadoc)
- *
- * @see sorcer.service.DynamicAccessor#getService(sorcer.service.Signature)
- */
+ 	* (non-Javadoc)
+ 	*
+ 	* @see sorcer.service.DynamicAccessor#getService(sorcer.service.Signature)
+ 	*/
     public <T> T getProvider(String serviceName, Class<T> serviceType) {
         try {
             return (T)getServiceImpl(serviceType, null, serviceName, null, WAIT_FOR);

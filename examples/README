@@ -7,7 +7,7 @@ Explicit references to providers are not required!
 
 A reference to a provider and/or its action is called a signature.
 
-A signature specifies an activity by an operation and its service type 
+A signature specifies an activity by an operation and its service fiType
 (context-oriented Java class or interface).
 	
 Service data and control strategy are context-based - distributed associative storage.

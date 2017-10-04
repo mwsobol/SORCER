@@ -103,7 +103,7 @@ public class AdderUI extends JPanel implements SorcerConstants {
 		cmdPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
 
 		btn = new JButton("Clear");
-		btn.setActionCommand("clear");
+		btn.setActionCommand("clearSessions");
 		btn.addActionListener(new ArithmeticActionListener());
 		cmdPanel.add(btn);
 
@@ -143,7 +143,7 @@ public class AdderUI extends JPanel implements SorcerConstants {
 
 		public void actionPerformed(ActionEvent ae) {
 			String selector = ae.getActionCommand();
-			if (selector.equals("clear")) {
+			if (selector.equals("clearSessions")) {
 				inField.setText("");
 				outText.setText("");
 				context = null;

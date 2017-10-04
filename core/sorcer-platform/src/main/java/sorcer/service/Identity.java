@@ -77,7 +77,7 @@ public abstract class Identity implements Serializable, Identifiable {
 
 	/**
 	 * setName - Method that allows setting of the name of a Identity Object
-	 * @param name -Name of the Identity Object
+	 * @param name -Tag of the Identity Object
 	 */
 	public void setName(String name) {
 		this.name = name;

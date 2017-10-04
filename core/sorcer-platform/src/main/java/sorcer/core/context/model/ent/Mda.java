@@ -1,7 +1,7 @@
 /*
  * Copyright 2013 the original author or authors.
  * Copyright 2013 SorcerSoft.org.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,5 +17,16 @@
 
 package sorcer.core.context.model.ent;
 
-public interface EntModeling {
+import sorcer.service.Context;
+import sorcer.service.ContextException;
+import sorcer.service.modeling.Model;
+
+/**
+ * Created by Mike Sobolewski on 6/3/17.
+ */
+
+public interface Mda {
+
+    public void analyze(Model model, Context context) throws ContextException;
+
 }

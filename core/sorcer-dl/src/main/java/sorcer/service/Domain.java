@@ -15,19 +15,38 @@
  * limitations under the License.
  */
 
-package sorcer.service.modeling;
-
-import sorcer.service.*;
+package sorcer.service;
 
 import java.rmi.RemoteException;
 
 /**
  * Created by Mike Sobolewski on 7/26/16.
  */
-public interface ServiceModel extends Arg {
+public interface Domain extends Mogram, Dependency {
 
-	/**
-	 * Returns the context of all responses of this model with a provided configuration.
+    /**
+     * Returns a requested evaluation context with a provided input context and arguments.
+     *
+     * @param inputContext a context for this evaluation
+     * @return the result context of this evaluation
+     * @throws ContextException
+     * @throws RemoteException
+     */
+    public Context evaluate(Context inputContext, Arg... args) throws ContextException, RemoteException;
+
+    /**
+     * Returns a value of the object at the path as is
+     * (no evaluation or invocation on this object).
+     *
+     * @param path
+     *            the variable name
+     * @return this model value at the path
+     * @throws ModelException
+     */
+    public Object asis(String path);
+
+    /**
+	 * Returns the context of all responses of this domain with a provided configuration.
 	 *
 	 * @param args optional configuration arguments
 	 * @return
@@ -38,7 +57,7 @@ public interface ServiceModel extends Arg {
 
 
 	/**
-	 * Returns the input context of this model.
+	 * Returns the input context of this domain.
 	 *
 	 * @return the input context
 	 * @throws ContextException
@@ -47,7 +66,7 @@ public interface ServiceModel extends Arg {
 	public Context getInputs() throws ContextException, RemoteException;
 
 	/**
-	 * Returns the input context of this model with all inputs (in and inout directions).
+	 * Returns the input context of this domain with all inputs (in and inout directions).
 	 *
 	 * @return the input context
 	 * @throws ContextException
@@ -56,7 +75,7 @@ public interface ServiceModel extends Arg {
 	public Context getAllInputs() throws ContextException, RemoteException;
 
 	/**
-	 * Returns the output context of this model.
+	 * Returns the output context of this domain.
 	 *
 	 * @return the output context
 	 * @throws ContextException
@@ -65,7 +84,7 @@ public interface ServiceModel extends Arg {
 	public Context getOutputs() throws ContextException, RemoteException;
 
 	/**
-	 * Returns a input connector as a map of input paths of tis model mapped to output paths of the sender.
+	 * Returns a input connector as a map of input paths of this domain mapped to output paths of the sender.
 	 * An input connector specifies a map of an input context of this model.
 	 *
 	 * @param args optional configuration arguments
@@ -76,8 +95,8 @@ public interface ServiceModel extends Arg {
 	public Context getInConnector(Arg... args) throws ContextException, RemoteException;
 
 	/**
-	 * Returns a output connector as a map of output paths of tis model mapped to input paths of the receiver.
-	 * An output connector specifies a map of an output context of this model.
+	 * Returns a output connector as a map of output paths of tis domain mapped to input paths of the receiver.
+	 * An output connector specifies a map of an output context of this domain.
 	 *
 	 * @param args optional configuration arguments
 	 * @return
@@ -87,28 +106,16 @@ public interface ServiceModel extends Arg {
 	public Context getOutConnector(Arg... args) throws ContextException, RemoteException;
 
 	/**
-	 * Returns a value of the object at the path
+	 * Returns a value of the object at the path od this domain
 	 * (evaluation or invocation on this object if needed).
 	 *
 	 * @param path
 	 *            the variable name
-	 * @return this model value at the path
+	 * @return this domain value at the path
 	 * @throws ModelException
 	 */
 	public Object getValue(String path, Arg... args) throws ContextException, RemoteException;
 
-	/**
-	 * Returns a value of the object at the path as is
-	 * (no evaluation or invocation on this object).
-	 *
-	 * @param path
-	 *            the variable name
-	 * @return this model value at the path
-	 * @throws ModelException
-	 */
-	public Object asis(String path);
-
-	public ServiceModel add(Identifiable... objects) throws ContextException,
+	public Domain add(Identifiable... objects) throws ContextException,
 			RemoteException;
-
 }

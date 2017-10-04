@@ -6,6 +6,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.service.ContextException;
 import sorcer.service.ServiceSession;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -170,10 +171,14 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
     }
 
     @Override
+    public String toString() {
+        return id.toString();
+    }
+
+    @Override
     public Uuid getId() {
         return id;
     }
-
     /**
      * Invalidates this session then unbinds any objects bound to it.
      */

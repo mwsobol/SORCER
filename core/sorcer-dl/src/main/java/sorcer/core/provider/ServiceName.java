@@ -77,7 +77,7 @@ public class ServiceName extends ProviderName {
     @Override
     public void setName(String name) {
         if (name != null)
-            throw  new RuntimeException("Name is not modifible!");
+            throw  new RuntimeException("Tag is not modifible!");
         else
             this.name = name;
     }

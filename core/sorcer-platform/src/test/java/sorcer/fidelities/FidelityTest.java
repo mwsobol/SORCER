@@ -64,8 +64,8 @@ public class FidelityTest {
 		fm.add(fiEnt(5, fis(fi("atX", "x1"), fi("atY", "y2"))));
 		logger.info("fi map: " + fm);
 
-		assertEquals(fm.get(2), fiList(fi("atX", "x1")));
-		assertEquals(fm.get(5), fiList(fi("atX", "x1"), fi("atY", "y2")));
+		assertEquals(fm.get(2), fis(fi("atX", "x1")));
+		assertEquals(fm.get(5), fis(fi("atX", "x1"), fi("atY", "y2")));
 	}
 
 	@Test
@@ -87,10 +87,10 @@ public class FidelityTest {
         fiMap.populateFidelities(dataTable.getRowCount()-1);
         logger.info("fi map populated: " + fiMap);
         assertEquals(fiMap.get(0), null);
-        assertEquals(fiMap.get(1), fiList(fi("atX", "x1")));
-        assertEquals(fiMap.get(2), fiList(fi("atX", "x1")));
-        assertEquals(fiMap.get(4), fiList(fi("atX", "x1"), fi("atY", "y2")));
-        assertEquals(fiMap.get(5), fiList(fi("atX", "x1"), fi("atY", "y2")));
+        assertEquals(fiMap.get(1), fis(fi("atX", "x1")));
+        assertEquals(fiMap.get(2), fis(fi("atX", "x1")));
+        assertEquals(fiMap.get(4), fis(fi("atX", "x1"), fi("atY", "y2")));
+        assertEquals(fiMap.get(5), fis(fi("atX", "x1"), fi("atY", "y2")));
     }
 
     @Test
@@ -111,10 +111,10 @@ public class FidelityTest {
         FiMap fiMap = new FiMap(dataTable);
         logger.info("fi map: " + fiMap);
         assertEquals(fiMap.get(0), null);
-        assertEquals(fiMap.get(1), fiList(fi("atX", "x1")));
-        assertEquals(fiMap.get(2), fiList(fi("atX", "x1")));
-        assertEquals(fiMap.get(4), fiList(fi("atX", "x1"), fi("atY", "y2")));
-        assertEquals(fiMap.get(5), fiList(fi("atX", "x1"), fi("atY", "y2")));
+        assertEquals(fiMap.get(1), fis(fi("atX", "x1")));
+        assertEquals(fiMap.get(2), fis(fi("atX", "x1")));
+        assertEquals(fiMap.get(4), fis(fi("atX", "x1"), fi("atY", "y2")));
+        assertEquals(fiMap.get(5), fis(fi("atX", "x1"), fi("atY", "y2")));
     }
 
     @Test

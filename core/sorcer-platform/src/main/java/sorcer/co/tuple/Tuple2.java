@@ -118,6 +118,21 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 		return this._2;
 	}
 
+	@Override
+	public void setNegative(boolean negative) {
+		// do nothing
+	}
+
+	@Override
+	public Context getScope() {
+		return null;
+	}
+
+	@Override
+	public void setScope(Context scope) {
+		// do nothing
+	}
+
 	/* (non-Javadoc)
 	 * @see sorcer.service.Setter#setValue(java.lang.Object)
 	 */
@@ -162,7 +177,7 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 	}
 
 	@Override
-	public Object exec(Arg... entries) throws ServiceException, RemoteException, TransactionException {
+	public Object exec(Arg... entries) throws ServiceException, RemoteException {
 		return getValue(entries);
 	}
 

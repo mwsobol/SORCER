@@ -443,7 +443,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 			parseEntry(entry);
 		}
 
-		private String[] _cols = new String[] { "Type", "Name", "Value" };
+		private String[] _cols = new String[] { "Type", "Tag", "Value" };
 
 		public int getRowCount() {
 			return _data.size();

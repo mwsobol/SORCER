@@ -48,7 +48,7 @@ public class ContextResult<Objec> extends ServiceContext<Object> {
 		
 	public ContextResult(MethodInvoker<?> invoker) throws ContextException {
 		putValue("exit/eval", 0);
-		putValue("invoker/type", invoker.getSelector());
+		putValue("invoker/fiType", invoker.getSelector());
 		putValue("invoked/method", invoker.getSelector());
 		putValue("method/parameters", invoker.getParameters());
 		putValue("method/parameter/types", invoker.getParameterTypes());

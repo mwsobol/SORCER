@@ -308,7 +308,8 @@ public class GenericUtil {
 		// shorten the mcrcache path for windows...hit a limit on some installations
 		scriptVect.add("export IS_CYGWIN=`uname -s | awk 'BEGIN{flag=0} {if ($0~/CYGWIN/) {flag=1}} END{print flag}'`");
 		scriptVect.add("if [ $IS_CYGWIN -eq 1 ]; then");
-		scriptVect.add("\texport MCR_CACHE_ROOT=`cygpath -ds $MCR_CACHE_ROOT`");
+//		scriptVect.add("\texport MCR_CACHE_ROOT=`cygpath -ds $MCR_CACHE_ROOT`");
+		scriptVect.add("\texport MCR_CACHE_ROOT=`cygpath -w $MCR_CACHE_ROOT`");
 		scriptVect.add("\techo \"MCR_CACHE_ROOT=$MCR_CACHE_ROOT\"");
 		scriptVect.add("fi");
 				
@@ -769,8 +770,8 @@ public class GenericUtil {
 	}
 
 	/**
-	 * The method returns an Object of type fullClassName using a constructor
-	 * from that type with arguments matching the types supplied in the
+	 * The method returns an Object of fiType fullClassName using a constructor
+	 * from that fiType with arguments matching the types supplied in the
 	 * constructorArgs.
 	 */
 	public static Object getInstance(String fullClassName,
@@ -2729,11 +2730,19 @@ public class GenericUtil {
 	 * @throws IOException
 	 */
 	public static void writeUrlToFile(URL inputUrl, File localInputFile)
-			throws IOException {
-		InputStream is = inputUrl.openStream();
-		redirectInputStream2File(is, localInputFile);
+			throws Exception {
+        InputStream is = null;
+        try {
+            is = inputUrl.openStream();
+            redirectInputStream2File(is, localInputFile);
+        } catch (Exception e) {
+            if (is != null) is.close();
+            throw(e);
+        } finally {
+            if (is != null) is.close();
+        }
 	}
-	
+
 	/**
 	 * Downloads url directory to target directory (url directory will be 
 	 * subdirectory of target directory); example:
@@ -3010,7 +3019,7 @@ public class GenericUtil {
                 /* Subclasses of URLClassLoader may override getURLs(), in order to
                  * return the URLs of the provided export codebase. This is a workaround to get
                  * the search path (not the codebase) of the URLClassLoader. We get the ucp property from the
-                 * URLCLassLoader (of type sun.misc.URLClassPath), and invoke the sun.misc.URLClassPath.getURLs()
+                 * URLCLassLoader (of fiType sun.misc.URLClassPath), and invoke the sun.misc.URLClassPath.getURLs()
                  * method */
 				try {
                     try {
@@ -4343,7 +4352,7 @@ class StreamGobbler extends Thread {
 	
 	public void closeDown() {
 		GenericUtil.appendFileContents("StreamGobbler.closingDown(): setting flag to stop running "
-				+ " keepGoing = false now; stream gobbler type = " + type, dir);
+				+ " keepGoing = false now; stream gobbler fiType = " + type, dir);
 		keepGoing = false;
 	}
 	
@@ -4355,29 +4364,29 @@ class StreamGobbler extends Thread {
 			while ((line = br.readLine()) != null && keepGoing) {
 				
 				GenericUtil.appendFileContents("StreamGobbler.run(): while loop; "
-						+ " stream gobbler type = " + type + "; line = " + line, dir);
+						+ " stream gobbler fiType = " + type + "; line = " + line, dir);
 				
 				if (displayStreamOutput) System.out.println(type + ">" + line);
 				
 				GenericUtil.appendFileContents("StreamGobbler.run(): while loop; "
-						+ " stream gobbler type = " + type + "; here0", dir);
+						+ " stream gobbler fiType = " + type + "; here0", dir);
 				
 				logPw.println(line);
 				
 				
 				GenericUtil.appendFileContents("StreamGobbler.run(): while loop; "
-						+ " stream gobbler type = " + type + "; here1", dir);
+						+ " stream gobbler fiType = " + type + "; here1", dir);
 				
 				logPw.flush();
 				
 				
 				GenericUtil.appendFileContents("StreamGobbler.run(): while loop; "
-						+ " stream gobbler type = " + type + "; here2", dir);
+						+ " stream gobbler fiType = " + type + "; here2", dir);
 				
 				while (!br.ready() && keepGoing) {
-					//System.out.println("gobbler type = " + type + " is not ready.");
+					//System.out.println("gobbler fiType = " + fiType + " is not ready.");
 					GenericUtil.appendFileContents("StreamGobbler.run(): inner while loop; "
-							+ "br not ready; stream gobbler type = " + type + "keepGoing = " + keepGoing, dir);
+							+ "br not ready; stream gobbler fiType = " + type + "keepGoing = " + keepGoing, dir);
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
@@ -4386,7 +4395,7 @@ class StreamGobbler extends Thread {
 				}
 				if (!keepGoing) break;
 			}
-			GenericUtil.appendFileContents("StreamGobbler.run(): exited run inner loop for type = "
+			GenericUtil.appendFileContents("StreamGobbler.run(): exited run inner loop for fiType = "
 					+ type + "; keepGoing = " + keepGoing, dir);
 			logPw.flush();
 			logPw.close();
@@ -4394,7 +4403,7 @@ class StreamGobbler extends Thread {
 			isr.close();
 			is.close();
 		} catch (IOException ioe) {
-			System.out.println("***exception in gobbler type = " + type + ": " + ioe);
+			System.out.println("***exception in gobbler fiType = " + type + ": " + ioe);
 			GenericUtil.appendFileContents("StreamGobbler.run(): exception = "
 					+ ioe, dir);
 			ioe.printStackTrace();

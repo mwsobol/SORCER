@@ -11,7 +11,7 @@ ntlSignature : 'sig' '(' ( sigName ',' )? 'filePath' '(' (netletFilename | netle
 
 bldrSignature : 'sig' '('( sigName ',' )? classSelector ','classType ')' ;
 
-prvSpec : (srvType | 'type' '(' srvTypeName ')') (',' matchTypes)? (',' (prvId))? (',' prvDeployment)? | bldrSignature | prvInstance ;
+prvSpec : (srvType | 'fiType' '(' srvTypeName ')') (',' matchTypes)? (',' (prvId))? (',' prvDeployment)? | bldrSignature | prvInstance ;
 srvType : classType | interfaceType ;
 opSpec  : (selector | signatureOp) (',' srvResult)? (',' inputConnector)? (',' outputConnector)? ( ',' dataContext )? ;
 matchTypes : 'types' '(' (interfaceType ',')* interfaceType ')' ; 

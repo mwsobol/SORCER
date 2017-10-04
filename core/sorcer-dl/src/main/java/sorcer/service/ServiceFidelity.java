@@ -1,23 +1,4 @@
 /*
- * Copyright 2014 the original author or authors.
- * Copyright 2014 SorcerSoft.org.
- *  
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package sorcer.service;
-
-/*
  * Copyright 2016 the original author or authors.
  * Copyright 2016 SorcerSoft.org.
  *
@@ -33,8 +14,11 @@ package sorcer.service;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import net.jini.core.transaction.TransactionException;
-import sorcer.core.Name;
+
+package sorcer.service;
+
+import sorcer.core.Tag;
+import sorcer.service.modeling.Reference;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -52,34 +36,34 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 
 	public ServiceFidelity() {
 		super();
-		name = "fidelity" + count++;
+		fiName = "fidelity" + count++;
 	}
 
 	public ServiceFidelity(Type type) {
 		this();
-		this.type = type;
+		this.fiType = type;
 	}
 	public ServiceFidelity(String name) {
-		this.name = name;
+		this.fiName = name;
 	}
 
 	public ServiceFidelity(String name, String path) {
-		this.name = name;
+		this.fiName = name;
 		this.path = path;
 	}
 
 	public ServiceFidelity(Arg name) {
-		this.name = name.getName();
+		this.fiName = name.getName();
 	}
 
 	public ServiceFidelity(Fidelity<T> fi) {
-		this.name = fi.getName();
+		this.fiName = fi.getName();
 		this.path = fi.getPath();
 		this.select = fi.getSelect();
 	}
 
 	public ServiceFidelity(T[] selects) {
-		name = "fidelity" + count++;
+		fiName = "fidelity" + count++;
 		for (T s : selects)
 			this.selects.add(s);
 		select =  selects[0];
@@ -95,19 +79,21 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 	}
 
 	public ServiceFidelity(String... selects) {
-		this.name = "";
+		this.fiName = "";
+		fiType = Type.NAME;
 		for (String s : selects)
-			this.selects.add((T) new Name(s));
+			this.selects.add((T) new Tag(s));
 	}
 
 	public ServiceFidelity(String name, String... selects) {
-		this.name = name;
+		this.fiName = name;
+		fiType = Type.NAME;
 		for (String s : selects)
-			this.selects.add((T) new Name(s));
+			this.selects.add((T) new Tag(s));
 	}
 
 	public ServiceFidelity(String name, T... selects) {
-		this.name = name;
+		this.fiName = name;
 		for (T s : selects)
 			this.selects.add(s);
 	}
@@ -116,30 +102,30 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 		for (T s : fidelity.selects)
 			selects.add(s);
 		this.path = fidelity.path;
-		this.type = fidelity.type;
-		if (fidelity.name != null)
-			this.name = fidelity.name;
+		this.fiType = fidelity.fiType;
+		if (fidelity.fiName != null)
+			this.fiName = fidelity.fiName;
 		else
-			this.name = "fidelity" + count++;
+			this.fiName = "fidelity" + count++;
 	}
 
 	public ServiceFidelity(String name, ServiceFidelity<T> fidelity) {
 		for (T s : fidelity.selects)
 			selects.add(s);
 		this.path = fidelity.path;
-		this.type = fidelity.type;
-		this.name = name;
+		this.fiType = fidelity.fiType;
+		this.fiName = name;
 	}
 
 	public ServiceFidelity(String name, List<T> selectors) {
 		for (T s : selectors)
 			selects.add(s);
-		this.name = name;
+		this.fiName = name;
 	}
 
 	public ServiceFidelity(String name, T selector) {
 		selects.add(selector);
-		this.name = name;
+		this.fiName = name;
 	}
 
 	public T getSelect() {
@@ -147,7 +133,6 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 		if (select == null && selects.size() > 0) {
 			select = selects.get(0);
 		}
-
 		return select;
 	}
 
@@ -185,7 +170,7 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 	}
 
 	@Override
-	public Object exec(Arg... args) throws ServiceException, RemoteException, TransactionException {
+	public Object exec(Arg... args) throws ServiceException, RemoteException {
 		if (select instanceof Service) {
 			return ((Service)select).exec(args);
 		} else return select;
@@ -194,7 +179,7 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 	@Override
 	public boolean equals(Object obj) {
 		if ((obj instanceof ServiceFidelity) &&
-				name.equals(((ServiceFidelity)obj).getName()) &&
+				fiName.equals(((ServiceFidelity)obj).getName()) &&
 				path.equals(((ServiceFidelity)obj).getPath())) {
 			return true;
 		} else {
@@ -219,6 +204,22 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 	}
 
 	public List<T> getSelects() {
+		return selects;
+	}
+
+	public List getSelects(Context scope) throws ContextException {
+		if (selects.get(0) instanceof Reference) {
+			List<Object> ss = new ArrayList();
+			for (Object s : selects) {
+				try {
+					((Reference)s).setScope(scope);
+					ss.add(((Reference)s).getValue());
+				} catch (Exception e) {
+					throw new ContextException(e);
+				}
+			}
+			return ss;
+		}
 		return selects;
 	}
 
@@ -266,10 +267,10 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 		}
 		return fis;
 	}
-
+	
 	@Override
 	public String toString() {
-		return (path != null ? name + "@" + path : name )
+		return (path != null ? fiName + "@" + path : fiName )
 				+ (selects != null && selects.size() > 0 ? ":" + selects : "");
 	}
 

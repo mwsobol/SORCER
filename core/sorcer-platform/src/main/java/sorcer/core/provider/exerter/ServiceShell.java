@@ -42,7 +42,7 @@ import sorcer.core.dispatch.ExertionSorter;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.FiMogram;
+import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.NetletSignature;
@@ -206,7 +206,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 					return (T) out;
 				}
 			} else {
-				((Model)mogram).getResponse();
+				((Context)mogram).getResponse();
 				return (T) mogram;
 			}
 		} catch (ContextException e) {
@@ -424,14 +424,15 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
                 // check proxy cache and ping with a provider name
 				try {
 					provider = proxies.get(signature);
-					//((Provider)provider).getProviderName();
+					// check if cached proxy is still alive
+					((Provider)provider).getProviderName();
 				} catch(Exception e) {
 					proxies.refresh(signature);
 					provider = proxies.get(signature);
 				}
 				if (provider == null) {
 					String message =
-							String.format("Provider name: [%s], type: %s not found, make sure it is running and there is " +
+							String.format("Provider name: [%s], fiType: %s not found, make sure it is running and there is " +
 											"an available lookup service with correct discovery settings",
 									signature.getProviderName(), signature.getServiceType().getName());
 					logger.error(message);
@@ -490,13 +491,13 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 		}
 		exertion.getControlContext().appendTrace(String.format("service shell for signature: %s", signature));
 		logger.info("Provider found for: {}", signature);
-		if (((Provider) provider).mutualExclusion()) {
-			try {
-				return serviceMutualExclusion((Provider) provider, exertion, transaction);
-			} catch (SignatureException e) {
-				throw new MogramException(e);
-			}
-		} else {
+//		if (((Provider) provider).mutualExclusion()) {
+//			try {
+//				return serviceMutualExclusion((Provider) provider, exertion, transaction);
+//			} catch (SignatureException e) {
+//				throw new MogramException(e);
+//			}
+//		} else {
 			// test exertion for serialization
 //			try{
 //				ObjectLogger.persist("exertionfiles.srl", exertion);
@@ -521,7 +522,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 				result = exertion;
 			}
 			return result;
-		}
+//		}
 	}
 
 	private Exertion serviceMutualExclusion(Provider provider,
@@ -555,9 +556,9 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 	}
 
 	/**
-	 * Depending on provider access type correct inconsistent signatures for
+	 * Depending on provider access fiType correct inconsistent signatures for
 	 * composite mograms only. Tasks go either to its provider directly or
-	 * Spacer depending on their provider access type (PUSH or PULL).
+	 * Spacer depending on their provider access fiType (PUSH or PULL).
 	 *
 	 * @return the corrected signature
 	 */
@@ -901,18 +902,18 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 					throw new ExertionException("No return path in the context: "
 							+ cxt.getName());
 				}
-			} else if (service instanceof FiMogram) {
+			} else if (service instanceof MultiFiMogram) {
 				Object out = null;
-				MorphFidelity morphFidelity = ((FiMogram)service).getMorphFidelity();
-				ServiceFidelity<Request> sfi = ((FiMogram)service).getServiceFidelity();
+				MorphFidelity morphFidelity = ((MultiFiMogram)service).getMorphFidelity();
+				ServiceFidelity<Request> sfi = ((MultiFiMogram)service).getServiceFidelity();
 				if (sfi == null) {
-					ServiceFidelity fi = ((FiMogram)service).getMorphFidelity().getFidelity();
+					ServiceFidelity fi = ((MultiFiMogram)service).getMorphFidelity().getFidelity();
 					Object select = fi.getSelect();
 					if (select != null) {
 						if (select instanceof Mogram)
 							out = ((Mogram) select).exert(args);
 						else {
-							Context cxt = ((FiMogram)service).getScope();
+							Context cxt = ((MultiFiMogram)service).getScope();
 							if (select instanceof Signature && cxt != null)
 								out = ((Service) select).exec(cxt);
 							else
@@ -920,7 +921,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 						}
 					}
 				}
-				Context cxt = ((FiMogram)service).getScope();
+				Context cxt = ((MultiFiMogram)service).getScope();
 				if (sfi.getSelect() instanceof Signature && cxt != null) {
 					out = sfi.getSelect().exec(cxt);
 				} else {
@@ -940,7 +941,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 	}
 
 	@Override
-	public Context exec(Service service, Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException {
+	public Context exec(Service service, Context context, Arg[] args) throws ServiceException, RemoteException {
 		Arg[] extArgs = new Arg[args.length+1];
 		Arrays.copyOf(args, args.length+1);
 		extArgs[args.length] = context;
@@ -954,7 +955,7 @@ public class ServiceShell implements RemoteServiceShell, Client, Callable {
 	}
 
 	@Override
-	public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+	public Object exec(Arg... args) throws MogramException, RemoteException {
 		return evaluate(args);
 	}
 }

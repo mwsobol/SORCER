@@ -10,7 +10,7 @@
 			  startMenu="no" startup="no"
 			  target="ant"
 			  commandLine="-f &quot;$INSTALL_PATH/bin/rio/boot-sorcer-rio.xml&quot;"
-			  terminal="true" type="Application"
+			  terminal="true" fiType="Application"
 			  workingDirectory="$INSTALL_PATH"/>
 	<shortcut applications="yes"
 			  description="Stop SORCER platform" desktop="yes"
@@ -19,7 +19,7 @@
 			  startMenu="no" startup="no"
 			  target="ant"
 			  commandLine="-f &quot;$INSTALL_PATH/bin/rio/destroy-sorcer-rio.xml&quot;"
-			  terminal="true" type="Application"
+			  terminal="true" fiType="Application"
 			  workingDirectory="$INSTALL_PATH"/>
 	<shortcut applications="yes" desktop="yes"
 			  encoding="UTF-8" iconFile="$INSTALL_PATH/bin/icons/browser.png"
@@ -27,14 +27,14 @@
 			  programGroup="yes" startMenu="no" startup="no"
 			  target="ant"
 			  commandLine="-f &quot;$INSTALL_PATH/bin/browser/bin/sorcer-browser.xml&quot;"
-			  type="Application" workingDirectory="$INSTALL_PATH"
+			  fiType="Application" workingDirectory="$INSTALL_PATH"
 			  terminal="false"/>
 	<shortcut applications="yes"
 			  description="Sorcer Network Shell" desktop="yes"
 			  encoding="UTF-8" initialState="normal" name="Network Shell"
 			  programGroup="yes" startMenu="no" startup="no"
 			  target="$INSTALL_PATH/bin/nsh" terminal="true"
-			  type="Application" workingDirectory="$INSTALL_PATH"
+			  fiType="Application" workingDirectory="$INSTALL_PATH"
 			  iconFile="$INSTALL_PATH/bin/icons/nsh.png"/>
 	<shortcut
 		name="Uninstall SORCER"

@@ -90,4 +90,9 @@ public class AdderImpl implements Adder {
         return context;
     }
 
+	@Override
+	public Context nothing(Context context) throws RemoteException, ContextException {
+		return context;
+	}
+
 }

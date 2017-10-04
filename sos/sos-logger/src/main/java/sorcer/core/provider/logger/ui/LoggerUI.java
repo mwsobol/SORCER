@@ -255,7 +255,7 @@ public class LoggerUI extends JPanel implements Observer {
 	}
 
 	/**
-	 * Clears the logger text area when the clear button is pressed
+	 * Clears the logger text area when the clearSessions button is pressed
 	 */
 	private class ClearLoggerTextAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;

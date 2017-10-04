@@ -344,7 +344,7 @@ public class DataTable implements ModelTable {
 	}
 
 	/**
-	 * Adds a row to the end of the model. The new row will contain
+	 * Adds a row to the end of the list of rows. The new row will contain
 	 * <code>null</code> values unless <code>rowData</code> is specified.
 	 * Notification of the row being added will be generated.
 	 * 
@@ -356,7 +356,7 @@ public class DataTable implements ModelTable {
 	}
 
 	/**
-	 * Adds a row to the end of the model. The new row will contain
+	 * Adds a row to the end of the list of rows. The new row will contain
 	 * <code>null</code> values unless <code>rowData</code> is specified.
 	 * Notification of the row being added will be generated.
 	 * 
@@ -368,7 +368,20 @@ public class DataTable implements ModelTable {
 	}
 
 	/**
-	 * Inserts a row at <code>row</code> in the model. The new row will contain
+	 * Adds a row of doubles to the end of the list of rows.
+	 *
+	 * @param rowData
+	 *            optional data of the row being added
+	 */
+	public void addRow(double[] rowData) {
+		List<Double> doa = new ArrayList<>();
+		for(double d : rowData) {
+			doa.add(d);
+		}
+		addRow(doa);
+	}
+	/**
+	 * Inserts a row at <code>row</code> in the list of rows. The new row will contain
 	 * <code>null</code> values unless <code>rowData</code> is specified.
 	 * Notification of the row being added will be generated.
 	 * 
@@ -1068,12 +1081,15 @@ public class DataTable implements ModelTable {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(getClass().getName() + ": " + name +"\n");
+		StringBuilder sb = new StringBuilder("\n" + getClass().getName() + ": " + name +"\n");
 		List<String> cns = getColumnNames();
 		if (cns != null && cns.size() > 0)
 			sb.append(cns);
 		if (dataList != null && dataList.size() > 0) {
-			sb.append("\nfirst 100 rows: " + dataList.size());
+			int rowCount = dataList.size();
+			if (rowCount > 100) {
+				sb.append("\nfirst 100 rows: " + dataList.size());
+			}
 			// print up to 100 rows only
 			int rc = 100;
 			if (dataList.size() < 100) {
@@ -1087,9 +1103,11 @@ public class DataTable implements ModelTable {
 					sb.append("\n").append(dataList.get(i));
 				}
 			}
+			if (rowCount > 100) {
+				sb.append("\n...\ntotal row count: " + dataList.size());
+                sb.append("\n");
+			}
 		}
-		sb.append("\n...\ntotal row count: " + dataList.size());
-		sb.append("\n");
 		describe(sb);
 		return sb.toString();
 	}
@@ -1114,12 +1132,16 @@ public class DataTable implements ModelTable {
 	 * @return a dataTable in/out sources description
 	 */
 	public String describe(StringBuilder sb) {
-		sb.append("parametric dataTable: " + (inputFileName != null ? inputFileName : "")
-				+ (inputTableURL != null ? inputTableURL : "" ));
-		sb.append("|").append(inputTableDelimiter != null ? "`" +  inputTableDelimiter + "`": "");
-		sb.append("\nresponse dataTable: " + (outputFileName != null ? outputFileName : "" )
-				+ (outputTableURL != null ? outputTableURL : ""));
-		sb.append("|").append(outputTableDelimiter != null ? "`" + outputTableDelimiter + "`" : "");
+		if (inputFileName != null || inputTableURL != null) {
+			sb.append("input file: " + (inputFileName != null ? inputFileName : "")
+					+ (inputTableURL != null ? inputTableURL : ""));
+			sb.append("|").append(inputTableDelimiter != null ? "`" + inputTableDelimiter + "`" : "");
+		}
+		if (outputFileName != null || outputTableURL != null) {
+			sb.append("\noutput file: " + (outputFileName != null ? outputFileName : "")
+					+ (outputTableURL != null ? outputTableURL : ""));
+			sb.append("|").append(outputTableDelimiter != null ? "`" + outputTableDelimiter + "`" : "");
+		}
 		//sb.append("dataTable responses: ").append(responseNames);
 		return sb.toString();
 	}
@@ -1519,10 +1541,8 @@ public class DataTable implements ModelTable {
 							}
 						}
 					}
-				} else {
-					if (!dataList.get(i).equals(((DataTable) table).dataList.get(i))) {
-						return false;
-					}
+				} else if (!dataList.get(i).equals(((DataTable) table).dataList.get(i))) {
+					return false;
 				}
 			}
 			return true;

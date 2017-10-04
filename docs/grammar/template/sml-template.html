@@ -68,12 +68,12 @@
     This <a href="sml.g.txt">link</a> will display a context free grammar representation of the SML DSL,
     using EBNF to document the SML DSL syntax.The syntax diagrams below have been generated from the
     referenced EBNF. The simplified BNF notation is used to enhance functional composition notation for SO
-    metamodeling with type-based arguments. That means that in most cases the order or function
+    metamodeling with fiType-based arguments. That means that in most cases the order or function
     arguments does not matter and number of arguments depends on the context used.
 </p>
 <a name="Signatures"><b><big>Signatures</big></b></a>
 <p>
-    A <i>provider signature</i> is a service provider reference (handle) specified by a <i>service type</i>.
+    A <i>provider signature</i> is a service provider reference (handle) specified by a <i>service fiType</i>.
     The role of provider signatures declaring provider services is similar to constructors in object-oriented
     programming. An <i>operation signature</i> expending a <i>provider signature</i> is an executable provider service -
     <i>exec(signature)</i>. An operation signature can be customized with the following options: signature name,
@@ -152,8 +152,8 @@
 <a name="Models"><b><big>Models</big></b></a>
     <p>
         A <i>model</i> is an aggregation of entries representing service federations as functionals.
-        A data context is composed of entries of the <i>dataEntry</i> type and a context model of entries of
-        the <i>contextEntry</i> type.
+        A data context is composed of entries of the <i>dataEntry</i> fiType and a context model of entries of
+        the <i>contextEntry</i> fiType.
     </p>
 
 <% MODELS %>
@@ -188,7 +188,7 @@
     a response table for a parametric table, and exploration context for an optimization task. When declared,
     a structured var-model can be more or less concrete. To be executed, to some degree an abstract model has
     to be configured by specifying all vars as fully declared in a model. Aggregated var-entries in structured
-    var-models collaborate in the model accordingly to a declared type of structured modeling. Structured
+    var-models collaborate in the model accordingly to a declared fiType of structured modeling. Structured
     var-models can be used as local or remote service providers. In either case a modeling task specifies
     a required modeling provider with its modeling context and returns a corresponding result.
 </p>

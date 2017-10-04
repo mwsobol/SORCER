@@ -18,7 +18,6 @@ import static sorcer.co.operator.*;
 import static sorcer.co.operator.persistent;
 import static sorcer.eo.operator.add;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.value;
 import static sorcer.po.operator.add;
 import static sorcer.po.operator.*;
 import static sorcer.mo.operator.*;
@@ -118,7 +117,7 @@ public class Procedures {
 		Proc<Double> dbp = dbEnt("shared/eval", 25.0);
 		
 		Proc multi = proc("multi",
-				procFi(ent("init/eval"),
+				pFi(ent("init/eval"),
 				dbp,
 				proc("invoke", invoker("x + y", args("x", "y")))));
 		
@@ -127,11 +126,11 @@ public class Procedures {
 		
 		setValue(dbp, 50.0);
 
-		assertTrue(eval(multi, cxt, procFi("shared/eval")).equals(50.0));
+		assertTrue(eval(multi, cxt, pFi("shared/eval")).equals(50.0));
 
-		assertTrue(eval(multi, cxt, procFi("init/eval")).equals(49.0));
+		assertTrue(eval(multi, cxt, pFi("init/eval")).equals(49.0));
 
-		assertTrue(eval(multi, cxt, procFi("invoke")).equals(30.0));
+		assertTrue(eval(multi, cxt, pFi("invoke")).equals(30.0));
 
 	}
 	

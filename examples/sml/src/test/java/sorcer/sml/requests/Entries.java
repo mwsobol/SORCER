@@ -1,6 +1,5 @@
 package sorcer.sml.requests;
 
-import net.jini.core.transaction.TransactionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -21,8 +20,7 @@ import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.args;
-import static sorcer.eo.operator.value;
-import static sorcer.mo.operator.putValue;
+import static sorcer.mo.operator.*;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.loop;
 import static sorcer.service.Signature.Direction;
@@ -59,6 +57,33 @@ public class Entries {
 		assertEquals(name(asis(x4)), "arg/x3");
         assertTrue(direction((Entry) asis(x4)) == Direction.OUT);
 	}
+
+    @Test
+    public void setup1() throws Exception {
+        Setup cxtEnt = setup("context/value", context(val("arg/x1", 100.0), val("arg/x2", 20.0)));
+        assertEquals(100.0, val(cxtEnt, "arg/x1"));
+    }
+
+    @Test
+    public void setup2() throws Exception {
+        Setup cxtEnt = setup("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        assertEquals(100.0, val(cxtEnt, "arg/x1"));
+    }
+
+    @Test
+    public void setValueOfSetup1() throws Exception {
+        Setup cxtEnt = setup("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        setValue(cxtEnt, "arg/x1", 80.0);
+        assertEquals(80.0, val(cxtEnt, "arg/x1"));
+    }
+
+    @Test
+    public void setValueOfSetup2() throws Exception {
+        Setup cxtEnt = setup("context/value", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        setValue(cxtEnt, val("arg/x1", 80.0), val("arg/x2", 10.0));
+        assertEquals(80.0, val(cxtEnt, "arg/x1"));
+        assertEquals(10.0, val(cxtEnt, "arg/x2"));
+    }
 
     @Test
     public void entFidelities() throws Exception {
@@ -103,7 +128,7 @@ public class Entries {
         }
 
         @Override
-        public Object exec(Arg... args) throws MogramException, RemoteException, TransactionException {
+        public Object exec(Arg... args) throws MogramException, RemoteException {
             return invoke((Context)Arg.getServiceModel(args), args);
         }
 

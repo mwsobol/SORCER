@@ -20,6 +20,7 @@ import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Ref;
 import sorcer.core.invoker.Observable;
 import sorcer.service.*;
 
@@ -61,7 +62,19 @@ public class MorphFidelity<T extends Arg> extends Observable implements
     }
 
     public T getSelect() {
-        return fidelity.getSelect();
+        Object obj = fidelity.getSelect();;
+        T select = null;
+
+        if (obj instanceof Ref) {
+            try {
+                select = (T) ((Ref) obj).getValue();
+            } catch (EvaluationException | RemoteException e) {
+                e.printStackTrace();
+            }
+        } else{
+            select = (T) obj;
+        }
+        return select;
     }
 
     @Override
@@ -120,7 +133,7 @@ public class MorphFidelity<T extends Arg> extends Observable implements
     }
 
     @Override
-    public Object exec(Arg... args) throws ServiceException, RemoteException, TransactionException {
+    public Object exec(Arg... args) throws ServiceException, RemoteException {
         if (fidelity.getSelect() instanceof Service) {
             return ((Service)fidelity.getSelect()).exec(args);
         } else return fidelity.getSelect();

@@ -56,7 +56,7 @@ public interface Deployment extends Arg, Serializable {
      * <ul>
      *     <li>DYNAMIC indicates that a service will be deployed to available machine instances that support the
      *     service's operational criteria up to the amount specified by the number of planned instances.</li>
-     *     <li>FIXED type that the service will be deployed to every machine instance that supports the
+     *     <li>FIXED fiType that the service will be deployed to every machine instance that supports the
      *     service's operational criteria, and every machine will have the number of planned instances.</li>
      * </ul>
      */

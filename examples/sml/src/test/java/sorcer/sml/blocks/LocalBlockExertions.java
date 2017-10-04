@@ -53,7 +53,6 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		Block result = exert(block);
 		assertEquals(value(context(result), "block/result"), 400.00);
-
 	}
 
 	@Test

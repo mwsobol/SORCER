@@ -17,7 +17,7 @@
 
 package sorcer.service;
 
-import sorcer.core.Name;
+import sorcer.core.Tag;
 import sorcer.core.context.model.ent.EntException;
 import sorcer.service.modeling.Variability;
 
@@ -59,7 +59,7 @@ public class ArgList extends ArrayList<Arg> {
 	public ArgList(String... names) {
 		super();
 		for (String s : names) {
-			add(new Name(s));
+			add(new Tag(s));
 		}
 	}
 
