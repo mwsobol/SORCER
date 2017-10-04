@@ -834,6 +834,10 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return fiManager;
     }
 
+    public FidelityManagement getRemoteFidelityManager() throws RemoteException {
+        return getFidelityManager();
+    }
+
     public void setFidelityManager(FidelityManagement fiManager) {
         this.fiManager = fiManager;
     }
