@@ -1797,8 +1797,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			// Close remote logging
 			if (ldmgr != null)
 				ldmgr.terminate();
-			if (joinManager != null)
+			boolean destroyJVM = true;
+			if (joinManager != null) {
+				for(Entry e : joinManager.getAttributes()) {
+					if(e.getClass().getName().equals("org.rioproject.entry.OperationalStringEntry")) {
+						destroyJVM = false;
+					}
+				}
 				joinManager.terminate();
+			}
 			providers.remove(this);
 			tally = tally - 1;
 
@@ -1816,14 +1823,14 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			if (lifeCycle != null) {
 				lifeCycle.unregister(this);
 			}
-
+			checkAndMaybeKillJVM(destroyJVM);
 		} catch(Exception e) {
 			logger.error("Problem destroying service " + getProviderName(), e);
 		}
 	}
 
-	void checkAndMaybeKillJVM() {
-		if (tally <= 0) {
+	void checkAndMaybeKillJVM(boolean destroyJVM) {
+		if (destroyJVM && tally == 0) {
 			new Thread(new Destroyer()).start();
 		}
 	}
