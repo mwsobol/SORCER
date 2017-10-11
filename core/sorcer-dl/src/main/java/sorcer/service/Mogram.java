@@ -169,6 +169,11 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
     public FidelityManagement getFidelityManager();
 
     /**
+     * Returns a fdelity manager for of this exertion.
+     */
+    public FidelityManagement getRemoteFidelityManager() throws RemoteException;
+
+    /**
      * Returns <code>true</code> if this exertion should be monitored for its
      * execution, otherwise <code>false</code>.
      *

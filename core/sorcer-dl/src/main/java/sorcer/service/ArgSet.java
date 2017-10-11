@@ -18,17 +18,13 @@ package sorcer.service;
  */
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class ArgSet extends TreeSet<Arg> {
+public class ArgSet extends LinkedHashSet<Arg> {
 	
 	private static final long serialVersionUID = -4662755904016297879L;
 	

@@ -308,7 +308,8 @@ public class GenericUtil {
 		// shorten the mcrcache path for windows...hit a limit on some installations
 		scriptVect.add("export IS_CYGWIN=`uname -s | awk 'BEGIN{flag=0} {if ($0~/CYGWIN/) {flag=1}} END{print flag}'`");
 		scriptVect.add("if [ $IS_CYGWIN -eq 1 ]; then");
-		scriptVect.add("\texport MCR_CACHE_ROOT=`cygpath -ds $MCR_CACHE_ROOT`");
+//		scriptVect.add("\texport MCR_CACHE_ROOT=`cygpath -ds $MCR_CACHE_ROOT`");
+		scriptVect.add("\texport MCR_CACHE_ROOT=`cygpath -w $MCR_CACHE_ROOT`");
 		scriptVect.add("\techo \"MCR_CACHE_ROOT=$MCR_CACHE_ROOT\"");
 		scriptVect.add("fi");
 				
@@ -2729,11 +2730,19 @@ public class GenericUtil {
 	 * @throws IOException
 	 */
 	public static void writeUrlToFile(URL inputUrl, File localInputFile)
-			throws IOException {
-		InputStream is = inputUrl.openStream();
-		redirectInputStream2File(is, localInputFile);
+			throws Exception {
+        InputStream is = null;
+        try {
+            is = inputUrl.openStream();
+            redirectInputStream2File(is, localInputFile);
+        } catch (Exception e) {
+            if (is != null) is.close();
+            throw(e);
+        } finally {
+            if (is != null) is.close();
+        }
 	}
-	
+
 	/**
 	 * Downloads url directory to target directory (url directory will be 
 	 * subdirectory of target directory); example:
