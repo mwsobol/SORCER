@@ -1070,7 +1070,7 @@ public class ProviderDelegate {
                 if (selector.equals("invoke") && (bean instanceof Exertion || bean instanceof ProcModel)) {
                     m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
                     isContextual = true;
-                } else if (selector.equals("evaluate") && bean instanceof Domain) {
+                } else if ((selector.equals("evaluate") || selector.equals("explore"))  && bean instanceof Domain) {
                     m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
                     isContextual = true;
                 } else if (selector.equals("exert") && bean instanceof ServiceShell) {
