@@ -262,7 +262,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			setCompositeAttribute(VAR_NODE_TYPE + APS + VAR + APS + VT);
 			dbUrl = "sos://sorcer.service.DatabaseStorer";
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Failure", e);
 		}
 	}
 
@@ -1946,8 +1946,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 					val = asis(path);
 			} catch (Exception ex) {
 				sb.append("\nUnable to retrieve eval: " + ex.getMessage());
-				ex.printStackTrace();
-				val = Context.none;;
+				logger.warn("Unable to retrieve eval", ex);
+				val = Context.none;
 //				continue;
 			}
 			// if (val == null)
@@ -1960,12 +1960,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 					URL url;
 					try {
 						url = ((ContextNode) val).getURL();
-						sb.append("<a href=").append(url).append(">")
-								.append(url).append("</a>");
-					} catch (MalformedURLException e2) {
-						e2.printStackTrace();
-					} catch (ContextNodeException e2) {
-						e2.printStackTrace();
+						sb.append("<a href=").append(url).append(">").append(url).append("</a>");
+					} catch (MalformedURLException | ContextNodeException e2) {
+						logger.warn("Problem formatting url", e2);
 					}
 				} else if (val instanceof Exertion) {
 					sb.append(((ServiceExertion) val).info());
@@ -2016,7 +2013,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				val = getValue(path);
 			} catch (Exception ex) {
 				sb.append("\nUnable to retrieve eval: " + ex.getMessage());
-				ex.printStackTrace();
+				logger.warn("Unable to retrieve eval", ex);
 				continue;
 			}
 			if (val == null)
@@ -2058,7 +2055,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		try {
 			return toString(false, false);
 		} catch (ContextException e) {
-			e.printStackTrace();
+			logger.warn("toString failed", e);
 		}
 		return null;
 	}
@@ -2702,7 +2699,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Substitution has failed", ex);
 			throw new SetterException(ex);
 		}
 	}
@@ -2779,7 +2776,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			try {
 				return (T) getValue0(path);
 			} catch (ContextException e) {
-				e.printStackTrace();
+				logger.warn("asis failure", e);
 			}
 			return null;
 		} else {
@@ -2910,11 +2907,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 			if (scope != null && (obj == Context.none || obj == null ))
 				obj = (T ) scope.getValue(path, entries);
-
 			return (T) obj;
 		} catch (Throwable e) {
-			logger.warn(e.getMessage());
-			e.printStackTrace();
+			//logger.error("getValue() failure {}", e.getClass().getName());
+			logger.error("getValue() failure", e);
 			return (T) Context.none;
 		}
 	}
@@ -3295,7 +3291,7 @@ public class ServiceContext<T> extends ServiceMogram implements
             exertion.getContext().appendContext(this);
             return (T) exertion.exert(txn);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failure", e);
             mogram.getContext().reportException(e);
             if (e instanceof Exception)
                 mogram.setStatus(FAILED);
