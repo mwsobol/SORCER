@@ -692,8 +692,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	public Object execute(Arg... args) throws MogramException, RemoteException {
 	    throw new MogramException("Signature service act should be implementd in subclasses");
 	}
-
-	@Override
+	
 	public Entry act(Arg... args) throws ServiceException, RemoteException {
 		Object result = this.execute(args);
 		if (result instanceof Entry) {
@@ -703,7 +702,6 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 		}
 	}
 
-	@Override
 	public Duo act(String entryName, Arg... args) throws ServiceException, RemoteException {
 		Object result = this.execute(args);
 		if (result instanceof Entry) {

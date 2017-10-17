@@ -22,7 +22,6 @@ import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Ref;
-import sorcer.core.provider.Provider;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -43,7 +42,7 @@ import java.util.Set;
  *
  * Created by Mike Sobolewski
  */
-public class MultiFiMogram extends ServiceMogram implements Fi<Data> {
+public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
 
     protected Fidelity requestFidelity;
 
@@ -256,7 +255,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Data> {
     }
 
     @Override
-    public void setSelect(Data select) {
+    public void setSelect(Request select) {
 
     }
 
@@ -266,23 +265,23 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Data> {
     }
 
     @Override
-    public Data getSelect() {
-        Data req = null;
+    public Request getSelect() {
+        Request req = null;
         Object select = getMultifidelity().getSelect();
         if (select instanceof Ref) {
-            req =  (Data) ((Ref) getMultifidelity().getSelect()).get();
+            req =  (Request) ((Ref) getMultifidelity().getSelect()).get();
         } else{
-            req = (Data) getMultifidelity().getSelect();
+            req = (Request) getMultifidelity().getSelect();
         }
         return req;
     }
 
     @Override
-    public Data get(int index) {
+    public Request get(int index) {
         if (requestFidelity != null) {
-            return (Data) requestFidelity.get(index);
+            return (Request) requestFidelity.get(index);
         } else if (morphFidelity != null) {
-            return (Data) morphFidelity.get(index);
+            return (Request) morphFidelity.get(index);
         }
         return null;
     }
@@ -293,7 +292,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Data> {
     }
 
     @Override
-    public void addSelect(Data fidelity) {
+    public void addSelect(Request fidelity) {
         getMultifidelity().addSelect(fidelity);
     }
 

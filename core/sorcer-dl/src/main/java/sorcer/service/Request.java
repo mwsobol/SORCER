@@ -23,7 +23,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike Sobolewski on 5/16/16.
  */
-public interface Data extends Service, Arg {
+public interface Request extends Service, Arg {
 
     public Duo act(Arg... args) throws ServiceException, RemoteException;
 

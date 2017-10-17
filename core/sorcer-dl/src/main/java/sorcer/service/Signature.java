@@ -48,7 +48,7 @@ import java.util.Arrays;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Signature extends Data, Comparable, Dependency, Identifiable,
+public interface Signature extends Request, Comparable, Dependency, Identifiable,
 		EvaluationComponent, SupportComponent, Serializable {
 
 	/**
