@@ -2530,7 +2530,7 @@ public class operator extends sorcer.operator {
 		return service.exert(mogram, txn, entries);
 	}
 
-	public static Object execItem(Item item, Arg... args) throws ServiceException {
+	public static Object execItem(Call item, Arg... args) throws ServiceException {
 		try {
 			return item.exec(args);
 		} catch (RemoteException e) {
