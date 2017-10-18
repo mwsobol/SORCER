@@ -1117,11 +1117,11 @@ public class operator extends sorcer.operator {
             if (dependers[i] instanceof DependencyEntry && ((DependencyEntry) dependers[i]).getDependees() != null) {
                 DependencyEntry mde = (DependencyEntry) dependers[i];
                 DependencyEntry de = null;
-                for (String name : de.getDependees()) {
+                for (String name : mde.getDependees()) {
                     if (mde.getType() == Type.FIDELITY) {
-                        de = dep(name, (Fidelity) de.annotation(), mde._2);
-                    } else if (de.getType() == Type.CONDITION) {
-                        de = dep(name, (Conditional) de.annotation(), mde._2);
+                        de = dep(name, (Fidelity) mde.annotation(), mde._2);
+                    } else if (mde.getType() == Type.CONDITION) {
+                        de = dep(name, (Conditional) mde.annotation(), mde._2);
                     } else {
                         de = dep(name, mde._2);
                     }
