@@ -489,7 +489,7 @@ public class operator extends sorcer.operator {
         return de;
     }
 
-	public static DependencyEntry dep(List<String> dependees, Fidelity fi, List<Path> paths) {
+	public static DependencyEntry dep(List<Path> dependees, Fidelity fi, List<Path> paths) {
 		DependencyEntry de = new DependencyEntry(dependees, paths);
 		de.annotation(fi);
 		de.setType(Variability.Type.FIDELITY);
@@ -1081,6 +1081,10 @@ public class operator extends sorcer.operator {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
+	public static List<Path> each(Object... paths) {
+		return paths(paths);
+	}
+
 	public static List<Path> paths(Object... paths) {
 		List<Path> list = new ArrayList<>();
 		for (Object o : paths) {
@@ -1117,13 +1121,13 @@ public class operator extends sorcer.operator {
             if (dependers[i] instanceof DependencyEntry && ((DependencyEntry) dependers[i]).getDependees() != null) {
                 DependencyEntry mde = (DependencyEntry) dependers[i];
                 DependencyEntry de = null;
-                for (String name : mde.getDependees()) {
+                for (Path p : mde.getDependees()) {
                     if (mde.getType() == Type.FIDELITY) {
-                        de = dep(name, (Fidelity) mde.annotation(), mde._2);
+                        de = dep(p.getName(), (Fidelity) mde.annotation(), mde._2);
                     } else if (mde.getType() == Type.CONDITION) {
-                        de = dep(name, (Conditional) mde.annotation(), mde._2);
+                        de = dep(p.getName(), (Conditional) mde.annotation(), mde._2);
                     } else {
-                        de = dep(name, mde._2);
+                        de = dep(p.getName(), mde._2);
                     }
                     dl.add(de);
                 }

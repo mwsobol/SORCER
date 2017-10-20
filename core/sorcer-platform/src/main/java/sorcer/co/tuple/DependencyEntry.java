@@ -31,14 +31,14 @@ public class DependencyEntry extends Entry<List<Path>> {
 
     private Conditional condition;
 
-    private List<String> dependees;
+    private List<Path> dependees;
 
     @SuppressWarnings("unchecked")
     public DependencyEntry(String path, List<Path> paths) {
         super(path, paths);
     }
 
-    public DependencyEntry(List<String> dependees, List<Path> paths) {
+    public DependencyEntry(List<Path> dependees, List<Path> paths) {
         super("multiplicity");
         this.dependees = dependees;
         _2 = paths;
@@ -57,11 +57,11 @@ public class DependencyEntry extends Entry<List<Path>> {
         this.condition = condition;
     }
 
-    public List<String> getDependees() {
+    public List<Path> getDependees() {
         return dependees;
     }
 
-    public void setDependees(List<String> dependees) {
+    public void setDependees(List<Path> dependees) {
         this.dependees = dependees;
     }
 }
