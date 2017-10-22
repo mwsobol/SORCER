@@ -1,4 +1,4 @@
-package sorcer.sml.requests;
+package sorcer.sml.signatures;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
