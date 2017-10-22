@@ -191,8 +191,14 @@ public class operator {
     }
 
     public static Domain responseUp(Domain model, String... responsePaths) throws ContextException {
-        for (String path : responsePaths)
-            ((ServiceContext)model).getMogramStrategy().getResponsePaths().add(new Path(path));
+        if (responsePaths == null || responsePaths.length == 0) {
+            ((ServiceContext) model).getMogramStrategy().getResponsePaths().clear();
+            ((ServiceContext) model).getMogramStrategy().getResponsePaths().addAll(((ServiceContext) model).getOutPaths());
+        } else {
+            for (String path : responsePaths) {
+                ((ServiceContext) model).getMogramStrategy().getResponsePaths().add(new Path(path));
+            }
+        }
         return model;
     }
 
@@ -202,8 +208,12 @@ public class operator {
     }
 
     public static Domain responseDown(Domain model, String... responsePaths) throws ContextException {
-        for (String path : responsePaths) {
-            ((ServiceContext) model).getMogramStrategy().getResponsePaths().remove(new Path(path));
+        if (responsePaths == null || responsePaths.length == 0) {
+            ((ServiceContext) model).getMogramStrategy().getResponsePaths().clear();
+        } else {
+            for (String path : responsePaths) {
+                ((ServiceContext) model).getMogramStrategy().getResponsePaths().remove(new Path(path));
+            }
         }
         return model;
     }

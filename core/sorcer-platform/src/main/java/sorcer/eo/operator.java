@@ -1362,14 +1362,14 @@ public class operator extends Operator {
 		return morphFi;
 	}
 
-	public static MorphFidelity mFi(String name, Morpher morpher, Request... services) {
+	public static MorphFidelity mFi(String name, Morpher morpher, Service... services) {
 		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
 		morphFi.setMorpher(morpher);
 		morphFi.setPath(name);
 		return morphFi;
 	}
 
-	public static MorphFidelity mFi(Request... services) {
+	public static MorphFidelity mFi(Service... services) {
 		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(services));
 		return morphFi;
 	}
@@ -1379,13 +1379,13 @@ public class operator extends Operator {
 		return morphFi;
 	}
 
-	public static ServiceFidelity rFi(Request... services) {
+	public static ServiceFidelity rFi(Service... services) {
 		ServiceFidelity srvFi = new ServiceFidelity(services);
 		srvFi.fiType = Fi.Type.REQUEST;
 		return srvFi;
 	}
 
-	public static ServiceFidelity rFi(String name, Request... services) {
+	public static ServiceFidelity rFi(String name, Service... services) {
 		ServiceFidelity srvFi = new ServiceFidelity(services);
 		srvFi.setPath(name);
 		srvFi.fiType = Fi.Type.REQUEST;

@@ -48,8 +48,8 @@ import java.util.Arrays;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Signature extends Request, Comparable, Dependency, Identifiable,
-		EvaluationComponent, SupportComponent, Serializable {
+public interface Signature extends Service, Comparable, Dependency, Identifiable,
+		Arg, EvaluationComponent, SupportComponent, Serializable {
 
 	/**
 	 * Returns a name of this signature.
