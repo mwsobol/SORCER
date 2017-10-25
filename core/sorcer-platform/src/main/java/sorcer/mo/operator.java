@@ -74,24 +74,21 @@ public class operator {
         return value;
     }
 
-    public static Model setValue(Model model, String entName, Object value)
+    public static Domain setValue(Domain model, String entName, Object value)
         throws ContextException {
         Object entry = model.get(entName);
-        if (entry == null)
-            try {
+        try {
+            if (entry == null) {
                 model.add(sorcer.po.operator.ent(entName, value));
-            } catch (RemoteException e) {
-                throw new ContextException(e);
-            }
-        else if (entry instanceof Setter) {
-            try {
+            } else if (entry instanceof Setter) {
                 ((Setter) entry).setValue(value);
-            } catch (RemoteException e) {
-                e.printStackTrace();
+            } else if (entry instanceof Entry) {
+                ((Entry) entry).setValue(value);
+            } else {
+                ((ServiceContext)model).put(entName, value);
             }
-        }
-        else {
-            ((ServiceContext)model).put(entName, value);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
         }
 
         if (entry instanceof Proc) {

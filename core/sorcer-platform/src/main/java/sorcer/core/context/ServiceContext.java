@@ -2781,8 +2781,6 @@ public class ServiceContext<T> extends ServiceMogram implements
                 e.printStackTrace();
             }
             return null;
-        } else if (val instanceof Entry) {
-            return (T) ((Entry) val).asis();
         }
         return val;
 	}

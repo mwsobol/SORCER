@@ -771,8 +771,7 @@ public class operator extends Operator {
 				((Setter) v).setPersistent(true);
 				((Evaluation)v).evaluate();
 				dburl = (URL) ((Evaluation)v).asis();
-			}
-			else if (context.asis(path) instanceof Entry) {
+			} else if (context.asis(path) instanceof Entry) {
 				Entry dbe = new Entry(path, context.asis(path));
 				dbe.setPersistent(true);
 				dbe.get();
@@ -1164,26 +1163,26 @@ public class operator extends Operator {
 		return entry.asis();
 	}
 
-	public static <T> T asis(Context<T> context, String path)
+	public static Object asis(Context context, String path)
 			throws ContextException {
-		return  context.asis(path);
+		return context.get(path);
 	}
 
-	public static <T> T rasis(Context<T> context, String path)
+	public static Object rasis(Context context, String path)
 			throws ContextException {
 		Object o = context.asis(path);
 		if (o instanceof Function)
-			return (T)rasis((Function)o);
+			return rasis((Function)o);
 		else
-			return (T)o;
+			return o;
 	}
 
-	public static <T> T asis(Domain model, String path)
+	public static Object asis(Domain model, String path)
 			throws ContextException {
-		return  ((ServiceContext<T>)model).asis(path);
+		return  model.asis(path);
 	}
 
-    public static <T> T asis(Mappable<T> mappable, String path)
+    public static Object asis(Mappable mappable, String path)
             throws ContextException {
         return  mappable.asis(path);
     }

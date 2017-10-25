@@ -71,7 +71,24 @@ public class Entry<V> extends Association<String, V>
 
     @Override
     public void setValue(Object value) throws SetterException, RemoteException {
-        out = (V) value;
+        if (isPersistent) {
+            try {
+                if (SdbUtil.isSosURL(value)) {
+                    this.out = (V) value;
+                    this.impl = value;
+                } else if (SdbUtil.isSosURL(this.impl)) {
+                    if (((URL) this.impl).getRef() == null) {
+                        this.impl = (V) SdbUtil.store(value);
+                    } else {
+                        SdbUtil.update((URL) this.impl, value);
+                    }
+                }
+            } catch (MogramException | SignatureException e) {
+                throw new SetterException(e);
+            }
+        } else {
+            this.out = (V) value;
+        }
     }
 
     public void setContextSelector(ContextSelection contextSelector) {

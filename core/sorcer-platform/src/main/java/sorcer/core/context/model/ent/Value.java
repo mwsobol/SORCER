@@ -9,6 +9,7 @@ import sorcer.util.url.sos.SdbUtil;
 
 import java.io.IOException;
 import java.net.URL;
+import java.rmi.RemoteException;
 
 /**
  * @author Mike Sobolewski
@@ -47,25 +48,12 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
     }
 
     public void setValue(Object value) throws SetterException {
-        if (isPersistent) {
-            try {
-                if (SdbUtil.isSosURL(value)) {
-                    this.out = (T) value;
-                    this.impl = value;
-                } else if (SdbUtil.isSosURL(this.impl)) {
-                    if (((URL) this.impl).getRef() == null) {
-                        this.impl = (T) SdbUtil.store(value);
-                    } else {
-                        SdbUtil.update((URL) this.impl, value);
-                    }
-                }
-            } catch (MogramException | SignatureException e) {
-                throw new SetterException(e);
-            }
-        } else {
-            this.out = (T) value;
-            this.impl = (T) value;
+        try {
+            super.setValue(value);
+        } catch (RemoteException e) {
+            throw new SetterException(e);
         }
+        this.impl = (T) value;
     }
 
     public Object getId() {

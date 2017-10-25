@@ -15,6 +15,7 @@ import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.util.Sorcer;
 
 import java.io.IOException;
@@ -170,17 +171,17 @@ public class ProcModelTest {
 	}
 		
 	@Test
-	public void contextProcTest() throws RemoteException,
+	public void procModelMappingTest() throws RemoteException,
 			ContextException {
-		Context cxt = context(proc("url", "myUrl"), proc("design/in", 25.0));
+		Model mdl = model(proc("url", "myUrl"), val("design/in", 25.0));
 
 		// mapping parameters to cxt, m1 and m2 are proc aliases
-		Proc p1 = as(proc("p1", "design/in"), cxt);
+		Proc p1 = as(proc("p1", "design/in"), mdl);
 		assertTrue(eval(p1).equals(25.0));
 		setValue(p1, 30.0);
 		assertTrue(eval(p1).equals(30.0));
 		
-		Proc p2 = as(proc("p2", "url"), cxt);
+		Proc p2 = as(proc("p2", "url"), mdl);
 		assertEquals(eval(p2), "myUrl");
 		setValue(p2, "newUrl");
 		assertEquals(eval(p2), "newUrl");
@@ -213,7 +214,7 @@ public class ProcModelTest {
 	}
 	
 	@Test
-	public void dbBasedModel() throws ContextException, RemoteException {
+	public void dbBasedContext() throws ContextException, RemoteException {
 		Context c4 = context("multiply",
 				dbVal("arg/x0", 1.0), dbInVal("arg/x1", 10.0),
 				dbOutVal("arg/x2", 50.0), outVal("result/y"));
@@ -221,25 +222,30 @@ public class ProcModelTest {
 		assertEquals(value(c4, "arg/x0"), 1.0);
 		assertEquals(value(c4, "arg/x1"), 10.0);
 		assertEquals(value(c4, "arg/x2"), 50.0);
-		
+
+		assertEquals(get(c4, "arg/x0"), 1.0);
+		assertEquals(get(c4, "arg/x1"), 10.0);
+		assertEquals(get(c4, "arg/x2"), 50.0);
+
 		assertTrue(asis(c4, "arg/x0") instanceof Proc);
 		assertTrue(asis(c4, "arg/x1") instanceof Proc);
 		assertTrue(asis(c4, "arg/x2") instanceof Proc);
-		
-		logger.info("arg/x0 URL: " + storeVal(c4, "arg/x0"));
-		logger.info("arg/x1 URL: " + storeVal(c4, "arg/x1"));
-		logger.info("arg/x2 URL: " + storeVal(c4, "arg/x2"));
+
 		assertTrue(storeVal(c4, "arg/x0") instanceof URL);
 		assertTrue(storeVal(c4, "arg/x1") instanceof URL);
 		assertTrue(storeVal(c4, "arg/x2") instanceof URL);
-		
-		c4.putValue("arg/x0", 11.0);
-		c4.putValue("arg/x1", 110.0);
-		c4.putValue("arg/x2", 150.0);
-		
-		assertEquals(value(c4, "arg/x0"), 11.0);
-		assertEquals(value(c4, "arg/x1"), 110.0);
-		assertEquals(value(c4, "arg/x2"), 150.0);
+
+		assertEquals(value(c4, "arg/x0"), 1.0);
+		assertEquals(value(c4, "arg/x1"), 10.0);
+		assertEquals(value(c4, "arg/x2"), 50.0);
+
+		assertTrue(asis(c4, "arg/x0") instanceof Proc);
+		assertTrue(asis(c4, "arg/x1") instanceof Proc);
+		assertTrue(asis(c4, "arg/x2") instanceof Proc);
+
+		assertEquals(value(c4, "arg/x0"), 1.0);
+		assertEquals(value(c4, "arg/x1"), 10.0);
+		assertEquals(value(c4, "arg/x2"), 50.0);
 
 		assertTrue(asis(c4, "arg/x0") instanceof Proc);
 		assertTrue(asis(c4, "arg/x1") instanceof Proc);
@@ -300,7 +306,7 @@ public class ProcModelTest {
 
 	@Test
 	public void aliasedProcTest() throws ContextException, RemoteException {
-		Context cxt = context(proc("design/in1", 25.0), proc("design/in2", 35.0));
+		Context cxt = model(proc("design/in1", 25.0), proc("design/in2", 35.0));
 		
 		Proc x1 = proc(cxt, "x1", "design/in1");
 		Proc x2 = as(proc("x2", "design/in2"), cxt);

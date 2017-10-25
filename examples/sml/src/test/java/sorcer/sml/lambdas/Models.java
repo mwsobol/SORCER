@@ -225,7 +225,7 @@ public class Models {
 		EntryCollable lambdaTask = (Model mdl) -> {
 			Context out = null;
 			Double value = null;
-			Task task = asis(mdl, "task/multiply");
+			Task task = (Task) asis(mdl, "task/multiply");
 			put(context(task), "arg/x1", 20.0);
 			put(context(task), "arg/x2", 100.0);
 			out = context(exert(task));
