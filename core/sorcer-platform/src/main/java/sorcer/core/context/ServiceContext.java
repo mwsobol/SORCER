@@ -1296,52 +1296,52 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public String getValClass(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		return vc;
 	}
 
 	public boolean isString(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		return vc.equals(""+ String.class);
 	}
 
 	public boolean isInt(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		boolean is = vc.equals(""+ int.class) || vc.equals(""+ Integer.class);
 		return is;
 	}
 	public boolean isShort(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		boolean is = vc.equals(""+ short.class) || vc.equals(""+ Short.class);
 		return is;
 	}
 
 	public boolean isLong(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		boolean is = vc.equals(""+ long.class) || vc.equals(""+ Long.class);
 		return is;
 	}
 
 	public boolean isFloat(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		boolean is = vc.equals(""+ float.class) || vc.equals(""+ Float.class);
 		return is;
 	}
 
 	public boolean isDouble(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		boolean is = vc.equals(""+ double.class) || vc.equals(""+ Double.class);
 		return is;
 	}
 
 	public boolean isByte(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		boolean is = vc.equals(""+ byte.class) || vc.equals(""+ Byte.class);
 		return is;
 	}
 
 	public boolean isBoolean(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		boolean is = vc.equals(""+ boolean.class) || vc.equals(""+ Boolean.class);
 		return is;
 	}
@@ -1525,7 +1525,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			this.appendInout(returnContext);
 			this.setChanged(true);
 		} else {
-			if (returnPath != null) {
+			if (returnPath != null  && !returnPath.equals(Signature.SELF)) {
 				this.put(returnPath, (T) outcxt.get(returnPath));
 			} else {
 				this.appendInout(outcxt);

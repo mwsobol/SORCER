@@ -11,6 +11,7 @@ import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.context.model.ent.SysCall;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.SysCaller;
+import sorcer.core.provider.caller.SysCallerProvider;
 import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -97,7 +98,7 @@ public class SysCalls {
                 proc("multiply", invoker("x * y", args("x", "y"))),
                 proc("add", invoker("x + y", args("x", "y"))));
 
-        SysCall caller = sysCall("volume", cxt(proc("cmd", "java -cp  " + cp + Volume.class.getName()),
+        SysCall caller = sysCall("volume", cxt(val("cmd", "java -cp  " + cp + Volume.class.getName()),
                 inVal("cylinder"), outVal("cylinder/volume"), outVal("cylinder/radius"),
 				outVal("cylinder/height")));
         add(pm, caller);
@@ -135,7 +136,7 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
 		Task callerTask = task("volume", sig("exec", SysCaller.class),
-						cxt(proc("cmd", "java -cp  " + cp + Volume.class.getName()),
+						cxt(val("cmd", "java -cp  " + cp + Volume.class.getName()),
 								inVal("cylinder"), outVal("cylinder/volume"), outVal("cylinder/radius"),
 								outVal("cylinder/height")));
 
@@ -166,9 +167,10 @@ public class SysCalls {
 				proc("multiply", invoker("x * y", args("x", "y"))),
 				proc("add", invoker("x + y", args("x", "y"))),
 				srv("volume", sig("exec", SysCaller.class,
-						cxt(proc("cmd", "java -cp  " + cp + Volume.class.getName()),
-						inVal("cylinder"), outVal("cylinder/volume"), outVal("cylinder/radius"),
-						outVal("cylinder/height")))));
+//				srv("volume", sig("exec", SysCallerProvider.class,
+						cxt(val("cmd", "java -cp  " + cp + Volume.class.getName()),
+								inVal("cylinder"),
+								outVal("cylinder/volume"), outVal("cylinder/radius"), outVal("cylinder/height")))));
 
 		String volume = (String) eval(sm, "volume");
 		logger.info("volume: " + volume);
@@ -203,8 +205,9 @@ public class SysCalls {
 		Model sm = srvModel(proc("x", 10.0), ent("y"),
 				proc("multiply", invoker("x * y", args("x", "y"))),
 				proc("add", invoker("x + y", args("x", "y"))),
-				srv("volume", sig("exec", SysCaller.class,
-						cxt(proc("cmd", "java -cp  " + cp + Volume.class.getName()),
+				srv("volume", sig("exec", SysCallerProvider.class,
+//				srv("volume", sig("exec", SysCaller.class,
+						cxt(val("cmd", "java -cp  " + cp + Volume.class.getName()),
 								inVal("cylinder", Arg.class),
 								outVal("cylinder/volume", double.class),
 								outVal("cylinder/radius", double.class),
@@ -233,7 +236,6 @@ public class SysCalls {
 		String ct = context.getValClass("cylinder/volume");
 		logger.info("ct: " + ct);
 		logger.info("double?: " + context.isDouble("cylinder/volume"));
-		Class cl = new Double(3.0).getClass();
-		logger.info("cl: " + cl);
+        assertTrue(context.isDouble("cylinder/volume"));
 	}
 }

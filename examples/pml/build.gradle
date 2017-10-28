@@ -41,6 +41,7 @@ build.dependsOn(install)
 dependencies { 
 	compile project(':sorcer-platform')
     compile project(':sorcer-lib')
+	compile project(':sos-caller')
     compile project(':sos-db-prv')
 	compile project(':examples:sml')
 	testCompile project(':sorcer-test')

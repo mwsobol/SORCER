@@ -46,6 +46,9 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
 
     protected Object annotation;
 
+    // used for returning the requested value of this type
+    protected Class valClass;
+
     protected Context scope;
 
     // when scope of this entry is changed then is not valid
@@ -185,6 +188,14 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
 
     public void setMultiFi(ServiceFidelity multiFi) {
         this.multiFi = multiFi;
+    }
+
+    public Class getValClass() {
+        return valClass;
+    }
+
+    public void setValClass(Class valClass) {
+        this.valClass = valClass;
     }
 
     @Override

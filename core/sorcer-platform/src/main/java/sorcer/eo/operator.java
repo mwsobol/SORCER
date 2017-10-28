@@ -589,9 +589,12 @@ public class operator extends Operator {
 				if (ent.isPersistent()) {
 					setProc(pcxt, ent, i);
 				} else {
-					if (ent.getMultiFi() != null) {
+					if (ent.getValClass() != null) {
+						pcxt.putOutValueAt(ent.getName(), ent.getOut(), ent.getValClass(), i + 1);
+					} else if (ent.getMultiFi() != null) {
 						pcxt.putOutValueAt(ent.getName(), ent, i + 1);
 					} else {
+
 						pcxt.putOutValueAt(ent.getName(), ent.getImpl(), i + 1);
 
 					}
