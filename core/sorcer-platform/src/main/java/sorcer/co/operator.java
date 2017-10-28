@@ -938,13 +938,13 @@ public class operator extends Operator {
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
-//        if (entry instanceof Proc) {
-//            Proc procEntry = (Proc)entry;
-//            if (procEntry.getScope() != null && procEntry.getContextable() == null) {
-//                procEntry.getScope().putValue(procEntry.getName(), valuate);
-//            }
-//        }
-        entry.isValid(true);
+        if (entry instanceof Proc) {
+            Proc procEntry = (Proc)entry;
+            if (procEntry.getScope() != null && procEntry.getContextable() == null) {
+                procEntry.getScope().putValue(procEntry.getName(), value);
+            }
+        }
+        entry.isValid(false);
         return entry;
     }
 

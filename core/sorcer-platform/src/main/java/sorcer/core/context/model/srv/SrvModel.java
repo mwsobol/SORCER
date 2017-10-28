@@ -292,6 +292,10 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                 }
             } else if (val instanceof ServiceFidelity) {
                 return ((Entry)((ServiceFidelity)val).getSelect()).get(args);
+            } else if (val instanceof Model) {
+                Context response = (Context) ((Model)val).getResponse(args);
+                append(response);
+                return response;
             } else {
                 return super.getValue(path, args);
             }

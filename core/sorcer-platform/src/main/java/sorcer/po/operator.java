@@ -232,7 +232,7 @@ public class operator extends Operator {
 
     public static Fidelity pFi(Function... entries) {
         Fidelity fi = new Fidelity(entries);
-        fi.fiType = ServiceFidelity.Type.SELECT;
+        fi.fiType = ServiceFidelity.Type.PROC;
         return fi;
     }
 

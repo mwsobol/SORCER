@@ -91,6 +91,10 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 					}
 				}
 			}
+		} else if ((entity instanceof Fidelity) && ((Fidelity)entity).getType().equals(Fi.Type.PROC)) {
+			multiFi = (Fi) entity;
+			impl = multiFi.getSelects().get(0);
+			return;
 		}
 		this.impl = entity;
 	}
@@ -126,8 +130,8 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	public void setValue(Object value) throws SetterException {
 		if (isPersistent && mappable == null) {
 			try {
-				if (SdbUtil.isSosURL(this.out)) {
-					SdbUtil.update((URL)this.out, value);
+				if (SdbUtil.isSosURL(this.impl)) {
+					SdbUtil.update((URL)this.impl, value);
 				} else  {
 					this.out = (T)SdbUtil.store(value);
 				}
@@ -212,10 +216,11 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		try {
 			substitute(args);
 			if (multiFi != null) {
-			    val = getData();
+			    val = ((Evaluation)multiFi.getSelect()).evaluate(args);
 			    if (val instanceof String) {
                     return (T) scope.asis(val.toString());
 				}
+                return (T) val;
 			}
 			if (mappable != null && out instanceof String) {
 				Object obj = mappable.asis((String) out);
@@ -324,6 +329,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 					}
 				} else if (arg instanceof Fidelity && multiFi != null) {
 					multiFi.setSelect(arg.getName());
+					multiFi.setChanged(true);
 				} else if (arg instanceof Context) {
 					if (scope == null)
 						scope = (Context) arg;

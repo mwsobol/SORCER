@@ -141,11 +141,14 @@ public class Procedures {
 		Proc<Double> dbp1 = persistent(proc("design/in", 25.0));
 		Proc<String> dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
 
+		// dbp1 is declared to be persisted
 		assertTrue(asis(dbp1).equals(25.0));
+		assertEquals(asis(dbp1).getClass(), Double.class);
+		// dbp2 is persisted already
 		assertEquals(asis(dbp2).getClass(), URL.class);
 			
 		URL dbp1Url = storeVal(dbp1);
-		URL dbp2Url = storeVal(dbp2);
+		URL dbp2Url = (URL) impl(dbp2);
 
 		assertTrue(content(dbp1Url).equals(25.0));
 		assertEquals(content(dbp2Url), "http://sorcersoft.org/sobol");
@@ -153,16 +156,19 @@ public class Procedures {
 		assertTrue(eval(dbp1).equals(25.0));
 		assertEquals(eval(dbp2), "http://sorcersoft.org/sobol");
 
+		// TODO update does not occur
 		// update persistent values
 		setValue(dbp1, 30.0);
 		setValue(dbp2, "http://sorcersoft.org");
-	
-		assertTrue(content(storeVal(dbp1)).equals(30.0));
-		assertEquals(content(storeVal(dbp2)), "http://sorcersoft.org");
+
+		logger.info("dbp1: " + eval(dbp1));
+		logger.info("dbp2: " + eval(dbp2));
+
+		assertTrue(eval(dbp1).equals(30.0));
+		assertTrue(eval(dbp2).equals("http://sorcersoft.org"));
 
 		assertEquals(asis(dbp1).getClass(), URL.class);
 		assertEquals(asis(dbp2).getClass(), URL.class);
-
 	}
 
 	@Test
@@ -171,11 +177,11 @@ public class Procedures {
 		Proc<Double> dbp = dbEnt("shared/eval", 25.0);
 		
 		Proc multi = proc("multi",
-				pFi(ent("init/eval"),
-                dbp,
-				proc("invoke", invoker("x + y", args("x", "y")))));
+				pFi(proc("init/eval"),
+                	dbp,
+					proc("invoke", invoker("x + y", args("x", "y")))));
 
-		Context<Double> cxt = context(proc("x", 10.0),
+		Context<Double> cxt = model(proc("x", 10.0),
 				proc("y", 20.0), proc("init/eval", 49.0));
 
 		setValue(dbp, 50.0);

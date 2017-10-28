@@ -1525,7 +1525,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 			this.appendInout(returnContext);
 			this.setChanged(true);
 		} else {
-			this.appendInout(outcxt);
+			if (returnPath != null) {
+				this.put(returnPath, (T) outcxt.get(returnPath));
+			} else {
+				this.appendInout(outcxt);
+			}
 			this.setChanged(true);
 		}
 		return resultContext;
