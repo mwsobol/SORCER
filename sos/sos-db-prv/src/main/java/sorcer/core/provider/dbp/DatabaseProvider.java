@@ -97,7 +97,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	}
 
 	public Uuid update(Uuid uuid, Object object) throws InvalidObjectException {
-		logger.info("Updating uuid object: " + uuid);
+//		logger.info("Updating uuid object: " + uuid);
 		Object uuidObject = object;
 		if (!(object instanceof Identifiable)) {
 			uuidObject = new UuidObject(uuid, object);
@@ -105,12 +105,11 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		UpdateThread ut = new UpdateThread(uuid, uuidObject);
         Uuid id = ut.getUuid();
         ut.start();
-		logger.info("Updating returning id: " + id);
         return id;
 	}
 
 	public Uuid updateObject(URL url, Object object) throws InvalidObjectException {
-		logger.info("Updating url object: " + url);
+//		logger.info("Updating url object: " + url);
 		Object uuidObject = object;
 		if (!(object instanceof Identifiable)) {
 			uuidObject = new UuidObject(SdbUtil.getUuid(url), object);
@@ -155,7 +154,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
     }
 
 	public Object getObject(Uuid uuid) {
-		logger.info("Getting object: " + uuid);
+//		logger.info("Getting object: " + uuid);
 		waitIfBusy(uuid);
 		StoredMap<UuidKey, UuidObject> uuidObjectMap = views.getUuidObjectMap();
 
