@@ -351,11 +351,12 @@ public class ArithmeticNetTest implements SorcerConstants {
 	}
 
 	@Test
-	public void arithmeticEolExerter() throws Exception {
+	public void arithmeticSmlExerter() throws Exception {
 		// get the current eval of the exertlet
-		Task task = task("eval", sig("execute", Evaluation.class, prvName("Arithmetic Exerter")));
-		logger.info("j1/t3/result/y: " + eval(task, "j1/t3/result/y"));
-		assertEquals(eval(task, "j1/t3/result/y"), 400.0);
+		Exerter exerter = task("exert", sig("exert", Exerter.class, prvName("Arithmetic Exerter")));
+		Context out = exert(exerter, context());
+		logger.info("out: " + out);
+		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 
 		// change both the contexts completely
 		Context multiplyContext = context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 70.0));
@@ -363,9 +364,9 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Context invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
-		logger.info("j1/t3/result/y: " + eval(task, "j1/t3/result/y"));
-		assertEquals(eval(task, "j1/t3/result/y"), 500.0);
+		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
+		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));
+		assertEquals(value(out, "j1/t3/result/y"), 500.0);
 
 		// change partially the contexts
 		multiplyContext = context("multiply", inVal("arg/x1", 20.0));
@@ -373,9 +374,9 @@ public class ArithmeticNetTest implements SorcerConstants {
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
+		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
 //		logger.info("j1/t3/result/y: " + eval(task, "j1/t3/result/y"));
-		assertEquals(eval(task, "j1/t3/result/y"), 1210.0);
+		assertEquals(value(out, "j1/t3/result/y"), 1210.0);
 
 		// reverse the state of the exertleter
 		multiplyContext = context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0));
@@ -383,15 +384,15 @@ public class ArithmeticNetTest implements SorcerConstants {
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
+		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
 //		logger.info("j1/t3/result/y: " + eval(task, "j1/t3/result/y"));
-		assertEquals(eval(task, "j1/t3/result/y"), 400.0);
+		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 	}
 
 	@Test
 	public void arithmeticApiExerter() throws Exception {
 		// get the current eval of the exertlet
-		NetSignature signature = new NetSignature("execute", Evaluation.class,
+		NetSignature signature = new NetSignature("exert", Exerter.class,
 				Sorcer.getActualName("Arithmetic Exerter"));
 		Task task = new NetTask("eval", signature);
 		Task result = task.exert();
