@@ -364,9 +364,9 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Context invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
-		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));
-		assertEquals(value(out, "j1/t3/result/y"), 500.0);
+		Task task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
+		logger.info("j1/t3/result/y: " + eval(out, "j1/t3/result/y"));
+		assertEquals(eval(task, "j1/t3/result/y"), 500.0);
 
 		// change partially the contexts
 		multiplyContext = context("multiply", inVal("arg/x1", 20.0));
@@ -374,9 +374,9 @@ public class ArithmeticNetTest implements SorcerConstants {
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
+		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
 //		logger.info("j1/t3/result/y: " + eval(task, "j1/t3/result/y"));
-		assertEquals(value(out, "j1/t3/result/y"), 1210.0);
+		assertEquals(eval(task, "j1/t3/result/y"), 1210.0);
 
 		// reverse the state of the exertleter
 		multiplyContext = context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0));
@@ -384,9 +384,9 @@ public class ArithmeticNetTest implements SorcerConstants {
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
+		task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
 //		logger.info("j1/t3/result/y: " + eval(task, "j1/t3/result/y"));
-		assertEquals(value(out, "j1/t3/result/y"), 400.0);
+		assertEquals(eval(task, "j1/t3/result/y"), 400.0);
 	}
 
 	@Test

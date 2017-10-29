@@ -2524,6 +2524,9 @@ public class operator extends Operator {
 		return new ReturnPath(path, inPaths);
 	}
 
+    public static ReturnPath result(Path path, In inPaths) {
+        return new ReturnPath(path, inPaths);
+    }
 	public static ReturnPath result(In inPaths) {
 		return new ReturnPath(Signature.SELF, inPaths);
 	}

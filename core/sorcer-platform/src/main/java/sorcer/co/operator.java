@@ -328,6 +328,10 @@ public class operator extends Operator {
 		return new Path(path, info);
 	}
 
+    public static Path path(String path, Signature.Direction dir) {
+        return new Path(path, dir);
+    }
+
 	public static Path map(String path, Object info) {
 		return new Path(path, info, Path.Type.MAP);
 	}

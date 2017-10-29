@@ -587,6 +587,19 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 			}
 		}
 
+		public ReturnPath(Path path, In argPaths) {
+			this.path = path.getName();
+			if (argPaths != null && argPaths.size() > 0) {
+				Path[] ps = new Path[argPaths.size()];
+				this.inPaths = argPaths.toArray(ps);
+				if (path.direction != null) {
+					direction = path.direction;
+				} else {
+					direction = Direction.IN;
+				}
+			}
+		}
+
 		public ReturnPath(String path, In argPaths) {
 			this.path = path;
 			if (argPaths != null && argPaths.size() > 0) {

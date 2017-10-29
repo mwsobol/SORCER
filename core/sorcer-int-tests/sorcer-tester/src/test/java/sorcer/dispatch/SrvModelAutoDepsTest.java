@@ -8,6 +8,7 @@ import sorcer.arithmetic.tester.provider.impl.DividerImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.service.Context;
+import sorcer.service.Signature;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertTrue;
@@ -35,16 +36,17 @@ public class SrvModelAutoDepsTest {
                         inPaths("multiply/x1", "multiply/x2")))),
                 ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("model/response",
-                        inPaths("multiply/out", "add/out")))),
+                ent(sig("subtract", SubtractorImpl.class,
+                        result(path("model/response", Signature.Direction.INOUT),
+                            inPaths("multiply/out", "add/out")))),
                 ent(sig("divide", DividerImpl.class, result("divider/out",
                         inPaths("model/response", "multiply/x1")))),
-                sorcer.mo.operator.response("divide"));
+                response("divide"));
 
         logger.info("Map of dependents: " + dependencies(m));
         logger.info("Dependencies: " + printDeps(m));
-        logger.info("response: " + response(m));
         Context out = response(m);
+        logger.info("response: " + out);
         logger.info("result: " + get(out, "divide"));
         assertTrue(get(out, "divide").equals(40.0));
     }
@@ -65,12 +67,12 @@ public class SrvModelAutoDepsTest {
                         inPaths("model/response", "multiply/x1")))),
                 ent("addfinal", sig("add", AdderImpl.class, result("addfinal/out",
                         inPaths("addfinal/x1", "divider/out")))),
-                sorcer.mo.operator.response("addfinal"));
+                response("addfinal"));
 
         logger.info("Map of dependents: " + dependencies(m));
         logger.info("Dependencies: " + printDeps(m));
-        logger.info("response: " + response(m));
         Context out = response(m);
+        logger.info("response: " + out);
         logger.info("result: " + get(out, "addfinal"));
         assertTrue(get(out, "addfinal").equals(1040.0));
     }

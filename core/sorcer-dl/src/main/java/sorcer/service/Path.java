@@ -37,6 +37,8 @@ public class Path implements Arg, Request {
 
 	protected Type type = Type.PATH;
 
+	protected  Signature.Direction direction = Signature.Direction.INOUT;
+
 	public Path() {
 	}
 
@@ -48,6 +50,11 @@ public class Path implements Arg, Request {
 		this.path = path;
 		this.info = info;
 		this.type = type;
+	}
+
+	public Path(String path, Signature.Direction direction) {
+		this(path);
+		this.direction = direction;
 	}
 
 	public Path(String path, Object info) {

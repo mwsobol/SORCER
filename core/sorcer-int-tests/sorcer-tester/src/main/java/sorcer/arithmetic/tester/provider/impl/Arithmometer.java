@@ -283,7 +283,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 								context.getMogram().getName());
 					}
 				}
-				cxt.putValue(outpath, result);
+				cxt.putInoutValue(outpath, result);
 				cxt.putValue(attPath(outpath, ArrayContext.DESCRIPTION), outputMessage);
 			} else {
 				cxt.putValue(RESULT_PATH, result);
@@ -348,6 +348,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 
 	private List<Double> determineInputs(PositionalContext context) throws ContextException {
 		List<Double> inputs = (List<Double>) Contexts.getNamedInValues(context);
+//		List<String> allInPaths = context.getAllInPaths();
 		if (inputs == null || inputs.size() == 0) {
 			inputs = (List<Double>) Contexts.getPrefixedInValues(context);
 //				logger.info("prefixed inputs: \n" + inputs);
@@ -355,9 +356,10 @@ public class Arithmometer implements SorcerConstants, Serializable {
 		//logger.info("named inputs: \n" + inputs);
 		if (inputs == null || inputs.size() == 0)
 			inputs = (List<Double>) context.getInValues();
-		if (inputs == null || inputs.size() == 0) {
+		if (inputs == null || inputs.size() == 0 || inputs.size() == 1) {
 			logger.info("context size: \n" + context.size());
 			if (context.size() == 2) {
+				inputs.clear();
 				inputs.add((Double) context.getValueAt(0));
 				inputs.add((Double) context.getValueAt(1));
 //				logger.info("first: \n" + context.getValueAt(0));

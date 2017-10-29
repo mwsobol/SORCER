@@ -1323,7 +1323,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public boolean isFloat(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
+		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
 		boolean is = vc.equals(""+ float.class) || vc.equals(""+ Float.class);
 		return is;
 	}
