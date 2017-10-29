@@ -45,10 +45,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static sorcer.co.operator.instance;
-import static sorcer.co.operator.list;
-import static sorcer.eo.operator.context;
-import static sorcer.po.operator.srv;
+import static sorcer.co.operator.*;
+import static sorcer.eo.operator.*;
+import static sorcer.po.operator.*;
+import static sorcer.mo.operator.*;
+
 
 /**
  * Created by Mike Sobolewski on 4/26/15.

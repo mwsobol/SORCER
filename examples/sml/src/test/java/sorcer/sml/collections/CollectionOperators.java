@@ -367,8 +367,8 @@ public class CollectionOperators {
 		assertTrue(asis(cxt, "arg/x7") instanceof Invocation);
 		logger.info("x7a: " + eval(cxt, "arg/x7"));
 		logger.info("x7b: " + value(cxt, "arg/x7"));
-		assertTrue(eval(cxt, "arg/x7") instanceof Proc);
-		assertTrue(value(cxt, "arg/x7") instanceof Proc);
+		assertTrue(eval(cxt, "arg/x7").equals(4.0));
+		assertTrue(value(cxt, "arg/x7").equals(4.0));
 
 	}
 

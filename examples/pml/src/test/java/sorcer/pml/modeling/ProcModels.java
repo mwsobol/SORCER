@@ -343,7 +343,7 @@ public class ProcModels {
 		assertTrue(eval(dbIn).equals(30.0));
 
 		// associated context is updated accordingly
-//		assertTrue(value(cxt, "design/in").equals(30.0));
+		assertTrue(value(cxt, "design/in").equals(30.0));
 		assertTrue(asis(cxt, "design/in") instanceof Proc);
 		assertTrue(asis((Proc)asis(cxt, "design/in")) instanceof URL);
 

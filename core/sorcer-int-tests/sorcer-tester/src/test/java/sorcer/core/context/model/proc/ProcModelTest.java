@@ -23,17 +23,10 @@ import java.net.URL;
 import java.rmi.RemoteException;
 
 import static org.junit.Assert.*;
-import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.persistent;
-import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.pipe;
-import static sorcer.mo.operator.responseUp;
-import static sorcer.po.operator.*;
-import static sorcer.po.operator.put;
 import static sorcer.mo.operator.*;
+import static sorcer.po.operator.*;
 import static sorcer.so.operator.*;
 
 /**
@@ -189,7 +182,7 @@ public class ProcModelTest {
 	
 	@Test
 	public void persistableContext() throws ContextException, RemoteException {
-		Context c4 = new ServiceContext("multiply");
+		Context c4 = context("multiply");
 		c4.putDbValue("arg/x1", 10.0);
 		c4.putValue("arg/x2", 50.0);
 		c4.putDbValue("result/y", null);
@@ -203,8 +196,8 @@ public class ProcModelTest {
 		assertTrue(storeVal(c4, "arg/x1") instanceof URL);
 		assertTrue(storeVal(c4, "arg/x2") instanceof URL);
 
-		c4.putValue("arg/x1", 110.0);
-		c4.putValue("arg/x2", 150.0);
+		setValue(c4, "arg/x1", 110.0);
+		setValue(c4, "arg/x2", 150.0);
 
 		assertEquals(value(c4, "arg/x1"), 110.0);
 		assertEquals(value(c4, "arg/x2"), 150.0);
@@ -223,33 +216,15 @@ public class ProcModelTest {
 		assertEquals(value(c4, "arg/x1"), 10.0);
 		assertEquals(value(c4, "arg/x2"), 50.0);
 
-		assertEquals(get(c4, "arg/x0"), 1.0);
-		assertEquals(get(c4, "arg/x1"), 10.0);
-		assertEquals(get(c4, "arg/x2"), 50.0);
-
+		// in context
 		assertTrue(asis(c4, "arg/x0") instanceof Proc);
 		assertTrue(asis(c4, "arg/x1") instanceof Proc);
 		assertTrue(asis(c4, "arg/x2") instanceof Proc);
 
-		assertTrue(storeVal(c4, "arg/x0") instanceof URL);
-		assertTrue(storeVal(c4, "arg/x1") instanceof URL);
-		assertTrue(storeVal(c4, "arg/x2") instanceof URL);
-
-		assertEquals(value(c4, "arg/x0"), 1.0);
-		assertEquals(value(c4, "arg/x1"), 10.0);
-		assertEquals(value(c4, "arg/x2"), 50.0);
-
-		assertTrue(asis(c4, "arg/x0") instanceof Proc);
-		assertTrue(asis(c4, "arg/x1") instanceof Proc);
-		assertTrue(asis(c4, "arg/x2") instanceof Proc);
-
-		assertEquals(value(c4, "arg/x0"), 1.0);
-		assertEquals(value(c4, "arg/x1"), 10.0);
-		assertEquals(value(c4, "arg/x2"), 50.0);
-
-		assertTrue(asis(c4, "arg/x0") instanceof Proc);
-		assertTrue(asis(c4, "arg/x1") instanceof Proc);
-		assertTrue(asis(c4, "arg/x2") instanceof Proc);
+        // in context
+        assertTrue(get(c4, "arg/x0") instanceof Proc);
+        assertTrue(get(c4, "arg/x1") instanceof Proc);
+        assertTrue(get(c4, "arg/x2") instanceof Proc);
 	}
 	
 	@Test
@@ -284,8 +259,8 @@ public class ProcModelTest {
 		// persistent proc
 		Proc dbIn = persistent(as(proc("dbIn", "design/in"), cxt));
 		assertTrue(eval(dbIn).equals(25.0));  	// is persisted
-		assertTrue(dbIn.asis().equals("design/in"));
-		assertTrue(eval((Value) asis(cxt, "design/in")).equals(25.0));
+		assertTrue(dbIn.asis() instanceof  URL);
+		assertTrue(eval((Entry) asis(cxt, "design/in")).equals(25.0));
 		assertTrue(value(cxt, "design/in").equals(25.0));
 
 		setValue(dbIn, 30.0); 	// is persisted
@@ -512,14 +487,14 @@ public class ProcModelTest {
 		assertTrue(result.equals(33510.32163829113));
 
 		// invoke the agent directly
-		invoke(pm,
-				"getSphereVolume",
-				new Agent("getSphereVolume",
-						"sorcer.arithmetic.tester.volume.Volume",
-						new URL(Sorcer.getWebsterUrl()
-								+ "/sorcer-tester-"+sorcerVersion+".jar")));
-
-//		logger.info("val: " + eval(pm, "sphere/volume"));
-		assertTrue(value(pm, "sphere/volume").equals(33510.32163829113));
+//		invoke(pm,
+//				"getSphereVolume",
+//				new Agent("getSphereVolume",
+//						"sorcer.arithmetic.tester.volume.Volume",
+//						new URL(Sorcer.getWebsterUrl()
+//								+ "/sorcer-tester-"+sorcerVersion+".jar")));
+//
+////		logger.info("val: " + eval(pm, "sphere/volume"));
+//		assertTrue(value(pm, "sphere/volume").equals(33510.32163829113));
 	}
 }

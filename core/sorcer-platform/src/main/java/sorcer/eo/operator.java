@@ -382,7 +382,7 @@ public class operator extends Operator {
 					cxt = new DataContext(name);
 			} else if (customContextClass != null) {
 				try {
-					cxt = (DataContext) customContextClass.newInstance();
+					cxt = (ServiceContext) customContextClass.newInstance();
 				} catch (Exception e) {
 					throw new ContextException(e);
 				}

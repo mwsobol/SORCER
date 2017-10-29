@@ -128,50 +128,55 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		mappable = map;
 	}
 
-	public void setValue(Object value) throws SetterException {
-		if (isPersistent && mappable == null) {
-			try {
-				if (SdbUtil.isSosURL(this.impl)) {
-					SdbUtil.update((URL)this.impl, value);
-				} else  {
-					this.impl = (T)SdbUtil.store(value);
-				}
-			} catch (Exception e) {
-				throw new SetterException(e);
-			}
-			return;
-		}
-		if (mappable != null && this.impl instanceof String ) {
-			try {
-				Object val = mappable.asis((String) impl);
-				if (val instanceof Proc) {
-					((Proc)val).setValue(value);
-				} else if (isPersistent) {
-					if (SdbUtil.isSosURL(val)) {
-						SdbUtil.update((URL)val, value);
-					} else {
-						URL url = SdbUtil.store(value);
-						Proc p = new Proc((String)this.out, url);
-						p.setPersistent(true);
-						if (mappable instanceof ServiceContext) {
-							((ServiceContext) mappable).put((String) this.out, p);
-						} else {
-							mappable.putValue((String) this.out, p);
-						}
-					}
-				} else {
-					mappable.putValue((String) impl, value);
-				}
-			} catch (Exception e) {
-				throw new SetterException(e);
-			}
-		} else if (value instanceof Evaluation) {
-			this.out = (T) value;
-		} else {
-			this.out = (T)value;
-			impl = (T) value;
-		}
-	}
+    public void setValue(Object value) throws SetterException {
+        if (isPersistent && mappable == null) {
+            try {
+                if (SdbUtil.isSosURL(this.impl)) {
+                    SdbUtil.update((URL) this.impl, value);
+                } else {
+                    this.impl = (T) SdbUtil.store(value);
+                }
+            } catch (Exception e) {
+                throw new SetterException(e);
+            }
+            return;
+        }
+
+        if (mappable != null) {
+            try {
+                if (this.impl instanceof String) {
+                    Object val = mappable.asis((String) impl);
+                    if (val instanceof Proc) {
+                        ((Proc) val).setValue(value);
+                    } else if (isPersistent) {
+                        if (SdbUtil.isSosURL(val)) {
+                            SdbUtil.update((URL) val, value);
+                        } else {
+                            URL url = SdbUtil.store(value);
+                            Proc p = new Proc((String) this.out, url);
+                            p.setPersistent(true);
+                            if (mappable instanceof ServiceContext) {
+                                ((ServiceContext) mappable).put((String) this.out, p);
+                            } else {
+                                mappable.putValue((String) this.out, p);
+                            }
+                        }
+                    } else {
+                        mappable.putValue((String) impl, value);
+                    }
+                } else if (impl instanceof URL) {
+                    SdbUtil.update(SdbUtil.getUuid((URL) impl), value);
+                }
+            } catch (Exception e) {
+                throw new SetterException(e);
+            }
+        } else if (value instanceof Evaluation) {
+            this.out = (T) value;
+        } else {
+            this.out = (T) value;
+            impl = (T) value;
+        }
+    }
 
 	@Override
 	public T get(Arg... args) {

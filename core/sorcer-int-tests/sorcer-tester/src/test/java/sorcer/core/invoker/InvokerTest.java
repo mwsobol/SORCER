@@ -266,7 +266,7 @@ public class InvokerTest {
 		assertTrue(eval(y).equals(30.0));
 
 //		logger.info("y scope: " + scope(y));
-		assertEquals(scope(y), null);
+		assertEquals(((Context)scope(y)).size(), 2);
 	}
 
 	@Test
