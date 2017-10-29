@@ -104,8 +104,8 @@ public class operator extends Operator {
 		return p;
 	}
 
-	public static Proc as(Proc proc, Service traget) {
-		proc.setMappable((Mappable)traget);
+	public static Proc as(Proc proc, Service target) {
+		proc.setMappable((Mappable)target);
 		return proc;
 	}
 
@@ -371,12 +371,21 @@ public class operator extends Operator {
 	public static Object invoke(ProcModel procModel, String parname, Arg... parameters)
 			throws RemoteException, InvocationException {
 		try {
-			Object obj = procModel.get(parname);
+			Object obj;
+			if (parameters.length > 0 && parameters[0] instanceof Agent) {
+				obj = parameters[0];
+			} else {
+				obj = procModel.get(parname);
+			}
+
 			Context scope = null;
 			// assume that the first argument is always context if provided
-			if (parameters.length > 0 && parameters[0] instanceof Context)
-				scope = (Context)parameters[0];
-			if (obj instanceof Proc
+			if (parameters.length > 0 && parameters[0] instanceof Context) {
+				scope = (Context) parameters[0];
+			}
+			if (obj instanceof Agent) {
+				return ((Agent)obj).evaluate(parameters);
+			} else if (obj instanceof Proc
 					&& ((Proc) obj).asis() instanceof Invocation) {
 				Invocation invoker = (Invocation) ((Proc) obj).asis();
 				//return invoker.invoke(procModel, parameters);
@@ -391,8 +400,6 @@ public class operator extends Operator {
 				else
 					out = ((Invocation) obj).invoke(null, parameters);
 				return out;
-			} else if (obj instanceof Agent) {
-				return ((Agent)obj).evaluate(parameters);
 			} else {
 				throw new InvocationException("No invoker for: " + parname);
 			}
@@ -404,15 +411,6 @@ public class operator extends Operator {
 	public static ArgSet args(ServiceInvoker invoker) {
 		return invoker.getArgs();
 	}
-
-//	public static Arg[] args(String... parnames)
-//			throws ContextException {
-//		ArgSet ps = new ArgSet();
-//		for (String name : parnames) {
-//			ps.add(new Proc(name));
-//		}
-//		return ps.toArray();
-//	}
 
 	public static Arg[] args(ProcModel pm, String... parnames)
 			throws ContextException {
@@ -426,10 +424,6 @@ public class operator extends Operator {
 	public static ServiceInvoker invoker(Evaluator evaluator, ArgSet pars) {
 		return new ServiceInvoker(evaluator,pars);
 	}
-
-//	public static ServiceInvoker invoker(Evaluator evaluator, Proc... procEntries) {
-//		return new ServiceInvoker(evaluator, procEntries);
-//	}
 
 	public static <T> ServiceInvoker invoker(ValueCallable<T> lambda, Args args) throws InvocationException {
 		return new ServiceInvoker(null, lambda, null, args.argSet());

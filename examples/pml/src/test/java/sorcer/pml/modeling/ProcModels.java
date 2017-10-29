@@ -76,33 +76,22 @@ public class ProcModels {
 		ProcModel model = procModel(
 				"Hello Arithmetic Domain #1",
 				// inputs
-				ent("x1"), ent("x2"), proc("x3", 20.0),
-				proc("x4", 80.0),
+				val("x1"), val("x2"), val("x3", 20.0),
+				val("x4", 80.0),
 				// outputs
 				proc("t4", invoker("x1 * x2", args("x1", "x2"))),
 				proc("t5", invoker("x3 + x4", args("x3", "x4"))),
 				proc("j1", invoker("t4 - t5", args("t4", "t5"))));
 
-		logger.info("model: " + model);
+		assertTrue(eval(model, "t5").equals(100.0));
 
-		assertEquals(eval(proc(model, "t4")), null);
+		assertEquals(eval(model, "j1"), null);
 
-		assertTrue(eval(proc(model, "t5")).equals(100.0));
-
-		assertEquals(eval(proc(model, "j1")), null);
-
-		logger.info("model: " + model);
-
-//		eval(model, "j1", proc("x1", 10.0), proc("x2", 50.0)).equals(400.0);
+		eval(model, "j1", proc("x1", 10.0), proc("x2", 50.0)).equals(400.0);
 
 		assertTrue(eval(model, "j1", val("x1", 10.0), val("x2", 50.0)).equals(400.0));
 
-//		// equivalent to the above line
-//		assertEquals(
-//				eval(proc(put(model, proc("x1", 10.0), proc("x2", 50.0)), "j1")),
-//				400.0);
-
-		assertTrue(eval(proc(model, "j1")).equals(400.0));
+		assertTrue(eval(model, "j1").equals(400.0));
 
 		// get model response
 		Response mr = (Response) eval(model, //proc("x1", 10.0), proc("x2", 50.0),
@@ -237,32 +226,32 @@ public class ProcModels {
 	}
 
 
-	@Test
-	public void entryPersistence() throws Exception {
+    @Test
+    public void entryPersistence() throws Exception {
 
-		Context cxt = context("multiply", dbVal("arg/x0", 1.0), dbInVal("arg/x1", 10.0),
-				dbOutVal("arg/x2", 50.0), outVal("result/y"));
+        Context cxt = model("multiply", dbVal("arg/x0", 1.0), dbInVal("arg/x1", 10.0),
+                dbOutVal("arg/x2", 50.0), outVal("result/y"));
 
-		assertEquals(value(cxt, "arg/x0"), 1.0);
-		assertEquals(value(cxt, "arg/x1"), 10.0);
-		assertEquals(value(cxt, "arg/x2"), 50.0);
+        assertEquals(value(cxt, "arg/x0"), 1.0);
+        assertEquals(value(cxt, "arg/x1"), 10.0);
+        assertEquals(value(cxt, "arg/x2"), 50.0);
 
-		assertTrue(asis(cxt, "arg/x0") instanceof Proc);
-		assertTrue(asis(cxt, "arg/x1") instanceof Proc);
-		assertTrue(asis(cxt, "arg/x2") instanceof Proc);
+        assertTrue(asis(cxt, "arg/x0") instanceof Proc);
+        assertTrue(asis(cxt, "arg/x1") instanceof Proc);
+        assertTrue(asis(cxt, "arg/x2") instanceof Proc);
 
-		put(cxt, "arg/x0", 11.0);
-		put(cxt, "arg/x1", 110.0);
-		put(cxt, "arg/x2", 150.0);
+        put(cxt, "arg/x0", 11.0);
+        put(cxt, "arg/x1", 110.0);
+        put(cxt, "arg/x2", 150.0);
 
-		assertEquals(value(cxt, "arg/x0"), 11.0);
-		assertEquals(value(cxt, "arg/x1"), 110.0);
-		assertEquals(value(cxt, "arg/x2"), 150.0);
+        assertEquals(value(cxt, "arg/x0"), 11.0);
+        assertEquals(value(cxt, "arg/x1"), 110.0);
+        assertEquals(value(cxt, "arg/x2"), 150.0);
 
-		assertTrue(asis(cxt, "arg/x0") instanceof Proc);
-		assertTrue(asis(cxt, "arg/x1") instanceof Proc);
-		assertTrue(asis(cxt, "arg/x2") instanceof Proc);
-	}
+        assertTrue(asis(cxt, "arg/x0") instanceof Proc);
+        assertTrue(asis(cxt, "arg/x1") instanceof Proc);
+        assertTrue(asis(cxt, "arg/x2") instanceof Proc);
+    }
 
 
 	@Test
@@ -288,28 +277,28 @@ public class ProcModels {
 		Proc p2 = proc("url", sUrl);
 		URL url1 = storeVal(p1);
 		URL url2 = storeVal(p2);
-//
-//		assertTrue(asis(p1) instanceof URL);
-//		assertEquals(content(url1), 30.0);
-//		assertEquals(eval(p1), 30.0);
-//
-//		assertTrue(asis(p2) instanceof URL);
-//		assertEquals(content(url2), sUrl);
-//		assertEquals(eval(p2), sUrl);
-//
-//		// store args in the data store
-//		p1 = proc("design/in", 30.0);
-//		p2 = proc("url", sUrl);
-//		URL url3 = store(p1);
-//		URL url4 = store(p2);
-//
-//		assertTrue(asis(p1) instanceof Double);
-//		assertEquals(content(url1), 30.0);
-//		assertEquals(eval(p1), 30.0);
-//
-//		assertTrue(asis(p2) instanceof URL);
-//		assertEquals(content(url2), sUrl);
-//		assertEquals(eval(p2), sUrl);
+
+		assertTrue(asis(p1) instanceof URL);
+		assertEquals(content(url1), 30.0);
+		assertEquals(eval(p1), 30.0);
+
+		assertTrue(asis(p2) instanceof URL);
+		assertEquals(content(url2), sUrl);
+		assertEquals(eval(p2), sUrl);
+
+		// store args in the data store
+		p1 = proc("design/in", 30.0);
+		p2 = proc("url", sUrl);
+		store(p1);
+		store(p2);
+
+		assertTrue(asis(p1) instanceof Double);
+		assertEquals(content(url1), 30.0);
+		assertEquals(eval(p1), 30.0);
+
+		assertTrue(asis(p2) instanceof URL);
+		assertEquals(content(url2), sUrl);
+		assertEquals(eval(p2), sUrl);
 
 	}
 
@@ -317,7 +306,7 @@ public class ProcModels {
 	@Test
 	public void aliasedProcsTest() throws Exception {
 
-		Context cxt = context(proc("design/in1", 25.0), proc("design/in2", 35.0));
+		Context cxt = model(proc("design/in1", 25.0), proc("design/in2", 35.0));
 
 		// mapping parameters to cxt, x1 and x2 are proc aliases
 		Proc x1 = proc(cxt, "x1", "design/in1");
@@ -344,16 +333,17 @@ public class ProcModels {
 
 		// persistent proc
 		Entry dbIn = persistent(as(proc("dbIn", "design/in"), cxt));
+
 		assertTrue(eval(dbIn).equals(25.0));  	// is persisted
-		assertTrue(dbIn.asis().equals("design/in"));
+		assertTrue(dbIn.asis() instanceof  URL);
 		assertTrue(eval((Entry) asis(cxt, "design/in")).equals(25.0));
 		assertTrue(value(cxt, "design/in").equals(25.0));
 
-		setValue((Value)dbIn, 30.0); 	// is persisted
+		setValue(dbIn, 30.0); 	// is persisted
 		assertTrue(eval(dbIn).equals(30.0));
 
 		// associated context is updated accordingly
-		assertTrue(value(cxt, "design/in").equals(30.0));
+//		assertTrue(value(cxt, "design/in").equals(30.0));
 		assertTrue(asis(cxt, "design/in") instanceof Proc);
 		assertTrue(asis((Proc)asis(cxt, "design/in")) instanceof URL);
 
@@ -655,15 +645,15 @@ public class ProcModels {
 		assertTrue(result.equals(33510.32163829113));
 
 		// invoke the agent directly
-		invoke(pm,
-				"getSphereVolume",
-                agent("getSphereVolume",
-                        "sorcer.arithmetic.tester.volume.Volume",
-                        new URL(Sorcer.getWebsterUrl()
-                                + "/sorcer-tester-" + sorcerVersion+".jar")));
-
-//		logger.info("val: " + eval(pm, "sphere/volume"));
-		assertTrue(value(pm, "sphere/volume").equals(33510.32163829113));
+//		invoke(pm,
+//				"getSphereVolume",
+//                agent("getSphereVolume",
+//                        "sorcer.pml.provider.impl.Volume",
+//                        new URL(Sorcer.getWebsterUrl()
+//                                + "/sorcer-tester-" + sorcerVersion+".jar")));
+//
+////		logger.info("val: " + eval(pm, "sphere/volume"));
+//		assertTrue(value(pm, "sphere/volume").equals(33510.32163829113));
 
 	}
 

@@ -626,7 +626,7 @@ public class operator extends Operator {
 		try {
 			if (object instanceof Entry) {
 				entry = (Entry)	object;
-				Object obj = entry.getImpl();
+				Object obj = entry.getData();
 				if (SdbUtil.isSosURL(obj)) {
 					dburl = (URL) obj;
 					SdbUtil.update(dburl, entry.getOut());
@@ -636,7 +636,7 @@ public class operator extends Operator {
 					dburl = SdbUtil.store(entry.getOut());
 				}
 			}
-			entry.setValue(entry.getOut());
+			entry.setOut(null);
 			entry.setImpl(dburl);
 			entry.isValid(true);
 			return dburl;
@@ -944,7 +944,7 @@ public class operator extends Operator {
                 procEntry.getScope().putValue(procEntry.getName(), value);
             }
         }
-        entry.isValid(false);
+        entry.isValid(true);
         return entry;
     }
 
@@ -979,7 +979,9 @@ public class operator extends Operator {
 					return (T) obj;
 				} else if (obj instanceof Value) {
 					return (T) ((Value) obj).getData();
-				} else if (SdbUtil.isSosURL(obj)) {
+				} else if (obj instanceof Proc) {
+                    return (T) ((Proc) obj).evaluate(args);
+                } else if (SdbUtil.isSosURL(obj)) {
 					return (T) ((URL) obj).getContent();
 				} else if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
 					return (T) ((ServiceContext) context).getEvalValue(path);

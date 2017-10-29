@@ -76,7 +76,8 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 		super(path);
 		name = path;
 		if (entity instanceof  Number || entity instanceof  String || entity instanceof  Date
-                || entity instanceof  List || entity instanceof  Map || entity.getClass().isArray()) {
+                || entity instanceof  URL || entity instanceof  List || entity instanceof  Map
+                || entity.getClass().isArray()) {
 		    out = (T) entity;
         }
 
@@ -133,7 +134,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 				if (SdbUtil.isSosURL(this.impl)) {
 					SdbUtil.update((URL)this.impl, value);
 				} else  {
-					this.out = (T)SdbUtil.store(value);
+					this.impl = (T)SdbUtil.store(value);
 				}
 			} catch (Exception e) {
 				throw new SetterException(e);
@@ -200,7 +201,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 			isValid = false;
 		}
 
-		if (impl != null && isValid && args.length == 00 && !isPersistent) {
+		if (impl != null && isValid && args.length == 0 && !isPersistent) {
 			try {
 				if (impl instanceof String
 						&& mappable != null && mappable.getValue((String) impl) != null)
@@ -283,20 +284,24 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 						val = ((UuidObject) val).getObject();
 					}
 				} else {
-					url = SdbUtil.store(val);
 					Proc p = null;
-					if (mappable != null && this.out instanceof String
-							&& mappable.asis((String) this.out) != null) {
-						p = new Proc((String) this.out, url);
-						p.setPersistent(true);
-						mappable.putValue((String) this.out, p);
-					} else if (this.out instanceof Identifiable) {
-						p = new Proc(((Identifiable) this.out).getName(), url);
-						p.setPersistent(true);
-					}
-					impl = (T) url;
-					out = null;
-				}
+                    if (mappable != null && this.out instanceof String
+                            && mappable.asis((String) out) != null) {
+                        val = mappable.getValue((String) out);
+                        url = SdbUtil.store(val);
+                        p = new Proc((String) out, url);
+                        p.setPersistent(true);
+                        mappable.putValue((String) out, p);
+                    } else if (out instanceof Identifiable) {
+                        url = SdbUtil.store(val);
+                        p = new Proc(((Identifiable) out).getName(), url);
+                        p.setPersistent(true);
+                    } else {
+                        url = SdbUtil.store(val);
+                    }
+                    impl = (T) url;
+                    out = null;
+                }
 				return (T) val;
 			}
 			return out;

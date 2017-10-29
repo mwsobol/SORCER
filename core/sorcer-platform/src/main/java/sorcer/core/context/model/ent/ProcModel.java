@@ -120,6 +120,8 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 
 			if (val instanceof Value) {
 				return ((Value)val).valuate();
+			} if (val instanceof Proc && ((Proc) val).isPersistent) {
+				return ((Proc)val).evaluate();
 			} else if ((val instanceof Proc) && (((Proc) val).asis() instanceof Function)) {
 				bindEntry((Function) ((Proc)val).asis());
 			} else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
@@ -153,7 +155,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 					if (o != Context.none && o != null)
 						return o;
 					else
-						return ((ServiceContext)scope).getSoftValue(path);
+						return scope.getSoftValue(path);
 				} else {
 					if (val == null)
 						return getSoftValue(path);

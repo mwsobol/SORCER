@@ -80,10 +80,10 @@ public class operator {
         try {
             if (entry == null) {
                 model.add(sorcer.po.operator.ent(entName, value));
-            } else if (entry instanceof Setter) {
-                ((Setter) entry).setValue(value);
             } else if (entry instanceof Entry) {
                 ((Entry) entry).setValue(value);
+            } else if (entry instanceof Setter) {
+                ((Setter) entry).setValue(value);
             } else {
                 ((ServiceContext)model).put(entName, value);
             }
