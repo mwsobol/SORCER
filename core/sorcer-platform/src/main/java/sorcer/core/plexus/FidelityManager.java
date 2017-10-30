@@ -35,6 +35,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static sorcer.eo.operator.mog;
 import static sorcer.eo.operator.rFi;
 
 /**

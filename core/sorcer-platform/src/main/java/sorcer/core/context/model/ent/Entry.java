@@ -60,12 +60,22 @@ public class Entry<V> extends Association<String, V>
         if (!isValid && multiFi != null) {
             Object select = multiFi.getSelect();
             if (select instanceof Entry) {
-                impl = ((Entry) multiFi.getSelect()).getImpl();
+                Object selectImpl = ((Entry) multiFi.getSelect()).getImpl();
+                if (selectImpl != null) {
+                    impl = ((Entry) multiFi.getSelect()).getImpl();
+                }
             } else {
                 impl = (multiFi.getSelect());
             }
         }
         isValid = true;
+        return impl;
+    }
+
+    public Object applyFidelity() {
+        if (multiFi != null && multiFi.isChanged()) {
+            impl = multiFi.getSelect();;
+        }
         return impl;
     }
 

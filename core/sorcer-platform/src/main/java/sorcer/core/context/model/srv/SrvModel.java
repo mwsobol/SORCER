@@ -155,9 +155,11 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
 
             if (val instanceof Number) {
                 return val;
-            } else if (val instanceof Srv) {
-                Fi srvFi = ((Srv)val).getMultiFi();
-                ((FidelityManager)fiManager).reconfigure(Arg.selectFidelities(args));
+            }
+            if (val instanceof Entry && ((Entry) val).getMultiFi() != null) {
+                ((FidelityManager) fiManager).reconfigure(Arg.selectFidelities(args));
+            }
+            if (val instanceof Srv) {
                 if (isChanged()) {
                     ((Srv) val).isValid(false);
                 }
@@ -272,8 +274,12 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     }
                 }
             } else if (val instanceof Entry) {
+                if (((Entry) val).getMultiFi() != null) {
+                    ((FidelityManager) fiManager).reconfigure(Arg.selectFidelities(args));
+                    ((Entry) val).applyFidelity();
+                }
                 // getData applies current fidelity
-                if (((Entry)val).getData() instanceof Ref) {
+                if (((Entry)val).getImpl() instanceof Ref) {
                     // dereferencing Ref and executing
                     Ref ref = ((Ref)((Entry)val).getImpl());
                     ref.setScope(this);
