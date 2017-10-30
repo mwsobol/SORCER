@@ -158,6 +158,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             }
             if (val instanceof Entry && ((Entry) val).getMultiFi() != null) {
                 ((FidelityManager) fiManager).reconfigure(Arg.selectFidelities(args));
+                ((Entry) val).applyFidelity();
             }
             if (val instanceof Srv) {
                 if (isChanged()) {
@@ -268,6 +269,22 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     Object out = ((Service)carrier).execute(nargs);
                     ((Srv) get(path)).setOut(out);
                     val = out;
+                } else if (((Entry)val).getImpl() instanceof Ref) {
+                    // dereferencing Ref and executing
+                    Ref ref = ((Ref) ((Entry) val).getImpl());
+                    ref.setScope(this);
+                    Object deref = ref.get();
+                    if (deref instanceof Evaluation) {
+                        if (deref instanceof Scopable) {
+                            ((Scopable) deref).setScope(this);
+                        }
+                        val = ((Evaluation) deref).evaluate(args);
+                    } else if (deref instanceof Signature) {
+                        val = execSignature((Signature) deref, args);
+                    } else {
+                        // assume default dereference of Entry is inner Entry
+                        val = ((Entry) deref).get(args);
+                    }
                 } else {
                     if (carrier == Context.none) {
                         val = getValue(((Srv) val).getName());
