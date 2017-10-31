@@ -333,8 +333,7 @@ public class ArithmeticMograms {
 		assertTrue(value(context, "j1/t3/result/y").equals(400.0));
 	}
 
-    @Test
-    public void amorphousModel() throws Exception {
+    @Test public void amorphousModel() throws Exception {
 
 		Morpher mFi1Morpher =  (mgr, mFi, value) -> {
 			Fidelity fi =  mFi.getFidelity();
@@ -349,51 +348,52 @@ public class ArithmeticMograms {
 			}
 		};
 
-        Morpher mFi2Morpher = (mgr, mFi, value) -> {
-            Fidelity<Signature> fi =  mFi.getFidelity();
-            if (fi.getSelectName().equals("divide")) {
-                if (((Double) value) <= 9.0) {
-                    mgr.morph("sysFi4");
-                } else {
-                    mgr.morph("sysFi3");
-                }
-            }
-        };
+		Morpher mFi2Morpher = (mgr, mFi, value) -> {
+			Fidelity<Signature> fi =  mFi.getFidelity();
+			if (fi.getSelectName().equals("divide")) {
+				if (((Double) value) <= 9.0) {
+					mgr.morph("sysFi4");
+				} else {
+					mgr.morph("sysFi3");
+				}
+			}
+		};
 
-        Metafidelity fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+		Metafidelity fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
 		Metafidelity fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
 		Metafidelity fi4 = fi("sysFi4", fi("mFi3", "average"));
 
-        Signature add = sig("add", AdderImpl.class,
-                result("result/y1", inPaths("arg/x1", "arg/x2")));
-        Signature subtract = sig("subtract", SubtractorImpl.class,
-                result("result/y2", inPaths("arg/x1", "arg/x2")));
-        Signature average = sig("average", AveragerImpl.class,
-                result("result/y2", inPaths("arg/x1", "arg/x2")));
-        Signature multiply = sig("multiply", MultiplierImpl.class,
-                result("result/y1", inPaths("arg/x1", "arg/x2")));
-        Signature divide = sig("divide", DividerImpl.class,
-                result("result/y2", inPaths("arg/x1", "arg/x2")));
+		Signature add = sig("add", AdderImpl.class,
+			result("result/y1", inPaths("arg/x1", "arg/x2")));
+		Signature subtract = sig("subtract", SubtractorImpl.class,
+			result("result/y2", inPaths("arg/x1", "arg/x2")));
+		Signature average = sig("average", AveragerImpl.class,
+			result("result/y2", inPaths("arg/x1", "arg/x2")));
+		Signature multiply = sig("multiply", MultiplierImpl.class,
+			result("result/y1", inPaths("arg/x1", "arg/x2")));
+		Signature divide = sig("divide", DividerImpl.class,
+			result("result/y2", inPaths("arg/x1", "arg/x2")));
 
-        // multifidelity model with morphers
-        Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
-                ent("mFi1", mFi(mFi1Morpher, add, multiply)),
-                ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),
-                ent("mFi3", mFi(average, divide, multiply)),
-                fi2, fi3, fi4,
-                response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
+		// multifidelity model with morphers
+		Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
+			ent("mFi1", mFi(mFi1Morpher, add, multiply)),
+			ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),
+			ent("mFi3", mFi(average, divide, multiply)),
+			fi2, fi3, fi4,
+			response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
-        Context out = response(mod);
-        logger.info("out: " + out);
-        assertTrue(get(out, "mFi1").equals(100.0));
-        assertTrue(get(out, "mFi2").equals(9.0));
-        assertTrue(get(out, "mFi3").equals(50.0));
+		Context out = response(mod);
+		logger.info("out: " + out);
+		assertTrue(get(out, "mFi1").equals(100.0));
+		assertTrue(get(out, "mFi2").equals(9.0));
+		assertTrue(get(out, "mFi3").equals(50.0));
 
 //        // first closing the fidelity for mFi1
 //        out = response(mod , fi("mFi1", "multiply"));
 //        logger.info("out: " + out);
 //        assertTrue(get(out, "mFi1").equals(900.0));
 //        assertTrue(get(out, "mFi2").equals(50.0));
+
 //        assertTrue(get(out, "mFi3").equals(9.0));
     }
 }

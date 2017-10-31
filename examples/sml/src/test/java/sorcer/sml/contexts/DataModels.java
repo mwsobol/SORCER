@@ -133,16 +133,16 @@ public class DataModels {
         assertTrue(outputs.equals(paths(outputs(cxt))));
 
         // return all values of inEntries
-        assertEquals(inCotextValues(cxt), list(1.5, 1.4, 1.3, 1.2));
+        assertEquals(inCotextValues(cxt), list(1.2, 1.3, 1.4, 1.5));
 
         // return all paths of inEntries
-        assertEquals(inContextPaths(cxt), list("arg/x5", "arg/x4", "arg/x3", "arg/x2"));
+        assertEquals(inContextPaths(cxt), list("arg/x2", "arg/x3", "arg/x4", "arg/x5"));
 
         // return all values of outEntries
-        assertEquals(outContextValues(cxt), list(1.8, 1.7, 1.9));
+        assertEquals(outContextValues(cxt), list(1.7, 1.8, 1.9));
 
         // return all paths of outEntries
-        assertEquals(outContextPaths(cxt), list("out/y2", "out/y1", "proc/z"));
+        assertEquals(outContextPaths(cxt), list("out/y1", "out/y2", "proc/z"));
 
     }
 
@@ -183,11 +183,11 @@ public class DataModels {
         // the default tagAssociation (attribute) 'tag'
         tag(cxt, "arg/x1", "tag|set1");
         tag(cxt, "arg/x2", "tag|set1");
-        assertEquals(valuesAt(cxt, "tag|set1"), list(1.2, 1.1));
+        assertEquals(valuesAt(cxt, "tag|set1"), list(1.1, 1.2));
 
         tag(cxt, "arg/x2", "tag|set2");
         tag(cxt, "arg/x4", "tag|set2");
-        assertEquals(valuesAt(cxt, "tag|set2"), list(1.4, 1.2));
+        assertEquals(valuesAt(cxt, "tag|set2"), list(1.2, 1.4));
 
         // now the path "arg/x2" is overwritten, so excluded
         assertEquals(valuesAt(cxt, "tag|set1"), list(1.1));
@@ -205,7 +205,7 @@ public class DataModels {
 
         // still the previous tagAssociation 'tag' holds with 'triplet'
         // for the same paths: arg/x1 and arg/x2
-        assertEquals(valuesAt(cxt, "tag|set2"), list(1.4, 1.2));
+        assertEquals(valuesAt(cxt, "tag|set2"), list( 1.2, 1.4));
 
         // custom annotation with the association: "person|first|last"
         tagAssociation(cxt, "person|first|last");

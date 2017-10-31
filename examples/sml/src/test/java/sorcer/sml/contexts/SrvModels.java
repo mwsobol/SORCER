@@ -353,10 +353,10 @@ public class SrvModels {
         logger.info("result: " + result);
 
         assertTrue(value(result, "add").equals(580.0));
-        assertTrue(value(result, "multiply").equals(5000.0));
+        assertTrue(value(result, "multiply").equals(500.0));
         assertTrue(value(result, "y1").equals(580.0));
-        assertTrue(value(result, "y2").equals(5000.0));
-        assertTrue(value(result, "y3").equals(4420.0));
+        assertTrue(value(result, "y2").equals(500.0));
+        assertTrue(value(result, "y3").equals(-80.0));
     }
 
 }

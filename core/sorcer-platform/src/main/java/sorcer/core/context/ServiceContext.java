@@ -85,7 +85,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * metacontext: key is a metaattribute and eval is a map of
 	 * path/metapath args
 	 */
-	protected Map<String, Map<String,String>> metacontext;
+	protected Map<String, LinkedHashMap<String, String>> metacontext;
 	protected Context initContext;
 
 	/** The exertion that uses this context */
@@ -233,8 +233,8 @@ public class ServiceContext<T> extends ServiceMogram implements
     protected void initContext() {
 		super.init();
 		data = new ConcurrentHashMap<String, T>();
-		metacontext = new HashMap<String, Map<String, String>>();
-		metacontext.put(SorcerConstants.CONTEXT_ATTRIBUTES, new HashMap());
+		metacontext = new HashMap<String, LinkedHashMap<String, String>>();
+		metacontext.put(SorcerConstants.CONTEXT_ATTRIBUTES, new LinkedHashMap());
 
 		// specify four SORCER standard composite attributes
 		try {
@@ -927,7 +927,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public String getSingletonAttributeValue(String path, String attributeName)
 			throws ContextException {
 		String val = null;
-		Hashtable table;
+		LinkedHashMap table;
 
 		// locate the context and context path for this key
 		Object[] map = getContextMapping(path);
@@ -935,7 +935,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		String mappedKey = (String) map[1];
 
 		if (cntxt.isSingletonAttribute(attributeName)) {
-			table = (Hashtable) cntxt.metacontext.get(attributeName);
+			table = (LinkedHashMap) cntxt.metacontext.get(attributeName);
 			if (table != null) {
 				val = (String) table.get(mappedKey);
 			}
@@ -999,17 +999,17 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public Context addComponentAssociation(String path, String attribute,
 										   String attributeValue) throws ContextException {
-		Hashtable values;
+		LinkedHashMap values;
 		// locate the context and context path for this key
 		Object[] map = getContextMapping(path);
 		ServiceContext cntxt = (ServiceContext) map[0];
 		String mappedKey = (String) map[1];
 
 		if (cntxt.isSingletonAttribute(attribute)) {
-			values = (Hashtable) cntxt.metacontext.get(attribute);
+			values = (LinkedHashMap) cntxt.metacontext.get(attribute);
 			if (values == null) {
 				// the creation of this hashtable was delayed until now
-				values = new Hashtable();
+				values = new LinkedHashMap();
 				cntxt.metacontext.put(attribute, values);
 			}
 			values.put(mappedKey, attributeValue);
@@ -1063,7 +1063,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 		List<String> keys = new ArrayList<String>();
 		if (isSingletonAttribute(attr)) {
-			values = (Map)getMetacontext().get(attr);
+			values = getMetacontext().get(attr);
 			if (values != null) { // if there are no attributes set,
 				// values==null;
 				for (Object key : values.keySet()) {
@@ -1296,52 +1296,52 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public String getValClass(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
+		String vc = (String) ((LinkedHashMap)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		return vc;
 	}
 
 	public boolean isString(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
+		String vc = (String) ((LinkedHashMap)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		return vc.equals(""+ String.class);
 	}
 
 	public boolean isInt(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
+		String vc = (String) ((LinkedHashMap)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		boolean is = vc.equals(""+ int.class) || vc.equals(""+ Integer.class);
 		return is;
 	}
 	public boolean isShort(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
+		String vc = (String) ((LinkedHashMap)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		boolean is = vc.equals(""+ short.class) || vc.equals(""+ Short.class);
 		return is;
 	}
 
 	public boolean isLong(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
+		String vc = (String) ((LinkedHashMap)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		boolean is = vc.equals(""+ long.class) || vc.equals(""+ Long.class);
 		return is;
 	}
 
 	public boolean isFloat(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get("vc")).get(path);
+		String vc = (String) ((LinkedHashMap)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		boolean is = vc.equals(""+ float.class) || vc.equals(""+ Float.class);
 		return is;
 	}
 
 	public boolean isDouble(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
+		String vc = (String) ((LinkedHashMap)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		boolean is = vc.equals(""+ double.class) || vc.equals(""+ Double.class);
 		return is;
 	}
 
 	public boolean isByte(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
+		String vc = (String) ((LinkedHashMap)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		boolean is = vc.equals(""+ byte.class) || vc.equals(""+ Byte.class);
 		return is;
 	}
 
 	public boolean isBoolean(String path) throws ContextException {
-		String vc = (String) ((Hashtable)getMetacontext().get(Context.VAL_CLASS)).get(path);
+		String vc = (String) ((LinkedHashMap)getMetacontext().get(Context.VAL_CLASS)).get(path);
 		boolean is = vc.equals(""+ boolean.class) || vc.equals(""+ Boolean.class);
 		return is;
 	}
@@ -1377,17 +1377,22 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * @throws ContextException
 	 */
 	public List<Object> getInValues() throws ContextException {
-		List<String> inpaths = Contexts.getInPaths(this);
-		List<Object> list = new ArrayList<Object>(inpaths.size());
-		for (String path : inpaths)
-			try {
-		    Object val = getValue(path);
-		    if (val != null) {
+		List<String> inpaths;
+		if (returnPath != null && returnPath.inPaths != null) {
+			// input paths specified by this context signature
+			inpaths = Path.getPathList(returnPath.inPaths);
+		} else {
+			// input paths of input entries
+			inpaths = Contexts.getInPaths(this);
+		}
+
+		List<Object> list = new ArrayList(inpaths.size());
+		for (String path : inpaths) {
+			Object val = getValue(path);
+			if (val != null) {
 				list.add(val);
-            }
-			} catch (Exception e) {
-				throw new ContextException(e);
 			}
+		}
 		return list;
 	}
 
@@ -1574,24 +1579,26 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return subcntxt;
 	}
 
-	public ServiceContext getEvaluatedSubcontext(Path[] paths, Arg[] items) throws ContextException {
+	public ServiceContext getEvaluatedSubcontext(Path[] inputPaths, Arg[] items) throws ContextException {
 		ServiceContext subcntxt = getSubcontext();
-		List<String> inpaths = getInPaths();
+//		List<String> contextInPaths = getInPaths();
+		List<Path> inpaths = Arrays.asList(inputPaths);
 		List<String> outpaths = getOutPaths();
 
-		for (Path path : paths) {
+		for (Path path : inputPaths) {
 			// tag the context with provided info
 			if(path.info != null) {
 				subcntxt.putValue(path.path, getValue(path.path), path.info.toString());
-			} else if (inpaths.contains(path.path))
-				subcntxt.putInValue(path.path, getValue(path.path, items));
+			}
+//			else if (contextInPaths.contains(path.path))
+//				subcntxt.putInValue(path.path, getValue(path.path, items));
 			else if (outpaths.contains(path))
 				subcntxt.putInoutValue(path.path, getValue(path.path, items));
 			else
-				subcntxt.putValue(path.path, getValue(path.path, items));
+				subcntxt.putInValue(path.path, getValue(path.path, items));
 		}
 		// annotate paths as provided by paths
-		for (Path p : paths) {
+		for (Path p : inputPaths) {
 			if (p.info != null) {
 				subcntxt.mark(p.path, (String)p.info);
 			}
@@ -1825,18 +1832,19 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 		}
 		// replicate subcontext attributes and metaattributes
-		Map table, attrTable;
-		attrTable = ((ServiceContext) mappedCntxt).metacontext;
+		LinkedHashMap table;
+		Map<String, LinkedHashMap<String, String>> attrMap;
+		attrMap = mappedCntxt.metacontext;
 		// note the metacontext contains only singleton attributes
 		// AND the SORCER.CONTEXT_ATTRIBUTES dataTable
-		e = attrTable.keySet().iterator();
+		e = attrMap.keySet().iterator();
 		String attr, val, metapath;
 		while (e.hasNext()) {
-			attr = (String) e.next();
+			attr = e.next();
 			// make sure we don't enumerate over the CONTEXT_ATTRIBUTES
 			if (attr.equals(CONTEXT_ATTRIBUTES))
 				continue;
-			table = (Hashtable) attrTable.get(attr);
+			table = attrMap.get(attr);
 			e1 = table.keySet().iterator();
 			while (e1.hasNext()) {
 				cntxtKey = (String) e1.next();
@@ -2095,7 +2103,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return toString(cr, sb, withMetacontext);
 	}
 
-	public Map<String, Map<String, String>> getMetacontext() {
+	public Map<String, LinkedHashMap<String, String>> getMetacontext() {
 		return metacontext;
 	}
 
@@ -2332,7 +2340,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public void removePathWithoutDeleted(String path) {
 		this.remove(path);
 		// Remove the path if it exists in metaAttribute also.
-		Iterator<Map<String, String>> i = metacontext.values().iterator();
+		Iterator<LinkedHashMap<String, String>> i = metacontext.values().iterator();
 		while (i.hasNext()) {
 			Map<String, String> attributeHash = metacontext.get(i.next());
 			if (attributeHash.containsKey(path))
@@ -2748,7 +2756,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * @see sorcer.service.Context#setMetacontext(java.util.Hashtable)
 	 */
 	@Override
-	public void setMetacontext(Map<String, Map<String, String>> metacontext) {
+	public void setMetacontext(Map<String, LinkedHashMap<String, String>> metacontext) {
 		this.metacontext = metacontext;
 	}
 

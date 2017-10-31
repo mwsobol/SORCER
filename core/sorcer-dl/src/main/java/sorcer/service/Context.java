@@ -236,14 +236,14 @@ public interface Context<T> extends Domain, Mappable<T>, Serializable, Contexter
 
 	public boolean containsPath(String path);
 
-	public Map<String, Map<String, String>> getMetacontext();
+	public Map<String, LinkedHashMap<String, String>> getMetacontext();
 
 	/**
 	 * @param metacontext
 	 *            The metacontext to set.
 	 */
 	public void setMetacontext(
-			Map<String, Map<String, String>> metacontext);
+			Map<String, LinkedHashMap<String, String>> metacontext);
 
 	/**
 	 * Returns the mogram associated with this context.

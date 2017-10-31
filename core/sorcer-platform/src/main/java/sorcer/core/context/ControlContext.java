@@ -509,7 +509,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 			parent.get(i).setIndex(i);
 			put(parent.get(i).getContext().getName(), remove(oldPath));
 			Map map;
-			Map<String, Map<String, String>> imc = getMetacontext();
+			Map<String, LinkedHashMap<String, String>> imc = getMetacontext();
 			String key;
 			Iterator keys = ((Map) imc.get(CONTEXT_ATTRIBUTES)).keySet().iterator();
 			while (keys.hasNext()) {
@@ -581,7 +581,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		}
 		String newPath = exertion.getContext().getName();
 		Map map;
-		Map<String, Map<String, String>> imc = getMetacontext();
+		Map<String, LinkedHashMap<String, String>> imc = getMetacontext();
 		e = ((Map) imc.get(CONTEXT_ATTRIBUTES)).keySet().iterator();
 		while (e.hasNext()) {
 			key = (String) e.next();

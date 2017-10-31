@@ -1217,7 +1217,7 @@ public class Contexts implements SorcerConstants {
 	public static String[] getMarkedPaths(Context cntxt, String association)
 			throws ContextException {
 		String attr, value, key;
-		Hashtable values;
+		LinkedHashMap <String, String> values;
 		// java 1.4.0 regex
 		// Pattern p;
 		// Matcher m;
@@ -1234,12 +1234,12 @@ public class Contexts implements SorcerConstants {
 
 		Vector keys = new Vector();
 		if (cntxt.isSingletonAttribute(attr)) {
-			values = (Hashtable) cntxt.getMetacontext().get(attr);
+			values = (LinkedHashMap<String, String>) cntxt.getMetacontext().get(attr);
 			if (values != null) { // if there are no attributes setValue,
 				// values==null;
-				Enumeration e = values.keys();
-				while (e.hasMoreElements()) {
-					key = (String) e.nextElement();
+				Iterator e = values.keySet().iterator();
+				while (e.hasNext()) {
+					key = (String) e.next();
 					/*
 					 * java 1.4.0 regex p = Pattern.compile(eval); m =
 					 * p.matcher((String)values.get(key)); if (m.find())
