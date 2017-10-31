@@ -92,7 +92,7 @@ public class ServiceMograms {
         assertTrue(value(result, "multiply").equals(500.0));
         assertTrue(value(result, "y1").equals(580.0));
         assertTrue(value(result, "y2").equals(500.0));
-        assertTrue(value(result, "y3").equals(-80));
+        assertTrue(value(result, "y3").equals(-80.0));
     }
 
     @Test
