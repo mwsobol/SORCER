@@ -2990,7 +2990,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public Object getResult() throws ContextException, RemoteException {
-		((ModelStrategy)mogramStrategy).outcome.setModeling(false);
+		if (((ModelStrategy) mogramStrategy).outcome != null) {
+			((ModelStrategy) mogramStrategy).outcome.setModeling(false);
+		}
 		return ((ModelStrategy)mogramStrategy).outcome;
 	}
 

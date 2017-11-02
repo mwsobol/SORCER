@@ -90,20 +90,20 @@ public class SrvModels {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                ent("mrpFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                response("mFi", "arg/x1", "arg/x2"));
+                response("mrpFi", "arg/x1", "arg/x2"));
 
-        logger.info("fidelity: " + asis(mod, "mFi"));
+        logger.info("fidelity: " + asis(mod, "mrpFi"));
 
-        Context out = response(mod, fi("mFi", "add"));
+        Context out = response(mod, fi("mrpFi", "add"));
 //        logger.info("out: " + out);
-//        assertTrue(valuate(out, "mFi").equals(100.0));
+//        assertTrue(valuate(out, "mrpFi").equals(100.0));
 //        assertTrue(eval(mod, "result/y").equals(100.0));
 //
-//        out = response(mod, fi("mFi", "multiply"));
+//        out = response(mod, fi("mrpFi", "multiply"));
 //        logger.info("out: " + out);
-//        assertTrue(valuate(out, "mFi").equals(900.0));
+//        assertTrue(valuate(out, "mrpFi").equals(900.0));
 //        assertTrue(eval(mod, "result/y").equals(900.0));
     }
 

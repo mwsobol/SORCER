@@ -122,7 +122,7 @@ public class ExertionMultiFidelities {
 		};
 
 		Task t4 = task("t4",
-				mFi(t4mrp, sFi("object", sig("multiply", MultiplierImpl.class)),
+				mrpFi(t4mrp, sFi("object", sig("multiply", MultiplierImpl.class)),
 						sFi("net", sig("multiply", Multiplier.class))),
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						outVal("result/y")));
@@ -165,13 +165,13 @@ public class ExertionMultiFidelities {
 				outVal("result/y")));
 
 		Task t4 = task("t4",
-			mFi(t4mrp, sFi("object1", sig("multiply", MultiplierImpl.class)),
+			mrpFi(t4mrp, sFi("object1", sig("multiply", MultiplierImpl.class)),
 				sFi("object2", sig("add", AdderImpl.class))),
 			context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 				outVal("result/y")));
 
 		Task t5 = task("t5",
-			mFi(t5mrp, sFi("object1", sig("add", AdderImpl.class)),
+			mrpFi(t5mrp, sFi("object1", sig("add", AdderImpl.class)),
 				sFi("object2", sig("multiply", MultiplierImpl.class))),
 			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 				outVal("result/y")));

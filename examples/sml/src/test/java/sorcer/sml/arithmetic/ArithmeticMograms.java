@@ -376,9 +376,9 @@ public class ArithmeticMograms {
 
 		// multifidelity model with morphers
 		Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
-			ent("mFi1", mFi(mFi1Morpher, add, multiply)),
-			ent("mFi2", mFi(mFi2Morpher, average, divide, subtract)),
-			ent("mFi3", mFi(average, divide, multiply)),
+			ent("mFi1", mrpFi(mFi1Morpher, add, multiply)),
+			ent("mFi2", mrpFi(mFi2Morpher, average, divide, subtract)),
+			ent("mFi3", mrpFi(average, divide, multiply)),
 			fi2, fi3, fi4,
 			response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 

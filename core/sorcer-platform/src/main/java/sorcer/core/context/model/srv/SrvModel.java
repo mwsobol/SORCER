@@ -30,7 +30,7 @@ import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MultiFiMogram;
+import sorcer.core.plexus.MogramFi;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
@@ -210,8 +210,9 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     if (rp != null && rp.path != null)
                         putValue(((Srv) val).getReturnPath().path, obj);
                     val = obj;
-                }  else if (carrier instanceof MultiFiMogram) {
-                    Object out = ((MultiFiMogram)carrier).exert(args);
+                }  else if (carrier instanceof MogramFi) {
+                    ((MogramFi) carrier).setScope(this);
+                    Object out = ((MogramFi)carrier).exert(args);
                     Context cxt = null;
                     if (out instanceof Exertion) {
                         cxt = ((Exertion) out).getContext();
@@ -220,13 +221,13 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                             Object obj = cxt.getReturnValue();
                             putInoutValue(rt.getPath(), obj);
                             ((Srv) get(path)).setOut(obj);
+                            ((Exertion) out).getContext().putValue(path, obj);
                             out = obj;
                         } else {
                             ((Srv) get(path)).setOut(cxt);
                             out = cxt;
                         }
                     }
-                    ((Srv) get(path)).setOut(cxt);
                     val = out;
                 } else if (carrier instanceof Client && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
                     // get target entry for this cal
@@ -327,6 +328,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         }
 
         ((Entry)get(path)).setOut(val);
+        ((Entry)get(path)).isValid(true);
         return val;
     }
 

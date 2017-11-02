@@ -127,6 +127,11 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected MetaFi selectedMetafidelity;
 
+//    // carrier of out
+//    protected Mogram impl = new ServiceFidelity(Fidelity.Type.SIG);
+//
+//    protected Fi multiFi;
+
     // service fidelities for this mogram
     protected Map<String, Fidelity> serviceFidelities;
 

@@ -191,6 +191,15 @@ public class LoopMogram extends ConditionalMogram {
 	}
 
 	@Override
+	public Context getDataContext() {
+		if (target instanceof Context) {
+			return (Context) target;
+		} else {
+			return scope;
+		}
+	}
+
+	@Override
 	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) {
 		try {
 			exceptions.addAll(target.getExceptions());

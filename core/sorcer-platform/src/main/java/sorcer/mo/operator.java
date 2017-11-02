@@ -495,12 +495,14 @@ public class operator {
                 mo = procModel(items);
             }
             mo.setName(name);
-            if (mo instanceof SrvModel && autoDeps)
+            if (mo instanceof SrvModel && autoDeps) {
                 try {
-                    mo = new SrvModelAutoDeps((SrvModel)mo).get();
+                    mo = new SrvModelAutoDeps((SrvModel) mo).get();
                 } catch (SortingException e) {
                     throw new ContextException(e);
                 }
+            }
+            ((ModelStrategy)mo.getMogramStrategy()).setOutcome(new ServiceContext(name + "-Output)"));
             return (M) mo;
         }
         throw new ModelException("do not know what model to create");

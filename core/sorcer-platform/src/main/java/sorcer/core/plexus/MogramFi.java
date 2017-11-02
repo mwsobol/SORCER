@@ -42,7 +42,7 @@ import java.util.Set;
  *
  * Created by Mike Sobolewski
  */
-public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
+public class MogramFi extends ServiceMogram implements Fi<Request> {
 
     protected Fidelity requestFidelity;
 
@@ -50,10 +50,10 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
 
     protected String path = "";
 
-    public MultiFiMogram() {
+    public MogramFi() {
     }
 
-    public MultiFiMogram(String name) throws SignatureException {
+    public MogramFi(String name) throws SignatureException {
         super(name);
     }
 
@@ -62,11 +62,11 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
         return scope.clearScope();
     }
 
-    public MultiFiMogram(ServiceFidelity fidelity) {
+    public MogramFi(ServiceFidelity fidelity) {
         this(fidelity.getName(), fidelity);
     }
 
-    public MultiFiMogram(String name, MorphFidelity fidelity)  {
+    public MogramFi(String name, MorphFidelity fidelity)  {
         super(name);
         morphFidelity = fidelity;
         if (fiManager == null)
@@ -79,22 +79,22 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
         morphFidelity.addObserver((FidelityManager)fiManager);
     }
 
-    public MultiFiMogram(String name, Metafidelity fidelity) {
+    public MogramFi(String name, Metafidelity fidelity) {
         super(name);
         requestFidelity = fidelity;
     }
 
-    public MultiFiMogram(String name, ServiceFidelity fidelity) {
+    public MogramFi(String name, ServiceFidelity fidelity) {
         super(name);
         requestFidelity = fidelity;
     }
 
-    public MultiFiMogram(Context context, MorphFidelity fidelity)  {
+    public MogramFi(Context context, MorphFidelity fidelity)  {
         this(context.getName(), fidelity);
         scope = context;
     }
 
-    public MultiFiMogram(Context context, Metafidelity fidelity) {
+    public MogramFi(Context context, Metafidelity fidelity) {
         this(context.getName(), fidelity);
         scope = context;
     }
@@ -116,8 +116,11 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
 
     @Override
     public Context getContext() throws ContextException {
-//        return ((Mogram)morphFidelity.getSelect()).getContext();
-        return scope;
+//        if (morphFidelity != null) {
+//            return ((Mogram)morphFidelity.getSelect()).getContext();
+//        } else {
+            return scope;
+//        }
     }
 
     public void setDataContext(ServiceContext dataContext) {

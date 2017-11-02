@@ -976,30 +976,35 @@ public class operator extends Operator {
 	public static <T> T value(Context<T> context, String path,
 							  Arg... args) throws ContextException {
 		try {
+			T out = null;
 			Object obj = context.get(path);
 			if (obj != null) {
 				if (obj instanceof Number || obj instanceof Number
 						|| obj.getClass().isArray() || obj instanceof Collection) {
-					return (T) obj;
+					out = (T) obj;
 				} else if (obj instanceof Value) {
-					return (T) ((Value) obj).getData();
+					out = (T) ((Value) obj).getData();
 				} else if (obj instanceof Proc) {
-                    return (T) ((Proc) obj).evaluate(args);
+                    out = (T) ((Proc) obj).evaluate(args);
                 } else if (SdbUtil.isSosURL(obj)) {
-					return (T) ((URL) obj).getContent();
+					out = (T) ((URL) obj).getContent();
 				} else if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
-					return (T) ((ServiceContext) context).getEvalValue(path);
+					out = (T) ((ServiceContext) context).getEvalValue(path);
 				} else if (obj instanceof Srv && ((Srv) obj).asis() instanceof EntryCollable) {
 					Entry entry = ((EntryCollable) ((Srv) obj).asis()).call((Model) context);
-					return (T) entry.asis();
+					out = (T) entry.asis();
 				} else {
 					// linked contexts and other special case of ServiceContext
-					return context.getValue(path, args);
+					out = context.getValue(path, args);
 				}
 			} else {
 				// linked contexts and other special case of ServiceContext
-				return context.getValue(path, args);
+				out = context.getValue(path, args);
 			}
+			if (context instanceof Model && ((ModelStrategy)context.getMogramStrategy()).getOutcome() != null) {
+				((ModelStrategy)context.getMogramStrategy()).getOutcome().putValue(path, out);
+			}
+			return out;
 		} catch (MogramException | IOException e) {
 			throw new ContextException(e);
 		}

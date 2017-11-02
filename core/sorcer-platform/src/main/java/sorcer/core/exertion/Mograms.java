@@ -22,6 +22,7 @@ import net.jini.id.UuidFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.plexus.MogramFi;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
@@ -240,8 +241,8 @@ public class Mograms implements SorcerConstants {
 			contexts.add(exertion.getDataContext());
 			for (int i = 0; i < ((Job) exertion).getMograms().size(); i++)
 				collectTaskContexts(((Job) exertion).get(i),
-						contexts);
-		} else if (exertion instanceof Task) {
+					contexts);
+		} else if (exertion instanceof Task || exertion instanceof Block) {
 			contexts.add(exertion.getDataContext());
 		}
 	}

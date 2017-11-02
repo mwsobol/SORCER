@@ -27,7 +27,7 @@ import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.*;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MultiFiMogram;
+import sorcer.core.plexus.MogramFi;
 import sorcer.service.*;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
@@ -751,9 +751,9 @@ public class operator extends Operator {
 			} else if (((Fi)value).getType() == Fi.Type.SRV) {
 				entry = new Srv(path, value);
 			}
-		} else if (value instanceof MultiFiMogram) {
+		} else if (value instanceof MogramFi) {
 			try {
-				((MultiFiMogram)value).setUnifiedName(path);
+				((MogramFi)value).setUnifiedName(path);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
