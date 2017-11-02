@@ -272,7 +272,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 	}
 
 	@Test
-	public void parBlockTest() throws Exception {
+	public void procBlockTest() throws Exception {
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),

@@ -468,9 +468,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public Signature getProcessSignature() {
         ServiceFidelity selectedFi = (ServiceFidelity)multiFi.getSelect();
-        if (selectedFi != null) {
+        if (selectedFi != null  && selectedFi.getSelect() != null) {
             return (Signature)selectedFi.getSelect();
+        } else {
+            if (selectedFi == null) {
+                return null;
+            }
         }
+
         Signature sig = null;
         for (Object s : selectedFi.selects) {
             if (s instanceof Signature && ((Signature)s).getType() == Signature.Type.PROC) {

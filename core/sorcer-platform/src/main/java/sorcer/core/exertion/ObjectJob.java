@@ -51,7 +51,6 @@ public class ObjectJob extends Job {
 			throws SignatureException {
 		super(name);
 		if (signature instanceof ObjectSignature) {
-			addSignature(signature);
 			ServiceFidelity sFi = new ServiceFidelity(signature);
 			sFi.setSelect(signature);
 			((ServiceFidelity)multiFi).getSelects().add(sFi);// Add the signature

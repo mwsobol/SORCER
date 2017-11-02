@@ -25,6 +25,7 @@ import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.exertion.AltMogram;
 import sorcer.core.exertion.LoopMogram;
 import sorcer.core.exertion.OptMogram;
+import sorcer.core.signature.ObjectSignature;
 import sorcer.util.SorcerUtil;
 import sorcer.util.url.sos.SdbUtil;
 import sorcer.service.Signature.ReturnPath;
@@ -46,18 +47,16 @@ public abstract class Block extends CompoundExertion {
 	public Block(String name) {
 		super(name);
 	}
-	
+
 	public Block(String name, Signature signature) {
 		super(name);
 		try {
-			((ServiceFidelity)multiFi.getSelect()).selects.add(signature);
-			((ServiceFidelity)multiFi.getSelect()).select = signature;
-			try {
-				setContext(new ProcModel("block context: " + getName()));
-//				persistContext();
-			} catch (Exception e) {
-				throw new ExertionException(e);
-			}
+			ServiceFidelity sFi = new ServiceFidelity(signature);
+			sFi.setSelect(signature);
+			((ServiceFidelity)multiFi).getSelects().add(sFi);// Add the signature
+			multiFi.setSelect(sFi);
+
+			setContext(new ProcModel("block context: " + getName()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
