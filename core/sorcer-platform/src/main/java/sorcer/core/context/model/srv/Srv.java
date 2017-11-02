@@ -175,7 +175,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
             } else if (impl instanceof SignatureEntry) {
                 if (scope != null && scope instanceof SrvModel) {
                     try {
-                        return ((SrvModel) scope).evalSignature(((SignatureEntry) impl).get(), getKey());
+                        return ((SrvModel) scope).evalSignature((Signature) ((SignatureEntry) impl).getImpl(), getKey());
                     } catch (Exception e) {
                         throw new EvaluationException(e);
                     }

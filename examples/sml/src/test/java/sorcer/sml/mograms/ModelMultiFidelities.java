@@ -273,7 +273,7 @@ public class ModelMultiFidelities {
     }
 
     @Test
-    public void entMultiFidelityAmorphousModel() throws Exception {
+    public void updateFiManagaerAmorphousModel() throws Exception {
 
         FidelityManager manager = new FidelityManager() {
             @Override

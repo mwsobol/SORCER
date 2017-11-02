@@ -195,7 +195,7 @@ public class LoopMogram extends ConditionalMogram {
 		if (target instanceof Context) {
 			return (Context) target;
 		} else {
-			return scope;
+			return dataContext;
 		}
 	}
 
