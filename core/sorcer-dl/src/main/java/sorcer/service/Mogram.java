@@ -159,9 +159,9 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
     public Fidelity getSelectedFidelity();
 
     /**
-     * Returns a map of all available service fidelities of this exertion.
+     * Returns service fidelities of this exertion.
      */
-    public Map<String, Fidelity> getFidelities();
+    public Fi getMultiFi();
 
     /**
      * Returns a fdelity manager for of this exertion.

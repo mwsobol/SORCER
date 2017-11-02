@@ -106,7 +106,7 @@ public class Job extends CompoundExertion {
 
 	public Job(String name, String description, ServiceFidelity fidelity) {
 		this(name, description);
-		this.selectedFidelity = fidelity;
+		multiFi.setSelect(fidelity);
 	}
 
 	/**
@@ -122,7 +122,10 @@ public class Job extends CompoundExertion {
 		// s.setServiceType(Jobber.class.getName());
 		s.getProviderName().setName(null);
 		s.setType(Signature.Type.PROC);
-        selectedFidelity.selects.add(s); // Add the signature
+		ServiceFidelity sFi = new ServiceFidelity(s);
+		sFi.setSelect(s);
+		((ServiceFidelity)multiFi).getSelects().add(sFi);// Add the signature
+		multiFi.setSelect(sFi);
 	}
 
 	@Override
@@ -188,7 +191,7 @@ public class Job extends CompoundExertion {
             SignatureException, RemoteException, TransactionException {
         if (delegate == null) {
             if (delegate == null) {
-                Signature ps = (Signature) selectedFidelity.select;
+                Signature ps = (Signature) ((ServiceFidelity)multiFi.getSelect()).getSelect();
                 if (ps instanceof NetSignature) {
                     delegate = new NetJob(name);
                 } else {
@@ -196,11 +199,10 @@ public class Job extends CompoundExertion {
                 }
 
                 delegate.setFidelityManager(getFidelityManager());
-                delegate.setFidelities(getFidelities());
-                delegate.setSelectedFidelity(getSelectedFidelity());
+                delegate.setMultiFi(getMultiFi());
+                delegate.setSelectedFidelity((ServiceFidelity) multiFi.getSelect());
                 delegate.setServiceMorphFidelity(getServiceMorphFidelity());
                 delegate.setServiceMetafidelities(getServiceMetafidelities());
-                delegate.setSelectedFidelitySelector(serviceFidelitySelector);
                 delegate.setContext(dataContext);
                 delegate.setControlContext(controlContext);
             }
@@ -210,7 +212,7 @@ public class Job extends CompoundExertion {
                 if (controlContext.getAccessType().equals(Access.PULL)) {
                     Signature procSig = delegate.getProcessSignature();
                     procSig.setServiceType(Spacer.class);
-                    delegate.selectedFidelity.selects.clear();
+					((ServiceFidelity)delegate.multiFi.getSelect()).selects.clear();
                     delegate.addSignature(procSig);
                 }
             }

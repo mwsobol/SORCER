@@ -48,21 +48,24 @@ public class ServiceFidelity extends Fidelity<Service> {
 		this.path = path;
 	}
 
-	public ServiceFidelity(Service service) {
-		this.fiName = ((Identifiable)service).getName();
-	}
-
 	public ServiceFidelity(Fidelity fi) {
 		this.fiName = fi.getName();
 		this.path = fi.getPath();
 		this.select = (Service) fi.getSelect();
 	}
 
-	public ServiceFidelity(Service[] selects) {
+	public ServiceFidelity(Service... selects) {
 		fiName = "fidelity" + count++;
 		for (Service s : selects)
 			this.selects.add(s);
-		select =  selects[0];
+		select = selects[0];
+	}
+
+	public ServiceFidelity(Signature... selects) {
+		fiName = "fidelity" + count++;
+		for (Service s : selects)
+			this.selects.add(s);
+		select = selects[0];
 	}
 
 	public Service getSelect(String name) {

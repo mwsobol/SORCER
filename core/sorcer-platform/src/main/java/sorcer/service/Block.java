@@ -50,8 +50,8 @@ public abstract class Block extends CompoundExertion {
 	public Block(String name, Signature signature) {
 		super(name);
 		try {
-			selectedFidelity.selects.add(signature);
-			selectedFidelity.select = signature;
+			((ServiceFidelity)multiFi.getSelect()).selects.add(signature);
+			((ServiceFidelity)multiFi.getSelect()).select = signature;
 			try {
 				setContext(new ProcModel("block context: " + getName()));
 //				persistContext();

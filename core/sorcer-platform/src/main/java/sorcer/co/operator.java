@@ -720,6 +720,10 @@ public class operator extends Operator {
 		return collection.size();
 	}
 
+	public static int size(Fi fidelity) {
+		return fidelity.getSelects().size();
+	}
+
 	public static int size(Model model) {
 		return ((ServiceContext)model).size();
 	}

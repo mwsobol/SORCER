@@ -76,6 +76,9 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     public ServiceExertion() {
         super("xrt" +  count++);
+        multiFi = new ServiceFidelity(name);
+        List<Service> sl = new ArrayList<>();
+        ((ServiceFidelity)multiFi).setSelects(sl);
     }
 
     public ServiceExertion(String name) {
@@ -587,7 +590,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 } else if (arg instanceof Signature.Operation) {
                     Signature.Operation op = (Signature.Operation)arg;
                     if (name.equals(op.path)) {
-                        ((ServiceSignature)selectedFidelity.getSelect()).setSelector(op.selector);
+                        ((ServiceSignature)((ServiceFidelity)multiFi.getSelect()).getSelect()).setSelector(op.selector);
                     }
                 }
             }

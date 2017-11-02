@@ -112,7 +112,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
     }
 
     public boolean isBatch() {
-        for (Object s : selectedFidelity.getSelects()) {
+        for (Object s : ((ServiceFidelity)multiFi.getSelect()).getSelects()) {
             if (s instanceof Signature && ((Signature)s).getType() != Signature.Type.PROC)
                 return false;
         }
@@ -471,16 +471,18 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         if (signature == null)
             return;
         ((ServiceSignature) signature).setOwnerId(getOwnerId());
-        selectedFidelity.getSelects().add(signature);
-        selectedFidelity.setSelect(signature);
+        ServiceFidelity sFi = (ServiceFidelity)multiFi.getSelect();
+        sFi.getSelects().add(signature);
+        sFi.setSelect(signature);
     }
 
     public void addSignatures(Signature... signatures) {
-        if (this.selectedFidelity != null)
-            this.selectedFidelity.getSelects().addAll(Arrays.asList(signatures));
+        ServiceFidelity sFi = (ServiceFidelity)multiFi.getSelect();
+        if (sFi != null)
+            sFi.getSelects().addAll(Arrays.asList(signatures));
         else {
-            this.selectedFidelity = new ServiceFidelity(name);
-            this.selectedFidelity.getSelects().addAll(Arrays.asList(signatures));
+            multiFi.addSelect(new ServiceFidelity(name));
+            sFi.getSelects().addAll(Arrays.asList(signatures));
         }
     }
 
@@ -488,9 +490,10 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
     public Context exert(Transaction txn, Arg... entries) throws TransactionException,
             ExertionException, RemoteException {
         Signature signature = null;
+        ServiceFidelity sFi = (ServiceFidelity)multiFi.getSelect();
         try {
-            if (selectedFidelity != null) {
-                signature = (Signature) selectedFidelity.getSelect();
+            if (sFi != null) {
+                signature = (Signature) sFi.getSelect();
             } else if (subjectValue != null && subjectValue instanceof Signature) {
                 signature = (Signature)subjectValue;
             }

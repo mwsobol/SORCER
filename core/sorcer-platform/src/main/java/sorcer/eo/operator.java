@@ -1339,8 +1339,16 @@ public class operator extends Operator {
 		return fi;
 	}
 
-	public static List<Service>  fis(Mogram exertion) {
-		return ((ServiceMogram) exertion).getServiceFidelities().get(exertion.getName()).getSelects();
+//	public static List<Service>  fis(Mogram exertion) {
+//		return ((ServiceMogram) exertion).getServiceFidelities().get(exertion.getName()).getSelects();
+//	}
+//
+	public static List<Service>  fis(Mogram mogram) {
+		if (mogram.getMultiFi() != null) {
+			return mogram.getMultiFi().getSelects();
+		} else {
+			return null;
+		}
 	}
 
 	public static Fidelity fi(Mogram mogram) {
@@ -1352,11 +1360,11 @@ public class operator extends Operator {
 	}
 
 	public static String fiName(Mogram exertion) {
-		return ((ServiceExertion) exertion).getSelectedFidelitySelector();
+		return ((Identifiable) exertion.getMultiFi().getSelect()).getName();
 	}
 
-	public static Map<String, Fidelity> srvFis(Exertion exertion) {
-		return exertion.getFidelities();
+	public static Fi srvFis(Exertion exertion) {
+		return exertion.getMultiFi();
 	}
 
 	public static MorphFidelity mrpFi(Morpher morpher, Service... services) {
@@ -1887,6 +1895,7 @@ public class operator extends Operator {
 				throw new ExertionException(e);
 			}
 			sigFi = new ServiceFidelity(name, sigs);
+			sigFi.setSelect(srvSig);
 		}
 		if (operation != null) {
 			task.setAccess(operation.accessType);
@@ -1936,17 +1945,15 @@ public class operator extends Operator {
 		if (sigFi != null) {
 			sigFi.setName(name);
 			sigFi.setPath(name);
-			task.putFidelity(name, sigFi);
+			task.getMultiFi().addSelect(sigFi);
 			task.setSelectedFidelity(sigFi);
-			task.setSelectedFidelitySelector(sigFi.getName());
 		}
 
 		if (srvFi != null) {
 			srvFi.setName(name);
 			srvFi.setPath(name);
-			task.putFidelity(name, srvFi);
-			task.setSelectedFidelity((ServiceFidelity)fis.get(0));
-			task.setSelectedFidelitySelector(((Identifiable)fis.get(0)).getName());
+			srvFi.setSelect(fis.get(0));
+			task.setMultiFi(srvFi);
 			for (Service fi : fis) {
 				((ServiceFidelity)fi).setPath(task.getName());
 			}
@@ -1962,8 +1969,8 @@ public class operator extends Operator {
 			for (Object fi : sList) {
 				((ServiceFidelity)fi).setPath(name);
 			}
-			task.putFidelity(task.getName(), (Fidelity) mFi.getFidelity());
-			task.setSelectedFidelitySelector(first.getName());
+//			task.putFidelity(task.getName(), (Fidelity) mFi.getFidelity());
+			task.getMultiFi().addSelect((Fidelity) mFi.getFidelity());
 			task.setServiceMorphFidelity(mFi);
 			task.setSelectedFidelity(first);
 			task.setSelectedFidelity(first);
@@ -1977,7 +1984,8 @@ public class operator extends Operator {
 
 		if (fiManager != null) {
 			task.setFidelityManager(fiManager);
-			fiManager.setFidelities(task.getServiceFidelities());
+//			fiManager.setFidelities(task.getServiceFidelities());
+			fiManager.addFidelity(task.getName(), (Fidelity) task.getMultiFi());
 			fiManager.setMetafidelities(task.getServiceMetafidelities());
 			if (mFi != null) {
 				fiManager.getMorphFidelities().put(mFi.getName(), mFi);
@@ -2167,9 +2175,9 @@ public class operator extends Operator {
 		if (srvFi != null) {
 			srvFi.setName(name);
 			srvFi.setPath(name);
-			job.putFidelity(name, srvFi);
+//			job.putFidelity(name, srvFi);
+			job.getMultiFi().addSelect(srvFi);
 			job.setSelectedFidelity((ServiceFidelity)fis.get(0));
-			job.setSelectedFidelitySelector(((Identifiable)fis.get(0)).getName());
 			for (Service fi : fis) {
 				((ServiceFidelity)fi).setPath(job.getName());
 			}
@@ -2202,8 +2210,7 @@ public class operator extends Operator {
 			for (Object fi : sList) {
 				((ServiceFidelity)fi).setPath(job.getName());
 			}
-			job.putFidelity(job.getName(), mFi.getFidelity());
-			job.setSelectedFidelitySelector(first.getName());
+			job.getMultiFi().addSelect(mFi.getFidelity());
 			job.setServiceMorphFidelity(mFi);
 			job.setSelectedFidelity(first);
 			job.setSelectedFidelity(first);
@@ -2230,7 +2237,7 @@ public class operator extends Operator {
 
 		if (fiManager != null) {
 			job.setFidelityManager(fiManager);
-			fiManager.setFidelities(job.getServiceFidelities());
+			fiManager.addFidelity(job.getName(), (Fidelity) job.getMultiFi());
 			fiManager.setMetafidelities(job.getServiceMetafidelities());
 			if (mFi != null) {
 				fiManager.getMorphFidelities().put(mFi.getName(), mFi);

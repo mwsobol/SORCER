@@ -105,10 +105,11 @@ public class Task extends ServiceExertion {
 
 	public Task(String name, String description, List<Signature> signatures) {
 		this(name, description);
-		this.selectedFidelity = new ServiceFidelity(name);
-		this.selectedFidelity.fiType = ServiceFidelity.Type.SIG;
-		this.selectedFidelity.selects.addAll(signatures);
-		this.selectedFidelity.select = signatures.get(0);
+		ServiceFidelity sFi = new ServiceFidelity(name);
+		sFi.fiType = ServiceFidelity.Type.SIG;
+		sFi.selects.addAll(signatures);
+		sFi.select = signatures.get(0);
+		multiFi.setSelect(sFi);
 	}
 
 	public Task doTask(Arg... args) throws MogramException, SignatureException,
@@ -126,14 +127,14 @@ public class Task extends ServiceExertion {
 	}
 
 	public void initDelegate() throws ContextException, ExertionException, SignatureException {
-		if (delegate != null && selectedFidelity != delegate.selectedFidelity) {
+		if (delegate != null && multiFi.getSelect() != delegate.getMultiFi().getSelect()) {
 			delegate = null;
 			dataContext.clearReturnPath();
 		}
 
 		try {
 			if (delegate == null) {
-				ServiceSignature ts = (ServiceSignature) selectedFidelity.select;
+				ServiceSignature ts = (ServiceSignature) ((ServiceFidelity)multiFi.getSelect()).getSelect();
 				if (ts.getClass() == ServiceSignature.class) {
 					ts = createSignature(ts);
 				}
@@ -145,11 +146,10 @@ public class Task extends ServiceExertion {
 //				delegate.getSelectedFidelity().setSelect(ts);
 
 				delegate.setFidelityManager(getFidelityManager());
-				delegate.setFidelities(getFidelities());
+				delegate.setMultiFi(getMultiFi());
 //				delegate.setSelectedFidelity(getSelectedFidelity());
 				delegate.setServiceMorphFidelity(getServiceMorphFidelity());
 				delegate.setServiceMetafidelities(getServiceMetafidelities());
-				delegate.setSelectedFidelitySelector(serviceFidelitySelector);
 				delegate.setContext(dataContext);
 				delegate.setControlContext(controlContext);
 			}
@@ -190,7 +190,7 @@ public class Task extends ServiceExertion {
 	
 	@Override
 	public boolean isCmd()  {
-		return (selectedFidelity.selects.size() == 1);
+		return ((ServiceFidelity)multiFi.getSelect()).getSelects().size() == 1;
 	}
 	
 	public boolean hasChild(String childName) {
@@ -205,9 +205,10 @@ public class Task extends ServiceExertion {
 	public void setOwnerId(String oid) {
 		// Util.debug("Owner ID: " +oid);
 		this.ownerId = oid;
-		if (selectedFidelity.selects != null)
-			for (int i = 0; i < selectedFidelity.selects.size(); i++)
-				((NetSignature) selectedFidelity.selects.get(i)).setOwnerId(oid);
+		List<Service> ls = ((ServiceFidelity)multiFi.getSelect()).getSelects();
+		if (ls != null)
+			for (int i = 0; i < ls.size(); i++)
+				((NetSignature) ls.get(i)).setOwnerId(oid);
 		// Util.debug("Context : "+ context);
 		if (dataContext != null)
 			dataContext.setOwnerId(oid);
@@ -257,10 +258,11 @@ public class Task extends ServiceExertion {
 		sb.append(", selector: ").append(getSelector());
 		sb.append(", parent ID: ").append(parentId);
 
-		if (selectedFidelity.selects.size() == 1) {
+		List<Service> ls = ((ServiceFidelity)multiFi.getSelect()).getSelects();
+		if (((ServiceFidelity)multiFi.getSelect()).getSelects().size() == 1) {
 			sb.append(getProcessSignature().getProviderName());
 		} else {
-			for (Object s : selectedFidelity.selects) {
+			for (Object s : ls) {
 				sb.append("\n  ").append(s);
 			}
 		}
@@ -421,7 +423,7 @@ public class Task extends ServiceExertion {
 	public void correctBatchSignatures() {
 		// if all signatures are of service process SRV fiType make all
 		// except the last one of preprocess PRE fiType
-		List<Service> alls = selectedFidelity.selects;
+		List<Service> alls = ((ServiceFidelity)multiFi.getSelect()).getSelects();
 		if (alls.size() > 1) {
 			Signature lastSig = (Signature) alls.get(alls.size() - 1);
 			if (alls.size() > 1 && this.isBatch() && !(lastSig instanceof NetSignature)) {
@@ -443,7 +445,7 @@ public class Task extends ServiceExertion {
 
 	@Override
 	public Object get(String component) {
-		return getFidelities().get(component);
+		return ((ServiceFidelity)multiFi).getSelect(component);
 	}
 
 }

@@ -20,7 +20,9 @@ package sorcer.core.exertion;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
+import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 
@@ -48,9 +50,13 @@ public class ObjectJob extends Job {
 	public ObjectJob(String name, Signature signature)
 			throws SignatureException {
 		super(name);
-		if (signature instanceof ObjectSignature)
+		if (signature instanceof ObjectSignature) {
 			addSignature(signature);
-		else
+			ServiceFidelity sFi = new ServiceFidelity(signature);
+			sFi.setSelect(signature);
+			((ServiceFidelity)multiFi).getSelects().add(sFi);// Add the signature
+			multiFi.setSelect(sFi);
+		} else
 			throw new SignatureException("ObjectJob requires ObjectSignature: "
 					+ signature);
 	}

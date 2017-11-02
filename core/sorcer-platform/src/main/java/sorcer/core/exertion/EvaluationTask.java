@@ -99,7 +99,7 @@ public class EvaluationTask extends Task {
 		dataContext.getMogramStrategy().setCurrentSelector(getProcessSignature().getSelector());
 		dataContext.setCurrentPrefix(getProcessSignature().getPrefix());
 
-		if (selectedFidelity.getSelects().size() > 1) {
+		if (((ServiceFidelity)multiFi.getSelect()).getSelects().size() > 1) {
 			try {
 				return super.doBatchTask(txn);
 			} catch (Exception e) {
