@@ -17,13 +17,10 @@
 
 package sorcer.core.context.model.ent;
 
-import sorcer.service.Context;
 import sorcer.service.ContextException;
-import sorcer.service.Evaluator;
 import sorcer.service.Setup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -54,12 +51,12 @@ public class Config extends Entry<List<Setup>> {
 
 	public void add(Setup setup) throws ContextException {
 		_2.add(setup);
-		isValid(false);
+		setValid(false);
 	}
 
 	public void addAll(List<Setup> list) throws ContextException {
 		_2.addAll(list);
-		isValid(false);
+		setValid(false);
 	}
 
 	public Setup remove(String name) throws ContextException {

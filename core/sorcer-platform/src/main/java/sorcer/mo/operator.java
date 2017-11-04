@@ -559,4 +559,8 @@ public class operator {
         ProvisionManager provisionManager = new ProvisionManager(Arrays.asList(signatures));
         return provisionManager.deployServices();
     }
+
+    public static void invalidate(Model model)  {
+        model.invalidateEntries();
+    }
 }

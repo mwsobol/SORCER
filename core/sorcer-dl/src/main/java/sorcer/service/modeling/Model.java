@@ -44,4 +44,6 @@ public interface Model extends Domain {
      */
     public void setBuilder(Signature signature);
 
+    public void invalidateEntries();
+
 }

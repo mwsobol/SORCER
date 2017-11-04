@@ -154,8 +154,10 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             }
 
             if (val instanceof Srv) {
-                if (isChanged())
-                    ((Srv) val).isValid(false);
+                if (((Srv) val).isCached()) {
+                    return ((Srv) val).getSrvValue();
+                } else if (isChanged())
+                    ((Srv) val).setValid(false);
                 Object val2 = ((Srv) val).asis();
                 if (val2 instanceof SignatureEntry) {
                     // return the calculated eval
@@ -336,7 +338,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         for (Fidelity sfi : fiList) {
             if (sfi.getName().equals(path)) {
                 selected = sfi;
-                ((Entry) asis(path)).isValid(false);
+                ((Entry) asis(path)).setValid(false);
                 isChanged();
                 break;
             }
@@ -469,7 +471,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             if (e.getValue() instanceof Srv) {
                 ((Srv) e.getValue()).srvValue = null;
             } else if (e.getValue() instanceof Entry && ((Entry)e.getValue()).asis() instanceof Evaluation) {
-                ((Entry)e.getValue()).isValid(false);
+                ((Entry)e.getValue()).setValid(false);
             }
         }
         return this;

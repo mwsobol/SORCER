@@ -202,7 +202,7 @@ public class Srv extends Entry<Object> implements Variability<Object>,
         Object out = null;
         if (obj instanceof Scopable) {
             ((Scopable)obj).setScope(scope);
-            isValid(false);
+            setValid(false);
         }
         if (obj instanceof Entry) {
             out = ((Entry) obj).getValue(entries);
@@ -271,7 +271,11 @@ public class Srv extends Entry<Object> implements Variability<Object>,
         return null;
     }
 
-    public Object getSrvValue() {
+    public Object getSrvValue(Arg... args) throws EvaluationException, RemoteException {
+        // if isCached compute only once for all
+        if (srvValue == null && isCached) {
+            srvValue = getValue(args);
+        }
         return srvValue;
     }
 

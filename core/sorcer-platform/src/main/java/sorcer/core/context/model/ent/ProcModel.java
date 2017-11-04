@@ -288,7 +288,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			Map.Entry<String, Object> entry = i.next();
 			Object val = entry.getValue();
 			if (val instanceof Entry && ((Entry)val).value() instanceof Evaluation) {
-				((Entry) val).isValid(false);
+				((Entry) val).setValid(false);
 			}
 		}
 	}
@@ -486,6 +486,17 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			}
 		}
 		return this;
+	}
+
+	public void invalidateEntries() {
+		Map<String, Object> data =  getData();
+		Iterator<String> i = data.keySet().iterator();
+		while (i.hasNext()) {
+			Object val = data.get(i.next());
+			if ((val != null || val != Context.none) && val instanceof Entry) {
+				((Entry)val).setValid(false);
+			}
+		}
 	}
 
 	@Override

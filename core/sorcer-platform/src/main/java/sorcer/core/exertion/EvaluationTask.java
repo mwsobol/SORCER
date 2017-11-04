@@ -111,7 +111,7 @@ public class EvaluationTask extends Task {
 			Evaluation evaluator = ((EvaluationSignature) getProcessSignature())
 					.getEvaluator();
 			if (evaluator instanceof Entry)
-				((Entry)evaluator).isValid(false);
+				((Entry)evaluator).setValid(false);
 
 			if (evaluator instanceof Evaluator) {
 				ArgSet vs = ((Evaluator) evaluator).getArgs();
@@ -167,7 +167,7 @@ public class EvaluationTask extends Task {
 
 		if (evaluator instanceof Srv) {
 			if (isChanged())
-				evaluator.isValid(false);
+				evaluator.setValid(false);
 			val = evaluator.asis();
 		}
 

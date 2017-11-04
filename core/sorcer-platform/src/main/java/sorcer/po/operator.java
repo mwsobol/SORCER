@@ -52,29 +52,29 @@ public class operator extends sorcer.operator {
 		return new Neo(path, signal);
 	}
 
-    public static Neo neo(String path, Args signals) {
-        return new Neo(path, signals);
-    }
+	public static Neo neo(String path, Args signals) {
+		return new Neo(path, signals);
+	}
 
-    public static Neo neo(String path, Args signals, Context<Float> weights) {
-        return new Neo(path, signals, weights);
-    }
+	public static Neo neo(String path, Args signals, Context<Float> weights) {
+		return new Neo(path, signals, weights);
+	}
 
 	public static Neo neo(String path, ServiceFidelity<NeoFidelity> fidelities) {
 		return new Neo(path, fidelities);
 	}
 
-    public static Entry th(String path, double threshold) {
-	    Entry e = new Entry(path, threshold);
-	    e.setType(Variability.Type.THRESHOLD);
-        return e;
-    }
+	public static Entry th(String path, double threshold) {
+		Entry e = new Entry(path, threshold);
+		e.setType(Variability.Type.THRESHOLD);
+		return e;
+	}
 
-    public static Entry bias(String path, double bias) {
-        Entry e = new Entry(path, bias);
-        e.setType(Variability.Type.BIAS);
-        return e;
-    }
+	public static Entry bias(String path, double bias) {
+		Entry e = new Entry(path, bias);
+		e.setType(Variability.Type.BIAS);
+		return e;
+	}
 
 	public static <T> Proc<T> proc(String path, T argument) throws EvaluationException, RemoteException {
 		return new Proc(path, argument);
@@ -97,7 +97,7 @@ public class operator extends sorcer.operator {
 	}
 
 	public static Proc as(Proc proc, Service traget) {
-		proc.setMappable((Mappable)traget);
+		proc.setMappable((Mappable) traget);
 		return proc;
 	}
 
@@ -113,7 +113,7 @@ public class operator extends sorcer.operator {
 			p.setScope(object);
 		} else if (object instanceof Entry) {
 			p = new Proc(path, argument);
-			p.setScope(context((Entry)object));
+			p.setScope(context((Entry) object));
 		} else if (object instanceof Service) {
 			p = new Proc(path, argument, object);
 		}
@@ -136,11 +136,11 @@ public class operator extends sorcer.operator {
 	}
 
 	public static Srv srv(String name, Identifiable item) {
-		return srv(name,  item,  null);
+		return srv(name, item, null);
 	}
 
 	public static Srv srv(Identifiable item, Context context) {
-		return srv(null,  item,  context);
+		return srv(null, item, context);
 	}
 
 	public static Srv srv(String name, Identifiable item, Context context, Arg... args) {
@@ -185,6 +185,7 @@ public class operator extends sorcer.operator {
 	public static Srv alias(String name, String path) {
 		return new Srv(path, null, name);
 	}
+
 	public static Proc dPar(Identifiable identifiable, Context context) throws EvaluationException, RemoteException {
 		Proc p = new Proc(identifiable.getName(), identifiable);
 		p.setPersistent(true);
@@ -216,29 +217,29 @@ public class operator extends sorcer.operator {
 		return parameter;
 	}
 
-    public static Fidelity pFi(String name) {
-        Fidelity fi =  new Fidelity(name);
-        fi.setFiType(Fi.Type.PROC);
-        return fi;
-    }
+	public static Fidelity pFi(String name) {
+		Fidelity fi = new Fidelity(name);
+		fi.setFiType(Fi.Type.PROC);
+		return fi;
+	}
 
-    public static ServiceFidelity<Proc> pFi(Entry... entries) {
-        ServiceFidelity<Proc> fi = new ServiceFidelity(entries);
-        fi.fiType = ServiceFidelity.Type.PROC;
-        return fi;
-    }
+	public static ServiceFidelity<Proc> pFi(Entry... entries) {
+		ServiceFidelity<Proc> fi = new ServiceFidelity(entries);
+		fi.fiType = ServiceFidelity.Type.PROC;
+		return fi;
+	}
 
-    public static ProcModel neoModel(String name, Object... objects)
-            throws ContextException, RemoteException {
-	    return procModel(name, objects);
-    }
+	public static ProcModel neoModel(String name, Object... objects)
+			throws ContextException, RemoteException {
+		return procModel(name, objects);
+	}
 
 	public static ProcModel procModel(String name, Object... objects)
 			throws RemoteException, ContextException {
 		ProcModel pm = new ProcModel(name);
 		for (Object o : objects) {
 			if (o instanceof Identifiable)
-				pm.add((Identifiable)o);
+				pm.add((Identifiable) o);
 		}
 		return pm;
 	}
@@ -247,7 +248,7 @@ public class operator extends sorcer.operator {
 			throws ContextException, RemoteException {
 		Object obj = pm.asis(parname);
 		if (obj instanceof Proc)
-			obj = ((Proc)obj).getValue(parametrs);
+			obj = ((Proc) obj).getValue(parametrs);
 		return obj;
 	}
 
@@ -274,7 +275,7 @@ public class operator extends sorcer.operator {
 
 	public static void clearPars(Object invoker) throws EvaluationException {
 		if (invoker instanceof ServiceInvoker)
-			((ServiceInvoker)invoker).clearPars();
+			((ServiceInvoker) invoker).clearPars();
 	}
 
 	public static ProcModel procModel(Identifiable... objects)
@@ -302,7 +303,7 @@ public class operator extends sorcer.operator {
 
 	public static ProcModel put(ProcModel procModel, Tuple2... entries) throws ContextException {
 		for (Tuple2 e : entries) {
-			procModel.putValue((String)e.key(), e.value());
+			procModel.putValue((String) e.key(), e.value());
 		}
 		procModel.setContextChanged(true);
 		return procModel;
@@ -311,7 +312,7 @@ public class operator extends sorcer.operator {
 	public static Proc add(Proc procEntry, Object to)
 			throws ContextException {
 		if (to instanceof Exertion) {
-			((ServiceExertion)to).addPersister(procEntry);
+			((ServiceExertion) to).addPersister(procEntry);
 			return procEntry;
 		}
 		return procEntry;
@@ -324,7 +325,7 @@ public class operator extends sorcer.operator {
 
 	public static Proc proc(Object object) throws EvaluationException, RemoteException {
 		if (object instanceof String)
-			return new Proc((String)object);
+			return new Proc((String) object);
 		else if (object instanceof Identifiable)
 			return new Proc(((Identifiable) object).getName(), object);
 		return null;
@@ -348,10 +349,10 @@ public class operator extends sorcer.operator {
 		return invoker.invoke(context, parameters);
 	}
 
-    public static Object activate(ProcModel procModel, String parname, Arg... parameters)
-            throws RemoteException, InvocationException {
-	    return invoke(procModel, parname, parameters);
-    }
+	public static Object activate(ProcModel procModel, String parname, Arg... parameters)
+			throws RemoteException, InvocationException {
+		return invoke(procModel, parname, parameters);
+	}
 
 	public static Object invoke(ProcModel procModel, String parname, Arg... parameters)
 			throws RemoteException, InvocationException {
@@ -360,7 +361,7 @@ public class operator extends sorcer.operator {
 			Context scope = null;
 			// assume that the first argument is always context if provided
 			if (parameters.length > 0 && parameters[0] instanceof Context)
-				scope = (Context)parameters[0];
+				scope = (Context) parameters[0];
 			if (obj instanceof Proc
 					&& ((Proc) obj).asis() instanceof Invocation) {
 				Invocation invoker = (Invocation) ((Proc) obj).asis();
@@ -380,7 +381,7 @@ public class operator extends sorcer.operator {
 //				procModel.getScope().putValue(parname, out);
 				return out;
 			} else if (obj instanceof Agent) {
-				return ((Agent)obj).getValue(parameters);
+				return ((Agent) obj).getValue(parameters);
 			} else {
 				throw new InvocationException("No invoker for: " + parname);
 			}
@@ -412,7 +413,7 @@ public class operator extends sorcer.operator {
 	}
 
 	public static ServiceInvoker invoker(Evaluator evaluator, ArgSet pars) {
-		return new ServiceInvoker(evaluator,pars);
+		return new ServiceInvoker(evaluator, pars);
 	}
 
 //	public static ServiceInvoker invoker(Evaluator evaluator, Proc... procEntries) {
@@ -453,7 +454,7 @@ public class operator extends sorcer.operator {
 		return invoker;
 	}
 
-	public static ServiceInvoker expr(String expression, Context scope,  Args args) throws ContextException {
+	public static ServiceInvoker expr(String expression, Context scope, Args args) throws ContextException {
 		return invoker(expression, scope, args);
 	}
 
@@ -472,8 +473,8 @@ public class operator extends sorcer.operator {
 	}
 
 	public static ServiceInvoker expr(String expression, Args args) {
-		return 	invoker(expression, args);
-		}
+		return invoker(expression, args);
+	}
 
 	public static ServiceInvoker invoker(String expression, Args args) {
 		return new GroovyInvoker(expression, args.args());
@@ -489,9 +490,9 @@ public class operator extends sorcer.operator {
 		return gi;
 	}
 
-    public static SysCall sysCall(String name, Context context) throws ContextException {
-        return new SysCall(name, context);
-    }
+	public static SysCall sysCall(String name, Context context) throws ContextException {
+		return new SysCall(name, context);
+	}
 
 	public static ServiceInvoker print(String path) {
 		return new GroovyInvoker("_print_", new Path(path));
@@ -502,13 +503,14 @@ public class operator extends sorcer.operator {
 	}
 
 	public static ServiceInvoker invoker(Exertion exertion) {
-        return new ExertInvoker(exertion);
-    }
+		return new ExertInvoker(exertion);
+	}
 
-    public static ServiceInvoker invoker(Args args) {
-        return new CmdInvoker(args.getNameArray());
-    }
-    public static IncrementInvoker inc(String path) {
+	public static ServiceInvoker invoker(Args args) {
+		return new CmdInvoker(args.getNameArray());
+	}
+
+	public static IncrementInvoker inc(String path) {
 		return new IntegerIncrementor(path, 1);
 	}
 
@@ -561,7 +563,7 @@ public class operator extends sorcer.operator {
 	}
 
 	public static <T> T next(ProcModel model, String name) throws ContextException {
-		Incrementor<T> inceremntor = (Incrementor<T>)invoker(model, name);
+		Incrementor<T> inceremntor = (Incrementor<T>) invoker(model, name);
 		return inceremntor.next();
 	}
 
@@ -621,11 +623,11 @@ public class operator extends sorcer.operator {
 		return new OptInvoker(name, condition, target);
 	}
 
-	public static AltInvoker alt(OptInvoker...  invokers) {
+	public static AltInvoker alt(OptInvoker... invokers) {
 		return new AltInvoker(null, invokers);
 	}
 
-	public static AltInvoker alt(String name, OptInvoker...  invokers) {
+	public static AltInvoker alt(String name, OptInvoker... invokers) {
 		return new AltInvoker(name, invokers);
 	}
 
@@ -675,14 +677,19 @@ public class operator extends sorcer.operator {
 	}
 
 	public static Entry ent(Model model, String path) throws ContextException {
-        return new Entry(path, model.asis(path));
-    }
+		return new Entry(path, model.asis(path));
+	}
 
 	public static <T extends Arg> Srv ent(String name, MorphFidelity<T> fidelity) {
-        fidelity.setPath(name);
-        fidelity.getFidelity().setPath(name);
-        return srv(name, fidelity);
-    }
+		fidelity.setPath(name);
+		fidelity.getFidelity().setPath(name);
+		return srv(name, fidelity);
+	}
+
+	public static Entry cache(Entry ent) {
+		ent.setCached(true);
+		return ent;
+	}
 
 	public static Srv ent(String name, ServiceFidelity<Signature> fidelity) {
         return srv(name, fidelity);

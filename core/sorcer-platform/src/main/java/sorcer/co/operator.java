@@ -360,7 +360,7 @@ public class operator extends sorcer.operator {
 
 	public static Config config(Object path, Setup... entries) {
 		Config ent = new Config(path.toString(), entries);
-		ent.isValid(false);
+		ent.setValid(false);
 		ent.setType(Type.CONFIG);
 		return ent;
 	}
@@ -648,7 +648,7 @@ public class operator extends sorcer.operator {
 				procEntry.getScope().putValue(procEntry.getName(), value);
 			}
 		}
-		entry.isValid(false);
+		entry.setValid(false);
 		return entry;
 	}
 
