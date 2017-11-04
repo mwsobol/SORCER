@@ -21,6 +21,7 @@ import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
@@ -504,5 +505,21 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		return this.getClass().getName() + ":" + getName() + "\nkeys: " + keySet()
 				+ "\n" + super.toString();
 	}
+
+    public boolean isValid(Entry entry, List<String> paths) {
+        String[] pns = new String[paths.size()];
+        return isValid(entry, paths.toArray(pns));
+    }
+
+	public boolean isValid(Entry entry, String[] paths) {
+	    boolean isValid = true;
+        Object obj;
+	    for (String path : paths) {
+	        obj = asis(path);
+	        if (obj instanceof Entry && !((Entry)obj).setValid())
+                isValid = false;
+        }
+	    return isValid;
+    }
 
 }

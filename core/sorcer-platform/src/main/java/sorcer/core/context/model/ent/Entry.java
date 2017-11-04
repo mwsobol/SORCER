@@ -55,7 +55,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 	protected boolean isReactive = false;
 
 	// when context of this entry is changed then setValid == false
-	protected boolean isValid = true;
+	protected boolean isValid = false;
 
     // if a value is computed then isCached is true - computed only one for all
     protected boolean isCached = false;

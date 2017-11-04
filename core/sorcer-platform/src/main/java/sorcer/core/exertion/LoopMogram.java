@@ -172,6 +172,8 @@ public class LoopMogram extends ConditionalMogram {
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}
+		// force target to be calculated in the loop
+		target.isValid(false);
 		return this;
 	}
 	

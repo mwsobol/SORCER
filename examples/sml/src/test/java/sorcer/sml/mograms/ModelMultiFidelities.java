@@ -49,6 +49,11 @@ public class ModelMultiFidelities {
         logger.info("out: " + out);
         assertTrue(get(out, "mFi").equals(900.0));
         assertTrue(get(mod, "result/y").equals(900.0));
+
+        invalidate(mod);
+        out = response(mod, fi("mFi", "add"));
+        assertTrue(get(out, "mFi").equals(100.0));
+        assertTrue(get(mod, "result/y").equals(100.0));
     }
 
     @Test
