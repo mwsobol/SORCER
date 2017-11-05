@@ -20,7 +20,7 @@ public class Fidelity<T> implements Fi, Call, Dependency, net.jini.core.entry.En
 
 	protected T select;
 
-	public Type fiType = Type.SELECT;
+	public Fi.Type fiType = Fi.Type.SELECT;
 
 	// dependency management for this Fidelity
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
@@ -73,11 +73,11 @@ public class Fidelity<T> implements Fi, Call, Dependency, net.jini.core.entry.En
 		this.select = select;
 	}
 
-	public Type getFiType() {
+	public Fi.Type getFiType() {
 		return fiType;
 	}
 
-	public void setFiType(Type fiType) {
+	public void setFiType(Fi.Type fiType) {
 		this.fiType = fiType;
 	}
 

@@ -477,6 +477,12 @@ public class operator extends sorcer.operator {
         return de;
 	}
 
+	public static DependencyEntry dep(String path, Dependency.Kind type, List<Path> paths) {
+		DependencyEntry de = new DependencyEntry(path, paths);
+		de.setDepType(type);
+		return de;
+	}
+
 	public static DependencyEntry dep(String path, List<Path> paths) {
 		return new DependencyEntry(path, paths);
 	}

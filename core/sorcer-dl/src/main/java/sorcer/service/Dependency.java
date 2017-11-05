@@ -26,6 +26,7 @@ import java.util.List;
  */
 public interface Dependency {
 
+    public enum Kind { CACHED, UNCACHED, VALID, INVALID, CHANGED }
     /**
      * Adds depeners for this dependency.
      *

@@ -686,7 +686,7 @@ public class operator extends sorcer.operator {
 		return srv(name, fidelity);
 	}
 
-	public static Entry cache(Entry ent) {
+	public static Entry cached(Entry ent) {
 		ent.setCached(true);
 		return ent;
 	}

@@ -19,6 +19,7 @@ package sorcer.co.tuple;
 
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Conditional;
+import sorcer.service.Dependency;
 import sorcer.service.Path;
 
 import java.util.List;
@@ -32,6 +33,8 @@ public class DependencyEntry extends Entry<List<Path>> {
     private Conditional condition;
 
     private List<Path> dependees;
+
+    private Kind depType;
 
     @SuppressWarnings("unchecked")
     public DependencyEntry(String path, List<Path> paths) {
@@ -63,5 +66,13 @@ public class DependencyEntry extends Entry<List<Path>> {
 
     public void setDependees(List<Path> dependees) {
         this.dependees = dependees;
+    }
+
+    public Kind getDepType() {
+        return depType;
+    }
+
+    public void setDepType(Kind depType) {
+        this.depType = depType;
     }
 }
