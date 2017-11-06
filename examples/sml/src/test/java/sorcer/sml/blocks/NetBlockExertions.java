@@ -20,6 +20,7 @@ import sorcer.service.Task;
 import java.io.Serializable;
 
 import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.val;
 import static sorcer.co.operator.value;
 import static sorcer.po.operator.ent;
 import static sorcer.co.operator.inVal;
@@ -120,7 +121,7 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
                 context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("block/result")));
 		
-		Block block = block(context(proc("y1", 100), proc("y2", 200)),
+		Block block = block(context(val("y1", 100), val("y2", 200)),
 				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4),
 					opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
 		
@@ -132,7 +133,7 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 //		bind(block, proc("y1", 200.0), proc("y2", 100.0));
 //		block = exert(block);
 
-		block = exert(block, proc("y1", 200.0), proc("y2", 100.0));
+		block = exert(block, val("y1", 200.0), val("y2", 100.0));
 		logger.info("block context: " + context(block));
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 500.0);
