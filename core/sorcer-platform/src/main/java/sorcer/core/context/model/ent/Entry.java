@@ -256,7 +256,7 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		return false;
 	}
 
-	public boolean setValid() {
+	public boolean isValid() {
 		return isValid;
 	}
 
