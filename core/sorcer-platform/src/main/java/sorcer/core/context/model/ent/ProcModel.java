@@ -59,8 +59,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ProcModel extends PositionalContext<Object> implements Model, Invocation<Object>,
-		Mappable<Object>, Contexter<Object> {
+public class ProcModel extends PositionalContext<Object> implements Model, Invocation<Object>, Contexter<Object> {
 
     private static final long serialVersionUID = -6932730998474298653L;
 
@@ -466,7 +465,11 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		java.util.Set nodes = new HashSet();
 		Object obj = null;
 		for (int i = 0; i < paths.length; i++) {
-			obj = sc.getValue(paths[i]);
+			try {
+				obj = sc.getValue(paths[i]);
+			} catch (RemoteException e) {
+				throw new ContextException(e);
+			}
 			if (obj != null && obj instanceof Functionality)
 				nodes.add(obj);
 		}

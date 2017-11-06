@@ -5,6 +5,7 @@ import sorcer.service.Context;
 import sorcer.service.ContextException;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 /**
  * @author   Sarah & Mike
@@ -122,12 +123,16 @@ public class Recipe implements Serializable {
 
 	static public Recipe getRecipe(Context context) throws ContextException {
 		Recipe r = new Recipe();
-		r.name = (String)context.getValue("name");
-		r.price = (int)context.getValue("price");
-		r.amtCoffee = (int)context.getValue("amtCoffee");
-		r.amtMilk = (int)context.getValue("amtMilk");
-		r.amtSugar = (int)context.getValue("amtSugar");
-		r.amtChocolate = (int)context.getValue("amtChocolate");
+		try {
+			r.name = (String)context.getValue("name");
+			r.price = (int)context.getValue("price");
+			r.amtCoffee = (int)context.getValue("amtCoffee");
+			r.amtMilk = (int)context.getValue("amtMilk");
+			r.amtSugar = (int)context.getValue("amtSugar");
+			r.amtChocolate = (int)context.getValue("amtChocolate");
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 		return r;
 	}
 

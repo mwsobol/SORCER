@@ -375,7 +375,7 @@ public class ModelMultiFidelities {
         Signature divide = sig("divide", DividerImpl.class,
                 result("result/y2", inPaths("arg/x1", "arg/x2")));
 
-        // three entry multifidelity model with morphers
+        // five entry multifidelity model with morphers
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
 				ent("arg/y1", entFi(inVal("arg/y1/fi1", 10.0), inVal("arg/y1/fi2", 11.0))),
 				ent("arg/y2", entFi(inVal("arg/y2/fi1", 90.0), inVal("arg/y2/fi2", 91.0))),

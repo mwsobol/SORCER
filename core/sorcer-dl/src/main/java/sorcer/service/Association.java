@@ -229,4 +229,11 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
     public Duo act(String entryName, Arg... args) throws ServiceException, RemoteException {
         return new Association<>(entryName, impl);
     }
+
+    protected Object realizeFidelity(Fi fidelity) {
+        // reimplement in suclasses
+        // define how the select of a fidelity is implemented by this association
+        impl = fidelity.getSelect();
+        return impl;
+    }
 }

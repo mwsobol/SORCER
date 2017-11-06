@@ -81,9 +81,13 @@ public class WorkerProvider extends ServiceTasker implements Worker {
 		return context;
 	}
 	
-	private String setMessage(Context context, String reply)
-			throws ContextException {
-		String previous = (String) context.getValue("prv/message");
+	private String setMessage(Context context, String reply) throws ContextException {
+		String previous = null;
+		try {
+			previous = (String) context.getValue("prv/message");
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 		String message = "";
 		if (previous != null && previous.length() > 0)
 			message = previous + "; " + reply;

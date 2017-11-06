@@ -18,6 +18,7 @@
 package sorcer.service;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 /**
  * Created by Mike Sobolewski on 12/9/16.
@@ -60,7 +61,11 @@ public class Setup implements Serializable {
 	}
 
 	public Object getContextValue(String path) throws ContextException {
-		return context.getValue(path);
+		try {
+			return context.getValue(path);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 	}
 
 	public boolean isValid() {

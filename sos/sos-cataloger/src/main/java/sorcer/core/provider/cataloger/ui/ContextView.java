@@ -29,6 +29,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RMISecurityManager;
+import java.rmi.RemoteException;
 import java.util.*;
 
 import javax.swing.JButton;
@@ -351,7 +352,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 	 *            Context the tree should be updated with
 	 */
 	@SuppressWarnings("unchecked")
-	public void buildTreeFromContext(ContextTree treePanel, Context theContext) {
+	public void buildTreeFromContext(ContextTree treePanel, Context theContext) throws RemoteException {
 
 		String path = null;
 		int cnt = 0;
@@ -518,12 +519,16 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 			// load from other confirm
 			loadOtherPanel.dispose();
 			theContext = signatureDispatcher.getContext(loadOtherBox
-					.getSelectedItem().toString()); // get the requested context
+				.getSelectedItem().toString()); // get the requested context
 			treePanelInput.clear();
-			buildTreeFromContext(treePanelInput, theContext);
-			Context newOutput = new ServiceContext("No Output");
-			treePanelOutput.clear();
-			buildTreeFromContext(treePanelOutput, newOutput);
+			try {
+				buildTreeFromContext(treePanelInput, theContext);
+				Context newOutput = new ServiceContext("No Output");
+				treePanelOutput.clear();
+				buildTreeFromContext(treePanelOutput, newOutput);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 
 		} else if (SAVE_CONTEXT_AS.equals(command)) {
 			// load save as dialog
@@ -575,14 +580,17 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 			// Confirm a delete and process the action
 			loadOtherPanel.dispose();
 			if (signatureDispatcher.deleteContext(loadOtherBox
-					.getSelectedItem().toString())) {
+				.getSelectedItem().toString())) {
 				theContext = new ServiceContext("root");
 				treePanelInput.clear();
-				buildTreeFromContext(treePanelInput, theContext);
-				treePanelOutput.clear();
-				buildTreeFromContext(treePanelOutput, theContext);
+				try {
+					buildTreeFromContext(treePanelInput, theContext);
+					treePanelOutput.clear();
+					buildTreeFromContext(treePanelOutput, theContext);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 			}
-
 		} else if (LAUNCH_SERVICE.equals(command)) {
 			ServiceContext result = new ServiceContext("FAILED"); // start off
 			// with
@@ -609,7 +617,11 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 			// build output tree and select it
 			tabbedContextPane.setSelectedIndex(1);
 			treePanelOutput.clear();
-			buildTreeFromContext(treePanelOutput, result);
+			try {
+				buildTreeFromContext(treePanelOutput, result);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 
 			/*
 			 * turn this on for the cool output window! JFrame servicePanel=new
@@ -685,12 +697,14 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 			// clearSessions input and output and create tree for new input
 			treePanelInput.clear();
 			theContext = model.getContext();
-			buildTreeFromContext(treePanelInput, theContext);
-
-			treePanelOutput.clear();
-			Context newOutput = new ServiceContext("No Output");
-			buildTreeFromContext(treePanelOutput, newOutput);
-
+			try {
+				buildTreeFromContext(treePanelInput, theContext);
+				treePanelOutput.clear();
+				Context newOutput = new ServiceContext("No Output");
+				buildTreeFromContext(treePanelOutput, newOutput);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		}
 
 	}

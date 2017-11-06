@@ -375,7 +375,8 @@ public class ServiceShell implements Exerter, Client, Callable, RemoteServiceShe
 			// exert object tasks and jobs
 			if (!(signature instanceof NetSignature)) {
 				if (exertion instanceof Task) {
-					if (exertion.getSelectedFidelity().getSelects().size() == 1) {
+					if (exertion.getSelectedFidelity() == null
+							|| exertion.getSelectedFidelity().getSelects().size() == 1) {
 						return ((Task) exertion).doTask(transaction, args);
 					} else {
 						try {

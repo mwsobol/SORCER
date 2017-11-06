@@ -380,7 +380,11 @@ public class InvokerTest {
 		Condition eval = new Condition(pm) {
 			@Override
 			public boolean isTrue() throws ContextException {
-				return (Boolean) conditionalContext.getValue("condition");
+				try {
+					return (Boolean) conditionalContext.getValue("condition");
+				} catch (RemoteException e) {
+					throw new ContextException(e);
+				}
 			}
 		};
 		assertEquals(eval.evaluate(), true);

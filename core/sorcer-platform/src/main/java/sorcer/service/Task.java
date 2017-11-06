@@ -258,12 +258,14 @@ public class Task extends ServiceExertion {
 		sb.append(", selector: ").append(getSelector());
 		sb.append(", parent ID: ").append(parentId);
 
-		List<Service> ls = ((ServiceFidelity)multiFi.getSelect()).getSelects();
-		if (((ServiceFidelity)multiFi.getSelect()).getSelects().size() == 1) {
-			sb.append(getProcessSignature().getProviderName());
-		} else {
-			for (Object s : ls) {
-				sb.append("\n  ").append(s);
+		if (multiFi.getSelect() != null) {
+			List<Service> ls = ((ServiceFidelity) multiFi.getSelect()).getSelects();
+			if (ls.size() == 1) {
+				sb.append(getProcessSignature().getProviderName());
+			} else {
+				for (Object s : ls) {
+					sb.append("\n  ").append(s);
+				}
 			}
 		}
 		String time = getControlContext().getExecTime();
@@ -397,7 +399,11 @@ public class Task extends ServiceExertion {
 		Object val = dataContext.getValue(path, args);
 		if (val == Context.none) {
 			if (scope != null){
-			val = scope.getValue(path, args);
+				try {
+					val = scope.getValue(path, args);
+				} catch (RemoteException e) {
+					throw new ContextException(e);
+				}
 			}
 		}
 		return val;

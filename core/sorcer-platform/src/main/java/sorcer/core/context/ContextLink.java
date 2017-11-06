@@ -17,6 +17,7 @@
 
 package sorcer.core.context;
 
+import java.rmi.RemoteException;
 import java.security.Principal;
 
 import net.jini.id.Uuid;
@@ -157,31 +158,35 @@ public class ContextLink implements SorcerConstants, Link {
 			return;
 		}
 
-		if (((Context) result[0]).getValue((String) result[1]) == null) {
-			if (Contexts.checkIfPathBeginsWith((ServiceContext) result[0],
-					(String) result[1])) {
-				if (!isSameContext(result[0], result[1])) {
-					this.offset = offset;
+		try {
+			if (((Context) result[0]).getValue((String) result[1]) == null) {
+				if (Contexts.checkIfPathBeginsWith((ServiceContext) result[0],
+						(String) result[1])) {
+					if (!isSameContext(result[0], result[1])) {
+						this.offset = offset;
+					}
+				} else {
+					this.offset = (String) result[1];
+					return;
 				}
-			} else {
-				this.offset = (String) result[1];
 				return;
-			}
-			return;
-		} else if (result[0] != linkedContext) {
-			this.offset = (String) result[1];
-			this.linkedContext = (Context) result[0];
-			this.contextId = linkedContext.getId();
-			this.fetched = true;
-			// status = BROKEN_LINK;
+			} else if (result[0] != linkedContext) {
+				this.offset = (String) result[1];
+				this.linkedContext = (Context) result[0];
+				this.contextId = linkedContext.getId();
+				this.fetched = true;
+				// status = BROKEN_LINK;
 
-			// the alternative is throwing an exception:
-			// throw new ContextException("Failed in setOffset: offset=
-			// \""+offset+"\" is not in this context, but in the context with
-			// name=\""+context.getName()+"\". Link and offset=\""+result[1]+"\"
-			// should be setValue in this context instead");
-		} else
-			this.offset = offset;
+				// the alternative is throwing an exception:
+				// throw new ContextException("Failed in setOffset: offset=
+				// \""+offset+"\" is not in this context, but in the context with
+				// name=\""+context.getName()+"\". Link and offset=\""+result[1]+"\"
+				// should be setValue in this context instead");
+			} else
+				this.offset = offset;
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 	}
 
 	public String toString() {

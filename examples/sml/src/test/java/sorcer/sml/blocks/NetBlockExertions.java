@@ -214,20 +214,20 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 						result("block/result")));
 				 
 		Block block = block("block", sig(Concatenator.class),
-				context(ent("x1", 4), ent("x2", 5)),
+				context(ent("x1", 4.0), ent("x2", 5.0)),
 				task(proc("y", invoker("x1 * x2", args("x1", "x2")))),
-				alt(opt(condition(cxt -> (int)value(cxt, "y") > 50.0), t4),
-						opt(condition(cxt -> (int)value(cxt, "y") <= 50 ), t5)));
+				alt(opt(condition(cxt -> (Double)value(cxt, "y") > 50.0), t4),
+						opt(condition(cxt -> (Double)value(cxt, "y") <= 50 ), t5)));
 				
 		block = exert(block);
 		logger.info("block context: " + context(block));
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
-//		block = exert(block, proc("block/x1", 10.0), proc("block/x2", 6.0));
-//		logger.info("block context: " + context(block));
-////		logger.info("result: " + eval(context(block), "block/result"));
-//		assertEquals(eval(context(block), "block/result"), 500.00);
+		block = exert(block, proc("block/x1", 10.0), proc("block/x2", 6.0));
+		logger.info("block context: " + context(block));
+//		logger.info("result: " + eval(context(block), "block/result"));
+		assertEquals(value(context(block), "block/result"), 500.00);
 
 	}
 

@@ -21,6 +21,8 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
+import java.rmi.RemoteException;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
@@ -317,7 +319,11 @@ public class Invokers {
 		Condition eval = new Condition(pm) {
 			@Override
 			public boolean isTrue() throws ContextException {
-				return (Boolean) conditionalContext.getValue("condition");
+				try {
+					return (Boolean) conditionalContext.getValue("condition");
+				} catch (RemoteException e) {
+					throw new ContextException(e);
+				}
 			}
 		};
 		assertEquals(eval.evaluate(), true);

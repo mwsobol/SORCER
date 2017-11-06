@@ -62,7 +62,7 @@ public class ArithmeticMograms {
 	public void dynamicLambdaModel() throws Exception {
 		// the scope changed at runtime for an entry ("multiply") in the model
 
-		Domain mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
+		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 				ent("add/x1", 20.0), ent("add/x2", 80.0),
 				lambda("add", (Context <Double> model) ->
 						value(model, "add/x1") + value(model, "add/x2")),

@@ -1037,7 +1037,11 @@ public class operator extends Operator {
 		if (((ServiceContext)context).getType().equals(Functionality.Type.MADO)) {
 			return ((ServiceContext)context.getDomain(domain)).getEvalValue(path);
 		} else {
-			return context.getDomain(domain).getValue(path);
+			try {
+				return context.getDomain(domain).getValue(path);
+			} catch (RemoteException e) {
+				throw new ContextException(e);
+			}
 		}
 	}
 
@@ -1178,11 +1182,6 @@ public class operator extends Operator {
 		return entry.asis();
 	}
 
-	public static Object asis(Context context, String path)
-			throws ContextException {
-		return context.get(path);
-	}
-
 	public static Object rasis(Context context, String path)
 			throws ContextException {
 		Object o = context.asis(path);
@@ -1192,7 +1191,12 @@ public class operator extends Operator {
 			return o;
 	}
 
-	public static Object asis(Domain model, String path)
+	public static Object asis(Context context, String path)
+			throws ContextException {
+		return context.get(path);
+	}
+
+	public static Object asis(Model model, String path)
 			throws ContextException {
 		return  model.asis(path);
 	}

@@ -190,13 +190,14 @@ import java.util.Map;
 		Object[] args = null;
 		args = new Object[pars.length];
 		for (int i = 0; i < pars.length; i++) {
-			args[i] = conditionalContext.getValue(pars[i]);
-			if (args[i] instanceof Evaluation)
-				try {
+			try {
+				args[i] = conditionalContext.getValue(pars[i]);
+				if (args[i] instanceof Evaluation) {
 					args[i] = ((Evaluation) args[i]).evaluate();
-				} catch (RemoteException e) {
-					throw new ContextException(e);
 				}
+			} catch (RemoteException e) {
+				throw new ContextException(e);
+			}
 		}
 		obj =  closure.call(args);
 		if (obj instanceof Boolean)

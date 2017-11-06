@@ -16,6 +16,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
+import sorcer.service.modeling.Model;
 import sorcer.util.Response;
 import sorcer.util.Sorcer;
 
@@ -229,7 +230,7 @@ public class ProcModels {
     @Test
     public void entryPersistence() throws Exception {
 
-        Context cxt = model("multiply", dbVal("arg/x0", 1.0), dbInVal("arg/x1", 10.0),
+        Context cxt = context("multiply", dbVal("arg/x0", 1.0), dbInVal("arg/x1", 10.0),
                 dbOutVal("arg/x2", 50.0), outVal("result/y"));
 
         assertEquals(value(cxt, "arg/x0"), 1.0);
@@ -302,11 +303,10 @@ public class ProcModels {
 
 	}
 
-
 	@Test
 	public void aliasedProcsTest() throws Exception {
 
-		Context cxt = model(proc("design/in1", 25.0), proc("design/in2", 35.0));
+		Model cxt = model(proc("design/in1", 25.0), proc("design/in2", 35.0));
 
 		// mapping parameters to cxt, x1 and x2 are proc aliases
 		Proc x1 = proc(cxt, "x1", "design/in1");
@@ -511,10 +511,15 @@ public class ProcModels {
 		Condition eval = new Condition(pm) {
 			@Override
 			public boolean isTrue() throws ContextException {
-				Closure c = (Closure)conditionalContext.getValue(Condition._closure_);
-				Object[] args = new Object[] { conditionalContext.getValue("x"),
+				Closure c = null;
+				try {
+					c = (Closure)conditionalContext.getValue(Condition._closure_);
+					Object[] args = new Object[] { conditionalContext.getValue("x"),
 						conditionalContext.getValue("y") };
-				return (Boolean) c.call(args);
+					return (Boolean) c.call(args);
+				} catch (RemoteException e) {
+					throw new ContextException(e);
+				}
 			}
 		};
 

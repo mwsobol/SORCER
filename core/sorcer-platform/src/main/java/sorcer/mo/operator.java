@@ -285,16 +285,16 @@ public class operator {
         return response(model);
     }
 
-    public static Context response(Signature signature, Arg... args) throws ContextException {
-        try {
-            return (Context) ((Domain)instance(signature)).getResponse(args);
-        } catch (RemoteException | SignatureException e) {
-            throw new ContextException(e);
-        }
-    }
+//    public static Context response(Signature signature, Arg... args) throws ContextException {
+//        try {
+//            return (Context) ((Domain)instance(signature)).getResponse(args);
+//        } catch (RemoteException | SignatureException e) {
+//            throw new ContextException(e);
+//        }
+//    }
 
     public static Domain setResponse(Domain model, String... modelPaths) throws ContextException {
-        ((ModelStrategy)((Mogram)model).getMogramStrategy()).setResponsePaths(modelPaths);
+        ((ModelStrategy)model.getMogramStrategy()).setResponsePaths(modelPaths);
         return model;
     }
 
@@ -444,7 +444,7 @@ public class operator {
         return model;
     }
 
-    public static <M extends Domain> M model(Object... items) throws ContextException {
+    public static Model model(Object... items) throws ContextException {
         String name = "unknown" + count++;
         boolean hasEntry = false;
         boolean neoType = false;
@@ -480,7 +480,7 @@ public class operator {
         }
 
         if ((hasEntry|| hasSignature && hasEntry) && !hasExertion) {
-            Domain mo = null;
+            Model mo = null;
             if (srvType) {
                 mo = srvModel(items);
             } else if (procType) {
@@ -503,7 +503,7 @@ public class operator {
                 }
             }
             ((ModelStrategy)mo.getMogramStrategy()).setOutcome(new ServiceContext(name + "-Output)"));
-            return (M) mo;
+            return mo;
         }
         throw new ModelException("do not know what model to create");
     }

@@ -335,15 +335,21 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
     public Object evalSignature(Signature sig, String path, Arg... args) throws MogramException {
         Context out = execSignature(sig, args);
         if (sig.getReturnPath() != null) {
-            Object obj = out.getValue(((ReturnPath)sig.getReturnPath()).path);
-            if (obj == null)
-                obj = out.getValue(path);
-            if (obj != null) {
-                ((Srv)get(path)).setOut(obj);
-                return obj;
-            } else {
-                logger.warn("no eval for return path: {} in: {}", ((ReturnPath)sig.getReturnPath()).path, out);
-                return out;
+            Object obj = null;
+            try {
+                obj = out.getValue(((ReturnPath)sig.getReturnPath()).path);
+
+                if (obj == null)
+                    obj = out.getValue(path);
+                if (obj != null) {
+                    ((Srv)get(path)).setOut(obj);
+                    return obj;
+                } else {
+                    logger.warn("no eval for return path: {} in: {}", ((ReturnPath)sig.getReturnPath()).path, out);
+                    return out;
+                }
+            } catch (RemoteException e) {
+                throw new MogramException(e);
             }
         } else {
             return out;

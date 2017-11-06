@@ -177,7 +177,11 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
     public Context get(Context session, Context taskContext, List<Path> paths) throws ContextException {
         for (Path p : paths) {
             if (session.containsPath(p.path)) {
-                taskContext.putOutValue(p.path, taskContext.getValue(p.path));
+                try {
+                    taskContext.putOutValue(p.path, taskContext.getValue(p.path));
+                } catch (RemoteException e) {
+                    throw new ContextException(e);
+                }
             }
         }
         return taskContext;
@@ -188,7 +192,11 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
         while (it.hasNext()) {
             Map.Entry e = (Map.Entry) it.next();
             if (paths.containsPath((String) e.getKey())) {
-                taskContext.putInValue((String) e.getKey(), session.getValue((String) e.getKey()));
+                try {
+                    taskContext.putInValue((String) e.getKey(), session.getValue((String) e.getKey()));
+                } catch (RemoteException ex) {
+                    throw new ContextException(ex);
+                }
             }
         }
         return taskContext;
@@ -197,7 +205,11 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
     public Context write(Context session, Context taskContext, List<Path> paths) throws ContextException {
        for (Path p : paths) {
             if (taskContext.containsPath(p.path)) {
-                session.putOutValue(p.path, taskContext.getValue(p.path));
+                try {
+                    session.putOutValue(p.path, taskContext.getValue(p.path));
+                } catch (RemoteException e) {
+                    throw new ContextException(e);
+                }
             }
         }
         return taskContext;

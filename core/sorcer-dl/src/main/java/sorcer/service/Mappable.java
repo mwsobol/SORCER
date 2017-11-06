@@ -18,6 +18,8 @@
 package sorcer.service;
 
 
+import java.rmi.RemoteException;
+
 /**
  * Implicit Maps such that a path indicates internal structure of composition
  * with the last inner component indicated by the path. Contexts, Exertions,
@@ -36,7 +38,7 @@ public interface Mappable<T> extends Identifiable {
 	 * @throws ContextException
 	 */
 	public T getValue(String path, Arg... args)
-			throws ContextException;
+			throws ContextException, RemoteException;
 	
 	/**
 	 * Returns a execute at the path as is with no reevaluation.

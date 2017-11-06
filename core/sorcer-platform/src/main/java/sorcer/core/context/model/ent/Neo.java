@@ -198,7 +198,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 	public Double getArg(String varName) throws ArgException {
 		try {
 			return (Double) scope.getValue(varName);
-		} catch (ContextException e) {
+		} catch (ContextException | RemoteException e) {
 			throw new ArgException(e);
 		}
 	}

@@ -20,6 +20,7 @@ import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.inVal;
+import static sorcer.co.operator.val;
 import static sorcer.co.operator.value;
 import static sorcer.eo.operator.alt;
 import static sorcer.eo.operator.*;
@@ -283,10 +284,10 @@ public class  LocalBlockExertions implements SorcerConstants {
 						result("block/result")));
 
 		Block block = block("block", sig("exert", ServiceConcatenator.class),
-                context(inVal("x1", 4), inVal("x2", 5)),
+                context(inVal("x1", 4.0), inVal("x2", 5.0)),
 				task(proc("y", invoker("x1 * x2", args("x1", "x2")))),
-				alt(opt(condition((Context<Integer> cxt) -> value(cxt, "y") > 50), t4),
-						opt(condition((Context<Integer> cxt) -> value(cxt, "y") <= 50), t5)));
+				alt(opt(condition((Context<Double> cxt) -> value(cxt, "y") > 50.0), t4),
+						opt(condition((Context<Double> cxt) -> value(cxt, "y") <= 50.0), t5)));
 
 		logger.info("block: " + block);
 		logger.info("mograms: " + mograms(block));
@@ -297,11 +298,10 @@ public class  LocalBlockExertions implements SorcerConstants {
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
-//		block = exert(block, proc("x1", 10.0), proc("x2", 6.0));
-////		logger.info("block context: " + context(block));
-////		logger.info("result: " + eval(context(block), "block/result"));
-//		assertEquals(eval(context(block), "block/result"), 500.00);
-
+		block = exert(block, val("block/x1", 10.0), val("block/x2", 6.0));
+//		logger.info("block context: " + context(block));
+//		logger.info("result: " + eval(context(block), "block/result"));
+		assertEquals(value(context(block), "block/result"), 500.00);
 	}
 
 }

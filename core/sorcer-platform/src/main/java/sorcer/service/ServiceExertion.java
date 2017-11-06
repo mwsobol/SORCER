@@ -165,9 +165,13 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             exertion.getProcessSignature().setReturnPath(rp);
 
         if (rp != null) {
-            if (((Context) result).getValue(rp.path) != null) {
-                dataContext.setReturnValue(((Context) result).getValue(rp.path));
-                dataContext.setFinalized(true);
+            try {
+                if (((Context) result).getValue(rp.path) != null) {
+					dataContext.setReturnValue(((Context) result).getValue(rp.path));
+					dataContext.setFinalized(true);
+				}
+            } catch (RemoteException e) {
+                throw new ContextException(e);
             }
         } else {
             dataContext.setReturnValue(result);

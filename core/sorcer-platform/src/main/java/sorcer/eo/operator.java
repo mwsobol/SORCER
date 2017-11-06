@@ -2022,7 +2022,7 @@ public class operator extends Operator {
 		if (mogram instanceof Exertion)
 			return ((Exertion)mogram).getAllMograms();
 		else
-			return null;
+			return new ArrayList();
 	}
 
 	public static <M extends Mogram> M mog(Object... items) throws MogramException {
@@ -2397,7 +2397,11 @@ public class operator extends Operator {
 	}
 
 	public static <V> V pathValue(Mappable<V> map, String path, Arg... args) throws ContextException {
-		return map.getValue(path, args);
+		try {
+			return map.getValue(path, args);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 	}
 
     public static Object content(URL url) throws EvaluationException {

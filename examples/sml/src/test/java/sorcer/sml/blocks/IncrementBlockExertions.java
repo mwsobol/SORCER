@@ -30,7 +30,7 @@ public class IncrementBlockExertions implements SorcerConstants {
 
 	@Test
 	public void entryIncrementor() throws Exception {
-		Context cxt = model("add", inVal("arg/x1", 20),
+		Context cxt = context("add", inVal("arg/x1", 20),
 						inVal("arg/x2", 80.0), result("result++"));
 
 		Incrementor z2 = inc(invoker(cxt, "arg/x1"), 2);

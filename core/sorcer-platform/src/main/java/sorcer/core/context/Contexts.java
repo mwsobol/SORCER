@@ -137,7 +137,11 @@ public class Contexts implements SorcerConstants {
 		while (e.hasNext()) {
 			path = (String) e.next();
 			if (path.startsWith(subpath))
-				ids.add(context.getValue(path));
+				try {
+					ids.add(context.getValue(path));
+				} catch (RemoteException ex) {
+					throw new ContextException(ex);
+				}
 		}
 		if (ids.size() > 0)
 			return ids;
@@ -147,33 +151,33 @@ public class Contexts implements SorcerConstants {
 
 	public static List<?> getNamedInValues(Context context) throws ContextException {
 		List inpaths = Contexts.getNamedInPaths(context);
-		if (inpaths == null) 
+		if (inpaths == null)
 			return null;
 		List list = new ArrayList(inpaths.size());
 		for (Object path : inpaths)
 			try {
 				list.add(context.getValue((String) path));
-			} catch (ContextException e) {
+			} catch (RemoteException e) {
 				throw new ContextException(e);
 			}
 
 		return list;
 	}
 
-    public static List<?> getNamedOutValues(Context context) throws ContextException {
-        List outpaths = Contexts.getNamedOutPaths(context);
-        if (outpaths == null)
-            return null;
-        List list = new ArrayList(outpaths.size());
-        for (Object path : outpaths)
-            try {
-                list.add(context.getValue((String) path));
-            } catch (ContextException e) {
-                throw new ContextException(e);
-            }
+	public static List<?> getNamedOutValues(Context context) throws ContextException {
+		List outpaths = Contexts.getNamedOutPaths(context);
+		if (outpaths == null)
+			return null;
+		List list = new ArrayList(outpaths.size());
+		for (Object path : outpaths)
+			try {
+				list.add(context.getValue((String) path));
+			} catch (RemoteException e) {
+				throw new ContextException(e);
+			}
 
-        return list;
-    }
+		return list;
+	}
 
 	public static List<?> getPrefixedInValues(Context context) throws ContextException {
 		List inpaths = Contexts.getPrefixedInPaths(context);
@@ -183,7 +187,7 @@ public class Contexts implements SorcerConstants {
 		for (Object path : inpaths)
 			try {
 				list.add(context.getValue((String) path));
-			} catch (ContextException e) {
+			} catch (RemoteException e) {
 				throw new ContextException(e);
 			}
 
@@ -198,7 +202,7 @@ public class Contexts implements SorcerConstants {
 		for (Object path : inpaths)
 			try {
 				list.add(context.getValue((String) path));
-			} catch (ContextException e) {
+			} catch (RemoteException e) {
 				throw new ContextException(e);
 			}
 
@@ -266,7 +270,7 @@ public class Contexts implements SorcerConstants {
 					toCntxt.putValue(key, fromCntxt.getValue(key));
 				}
 			}
-		} catch (MalformedURLException me) {
+		} catch (MalformedURLException | RemoteException me) {
 			throw new ContextException("Caught MalformedURLException", me);
 		}
 
@@ -299,7 +303,11 @@ public class Contexts implements SorcerConstants {
 	public static Hashtable getContextVariableMap(Context cntxt)
 			throws ContextException {
 		if (containsContextVariables(cntxt)) {
-			return (Hashtable) cntxt.getValue(SORCER_VARIABLES_PATH);
+			try {
+				return (Hashtable) cntxt.getValue(SORCER_VARIABLES_PATH);
+			} catch (RemoteException e) {
+				throw new ContextException(e);
+			}
 		} else {
 			throw new ContextException("RequestorContext"
 					+ ".getContextVariableHashtable(ServiceContext): "
@@ -320,7 +328,11 @@ public class Contexts implements SorcerConstants {
 	public static boolean isEmptyLeafNode(Context cntxt, String path)
 			throws ContextException {
 		Object obj;
-		obj = cntxt.getValue(path);
+		try {
+			obj = cntxt.getValue(path);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 		if (obj instanceof String) {
 			if (obj.equals(Context.EMPTY_LEAF))
 				return true;
@@ -362,9 +374,9 @@ public class Contexts implements SorcerConstants {
 	public static String getFormattedOut(Context sc, boolean isHTML) {
 		// return context with outpaths
 		String inoutAssoc = Context.DIRECTION + SorcerConstants.APS
-				+ Context.DA_INOUT + APS;
+			+ Context.DA_INOUT + APS;
 		String outAssoc = Context.DIRECTION + SorcerConstants.APS
-				+ Context.DA_OUT + APS;
+			+ Context.DA_OUT + APS;
 		String[] outPaths = null, inoutPaths = null;
 		try {
 			outPaths = Contexts.getMarkedPaths(sc, outAssoc);
@@ -382,24 +394,20 @@ public class Contexts implements SorcerConstants {
 		else
 			cr = "\n";
 		StringBuilder sb = new StringBuilder();
-		if (outPaths != null)
-			for (int i = 0; i < outPaths.length; i++) {
-				sb.append(outPaths[i]).append(" = ");
-				try {
+		try {
+			if (outPaths != null)
+				for (int i = 0; i < outPaths.length; i++) {
+					sb.append(outPaths[i]).append(" = ");
 					sb.append(sc.getValue(outPaths[i])).append(cr);
-				} catch (ContextException ex) {
-					sb.append("Unable to retrieve eval").append(cr);
 				}
-			}
-		if (inoutPaths != null)
-			for (int i = 0; i < inoutPaths.length; i++) {
-				sb.append(inoutPaths[i]).append(" = ");
-				try {
+			if (inoutPaths != null)
+				for (int i = 0; i < inoutPaths.length; i++) {
+					sb.append(inoutPaths[i]).append(" = ");
 					sb.append(sc.getValue(inoutPaths[i])).append(cr);
-				} catch (ContextException ex) {
-					sb.append("Unable to retrieve eval").append(cr);
 				}
-			}
+		} catch (RemoteException | ContextException ex) {
+			sb.append("Unable to retrieve eval").append(cr);
+		}
 		return sb.toString();
 	}
 
@@ -637,7 +645,11 @@ public class Contexts implements SorcerConstants {
 		java.util.Set nodes = new HashSet();
 		Object obj = null;
 		for (int i = 0; i < paths.length; i++) {
-			obj = sc.getValue(paths[i]);
+			try {
+				obj = sc.getValue(paths[i]);
+			} catch (RemoteException e) {
+				throw new ContextException(e);
+			}
 			if (obj != null && obj instanceof ContextNode)
 				nodes.add(obj);
 		}
@@ -652,7 +664,11 @@ public class Contexts implements SorcerConstants {
 		java.util.Set nodes = new HashSet();
 		Object obj = null;
 		for (int i = 0; i < paths.length; i++) {
-			obj = sc.getValue(paths[i]);
+			try {
+				obj = sc.getValue(paths[i]);
+			} catch (RemoteException e) {
+				throw new ContextException(e);
+			}
 			if (obj != null && obj instanceof ContextNode)
 				nodes.add(obj);
 		}
@@ -667,19 +683,23 @@ public class Contexts implements SorcerConstants {
 	}
 
 	public static Object[] getMarkedValues(Context context, String association)
-			throws ContextException {
+		throws ContextException {
 		String[] paths = getMarkedPaths(context, association);
 		List<Object> values = new ArrayList();
-		for (int i = 0; i < paths.length; i++) {
-			values.add(context.getValue(paths[i]));
-		}
-		if (paths == null || values.size() == 0) {
-			Context cxt = context.getScope();
-			if (cxt != null)
-				paths = getMarkedPaths(cxt, association);
+		try {
 			for (int i = 0; i < paths.length; i++) {
 				values.add(context.getValue(paths[i]));
 			}
+			if (paths == null || values.size() == 0) {
+				Context cxt = context.getScope();
+				if (cxt != null)
+					paths = getMarkedPaths(cxt, association);
+				for (int i = 0; i < paths.length; i++) {
+					values.add(context.getValue(paths[i]));
+				}
+			}
+		} catch (RemoteException e) {
+			throw new ContextException(e);
 		}
 		return values.toArray();
 	}
@@ -969,8 +989,12 @@ public class Contexts implements SorcerConstants {
 		Iterator e = ((ServiceContext)fromContext).keyIterator();
 		while (e.hasNext()){
 			String key = (String) e.next();
-			if (fromContext.getValue(key) instanceof ContextNode)
-				toContext.putValue(key, fromContext.getValue(key));
+			try {
+				if (fromContext.getValue(key) instanceof ContextNode)
+					toContext.putValue(key, fromContext.getValue(key));
+			} catch (RemoteException ex) {
+				throw new ContextException(ex);
+			}
 		}
 	}
 
@@ -981,7 +1005,11 @@ public class Contexts implements SorcerConstants {
 	
 	public static void copyValue(Context fromContext, String fromPath,
 			Context toContext, String toPath) throws ContextException {
-		toContext.putValue(toPath, fromContext.getValue(fromPath));
+		try {
+			toContext.putValue(toPath, fromContext.getValue(fromPath));
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 	}
 
 	public static Object putOutValue(Context cntxt, String path, Object value)
@@ -1062,29 +1090,33 @@ public class Contexts implements SorcerConstants {
 		Context subcntxt = null;
 		while (e.hasNext()) {
 			String key1 = (String) e.next();
-			if ((contextTree.getValue(key1) instanceof ContextLink)) {
-				link = (ContextLink) contextTree.getValue(key1);
-				if (!linkStop) {
-					// get subcontext for recursion
-					try {
-						subcntxt = link.getContext().getContext(
-								link.getOffset().trim());
-					} catch (RemoteException ex) {
-						throw new ContextException(ex);
+			try {
+				if ((contextTree.getValue(key1) instanceof ContextLink)) {
+					link = (ContextLink) contextTree.getValue(key1);
+					if (!linkStop) {
+						// get subcontext for recursion
+						try {
+							subcntxt = link.getContext().getContext(
+									link.getOffset().trim());
+						} catch (RemoteException ex) {
+							throw new ContextException(ex);
+						}
+						// getSubcontext cuts above, which is what we want
+						List<String> el = getPathsWithoutLinkedPaths(subcntxt,
+								((ServiceContext) subcntxt).keySet().iterator(), true);
+						for (String path : el) {
+							String str = key1 + SorcerConstants.CPS + path;
+							keys.add(str);
+						}
+						keys.remove(key1);
+					} else if (linkStop) {
+						keys.add(key1);
 					}
-					// getSubcontext cuts above, which is what we want
-					List<String> el = getPathsWithoutLinkedPaths(subcntxt,
-							((ServiceContext) subcntxt).keySet().iterator(), true);
-					for (String path : el) {
-						String str = key1 + SorcerConstants.CPS + path;
-						keys.add(str);
-					}
-					keys.remove(key1);
-				} else if (linkStop) {
+				} else {
 					keys.add(key1);
 				}
-			} else {
-				keys.add(key1);
+			} catch (RemoteException ex) {
+				throw new ContextException(ex);
 			}
 		}
 		SorcerUtil.bubbleSort(keys);
@@ -1342,7 +1374,7 @@ public class Contexts implements SorcerConstants {
 				Object p = i.next();
 				map.put(p, context.getValue((String) p));
 			}
-		} catch (ContextException e) {
+		} catch (ContextException | RemoteException e) {
 			e.printStackTrace();
 		}
 		return map;
@@ -1457,28 +1489,38 @@ public class Contexts implements SorcerConstants {
 	}
 
 	public static String[] getContextNodePathsWithAssoc(Context context,
-			String association) throws ContextException {
+														String association) throws ContextException {
 		Vector contextNodes = new Vector();
 		String[] paths = getMarkedPaths(context, association);
 		if (paths == null)
-			return (String[]) null;
-		for (int i = 0; i < paths.length; i++)
-			if (context.getValue(paths[i]) instanceof ContextNode)
-				contextNodes.addElement(paths[i]);
+			return null;
+		try {
+			for (int i = 0; i < paths.length; i++) {
+				if (context.getValue(paths[i]) instanceof ContextNode)
+					contextNodes.addElement(paths[i]);
+			}
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
+
 		String[] contextNodePaths = new String[contextNodes.size()];
 		contextNodes.copyInto(contextNodePaths);
 		return contextNodePaths;
 	}
 
 	public static String[] getContextNodePaths(Context context)
-			throws ContextException {
+		throws ContextException {
 		String path;
 		Vector contextNodes = new Vector();
 		Iterator e = ((ServiceContext)context).keyIterator();
-		while (e.hasNext()) {
-			path = (String) e.next();
-			if (context.getValue(path) instanceof ContextNode)
-				contextNodes.addElement(path);
+		try {
+			while (e.hasNext()) {
+				path = (String) e.next();
+				if (context.getValue(path) instanceof ContextNode)
+					contextNodes.addElement(path);
+			}
+		} catch (RemoteException ex) {
+			throw new ContextException(ex);
 		}
 		String[] contextNodePaths = new String[contextNodes.size()];
 		contextNodes.copyInto(contextNodePaths);

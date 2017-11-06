@@ -9,6 +9,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.service.Context;
+import sorcer.service.Domain;
 import sorcer.service.modeling.*;
 
 import java.net.URL;
@@ -30,62 +31,6 @@ import static sorcer.so.operator.*;
 public class Procedures {
 	private final static Logger logger = LoggerFactory.getLogger(Procedures.class.getName());
 
-	public void smlSyntax() throws Exception {
-
-		// Signatures
-		sig s1 = sig("s1", Class.class);
-		sig s2 = sig("s2", Class.class);
-		Object o1 = exec(s1);
-
-		// Entries
-		val v1 = val("x1", 10.8);
-		func f1 = proc("x2", 20.0);
-		func f2 = func("v1 + f1", args("v1", "f1"));
-		func f3 = lmbd("s1", args("v1", "f1"));
-		func f4 = neo("x3", 1.0);
-		func f5 = srv(sig("s1", Class.class));
-		ent e1 = ent("x1", 10.0);
-		ent f5b = srv(s1);
-		ent v1b = val("x1", 10.8);
-
-		// Contexts
-		cxt c1 = context(v1, val("x4", 10.8), f1);
-
-		// Mograms
-		mog t1 = task(s1, c1);
-		mog t2 = task(s1, s2, c1);
-		mog m1 = model(v1, f1, f2, f3);
-		mog m2 = model(m1, s1, t1);
-		mog x1 = block(t1, t2, m1);
-		mog x2 = job(t1, job(t2, m1));
-
-		// Outputs
-		Object o2 = value(v1);
-		Object o3 = eval(f1);
-        Object o4 = eval(e1);
-		Object o5 = eval(t1);
-		Object o6 = eval(block());
-		Object o7 = eval(job());
-		Object o8 = exec(m1);
-		Object o9 = value(context(), "path");
-		Object o10 = response(model(), "path");
-
-		// returning entries
-		ent e2 = act(v1);
-		ent e3 = act(f1);
-		ent e4 = act(context(), "path");
-
-		// processing mograms
-		cxt c3 = response((Model) model());
-		mog m3 = exert(task());
-		mog m4 = exert(job());
-		mog m5 = exert(model());
-		cxt c4 = context(job());
-		cxt c5 = context(exert(job()));
-
-	}
-
-
 	@Test
 	public void procScope() throws Exception {
 		// a proc is a variable (entry) evaluated with its own scope (context)
@@ -101,15 +46,15 @@ public class Procedures {
 	@Test
 	public void modelScope() throws Exception {
 
-		Context<Double> cxt = model(proc("x", 20.0), proc("y", 30.0));
-		Proc add = proc("add", invoker("x + y", args("x", "y")), cxt);
+		Model mdl = model(proc("x", 20.0), proc("y", 30.0));
+		Proc add = proc("add", invoker("x + y", args("x", "y")), mdl);
 
-		// adding a proc to the context updates proc's scope
-		add(cxt, add);
+		// adding a proc to the model updates proc's scope
+		add(mdl, add);
 
-		// process the entry of the context
-		logger.info("context add eval: " + value(cxt, "add"));
-		assertTrue(value(cxt, "add").equals(50.0));
+		// evaluate entry of the context
+		logger.info("eval add : " + eval(mdl, "add"));
+		assertTrue(eval(mdl, "add").equals(50.0));
 
 	}
 	
@@ -181,38 +126,38 @@ public class Procedures {
                 	dbp,
 					proc("invoke", invoker("x + y", args("x", "y")))));
 
-		Context<Double> cxt = model(proc("x", 10.0),
+		Model mdl = model(proc("x", 10.0),
 				proc("y", 20.0), proc("init/eval", 49.0));
 
 		setValue(dbp, 50.0);
 		assertTrue(eval(dbp).equals(50.0));
 
-		assertTrue(eval(multi, cxt, pFi("shared/eval")).equals(50.0));
-		assertTrue(eval(multi, cxt, pFi("init/eval")).equals(49.0));
-		assertTrue(eval(multi, cxt, pFi("invoke")).equals(30.0));
+		assertTrue(eval(multi, mdl, pFi("shared/eval")).equals(50.0));
+		assertTrue(eval(multi, mdl, pFi("init/eval")).equals(49.0));
+		assertTrue(eval(multi, mdl, pFi("invoke")).equals(30.0));
 
 	}
 	
 	@Test
 	public void procModelOperator() throws Exception {
 		
-		ProcModel pm = procModel("proc-model", proc("v1", 1.0), proc("v2", 2.0));
-		add(pm, proc("x", 10.0), proc("y", 20.0));
+		Model mdl = procModel("proc-model", proc("v1", 1.0), proc("v2", 2.0));
+		add(mdl, proc("x", 10.0), proc("y", 20.0));
 		// add an active proc, no scope
-		add(pm, invoker("add1", "x + y", args("x", "y")));
+		add(mdl, invoker("add1", "x + y", args("x", "y")));
 		// add a proc with own scope
-		add(pm, proc(invoker("add2", "x + y", args("x", "y")),
+		add(mdl, proc(invoker("add2", "x + y", args("x", "y")),
 				context(proc("x", 30.0), proc("y", 40.0))));
 		
-		assertEquals(eval(pm, "add1"), 30.0);
+		assertEquals(eval(mdl, "add1"), 30.0);
 		// change the scope of add1
-		setValue(pm, "x", 20.0);
-		assertEquals(eval(pm, "add1"), 40.0);
+		setValue(mdl, "x", 20.0);
+		assertEquals(eval(mdl, "add1"), 40.0);
 
-		assertEquals(eval(pm, "add2"), 70.0);
+		assertEquals(eval(mdl, "add2"), 70.0);
 		// x is changed but add2 eval is the same, has its own scope
-		setValue(pm, "x", 20.0);
-		assertEquals(eval(pm, "add2"), 70.0);
+		setValue(mdl, "x", 20.0);
+		assertEquals(eval(mdl, "add2"), 70.0);
 		
 	}
 }

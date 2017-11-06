@@ -281,7 +281,7 @@ public class ProcModelTest {
 
 	@Test
 	public void aliasedProcTest() throws ContextException, RemoteException {
-		Context cxt = model(proc("design/in1", 25.0), proc("design/in2", 35.0));
+		Model cxt = model(proc("design/in1", 25.0), proc("design/in2", 35.0));
 		
 		Proc x1 = proc(cxt, "x1", "design/in1");
 		Proc x2 = as(proc("x2", "design/in2"), cxt);
@@ -428,10 +428,15 @@ public class ProcModelTest {
 		Condition eval = new Condition(pm) {
 			@Override
 			public boolean isTrue() throws ContextException {
-				Closure c = (Closure)conditionalContext.getValue(Condition._closure_);
-				Object[] args = new Object[] { conditionalContext.getValue("x"),
+				Closure c = null;
+				try {
+					c = (Closure)conditionalContext.getValue(Condition._closure_);
+					Object[] args = new Object[] { conditionalContext.getValue("x"),
 						conditionalContext.getValue("y") };
-				return (Boolean) c.call(args);
+					return (Boolean) c.call(args);
+				} catch (RemoteException e) {
+					throw new ContextException(e);
+				}
 			}
 		};
 

@@ -24,6 +24,7 @@ import sorcer.service.ContextException;
 import sorcer.service.SetterException;
 import sorcer.service.Task;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -115,23 +116,29 @@ public class ContextSelector implements ContextSelection {
 	private Object select(Context in) throws ContextException {
 		Object val;
 		Context out = new ServiceContext("Selected Context");
-		if (name != null)
+		if (name != null) {
 			out.setSubject("filter" + SorcerConstants.CPS + name, new Date());
-
-		if (selectedPath != null)
-			return in.getValue(selectedPath);
-		
-		for (String path : paths) {
-			val = in.getValue(path);
-			if (val != null)
-				out.putValue(path, val);
 		}
-		if (out.size() == 0) {
-			return null;
-		} else if (out.size() == 1) {
-            return out.getValue(paths.get(0));
-		} else
-			return out;
+
+		try {
+			if (selectedPath != null) {
+				return in.getValue(selectedPath);
+			}
+			for (String path : paths) {
+				val = in.getValue(path);
+				if (val != null)
+					out.putValue(path, val);
+			}
+			if (out.size() == 0) {
+				return null;
+			} else if (out.size() == 1) {
+				return out.getValue(paths.get(0));
+			} else {
+				return out;
+			}
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 	}
 
 	public String setPath(String path) {

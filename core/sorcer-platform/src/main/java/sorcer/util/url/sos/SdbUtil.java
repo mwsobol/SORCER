@@ -248,8 +248,7 @@ public class SdbUtil {
 		return (URL) eval(objectStoreTask);
 	}
 
-	public static URL store(Object object) throws MogramException,
-			SignatureException, ContextException {
+	public static URL store(Object object) throws MogramException, SignatureException {
 		String storageName = Sorcer.getDatabaseStorerName();
 		Task objectStoreTask = task(
 				"store",
@@ -258,7 +257,11 @@ public class SdbUtil {
 						result(StorageManagement.object_url)));
 
 		Task out = exert(objectStoreTask);
-		return (URL) out.getDataContext().getValue(StorageManagement.object_url);
+		try {
+			return (URL) out.getDataContext().getValue(StorageManagement.object_url);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 	}
 
 	public static URL write(Object object) throws MogramException,

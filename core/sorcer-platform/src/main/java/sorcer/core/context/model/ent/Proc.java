@@ -438,7 +438,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	public T getArg(String varName) throws ArgException {
 		try {
 			return (T) scope.getValue(varName);
-		} catch (ContextException e) {
+		} catch (ContextException | RemoteException e) {
 			throw new ArgException(e);
 		}
 	}
@@ -559,7 +559,11 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 					throw new ContextException(e);
 				}
 			else if (mappable != null)
-				return (T)mappable.getValue(path.substring(name.length()), args);
+				try {
+					return (T)mappable.getValue(path.substring(name.length()), args);
+				} catch (RemoteException e) {
+					throw new ContextException(e);
+				}
 		}
 		return null;
 	}

@@ -372,41 +372,45 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	public Object getValue0(String path) throws ContextException {
 		Object result = get(path);
-		if (result instanceof Value) {
-			return ((Value)result).getData();
-		} else if (result instanceof ContextLink) {
-			String offset = ((ContextLink) result).getOffset();
-			Context linkedCntxt = ((ContextLink) result).getContext();
-			result = linkedCntxt.getValue(offset);
-		}
-		if (result == null) {
-			// could be in a linked context
-			List<String> paths = localLinkPaths();
-			int len;
-			for (String linkPath : paths) {
-				ContextLink link = null;
-				link = (ContextLink) get(linkPath);
-				String offset = link.getOffset();
-				int index = offset.lastIndexOf(CPS);
-				String extendedLinkPath = linkPath;
-				if (index < 0) {
-					if (offset.length() > 0)
-						extendedLinkPath = linkPath + CPS + offset;
-				} else
-					extendedLinkPath = linkPath + offset.substring(index);
-				len = extendedLinkPath.length();
-				if (path.startsWith(extendedLinkPath)
+		try {
+			if (result instanceof Value) {
+				return ((Value)result).getData();
+			} else if (result instanceof ContextLink) {
+				String offset = ((ContextLink) result).getOffset();
+				Context linkedCntxt = ((ContextLink) result).getContext();
+				result = linkedCntxt.getValue(offset);
+			}
+			if (result == null) {
+				// could be in a linked context
+				List<String> paths = localLinkPaths();
+				int len;
+				for (String linkPath : paths) {
+					ContextLink link = null;
+					link = (ContextLink) get(linkPath);
+					String offset = link.getOffset();
+					int index = offset.lastIndexOf(CPS);
+					String extendedLinkPath = linkPath;
+					if (index < 0) {
+						if (offset.length() > 0)
+							extendedLinkPath = linkPath + CPS + offset;
+					} else
+						extendedLinkPath = linkPath + offset.substring(index);
+					len = extendedLinkPath.length();
+					if (path.startsWith(extendedLinkPath)
 						&& (path.indexOf(CPS, len) == len || path.length() > len)) {
-					// looking for something in this linked context
-					String keyInLinkedCntxt = path.substring(len + 1);
-					if (offset.length() > 0)
-						keyInLinkedCntxt = offset + path.substring(len);
-					Context linkedCntxt;
-					linkedCntxt = getLinkedContext(link);
-					result = linkedCntxt.getValue(keyInLinkedCntxt);
-					break;
+						// looking for something in this linked context
+						String keyInLinkedCntxt = path.substring(len + 1);
+						if (offset.length() > 0)
+							keyInLinkedCntxt = offset + path.substring(len);
+						Context linkedCntxt;
+						linkedCntxt = getLinkedContext(link);
+						result = linkedCntxt.getValue(keyInLinkedCntxt);
+						break;
+					}
 				}
 			}
+		} catch (RemoteException e) {
+			throw new ContextException(e);
 		}
 		return result;
 	}
@@ -3326,11 +3330,15 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (result instanceof Context) {
 			ReturnPath rp = dataContext.getReturnPath();
 			if (rp != null) {
-				if (((Context) result).getValue(rp.path) != null) {
-					dataContext.setReturnValue(((Context) result).getValue(rp.path));
-				} else if (rp.outPaths != null && rp.outPaths.length > 0) {
-					Context out = dataContext.getDirectionalSubcontext(rp.outPaths);
-					dataContext.setReturnValue(out);
+				try {
+					if (((Context) result).getValue(rp.path) != null) {
+						dataContext.setReturnValue(((Context) result).getValue(rp.path));
+					} else if (rp.outPaths != null && rp.outPaths.length > 0) {
+						Context out = dataContext.getDirectionalSubcontext(rp.outPaths);
+						dataContext.setReturnValue(out);
+					}
+				} catch (RemoteException e) {
+					throw new ContextException(e);
 				}
 			} else if (dataContext.getScope() != null) {
 				dataContext.getScope().append((Context)result);

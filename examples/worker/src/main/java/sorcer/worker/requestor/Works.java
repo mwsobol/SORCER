@@ -7,6 +7,7 @@ import sorcer.worker.provider.InvalidWork;
 import sorcer.worker.provider.Work;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.List;
 
 import static sorcer.co.operator.value;
@@ -41,7 +42,7 @@ public class Works implements Serializable {
 		work1 = new Work() {
 			private static final long serialVersionUID = 1L;
 
-			public Context exec(Context cxt) throws ContextException {
+			public Context exec(Context cxt) throws ContextException, RemoteException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
 				String operand1Path = "req/arg/1";
 				String operand2Path = "req/arg/2";
@@ -77,7 +78,7 @@ public class Works implements Serializable {
 		work2 = new Work() {
 			private static final long serialVersionUID = 1L;
 
-			public Context exec(Context cxt) throws ContextException {
+			public Context exec(Context cxt) throws ContextException, RemoteException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
 				String operand1Path = "req/arg/1";
 				String operand2Path = "req/arg/2";
@@ -113,7 +114,7 @@ public class Works implements Serializable {
 		work3 = new Work() {
 			private static final long serialVersionUID = 1L;
 
-			public Context exec(Context cxt) throws ContextException {
+			public Context exec(Context cxt) throws ContextException, RemoteException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
 				String operand1Path = "req/arg/1";
 				String operand2Path = "req/arg/2";
@@ -149,7 +150,7 @@ public class Works implements Serializable {
 		work4 = new Work() {
 			private static final long serialVersionUID = 1L;
 
-			public Context exec(Context cxt) throws ContextException {
+			public Context exec(Context cxt) throws ContextException, RemoteException {
 				String sigPrefix = ((ServiceContext)cxt).getCurrentPrefix();
 				String operand1Path = "req/arg/1";
 				String operand2Path = "req/arg/2";

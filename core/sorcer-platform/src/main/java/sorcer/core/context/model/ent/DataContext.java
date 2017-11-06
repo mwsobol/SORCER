@@ -82,10 +82,10 @@ public class DataContext<T> extends PositionalContext<T> {
     @Override
     public T getValue(String path, Arg... args) throws ContextException {
         Object obj = data.get(path);
-        if (obj instanceof Entry && ((Entry)obj).isPersistent()) {
-            Object val = ((Entry)obj).getImpl();
-            URL url = null;
-            try {
+        try {
+            if (obj instanceof Entry && ((Entry)obj).isPersistent()) {
+                Object val = ((Entry)obj).getImpl();
+                URL url = null;
                 if (SdbUtil.isSosURL(val)) {
                     val = ((URL) val).getContent();
                     if (val instanceof UuidObject)
@@ -104,12 +104,12 @@ public class DataContext<T> extends PositionalContext<T> {
                     return (T) val;
                 }
                 return (T) val;
-            } catch (IOException | MogramException | SignatureException e) {
-                throw new ContextException(e);
+            } else if ((obj == Context.none || obj == null) && scope != null) {
+                // if not here check in the scope of it
+                obj = scope.getValue(path, args);
             }
-        } else if ((obj == Context.none || obj == null) && scope != null) {
-            // if not here check in the scope of it
-            obj = scope.getValue(path, args);
+        } catch (IOException | MogramException | SignatureException e) {
+            throw new ContextException(e);
         }
         return (T) obj;
     }

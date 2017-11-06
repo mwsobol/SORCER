@@ -32,7 +32,9 @@ import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.Spacer;
+import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.ObjectSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Signature.ReturnPath;
@@ -117,13 +119,16 @@ public class Job extends CompoundExertion {
 	 */
 	protected void init() {
 		super.init();
-		NetSignature s = new NetSignature("exert", Jobber.class);
-		// Needs to be RemoteJobber for Cataloger to find it
-		// s.setServiceType(Jobber.class.getName());
-		s.getProviderName().setName(null);
-		s.setType(Signature.Type.PROC);
-		ServiceFidelity sFi = new ServiceFidelity(s);
-		sFi.setSelect(s);
+		Signature sig;
+		if (this instanceof ObjectJob) {
+			sig = new ObjectSignature("exert", ServiceJobber.class);
+		} else {
+			sig = new NetSignature("exert", Jobber.class);
+		}
+		sig.getProviderName().setName(null);
+		sig.setType(Signature.Type.PROC);
+		ServiceFidelity sFi = new ServiceFidelity(sig);
+		sFi.setSelect(sig);
 		((ServiceFidelity)multiFi).getSelects().add(sFi);// Add the signature
 		multiFi.setSelect(sFi);
 	}
@@ -377,8 +382,12 @@ public class Job extends CompoundExertion {
 			Iterator it = ((ServiceContext)connector).entryIterator();
 			while (it.hasNext()) {
 				Map.Entry e = (Map.Entry) it.next();
-				dataContext.putInValue((String) e.getKey(), jobContext.getValue((String) e.getValue()));
-				dataContext.removePath((String) e.getValue());
+				try {
+					dataContext.putInValue((String) e.getKey(), jobContext.getValue((String) e.getValue()));
+					dataContext.removePath((String) e.getValue());
+				} catch (RemoteException ex) {
+					throw new ContextException(ex);
+				}
 			}
 		}
 		return dataContext;
@@ -456,7 +465,11 @@ public class Job extends CompoundExertion {
 		int index = path.indexOf(last);
 		String contextPath = path.substring(index + last.length() + 1);
 
-		return exti.getContext().getValue(contextPath);
+		try {
+			return exti.getContext().getValue(contextPath);
+		} catch (RemoteException ex) {
+			throw new ContextException(ex);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -469,7 +482,11 @@ public class Job extends CompoundExertion {
 		}
 		Object val = dataContext.getValue(path, args);
 		if (val == Context.none) {
-			val = scope.getValue(path, args);
+			try {
+				val = scope.getValue(path, args);
+			} catch (RemoteException ex) {
+				throw new ContextException(ex);
+			}
 		}
 		return val;
 	}

@@ -18,6 +18,7 @@ import sorcer.util.ProviderAccessor;
 import sorcer.util.ProviderLookup;
 
 import static org.junit.Assert.assertEquals;
+import static sorcer.co.operator.val;
 import static sorcer.co.operator.value;
 import static sorcer.eo.operator.*;
 import static sorcer.so.operator.*;
@@ -51,7 +52,7 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 						result("block/result")));
 		
 		Block block = block("block", // sig(Concatenator.class),
-				context(sorcer.po.operator.ent("y1", 100), sorcer.po.operator.ent("y2", 200)),
+				context(val("y1", 100), val("y2", 200)),
 				alt(opt(condition("{ y1, y2 -> y1 > y2 }", "y1", "y2"), t4), 
 					opt(condition("{ y1, y2 -> y1 <= y2 }", "y1", "y2"), t5)));
 		
@@ -60,12 +61,12 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
-		block = exert(block, sorcer.po.operator.ent("y1", 200.0), sorcer.po.operator.ent("y2", 100.0));
+		block = exert(block, val("block/y1", 200.0), val("block/y2", 100.0));
 		logger.info("block context: " + context(block));
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 500.0);
 	}
-	
+
 	@Test
 	public void taskAltBlockTest() throws Exception {
 		Task t3 = task("t3",  sig("subtract", Subtractor.class), 

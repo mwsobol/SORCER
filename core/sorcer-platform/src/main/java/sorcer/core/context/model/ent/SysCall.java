@@ -44,29 +44,35 @@ public class SysCall extends Proc<Context> implements Serializable {
 
     public SysCall(String parname, Context context) throws ContextException {
         this(parname);
-        String cmd = (String)context.getValue("cmd");
-        String[] cmdarray = (String[])context.getValue("cmdarray");
-        String scriptFilename = (String)context.getValue("filename");
-        Context scope = (Context)context.getValue("scope");
+        String cmd = null;
+        try {
+            cmd = (String)context.getValue("cmd");
+            String[] cmdarray = (String[])context.getValue("cmdarray");
+            String scriptFilename = (String)context.getValue("filename");
+            Context scope = (Context)context.getValue("scope");
 
-        dataContext = (ServiceContext) context;
-        inPaths = ((ServiceContext)context).getInPaths();
-        outPaths = ((ServiceContext)context).getOutPaths();
+            dataContext = (ServiceContext) context;
+            inPaths = ((ServiceContext)context).getInPaths();
+            outPaths = ((ServiceContext)context).getOutPaths();
 
-        if (name != null)
-            invoker = new CmdInvoker();
-        else
-            invoker = new CmdInvoker(name);
+            if (name != null)
+                invoker = new CmdInvoker();
+            else
+                invoker = new CmdInvoker(name);
 
-        if (scope != null) {
-            invoker.setScope(scope);
+            if (scope != null) {
+                invoker.setScope(scope);
+            }
+
+            if (cmd != null)
+                invoker.setCmd(cmd);
+
+            if (cmdarray != null)
+                invoker.setCmdarray(cmdarray);
+        } catch (RemoteException e) {
+            throw new ContextException(e);
         }
 
-        if (cmd != null)
-            invoker.setCmd(cmd);
-
-        if (cmdarray != null)
-            invoker.setCmdarray(cmdarray);
     }
 
     public Context evaluate(Arg... args) throws RemoteException,

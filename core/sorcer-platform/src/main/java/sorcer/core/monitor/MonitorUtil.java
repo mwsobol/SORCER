@@ -85,7 +85,7 @@ public class MonitorUtil {
     public static MonitoringSession getMonitoringSession(StrategyContext controlContext) {
         try {
             return (MonitoringSession) controlContext.getValue(KEY_MONITORING_SESSION);
-        } catch (ContextException e) {
+        } catch (ContextException | RemoteException e) {
             throw new IllegalStateException("Context broken", e);
         }
     }

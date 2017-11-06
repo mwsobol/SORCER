@@ -279,7 +279,7 @@ public abstract class Block extends CompoundExertion {
 		}
 		int index = path.indexOf(last);
 		String contextPath = path.substring(index + last.length() + 1);
-		((Exertion)exti).getContext().putValue(contextPath, value);
+		exti.getContext().putValue(contextPath, value);
 		return value;
 	}
 	
@@ -308,9 +308,8 @@ public abstract class Block extends CompoundExertion {
 			for (Arg e : entries) {
 				if (e instanceof Entry) {
 					if (e.getName().indexOf(name) >= 0)
-						putBlockValue(e.getName(), ((Entry) e).get());
-
-					else
+					putBlockValue(e.getName(), ((Entry) e).get());
+				}else {
 						super.putValue(e.getName(), ((Entry) e).get());
 				}
 			}
