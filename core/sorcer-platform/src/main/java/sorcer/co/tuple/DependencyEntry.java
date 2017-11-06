@@ -19,8 +19,8 @@ package sorcer.co.tuple;
 
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Conditional;
-import sorcer.service.Dependency;
 import sorcer.service.Path;
+import sorcer.service.Signature;
 
 import java.util.List;
 
@@ -32,16 +32,16 @@ public class DependencyEntry extends Entry<List<Path>> {
 
     private Conditional condition;
 
-    private List<Path> dependees;
+    private Signature.Paths dependees;
 
-    private Kind depType;
+    private Path.State entryState;
 
     @SuppressWarnings("unchecked")
     public DependencyEntry(String path, List<Path> paths) {
         super(path, paths);
     }
 
-    public DependencyEntry(List<Path> dependees, List<Path> paths) {
+    public DependencyEntry(Signature.Paths dependees, List<Path> paths) {
         super("multiplicity");
         this.dependees = dependees;
         _2 = paths;
@@ -64,15 +64,15 @@ public class DependencyEntry extends Entry<List<Path>> {
         return dependees;
     }
 
-    public void setDependees(List<Path> dependees) {
+    public void setDependees(Signature.Paths dependees) {
         this.dependees = dependees;
     }
 
-    public Kind getDepType() {
-        return depType;
+    public Path.State getEntryState() {
+        return entryState;
     }
 
-    public void setDepType(Kind depType) {
-        this.depType = depType;
+    public void setEntryState(Path.State entryState) {
+        this.entryState = entryState;
     }
 }
