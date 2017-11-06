@@ -223,10 +223,10 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
-//		block = exert(block, proc("block/x1", 10.0), proc("block/x2", 6.0));
+//		block = exert(block, val("block/x1", 10.0), val("block/x2", 6.0));
 //		logger.info("block context: " + context(block));
 ////		logger.info("result: " + eval(context(block), "block/result"));
-//		assertEquals(eval(context(block), "block/result"), 500.00);
+//		assertEquals(value(context(block), "block/result"), 500.00);
 
 	}
 
