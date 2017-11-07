@@ -454,6 +454,11 @@ public class operator extends sorcer.operator {
 		return false;
 	}
 
+	// initialization paths in the model
+	public static DependencyEntry dep(Signature.Paths paths) {
+		return new DependencyEntry(paths);
+	}
+
     public static DependencyEntry dep(String path, Path... paths) {
 		return new DependencyEntry(path, Arrays.asList(paths));
 	}

@@ -37,6 +37,10 @@ public class DependencyEntry extends Entry<List<Path>> {
     private Path.State entryState;
 
     @SuppressWarnings("unchecked")
+    public DependencyEntry(List<Path> paths) {
+        super("_init_", paths);
+    }
+
     public DependencyEntry(String path, List<Path> paths) {
         super(path, paths);
     }

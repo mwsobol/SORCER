@@ -283,7 +283,9 @@ public class ServiceMograms {
 
          dependsOn(outerMdl, dep("subtract", paths("multiply", "add")));
 
-         // state of entries can be updated
+         // initialization of the model
+        dependsOn(outerMdl, dep(paths("multiply", "add")));
+        // state of entries can be updated
         dependsOn(outerMdl, dep("subtract", setKind(paths("multiply", "add"), Path.State.CACHED, Path.State.AFTER)));
 
         add(outerMdl, innerMdl, inVal("arg/x1", 10.0), inVal("arg/x2", 50.0));

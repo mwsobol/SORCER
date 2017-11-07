@@ -3492,6 +3492,9 @@ public class ServiceContext<T> extends ServiceMogram implements
         throw new ContextException("no such domain: " + name);
 	}
 
+	public void execDependencies(String path, Arg... args) throws ContextException {
+		substitute(args);
+	}
 
 	@Override
 	public Object exec(Arg... args) throws MogramException, RemoteException {

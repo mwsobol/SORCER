@@ -46,4 +46,6 @@ public interface Model extends Domain {
 
     public void invalidateEntries();
 
+    public void execDependencies(String path, Arg... args) throws ContextException;
+
 }
