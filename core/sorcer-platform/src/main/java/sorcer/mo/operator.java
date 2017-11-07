@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 
 import static sorcer.co.operator.instance;
-import static sorcer.co.operator.list;
 import static sorcer.eo.operator.context;
 
 /**
