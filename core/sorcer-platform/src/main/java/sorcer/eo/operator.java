@@ -1969,8 +1969,7 @@ public class operator extends Operator {
 			for (Object fi : sList) {
 				((ServiceFidelity)fi).setPath(name);
 			}
-//			task.putFidelity(task.getName(), (Fidelity) mFi.getFidelity());
-			task.getMultiFi().addSelect((Fidelity) mFi.getFidelity());
+			task.setMultiFi(mFi.getFidelity());
 			task.setServiceMorphFidelity(mFi);
 			task.setSelectedFidelity(first);
 			task.setSelectedFidelity(first);

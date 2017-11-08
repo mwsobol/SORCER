@@ -207,16 +207,12 @@ public class ExertionMultiFidelities {
 
         logger.info("job context: " + context(job));
 
-        Context out = null;
-
         // Jobbers and  all tasks are local
-        job = exert(job);
-        out = upcontext(job);
+		Context out = upcontext(exert(job));
         logger.info("job context: " + out);
         assertTrue(value(out, "j1/t3/result/y").equals(400.0));
 
-        job = exert(job);
-        out = upcontext(job);
+        out = upcontext( exert(job));
         logger.info("job context: " + out);
         assertTrue(value(out, "j1/t3/result/y").equals(-1540.0));
     }
