@@ -1985,7 +1985,8 @@ public class operator extends Operator {
 			task.setFidelityManager(fiManager);
 //			fiManager.setFidelities(task.getServiceFidelities());
 			fiManager.addFidelity(task.getName(), (Fidelity) task.getMultiFi());
-			fiManager.setMetafidelities(task.getServiceMetafidelities());
+//			fiManager.setMetafidelities(task.getServiceMetafidelities());
+			fiManager.addMetaFidelity(task.getName(), (Metafidelity) task.getMultiMetaFi());
 			if (mFi != null) {
 				fiManager.getMorphFidelities().put(mFi.getName(), mFi);
 				mFi.addObserver(fiManager);
@@ -2224,8 +2225,9 @@ public class operator extends Operator {
 			for (Object fi : metaFis) {
 				((ServiceFidelity)fi).setPath(name);
 			}
-			job.putMetafidelity(job.getName(), metaFi);
-			job.setSelectedMetafidelity((MetaFi) first);
+			metaFi.setSelect(first);
+			job.setMultiMetaFi(metaFi);
+//			job.setSelectedMetafidelity((MetaFi) first);
 		}
 
 		if (fm == Strategy.FidelityManagement.YES && job.getFidelityManager() == null
@@ -2237,7 +2239,7 @@ public class operator extends Operator {
 		if (fiManager != null) {
 			job.setFidelityManager(fiManager);
 			fiManager.addFidelity(job.getName(), (Fidelity) job.getMultiFi());
-			fiManager.setMetafidelities(job.getServiceMetafidelities());
+			fiManager.addMetafidelity(job.getName(), (Metafidelity) job.getMultiMetaFi());
 			if (mFi != null) {
 				fiManager.getMorphFidelities().put(mFi.getName(), mFi);
 				mFi.addObserver(fiManager);

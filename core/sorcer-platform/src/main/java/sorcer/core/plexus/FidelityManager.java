@@ -92,6 +92,10 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     public void setMetafidelities(Map<String, Metafidelity> metafidelities) {
         this.metafidelities = metafidelities;
     }
+    public void addMetaFidelity(String path, Metafidelity  fi) {
+        if (fi != null)
+            this.metafidelities.put(path, fi);
+    }
 
     @Override
     public Map<String, Fidelity> getFidelities() {

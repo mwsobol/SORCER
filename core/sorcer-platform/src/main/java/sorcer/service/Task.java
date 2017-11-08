@@ -148,7 +148,7 @@ public class Task extends ServiceExertion {
 				((ServiceFidelity)multiFi.getSelect()).setSelect(ts);
 				delegate.setFidelityManager(getFidelityManager());
 				delegate.setServiceMorphFidelity(getServiceMorphFidelity());
-				delegate.setServiceMetafidelities(getServiceMetafidelities());
+				delegate.setMultiMetaFi(getMultiMetaFi());
 				delegate.setContext(dataContext);
 				delegate.setControlContext(controlContext);
 			}

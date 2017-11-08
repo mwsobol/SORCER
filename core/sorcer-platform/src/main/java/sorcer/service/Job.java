@@ -207,7 +207,7 @@ public class Job extends CompoundExertion {
                 delegate.setMultiFi(getMultiFi());
                 delegate.setSelectedFidelity((ServiceFidelity) multiFi.getSelect());
                 delegate.setServiceMorphFidelity(getServiceMorphFidelity());
-                delegate.setServiceMetafidelities(getServiceMetafidelities());
+                delegate.setMultiMetaFi(getMultiMetaFi());
                 delegate.setContext(dataContext);
                 delegate.setControlContext(controlContext);
             }
