@@ -127,11 +127,7 @@ public class ExertionMultiFidelities {
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						outVal("result/y")));
 
-
 		assertEquals("object", fiName(t4));
-		// select fidelity and check the selection
-		assertEquals("net", name(fi(t4, "net")));
-		assertEquals("object", name(fi(t4, "object")));
 
 		t4 = exert(t4);
 		Context out = context(t4);

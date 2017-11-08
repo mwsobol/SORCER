@@ -307,10 +307,11 @@ public abstract class Block extends CompoundExertion {
 		try {
 			for (Arg e : entries) {
 				if (e instanceof Entry) {
-					if (e.getName().indexOf(name) >= 0)
-					putBlockValue(e.getName(), ((Entry) e).get());
-				}else {
+					if (e.getName().indexOf(name) >= 0) {
+						putBlockValue(e.getName(), ((Entry) e).get());
+					} else {
 						super.putValue(e.getName(), ((Entry) e).get());
+					}
 				}
 			}
 			updateConditions();

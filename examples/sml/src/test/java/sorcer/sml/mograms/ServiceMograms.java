@@ -140,7 +140,7 @@ public class ServiceMograms {
                 task(sig("add", AdderImpl.class),
                         context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("add"))),
                 loop(condition(cxt ->
-                                (double) eval(cxt, "out") < 1000.0), mdl));
+                                (double) value(cxt, "out") < 1000.0), mdl));
 
         looping = exert(looping, fi("by-20", "by"));
         logger.info("block context: " + context(looping));
