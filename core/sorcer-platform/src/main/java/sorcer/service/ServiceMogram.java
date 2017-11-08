@@ -122,25 +122,19 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected String dbUrl;
 
-    // service metafidelities for this mogram
-    protected Map<String, MetaFi> serviceMetafidelities;
-
-    protected MetaFi selectedMetafidelity;
-
     // carrier of out
     protected Mogram impl;
 
     protected Fi multiFi = new ServiceFidelity();
 
-//    // service fidelities for this mogram
-//    protected Map<String, Fidelity> serviceFidelities;
-
     protected MorphFidelity serviceMorphFidelity;
 
-    protected SorcerPrincipal principal;
+    // service metafidelities for this mogram
+    protected Map<String, MetaFi> serviceMetafidelities;
 
-//    // fidelity Contexts for its component mograms
-//    protected Map<String, FidelityContext> fidelityContexts;
+    protected MetaFi selectedMetafidelity;
+
+    protected SorcerPrincipal principal;
 
     // Date of creation of this Exertion
     protected Date creationDate = new Date();

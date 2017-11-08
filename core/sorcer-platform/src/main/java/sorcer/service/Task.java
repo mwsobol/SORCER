@@ -136,6 +136,7 @@ public class Task extends ServiceExertion {
 			if (delegate == null) {
 				ServiceSignature ts = (ServiceSignature) ((ServiceFidelity)multiFi.getSelect()).getSelect();
 				if (ts.getClass() == ServiceSignature.class) {
+					((ServiceFidelity)multiFi.getSelect()).getSelects().remove(ts);
 					ts = createSignature(ts);
 				}
 				if (ts instanceof NetSignature) {
@@ -143,11 +144,9 @@ public class Task extends ServiceExertion {
 				} else {
 					delegate = new ObjectTask(name, ts);
 				}
-//				delegate.getSelectedFidelity().setSelect(ts);
-
+				((ServiceFidelity)multiFi.getSelect()).addSelect(ts);
+				((ServiceFidelity)multiFi.getSelect()).setSelect(ts);
 				delegate.setFidelityManager(getFidelityManager());
-				delegate.setMultiFi(getMultiFi());
-//				delegate.setSelectedFidelity(getSelectedFidelity());
 				delegate.setServiceMorphFidelity(getServiceMorphFidelity());
 				delegate.setServiceMetafidelities(getServiceMetafidelities());
 				delegate.setContext(dataContext);
