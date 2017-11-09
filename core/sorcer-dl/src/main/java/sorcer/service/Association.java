@@ -19,6 +19,7 @@ package sorcer.service;
 
 import sorcer.service.modeling.Duo;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Getter;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -28,7 +29,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Serializable, Identifiable, Arg {
+public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Getter, Serializable, Identifiable, Arg {
 	private  static final long serialVersionUID =  1L;
 
 	protected K key;

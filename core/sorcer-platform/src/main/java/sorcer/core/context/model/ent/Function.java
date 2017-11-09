@@ -36,7 +36,7 @@ import static sorcer.mo.operator.add;
 /**
  * @author Mike Sobolewski
  */
-public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, Comparable<T>,
+public class Function<T> extends Entry<T> implements Functionality<T>, Dependency, Comparable<T>,
 		EvaluationComponent, SupportComponent, Scopable, Setter {
 
 	private static final long serialVersionUID = 1L;
@@ -330,16 +330,30 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 		this.negative = negative;
 	}
 
-	public ServiceFidelity getServiceFidelity() {
-		return (ServiceFidelity) impl;
+	public Fi getServiceFidelity() {
+		return multiFi;
 	}
 
 	public String fiName() {
-		return ((Fidelity)getSelectedFidelity()).getName();
+		return ((Identifiable)multiFi.getSelect()).getName();
 	}
 
 	public Object getSelectedFidelity() {
-		return getServiceFidelity().getSelect();
+		return multiFi.getSelect();
+	}
+
+	@Override
+	public Class<?> getValueType() {
+		return null;
+	}
+
+	@Override
+	public T getValue(Arg... args) throws EvaluationException {
+		try {
+			return evaluate();
+		} catch (RemoteException e) {
+			throw new EvaluationException(e);
+		}
 	}
 
 	public ArgSet getArgs() {
@@ -347,8 +361,42 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 	}
 
 	@Override
+	public void addArgs(ArgSet set) throws EvaluationException {
+
+	}
+
+	@Override
+	public Object getArg(String varName) throws ContextException {
+		return null;
+	}
+
+	@Override
+	public boolean isValueCurrent() {
+		return false;
+	}
+
+	@Override
+	public void valueChanged(Object obj) throws EvaluationException {
+
+	}
+
+	@Override
+	public void valueChanged() throws EvaluationException {
+
+	}
+
+	@Override
 	public T call(Arg... args) throws EvaluationException, RemoteException {
 		return evaluate(args);
 	}
 
+	@Override
+	public T getPerturbedValue(String varName) throws EvaluationException, RemoteException {
+		return null;
+	}
+
+	@Override
+	public double getPerturbation() {
+		return 0;
+	}
 }

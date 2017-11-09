@@ -19,7 +19,6 @@ package sorcer.core.context.model.ent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.invoker.Activator;
-import sorcer.core.plexus.FidelityManager;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
@@ -28,7 +27,6 @@ import sorcer.service.modeling.func;
 
 import java.rmi.RemoteException;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * In service-based modeling, a service neuron (for short a neo) is a special kind of

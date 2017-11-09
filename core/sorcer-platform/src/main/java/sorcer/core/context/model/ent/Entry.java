@@ -1,5 +1,7 @@
 package sorcer.core.context.model.ent;
 
+import net.jini.id.Uuid;
+import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ContextSelection;
@@ -13,11 +15,13 @@ import java.net.URL;
 import java.rmi.RemoteException;
 
 public class Entry<V> extends Association<String, V>
-        implements Identifiable, Getter, Callable<V>, Setter, Reactive<V>, ent<V> {
+        implements Identifiable, Evaluation<V>, Callable<V>, Setter, Reactive<V>, ent<V> {
 
     private static final long serialVersionUID = 1L;
 
     protected static Logger logger = LoggerFactory.getLogger(Entry.class.getName());
+
+    protected Uuid id = UuidFactory.generate();
 
     protected boolean negative;
 
@@ -48,7 +52,12 @@ public class Entry<V> extends Association<String, V>
         }
     }
 
-    public Object getOut() {
+    @Override
+    public Uuid getId() {
+        return id;
+    }
+
+    public V getOut() {
         return out;
     }
 
@@ -304,6 +313,15 @@ public class Entry<V> extends Association<String, V>
             return (V) ((Entry) impl).asis();
         } else {
             return (V) impl;
+        }
+    }
+
+    @Override
+    public V evaluate(Arg... args) throws EvaluationException, RemoteException {
+        try {
+            return getData(args);
+        } catch (ContextException e) {
+            throw new EvaluationException(e);
         }
     }
 }
