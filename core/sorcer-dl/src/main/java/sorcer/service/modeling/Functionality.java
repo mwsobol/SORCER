@@ -66,6 +66,8 @@ public interface Functionality<T> extends Identifiable, Evaluation<T>, Perturbat
 		QUADRATIC // Quadratic function of dependent variables
 	}
 
+	public T getValue(Arg... args) throws EvaluationException;
+
 	public Type getType();
 
 	public Class<?> getValueType();

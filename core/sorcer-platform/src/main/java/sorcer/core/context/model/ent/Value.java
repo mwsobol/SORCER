@@ -2,6 +2,7 @@ package sorcer.core.context.model.ent;
 
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Getter;
 import sorcer.service.modeling.Valuation;
 import sorcer.service.modeling.val;
 import sorcer.util.bdb.objects.UuidObject;

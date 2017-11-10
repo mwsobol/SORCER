@@ -175,7 +175,7 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Ser
         return isValid;
     }
 
-    public void isValid(boolean state) {
+    public void setValid(boolean state) {
         isValid = state;
         if (impl instanceof Association) {
             ((Association) impl).isValid = state;

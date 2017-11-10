@@ -212,7 +212,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
         Object out = null;
         if (obj instanceof Scopable) {
             ((Scopable)obj).setScope(scope);
-            isValid(false);
+            setValid(false);
         }
         if (obj instanceof Function) {
             out = ((Function) obj).evaluate(entries);

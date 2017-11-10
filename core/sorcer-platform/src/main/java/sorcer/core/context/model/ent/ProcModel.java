@@ -20,6 +20,7 @@ import sorcer.core.context.Contexts;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.Domain;
@@ -117,18 +118,21 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 				}
 			}
 
-			if (val instanceof Value) {
-				return ((Value)val).valuate();
-			} if (val instanceof Proc && ((Proc) val).isPersistent) {
-				return ((Proc)val).evaluate();
-			} else if ((val instanceof Proc) && (((Proc) val).asis() instanceof Function)) {
-				bindEntry((Function) ((Proc)val).asis());
-			} else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
-				((Scopable)val).getScope().setScope(this);
-			} else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
-				((Scopable) ((Entry)val).asis()).setScope(this);
-			}
-
+            if (val instanceof Value) {
+                return ((Value)val).valuate();
+            } if (val instanceof Proc) {
+                if (((Proc) val).isCached()) {
+                    return ((Proc) val).getOut();
+                } else if (((Proc) val).isPersistent) {
+                    return ((Proc)val).evaluate();
+                } else if ((((Proc) val).asis() instanceof Function)) {
+                    bindEntry((Function) ((Proc) val).asis());
+                }
+            } else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
+                ((Scopable)val).getScope().setScope(this);
+            } else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
+                ((Scopable) ((Entry)val).asis()).setScope(this);
+            }
 			if (val != null && val instanceof Invocation) {
 				if (isChanged && val instanceof ServiceInvoker) {
 					((ServiceInvoker)val).valueValid(false);
@@ -298,7 +302,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			Map.Entry<String, Object> entry = i.next();
 			Object val = entry.getValue();
 			if (val instanceof Entry && ((Entry)val).getImpl() instanceof Evaluation) {
-				((Entry) val).isValid(false);
+				((Entry) val).setValid(false);
 			}
 		}
 	}

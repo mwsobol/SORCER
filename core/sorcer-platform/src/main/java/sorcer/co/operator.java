@@ -382,7 +382,7 @@ public class operator extends Operator {
 
 	public static Config config(Object path, Setup... entries) {
 		Config ent = new Config(path.toString(), entries);
-		ent.isValid(false);
+		ent.setValid(false);
 		ent.setType(Type.CONFIG);
 		return ent;
 	}
@@ -642,7 +642,7 @@ public class operator extends Operator {
 			}
 			entry.setOut(null);
 			entry.setImpl(dburl);
-			entry.isValid(true);
+			entry.setValid(true);
 			return dburl;
 		} catch (Exception e) {
 			throw new EvaluationException(e);
@@ -952,7 +952,7 @@ public class operator extends Operator {
                 procEntry.getScope().putValue(procEntry.getName(), value);
             }
         }
-        entry.isValid(true);
+        entry.setValid(true);
         return entry;
     }
 

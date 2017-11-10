@@ -100,7 +100,7 @@ public class DataContext<T> extends PositionalContext<T> {
                     }
                     ((Entry)obj).setImpl(url);
                     ((Entry)obj).setImpl(val);
-                    ((Entry)obj).isValid(true);
+                    ((Entry)obj).setValid(true);
                     return (T) val;
                 }
                 return (T) val;

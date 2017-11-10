@@ -137,11 +137,14 @@ public class Path implements Arg, Request {
 		return sa;
 	}
 
-
 	@Override
 	public int hashCode() {
-		int hash = path.length() + 1;
-		return hash * 31 + path.hashCode();
+		if (path != null) {
+			int hash = path.length() + 1;
+			return hash * 31 + path.hashCode();
+		} else {
+			return super.hashCode();
+		}
 	}
 
 	@Override

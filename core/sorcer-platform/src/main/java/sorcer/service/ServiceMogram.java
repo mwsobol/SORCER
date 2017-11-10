@@ -110,7 +110,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected boolean isChanged = false;
 
-    // when mogram is changed then isValid == false
+    // when mogram is changed then setValid == false
     protected boolean isValid = true;
 
     // indicates that is the parent of another mogram
@@ -679,10 +679,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return (Fidelity) multiFi.getSelect();
     }
 
-//    public void setSelectedFidelity(Fidelity fidelity) {
-//        this.selectedFidelity = fidelity;
-//    }
-
     public ContextSelector getContextSelector() {
         return contextSelector;
     }
@@ -716,12 +712,12 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return isRevaluable;
     }
 
-    /*public boolean isValid() {
-        return isValid;
+    /*public boolean setValid() {
+        return setValid;
     }
 
-    public void isValid(boolean state) {
-        isValid = state;
+    public void setValid(boolean state) {
+        setValid = state;
     }*/
 
     public void setModeling(boolean isRevaluable) {

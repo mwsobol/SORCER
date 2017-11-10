@@ -62,7 +62,7 @@ public class operator extends Operator {
         try {
             synchronized (entry) {
                 if (entry instanceof Valuation) {
-                    return (T) ((Valuation) entry).get(args);
+                    return (T) ((Entry) entry).get(args);
                 } else if (((Entry) entry).asis() instanceof ServiceContext) {
                     return (T) ((ServiceContext) ((Entry) entry).asis()).getValue(entry.getName());
                 } else if (entry instanceof Incrementor) {

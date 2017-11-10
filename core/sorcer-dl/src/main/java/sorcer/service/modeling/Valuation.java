@@ -26,7 +26,7 @@ import sorcer.service.ContextException;
  * 
  * @author Mike Sobolewski
  */
-public interface Valuation<T> extends Activity, Getter {
+public interface Valuation<T> extends Activity {
 
 	/**
 	 * Returns the current execute of this valuation.

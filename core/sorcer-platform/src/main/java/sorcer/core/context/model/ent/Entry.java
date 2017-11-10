@@ -13,13 +13,16 @@ import java.net.URL;
 import java.rmi.RemoteException;
 
 public class Entry<V> extends Association<String, V>
-        implements Identifiable, Getter, Callable<V>, Setter, Reactive<V>, ent<V> {
+        implements Identifiable, Evaluation<V>, Callable<V>, Getter, Setter, Reactive<V>, ent<V> {
 
     private static final long serialVersionUID = 1L;
 
     protected static Logger logger = LoggerFactory.getLogger(Entry.class.getName());
 
     protected boolean negative;
+
+    // if a value is computed then isCached is true - computed only one for all
+    protected boolean isCached = false;
 
     // its arguments is persisted
     protected boolean isPersistent = false;
@@ -289,6 +292,14 @@ public class Entry<V> extends Association<String, V>
         }
     }
 
+    public boolean isCached() {
+        return isCached;
+    }
+
+    public void setCached(boolean cached) {
+        isCached = cached;
+    }
+
     @Override
     public String getName() {
         return key;
@@ -304,6 +315,15 @@ public class Entry<V> extends Association<String, V>
             return (V) ((Entry) impl).asis();
         } else {
             return (V) impl;
+        }
+    }
+
+    @Override
+    public V evaluate(Arg... args) throws EvaluationException, RemoteException {
+        try {
+            return getData(args);
+        } catch (ContextException e) {
+            throw new EvaluationException(e);
         }
     }
 }

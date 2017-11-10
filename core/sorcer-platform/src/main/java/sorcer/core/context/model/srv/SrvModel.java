@@ -161,8 +161,10 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                 ((Entry) val).applyFidelity();
             }
             if (val instanceof Srv) {
-                if (isChanged()) {
-                    ((Srv) val).isValid(false);
+                if (((Srv) val).isCached()) {
+                    return ((Srv) val).getOut();
+                } else if (isChanged()) {
+                    ((Srv) val).setValid(false);
                 }
                 Object carrier = ((Srv) val).getImpl();
                 if (carrier instanceof Signature) {
@@ -328,7 +330,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         }
 
         ((Entry)get(path)).setOut(val);
-        ((Entry)get(path)).isValid(true);
+        ((Entry)get(path)).setValid(true);
         return val;
     }
 
@@ -388,7 +390,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         for (Fidelity sfi : fiList) {
             if (sfi.getName().equals(path)) {
                 selected = sfi;
-                ((Entry) get(path)).isValid(false);
+                ((Entry) get(path)).setValid(false);
                 isChanged();
                 break;
             }
@@ -523,7 +525,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
             Map.Entry e = i.next();
             if (e.getValue() instanceof Entry) {
                 ((Entry) e.getValue()).setOut(null);
-                ((Entry)e.getValue()).isValid(false);
+                ((Entry)e.getValue()).setValid(false);
             }
         }
         return this;

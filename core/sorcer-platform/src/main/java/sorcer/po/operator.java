@@ -710,6 +710,11 @@ public class operator extends Operator {
 		return entry;
 	}
 
+	public static Entry cached(Entry ent) {
+		ent.setCached(true);
+		return ent;
+	}
+
 	public static <T> Ref<T> ref(SupportComponent component) {
 		Ref cr = new Ref();
 		cr.set(component);

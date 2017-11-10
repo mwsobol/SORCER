@@ -36,8 +36,8 @@ import static sorcer.mo.operator.add;
 /**
  * @author Mike Sobolewski
  */
-public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, Comparable<T>,
-		EvaluationComponent, SupportComponent, Scopable, Setter {
+public class Function<T> extends Entry<T> implements Functionality<T>, Dependency, Comparable<T>,
+		EvaluationComponent, SupportComponent, Scopable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -48,6 +48,10 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 	protected String name;
 
 	protected Object annotation;
+
+	protected boolean isValueCurrent;
+
+	protected ArgSet args;
 
 	// dependency management for this Entry
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
@@ -342,8 +346,51 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 		return getServiceFidelity().getSelect();
 	}
 
-	public ArgSet getArgs() {
+    @Override
+    public T getValue(Arg... args) throws EvaluationException {
+        try {
+            return getData(args);
+        } catch (ContextException e) {
+            throw new EvaluationException(e);
+        }
+    }
+
+    @Override
+	public Class<?> getValueType() {
 		return null;
+	}
+
+	public ArgSet getArgs() {
+		return args;
+	}
+
+	@Override
+	public void addArgs(ArgSet set) throws EvaluationException {
+
+	}
+
+	@Override
+	public T getArg(String varName) throws ContextException {
+		return null;
+	}
+
+	@Override
+	public boolean isValueCurrent() {
+		return isValueCurrent;
+	}
+
+	public boolean setValueCurrent(boolean state) {
+		return isValueCurrent = state;
+	}
+
+	@Override
+	public void valueChanged(Object obj) throws EvaluationException {
+
+	}
+
+	@Override
+	public void valueChanged() throws EvaluationException {
+
 	}
 
 	@Override
@@ -351,4 +398,13 @@ public class Function<T> extends Entry<T> implements Evaluation<T>, Dependency, 
 		return evaluate(args);
 	}
 
+	@Override
+	public T getPerturbedValue(String varName) throws EvaluationException, RemoteException {
+		return null;
+	}
+
+	@Override
+	public double getPerturbation() {
+		return 0;
+	}
 }

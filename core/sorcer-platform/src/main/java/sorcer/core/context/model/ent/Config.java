@@ -53,12 +53,12 @@ public class Config extends Entry<List<Setup>> {
 
 	public void add(Setup setup) throws ContextException {
 		out.add(setup);
-		isValid(false);
+		setValid(false);
 	}
 
 	public void addAll(List<Setup> list) throws ContextException {
 		out.addAll(list);
-		isValid(false);
+		setValid(false);
 	}
 
 	public Setup remove(String name) throws ContextException {
