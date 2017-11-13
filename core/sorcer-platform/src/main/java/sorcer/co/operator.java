@@ -1169,17 +1169,19 @@ public class operator extends sorcer.operator {
         if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof DependencyEntry) {
             Map<String, List<DependencyEntry>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
             for (Evaluation e : dependers) {
-                path = e.getName();
-                if (dm.get(path) != null) {
-                    if (!dm.get(path).contains(e)) {
-                        ((List) dm.get(path)).add(e);
-                    }
-                } else {
-                    List<DependencyEntry> del = new ArrayList();
-                    del.add((DependencyEntry)e);
-                    dm.put(path, del);
-                }
-            }
+				if (e != null) {
+					path = e.getName();
+					if (dm.get(path) != null) {
+						if (!dm.get(path).contains(e)) {
+							((List) dm.get(path)).add(e);
+						}
+					} else {
+						List<DependencyEntry> del = new ArrayList();
+						del.add((DependencyEntry) e);
+						dm.put(path, del);
+					}
+				}
+			}
         }
         // second pass for dependency lists
         if (dl.size() > 0) {
