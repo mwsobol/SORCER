@@ -143,7 +143,6 @@ public class Path implements Arg  {
 		}
 	}
 
-
 	public static String[] getPathNames(List<Path> paths) {
 		String[] sa = new String[paths.size()];
 		for (int i = 0; i < paths.size(); i++)
