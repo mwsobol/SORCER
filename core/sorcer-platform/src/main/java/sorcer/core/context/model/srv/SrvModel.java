@@ -421,7 +421,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         return  super.execSignature(sig, items);
     }
 
-    protected void execDependencies(String path, Arg... args) throws ContextException {
+    public void execDependencies(String path, Arg... args) throws ContextException {
         Map<String, List<ExecDependency>> dpm = ((ModelStrategy)mogramStrategy).getDependentPaths();
         if (dpm != null && dpm.get(path) != null) {
             List<ExecDependency> del = dpm.get(path);

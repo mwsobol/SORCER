@@ -1240,36 +1240,100 @@ public class operator extends Operator {
     }
 
 	public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
-        String path = null;
-		for (Evaluation d : dependers) {
-            path = ((Identifiable)d).getName();
-            if (path != null && path.equals("self")) {
-                ((Entry)d).setKey(((Domain) dependee).getName());
-            }
-            if (d instanceof ExecDependency && ((ExecDependency)d).getType().equals(Type.CONDITION)) {
-                ((ExecDependency)d).getCondition().setConditionalContext((Context)dependee);
-                }
-			if (!dependee.getDependers().contains(d)) {
-                dependee.getDependers().add(d);
-            }
+		String path = null;
+		List<Dependency> dl = new ArrayList<>();
+		// find dependency lists
+		for (int i = 0; i < dependers.length; i++) {
+			if (dependers[i] instanceof ExecDependency && ((ExecDependency) dependers[i]).getDependees() != null) {
+				ExecDependency mde = (ExecDependency) dependers[i];
+				ExecDependency de = null;
+				for (Path p : mde.getDependees()) {
+					if (mde.getType() == Type.FIDELITY) {
+						de = dep(p.getName(), (Fidelity) mde.annotation(), (List<Path>)mde.getImpl());
+					} else if (mde.getType() == Type.CONDITION) {
+						de = dep(p.getName(), (Conditional) mde.annotation(), (List<Path>)mde.getImpl());
+					} else {
+						de = dep(p.getName(), (List<Path>)mde.getImpl());
+					}
+					dl.add(de);
+				}
+				dependers[i] = null;
+			}
 		}
-		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
-			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
-			for (Evaluation e : dependers) {
-				path = ((Identifiable)e).getName();
-				if (dm.get(path) != null) {
-                    if (!dm.get(path).contains(e)) {
-                        ((List) dm.get(path)).add(e);
-                    }
-				} else {
-					List<ExecDependency> del = new ArrayList();
-					del.add((ExecDependency)e);
-					dm.put(path, del);
+
+		for (Evaluation d : dependers) {
+			if (d != null) {
+				path = ((Identifiable)d).getName();
+				if (path != null && path.equals("self")) {
+					((Entry) d).setKey(((Domain) dependee).getName());
+				}
+
+				if (d instanceof ExecDependency && ((ExecDependency) d).getType().equals(Type.CONDITION)) {
+					((ExecDependency) d).getCondition().setConditionalContext((Context) dependee);
+				}
+				if (!dependee.getDependers().contains(d)) {
+					dependee.getDependers().add(d);
 				}
 			}
 		}
+
+		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
+			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
+			for (Evaluation e : dependers) {
+				if (e != null) {
+					path = ((Identifiable)e).getName();
+					if (dm.get(path) != null) {
+						if (!dm.get(path).contains(e)) {
+							((List) dm.get(path)).add(e);
+						}
+					} else {
+						List<ExecDependency> del = new ArrayList();
+						del.add((ExecDependency) e);
+						dm.put(path, del);
+					}
+				}
+			}
+		}
+		// second pass for dependency lists
+		if (dl.size() > 0) {
+			Evaluation[] deps = new Evaluation[dl.size()];
+			dependsOn(dependee, dl.toArray(deps));
+		}
+
 		return dependee;
 	}
+
+//	public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
+//        String path = null;
+//		for (Evaluation d : dependers) {
+//            path = ((Identifiable)d).getName();
+//            if (path != null && path.equals("self")) {
+//                ((Entry)d).setKey(((Domain) dependee).getName());
+//            }
+//            if (d instanceof ExecDependency && ((ExecDependency)d).getType().equals(Type.CONDITION)) {
+//                ((ExecDependency)d).getCondition().setConditionalContext((Context)dependee);
+//                }
+//			if (!dependee.getDependers().contains(d)) {
+//                dependee.getDependers().add(d);
+//            }
+//		}
+//		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
+//			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
+//			for (Evaluation e : dependers) {
+//				path = ((Identifiable)e).getName();
+//				if (dm.get(path) != null) {
+//                    if (!dm.get(path).contains(e)) {
+//                        ((List) dm.get(path)).add(e);
+//                    }
+//				} else {
+//					List<ExecDependency> del = new ArrayList();
+//					del.add((ExecDependency)e);
+//					dm.put(path, del);
+//				}
+//			}
+//		}
+//		return dependee;
+//	}
 
 	public static Dependency dependsOn(Dependency dependee, Context scope, Evaluation... dependers)
 			throws ContextException {
