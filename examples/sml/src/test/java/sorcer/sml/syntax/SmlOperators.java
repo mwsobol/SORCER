@@ -55,7 +55,7 @@ public class SmlOperators {
 		ent f5b = srv(s1);
 		ent v1b = val("x1", 10.8);
 
-		// Contexts
+		// Data Contexts
 		cxt c1 = context(v1, val("x4", 10.8), f1);
 
 		// Mograms
