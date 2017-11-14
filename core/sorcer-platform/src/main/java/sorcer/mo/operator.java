@@ -298,6 +298,18 @@ public class operator {
         return model;
     }
 
+    public static void init(Domain model, Arg... args) throws ContextException {
+        // initialize a model
+        Map<String, List<DependencyEntry>> depMap = ((ModelStrategy)model.getMogramStrategy()).getDependentPaths();
+        Signature.Paths paths = Arg.selectPaths(args);
+        if (paths != null) {
+            model.getDependers().add(new DependencyEntry(paths));
+        }
+        if (depMap != null && model instanceof Model) {
+            ((Model)model).execDependencies("_init_", args);
+        }
+    }
+
     public static Object response(Domain model, String path) throws ContextException {
         try {
             return ((ServiceContext)model).getResponseAt(path);
