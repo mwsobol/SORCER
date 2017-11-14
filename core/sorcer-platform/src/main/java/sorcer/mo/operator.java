@@ -332,11 +332,15 @@ public class operator {
         return model;
     }
 
-    public static void init(Domain model, Arg... items) throws ContextException {
+    public static void init(Domain model, Arg... args) throws ContextException {
         // initialize a model
         Map<String, List<DependencyEntry>> depMap = ((ModelStrategy)model.getMogramStrategy()).getDependentPaths();
+        Signature.Paths paths = Arg.getPaths(args);
+        if (paths != null) {
+            model.getDependers().add(new DependencyEntry(paths));
+        }
         if (depMap != null && model instanceof Model) {
-            ((Model)model).execDependencies("_init_", items);
+            ((Model)model).execDependencies("_init_", args);
         }
     }
 
