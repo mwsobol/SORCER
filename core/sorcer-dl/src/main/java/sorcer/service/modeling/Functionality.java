@@ -72,11 +72,13 @@ public interface Functionality<T> extends Identifiable, Evaluation<T>, Perturbat
 
 	public Class<?> getValueType();
 
+	public T getValue(Arg... args) throws EvaluationException;
+
 	public ArgSet getArgs();
 
 	public void addArgs(ArgSet set) throws EvaluationException;
 
-	public T getArg(String varName) throws ContextException;
+	public Object getArg(String varName) throws ContextException;
 
 	public boolean isValueCurrent();
 

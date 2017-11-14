@@ -334,30 +334,30 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Dependenc
 		this.negative = negative;
 	}
 
-	public ServiceFidelity getServiceFidelity() {
-		return (ServiceFidelity) impl;
+	public Fi getServiceFidelity() {
+		return multiFi;
 	}
 
 	public String fiName() {
-		return ((Fidelity)getSelectedFidelity()).getName();
+		return ((Identifiable)multiFi.getSelect()).getName();
 	}
 
 	public Object getSelectedFidelity() {
-		return getServiceFidelity().getSelect();
+		return multiFi.getSelect();
 	}
 
-    @Override
-    public T getValue(Arg... args) throws EvaluationException {
-        try {
-            return getData(args);
-        } catch (ContextException e) {
-            throw new EvaluationException(e);
-        }
-    }
-
-    @Override
+	@Override
 	public Class<?> getValueType() {
-		return null;
+		return Object.class;
+	}
+
+	@Override
+	public T getValue(Arg... args) throws EvaluationException {
+		try {
+			return evaluate();
+		} catch (RemoteException e) {
+			throw new EvaluationException(e);
+		}
 	}
 
 	public ArgSet getArgs() {
