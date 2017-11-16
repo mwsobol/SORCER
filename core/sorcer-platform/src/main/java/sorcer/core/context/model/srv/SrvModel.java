@@ -30,7 +30,7 @@ import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.MogramFi;
+import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
@@ -212,9 +212,9 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     if (rp != null && rp.path != null)
                         putValue(((Srv) val).getReturnPath().path, obj);
                     val = obj;
-                }  else if (carrier instanceof MogramFi) {
-                    ((MogramFi) carrier).setScope(this);
-                    Object out = ((MogramFi)carrier).exert(args);
+                }  else if (carrier instanceof MultiFiMogram) {
+                    ((MultiFiMogram) carrier).setScope(this);
+                    Object out = ((MultiFiMogram)carrier).exert(args);
                     Context cxt = null;
                     if (out instanceof Exertion) {
                         cxt = ((Exertion) out).getContext();

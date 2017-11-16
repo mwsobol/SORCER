@@ -17,11 +17,9 @@
 
 package sorcer.service.modeling;
 
-import sorcer.core.context.ApplicationDescription;
 import sorcer.service.*;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 
 /**
  * A variable has id, name and execute. Its execute can be evaluated by a related
@@ -71,8 +69,6 @@ public interface Functionality<T> extends Identifiable, Evaluation<T>, Perturbat
 	public Type getType();
 
 	public Class<?> getValueType();
-
-	public T getValue(Arg... args) throws EvaluationException;
 
 	public ArgSet getArgs();
 

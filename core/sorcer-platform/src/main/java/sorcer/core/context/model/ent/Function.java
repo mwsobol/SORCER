@@ -366,12 +366,12 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Dependenc
 
 	@Override
 	public void addArgs(ArgSet set) throws EvaluationException {
-
+		args.addAll(set);
 	}
 
 	@Override
-	public T getArg(String varName) throws ContextException {
-		return null;
+	public Object getArg(String varName) throws ContextException {
+		return args.getArg(varName);
 	}
 
 	@Override
