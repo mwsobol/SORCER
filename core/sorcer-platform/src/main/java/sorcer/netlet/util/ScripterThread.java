@@ -184,7 +184,7 @@ public class ScripterThread extends Thread {
             // var-oriented modeling
             "sorcer.modeling.vo.operator",
             "sorcer.modeling.mo.operator",
-            " sorcer.modeling.vi.operator"
+            "sorcer.modeling.vi.operator"
     };
 
     private ImportCustomizer getImports() {
