@@ -2831,7 +2831,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
-	public Proc getPar(String path) throws ContextException, RemoteException {
+	public Proc getProc(String path) throws ContextException, RemoteException {
 		return new Proc(path, this);
 	}
 
