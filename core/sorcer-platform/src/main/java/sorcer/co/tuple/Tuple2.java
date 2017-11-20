@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 @SuppressWarnings("unchecked")
-public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, Identifiable, Evaluation<T2>, Setter, Arg {
+public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, Identifiable, Setter, Arg {
 	private  static final long serialVersionUID = -6519678282532888568L;
 	public T1 _1 = null;
 	public T2 _2 = null;
@@ -38,24 +38,24 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 	public Tuple2() {
 		id = UuidFactory.generate();
 	}
-	
+
 	public Tuple2(T1 x1, T2 x2) {
 		_1 = x1;
 		_2 = x2;
 	}
-	
+
 	public T1 key() {
 		return _1;
 	}
-	
+
 	public String path() {
 		return (String)_1;
 	}
-	
+
 	public T2 value() {
 		return _2;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see sorcer.service.Arg#getName()
 	 */
@@ -63,12 +63,12 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 	public String getName() {
 		return ""+_1;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[" + _1 + ":" + _2 + "]";
 	}
-	
+
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof Tuple2) {
@@ -78,7 +78,7 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return 2 * 31 + _1.hashCode() + _2.hashCode();
@@ -99,7 +99,6 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 	/* (non-Javadoc)
 	 * @see sorcer.service.Evaluation#asis()
 	 */
-	@Override
 	public T2 asis() throws EvaluationException, RemoteException {
 		return _2;
 	}
@@ -107,7 +106,6 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 	/* (non-Javadoc)
 	 * @see sorcer.service.Evaluation#getValue(sorcer.service.Arg[])
 	 */
-	@Override
 	public T2 getValue(Arg... entries) throws EvaluationException,
 			RemoteException {
 		try {
@@ -118,17 +116,14 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 		return this._2;
 	}
 
-	@Override
 	public void setNegative(boolean negative) {
 		// do nothing
 	}
 
-	@Override
 	public Context getScope() {
 		return null;
 	}
 
-	@Override
 	public void setScope(Context scope) {
 		// do nothing
 	}
@@ -136,7 +131,6 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 	/* (non-Javadoc)
 	 * @see sorcer.service.Setter#setValue(java.lang.Object)
 	 */
-	@Override
 	public void setValue(Object value) throws SetterException, RemoteException {
 		this._2 = (T2) value;
 	}
@@ -144,7 +138,6 @@ public class Tuple2<T1, T2> implements net.jini.core.entry.Entry, Serializable, 
 	/* (non-Javadoc)
 	 * @see sorcer.service.Evaluation#substitute(sorcer.service.Arg[])
 	 */
-	@Override
 	public void substitute(Arg... entries) throws SetterException {
 		if (entries != null) {
 			for (Arg a : entries) {
