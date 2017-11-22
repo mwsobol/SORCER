@@ -454,6 +454,11 @@ public class operator extends sorcer.operator {
 		return false;
 	}
 
+	// initialization paths in the model
+	public static DependencyEntry dep(Signature.Paths paths) {
+		return new DependencyEntry(paths);
+	}
+
     public static DependencyEntry dep(String path, Path... paths) {
 		return new DependencyEntry(path, Arrays.asList(paths));
 	}
@@ -477,10 +482,14 @@ public class operator extends sorcer.operator {
         return de;
 	}
 
-	public static DependencyEntry dep(String path, Dependency.Kind type, List<Path> paths) {
-		DependencyEntry de = new DependencyEntry(path, paths);
-		de.setDepType(type);
-		return de;
+	public static Signature.Paths setKind(Signature.Paths paths, Path.State... states) {
+		for (Path.State state : states) {
+			if (paths.kind == null) {
+				paths.kind = new HashSet();
+			}
+			paths.kind.add(state);
+		}
+		return paths;
 	}
 
 	public static DependencyEntry dep(String path, List<Path> paths) {
@@ -495,7 +504,7 @@ public class operator extends sorcer.operator {
         return de;
     }
 
-	public static DependencyEntry dep(List<Path> dependees, Fidelity fi, List<Path> paths) {
+	public static DependencyEntry dep(Signature.Paths dependees, Fidelity fi, List<Path> paths) {
 		DependencyEntry de = new DependencyEntry(dependees, paths);
 		de.annotation(fi);
 		de.setType(Variability.Type.FIDELITY);
@@ -1087,12 +1096,12 @@ public class operator extends sorcer.operator {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
-	public static List<Path> each(Object... paths) {
+	public static Signature.Paths each(Object... paths) {
 		return paths(paths);
 	}
 
-	public static List<Path> paths(Object... paths) {
-		List<Path> list = new ArrayList<>();
+	public static Signature.Paths paths(Object... paths) {
+		Signature.Paths list = new Signature.Paths();
 		for (Object o : paths) {
 			if (o instanceof String) {
 				list.add(new Path((String) o));
@@ -1160,17 +1169,19 @@ public class operator extends sorcer.operator {
         if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof DependencyEntry) {
             Map<String, List<DependencyEntry>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
             for (Evaluation e : dependers) {
-                path = e.getName();
-                if (dm.get(path) != null) {
-                    if (!dm.get(path).contains(e)) {
-                        ((List) dm.get(path)).add(e);
-                    }
-                } else {
-                    List<DependencyEntry> del = new ArrayList();
-                    del.add((DependencyEntry)e);
-                    dm.put(path, del);
-                }
-            }
+				if (e != null) {
+					path = e.getName();
+					if (dm.get(path) != null) {
+						if (!dm.get(path).contains(e)) {
+							((List) dm.get(path)).add(e);
+						}
+					} else {
+						List<DependencyEntry> del = new ArrayList();
+						del.add((DependencyEntry) e);
+						dm.put(path, del);
+					}
+				}
+			}
         }
         // second pass for dependency lists
         if (dl.size() > 0) {

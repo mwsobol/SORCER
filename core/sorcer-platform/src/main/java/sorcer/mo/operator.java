@@ -17,6 +17,7 @@
 
 package sorcer.mo;
 
+import sorcer.co.tuple.DependencyEntry;
 import sorcer.core.context.MapContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.ServiceContext;
@@ -41,9 +42,9 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static sorcer.co.operator.instance;
-import static sorcer.co.operator.list;
 import static sorcer.eo.operator.context;
 
 /**
@@ -327,13 +328,25 @@ public class operator {
     }
 
     public static Domain setResponse(Domain model, String... modelPaths) throws ContextException {
-        ((ModelStrategy)((Mogram)model).getMogramStrategy()).setResponsePaths(modelPaths);
+        ((ModelStrategy)model.getMogramStrategy()).setResponsePaths(modelPaths);
         return model;
     }
 
+    public static void init(Domain model, Arg... args) throws ContextException {
+        // initialize a model
+        Map<String, List<DependencyEntry>> depMap = ((ModelStrategy)model.getMogramStrategy()).getDependentPaths();
+        Signature.Paths paths = Arg.getPaths(args);
+        if (paths != null) {
+            model.getDependers().add(new DependencyEntry(paths));
+        }
+        if (depMap != null && model instanceof Model) {
+            ((Model)model).execDependencies("_init_", args);
+        }
+    }
 
     public static Context response(Domain model, Object... items) throws ContextException {
         try {
+            Map<String, List<DependencyEntry>> depMap = ((ModelStrategy)model.getMogramStrategy()).getDependentPaths();
             List<Arg> argl = new ArrayList();
             List<Path> paths = new ArrayList();;
             for (Object item : items) {
@@ -349,11 +362,16 @@ public class operator {
                     argl.add((Arg) item);
                 }
             }
+            Arg[] args = new Arg[argl.size()];
+            argl.toArray(args);
+            // initialize a model
+            if (depMap != null && model instanceof Model) {
+                ((Model)model).execDependencies("_init_", args);
+            }
             if (paths != null && paths.size() > 0) {
                 ((ModelStrategy)((Mogram)model).getMogramStrategy()).setResponsePaths(paths);
             }
-            Arg[] args = new Arg[argl.size()];
-            argl.toArray(args);
+
             return (Context) model.getResponse(args);
         } catch (RemoteException e) {
             throw new ContextException(e);

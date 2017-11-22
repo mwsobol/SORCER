@@ -199,7 +199,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		}
 	}
 
-	public Proc getPar(String name) throws ContextException {
+	public Proc getProc(String name) throws ContextException {
 		Object obj = get(name);
 		if (obj instanceof Proc)
 			return (Proc) obj;
@@ -516,7 +516,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
         Object obj;
 	    for (String path : paths) {
 	        obj = asis(path);
-	        if (obj instanceof Entry && !((Entry)obj).setValid())
+	        if (obj instanceof Entry && !((Entry)obj).isValid())
                 isValid = false;
         }
 	    return isValid;
