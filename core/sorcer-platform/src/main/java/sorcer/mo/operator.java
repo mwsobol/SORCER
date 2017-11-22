@@ -17,6 +17,7 @@
 
 package sorcer.mo;
 
+import sorcer.co.tuple.ExecDependency;
 import sorcer.co.tuple.InoutValue;
 import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
@@ -40,10 +41,7 @@ import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
@@ -285,14 +283,6 @@ public class operator {
         return response(model);
     }
 
-//    public static Context response(Signature signature, Arg... args) throws ContextException {
-//        try {
-//            return (Context) ((Domain)instance(signature)).getResponse(args);
-//        } catch (RemoteException | SignatureException e) {
-//            throw new ContextException(e);
-//        }
-//    }
-
     public static Domain setResponse(Domain model, String... modelPaths) throws ContextException {
         ((ModelStrategy)model.getMogramStrategy()).setResponsePaths(modelPaths);
         return model;
@@ -300,13 +290,13 @@ public class operator {
 
     public static void init(Domain model, Arg... args) throws ContextException {
         // initialize a model
-        Map<String, List<DependencyEntry>> depMap = ((ModelStrategy)model.getMogramStrategy()).getDependentPaths();
+        Map<String, List<ExecDependency>> depMap = ((ModelStrategy)model.getMogramStrategy()).getDependentPaths();
         Signature.Paths paths = Arg.selectPaths(args);
         if (paths != null) {
-            model.getDependers().add(new DependencyEntry(paths));
+            model.getDependers().add(new ExecDependency(paths));
         }
         if (depMap != null && model instanceof Model) {
-            ((Model)model).execDependencies("_init_", args);
+            model.execDependencies("_init_", args);
         }
     }
 

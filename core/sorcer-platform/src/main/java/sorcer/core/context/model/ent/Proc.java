@@ -435,7 +435,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	 * @see sorcer.vfe.Variability#getArg(java.lang.String)
 	 */
 	@Override
-	public T getArg(String varName) throws ArgException {
+	public Object getArg(String varName) throws ArgException {
 		try {
 			return (T) scope.getValue(varName);
 		} catch (ContextException | RemoteException e) {

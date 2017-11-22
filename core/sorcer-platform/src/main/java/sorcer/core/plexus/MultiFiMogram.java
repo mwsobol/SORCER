@@ -42,7 +42,7 @@ import java.util.Set;
  *
  * Created by Mike Sobolewski
  */
-public class MogramFi extends ServiceMogram implements Fi<Request> {
+public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
 
     protected Fidelity requestFidelity;
 
@@ -50,10 +50,10 @@ public class MogramFi extends ServiceMogram implements Fi<Request> {
 
     protected String path = "";
 
-    public MogramFi() {
+    public MultiFiMogram() {
     }
 
-    public MogramFi(String name) throws SignatureException {
+    public MultiFiMogram(String name) throws SignatureException {
         super(name);
     }
 
@@ -62,11 +62,11 @@ public class MogramFi extends ServiceMogram implements Fi<Request> {
         return scope.clearScope();
     }
 
-    public MogramFi(ServiceFidelity fidelity) {
+    public MultiFiMogram(ServiceFidelity fidelity) {
         this(fidelity.getName(), fidelity);
     }
 
-    public MogramFi(String name, MorphFidelity fidelity)  {
+    public MultiFiMogram(String name, MorphFidelity fidelity)  {
         super(name);
         morphFidelity = fidelity;
         if (fiManager == null)
@@ -79,22 +79,22 @@ public class MogramFi extends ServiceMogram implements Fi<Request> {
         morphFidelity.addObserver((FidelityManager)fiManager);
     }
 
-    public MogramFi(String name, Metafidelity fidelity) {
+    public MultiFiMogram(String name, Metafidelity fidelity) {
         super(name);
         requestFidelity = fidelity;
     }
 
-    public MogramFi(String name, ServiceFidelity fidelity) {
+    public MultiFiMogram(String name, ServiceFidelity fidelity) {
         super(name);
         requestFidelity = fidelity;
     }
 
-    public MogramFi(Context context, MorphFidelity fidelity)  {
+    public MultiFiMogram(Context context, MorphFidelity fidelity)  {
         this(context.getName(), fidelity);
         scope = context;
     }
 
-    public MogramFi(Context context, Metafidelity fidelity) {
+    public MultiFiMogram(Context context, Metafidelity fidelity) {
         this(context.getName(), fidelity);
         scope = context;
     }

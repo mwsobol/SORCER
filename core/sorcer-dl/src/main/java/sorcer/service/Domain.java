@@ -121,5 +121,7 @@ public interface Domain extends Mogram, Dependency, mog {
 	public Domain add(Identifiable... objects) throws ContextException,
 			RemoteException;
 
+	public void execDependencies(String path, Arg... args) throws ContextException;
+
 	public boolean isChanged();
 }

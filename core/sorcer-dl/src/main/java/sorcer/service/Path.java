@@ -31,6 +31,8 @@ public class Path implements Arg, Request {
 		PATH, MAP, ENT, CONTEXT, ARRAY, OUT
 	}
 
+	public enum State { CACHED, UNCACHED, VALID, INVALID, CHANGED, BEFORE, AFTER }
+
 	public String path = null;
 
 	public Object info = null;

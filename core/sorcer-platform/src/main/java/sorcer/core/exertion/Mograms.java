@@ -22,7 +22,6 @@ import net.jini.id.UuidFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.plexus.MogramFi;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;

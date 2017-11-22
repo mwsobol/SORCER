@@ -57,10 +57,6 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
         this.impl = (T) value;
     }
 
-    public Object getId() {
-        return toString();
-    }
-
     public boolean isPersistent() {
         return isPersistent;
     }

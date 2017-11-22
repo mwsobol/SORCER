@@ -20,6 +20,7 @@ package sorcer.co.tuple;
 import sorcer.core.context.model.ent.Function;
 import sorcer.service.Conditional;
 import sorcer.service.Path;
+import sorcer.service.Signature;
 
 import java.util.List;
 
@@ -31,6 +32,10 @@ public class ExecDependency extends Function<List<Path>> {
 
     private Conditional condition;
 
+    private Signature.Paths dependees;
+
+    private Path.State entryState;
+
     @SuppressWarnings("unchecked")
     public ExecDependency(String path, List<Path> paths) {
         key = path;
@@ -38,9 +43,21 @@ public class ExecDependency extends Function<List<Path>> {
         impl = paths;
     }
 
+    public ExecDependency(List<Path> paths) {
+        this("_init_", paths);
+    }
+
     public ExecDependency(String path, Conditional condition, List<Path> paths) {
         this(path, paths);
         this.condition = condition;
+    }
+
+    public List<Path> getDependees() {
+        return dependees;
+    }
+
+    public void setDependees(Signature.Paths dependees) {
+        this.dependees = dependees;
     }
 
     public Conditional getCondition() {
@@ -49,6 +66,14 @@ public class ExecDependency extends Function<List<Path>> {
 
     public void setCondition(Conditional condition) {
         this.condition = condition;
+    }
+
+    public Path.State getEntryState() {
+        return entryState;
+    }
+
+    public void setEntryState(Path.State entryState) {
+        this.entryState = entryState;
     }
 
 }

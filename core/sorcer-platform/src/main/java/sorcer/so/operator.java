@@ -24,7 +24,7 @@ import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.core.plexus.MogramFi;
+import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.Exerter;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
@@ -178,7 +178,7 @@ public class operator extends Operator {
         try {
             if (service instanceof Entry || service instanceof Signature ) {
                     return service.execute(args);
-            } else if (service instanceof Context || service instanceof MogramFi) {
+            } else if (service instanceof Context || service instanceof MultiFiMogram) {
                 if (service instanceof Model) {
                     return ((Model)service).getResponse(args);
                 } else {
