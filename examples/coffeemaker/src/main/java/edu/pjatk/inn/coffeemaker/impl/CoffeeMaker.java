@@ -202,7 +202,7 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
     }
 
     /**
-     * Returns the Recipe associated with the given name
+     * Returns the Recipe associated with the given key
      * @param name
      * @return Recipe
      */
@@ -245,7 +245,7 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
 
 	@Override
 	public Context makeCoffee(Context context) throws RemoteException, ContextException {
-		String recipeName = (String)context.getValue("recipe/name");
+		String recipeName = (String)context.getValue("recipe/key");
 		Context recipeContext = (Context)context.getValue("recipe");
 		if (recipeContext != null)
 			addRecipe(recipeContext);

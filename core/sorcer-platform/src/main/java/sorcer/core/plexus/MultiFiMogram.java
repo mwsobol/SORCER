@@ -207,7 +207,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
     }
 
     public void setUnifiedName(String name) throws RemoteException {
-        this.name = name;
+        this.key = name;
         ((FidelityManager)fiManager).setName(name);
         Map<String, ServiceFidelity> fiMap = fiManager.getFidelities();
         Set<String> fiSet = fiMap.keySet();
@@ -263,7 +263,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
     }
 
     @Override
-    public Type getType() {
+    public Type getFiType() {
         return Type.MULTI;
     }
 

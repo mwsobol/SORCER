@@ -47,11 +47,11 @@ public class WorkerExertionsTest {
 		hostname = InetAddress.getLocalHost().getHostName();
 		
 		context = context("work", 
-				operator.ent("req/name", hostname),
+				operator.ent("req/key", hostname),
 				operator.ent("req/arg/1", 11),
 				operator.ent("req/arg/2", 101),
 				operator.ent("req/work", Works.work0),
-				operator.ent("to/prv/name", "SORCER Worker"));
+				operator.ent("to/prv/key", "SORCER Worker"));
 		
 		contextUrl = store(context);
 	}
@@ -65,7 +65,7 @@ public class WorkerExertionsTest {
 	
 		logger.info("context: " + context(et));
 		assertEquals(get(et, "prv/result"), 1111);
-		assertEquals(get(et, "prv/host/name"), hostname);
+		assertEquals(get(et, "prv/host/key"), hostname);
 		
 	}
 
@@ -78,7 +78,7 @@ public class WorkerExertionsTest {
 
 		logger.info("context: " + context(et));
 		assertEquals(get(et, "prv/result"), 1111);
-		assertEquals(get(et, "prv/host/name"), Context.none);
+		assertEquals(get(et, "prv/host/key"), Context.none);
 
 	}
 
@@ -91,7 +91,7 @@ public class WorkerExertionsTest {
 	
 		logger.info("context: " + context(et));
 		assertEquals(get(et, "prv/result"), 1111);
-		assertEquals(get(et, "prv/host/name"), hostname);
+		assertEquals(get(et, "prv/host/key"), hostname);
 		
 	}
 	
@@ -105,7 +105,7 @@ public class WorkerExertionsTest {
 		logger.info("context: " + context(et));
 		assertEquals(get(et, "prv/result"), 1111);
 		assertEquals(get(et, "prv/message"), "Done work by: " + actualName("Worker1"));
-		assertEquals(get(et, "prv/host/name"), hostname);
+		assertEquals(get(et, "prv/host/key"), hostname);
 		
 	}
 	
@@ -143,19 +143,19 @@ public class WorkerExertionsTest {
 	@Test
 	public void contextPipes() throws Exception {
 		
-		Context cxt1 = context(operator.ent("req/name", "workaholic"),
+		Context cxt1 = context(operator.ent("req/key", "workaholic"),
 				operator.ent("req/arg/1", 20),  operator.ent("req/arg/2", 80),
-				operator.ent("req/work", Works.work1),  operator.ent("tp/prv/name", "Worker1"),
+				operator.ent("req/work", Works.work1),  operator.ent("tp/prv/key", "Worker1"),
 				outVal("prv/result"));
 
-		Context cxt2 = context(operator.ent("req/name", "workaholic"),
+		Context cxt2 = context(operator.ent("req/key", "workaholic"),
 				operator.ent("req/arg/1", 10),  operator.ent("req/arg/2", 50),
-				operator.ent("req/work", Works.work2),  operator.ent("tp/prv/name", "Worker2"),
+				operator.ent("req/work", Works.work2),  operator.ent("tp/prv/key", "Worker2"),
 				outVal("prv/result"));
 
-		Context cxt3 = context(operator.ent("req/name", "workaholic"),
+		Context cxt3 = context(operator.ent("req/key", "workaholic"),
 				inVal("req/arg/1"),  inVal("req/arg/2"),
-				operator.ent("req/work", Works.work3),  operator.ent("tp/prv/name", "Worker3"),
+				operator.ent("req/work", Works.work3),  operator.ent("tp/prv/key", "Worker3"),
 				outVal("prv/result"));
 
 		Job job = job("strategy", 
@@ -175,17 +175,17 @@ public class WorkerExertionsTest {
 	@Test
 	public void exertionStrategy() throws Exception {
 
-		Context cxt1 = context(operator.ent("req/name", "workaholic"),
+		Context cxt1 = context(operator.ent("req/key", "workaholic"),
 				operator.ent("req/arg/1", 20),  operator.ent("req/arg/2", 80),
-				operator.ent("req/work", Works.work1),  operator.ent("tp/prv/name", "Worker1"));
+				operator.ent("req/work", Works.work1),  operator.ent("tp/prv/key", "Worker1"));
 
-		Context cxt2 = context(operator.ent("req/name", "workaholic"),
+		Context cxt2 = context(operator.ent("req/key", "workaholic"),
 				operator.ent("req/arg/1", 10),  operator.ent("req/arg/2", 50),
-				operator.ent("req/work", Works.work2),  operator.ent("tp/prv/name", "Worker2"));
+				operator.ent("req/work", Works.work2),  operator.ent("tp/prv/key", "Worker2"));
 
-		Context cxt3 = context(operator.ent("req/name", "workaholic"),
+		Context cxt3 = context(operator.ent("req/key", "workaholic"),
 				operator.ent("req/arg/1", 100),  operator.ent("req/arg/2", 100),
-				operator.ent("req/work", Works.work3),  operator.ent("tp/prv/name", "Worker3"));
+				operator.ent("req/work", Works.work3),  operator.ent("tp/prv/key", "Worker3"));
 
 		Job job = job("strategy", 
 				task("work1", sig("doWork", Worker.class, prvName("Worker1")), cxt1),

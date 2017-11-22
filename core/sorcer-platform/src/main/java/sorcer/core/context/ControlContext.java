@@ -40,7 +40,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 	// job broker
 	public final static String JOBBER_IS_DIRECT = "jobber" + CPS + "direct";
 
-	// control context name
+	// control context key
 	public final static String CONTROL_CONTEXT = "control/strategy";
 
 	/**
@@ -74,7 +74,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 			+ CPS + "reference" + CPS + "preserved";
 
 	// a rendezovous provider is either Jobber or Spacer
-	public final static String RENDEZVOUS_NAME = "rendezvous" + CPS + "name";
+	public final static String RENDEZVOUS_NAME = "rendezvous" + CPS + "key";
 
 	public final static String NOTIFY_EXEC = "notify" + CPS + "execution" + CPS
 			+ "to:";

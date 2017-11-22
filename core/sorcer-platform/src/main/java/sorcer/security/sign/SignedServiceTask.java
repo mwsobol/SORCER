@@ -38,7 +38,7 @@ import sorcer.service.Signature;
  * ServiceTask from it is extracted and is used to perform all the method
  * execution. SignedServiceTask is sent to Auditor service along with the
  * subject that is sent with this SignedServiceTask from Service UI to provider.
- * That subject contains the principal name that is used to save this task in
+ * That subject contains the principal key that is used to save this task in
  * database.
  * 
  * @see SignedTaskInterface
@@ -79,16 +79,16 @@ public final class SignedServiceTask extends NetTask implements
 	/**
 	 * Constructor to an instance of SignedServiceTask
 	 * 
-	 * @param name
-	 *            task name
+	 * @param key
+	 *            task key
 	 * @param description
 	 *            task description
 	 * @param methods
 	 *            array of ServiceMethods that need to be executed
 	 */
-//	public SignedServiceTask(String name, String description,
+//	public SignedServiceTask(String key, String description,
 //			List<Signature> signatures) {
-//		super(name, description, signatures);
+//		super(key, description, signatures);
 //	}
 
 	/**

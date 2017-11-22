@@ -150,7 +150,7 @@ public class SorcerDatabaseViews {
 	}
 
 	/**
-	 * Return a map view of the runtime-by-name index.
+	 * Return a map view of the runtime-by-key index.
 	 */
 	public StoredMap getRuntimeByProviderNameMap() {
 		return runtimeByProviderNameMap;

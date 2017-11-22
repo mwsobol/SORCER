@@ -33,7 +33,7 @@ public final class Stopwatch implements Serializable {
 	 * Create a new named Stopwatch.
 	 * 
 	 * @param name
-	 *            the name of this Stopwatch object
+	 *            the key of this Stopwatch object
 	 */
 	public Stopwatch(String name) {
 		this.name = name;

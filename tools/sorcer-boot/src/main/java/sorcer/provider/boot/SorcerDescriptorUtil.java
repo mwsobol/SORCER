@@ -1361,7 +1361,7 @@ public class SorcerDescriptorUtil {
      * Find a file starting with the {@code baseName}.
      *
      * @param dir The directory the file is located in.
-     * @param baseName The name the sought after file starts with.
+     * @param baseName The key the sought after file starts with.
      *
      * @return The {@code File} or {@code null}
      *

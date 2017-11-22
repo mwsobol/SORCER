@@ -134,7 +134,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	 * Loads service requestor properties from a <code>filename</code> file. 
 	 * 
 	 * @param filenames
-	 *            the properties file name see #getProperty
+	 *            the properties file key see #getProperty
 	 * @throws ConfigurationException 
 	 */
 	public void loadProperties(String... filenames) throws ConfigurationException {
@@ -166,7 +166,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	/**
 	 * Returns the hostname of a requestor data server.
 	 * 
-	 * @return a data server name.
+	 * @return a data server key.
 	 */
 	public String getDataServerInterface() {
 		return  System.getProperty(R_DATA_SERVER_INTERFACE);
@@ -194,7 +194,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	/**
 	 * Returns the hostname of a requestor class server.
 	 * 
-	 * @return a webster host name.
+	 * @return a webster host key.
 	 */
 	public String getWebsterInterface() {
 		String hn = System.getenv("IGRID_WEBSTER_INTERFACE");

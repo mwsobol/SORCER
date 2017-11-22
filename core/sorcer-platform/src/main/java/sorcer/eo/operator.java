@@ -1760,7 +1760,7 @@ public class operator extends Operator {
 		if (strings.size()==1) {
 			name = strings.get(0);
 		} else if (strings.size()==2) {
-			// if both string then the first one is name
+			// if both string then the first one is key
 			name = strings.get(0);
 			selector = strings.get(0);
 		}
@@ -1867,7 +1867,7 @@ public class operator extends Operator {
 		if (strings.size()==1) {
 			name = strings.get(0);
 		} else if (strings.size()==2) {
-			// if both string then the first one is name
+			// if both string then the first one is key
 			name = strings.get(0);
 			selector = strings.get(0);
 		}
@@ -1969,7 +1969,7 @@ public class operator extends Operator {
 			for (Object fi : sList) {
 				((ServiceFidelity)fi).setPath(name);
 			}
-			task.setMultiFi(mFi.getFidelity());
+			task.setMultiFi((ServiceFidelity) mFi.getFidelity());
 			task.setServiceMorphFidelity(mFi);
 			task.setSelectedFidelity(first);
 			task.setSelectedFidelity(first);
@@ -2145,7 +2145,7 @@ public class operator extends Operator {
 			} else if (elems[i] instanceof MorphFidelity) {
 				mFi = (MorphFidelity) elems[i];
 			} else if (elems[i] instanceof ServiceFidelity) {
-				if (((ServiceFidelity) elems[i]).getType().equals(ServiceFidelity.Type.META)) {
+				if (((ServiceFidelity) elems[i]).getFiType().equals(ServiceFidelity.Type.META)) {
 					metaFis.add((ServiceFidelity) elems[i]);
 				} else {
 					fis.add(((ServiceFidelity) elems[i]));
@@ -2175,7 +2175,7 @@ public class operator extends Operator {
 		if (srvFi != null) {
 			srvFi.setName(name);
 			srvFi.setPath(name);
-//			job.putFidelity(name, srvFi);
+//			job.putFidelity(key, srvFi);
 			job.getMultiFi().addSelect(srvFi);
 			job.setSelectedFidelity((ServiceFidelity)fis.get(0));
 			for (Service fi : fis) {
@@ -2421,7 +2421,7 @@ public class operator extends Operator {
 	 * Associates a given path in this context with a tag
 	 * defined for this context. If a tag, for example, is
 	 * "triplet|one|two|three" then its tuple can be "triplet|mike|w|sobol" where
-	 * 'triplet' is the name of relation and its proper tuple is 'mike|w|sobol'.
+	 * 'triplet' is the key of relation and its proper tuple is 'mike|w|sobol'.
 	 *
 	 * @param context
 	 * @param path
@@ -2609,7 +2609,7 @@ public class operator extends Operator {
 		}
 	}
 
-	// putLink(String name, String path, Context linkedContext, String offset)
+	// putLink(String key, String path, Context linkedContext, String offset)
 	public static Object link(Context context, String path,
 							  Context linkedContext, String offset) throws ContextException {
 		context.putLink(null, path, linkedContext, offset);
@@ -3201,7 +3201,7 @@ public class operator extends Operator {
 					block = new NetBlock(name);
 			} else {
 				// default signature
-//				block = new NetBlock(name);
+//				block = new NetBlock(key);
 				block = new ObjectBlock(name);
 			}
 

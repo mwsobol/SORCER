@@ -51,7 +51,7 @@ public class SpacerAccessor {
     /**
      * Returns a SORCER Spacer service provider using Jini lookup and discovery.
      *
-     * @param name the name of a spacer service provider
+     * @param name the key of a spacer service provider
      * @return a Spacer proxy
      */
     public static Spacer getSpacer(String name) {

@@ -35,7 +35,7 @@ public interface ScratchManager {
     /**
      * Return a scratch directory with the suffix
      *
-     * @param suffix The directory name to append
+     * @param suffix The directory key to append
      *
      * @return A File for use as a scratch directory.
      */
@@ -45,7 +45,7 @@ public interface ScratchManager {
      * Based on a {@link sorcer.service.Context}, return a scratch directory.
      *
      * @param context The Context, must not be null.
-     * @param suffix The directory name to append
+     * @param suffix The directory key to append
      *
      * @return A File for use as a scratch directory.
      */

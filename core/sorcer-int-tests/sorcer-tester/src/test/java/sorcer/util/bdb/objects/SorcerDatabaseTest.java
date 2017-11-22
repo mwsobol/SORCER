@@ -194,7 +194,7 @@ public class SorcerDatabaseTest implements SorcerConstants {
 	
 	//@Test
 	public void sdbURL() throws Exception {
-		URL sbdUrl = new URL("sbd://myIterface/name#context=2345");
+		URL sbdUrl = new URL("sbd://myIterface/key#context=2345");
 		Object obj = sbdUrl.openConnection().getContent();
 	}
 }

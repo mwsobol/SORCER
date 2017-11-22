@@ -32,7 +32,7 @@ public class DataContext<T> extends PositionalContext<T> {
 
     public DataContext() {
         super();
-        name = DATA_MODEL;
+        key = DATA_MODEL;
         setSubject("data/model", new Date());
         isRevaluable = false;
     }
@@ -41,9 +41,9 @@ public class DataContext<T> extends PositionalContext<T> {
         super();
         initContext();
         if (name == null || name.length() == 0) {
-            this.name = defaultName + count++;
+            this.key = defaultName + count++;
         } else {
-            this.name = name;
+            this.key = name;
         }
         mogramId = UuidFactory.generate();
         mogramStrategy = new ModelStrategy(this);
@@ -75,7 +75,7 @@ public class DataContext<T> extends PositionalContext<T> {
      * (evaluation or invocation on this object if needed).
      *
      * @param path
-     *            the variable name
+     *            the variable key
      * @return this model execute at the path
      * @throws ModelException
      */

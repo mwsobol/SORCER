@@ -50,7 +50,7 @@ public class Projection extends ServiceFidelity {
 			if (fi.getClass() == Fidelity.class) {
 				this.selects.add((Fidelity) fi);
 			} else if (fi instanceof ServiceFidelity
-					&& ((ServiceFidelity)fi).getType().equals(Type.META)) {
+					&& ((ServiceFidelity)fi).getFiType().equals(Type.META)) {
 				this.selects.add(new Projection((ServiceFidelity)fi));
 			}
 		}

@@ -109,7 +109,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	/**
 	 * Default constructor for the ServiceContext class. The constructor calls the method init, 
-	 * defines the the service context name sets the root name to a blank string creates a new 
+	 * defines the the service context key sets the root key to a blank string creates a new
 	 * hash tables for path identifications, delPath, and linked paths. The constructor creates the 
 	 * context identification number via the UUID factory generate method.
 	 */
@@ -126,9 +126,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 		super();
         initContext();
         if (name == null || name.length() == 0) {
-			this.name = defaultName + count++;
+			this.key = defaultName + count++;
 		} else {
-			this.name = name;
+			this.key = name;
 		}
 		mogramId = UuidFactory.generate();
 		mogramStrategy = new ModelStrategy(this);
@@ -216,7 +216,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * A 'metacontext' map stores all data attribute definitions in an internal
 	 * 'metacontext' map with a key being an attribute
 	 * mapped to the corresponding attribute descriptor. The attribute
-	 * descriptor for a simple attribute is the attribute name itself, and for a
+	 * descriptor for a simple attribute is the attribute key itself, and for a
 	 * composite attribute the descriptor is an APS (association path separator)
 	 * separated list of component attributes. A 'metacontext' map contains all
 	 * simple attributes and component attributes (keys) associations with the
@@ -226,7 +226,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * The usage of metacontext is illustrated as follows:
 	 * a single attribute - 'tag'; cxt.tag("arg/x1", "tag|stress");
 	 * and get tagged eval at arg/x1: cxt.getMarkedValues("tag|stress"));
-	 * relation - 'triplet|path|info|_3', 'triplet' is a relation name and path, _3, and _3
+	 * relation - 'triplet|path|info|_3', 'triplet' is a relation key and path, _3, and _3
 	 * are component attributes; cxt.tag("arg/x3", "triplet|mike|w|sobol");
 	 * and get tagged eval at arg/x3: cxt.getMarkedValues("triplet|mike|w|sobol"));
 	 */
@@ -255,7 +255,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 					+ INTERFACE + APS + SELECTOR);
 			// operand positioning (OOP) for operators by index
 			setCompositeAttribute(OPP + APS + DIRECTION + APS + INDEX);
-			// the variable node fiType relationship (var name and its fiType) in
+			// the variable node fiType relationship (var key and its fiType) in
 			// Analysis Models: vnt|var|vt
 			setCompositeAttribute(VAR_NODE_TYPE + APS + VAR + APS + VT);
 			dbUrl = "sos://sorcer.service.DatabaseStorer";
@@ -470,7 +470,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
-	// we assume that a path ending with name refers to its eval
+	// we assume that a path ending with key refers to its eval
 	public T getValueEndsWith(String name) throws EvaluationException,
 			RemoteException {
 		T val = null;
@@ -819,7 +819,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		// with this ServiceContext
 		String composite = SorcerUtil.firstToken(descriptor, APS);
 		if (composite.startsWith(PRIVATE) && composite.endsWith(PRIVATE))
-			throw new ContextException("Illegal metaattribute name");
+			throw new ContextException("Illegal metaattribute key");
 		String components = descriptor.substring(composite.length() + 1);
 		getDataAttributeMap().put(composite, components);
 		StringTokenizer st = new StringTokenizer(components, APS);
@@ -1021,7 +1021,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			cntxt.addCompositeAssociation(mappedKey, attribute, attributeValue);
 		else
 			throw new ContextException("No attribute defined: \"" + attribute
-					+ "\" in this context (name=\"" + cntxt.getName() + "\"");
+					+ "\" in this context (key=\"" + cntxt.getName() + "\"");
 		return this;
 	}
 
@@ -1043,7 +1043,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			throw new ContextException("Invalid:  The metavalue of \""
 					+ metaattributeValue + "\" for metaattribute \""
 					+ metaattribute + APS + getLocalMetapath(metaattribute)
-					+ "\" is invalid in this context (name=\""
+					+ "\" is invalid in this context (key=\""
 					+ cntxt.getName() + "\"");
 		for (int i = 0; i < attrs.length; i++)
 			((ServiceContext) cntxt).addComponentAssociation(mappedKey,
@@ -1193,7 +1193,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public String getLocalMetapath(String metaattribute)
 			throws ContextException {
-		// return the metapath (attribute-name n-tuple) equivalent to
+		// return the metapath (attribute-key n-tuple) equivalent to
 		// this metaattribute; format is a String with attributes
 		// separated by the CMPS (context metapath separator)
 		if (isMetaattribute(metaattribute))
@@ -1736,7 +1736,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public Context<T> appendContext(Context<T> context) throws ContextException,
 			RemoteException {
-		// get the whole context, with the context root name as the
+		// get the whole context, with the context root key as the
 		// path prefix
 		String key;
 		List<String> paths = new ArrayList<String>();
@@ -1802,8 +1802,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		String mappedKey = (String) map[1];
 		// System.out.println("path="+path);
 		// System.out.println("mappedKey="+mappedKey);
-		// System.out.println("orig context name="+cntxt.getName());
-		// System.out.println("mapped context name="+mappedCntxt.getName());
+		// System.out.println("orig context key="+cntxt.getName());
+		// System.out.println("mapped context key="+mappedCntxt.getName());
 
 		int len = mappedKey.length();
 		String prefix;
@@ -2095,15 +2095,15 @@ public class ServiceContext<T> extends ServiceMogram implements
 		StringBuilder sb; // String buffer
 		if (isHTML) {
 			cr = "<br>";
-			// sb = new StringBuilder("<html>\nContext name: ");
+			// sb = new StringBuilder("<html>\nContext key: ");
 			sb = new StringBuilder("<html>\n");
 		} else {
 			cr = "\n";
-			sb = new StringBuilder(name != null ? "Context name: " + name
+			sb = new StringBuilder(key != null ? "Context key: " + key
 					+ "\n" : "");
 			// sb = new StringBuilder();
 		}
-		// sb.append(name).append("\n");
+		// sb.append(key).append("\n");
 		return toString(cr, sb, withMetacontext);
 	}
 
@@ -2353,7 +2353,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public String getTitle() {
-		return name + ", " + (domainName == null ? "" : domainName + ", ")
+		return key + ", " + (domainName == null ? "" : domainName + ", ")
 				+ (subdomainName == null ? "" : subdomainName);
 	}
 
@@ -2989,7 +2989,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			result = ((ModelStrategy)mogramStrategy).outcome;
 		}
 		((ModelStrategy)mogramStrategy).outcome.setModeling(false);
-		result.setName("Response of " + getClass().getSimpleName() + " " + name);
+		result.setName("Response of " + getClass().getSimpleName() + " " + key);
 		return result;
 	}
 
@@ -3103,7 +3103,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	@Override
 	public String getName() {
-		return name;
+		return key;
 	}
 
 	/* (non-Javadoc)
@@ -3270,7 +3270,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		try {
 			if (subjectValue instanceof Class) {
 				signature = sig(subjectPath, subjectValue);
-				return (T) operator.xrt(name, signature, this).exert(txn, entries).getContext();
+				return (T) operator.xrt(key, signature, this).exert(txn, entries).getContext();
 			} else {
 				// evaluates model outputs - response
 				getResponse(entries);
@@ -3476,7 +3476,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public String getProviderName() throws RemoteException {
 		if (provider == null)
-			return name;
+			return key;
 		else
 			return provider.getProviderName();
 	}
@@ -3537,7 +3537,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (result instanceof Entry) {
 			return (Entry)result;
 		} else {
-			return new Entry(name, result);
+			return new Entry(key, result);
 		}
 	}
 

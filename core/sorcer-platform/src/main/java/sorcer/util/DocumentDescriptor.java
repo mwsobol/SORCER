@@ -76,9 +76,9 @@ public class DocumentDescriptor implements SorcerConstants, Serializable {
 	private String activeVersionID;
 
 	// key -> versionID eval -> (accessName + GApp.sep + VersionName)
-	// accessName :This is the access name of the current version. ie, the
-	// physical name by which it's store in FileSystem.
-	// versionName :The logical name given to the file by the user.
+	// accessName :This is the access key of the current version. ie, the
+	// physical key by which it's store in FileSystem.
+	// versionName :The logical key given to the file by the user.
 	private Hashtable versions;
 
 	// Information on the new version to be uploaded

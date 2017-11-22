@@ -36,7 +36,7 @@ public class StartStopCmd extends ShellCmd {
 
 		NOT_LOADED_MSG = "***command not loaded due to conflict";
 
-		COMMAND_USAGE = "start <application name> or stop <registrar index> | all";
+		COMMAND_USAGE = "start <application key> or stop <registrar index> | all";
 
 		COMMAND_HELP = "Start application. " 
 			+ "\nStop a single lookup service or all lookup services.";
@@ -97,7 +97,7 @@ public class StartStopCmd extends ShellCmd {
 
 	public String getUsage(String subCmd) {
 		if (subCmd.equals("start")) {
-			return "start <application name>";
+			return "start <application key>";
 		} else if (subCmd.equals("stop")) {
 			return "stop <lookup service index> | all";
 		} else {

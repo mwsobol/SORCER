@@ -157,7 +157,7 @@ public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry
         return names;
     }
 
-    public Type getType() {
+    public Type getFiType() {
 		return fiType;
 	}
 
@@ -198,7 +198,7 @@ public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry
 			if (((Fidelity) object).getName().equals(fiName)
 					&& ((Fidelity) object).getPath().equals(path)
 					&& selectorEquality
-					&& ((Fidelity) object).getType().equals(fiType)) {
+					&& ((Fidelity) object).getFiType().equals(fiType)) {
 				return true;
 			}
 		}

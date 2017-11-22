@@ -52,7 +52,7 @@ public class LokiMemberUtil {
 	private String memberSeqId;
 	/** unique identifier */
 	private Uuid myUID;
-	/** name identifier */
+	/** key identifier */
 	private String myName;
 	/** Group sequence identifier */
 	private String groupSeqId;

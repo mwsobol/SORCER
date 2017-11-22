@@ -25,7 +25,6 @@ import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.exertion.AltMogram;
 import sorcer.core.exertion.LoopMogram;
 import sorcer.core.exertion.OptMogram;
-import sorcer.core.signature.ObjectSignature;
 import sorcer.util.SorcerUtil;
 import sorcer.util.url.sos.SdbUtil;
 import sorcer.service.Signature.ReturnPath;
@@ -137,7 +136,7 @@ public abstract class Block extends CompoundExertion {
 	@Override
 	public Context linkContext(Context context, String path)
 			throws ContextException {
-		dataContext.putLink(path + CPS + name, context);
+		dataContext.putLink(path + CPS + key, context);
 		return context;
 	}
 
@@ -147,7 +146,7 @@ public abstract class Block extends CompoundExertion {
 	@Override
 	public Context linkControlContext(Context context, String path)
 			throws ContextException {
-		controlContext.putLink(path + CPS + name, context);
+		controlContext.putLink(path + CPS + key, context);
 		return context;
 	}
 
@@ -256,7 +255,7 @@ public abstract class Block extends CompoundExertion {
 		if (attributes[0].equals(getName())) {
 			// updated this context
 			if ((attributes.length >= 2) && !hasChild(attributes[1])) {
-				dataContext.putValue(path.substring(name.length() + 1), value);
+				dataContext.putValue(path.substring(key.length() + 1), value);
 				return value;
 			}
 			String[] attributes1 = new String[attributes.length - 1];
@@ -307,7 +306,7 @@ public abstract class Block extends CompoundExertion {
 		try {
 			for (Arg e : entries) {
 				if (e instanceof Entry) {
-					if (e.getName().indexOf(name) >= 0) {
+					if (e.getName().indexOf(key) >= 0) {
 						putBlockValue(e.getName(), ((Entry) e).get());
 					} else {
 						super.putValue(e.getName(), ((Entry) e).get());

@@ -110,7 +110,7 @@ public class FiltersView extends JPanel{
 		
 	}
 	public void setDefaultText(){
-		String infText="//   Type in the full name of the service's interface classes\n"+
+		String infText="//   Type in the full key of the service's interface classes\n"+
 		"//   that you want to filter on for example\n"+
 		"//   net.jini.event.EventMailbox\n"+
 		"//   net.jini.space.JavaSpace\n\n"+

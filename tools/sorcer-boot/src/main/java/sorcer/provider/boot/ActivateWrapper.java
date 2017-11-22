@@ -100,7 +100,7 @@ public class ActivateWrapper implements Remote, Serializable {
     public static class ActivateDesc implements Serializable {
         private static final long serialVersionUID = 1L;
         /**
-         * The activatable object's class name.
+         * The activatable object's class key.
          * 
          * @serial
          */

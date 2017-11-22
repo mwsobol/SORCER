@@ -68,7 +68,7 @@ public abstract class Identity implements Serializable, Identifiable {
 	}
 	
 	/**
-	 * getName - Returns name
+	 * getName - Returns key
 	 * @return String
 	 */
 	public String getName() {
@@ -76,7 +76,7 @@ public abstract class Identity implements Serializable, Identifiable {
 	}
 
 	/**
-	 * setName - Method that allows setting of the name of a Identity Object
+	 * setName - Method that allows setting of the key of a Identity Object
 	 * @param name -Tag of the Identity Object
 	 */
 	public void setName(String name) {
@@ -93,6 +93,6 @@ public abstract class Identity implements Serializable, Identifiable {
 	}
 
 	public String toString() {
-		return "name: " + name +  ", id: " + id;
+		return "key: " + name +  ", id: " + id;
 	}
 }

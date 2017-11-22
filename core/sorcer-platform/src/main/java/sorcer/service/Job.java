@@ -82,7 +82,7 @@ public class Job extends CompoundExertion {
 	 * Constructs a job and sets all default values to it.
 	 * 
 	 * @param name
-	 *            The name of the job.
+	 *            The key of the job.
 	 * @throws sorcer.service.SignatureException
 	 */
 	public Job(String name) {
@@ -113,7 +113,7 @@ public class Job extends CompoundExertion {
 
 	/**
 	 * Initialize it with assigning it a new ControlContext and a defaultMethod
-	 * with serviceInfo as "sorcer.core.provider.jobber.ServiceJobber" name as
+	 * with serviceInfo as "sorcer.core.provider.jobber.ServiceJobber" key as
 	 * "service" and providerName "*"
 	 * @throws sorcer.service.SignatureException
 	 */
@@ -198,13 +198,13 @@ public class Job extends CompoundExertion {
             if (delegate == null) {
                 Signature ps = (Signature) ((ServiceFidelity)multiFi.getSelect()).getSelect();
                 if (ps instanceof NetSignature) {
-                    delegate = new NetJob(name);
+                    delegate = new NetJob(key);
                 } else {
-                    delegate = new ObjectJob(name);
+                    delegate = new ObjectJob(key);
                 }
 
                 delegate.setFidelityManager(getFidelityManager());
-                delegate.setMultiFi(getMultiFi());
+                delegate.setMultiFi((ServiceFidelity) getMultiFi());
                 delegate.setSelectedFidelity((ServiceFidelity) multiFi.getSelect());
                 delegate.setServiceMorphFidelity(getServiceMorphFidelity());
                 delegate.setMultiMetaFi(getMultiMetaFi());
@@ -317,7 +317,7 @@ public class Job extends CompoundExertion {
 	}
 
 	public String getContextName() {
-		return Context.JOB_ + name + "[" + index + "]" + Context.ID;
+		return Context.JOB_ + key + "[" + index + "]" + Context.ID;
 	}
 
 	public String toString() {
@@ -398,15 +398,15 @@ public class Job extends CompoundExertion {
 	}
 	
 	public Context getJobContext() throws ContextException {
-		ServiceContext cxt = new ServiceContext(name);
-		cxt.setSubject("job/data/context", name);
+		ServiceContext cxt = new ServiceContext(key);
+		cxt.setSubject("job/data/context", key);
 		cxt.append(dataContext);
 		return linkContext(cxt, getName());
 	}
 
 	public Context getControlInfo() {
-		ServiceContext cxt = new ServiceContext(name);
-		cxt.setSubject("job/control/context", name);
+		ServiceContext cxt = new ServiceContext(key);
+		cxt.setSubject("job/control/context", key);
 		
 		return linkControlContext(cxt,  getName());
 	}
@@ -477,7 +477,7 @@ public class Job extends CompoundExertion {
 	 */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
-		if (path.indexOf(name) >= 0) {
+		if (path.indexOf(key) >= 0) {
 			return getJobValue(path);
 		}
 		Object val = dataContext.getValue(path, args);
@@ -492,7 +492,7 @@ public class Job extends CompoundExertion {
 	}
 	
 	public Object putValue(String path, Object value) throws ContextException {
-		if (path.indexOf(name) >= 0)
+		if (path.indexOf(key) >= 0)
 			putJobValue(path, value);
 		else
 			super.putValue(path, value);
@@ -603,7 +603,7 @@ public class Job extends CompoundExertion {
 			if (entries != null) {
 				for (Arg e : entries) {
 					if (e instanceof Entry)
-						if (e.getName().indexOf(name) >= 0)
+						if (e.getName().indexOf(key) >= 0)
 							putJobValue(e.getName(), ((Function) e).get());
 
 						else

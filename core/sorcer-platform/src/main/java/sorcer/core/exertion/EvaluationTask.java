@@ -55,7 +55,7 @@ public class EvaluationTask extends Task {
 		dataContext.setExertion(this);
 		if (es.getEvaluator() instanceof Proc) {
 			if (dataContext.getScope() == null)
-				dataContext.setScope(new ProcModel(name));
+				dataContext.setScope(new ProcModel(key));
 		}
 		if (evaluator instanceof Srv) {
 			if (dataContext.getReturnPath() == null)

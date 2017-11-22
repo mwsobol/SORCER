@@ -67,7 +67,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
 
     public SrvModel() {
         super();
-        name = SRV_MODEL;
+        key = SRV_MODEL;
         setSignature();
         setSubject("srv/model", new Date());
         isRevaluable = true;
@@ -489,7 +489,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         if (sFi != null)
             sFi.getSelects().addAll(Arrays.asList(signatures));
         else {
-            multiFi.addSelect(new ServiceFidelity(name));
+            multiFi.addSelect(new ServiceFidelity(key));
             sFi.getSelects().addAll(Arrays.asList(signatures));
         }
     }
@@ -506,7 +506,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                 signature = (Signature)subjectValue;
             }
             if (signature != null) {
-                Exertion out = operator.xrt(name, subjectValue, this).exert(txn, entries);
+                Exertion out = operator.xrt(key, subjectValue, this).exert(txn, entries);
                 Exertion xrt = out.exert();
                 return xrt.getDataContext();
             } else {

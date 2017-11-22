@@ -26,12 +26,12 @@ public class WorkerTaskApplication {
 		// initialize system properties
 		Sorcer.getEnvProperties();
 
-		// get the queried provider name from the command line
+		// get the queried provider key from the command line
 		String pn = null;
 		if (args.length == 1)
 			pn = args[0];
 
-		logger.info("Provider name: " + pn);
+		logger.info("Provider key: " + pn);
 
 		Exertion exertion = new WorkerTaskApplication().getExertion(pn);
 		Exertion result = exertion.exert();
@@ -42,13 +42,13 @@ public class WorkerTaskApplication {
 		String hostname = SorcerEnv.getHostName();
 
         if (pn!=null) pn = Sorcer.getActualName(pn);
-        logger.info("Suffixed Provider name: " + pn);
+        logger.info("Suffixed Provider key: " + pn);
 
         Context context = new ServiceContext("work");
-        context.putValue("requstor/name", hostname);
+        context.putValue("requstor/key", hostname);
         context.putValue("requestor/operand/1", 4);
         context.putValue("requestor/operand/2", 4);
-        context.putValue("to/provider/name", pn);
+        context.putValue("to/provider/key", pn);
         context.putValue("requestor/work", Works.work2);
 
 

@@ -194,7 +194,7 @@ public class DataStorageCmd extends ShellCmd {
 //				out.println("XXXXXXXXXXXXX service impl: " + dataStorers[selectedDataStorer]);
 //				out.println("XXXXXXXXXXXXX service: " + (DatabaseStorer) dataStorers[selectedDataStorer].service);
 //				out.println("XXXXXXXXXXXXX interfaces: " + Arrays.toString(dataStorers[selectedDataStorer].service.getClass().getInterfaces()));
-//				out.println("XXXXXXXXXXXXX name: " + ((Provider) dataStorers[selectedDataStorer].service).getProviderName());
+//				out.println("XXXXXXXXXXXXX key: " + ((Provider) dataStorers[selectedDataStorer].service).getProviderName());
 				cxt = ((DatabaseStorer) dataStorers[selectedDataStorer].service).contextList(SdbUtil.getListContext(Store.object));
 //				out.println("XXXXXXXXXXXXX context: " + cxt);
 
@@ -289,7 +289,7 @@ public class DataStorageCmd extends ShellCmd {
 				+ AttributesUtil.getUserDir(dataStorers[index].attributeSets));
 		String groups = AttributesUtil
 				.getGroups(dataStorers[index].attributeSets);
-		out.println("Provider name: "
+		out.println("Provider key: "
 				+ AttributesUtil
 						.getProviderName(dataStorers[index].attributeSets));
 		out.println("Groups supported: " + groups);

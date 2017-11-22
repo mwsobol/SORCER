@@ -196,7 +196,7 @@ public class LibraryPathHelper extends AbstractSet<String> {
             if (useLocate)
                 cmds = new String[] { "locate" , nativeFileName };
             else
-                cmds = new String[] { "find" , "-name", nativeFileName };
+                cmds = new String[] { "find" , "-key", nativeFileName };
             GenericUtil.execScript(cmds, new File(startDirectory), results, errors);
             for (String res : results) {
                 if (res.endsWith(nativeFileName)) {

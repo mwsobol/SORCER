@@ -50,7 +50,7 @@ public class LookupCmd extends ShellCmd {
 		NOT_LOADED_MSG = "***command not loaded due to conflict";
 
 		COMMAND_USAGE = "lup  [-s | -p | <service index> | -v | -x] | --d <service index>" 
-				+ "\n\t\t\t  | ( -p | -s ) [-n <name attribute eval>] [-i <service fiType name>] ";
+				+ "\n\t\t\t  | ( -p | -s ) [-n <key attribute eval>] [-i <service fiType key>] ";
 
 		COMMAND_HELP = "Performs lookup on a default lookup service (disco <registrar index>);"
 			+ "\n  -s   show all services registered with the default lookup service" 
@@ -58,8 +58,8 @@ public class LookupCmd extends ShellCmd {
 			+ "\n  <service index>   show and select the fetched <service index> provider"
 			+ "\n  -v   show the selected provider"
 			+ "\n  -x   clearSessions the selected provider"
-			+ "\n  -n   show service based on the name attribute eval"
-			+ "\n  -t   show services based on the fiType name"
+			+ "\n  -n   show service based on the key attribute eval"
+			+ "\n  -t   show services based on the fiType key"
 			+ "\n  --d <service index>	  destroy the <provider index> provider";
 
 	}
@@ -328,7 +328,7 @@ public class LookupCmd extends ShellCmd {
 				+ AttributesUtil.getUserDir(serviceItems.get(index).attributeSets) + "|@"));
 		String groups = AttributesUtil
 				.getGroups(serviceItems.get(index).attributeSets);
-		out.println(ansi().render("Provider name: "
+		out.println(ansi().render("Provider key: "
                 + "@|bold,green " + AttributesUtil.getProviderName(serviceItems.get(index).attributeSets) + "|@"));
 		out.println(ansi().render("Proxy class: @|bold "
 				+ serviceItems.get(index).service.getClass().getName() + "|@"));

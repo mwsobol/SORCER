@@ -392,7 +392,7 @@ public class ProviderDelegate {
 		logger.info("ServiceProvider:groups to discover={}"+ SorcerUtil.arrayToString(groupsToDiscover));
 		// set provider space group if defined in provider's properties
 		spaceGroup = config.getProperty(J_SPACE_GROUP, Sorcer.getSpaceGroup());
-		// set provider space name if defined in provider's properties
+		// set provider space key if defined in provider's properties
 		spaceName = config.getProperty(J_SPACE_NAME, Sorcer.getActualSpaceName());
 
 		try {
@@ -729,7 +729,7 @@ public class ProviderDelegate {
                                                      factory);
             spaceHandlingPools.add(spaceWorkerPool);
             // SORCER.ANY is required for a ProviderWorker
-            // to avoid matching to any provider name
+            // to avoid matching to any provider key
             // that is Java null matching everything
             envelop = ExertionEnvelop.getTemplate(publishedServiceTypes[i], getProviderName());
             if (spaceReadiness) {
@@ -879,7 +879,7 @@ public class ProviderDelegate {
 					confirmExec(task);
 					task.stopExecTime();
 					task.setService(null);
-					logger.info("provider name = {}\nreturning task; transaction = {}", provider.getDescription(), transaction);
+					logger.info("provider key = {}\nreturning task; transaction = {}", provider.getDescription(), transaction);
 					return task;
 				} else {
 					provider.fireEvent();
@@ -1204,7 +1204,7 @@ public class ProviderDelegate {
 
 		if (visited.contains(serviceID)) {
 			visited.remove(serviceID);
-			throw new ExertionException("Not able to get relevant type: "+ prvType + ", name: " + prvName);
+			throw new ExertionException("Not able to get relevant type: "+ prvType + ", key: " + prvName);
 		}
 		visited.add(serviceID);
 		if (serviceComponents != null) {
@@ -1228,7 +1228,7 @@ public class ProviderDelegate {
 		if (recipient == null) {
 			visited.remove(serviceID);
 			ExertionException re = new ExertionException(
-					"Not able to get provider type: " + prvType + ", name: "
+					"Not able to get provider type: " + prvType + ", key: "
 							+ prvName);
 			notifyException(task, "", re);
 			throw re;
@@ -1236,7 +1236,7 @@ public class ProviderDelegate {
 				.startsWith(requestor.getClass().getName())) {
 			visited.remove(serviceID);
 			ExertionException re = new ExertionException(
-					"Invalid task for provider type: " + prvType + ", name: "
+					"Invalid task for provider type: " + prvType + ", key: "
 							+ prvName + " " + task.toString());
 			notifyException(task, "", re);
 			throw re;
@@ -1250,7 +1250,7 @@ public class ProviderDelegate {
 					visited.remove(serviceID);
 					throw new ExertionException(
 							"Not able to get relevant type: " + prvType
-							+ ", name: " + prvName);
+							+ ", key: " + prvName);
 				}
 			} catch (TransactionException te) {
 				visited.remove(serviceID);
@@ -1304,7 +1304,7 @@ public class ProviderDelegate {
 	}
 
 	public boolean isValidMethod(String name) throws RemoteException {
-		// modify name for SORCER providers
+		// modify key for SORCER providers
 		Method[] methods = provider.getClass().getMethods();
 		for (int i = 0; i < methods.length; i++) {
 			if (methods[i].getName().equals(name))
@@ -1461,7 +1461,7 @@ public class ProviderDelegate {
 	}
 
 	/**
-	 * Set a name of the provider. The name may be defined in this provider's
+	 * Set a key of the provider. The key may be defined in this provider's
 	 * properties file.
 	 */
 	public void setProviderName(String name) {
@@ -1511,7 +1511,7 @@ public class ProviderDelegate {
 		final List<Entry> attrVec = new ArrayList<Entry>();
 
 		try {
-			// name of the provider suffixed in loadJiniConfiguration
+			// key of the provider suffixed in loadJiniConfiguration
 			boolean discoveryEnabled = (Boolean) Config.getNonNullEntry(
 					getDeploymentConfig(), ServiceProvider.COMPONENT,
 					ProviderDelegate.DISCOVERY_ENABLED, boolean.class, true);
@@ -2056,7 +2056,7 @@ public class ProviderDelegate {
 			String str;
 			String providerName;
 
-			// set provider name if defined in provider's properties
+			// set provider key if defined in provider's properties
 			str = getProperty(P_PROVIDER_NAME);
 			if (str != null) {
 				providerName = str.trim();
@@ -2064,11 +2064,11 @@ public class ProviderDelegate {
 					props.setProperty(P_PROVIDER_NAME, providerName);
 			} else {
 				if (exitOnEmptyName) {
-					logger.error("Provider HALTED: its name not defined in the provider config file");
+					logger.error("Provider HALTED: its key not defined in the provider config file");
 					try {
 						provider.destroy();
 					} catch (Exception e) {
-						logger.warn("Problem trying to destroy the provider due to empty name in the provider config file");
+						logger.warn("Problem trying to destroy the provider due to empty key in the provider config file");
 					}
                 }
 			}
@@ -2142,7 +2142,7 @@ public class ProviderDelegate {
 		}
 
 		/**
-		 * Sets the provider name. Can be called manually if needed.
+		 * Sets the provider key. Can be called manually if needed.
 		 * 
 		 * @param name
 		 */
@@ -2163,28 +2163,28 @@ public class ProviderDelegate {
 		}
 
 		/**
-		 * Return a name of the provider. The name may be specified in this
+		 * Return a key of the provider. The key may be specified in this
 		 * provider's properties file.
 		 * 
 		 * 
-		 * @return the name of the provider
+		 * @return the key of the provider
 		 */
 		public String getProviderName() {
 			return getProperty(P_PROVIDER_NAME);
 		}
 
 		/**
-		 * Return a file name of the provider's icon. The name may be specified
+		 * Return a file key of the provider's icon. The key may be specified
 		 * in this provider's properties file.
 		 * 
-		 * @return the name of the provider
+		 * @return the key of the provider
 		 */
 		public String getIconName() {
 			return getProperty(P_ICON_NAME);
 		}
 
 		/**
-		 * @return the host name for this provider
+		 * @return the host key for this provider
 		 */
 		public String getProviderHostName() {
 			return getProperty(P_PROVIDR_HOST);
@@ -2201,7 +2201,7 @@ public class ProviderDelegate {
 		 * Loads provider properties from a <code>filename</code> file. By
 		 * default a provider loads its properties from
 		 * <code>provider.properties</code> file located in the provider's
-		 * package. Also, a provider properties file name can be specified as a
+		 * package. Also, a provider properties file key can be specified as a
 		 * variable <code>providerProperties</code> in a Jini configuration file
 		 * for a SORCER provider. In this case the provider loads properties
 		 * from the specified <code>providerProperties</code> file. Properties
@@ -2209,7 +2209,7 @@ public class ProviderDelegate {
 		 * accessible calling the <code> getProperty(String)</code> method.
 		 * 
 		 * @param filename
-		 *            the properties file name
+		 *            the properties file key
 		 * @see #getProperty
 		 */
 		public void loadConfiguration(String filename) {
@@ -2337,7 +2337,7 @@ public class ProviderDelegate {
 					setProviderName(val);
 			}
 
-			// for suffixed name, when srvName is null
+			// for suffixed key, when srvName is null
 			if (val != null) {
 				String nameSuffixed = "";
 				boolean globalNameSuffixed = Sorcer.nameSuffixed();
@@ -2362,7 +2362,7 @@ public class ProviderDelegate {
 					suffixedName = val + "-" + nameSuffixed;
 					nameSuffixed = "true";
 				}
-				// add provider name and SorcerServiceType args
+				// add provider key and SorcerServiceType args
 				// nameSuffixed not defined by this provider but in sorcer.env
 				if (nameSuffixed.length() == 0 && globalNameSuffixed) {
 					setProviderName(suffixedName);
@@ -2686,7 +2686,7 @@ public class ProviderDelegate {
 	 * <li>Expose objects as services <br>
 	 * <code>beans = new String[] { ..... }<br>
 	 *    proxyName = "xxx.xxx"</code><br>
-	 * Provide the proxy name and have a constructor with one argument, which
+	 * Provide the proxy key and have a constructor with one argument, which
 	 * accepts the exported inner proxy.
 	 * </ol>
 	 * 
@@ -3001,7 +3001,7 @@ public class ProviderDelegate {
 	 * Returns a partner service specified in the provider's Jini configuration.
 	 * 
 	 * @param partnerName
-	 *            name of the partner service
+	 *            key of the partner service
 	 * @param partnerType
 	 *            service type (interface) of the partner service
 	 * @throws ExportException

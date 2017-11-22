@@ -129,7 +129,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	 * @param context
 	 *            service context
 	 * @param selector
-	 *            a name of arithmetic operation
+	 *            a key of arithmetic operation
 	 * @return
 	 * @throws RemoteException
 	 * @throws ContextException
@@ -209,7 +209,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	 *
 	 * @param cxt
 	 * @param selector
-	 *            a name of arithmetic operation
+	 *            a key of arithmetic operation
 	 * @return
 	 * @throws RemoteException
 	 * @throws ContextException
@@ -267,8 +267,8 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			String outputMessage = "calculated by " + getHostname();
 			if (context.getReturnPath() != null) {
 				String outpath = context.getReturnPath().path;
-				if (outpath.indexOf("${name}") >= 0) {
-					String out = outpath.replace("${name}",
+				if (outpath.indexOf("${key}") >= 0) {
+					String out = outpath.replace("${key}",
 							context.getMogram().getName());
 					context.getReturnPath().path = out;
 				}
@@ -277,9 +277,9 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			else if (outpaths.size() == 1) {
 				// put the result in the existing output path
 				String outpath = outpaths.get(0);
-				if (outpath.indexOf("${name}") >= 0) {
-					if (outpath.indexOf("${name}") >= 0) {
-						outpath = outpath.replace("${name}",
+				if (outpath.indexOf("${key}") >= 0) {
+					if (outpath.indexOf("${key}") >= 0) {
+						outpath = outpath.replace("${key}",
 								context.getMogram().getName());
 					}
 				}
@@ -314,8 +314,8 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			outputMessage = "calculated by " + getHostname();
 			if (context.getReturnPath() != null) {
 				String outpath = ((ServiceContext) context).getReturnPath().path;
-				if (outpath.indexOf("${name}") >= 0) {
-					String out = outpath.replace("${name}",
+				if (outpath.indexOf("${key}") >= 0) {
+					String out = outpath.replace("${key}",
 							context.getMogram().getName());
 					context.getReturnPath().setPath(out);
 				}
@@ -323,9 +323,9 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			} else if (outpaths.size() == 1) {
 				// put the result in the existing output path
 				String outpath = outpaths.get(0);
-				if (outpath.indexOf("${name}") >= 0) {
-					if (outpath.indexOf("${name}") >= 0) {
-						outpath = outpath.replace("${name}",
+				if (outpath.indexOf("${key}") >= 0) {
+					if (outpath.indexOf("${key}") >= 0) {
+						outpath = outpath.replace("${key}",
 								((ServiceContext) context).getMogram()
 										.getName());
 					}
@@ -375,9 +375,9 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	}
 
 	/**
-	 * Returns name of the local host.
+	 * Returns key of the local host.
 	 *
-	 * @return local host name
+	 * @return local host key
 	 * @throws UnknownHostException
 	 */
 	private String getHostname() throws UnknownHostException {

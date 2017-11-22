@@ -41,7 +41,7 @@ public class DirCmd extends ShellCmd {
 
 		NOT_LOADED_MSG = "***command not loaded due to conflict";
 
-		COMMAND_USAGE = "ls [-l] | pwd | cd <directory name> | ls --c | --p ";
+		COMMAND_USAGE = "ls [-l] | pwd | cd <directory key> | ls --c | --p ";
 
 		COMMAND_HELP = "Handles directory commands: ls, pwd, cd; Cataloger contents or providers: ls --c | --p.";
 	}
@@ -257,7 +257,7 @@ public class DirCmd extends ShellCmd {
             case "pwd":
                 return "pwd";
             case "cd":
-                return "cd <directory name> | ~";
+                return "cd <directory key> | ~";
             default:
                 return COMMAND_USAGE;
         }

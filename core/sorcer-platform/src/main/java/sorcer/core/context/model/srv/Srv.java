@@ -63,7 +63,7 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
 
     public Srv(String name, Object value) {
         if(name == null)
-            throw new IllegalArgumentException("name must not be null");
+            throw new IllegalArgumentException("key must not be null");
         this.key = name;
         this.name = name;
         if (value instanceof Fidelity) {

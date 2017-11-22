@@ -49,13 +49,13 @@ public class Booter implements SorcerConstants {
 	private static int port = -1;
 
 	/**
-	 * Default name 'provider.properties' for a file defining provider
+	 * Default key 'provider.properties' for a file defining provider
 	 * properties.
 	 */
 	public static String PROVIDER_PROPERTIES_FILENAME = "provider.properties";
 
 	/**
-	 * Default name 'data.formats' for a file defining service context node
+	 * Default key 'data.formats' for a file defining service context node
 	 * types.
 	 */
 	private static String CONTEXT_DATA_FORMATS = "data.formats";
@@ -97,7 +97,7 @@ public class Booter implements SorcerConstants {
 	}
 
 	/**
-	 * Return the codebase for the provided JAR name and port. This method will
+	 * Return the codebase for the provided JAR key and port. This method will
 	 * first get the IP Address of the machine using
 	 * <code>java.net.InetAddress.getLocalHost().getHostAddress()</code>, then
 	 * construct the codebase using the host address and the port for the
@@ -137,7 +137,7 @@ public class Booter implements SorcerConstants {
 	}
 
 	/**
-	 * Return the codebase for the provided JAR name, port and address
+	 * Return the codebase for the provided JAR key, port and address
 	 * 
 	 * @param jar
 	 *            The JAR to use
@@ -199,12 +199,12 @@ public class Booter implements SorcerConstants {
 	 * {@link java.net.InetAddress#getByName(String)}
 	 * 
 	 * @param name
-	 *            The name of the host to return
+	 *            The key of the host to return
 	 * 
 	 * @return The local host address
 	 * 
 	 * @throws java.net.UnknownHostException
-	 *             if no IP address for the host name could be found.
+	 *             if no IP address for the host key could be found.
 	 */
 	public static String getHostAddress(String name)
 			throws java.net.UnknownHostException {
@@ -218,12 +218,12 @@ public class Booter implements SorcerConstants {
 	 * {@link java.net.InetAddress#getLocalHost()}
 	 * 
 	 * @param property
-	 *            The property name to use
+	 *            The property key to use
 	 * 
 	 * @return The local host address
 	 * 
 	 * @throws java.net.UnknownHostException
-	 *             if no IP address for the host name could be found.
+	 *             if no IP address for the host key could be found.
 	 */
 	public static String getHostAddressFromProperty(String property)
 			throws java.net.UnknownHostException {
@@ -236,10 +236,10 @@ public class Booter implements SorcerConstants {
 	}
 
 	/**
-	 * Return the local host name
+	 * Return the local host key
 	 * <code>java.net.InetAddress.getLocalHost().getHostName()</code>
 	 * 
-	 * @return The local host name
+	 * @return The local host key
 	 * @throws java.net.UnknownHostException
 	 *             if no hostname for the local host could be found.
 	 */

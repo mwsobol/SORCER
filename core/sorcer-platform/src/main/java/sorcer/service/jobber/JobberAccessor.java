@@ -57,7 +57,7 @@ public class JobberAccessor {
      * Returns a SORCER Jobber service provider using Jini lookup and discovery.
      *
      * @param name
-     *            the name of a Jobber service provider
+     *            the key of a Jobber service provider
      * @return a Jobber proxy
      */
     public static Jobber getJobber(String name) {

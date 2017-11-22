@@ -257,7 +257,7 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 	 * Loads service requestor properties from a <code>filename</code> file. By
 	 * default a service requestor loads its properties from
 	 * <code>requestor.properties</code> file located in the requestor's
-	 * package. Also, a service requestor properties file name can be specified
+	 * package. Also, a service requestor properties file key can be specified
 	 * as a system property when starting the requestor with
 	 * <code>-DrequestorProperties=&ltfilename&gt<code>. In this case the requestor loads 
 	 * properties from <code>filename</code> file. Properties are accessible
@@ -265,7 +265,7 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 	 * getProperty(String)</code> method.
 	 * 
 	 * @param filename
-	 *            the properties file name see #getProperty
+	 *            the properties file key see #getProperty
 	 */
 	public void loadProperties(String filename) {
 		try {

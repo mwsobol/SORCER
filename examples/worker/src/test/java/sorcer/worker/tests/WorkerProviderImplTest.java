@@ -55,11 +55,11 @@ public class WorkerProviderImplTest {
 		};
 
 		context = context("work", 
-				operator.ent("req/name", hostname),
+				operator.ent("req/key", hostname),
 				operator.ent("req/arg/1", 11),
 				operator.ent("req/arg/2", 101),
 				operator.ent("req/work", work),
-				operator.ent("to/prv/name", "Worker Provider"));
+				operator.ent("to/prv/key", "Worker Provider"));
 	}
 
 

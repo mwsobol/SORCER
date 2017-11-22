@@ -36,25 +36,25 @@ public class SOS {
     protected static int port = 0;
 
     /**
-     * Default name 'sorcer.env' for a file defining global environment
+     * Default key 'sorcer.env' for a file defining global environment
      * properties.
      */
     public static String SORCER_ENV_FILENAME = "sorcer.env";
 
     /**
-     * Default name 'data.formats' for a file defining service context node
+     * Default key 'data.formats' for a file defining service context node
      * types.
      */
     protected static String CONTEXT_DATA_FORMATS = "data.formats";
 
     /**
-     * Default name 'provider.properties' for a file defining provider
+     * Default key 'provider.properties' for a file defining provider
      * properties.
      */
     public static String PROVIDER_PROPERTIES_FILENAME = "provider.properties";
 
     /**
-     * Default name 'servid.per' for a file storing a service registration ID.
+     * Default key 'servid.per' for a file storing a service registration ID.
      */
     protected static String serviceIdFilename = "servid.per";
 

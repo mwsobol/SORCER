@@ -76,7 +76,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     public ServiceExertion() {
         super("xrt" +  count++);
-        multiFi = new ServiceFidelity(name);
+        multiFi = new ServiceFidelity(key);
         List<Service> sl = new ArrayList<>();
         ((ServiceFidelity)multiFi).setSelects(sl);
     }
@@ -91,7 +91,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     protected void init() {
         super.init();
-        dataContext = new PositionalContext(name);
+        dataContext = new PositionalContext(key);
         controlContext = new ControlContext(this);
     }
 
@@ -593,7 +593,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     updateControlContect((ControlContext)arg);
                 } else if (arg instanceof Signature.Operation) {
                     Signature.Operation op = (Signature.Operation)arg;
-                    if (name.equals(op.path)) {
+                    if (key.equals(op.path)) {
                         ((ServiceSignature)((ServiceFidelity)multiFi.getSelect()).getSelect()).setSelector(op.selector);
                     }
                 }
@@ -657,7 +657,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     // no control context
     public String info() {
         StringBuffer info = new StringBuffer()
-                .append(this.getClass().getName()).append(": " + name);
+                .append(this.getClass().getName()).append(": " + key);
         info.append("\n  process sig=").append(getProcessSignature());
         info.append("\n  status=").append(status);
         info.append(", exertion ID=").append(mogramId);
@@ -1048,7 +1048,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     .append("[SORCER Service Exertion]\n")
                     .append("\tExertion Type:        " + getClass().getName()
                             + "\n")
-                    .append("\tExertion Tag:        " + name + "\n")
+                    .append("\tExertion Tag:        " + key + "\n")
                     .append("\tExertion Status:      " + status + "\n")
                     .append("\tExertion ID:          " + mogramId + "\n")
                     .append("\tCreation Date:        " + sdf.format(creationDate) + "\n")

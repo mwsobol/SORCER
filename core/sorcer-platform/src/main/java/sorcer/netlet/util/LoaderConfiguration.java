@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * <ul>
  * <li>All lines starting with "#" are ignored.</li>
  * <li>The "main is" part may only be once in the file. The String
- * afterwards is the name of a class with a main method. </li>
+ * afterwards is the key of a class with a main method. </li>
  * <li>The "load" command will add the given file or path to the
  * classpath in this configuration object. If the path does not
  * exist, the path will be ignored.
@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * called with false, before reading the configuration.
  * You can use the wildcard "*" to filter the path, but only for files, not
  * directories. To match directories use "**". The ${propertyname} is replaced by the eval of the system's
- * property name. You can use user.home here for example. If the property does
+ * property key. You can use user.home here for example. If the property does
  * not exist, an empty string will be used. If the path or file after the load
  * command does not exist, the path will be ignored.
  *
@@ -119,7 +119,7 @@ public class LoaderConfiguration {
                 String params = line.substring(PROP_PREFIX.length()).trim();
                 int index = params.indexOf('=');
                 if (index == -1) {
-                    throw new IOException("unexpected property format - expecting name=eval" + lineNumber + " : " + line);
+                    throw new IOException("unexpected property format - expecting key=eval" + lineNumber + " : " + line);
                 }
                 String propName = params.substring(0, index);
                 String propValue= LoaderConfigurationHelper.assignProperties(params.substring(index + 1));
@@ -225,7 +225,7 @@ public class LoaderConfiguration {
     /**
      * Adds a file to the classpath if it exists.
      *
-     * @param filename the name of the file to add
+     * @param filename the key of the file to add
      */
     public void addFile(String filename) {
         if (filename != null) addFile(new File(filename));
@@ -269,9 +269,9 @@ public class LoaderConfiguration {
     }
 
     /**
-     * Returns the name of the main class for this configuration.
+     * Returns the key of the main class for this configuration.
      *
-     * @return the name of the main class or null if not defined
+     * @return the key of the main class or null if not defined
      */
     public String getMainClass() {
         return main;
@@ -283,7 +283,7 @@ public class LoaderConfiguration {
      * after calling this method does not require a main class
      * definition inside the stream.
      *
-     * @param classname the name to become the main class
+     * @param classname the key to become the main class
      */
     public void setMainClass(String classname) {
         main = classname;

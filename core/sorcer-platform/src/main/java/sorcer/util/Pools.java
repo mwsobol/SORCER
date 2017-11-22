@@ -28,7 +28,7 @@ import java.util.*;
  */
 public class Pools {
 
-	/** Configuration component name for service mogram. */
+	/** Configuration component key for service mogram. */
 	public static final String COMPONENT = Pools.class.getName();
 
 	public static final String FI_POOL = "fiPool";

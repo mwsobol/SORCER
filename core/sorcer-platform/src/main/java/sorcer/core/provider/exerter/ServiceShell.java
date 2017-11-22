@@ -421,7 +421,7 @@ public class ServiceShell implements Exerter, Client, Callable, RemoteServiceShe
 			}
 			provider = ((NetSignature) signature).getProvider();
 			if (provider == null) {
-                // check proxy cache and ping with a provider name
+                // check proxy cache and ping with a provider key
 				try {
 					provider = proxies.get(signature);
 					// check if cached proxy is still alive
@@ -432,7 +432,7 @@ public class ServiceShell implements Exerter, Client, Callable, RemoteServiceShe
 				}
 				if (provider == null) {
 					String message =
-							String.format("Provider name: [%s], fiType: %s not found, make sure it is running and there is " +
+							String.format("Provider key: [%s], fiType: %s not found, make sure it is running and there is " +
 											"an available lookup service with correct discovery settings",
 									signature.getProviderName(), signature.getServiceType().getName());
 					logger.error(message);

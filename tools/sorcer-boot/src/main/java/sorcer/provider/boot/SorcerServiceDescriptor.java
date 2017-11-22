@@ -138,7 +138,7 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
      * @param policy           server policy filename or URL
      * @param classpath        location where server implementation classes can be found.
      *                         Classpath components must be separated by path separators.
-     * @param implClassName    name of server implementation class
+     * @param implClassName    key of server implementation class
      * @param address          code server address used for the codebase
      * @param lifeCycle        <code>LifeCycle</code> reference for hosting environment
      * @param serverConfigArgs service configuration arguments
@@ -189,7 +189,7 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
      * @param policy           server policy filename or URL
      * @param classpath        location where server implementation classes can be found.
      *                         Classpath components must be separated by path separators.
-     * @param implClassName    name of server implementation class
+     * @param implClassName    key of server implementation class
      * @param serverConfigArgs service configuration arguments
      */
     public SorcerServiceDescriptor(String codebase, String policy,

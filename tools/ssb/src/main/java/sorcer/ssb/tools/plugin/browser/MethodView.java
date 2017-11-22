@@ -70,7 +70,7 @@ class MethodView extends JPanel implements ActionListener {
 
 		data[0][0] = "Return type";
 		data[0][1] = retType.getName();
-		data[1][0] = "Method name";
+		data[1][0] = "Method key";
 		data[1][1] = name;
 
 		boolean executable = true;

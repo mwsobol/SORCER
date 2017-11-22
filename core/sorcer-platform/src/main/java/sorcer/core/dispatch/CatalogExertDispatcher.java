@@ -165,7 +165,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
             }*/
             if (service == null) {
                 String msg;
-                // get the PROCESS Method and grab provider name + interface
+                // get the PROCESS Method and grab provider key + interface
                 msg = "No Provider Available\n" + "Provider Tag:      "
                         + sig.getProviderName() + "\n"
                         + "Provider Interface: " + sig.getServiceType();

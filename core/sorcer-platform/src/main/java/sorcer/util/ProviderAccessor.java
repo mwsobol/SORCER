@@ -129,12 +129,12 @@ public class ProviderAccessor extends ServiceAccessor {
 	}
 
 	/**
-	 * Returns a SORCER service provider with the specified name and service
+	 * Returns a SORCER service provider with the specified key and service
 	 * type, using a Cataloger if available, otherwise using Jini lookup
 	 * services.
 	 *
 	 * @param providerName
-	 *            the name of service provider
+	 *            the key of service provider
 	 * @param serviceType
 	 *            a provider service type (interface)
 	 * @return a SORCER provider service
@@ -278,7 +278,7 @@ public class ProviderAccessor extends ServiceAccessor {
 	 * Cataloger service.
 	 *
 	 * @param providerName
-	 *            - a name of requested service
+	 *            - a key of requested service
 	 * @param primaryInterface
 	 *            - service type of requested provider
 	 * @return a requested service or null if a Cataloger is not available

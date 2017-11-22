@@ -72,7 +72,7 @@ public class ProviderLocator {
 	 * Locates a service via Unicast discovery
 	 * 
 	 * @param lusHost
-	 *            The name of the host where a Jini lookup service is running
+	 *            The key of the host where a Jini lookup service is running
 	 * @param serviceClass
 	 *            The class object representing the interface of the service
 	 * @throws MalformedURLException

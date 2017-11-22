@@ -126,7 +126,7 @@ public class CollectionOperators {
 	public void genericSetOperator() throws Exception {
 
 		// the set operator creates instances of java.util.Set
-		Set<Serializable> s = set("name", "Mike", "name", "Ray", x("height", 174));
+		Set<Serializable> s = set("key", "Mike", "key", "Ray", x("height", 174));
 		assertEquals(s.size(), 4);
 		assertEquals(x("height", 174)._1, "height");
 		assertEquals((int) x("height", 174)._2, 174);
@@ -295,30 +295,30 @@ public class CollectionOperators {
 	@Test
 	public void mapOperator() throws Exception {
 
-		Map<Object, Object> map1 = dictionary(x("name", "Mike"), x("height", 174.0));
+		Map<Object, Object> map1 = dictionary(x("key", "Mike"), x("height", 174.0));
 
 		Map<String, Double> map2 = map(x("length", 248.0), x("screen/width", 27.0), x("screen/height", 12.0));
 
 		// keys and values of args
-		assertEquals(key(x("name", "Mike")), "name");
-		assertEquals(val(x("name", "Mike")), "Mike");
-		// when using namespaces use path for the name of context (map) variables
+		assertEquals(key(x("key", "Mike")), "key");
+		assertEquals(val(x("key", "Mike")), "Mike");
+		// when using namespaces use path for the key of context (map) variables
 		assertEquals(path(x("screen/height", 12.0)), "screen/height");
 
-		assertEquals(keyValue(map1, "name"), "Mike");
+		assertEquals(keyValue(map1, "key"), "Mike");
 		assertEquals(keyValue(map1, "height"), 174.0);
 
 		assertTrue(key(x("width", 2.0)).equals("width"));
 		assertTrue(val(x("width", 2.0)).equals(2.0));
 
-		assertEquals(keyValue(map1, "name"), "Mike");
+		assertEquals(keyValue(map1, "key"), "Mike");
 		assertEquals(keyValue(map1, "height"), 174.0);
 
 		assertTrue(pathValue(map2, "screen/width").equals(27.0));
 		assertTrue(pathValue(map2, "screen/height").equals(12.0));
 
 		// Java API
-		assertEquals(map1.keySet(), set("name", "height"));
+		assertEquals(map1.keySet(), set("key", "height"));
 		// check map values
 		assertTrue(map1.values().contains("Mike"));
 		assertTrue(map1.values().contains(174.0));

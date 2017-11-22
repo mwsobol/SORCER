@@ -77,7 +77,7 @@ public interface Fi<T> extends Identifiable, Request {
 
     public boolean isValid();
 
-    public Type getType();
+    public Type getFiType();
 
     public boolean isChanged();
 

@@ -327,7 +327,7 @@ public class EmxCmd extends ShellCmd {
                     break;
             }
 
-            StringBuilder info = new StringBuilder().append("name: ").append("@|bold,green ").append(exertionInfos[i].getName()).append("|@");
+            StringBuilder info = new StringBuilder().append("key: ").append("@|bold,green ").append(exertionInfos[i].getName()).append("|@");
             info.append("  ID: ").append("@|bold ").append(exertionInfos[i].getId()).append("|@");
             info.append("  state: ").append("@|").append(color).append(Exec.State.name(exertionInfos[i].getStatus())).append("|@");
             info.append("\ncreated at: ").append("@|yellow ").append((exertionInfos[i].getCreationDate() != null) ? sdf.format(exertionInfos[i].getCreationDate()) : "").append("|@");
@@ -375,7 +375,7 @@ public class EmxCmd extends ShellCmd {
 				+ AttributesUtil.getUserDir(emxMonitors[index].attributeSets));
 		String groups = AttributesUtil
 				.getGroups(emxMonitors[index].attributeSets);
-		out.println(ansi().render("Provider name: @|bold "
+		out.println(ansi().render("Provider key: @|bold "
 				+ AttributesUtil
 						.getProviderName(emxMonitors[index].attributeSets) + "|@"));
 		out.println(ansi().render("Groups supported: @|bold " + groups + "|@"));

@@ -40,7 +40,7 @@ public interface DynamicAccessor {
     /**
      * Returns a service matching serviceName and serviceInfo
      *
-     * @param serviceName name
+     * @param serviceName key
      * @param serviceType type
      *
      * @return The first discovered service or null

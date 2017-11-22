@@ -62,7 +62,7 @@ public class StartPlugin {
 
 	public static Properties getProperties() {
 		Properties props = new Properties();
-		props.setProperty("plugin.name", ServiceBrowser.TITLE);
+		props.setProperty("plugin.key", ServiceBrowser.TITLE);
 		// props.setProperty("admin.compatible","true");
 		try {
 			URL iconUrl = StartPlugin.class.getClassLoader().getResource(

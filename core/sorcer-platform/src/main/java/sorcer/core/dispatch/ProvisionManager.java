@@ -130,7 +130,7 @@ public class ProvisionManager {
                                 String newName = createDeploymentName(deployment.getName(),
                                                                       deployAdmin.getOperationalStringManagers());
                                 if(logger.isDebugEnabled())
-                                    logger.debug("Deployment for {} already exists, created new name [{}], " +
+                                    logger.debug("Deployment for {} already exists, created new key [{}], " +
                                                           "proceed with autonomic deployment",
                                                           deployment.getName(), newName);
                                 ((OpString)deployment).setName(newName);

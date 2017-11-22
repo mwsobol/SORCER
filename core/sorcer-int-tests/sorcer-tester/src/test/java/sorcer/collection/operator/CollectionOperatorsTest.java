@@ -51,18 +51,18 @@ public class CollectionOperatorsTest {
 
 	@Test
 	public void mapOperatorTest() throws Exception {
-		Map<Object, Object> map1 = dictionary(ent("name", "Mike"), ent("height", 174.0));
+		Map<Object, Object> map1 = dictionary(ent("key", "Mike"), ent("height", 174.0));
 				
 		Map<String, Double> map2 = map(ent("length", 248.0), ent("width", 2.0), ent("height", 17.0));
 		
 		// keys and values of args
-		String k = key(val("name", "Mike"));
+		String k = key(val("key", "Mike"));
 		Double v = eval(val("height", 174.0));
-		assertEquals(k, "name");
+		assertEquals(k, "key");
 		assertTrue(v.equals(174.0));
 		
 		// casts are needed for dictionary: Map<Object, Object>
-		k = (String)map1.get("name");
+		k = (String)map1.get("key");
 		v = (Double)map1.get("height");
 		assertEquals(k, "Mike");
 		assertTrue(v.equals(174.0));
@@ -72,7 +72,7 @@ public class CollectionOperatorsTest {
 		assertTrue(v.equals(248.0));
 		
 		// check map keys
-		assertEquals(map1.keySet(), bag("name", "height"));
+		assertEquals(map1.keySet(), bag("key", "height"));
 		// check map values
 		assertTrue(map1.values().contains("Mike"));
 		assertTrue(map1.values().contains(174.0));
@@ -81,7 +81,7 @@ public class CollectionOperatorsTest {
 	@Test
 	public void bagOperatorTest() throws EvaluationException {
 		// the bag operator creates instances of java.util.Set
-		Set<Object> set = bag("name", "Mike", "name", "Ray", ent("height", 174));
+		Set<Object> set = bag("key", "Mike", "key", "Ray", ent("height", 174));
 		assertEquals(set.size(), 4);
 		assertEquals(ent("height", 174), ent("height", 174));
 		assertTrue(set.contains(ent("height", 174)));

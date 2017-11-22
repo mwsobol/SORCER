@@ -102,7 +102,7 @@ public interface SignatureDispatchment extends ActionListener {
 	String[] getSavedContextList();
 
 	/**
-	 * Obtains the context for the specified method name from the network.
+	 * Obtains the context for the specified method key from the network.
 	 * 
 	 * @param methodName
 	 *            String representing the method to obtain the context from
@@ -112,7 +112,7 @@ public interface SignatureDispatchment extends ActionListener {
 
 	/**
 	 * Save a context back to the network, saves the context as the currently
-	 * selected method name.
+	 * selected method key.
 	 * 
 	 * @param theContext
 	 *            Context to be saved.
@@ -121,11 +121,11 @@ public interface SignatureDispatchment extends ActionListener {
 	Boolean saveContext(Context theContext);
 
 	/**
-	 * Save the context to the network, this stores the context under the name
+	 * Save the context to the network, this stores the context under the key
 	 * provided in newName.
 	 * 
 	 * @param newName
-	 *            String representing the name the context should be saved as
+	 *            String representing the key the context should be saved as
 	 * @param theContext
 	 *            Context to be saved.
 	 * @return Boolean indicating if the operation was successful.
@@ -137,7 +137,7 @@ public interface SignatureDispatchment extends ActionListener {
 	 * by the String methodName.
 	 * 
 	 * @param methodName
-	 *            String with the name of the context to delete.
+	 *            String with the key of the context to delete.
 	 * @return Boolean indicating if the operation was successful.
 	 */
 	Boolean deleteContext(String methodName);

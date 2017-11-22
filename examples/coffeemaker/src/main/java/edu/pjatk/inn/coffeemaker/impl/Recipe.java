@@ -84,13 +84,13 @@ public class Recipe implements Serializable {
 		} 
 	}
     /**
-	 * @return   Returns the name.
+	 * @return   Returns the key.
 	 */
     public String getName() {
 		return name;
 	}
     /**
-	 * @param name   The name to setValue.
+	 * @param name   The key to setValue.
 	 */
     public void setName(String name) {
     	if(name != null) {
@@ -124,7 +124,7 @@ public class Recipe implements Serializable {
 	static public Recipe getRecipe(Context context) throws ContextException {
 		Recipe r = new Recipe();
 		try {
-			r.name = (String)context.getValue("name");
+			r.name = (String)context.getValue("key");
 			r.price = (int)context.getValue("price");
 			r.amtCoffee = (int)context.getValue("amtCoffee");
 			r.amtMilk = (int)context.getValue("amtMilk");
@@ -138,7 +138,7 @@ public class Recipe implements Serializable {
 
 	static public Context getContext(Recipe recipe) throws ContextException {
 		Context cxt = new ServiceContext();
-		cxt.putValue("name", recipe.getName());
+		cxt.putValue("key", recipe.getName());
 		cxt.putValue("price", recipe.getPrice());
 		cxt.putValue("amtCoffee", recipe.getAmtCoffee());
 		cxt.putValue("amtMilk", recipe.getAmtMilk());

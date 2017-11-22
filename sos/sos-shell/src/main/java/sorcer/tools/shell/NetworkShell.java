@@ -1617,8 +1617,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	/**
 	 * Hunt for the script file, doesn't bother if it is named precisely.
 	 * 
-	 * Tries in this order: - actual supplied name - name.ex - name.exertlet -
-	 * name.sorcer.netlet - name.net - name.groovy - name.gvy - name.gy - name.gsh
+	 * Tries in this order: - actual supplied key - key.ex - key.exertlet -
+	 * key.sorcer.netlet - key.net - key.groovy - key.gvy - key.gy - key.gsh
 	 * 
 	 * @throws IOException
 	 */
@@ -1731,7 +1731,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		out.println("  EMX enabled: " + serviceInfo.monitorable);
 		out.println("  location: " + serviceInfo.location);
 		out.println("  repository: " + serviceInfo.serviceHome);
-		out.println("  host name: " + serviceInfo.hostName);
+		out.println("  host key: " + serviceInfo.hostName);
 		out.println("  host address: " + serviceInfo.hostAddress);
 		out.println("  provider groups: " + serviceInfo.groups);
 		out.println("  space group: " + serviceInfo.spaceGroup);
@@ -1778,9 +1778,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			ClearCmd.class, ExecCmd.class, InfoCmd.class, SosCmd.class, DataStorageCmd.class,
 			SpaceCmd.class };
 
-	// a map of application name/ filename
+	// a map of application key/ filename
 	static private Map<String, String> appMap = new TreeMap<String, String>();
-	// non interactive shell apps - used with nsh --<app name>
+	// non interactive shell apps - used with nsh --<app key>
 	static private Map<String, String> nishAppMap = new TreeMap<String, String>();
 
 	static { 

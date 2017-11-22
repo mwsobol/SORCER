@@ -63,11 +63,11 @@ public class ProviderLookup extends ServiceAccessor {
 	}
 
 	/**
-	 * Returns a SORCER service provider with the specified name and service
+	 * Returns a SORCER service provider with the specified key and service
 	 * type.
 	 * 
 	 * @param providerName
-	 *            the name of service provider
+	 *            the key of service provider
 	 * @param serviceType
 	 *            a provider service type (interface)
 	 * @return a SORCER service provider
@@ -77,10 +77,10 @@ public class ProviderLookup extends ServiceAccessor {
 	}
 
 	/**
-	 * Returns a service provider with the specified name and service type.
+	 * Returns a service provider with the specified key and service type.
 	 *
 	 * @param providerName
-	 *            The name of the provider to search for
+	 *            The key of the provider to search for
 	 * @param serviceType
 	 *            The interface to look for
 	 *

@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Getter, Serializable, Identifiable, Arg {
+public class Association<K, I> implements Service, net.jini.core.entry.Entry, Duo<I>, Getter, Serializable, Identifiable, Arg {
 	private  static final long serialVersionUID =  1L;
 
 	protected K key;
@@ -43,7 +43,7 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Get
 
     protected Functionality.Type type = Functionality.Type.VAL;
 
-    public int index;
+    public Integer index;
 
     protected Object annotation;
 
@@ -113,7 +113,7 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Get
         }
     }
 
-    public I asis() {
+    public I asis() throws EvaluationException, RemoteException {
         return out;
     }
 
@@ -134,7 +134,18 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Get
 		return impl;
 	}
 
-	@Override
+    /**
+     * Returns the index assigned by the container.
+     */
+    public int getIndex() {
+        return (index == null) ? -1 : index;
+    }
+
+    public void setIndex(int i) {
+        index = i;
+    }
+
+    @Override
 	public Object getId() {
 		return key.toString();
 	}
@@ -201,7 +212,7 @@ public class Association<K, I> implements net.jini.core.entry.Entry, Duo<I>, Get
 
     @Override
     public int hashCode() {
-        return 2 * 31 + key.hashCode() + impl.hashCode();
+        return 2 * 31 + key.hashCode();
     }
 
     public boolean equals(Object object) {

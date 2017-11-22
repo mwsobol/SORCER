@@ -49,19 +49,19 @@ public class CoffeeServiceTest {
 		recipe.setAmtSugar(1);
 		recipe.setAmtChocolate(0);
 
-		espresso = context(ent("name", "espresso"), ent("price", 50),
+		espresso = context(ent("key", "espresso"), ent("price", 50),
 				ent("amtCoffee", 6), ent("amtMilk", 0),
 				ent("amtSugar", 1), ent("amtChocolate", 0));
 
-		mocha  = context(ent("name", "mocha"), ent("price", 100),
+		mocha  = context(ent("key", "mocha"), ent("price", 100),
 				ent("amtCoffee", 8), ent("amtMilk", 1),
 				ent("amtSugar", 1), ent("amtChocolate", 2));
 
-		macchiato  = context(ent("name", "macchiato"), ent("price", 40),
+		macchiato  = context(ent("key", "macchiato"), ent("price", 40),
 				ent("amtCoffee", 7), ent("amtMilk", 1),
 				ent("amtSugar", 2), ent("amtChocolate", 0));
 
-		americano  = context(ent("name", "americano"), ent("price", 40),
+		americano  = context(ent("key", "americano"), ent("price", 40),
 				ent("amtCoffee", 4), ent("amtMilk", 0),
 				ent("amtSugar", 1), ent("amtChocolate", 0));
 
@@ -132,13 +132,13 @@ public class CoffeeServiceTest {
 
 		// order espresso with delivery
 		Domain mod = model(
-				ent("recipe/name", "espresso"),
+				ent("recipe/key", "espresso"),
 				ent("paid$", 120),
 				ent("location", "PJATK"),
 				ent("room", "101"),
 
 				ent(sig("makeCoffee", CoffeeService.class,
-						result("coffee$", inPaths("recipe/name")))),
+						result("coffee$", inPaths("recipe/key")))),
 				ent(sig("deliver", Delivery.class,
 						result("delivery$", inPaths("location", "room")))));
 //				ent("change$", invoker("paid$ - (coffee$ + delivery$)", args("paid$", "coffee$", "delivery$"))));
@@ -160,7 +160,7 @@ public class CoffeeServiceTest {
 	public void getCoffee() throws Exception {
 
 		Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
-				inVal("recipe/name", "espresso"),
+				inVal("recipe/key", "espresso"),
 				inVal("coffee/paid", 120),
 				inVal("recipe", espresso)));
 

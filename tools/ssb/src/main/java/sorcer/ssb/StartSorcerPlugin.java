@@ -62,7 +62,7 @@ public class StartSorcerPlugin {
 
 	public static Properties getProperties() {
 		Properties props = new Properties();
-		props.setProperty("plugin.name", SorcerServiceBrowser.TITLE);
+		props.setProperty("plugin.key", SorcerServiceBrowser.TITLE);
 		// props.setProperty("admin.compatible","true");
 		try {
 			URL iconUrl = StartPlugin.class.getClassLoader().getResource(

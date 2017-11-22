@@ -1850,7 +1850,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 							mb.add(windowMenu);
 							contentPane.add(mb, BorderLayout.NORTH);
 						}
-						//tp.add(name, contentPane);
+						//tp.add(key, contentPane);
 						tp.add("Windows", contentPane);
 						tp.setIconAt(tp.getComponentCount() - 1,
 								TreeRenderer._serviceUIIcon);
@@ -2261,7 +2261,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 
 		DefaultMutableTreeNode lusNode = getLUSNode(lusSid);
 		final Object[] eventData = new Object[] {  lusNode == null ? "null" : lusNode.toString(),
-				new java.util.Date(), "",// name
+				new java.util.Date(), "",// key
 				"",// event type
 				sid };
 		if ((trans & ServiceRegistrar.TRANSITION_NOMATCH_MATCH) > 0) {

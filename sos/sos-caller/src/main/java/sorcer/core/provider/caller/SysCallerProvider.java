@@ -42,7 +42,7 @@ public class SysCallerProvider extends ServiceProvider implements SysCaller {
 
 	@Override
 	public Context exec(Context context) throws ContextException, RemoteException {
-        String name = (String)context.getValue("name");
+        String name = (String)context.getValue("key");
 		if (name == null)
 			name = context.getName();
         SysCall caller = new SysCall(name, context);

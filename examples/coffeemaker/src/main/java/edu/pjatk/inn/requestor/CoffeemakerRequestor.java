@@ -42,7 +42,7 @@ public class CoffeemakerRequestor extends ServiceRequestor {
     }
 
     private Context getEspressoContext() throws ContextException {
-        return context(val("name", "espresso"), val("price", 50),
+        return context(val("key", "espresso"), val("price", 50),
             val("amtCoffee", 6), val("amtMilk", 0),
             val("amtSugar", 1), val("amtChocolate", 0));
     }
@@ -54,7 +54,7 @@ public class CoffeemakerRequestor extends ServiceRequestor {
 
     private Exertion createExertion() throws Exception {
         Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
-            val("recipe/name", "espresso"),
+            val("recipe/key", "espresso"),
             val("coffee/paid", 120),
             val("coffee/change"),
             val("recipe", getEspressoContext())));
@@ -75,13 +75,13 @@ public class CoffeemakerRequestor extends ServiceRequestor {
 
         // order espresso with delivery
         Domain mdl = srvModel(
-            val("recipe/name", "espresso"),
+            val("recipe/key", "espresso"),
             val("paid$", 120),
             val("location", "PJATK"),
             val("room", "101"),
 
                 srv(sig("makeCoffee", CoffeeService.class,
-                        result("coffee$", inPaths("recipe/name")))),
+                        result("coffee$", inPaths("recipe/key")))),
                 srv(sig("deliver", Delivery.class,
                         result("delivery$", inPaths("location", "room")))));
 //				proc("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));

@@ -34,7 +34,7 @@ public class FidelityEntry extends Entry<ServiceFidelity> {
 	protected Map<String, ServiceFidelity> fidelities;
 
 	// the current fidelity alias, as it is named in 'fidelities'
-	// its original name might be different if aliasing is used
+	// its original key might be different if aliasing is used
 	// for already existing names
 	protected String fidelitySelector;
 

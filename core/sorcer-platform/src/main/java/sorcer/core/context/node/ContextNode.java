@@ -182,7 +182,7 @@ public class ContextNode implements Serializable {
 	}
 
 	public String toString() {
-		// return name + " (" + data + ")";
+		// return key + " (" + data + ")";
 		return toFullString();
 	}
 

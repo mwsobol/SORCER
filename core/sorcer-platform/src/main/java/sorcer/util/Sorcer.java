@@ -71,9 +71,9 @@ import java.util.Hashtable;
  * to MIME types and are loaded like the environment properties
  * <code>sorcer.env</code> described above. They associate applications to a
  * format of data contained in context data nodes. Data types can be either
- * loaded from a file (default name <code>data.formats</code>) or database. A
+ * loaded from a file (default key <code>data.formats</code>) or database. A
  * JVM system property <code>sorcer.formats.file</code> can be used to indicate
- * the location and name of a data type file. Data types are defined in service
+ * the location and key of a data type file. Data types are defined in service
  * contexts by a particular composite attribute
  * <code>dnt|application|modifiers</code>, see examples in
  * <code>iGrid/data.formats</code>. Data type associations (for example
@@ -97,7 +97,7 @@ public class Sorcer extends SorcerEnv implements SorcerConstants {
 	 * {@code Context.getMarkedPaths}.
 	 * 
 	 * @param filename
-	 *            name of file containing service context node type definitions.
+	 *            key of file containing service context node type definitions.
 	 */
 	private static void loadDataNodeTypes(String filename) {
 		try {

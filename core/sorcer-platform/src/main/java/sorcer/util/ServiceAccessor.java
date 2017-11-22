@@ -98,7 +98,7 @@ public class ServiceAccessor implements DynamicAccessor {
 	 * Returns a service impl containing a service matching providerName and
 	 * serviceInfo using Jini lookup service.
 	 *
-	 * @param providerName name
+	 * @param providerName key
 	 * @param serviceType fiType
 	 * @return A ServiceItem
 	 */
@@ -250,7 +250,7 @@ public class ServiceAccessor implements DynamicAccessor {
 				logger.error("Failed trying to get {} {}", name, serviceType.getName(), e);
 			}
 		}
-		logger.info("got LUS service [fiType={} name={}]: {}", serviceType.getName(), name, proxy);
+		logger.info("got LUS service [fiType={} key={}]: {}", serviceType.getName(), name, proxy);
 		return proxy;
 	}
 
@@ -354,7 +354,7 @@ public class ServiceAccessor implements DynamicAccessor {
     }
 
 	static String formatServiceTemplate(ServiceTemplate template) {
-		return String.format("name: %s, fiType: %s",  getNames(template.attributeSetTemplates), getTypes(template.serviceTypes));
+		return String.format("key: %s, fiType: %s",  getNames(template.attributeSetTemplates), getTypes(template.serviceTypes));
     }
 
     static String getNames(Entry[] entries) {
@@ -403,13 +403,13 @@ public class ServiceAccessor implements DynamicAccessor {
                 Name name = (Name) attr;
                 if (ANY.equals(name.name)) {
                     name.name = null;
-                    logger.warn("Requested service with name '*'", new IllegalArgumentException());
+                    logger.warn("Requested service with key '*'", new IllegalArgumentException());
                 }
             } else if (attr instanceof SorcerServiceInfo) {
                 SorcerServiceInfo info = (SorcerServiceInfo) attr;
                 if (ANY.equals(info.providerName)) {
                     info.providerName = null;
-                    logger.warn("Requested service with name '*'", new IllegalArgumentException());
+                    logger.warn("Requested service with key '*'", new IllegalArgumentException());
                 }
             }
         }

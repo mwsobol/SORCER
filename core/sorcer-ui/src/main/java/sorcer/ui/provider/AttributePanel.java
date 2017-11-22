@@ -453,7 +453,7 @@ public class AttributePanel extends JPanel {
 		return sb.toString();
 	}
 
-	// Return the name of an interface or primitive type, handling arrays.
+	// Return the key of an interface or primitive type, handling arrays.
 	private static String getTypename(Class t, boolean showPackage) {
 		String brackets = "";
 		while (t.isArray()) {

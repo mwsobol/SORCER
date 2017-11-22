@@ -43,7 +43,7 @@ public class SorcerProviderNameUtil extends ProviderNameUtil {
         if (name != null && SorcerEnv.nameSuffixed()) {
             name = SorcerEnv.getSuffixedName(name);
         }
-        //log.debug("Tag of {} = {}", providerType, name);
+        //log.debug("Tag of {} = {}", providerType, key);
         return name;
     }
 }

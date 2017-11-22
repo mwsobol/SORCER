@@ -746,14 +746,14 @@ public class operator extends Operator {
 			}
 			entry.setType(Functionality.Type.SRV);
 		} else if (value instanceof Fidelity) {
-			if (((Fi)value).getType() == Fi.Type.VAL) {
+			if (((Fi)value).getFiType() == Fi.Type.VAL) {
 				entry = new Value(path, value);
-			} else if (((Fi)value).getType() == Fi.Type.PROC) {
+			} else if (((Fi)value).getFiType() == Fi.Type.PROC) {
 				entry = new Proc(path, value);
-			} else if (((Fi)value).getType() == Fi.Type.ENTRY) {
+			} else if (((Fi)value).getFiType() == Fi.Type.ENTRY) {
                 ((Fidelity)value).setName(path);
 				entry = new Entry(path, value);
-			} else if (((Fi)value).getType() == Fi.Type.SRV) {
+			} else if (((Fi)value).getFiType() == Fi.Type.SRV) {
 				entry = new Srv(path, value);
 			}
 		} else if (value instanceof MultiFiMogram) {
@@ -811,12 +811,12 @@ public class operator extends Operator {
 //			throw new ConfigurationException("Misconfigured fidelity: " + srvFi + " for: " + selectFi);
 		}
 		Tuple2<Fidelity, Fidelity> assoc =  new Tuple2<>(selectFi, srvFi);
-		if (srvFi.getType().equals(Fi.Type.GRADIENT)) {
-			// if no path set use its name - no multifidelities
+		if (srvFi.getFiType().equals(Fi.Type.GRADIENT)) {
+			// if no path set use its key - no multifidelities
 			if (selectFi.getPath().equals("")) {
 				selectFi.setPath(selectFi.getName());
 			}
-			// use a select gradient name if declared
+			// use a select gradient key if declared
 			if (selectFi.getSelect() == null) {
 				if (srvFi.getSelect() != null) {
 					selectFi.setSelect(srvFi.getSelect());
@@ -829,7 +829,7 @@ public class operator extends Operator {
 		srvFi.setName(selectFi.getName());
 		srvFi.setPath(selectFi.getPath());
 //		srvFi.setSelect((T) selectFi.getSelect());
-		selectFi.setType(srvFi.getType());
+		selectFi.setType(srvFi.getFiType());
 		return assoc;
 	}
 

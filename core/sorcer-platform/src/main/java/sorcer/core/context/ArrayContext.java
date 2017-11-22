@@ -59,17 +59,17 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	protected int maxIndex = 0;
 
 	/**
-	 * Initializes a context array with the name 'Array Context'.
+	 * Initializes a context array with the key 'Array Context'.
 	 */
 	public ArrayContext() {
 		super("Array Context");
 	}
 
 	/**
-	 * Initializes a context array with the name specified.
+	 * Initializes a context array with the key specified.
 	 * 
 	 * @param name
-	 *            context name
+	 *            context key
 	 */
 	public ArrayContext(String name) {
 		super(name);

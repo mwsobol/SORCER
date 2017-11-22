@@ -37,7 +37,7 @@ public class ContextSelector implements ContextSelection {
 
 	protected static int count = 0;
 
-	// name of this filter
+	// key of this filter
 	protected String name;
 
 	final protected static Logger logger = LoggerFactory.getLogger(ContextSelector.class
@@ -185,7 +185,7 @@ public class ContextSelector implements ContextSelection {
 	
 	/**
 	 * <p>
-	 * Returns a task name of this selector direct target responseContext. The task responseContext is
+	 * Returns a task key of this selector direct target responseContext. The task responseContext is
 	 * subcontext of the input (indirect) job responseContext.
 	 * </p>
 	 * 
@@ -197,7 +197,7 @@ public class ContextSelector implements ContextSelection {
 
 	/**
 	 * <p>
-	 * Assigns a task name of this filter direct target responseContext.
+	 * Assigns a task key of this filter direct target responseContext.
 	 * </p>
 	 * 
 	 * @param selectedTaskName

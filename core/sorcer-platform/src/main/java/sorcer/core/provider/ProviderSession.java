@@ -82,12 +82,12 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
     }
 
    /**
-     * Returns the object bound with the specified name in this session, or
-     * <code>null</code> if no object is bound under the name.
+     * Returns the object bound with the specified key in this session, or
+     * <code>null</code> if no object is bound under the key.
      *
      * @param name
-     *            a string specifying the name of the object
-     * @return the object with the specified name
+     *            a string specifying the key of the object
+     * @return the object with the specified key
      * @exception ContextException
      *                if this method is called on an invalidated session
      */
@@ -116,15 +116,15 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
 
 
     /**
-     * Binds an object to this session, using the name specified. If an object
-     * of the same name is already bound to the session, the object is replaced.
+     * Binds an object to this session, using the key specified. If an object
+     * of the same key is already bound to the session, the object is replaced.
      * <p>
      * After this method executes, and if the new object implements
      * <code>net.jini.core.event.RemoteEventListener</code>, the provider calls
      * <code>net.jini.core.event.RemoteEventListener.notify</code>. The requestor then
      * notifies any related provider in the service federation.
      * <p>
-     * If an object was already bound to this session of this name that
+     * If an object was already bound to this session of this key that
      * implements <code>net.jini.core.event.RemoteEventListener</code>, its
      * <code>ProviderSessionBindingListener.valueUnbound</code> method is called
      * to indicate the unbound eval of this session.<p>
@@ -132,7 +132,7 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
      * <code>removeAttribute()</code>.
      *
      * @param name
-     *            the name to which the object is bound; cannot be null
+     *            the key to which the object is bound; cannot be null
      * @param value
      *            the object to be bound
      * @exception ContextException
@@ -148,8 +148,8 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
 
 
     /**
-     * Removes the object bound with the specified name from this session. If
-     * the session does not have an object bound with the specified name, this
+     * Removes the object bound with the specified key from this session. If
+     * the session does not have an object bound with the specified key, this
      * method does nothing.
      * <p>
      * After this method executes, and if the object implements
@@ -159,7 +159,7 @@ public class ProviderSession extends ServiceContext implements ServiceSession {
      * eval of this session.
      *
      * @param name
-     *            the name of the object to remove from this session
+     *            the key of the object to remove from this session
      * @exception ContextException
      *                if this method is called on an invalidated session
      */

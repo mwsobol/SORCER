@@ -161,7 +161,7 @@ public class LusTree {
 									sNode);
 							_root.add(service);
 
-							// now add the other bits, name filter already
+							// now add the other bits, key filter already
 							// applied so make empty
 							addServiceItems(items[i], service, new String[] {},
 									new String[] {});

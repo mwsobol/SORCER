@@ -128,7 +128,7 @@ public class GlyphView extends JComponent{
 			FontMetrics fm=g.getFontMetrics();
 			
 			ArrayList str=new ArrayList(); 
-			//add the service name
+			//add the service key
 			String label=_selected.getText();
 			str.add(label);
 			int maxWidth=fm.stringWidth(label+"  ");
@@ -214,7 +214,7 @@ public class GlyphView extends JComponent{
 			for(int i=0;i<nstr;i++){
 				
 				if(i==0){
-					//draw line under name
+					//draw line under key
 					g.setFont(new Font(font.getFamily(),Font.BOLD,font.getSize()));
 					label=(String)str.get(i);
 					g.drawString(label,x,y);

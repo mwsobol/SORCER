@@ -273,7 +273,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	/**
 	 * Used to get the selected provider from the model
 	 * 
-	 * @return - a string with the selected providers name
+	 * @return - a string with the selected providers key
 	 */
 	public String getSelectedProvider() {
 		return selectedProvider;
@@ -300,9 +300,9 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Used to get the selected interface name from the model
+	 * Used to get the selected interface key from the model
 	 * 
-	 * @return - A string with the selected interface name
+	 * @return - A string with the selected interface key
 	 */
 	public String getSelectedInterfaceName() {
 		return selectedInterfaceName;
@@ -334,7 +334,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	/**
 	 * Used to get the selected method from the model
 	 * 
-	 * @return - A string with the name of the currently selected provider
+	 * @return - A string with the key of the currently selected provider
 	 */
 	public String getSelectedMethod() {
 		return selectedMethod;

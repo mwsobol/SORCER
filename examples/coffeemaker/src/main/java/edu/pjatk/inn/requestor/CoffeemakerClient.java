@@ -38,8 +38,8 @@ public class CoffeemakerClient {
         if(userInput == 0) System.exit(0);
     }
 	public static void addRecipe() {
-	    //Read in recipe name
-	    String name = inputOutput("\nPlease act the recipe name: ");
+	    //Read in recipe key
+	    String name = inputOutput("\nPlease act the recipe key: ");
 	    
 	    //Read in recipe price
 	    String priceString = inputOutput("\nPlease act the recipe price: $");
@@ -149,8 +149,8 @@ public class CoffeemakerClient {
 	        
 	        Recipe oldRecipe = recipes[recipeToEdit];
 	        
-		    //Read in recipe name
-		    String name = inputOutput("\nPlease act the recipe name: ");
+		    //Read in recipe key
+		    String name = inputOutput("\nPlease act the recipe key: ");
 		    
 		    //Read in recipe price
 		    String priceString = inputOutput("\nPlease act the recipe price: $");

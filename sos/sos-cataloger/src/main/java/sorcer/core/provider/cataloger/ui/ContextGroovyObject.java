@@ -118,7 +118,7 @@ public class ContextGroovyObject implements Serializable
 	 *
 	 * 
 	 * @param attributes HashMap<String,Object> of items to register with the Groovy interpreter. The key is the
-	 * 						name of the variable in Groovy and the Object is its eval.
+	 * 						key of the variable in Groovy and the Object is its eval.
 	 * @return Object evaluated from expression, null if expression is empty.
 	 * @throws Exception if there is a problem
 	 */

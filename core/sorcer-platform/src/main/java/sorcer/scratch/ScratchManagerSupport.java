@@ -83,7 +83,7 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
             if(scratchDirName==null) {
                 //scratchDirName = String.format("%s-%s", DEFAULT_SCRATCH_DIR, getNext(dataDir));
                 scratchDirName = DEFAULT_SCRATCH_DIR;
-                logger.warn("scratch directory name cannot be derived from any of the " +
+                logger.warn("scratch directory key cannot be derived from any of the " +
                                 "following properties: {}, {}, {}, will default to {}",
                         SCRATCH_DIR, P_SCRATCH_DIR, R_SCRATCH_DIR, scratchDirName);
             }
@@ -107,7 +107,7 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
             logger.warn("*** Warning: context already contains scratch dir or scratch url key; " +
                             "beware of using this method twice on the same context argument " +
                             "(using getScratchDir() and add scratch dir key and eval " +
-                            "yourself may be better).\n\tcontext name = {}\n\tcontext ={}",
+                            "yourself may be better).\n\tcontext key = {}\n\tcontext ={}",
                     context.getName(), context);
         }
         try {
@@ -124,7 +124,7 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
             String message = "*** Error: problem getting scratch "+
                     "directory and adding path/url to context"+
                     "dataDir: "+System.getProperty(DataService.DATA_DIR)+
-                    "\ncontext name = " + context.getName() + "\ncontext = "+
+                    "\ncontext key = " + context.getName() + "\ncontext = "+
                     context + "\nscratchDirNamePrefix = "+ scratchDirPrefix;
             logger.warn(message, e);
             context.reportException(message, e);

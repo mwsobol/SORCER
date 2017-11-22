@@ -45,7 +45,7 @@ public class Contexts implements SorcerConstants {
 	// job broker
 	final static String JOBBER_IS_DIRECT = "jobber" + CPS + "is direct";
 
-	// control context name
+	// control context key
 	final static String CONTROL_CONTEXT = "Control Context";
 
 	// control context attributes
@@ -59,7 +59,7 @@ public class Contexts implements SorcerConstants {
 	final static String NODE_REFERENCE_PRESERVED = "job" + CPS + "node" + CPS
 			+ "reference" + CPS + "preserved";
 
-	final static String JOBBER_NAME = "jobber" + CPS + "name";
+	final static String JOBBER_NAME = "jobber" + CPS + "key";
 
 	final static String NOTIFY_EXEC = "notify" + CPS + "execution" + CPS
 			+ "to:";

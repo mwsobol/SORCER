@@ -167,7 +167,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		LifeCycle, Partner, Partnership, SorcerConstants, AdministratableProvider, ScratchManager {
 	// RemoteMethodControl is needed to enable Proxy Constraints
 
-	/** Logger and configuration component name for service provider. */
+	/** Logger and configuration component key for service provider. */
 	public static final String COMPONENT = ServiceProvider.class.getName();
 
 	/** Logger for logging information about this instance */
@@ -272,7 +272,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         // decide if thread management is needed for ExertionDispatcher
         setupThreadManager();
         init(args, lifeCycle);
-        logger.info("<init> (String[], LifeCycle); name = {}", this.getName());
+        logger.info("<init> (String[], LifeCycle); key = {}", this.getName());
     }
 
     // this is only used to instantiate provider impl objects and use their
@@ -1004,7 +1004,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			URL helpUrl = new URL(Sorcer.getWebsterUrl()
 					+ "/exertlet/exertlet-ui.html");
 
-			// URL exportUrl, String className, String name, String helpFilename
+			// URL exportUrl, String className, String key, String helpFilename
 			uiDesc2 = UIDescriptorFactory.getUIDescriptor(MainUI.ROLE,
 					(JFrameFactory) new UIFrameFactory(new URL[] { uiUrl },
 							"sorcer.ui.exertlet.NetletUI", "Netlet Editor",
@@ -1619,7 +1619,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
 	@Override
 	public String getName() {
-		String name = "<no delgate; no name available>";
+		String name = "<no delgate; no key available>";
 		if (delegate != null) name = delegate.getProviderName();
 		return name;
 	}
@@ -1870,7 +1870,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public void destroyNode() throws RemoteException {
 		logger.info("providers.size() = " + providers.size());
 		for (ServiceProvider provider : providers) {
-			logger.info("calling destroy on provider name = " + provider.getName());
+			logger.info("calling destroy on provider key = " + provider.getName());
 			provider.destroy();
 		}
 		// exit JVM after destroying all providers
@@ -2064,7 +2064,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		// strip last '/' if included
 		int l0 = resourceDirRef.length();
 		if (resourceDirRef.substring(l0,l0).equals("/"))resourceDirRef = resourceDirRef.substring(0,l0 - 1);
-		// get resource directory name to copy
+		// get resource directory key to copy
 		String resourceDirectoryName = resourceDirRef;
 		l0 = resourceDirectoryName.lastIndexOf("/");
 		if (l0 != -1) resourceDirectoryName = resourceDirectoryName.substring(l0 + 1);
@@ -2125,11 +2125,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				if (name.startsWith(path)) { //filter according to the path
 					if (name.endsWith("/")) continue;
 					String entry = name;
-//                    String entry = name.substring(path.length());
+//                    String entry = key.substring(path.length());
 //                    doLog("entry = " + entry);
 //                    int checkSubdir = entry.indexOf("/");
 //                    if (checkSubdir >= 0) {
-//                        // if it is a subdirectory, we just return the directory name
+//                        // if it is a subdirectory, we just return the directory key
 //                        entry = entry.substring(0, checkSubdir);
 //                    }
 					result.add(entry);

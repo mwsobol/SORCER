@@ -73,7 +73,7 @@ public interface CoffeeMaking {
     public Recipe[] getRecipes() throws RemoteException;
 
     /**
-     * Returns the Recipe associated with the given name
+     * Returns the Recipe associated with the given key
      * @param name
      * @return Recipe
      */

@@ -22,9 +22,9 @@ package sorcer.core.provider;
  */
 public interface ProviderAdminMBean {
     /**
-     * Get the name of the provider
+     * Get the key of the provider
      *
-     * @return The provider's name, never null
+     * @return The provider's key, never null
      */
     String getProviderName();
 

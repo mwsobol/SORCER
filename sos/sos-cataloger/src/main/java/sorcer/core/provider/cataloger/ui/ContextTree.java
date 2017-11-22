@@ -167,7 +167,7 @@ public class ContextTree extends JPanel {
 	 */
 	public Context generateContext() {
 		ServiceContext context = new ServiceContext(rootNode.getUserObject()
-				.toString()); // put root name here!
+				.toString()); // put root key here!
 		context = (ServiceContext) doRootGenerateContext((Context) context,
 				treeModel.getRoot(), "");
 		return context;
@@ -198,7 +198,7 @@ public class ContextTree extends JPanel {
 		// have kids and
 		// that we are
 		// not at root
-		{ // dont want root because it is technically the name of the context
+		{ // dont want root because it is technically the key of the context
 			// and not a valid path
 
 			// we have no kids so we just output the path.

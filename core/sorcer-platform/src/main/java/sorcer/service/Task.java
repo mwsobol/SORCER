@@ -54,8 +54,7 @@ public class Task extends ServiceExertion {
 	private static final long serialVersionUID = 5179772214884L;
 
 	/** our logger */
-	protected final static Logger logger = LoggerFactory.getLogger(Task.class
-			.getName());
+	protected final static Logger logger = LoggerFactory.getLogger(Task.class);
 
 	public final static String argsPath = "method/args";
 
@@ -140,9 +139,9 @@ public class Task extends ServiceExertion {
 					ts = createSignature(ts);
 				}
 				if (ts instanceof NetSignature) {
-					delegate = new NetTask(name, ts);
+					delegate = new NetTask(key, ts);
 				} else {
-					delegate = new ObjectTask(name, ts);
+					delegate = new ObjectTask(key, ts);
 				}
 				((ServiceFidelity)multiFi.getSelect()).addSelect(ts);
 				((ServiceFidelity)multiFi.getSelect()).setSelect(ts);
@@ -223,7 +222,7 @@ public class Task extends ServiceExertion {
 
 	// Just to remove if at all the places.
 	public boolean equals(Task task) throws Exception {
-		return name.equals(task.name);
+		return key.equals(task.key);
 	}
 
 	public String toString() {
@@ -232,7 +231,7 @@ public class Task extends ServiceExertion {
 		}
 		StringBuilder sb = new StringBuilder(
 				"\n=== START PRINTING TASK ===\nExertion Description: "
-						+ getClass().getName() + ":" + name);
+						+ getClass().getName() + ":" + key);
 		sb.append("\n\tstatus: ").append(getStatus());
 		sb.append(", task ID=");
 		sb.append(getId());
@@ -284,7 +283,7 @@ public class Task extends ServiceExertion {
 
 	public String describe() {
 		StringBuilder sb = new StringBuilder(this.getClass().getName() + ": "
-				+ name);
+				+ key);
 		sb.append(" task ID: ").append(getId()).append("\n  process sig: ")
 				.append(getProcessSignature());
 		sb.append("\n  status: ").append(getStatus());

@@ -59,7 +59,7 @@ public class DeploymentIdFactory {
 
         String deploymentID = createDeploymentID(ssb.toString());
         if(logger.isDebugEnabled()) {
-            logger.debug("Create deployment name from Signature list: {}\nID: {}",
+            logger.debug("Create deployment key from Signature list: {}\nID: {}",
                          ssb.toString(),
                          deploymentID);
         }
@@ -88,7 +88,7 @@ public class DeploymentIdFactory {
         }
         String deploymentID = createDeploymentID(nameBuilder.toString());
         if(logger.isDebugEnabled()) {
-            logger.debug("Create deployment name from service element: {}\nID: {}",
+            logger.debug("Create deployment key from service element: {}\nID: {}",
                          nameBuilder.toString(),
                          deploymentID);
         }

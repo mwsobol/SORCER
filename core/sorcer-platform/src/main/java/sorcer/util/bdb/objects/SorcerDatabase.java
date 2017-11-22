@@ -112,10 +112,10 @@ public class SorcerDatabase {
         
         uuidObjectDb = env.openDatabase(null, OBJECT_STORE, dbConfig);
 
-        // Open the SecondaryDatabase for the name index of the provider in the runtime store.
+        // Open the SecondaryDatabase for the key index of the provider in the runtime store.
         // Duplicate keys are allowed since more than one provider may be in
         // the same exertion.  A foreign key constraint is defined for the
-        // name indices to ensure that a runtime only refers to
+        // key indices to ensure that a runtime only refers to
         // existing provider keys.  The CASCADE delete action means
         // that shipments will be deleted if their associated part or supplier
         // is deleted.

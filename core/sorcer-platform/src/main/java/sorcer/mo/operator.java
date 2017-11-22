@@ -46,7 +46,6 @@ import java.util.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.po.operator.*;
-import static sorcer.mo.operator.*;
 
 
 /**
@@ -646,7 +645,7 @@ public class operator {
                 if (item instanceof Metafidelity) {
                     metaFis.add((Metafidelity) item);
                 } else {
-                    if (((Fidelity)item).getType() == Fi.Type.RESPONSE){
+                    if (((Fidelity)item).getFiType() == Fi.Type.RESPONSE){
                         responsePaths = (Fidelity<Path>) item;
                     }
                 }

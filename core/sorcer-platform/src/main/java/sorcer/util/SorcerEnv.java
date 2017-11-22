@@ -74,9 +74,9 @@ import static sorcer.core.SorcerConstants.*;
  * to MIME types and are loaded like the environment properties
  * <code>sorcer.env</code> described above. They associate applications to a
  * format of data contained in context data nodes. Data types can be either
- * loaded from a file (default name <code>data.formats</code>) or database. A
+ * loaded from a file (default key <code>data.formats</code>) or database. A
  * JVM system property <code>sorcer.formats.file</code> can be used to indicate
- * the location and name of a data type file. Data types are defined in service
+ * the location and key of a data type file. Data types are defined in service
  * contexts by a particular composite attribute
  * <code>dnt|application|modifiers</code>, see examples in
  * <code>iGrid/data.formats</code>. Data type associations (for example
@@ -166,7 +166,7 @@ public class SorcerEnv extends SOS {
 	/**
 	 * Returns the hostname of a SORCER class server.
 	 * 
-	 * @return a webster host name.
+	 * @return a webster host key.
 	 */
 	public static String getWebsterInterface() {
 		String hn = System.getenv("SORCER_WEBSTER_INTERFACE");
@@ -437,7 +437,7 @@ public class SorcerEnv extends SOS {
 	 * {@code Context.getMarkedPaths}.
 	 * 
 	 * @param filename
-	 *            name of file containing service context node type definitions.
+	 *            key of file containing service context node type definitions.
 	 * @throws ConfigurationException
 	 */
 	protected static void loadDataFormatTypes(String filename)
@@ -695,7 +695,7 @@ public class SorcerEnv extends SOS {
 	/**
 	 * Returns the hostname of a data server.
 	 * 
-	 * @return a data server name.
+	 * @return a data server key.
 	 */
 	public static String getDataServerInterface() {
 		String hn = System.getenv("DATA_SERVER_INTERFACE");
@@ -763,7 +763,7 @@ public class SorcerEnv extends SOS {
 	/**
 	 * Returns the hostname of a provider data server.
 	 * 
-	 * @return a data server name.
+	 * @return a data server key.
 	 */
 	public String getProviderDataServerInterface() {
 		return System.getProperty(P_DATA_SERVER_INTERFACE);
@@ -826,28 +826,28 @@ public class SorcerEnv extends SOS {
     }
 
     /**
-     * Gets a system Cataloger name for this environment.
+     * Gets a system Cataloger key for this environment.
      *
-     * @return a name of the system Cataloger
+     * @return a key of the system Cataloger
      */
     public static String getCatalogerName() {
         return props.getProperty(P_CATALOGER_NAME, "Cataloger");
 	}
 
 	/**
-	 * Returns an the actual Cataloger name, eventually suffixed, to use with
+	 * Returns an the actual Cataloger key, eventually suffixed, to use with
 	 * this environment.
 	 * 
-	 * @return a Cataloger actual name
+	 * @return a Cataloger actual key
 	 */
 	public static String getActualCatalogerName() {
 		return getActualName(getCatalogerName());
 	}
 
 	/**
-	 * Gets an exertion space group name to use with this environment.
+	 * Gets an exertion space group key to use with this environment.
 	 * 
-	 * @return a of space group name
+	 * @return a of space group key
 	 * @see #getSpaceName
 	 */
 	public static String getSpaceGroup() {
@@ -855,9 +855,9 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * Returns an exertion space name to use with this environment.
+	 * Returns an exertion space key to use with this environment.
 	 * 
-	 * @return a not suffixed space name
+	 * @return a not suffixed space key
 	 * @see #getSpaceName
 	 */
 
@@ -866,10 +866,10 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * Returns an the actual space name, eventually suffixed, to use with this
+	 * Returns an the actual space key, eventually suffixed, to use with this
 	 * environment.
 	 * 
-	 * @return a space actual name
+	 * @return a space actual key
 	 * @see #getSpaceName
 	 */
 	public static String getActualSpaceName() {
@@ -891,7 +891,7 @@ public class SorcerEnv extends SOS {
 	/**
 	 * Checks which host to use for RMI.
 	 * 
-	 * @return a name of ExertMonitor provider
+	 * @return a key of ExertMonitor provider
 	 */
 	public static String getExertMonitorName() {
 		return props.getProperty(EXERT_MONITOR_NAME, "Exert Monitor");
@@ -945,7 +945,7 @@ public class SorcerEnv extends SOS {
 
 	/**
 	 * Specifies a host to be used for the SORCER SORCER application server. A
-	 * default host name is localhost.
+	 * default host key is localhost.
 	 * 
 	 * @return a hostname
 	 */
@@ -983,9 +983,9 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * Return true if a modified name is used.
+	 * Return true if a modified key is used.
 	 * 
-	 * @return true if name is suffixed
+	 * @return true if key is suffixed
 	 */
 	public static boolean nameSuffixed() {
 		return props.getProperty(S_IS_NAME_SUFFIXED, "false").equals("true");
@@ -1082,9 +1082,9 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * Returns the name of the JNDI context factory.
+	 * Returns the key of the JNDI context factory.
 	 * 
-	 * @return a fully qualified name of class of context factory
+	 * @return a fully qualified key of class of context factory
 	 */
 	public static String getContextFactory() {
 		return "com.sun.jndi.rmi.registry.RegistryContextFactory";
@@ -1372,10 +1372,10 @@ public class SorcerEnv extends SOS {
 	 * {@link java.net.InetAddress#getByName(String)}
 	 * 
 	 * @param name
-	 *            The name of the host to return
+	 *            The key of the host to return
 	 * @return The local host address
 	 * @throws java.net.UnknownHostException
-	 *             if no IP address for the host name could be found.
+	 *             if no IP address for the host key could be found.
 	 */
 	public static String getHostAddress(String name)
 			throws java.net.UnknownHostException {
@@ -1383,10 +1383,10 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * Return the local host name
+	 * Return the local host key
 	 * <code>java.net.InetAddress.getLocalHost().getHostName()</code>
 	 * 
-	 * @return The local host name
+	 * @return The local host key
 	 * @throws java.net.UnknownHostException
 	 *             if no hostname for the local host could be found.
 	 */
@@ -1409,7 +1409,7 @@ public class SorcerEnv extends SOS {
 	}
 
 	/**
-	 * Expands properties embedded in a string with ${some.property.name}. Also
+	 * Expands properties embedded in a string with ${some.property.key}. Also
 	 * treats ${/} as ${file.separator}.
 	 */
 	synchronized public static String expandStringProperties(String value,

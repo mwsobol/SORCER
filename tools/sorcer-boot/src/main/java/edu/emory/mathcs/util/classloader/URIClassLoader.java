@@ -120,9 +120,9 @@ public class URIClassLoader extends URLClassLoader {
 //    }
 
     /**
-     * Finds and loads the class with the specified name.
+     * Finds and loads the class with the specified key.
      *
-     * @param name the name of the class
+     * @param name the key of the class
      * @return the resulting class
      * @exception ClassNotFoundException if the class could not be found
      */
@@ -190,7 +190,7 @@ public class URIClassLoader extends URLClassLoader {
     }
 
     /**
-     * returns true if the specified package name is sealed according to the
+     * returns true if the specified package key is sealed according to the
      * given manifest.
      */
     private boolean isSealed(String name, Manifest man) {
@@ -209,9 +209,9 @@ public class URIClassLoader extends URLClassLoader {
     }
 
     /**
-     * Finds the resource with the specified name.
+     * Finds the resource with the specified key.
      *
-     * @param name the name of the resource
+     * @param name the key of the resource
      * @return a <code>URL</code> for the resource, or <code>null</code>
      *         if the resource could not be found.
      */
@@ -226,9 +226,9 @@ public class URIClassLoader extends URLClassLoader {
 
     /**
      * Returns an Enumeration of URLs representing all of the resources
-     * having the specified name.
+     * having the specified key.
      *
-     * @param name the resource name
+     * @param name the resource key
      * @exception java.io.IOException if an I/O exception occurs
      * @return an <code>Enumeration</code> of <code>URL</code>s
      */
@@ -242,7 +242,7 @@ public class URIClassLoader extends URLClassLoader {
     }
 
     /**
-     * Returns the absolute path name of a native library. The VM
+     * Returns the absolute path key of a native library. The VM
      * invokes this method to locate the native libraries that belong
      * to classes loaded with this class loader. If this method returns
      * <code>null</code>, the VM searches the library along the path
@@ -255,7 +255,7 @@ public class URIClassLoader extends URLClassLoader {
      * Subclasses can override this method to provide specific approaches
      * in library searching.
      *
-     * @param      libname   the library name
+     * @param      libname   the library key
      * @return     the absolute path of the native library
      * @see        System#loadLibrary(String)
      * @see        System#mapLibraryName(String)
@@ -280,10 +280,10 @@ public class URIClassLoader extends URLClassLoader {
 //    }
 
     /**
-     * Finds the ResourceHandle object for the class with the specified name.
+     * Finds the ResourceHandle object for the class with the specified key.
      * Unlike <code>findClass()</code>, this method does not load the class.
      *
-     * @param name the name of the class
+     * @param name the key of the class
      * @return the ResourceHandle of the class
      */
     protected ResourceHandle getClassHandle(final String name) {
@@ -292,9 +292,9 @@ public class URIClassLoader extends URLClassLoader {
     }
 
     /**
-     * Finds the ResourceHandle object for the resource with the specified name.
+     * Finds the ResourceHandle object for the resource with the specified key.
      *
-     * @param name the name of the resource
+     * @param name the key of the resource
      * @return the ResourceHandle of the resource
      */
     protected ResourceHandle getResourceHandle(final String name)
@@ -309,8 +309,8 @@ public class URIClassLoader extends URLClassLoader {
 
     /**
      * Finds the ResourceHandle object for the native library with the specified
-     * name.
-     * The library name must be '/'-separated path. The last part of this
+     * key.
+     * The library key must be '/'-separated path. The last part of this
      * path is substituted by its system-dependent mapping (using
      * {@link System#mapLibraryName(String)} method). Next, the
      * <code>ResourceFinder</code> is used to look for the library as it
@@ -319,7 +319,7 @@ public class URIClassLoader extends URLClassLoader {
      * Subclasses can override this method to provide specific approaches
      * in library searching.
      *
-     * @param name the name of the library
+     * @param name the key of the library
      * @return the ResourceHandle of the library
      */
     protected ResourceHandle getLibraryHandle(final String name) {
@@ -329,7 +329,7 @@ public class URIClassLoader extends URLClassLoader {
         if (idx == -1) {
             path = "";
             simplename = name;
-        } else if (idx == name.length()-1) { // name.endsWith('/')
+        } else if (idx == name.length()-1) { // key.endsWith('/')
             throw new IllegalArgumentException(name);
         } else {
             path = name.substring(0, idx+1); // including '/'
@@ -340,9 +340,9 @@ public class URIClassLoader extends URLClassLoader {
 
     /**
      * Returns an Enumeration of ResourceHandle objects representing all of the
-     * resources having the specified name.
+     * resources having the specified key.
      *
-     * @param name the name of the resource
+     * @param name the key of the resource
      * @return the ResourceHandle of the resource
      */
     protected Enumeration getResourceHandles(final String name)

@@ -57,7 +57,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	private URL dbURL;
 
 	// A context returning eval at the path
-	// that is this proc name
+	// that is this proc key
 	// Sorcer Mappable: Context, Exertion, or Entry args
 	protected Mappable mappable;
 
@@ -92,7 +92,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 					}
 				}
 			}
-		} else if ((entity instanceof Fidelity) && ((Fidelity)entity).getType().equals(Fi.Type.PROC)) {
+		} else if ((entity instanceof Fidelity) && ((Fidelity)entity).getFiType().equals(Fi.Type.PROC)) {
 			multiFi = (Fi) entity;
 			impl = multiFi.getSelects().get(0);
 			return;
@@ -390,7 +390,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
             ps = "" + out;
         }
 
-        return "proc [name: " + name + ", eval: " + ps + ", path: " + key + "]";
+        return "proc [key: " + name + ", eval: " + ps + ", path: " + key + "]";
     }
 
 	/* (non-Javadoc)
@@ -446,7 +446,7 @@ public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T
 	/**
 	 * <p>
 	 * Returns a Contextable (Context or Exertion) of this Proc that by a its
-	 * name provides values of this Proc.
+	 * key provides values of this Proc.
 	 * </p>
 	 * 
 	 * @return the contextable

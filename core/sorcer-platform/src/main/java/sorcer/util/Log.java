@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
  * . This already has a good example configuration.
  * <p>
  * You should generally consider using a logger for each of your packages or
- * classes, following the standard of setting the logger name to be the same as
- * the fully qualified name of the package or class respectively. This allows
+ * classes, following the standard of setting the logger key to be the same as
+ * the fully qualified key of the package or class respectively. This allows
  * for finer-grained control of logging due to ability to turn logging on and
  * off based on namespaces. The Log class predefines the top-level namespace for
  * SORCER logging. You can use one of five predefined logs, for example:

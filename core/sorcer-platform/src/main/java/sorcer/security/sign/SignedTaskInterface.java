@@ -29,7 +29,7 @@ import java.security.SignatureException;
  * Interface for making a signed ServiceTask. SignedServiceTask is sent over the
  * communication channel to the provider where ServiceTask is retrieved from it
  * and the SignedServiceTask object is saved in the database along with the
- * prinicipal name sent in context.
+ * prinicipal key sent in context.
  * 
  * @see SignedTaskInterface
  */

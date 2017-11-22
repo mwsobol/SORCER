@@ -150,7 +150,7 @@ public class ContextLink implements SorcerConstants, Link {
 				// the alternative is throwing an exception:
 				// throw new ContextException("Failed in setOffset: offset=
 				// \""+offset+"\" is not in this context, but in the context
-				// with name=\""+context.getName()+"\". Link and
+				// with key=\""+context.getName()+"\". Link and
 				// offset=\""+result[1]+"\" should be setValue in this context
 				// instead");
 				this.offset = offset;
@@ -180,7 +180,7 @@ public class ContextLink implements SorcerConstants, Link {
 				// the alternative is throwing an exception:
 				// throw new ContextException("Failed in setOffset: offset=
 				// \""+offset+"\" is not in this context, but in the context with
-				// name=\""+context.getName()+"\". Link and offset=\""+result[1]+"\"
+				// key=\""+context.getName()+"\". Link and offset=\""+result[1]+"\"
 				// should be setValue in this context instead");
 			} else
 				this.offset = offset;
@@ -190,7 +190,7 @@ public class ContextLink implements SorcerConstants, Link {
 	}
 
 	public String toString() {
-//		String str = "Link:\"" + name + "\":" + offset;
+//		String str = "Link:\"" + key + "\":" + offset;
 		return "\n" + linkedContext;
 	}
 

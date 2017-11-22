@@ -201,7 +201,7 @@ public class PlatformLoader {
             if (attr.getName().equals("common")) { // <capability common="???">
                 cap.setCommon(attr.getValue());
             }
-            if (attr.getName().equals("name")) { // <capability name="???">
+            if (attr.getName().equals("key")) { // <capability key="???">
                 cap.setName(attr.getValue());
             }
             if (attr.getName().equals("class")) { // <capability class="???">
@@ -408,7 +408,7 @@ public class PlatformLoader {
 
         public String toString() {
             return "Capability{" +
-                   "name='" + name + '\'' +
+                   "key='" + name + '\'' +
                    ", description='" + description + '\'' +
                    ", manufacturer='" + manufacturer + '\'' +
                    ", version='" + version + '\'' +

@@ -20,7 +20,6 @@ import sorcer.core.context.Contexts;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.Domain;
@@ -51,7 +50,7 @@ import java.util.*;
 
 /**
  * The ProcModel is an active shared service context as a map of parameters (Pars),
- * parameter name and its argument <name, argument> is the definition of a
+ * parameter key and its argument <key, argument> is the definition of a
  * independent and dependent arguments. Arguments that dependent on other
  * arguments are subroutines (invokers), so that, each time the subroutine is
  * called, its arguments for that call can be assigned to the corresponding
@@ -72,7 +71,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 
     public ProcModel() {
 		super();
-		name = PROC_MODEL;
+		key = PROC_MODEL;
 		setSubject("proc/model", new Date());
 		isRevaluable = true;
 	}
@@ -89,7 +88,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 
     public ProcModel(Context context) throws RemoteException, ContextException {
         super(context);
-        name = PROC_MODEL;
+        key = PROC_MODEL;
         setSubject("proc/model", new Date());
 		isRevaluable = true;
 	}

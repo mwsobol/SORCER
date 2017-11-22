@@ -214,10 +214,10 @@ public class CodeServer implements Runnable {
 			boolean isJar = false;
 
 			if (resourceName.endsWith(".class")) {
-				// just get the name
+				// just get the key
 				spos = resourceName.indexOf(".class");
 				String className = pathToClass(resourceName.substring(0, spos));
-				//System.out.println("Class name="+className);
+				//System.out.println("Class key="+className);
 				String path = getPathForClass(Class.forName(className));
 				if (path.endsWith(".jar")) {
 					fileName = path;

@@ -82,8 +82,8 @@ public class ProviderAdmin implements ProviderAdminMBean {
             projectId = String.format(",projectId=%s", System.getProperty("project.id"));
         else
             projectId="";
-        //String objectName = String.format("%s:type=Provider,name=%s%s,uuid=%s",
-        String objectName = String.format("%s:name=%s%s,uuid=%s",
+        //String objectName = String.format("%s:type=Provider,key=%s%s,uuid=%s",
+        String objectName = String.format("%s:key=%s%s,uuid=%s",
                                           domain,
                                           getProviderName(),
                                           projectId,

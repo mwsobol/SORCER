@@ -57,7 +57,7 @@ public class CatalogerAccessor  {
      * Returns a SORCER Cataloger service provider using Jini lookup and discovery.
      *
      * @param name
-     *            the name of a Cataloger service provider
+     *            the key of a Cataloger service provider
      * @return a Cataloger proxy
      */
     public static Cataloger getCataloger(String name) {

@@ -202,7 +202,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 		}
 		// here we're asking for all the args in the space
 		// you could modify this sample GUI to allow user input of an entry
-		// class name
+		// class key
 		// AdminIterator iter=javaSpaceAdmin.contents(null/*Entry
 		// template*/,null/*Transaction*/);
 		ArrayList tmplist = new ArrayList();

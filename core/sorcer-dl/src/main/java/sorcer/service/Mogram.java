@@ -195,8 +195,6 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
      */
     public Date getCreationDate();
 
-    /**
-	 */
 	public Date getGoodUntilDate();
 
 	/**
@@ -205,8 +203,6 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
 	 */
 	public void setGoodUntilDate(Date date);
 
-	/**
-	 */
 	public String getDomainId();
 
 	/**
@@ -215,8 +211,6 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
 	 */
 	public void setDomainId(String id);
 
-	/**
-	 */
 	public String getSubdomainId();
 
 	/**
@@ -302,7 +296,7 @@ public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, 
 
     public boolean isValid();
 
-    public void isValid(boolean state);
+    public void setValid(boolean state);
 
     /**
      * Returns a data service context (service data) of this mogram.

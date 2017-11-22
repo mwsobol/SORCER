@@ -38,23 +38,23 @@ public class WorkerBean implements Worker {
 
 	public Context sayHi(Context context) throws RemoteException,
 			ContextException {
-		context.putValue("prv/host/name", hostName);
-		String reply = "Hi" + " " + context.getValue("req/name") + "!";
+		context.putValue("prv/host/key", hostName);
+		String reply = "Hi" + " " + context.getValue("req/key") + "!";
 		setMessage(context, reply);
 		return context;
 	}
 
 	public Context sayBye(Context context) throws RemoteException,
 			ContextException {
-		context.putValue("prv/host/name", hostName);
-		String reply = "Bye" + " " + context.getValue("req/name") + "!";
+		context.putValue("prv/host/key", hostName);
+		String reply = "Bye" + " " + context.getValue("req/key") + "!";
 		setMessage(context, reply);
 		return context;
 	}
 
 	public Context doWork(Context context) throws InvalidWork, RemoteException,
 			ContextException {
-		context.putValue("prv/host/name", hostName);
+		context.putValue("prv/host/key", hostName);
 		String sigPrefix = ((ServiceContext) context).getCurrentPrefix();
 		String path = "req/work";
 		if (sigPrefix != null && sigPrefix.length() > 0)

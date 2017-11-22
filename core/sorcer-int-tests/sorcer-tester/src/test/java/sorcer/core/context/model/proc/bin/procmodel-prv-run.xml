@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- 
-Replace "provider.name" with your provider name and specify property eval for "provider.class."
+Replace "provider.key" with your provider key and specify property eval for "provider.class."
 Also you might need to adjust the classpath (provider.classpath) for your provider 
 -->
 

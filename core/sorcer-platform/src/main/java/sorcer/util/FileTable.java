@@ -591,13 +591,13 @@ public class FileTable<K,V> extends Identity implements Runnable, ModelTable {
 	public Context getFileContext() throws ContextException {
 		ServiceContext sc = new ServiceContext(this.getName());
 
-        sc.putValue("object/file/name", fileName +".obf");
-        sc.putValue("index/file/name", fileName +"-index.obf");
+        sc.putValue("object/file/key", fileName +".obf");
+        sc.putValue("index/file/key", fileName +"-index.obf");
 
-		sc.putValue("input/file/name", inputFileName);
+		sc.putValue("input/file/key", inputFileName);
 		sc.putValue("input/table/URL", inputTableURL);
 
-		sc.putValue("output/file/name", outputFileName);
+		sc.putValue("output/file/key", outputFileName);
 		sc.putValue("output/table/URL", outputTableURL);
 		sc.putValue("input/table/delimiter", inputTableDelimiter);
 

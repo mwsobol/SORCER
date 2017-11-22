@@ -211,7 +211,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 				else
 					evalClass = target.getClass();
 			}
-			// if no paramTypes defined assume that the method name 'selector'
+			// if no paramTypes defined assume that the method key 'selector'
 			// is unique
 			if (paramTypes == null) {
 				Method[] mts = evalClass.getDeclaredMethods();
@@ -404,7 +404,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 
 	public String describe() {
 		StringBuilder sb = new StringBuilder("\nObjectIvoker");
-		sb.append(", class name: " + className);
+		sb.append(", class key: " + className);
 		sb.append(", selector: " + selector);
 		sb.append(", target: " + target);
 		sb.append("\nargs: " + params);

@@ -21,6 +21,7 @@ import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.modeling.Duo;
+import sorcer.service.modeling.Functionality;
 import sorcer.util.GenericUtil;
 import sorcer.util.Pool;
 import sorcer.util.Pools;
@@ -34,13 +35,11 @@ import java.util.*;
 /**
  * Created by sobolemw on 5/4/15.
  */
-public abstract class ServiceMogram implements Mogram, Exec, Serializable, SorcerConstants {
+public abstract class ServiceMogram extends Association<String, Object> implements Mogram, Exec, Serializable, SorcerConstants {
 
     protected final static Logger logger = LoggerFactory.getLogger(ServiceMogram.class.getName());
 
     static final long serialVersionUID = 1L;
-
-    protected String name;
 
     protected Uuid mogramId;
 
@@ -87,10 +86,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     protected List<Coupling> couplings;
 
     protected ContextSelector contextSelector;
-    /**
-     * position of component Mogram in a compund mogram
-     */
-    protected Integer index = new Integer(-1);
 
     /**
      * execution status: INITIAL|DONE|RUNNING|SUSPENDED|HALTED
@@ -98,9 +93,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     protected Integer status = Exec.INITIAL;
 
     protected Integer priority;
-
-    // the mogram's scope
-    protected Context scope;
 
     protected String description;
 
@@ -110,9 +102,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     protected boolean isChanged = false;
 
-    // when mogram is changed then setValid == false
-    protected boolean isValid = true;
-
     // indicates that is the parent of another mogram
     protected boolean isSuper = false;
 
@@ -121,11 +110,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     protected boolean isInitializable = true;
 
     protected String dbUrl;
-
-    // carrier of out
-    protected Mogram impl;
-
-    protected Fi multiFi = new ServiceFidelity();
 
     protected MetaFi multiMetaFi = new Metafidelity();
 
@@ -160,14 +144,14 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     protected transient Provider provider;
 
     protected ServiceMogram() {
-        this((String) null);
+        this(defaultName + count++);
     }
 
     public ServiceMogram(String name) {
         if (name == null || name.length() == 0)
-            this.name = defaultName + count++;
+            this.key = defaultName + count++;
         else
-            this.name = name;
+            this.key = name;
         init();
     }
 
@@ -176,24 +160,9 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.builder = builder;
     }
 
-    public Fi getMultiFi() {
-        return multiFi;
-    }
-
-    public void setMultiFi(Fi multiFi) {
-        this.multiFi = multiFi;
-    }
-
-    public Mogram getImpl() {
-        return impl;
-    }
-
-    public void setImpl(Mogram impl) {
-        this.impl = impl;
-    }
-
     protected void init() {
         mogramId = UuidFactory.generate();
+        multiFi = new ServiceFidelity();
         domainId = "0";
         subdomainId = "0";
         accessClass = PUBLIC;
@@ -204,17 +173,9 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         setSubject(principal);
     }
 
-    /**
-     * Returns the index assigned by the container.
-     */
     @Override
-    public int getIndex() {
-        return (index == null) ? -1 : index;
-    }
-
-    @Override
-    public void setIndex(int i) {
-        index = i;
+    public void setName(String name) {
+        key = name;
     }
 
     public Uuid getMogramId() {
@@ -257,7 +218,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
     }
 
     public Mogram getMogram(String componentMogramName) {
-        if (name.equals(componentMogramName)) {
+        if (key.equals(componentMogramName)) {
             return this;
         } else {
             List<Mogram> mograms = getAllMograms();
@@ -292,15 +253,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public void setId(Uuid id) {
         mogramId = id;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDescription() {
@@ -343,16 +295,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         this.sessionId = sessionId;
     }
 
-    @Override
-    public Context getScope() {
-        return scope;
-    }
-
-    @Override
-    public void setScope(Context scope) {
-        this.scope = scope;
-    }
-
     public Mogram getParent() {
         return parent;
     }
@@ -375,6 +317,11 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public void setSubject(Subject subject) {
         this.subject = subject;
+    }
+
+    @Override
+    public Functionality.Type getType() {
+        return Functionality.Type.MOGRAM;
     }
 
     private void setSubject(Principal principal) {
@@ -726,7 +673,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public String toString() {
         StringBuffer info = new StringBuffer()
-                .append(this.getClass().getName()).append(": " + name);
+                .append(this.getClass().getName()).append(": " + key);
         info.append("\n  status=").append(status);
         info.append(", mogram ID=").append(mogramId);
         return info.toString();
@@ -858,14 +805,6 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         return fidelity;
     }
 
-    public boolean isValid() {
-        return isValid;
-    }
-
-    public void isValid(boolean state) {
-        isValid = state;
-    }
-
     @Override
     public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
         if (fiManager != null) {
@@ -907,7 +846,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
 
     public void loadFiPool() {
         if (configFilename == null) {
-            logger.warn("No mogram configuration file available for: {}", name);
+            logger.warn("No mogram configuration file available for: {}", key);
         } else {
             initConfig(new String[]{configFilename});
         }
@@ -968,7 +907,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
                    mdaFi = new Fidelity(((MdaEntry)mdaComponent).getName());
                    mdaFi.addSelect((MdaEntry) mdaComponent);
                } else if (mdaComponent instanceof ServiceFidelity
-                       && ((ServiceFidelity) mdaComponent).getType().equals(Fi.Type.MDA)) {
+                       && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
                    mdaFi = (Fidelity) mdaComponent;
                }
            }
@@ -1006,7 +945,7 @@ public abstract class ServiceMogram implements Mogram, Exec, Serializable, Sorce
         if (result instanceof Entry) {
             return (Entry)result;
         } else {
-            return new Entry(name, result);
+            return new Entry(key, result);
         }
     }
 

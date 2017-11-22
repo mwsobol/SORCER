@@ -799,9 +799,9 @@ public class GenericUtil {
 			}
 		}
 		if (methodName == null) {
-			System.out.println("Error:Method with name:" + desiredMethodName
+			System.out.println("Error:Method with key:" + desiredMethodName
 					+ " Not Found in class " + cl.getName());
-			throw new NoSuchMethodException("Error:Method with name:"
+			throw new NoSuchMethodException("Error:Method with key:"
 					+ desiredMethodName + " Not Found in class " + cl.getName());
 		}
 		return methodName;
@@ -839,11 +839,11 @@ public class GenericUtil {
 	public static String getRootName(String scriptName) {
 		String rootName;
 		StringTokenizer fields = new StringTokenizer(scriptName, ".");
-		// assume only one "." in bin name
+		// assume only one "." in bin key
 		rootName = scriptName;
 		if (fields.countTokens() > 0)
 			rootName = fields.nextToken();
-		// take the string up to the first "." and call this the root name
+		// take the string up to the first "." and call this the root key
 		return rootName;
 	}
 
@@ -986,16 +986,16 @@ public class GenericUtil {
 	}
 
 	/**
-	 * This method returns a string containing the Operating system name
+	 * This method returns a string containing the Operating system key
 	 * 
-	 * @return String containing the operating system name
+	 * @return String containing the operating system key
 	 */
 	public static String whatOS() {
 		return System.getProperty("os.name").trim();
 	}
 
 	/**
-	 * This method returns a boolean eval of true if the operating system name
+	 * This method returns a boolean eval of true if the operating system key
 	 * starts with Linux
 	 * 
 	 * @return Boolean eval indicating if the operating system is Linux
@@ -1008,7 +1008,7 @@ public class GenericUtil {
 	}
 
 	/**
-	 * This method returns a boolean eval of true if the operating system name
+	 * This method returns a boolean eval of true if the operating system key
 	 * starts with Mac
 	 * 
 	 * @return Boolean eval indicating if the operating system is Mac
@@ -1021,7 +1021,7 @@ public class GenericUtil {
 	}
 
 	/**
-	 * This method returns a boolean eval of true if the operating system name
+	 * This method returns a boolean eval of true if the operating system key
 	 * starts with Linux and Mac
 	 * 
 	 * @return
@@ -1034,7 +1034,7 @@ public class GenericUtil {
 	}
 
 	/**
-	 * This method returns a boolean eval of true if the operating system name
+	 * This method returns a boolean eval of true if the operating system key
 	 * starts with Win
 	 * 
 	 * @return
@@ -1263,11 +1263,11 @@ public class GenericUtil {
 		Vector<String> scriptCmd = new Vector<String>();
 
 		StringTokenizer fields = new StringTokenizer(executableName, ".");
-		// assume only one "." in bin name
+		// assume only one "." in bin key
 		rootName = executableName;
 		if (fields.countTokens() > 0)
 			rootName = fields.nextToken();
-		// take the string up to the first "." and call this the root name
+		// take the string up to the first "." and call this the root key
 
 		executableLogFile = logFileName;
 		if (logFileName == null)
@@ -1597,7 +1597,7 @@ public class GenericUtil {
 			// Windows
 
 			if (!scriptFile.getName().endsWith(".bat")) {
-				// If the script file name does not end with .bat add .bat to
+				// If the script file key does not end with .bat add .bat to
 				// end of the pat
 				scriptFile.renameTo(new File(scriptFile.getAbsolutePath()
 						+ ".bat"));
@@ -1999,8 +1999,8 @@ public class GenericUtil {
 	 *            Windows) so specific commands to kill child process may be included in
 	 *            this argument.  For example,
 	 *            
-	 *            wmic /interactive:off process where name=\"analyzeWingNoise.exe\" delete
-	 *	     	  wmic /interactive:off process where name=\"NAFNoise.exe\" delete
+	 *            wmic /interactive:off process where key=\"analyzeWingNoise.exe\" delete
+	 *	     	  wmic /interactive:off process where key=\"NAFNoise.exe\" delete
 	 *
 	 *			 kill all processes matching the act names in "".
 	 *
@@ -2384,10 +2384,10 @@ public class GenericUtil {
 	public static Process runShellScript(String scriptName, String logFileName,
 			Vector<?> scriptInputRecords, String runDir, Vector<?> shellCommand)
 			throws IOException, InterruptedException {
-		// create shell script file from name
+		// create shell script file from key
 		File shellScriptFile = GenericUtil.getShellScriptFile(scriptName,
 				runDir);
-		// create shell script log file from name
+		// create shell script log file from key
 		String rootName = getRootName(scriptName);
 		PrintWriter execLog = null;
 		if (logFileName == null) {
@@ -2404,10 +2404,10 @@ public class GenericUtil {
 			Vector<?> scriptInputRecords, String runDir,
 			Vector<?> shellCommand, boolean windows) throws IOException,
 			InterruptedException {
-		// create shell script file from name
+		// create shell script file from key
 		File shellScriptFile = GenericUtil.getShellScriptFile(scriptName,
 				runDir, windows);
-		// create shell script log file from name
+		// create shell script log file from key
 		String rootName = getRootName(scriptName);
 		PrintWriter execLog = null;
 		if (logFileName == null) {
@@ -4113,9 +4113,9 @@ public class GenericUtil {
 			// jobID = jobsubrec[1];
 			// }
 			// if (jobID == null) {
-			// //System.out.println("No Job found in queue with name = "+
+			// //System.out.println("No Job found in queue with key = "+
 			// jobName);
-			// logger.info("No Job found in queue with name = "+ jobName);
+			// logger.info("No Job found in queue with key = "+ jobName);
 			// throw new
 			// Exception("*** error: problem submittnig to slurm, see "
 			// + scratchDir);

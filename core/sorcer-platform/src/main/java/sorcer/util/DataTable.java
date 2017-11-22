@@ -79,7 +79,7 @@ public class DataTable implements ModelTable {
 	protected List<List<?>> dataList;
 
 	// Input dataTable properties
-	/* Input dataTable file name */
+	/* Input dataTable file key */
 	protected String inputFileName;
 	/* Input dataTable URL */
 	protected URL inputTableURL;
@@ -87,7 +87,7 @@ public class DataTable implements ModelTable {
 	protected String inputTableDelimiter;
 
 	// Output dataTable properties
-	/* Output dataTable file name */
+	/* Output dataTable file key */
 	protected String outputFileName;
 	/* Output dataTable URL */
 	protected URL outputTableURL;
@@ -159,7 +159,7 @@ public class DataTable implements ModelTable {
 	/**
 	 * Constructs a <code>Table</code> with as many columns as there are
 	 * elements in <code>columnNames</code> and <code>rowCount</code> of
-	 * <code>null</code> object values. Each column's name will be taken from
+	 * <code>null</code> object values. Each column's key will be taken from
 	 * the <code>columnNames</code> list.
 	 * 
 	 * @param columnNames
@@ -178,7 +178,7 @@ public class DataTable implements ModelTable {
 	/**
 	 * Constructs a <code>Table</code> with as many columns as there are
 	 * elements in <code>columnNames</code> and <code>rowCount</code> of
-	 * <code>null</code> object values. Each column's name will be taken from
+	 * <code>null</code> object values. Each column's key will be taken from
 	 * the <code>columnNames</code> array.
 	 * 
 	 * @param columnNames
@@ -305,7 +305,7 @@ public class DataTable implements ModelTable {
 	 * <code>List</code> of rows, <code>dataList</code>. Each row is represented
 	 * in <code>dataList</code> as a <code>List</code> of <code>Object</code>
 	 * values. <code>columnIdentifiers</code> are the names of the new columns.
-	 * The first name in <code>columnIdentifiers</code> is mapped to column 0 in
+	 * The first key in <code>columnIdentifiers</code> is mapped to column 0 in
 	 * <code>dataList</code>. Each row in <code>dataList</code> is adjusted to
 	 * match the number of columns in <code>columnIdentifiers</code> either by
 	 * truncating the <code>List</code> if it is too long, or adding
@@ -674,12 +674,12 @@ public class DataTable implements ModelTable {
 	}
 
 	/**
-	 * Returns the column name.
+	 * Returns the column key.
 	 * 
-	 * @return a name for this column using the string eval of the appropriate
+	 * @return a key for this column using the string eval of the appropriate
 	 *         member in <code>columnIdentifiers</code>. If
 	 *         <code>columnIdentifiers</code> does not have an entry for this
-	 *         index, returns the default name provided by the superclass.
+	 *         index, returns the default key provided by the superclass.
 	 */
 	public String getColumnName(int column) {
 		Object id = columnIdentifiers.get(column);
@@ -1315,10 +1315,10 @@ public class DataTable implements ModelTable {
 
 	/**
 	 * <p>
-	 * Returns the name of this dataTable.
+	 * Returns the key of this dataTable.
 	 * </p>
 	 * 
-	 * @return the name
+	 * @return the key
 	 */
 	public String getName() {
 		return name;
@@ -1326,11 +1326,11 @@ public class DataTable implements ModelTable {
 
 	/**
 	 * <p>
-	 * Assigns the name for this dataTable.
+	 * Assigns the key for this dataTable.
 	 * </p>
 	 * 
 	 * @param name
-	 *            the name to setValue
+	 *            the key to setValue
 	 */
 	public void setName(String name) {
 		this.name = name;

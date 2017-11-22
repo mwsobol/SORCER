@@ -10,7 +10,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Abstraction of resource searching policy. Given resource name, the resource
+ * Abstraction of resource searching policy. Given resource key, the resource
  * finder performs implementation-specific lookup, and, if it is able to locate
  * the resource, returns the {@link edu.emory.mathcs.util.classloader.ResourceHandle handle(s)} or URL(s) of it.
  *
@@ -19,31 +19,31 @@ import java.util.*;
  */
 public interface ResourceFinder {
     /**
-     * Find the resource by name and return URL of it if found.
-     * @param name the resource name
+     * Find the resource by key and return URL of it if found.
+     * @param name the resource key
      * @return resource URL or null if resource was not found
      */
     public URL findResource(String name);
 
     /**
-     * Find all resources with given name and return enumeration of their URLs.
-     * @param name the resource name
+     * Find all resources with given key and return enumeration of their URLs.
+     * @param name the resource key
      * @return enumeration of resource URLs (possibly empty).
      */
     public Enumeration findResources(String name);
 
     /**
-     * Get the resource by name and, if found, open connection to it and return
+     * Get the resource by key and, if found, open connection to it and return
      * the {@link edu.emory.mathcs.util.classloader.ResourceHandle handle} of it.
-     * @param name the resource name
+     * @param name the resource key
      * @return resource handle or null if resource was not found
      */
     public ResourceHandle getResource(String name);
 
     /**
-     * Get all resources with given name and return enumeration of their
+     * Get all resources with given key and return enumeration of their
      * {@link edu.emory.mathcs.util.classloader.ResourceHandle resource handles}.
-     * @param name the resource name
+     * @param name the resource key
      * @return enumeration of resource handles (possibly empty).
      */
     public Enumeration getResources(String name);

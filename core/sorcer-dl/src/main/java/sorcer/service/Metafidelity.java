@@ -146,7 +146,7 @@ public class Metafidelity extends Fidelity<Fi> implements MetaFi, Dependency, Ar
 			if (((Fidelity) object).getName().equals(fiName)
 					&& ((Fidelity) object).getPath().equals(path)
 					&& selectorEquality
-					&& ((Fidelity) object).getType().equals(fiType)) {
+					&& ((Fidelity) object).getFiType().equals(fiType)) {
 				return true;
 			}
 		}

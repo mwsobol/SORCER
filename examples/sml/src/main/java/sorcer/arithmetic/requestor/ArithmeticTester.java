@@ -278,7 +278,7 @@ public class ArithmeticTester extends SorcerRequestor {
 		long end = System.currentTimeMillis();
 		System.out.println("Execution time: " + (end-start) + " ms.");
 		
-		logger.info("out name: " + name(out));
+		logger.info("out key: " + name(out));
 		logger.info("job f1 context: " + context(out));
 		logger.info("job f1 job context: " + upcontext(out));
 		logger.info("job f1 f3/result/y3: " + get(out, "f1/f3/result/y3"));
@@ -316,7 +316,7 @@ private Exertion f1SEQpull() throws Exception {
 		long end = System.currentTimeMillis();
 		System.out.println("Execution time: " + (end-start) + " ms.");
 		
-		logger.info("out name: " + name(out));
+		logger.info("out key: " + name(out));
 		logger.info("job f1 context: " + context(out));
 		logger.info("job f1 job context: " + upcontext(out));
 		logger.info("job f1 f3/result/y3: " + get(out, "f1/f3/result/y3"));

@@ -31,13 +31,13 @@ import net.jini.config.ConfigurationException;
  *
  * <h4>Configuration</h4>
  * The RegistryUtil class supports the following configuration args;
- * where each configuration entry name is associated with the component name
+ * where each configuration entry key is associated with the component key
  * <tt>sorcer.provider.rmi</tt>.
  *
  * <ul>
  <li><span
  style="font-weight: bold; font-family: courier new,courier,monospace; color: rgb(0, 0, 0);"><a
- name="registryPort_"></a>registryPort</span>
+ key="registryPort_"></a>registryPort</span>
  <dataTable style="text-align: left; width: 100%;" border="0"
  cellspacing="2" cellpadding="2">
  <tbody>
@@ -73,7 +73,7 @@ import net.jini.config.ConfigurationException;
  <ul>
  <li><span
  style="font-weight: bold; font-family: courier new,courier,monospace; color: rgb(0, 0, 0);"><a
- name="registryRetries_"></a>registryRetries</span>
+ key="registryRetries_"></a>registryRetries</span>
  <dataTable style="text-align: left; width: 100%;" border="0"
  cellspacing="2" cellpadding="2">
  <tbody>

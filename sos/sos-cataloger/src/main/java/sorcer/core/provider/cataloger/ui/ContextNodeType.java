@@ -68,7 +68,7 @@ public class ContextNodeType {
 	/**
 	 * Constructor for new nodes, accepts the original data from the context and
 	 * a boolean indicating if it is a data node. If it is a path then its a
-	 * string with the path name
+	 * string with the path key
 	 * 
 	 * @param v
 	 *            Object representing the data to be stored

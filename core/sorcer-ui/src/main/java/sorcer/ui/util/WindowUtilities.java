@@ -68,7 +68,7 @@ public class WindowUtilities {
   }
 
   /** Uses Color.white as the background color, and the
-   *  name of the Container's class as the JFrame title.
+   *  key of the Container's class as the JFrame title.
    */
 
   public static JFrame openInJFrame(Container content,

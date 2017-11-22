@@ -417,7 +417,7 @@ public class operator extends Operator {
 			for (Entry e : entries) {
 				cxt.put(e.getName(), e.get());
 			}
-			cxt.isValid(false);
+			cxt.setValid(false);
 			return new Setup(aspect.toString(), cxt);
 		} else {
 			return new Setup(aspect.toString(), null);
@@ -1310,7 +1310,7 @@ public class operator extends Operator {
 //            if (path != null && path.equals("self")) {
 //                ((Entry)d).setKey(((Domain) dependee).getName());
 //            }
-//            if (d instanceof ExecDependency && ((ExecDependency)d).getType().equals(Type.CONDITION)) {
+//            if (d instanceof ExecDependency && ((ExecDependency)d).getFiType().equals(Type.CONDITION)) {
 //                ((ExecDependency)d).getCondition().setConditionalContext((Context)dependee);
 //                }
 //			if (!dependee.getDependers().contains(d)) {

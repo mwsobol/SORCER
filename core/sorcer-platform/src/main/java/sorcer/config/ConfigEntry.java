@@ -30,7 +30,7 @@ public @interface ConfigEntry {
     public String DEFAULT_COMPONENT = "ConfigEntry.DefaultComponent";
 
     /**
-     * Entry name. Default null eval makes use of field or property name.
+     * Entry key. Default null eval makes use of field or property key.
      */
     String value() default DEFAULT_KEY;
 

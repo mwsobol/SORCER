@@ -98,8 +98,8 @@ public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>,
     }
 
     @Override
-    public Type getType() {
-        return fidelity.getType();
+    public Type getFiType() {
+        return fidelity.getFiType();
     }
 
     @Override

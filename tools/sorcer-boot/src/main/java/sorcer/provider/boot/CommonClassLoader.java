@@ -283,7 +283,7 @@ public class CommonClassLoader extends URLClassLoader {
 	public Object load(String name) throws 
 	ClassNotFoundException, IllegalAccessException, InstantiationException {		
 	    if (name == null)
-	        throw new NullPointerException("name is null");
+	        throw new NullPointerException("key is null");
 	    boolean registered;
 	    synchronized (components) {
 	        registered = components.containsKey(name);			

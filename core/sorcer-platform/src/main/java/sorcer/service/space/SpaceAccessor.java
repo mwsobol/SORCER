@@ -38,7 +38,7 @@ public class SpaceAccessor {
     private ProviderNameUtil providerNameUtil = new SorcerProviderNameUtil();
 
     /**
-     * Returns a JavaSpace service with a given name.
+     * Returns a JavaSpace service with a given key.
      *
      * @return JavaSpace proxy
      */

@@ -103,7 +103,7 @@ import java.util.concurrent.ConcurrentMap;
  * above
  * 
  * <li> <code>getServiceMethods())</code> returns a hash map with the key as a
- * service interface (those interfaces package name starting with
+ * service interface (those interfaces package key starting with
  * <code>sorcer.</code>) and its eval is a list of interface's method names.
  * 
  * <li> <code>getMethodContext(providerName, methodName))</code> returns the
@@ -242,7 +242,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	/**
 	 * Returns a Jini ServiceItem containing SORCER service provider based on
 	 * two args provided. The first entry is a provider's service type, the
-	 * second provider's name. Expected that more args will be needed to
+	 * second provider's key. Expected that more args will be needed to
 	 * identify a provider in the future. See also lookup for a given ServiceID.
 	 * 
 	 * @see sorcer.core.provider.Cataloger#lookup(Class[])
@@ -268,10 +268,10 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 	/**
 	 * * Returns a SORCER service provider identified by its primary service
-	 * type and the provider's name/
+	 * type and the provider's key/
 	 * 
 	 * @param providerName
-	 *            - a provider name, a friendly provider's ID.
+	 *            - a provider key, a friendly provider's ID.
 	 * @param serviceTypes
 	 *            - interface of a SORCER provider
 	 * @return a SORCER service provider
@@ -798,7 +798,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 					} else
 						serviceName = service.getClass().getName();
 				}
-				// list only interfaces of the Service type in package name
+				// list only interfaces of the Service type in package key
 				if (service instanceof Service) {
 					if (map.get(serviceName) == null) {
 						map.put(serviceName, SorcerUtil.arrayToString(clazz)
@@ -837,7 +837,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 					} else
 						serviceName = service.getClass().getName();
 				}
-				// list only interfaces of the Service type in package name
+				// list only interfaces of the Service type in package key
 				if (service instanceof Service) {
 					String annotation = RMIClassLoader.getClassAnnotation(service.getClass());
 					if(annotation!=null && annotation.length()>0) {
@@ -864,7 +864,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		}
 
 		/**
-		 * Returns the list of providers for a given provider name.
+		 * Returns the list of providers for a given provider key.
 		 * 
 		 * @return
 		 * @throws RemoteException
@@ -966,7 +966,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 			Object service;
 			String serviceName = null;
 			net.jini.core.entry.Entry[] attributes;
-			logger.info("Provider Tag " + providerName + " interface name "
+			logger.info("Provider Tag " + providerName + " interface key "
 					+ interfaceName);
 			for (Map.Entry<InterfaceList, List<ServiceItem>> entry : interfaceListMap
 					.entrySet()) {
@@ -1066,7 +1066,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		/**
 		 * Returns a list of selectors of <code>serviceType</code> along with
 		 * hash tables per each interface. The hash dataTable key is an interface
-		 * name and the eval is a list of all interface selectors.
+		 * key and the eval is a list of all interface selectors.
 		 * 
 		 * @param serviceType
 		 * @return list of selectors of serviceType and its superinterface hash
@@ -1094,7 +1094,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		/**
 		 * Returns a list of maps per each interface in the array clazz
 		 * such that they are registered by the service provider as sorcerTypes.
-		 * The hash dataTable key is an interface name and the eval is a list of
+		 * The hash dataTable key is an interface key and the eval is a list of
 		 * all interface selectors.
 		 * 
 		 * @param clazz
