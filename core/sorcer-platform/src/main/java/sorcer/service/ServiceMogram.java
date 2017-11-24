@@ -15,6 +15,7 @@ import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.provider.Provider;
+import sorcer.core.provider.ServiceBean;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.NetSignature;
@@ -35,7 +36,7 @@ import java.util.*;
 /**
  * Created by sobolemw on 5/4/15.
  */
-public abstract class ServiceMogram extends Association<String, Object> implements Mogram, Exec, Serializable, SorcerConstants {
+public abstract class ServiceMogram extends Association<String, Object> implements Mogram, ServiceBean, Exec, Serializable, SorcerConstants {
 
     protected final static Logger logger = LoggerFactory.getLogger(ServiceMogram.class.getName());
 

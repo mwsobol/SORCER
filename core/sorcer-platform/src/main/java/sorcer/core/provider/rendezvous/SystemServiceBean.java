@@ -41,7 +41,7 @@ import java.util.Vector;
  * 
  * @author Mike Sobolewski
  */
-abstract public class SystemServiceBean implements Exerter {
+abstract public class SystemServiceBean implements Exerter, ServiceBean {
 	private Logger logger = LoggerFactory.getLogger(SystemServiceBean.class.getName());
 
 	protected ServiceProvider provider;
