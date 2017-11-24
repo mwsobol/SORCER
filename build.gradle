@@ -37,7 +37,6 @@ task printVersion {
     }
 }
 
-
 task printClasspath() {
     description = 'Prints the current Java classpath.'
     doLast {
