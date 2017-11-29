@@ -19,11 +19,13 @@ import org.rioproject.config.Component
  * Configuration for the deployment
  */
 @Component('sorcer.core.exertion.deployment')
-class PlanedConfig {
+class FixedConfig {
     String[] interfaces = ["some.example.interface.Test"]
     String[] codebaseJars = ["ju-arithmetic-dl.jar"]
     String[] implJars = ["ju-arithmetic-beans.jar"]
     String jvmArgs = "-Xmx4G"
+    def environment = ["SORCER_HOME=/home/sorcer"] as String[]
+    def systemProperties = ["sorcer.home=/home/sorcer", "something.else=foo"] as String[]
     boolean fork = true
     int planned = 10
     boolean fixed = true
