@@ -127,7 +127,7 @@ public final class ServiceElementFactory  {
 
         String name = deployment.getName();
         if(name==null) {
-            name = configuration.getEntry(component, "key", String.class, null);
+            name = configuration.getEntry(component, "name", String.class, null);
         }
         if(name!=null)
             name = SorcerEnv.getActualName(name);
