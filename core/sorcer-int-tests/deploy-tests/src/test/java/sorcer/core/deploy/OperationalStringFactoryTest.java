@@ -25,8 +25,6 @@ import org.rioproject.system.capability.connectivity.TCPConnectivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.operator;
-import sorcer.core.provider.ProviderName;
-import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.util.SorcerEnv;
 
