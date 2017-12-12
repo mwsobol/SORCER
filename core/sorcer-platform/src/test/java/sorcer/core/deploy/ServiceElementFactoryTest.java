@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URISyntaxException;
 
+import static org.junit.Assert.assertTrue;
 import static sorcer.eo.operator.*;
 
 /**
@@ -51,8 +52,20 @@ public class ServiceElementFactoryTest {
         Assert.assertEquals(SorcerEnv.getActualName("The Great and wonderful Oz"),
                             serviceElement.getName());
         Assert.assertEquals("foo.Impl", serviceElement.getComponentBundle().getClassName());
-        Assert.assertTrue(serviceElement.getExportBundles().length==1);
+        assertTrue(serviceElement.getExportBundles().length==1);
         Assert.assertEquals("foo.Interface", serviceElement.getExportBundles()[0].getClassName());
+    }
+
+    @Test
+    public void testSystemPropertiesAndEnvironment() throws Exception {
+        ServiceDeployment deployment = new ServiceDeployment();
+        deployment.setConfig(getConfigDir() + "/FixedConfig.groovy");
+        ServiceElement serviceElement = ServiceElementFactory.create(deployment);
+        assertTrue(serviceElement.getExecDescriptor()!=null);
+        assertTrue(serviceElement.getExecDescriptor().getInputArgs()!=null);
+        String[] parts = serviceElement.getExecDescriptor().getInputArgs().split(" ");
+        assertTrue("Expected 3 inputArgs, got: "+parts.length+
+                   ", actual args: "+serviceElement.getExecDescriptor().getInputArgs(),parts.length==3);
     }
 
     @Test
@@ -61,7 +74,7 @@ public class ServiceElementFactoryTest {
         deployment.setConfig(getConfigDir() + "/TestIP.groovy");
         deployment.setWebsterUrl("http://spongebob:8080");
         ServiceElement serviceElement = ServiceElementFactory.create(deployment);
-        Assert.assertTrue(serviceElement.getExportURLs().length > 1);
+        assertTrue(serviceElement.getExportURLs().length > 1);
         Assert.assertEquals(serviceElement.getExportURLs()[0].getHost(), "spongebob");
         Assert.assertEquals(serviceElement.getExportURLs()[0].getPort(), 8080);
     }
@@ -75,7 +88,7 @@ public class ServiceElementFactoryTest {
                                       webster("http://spongebob:8080")));
 
         ServiceElement serviceElement = ServiceElementFactory.create(methodEN.getDeployment());
-        Assert.assertTrue(serviceElement.getExportURLs().length>1);
+        assertTrue(serviceElement.getExportURLs().length>1);
         Assert.assertEquals(serviceElement.getExportURLs()[0].getHost(), "spongebob");
         Assert.assertEquals(serviceElement.getExportURLs()[0].getPort(), 8080);
     }
@@ -85,7 +98,7 @@ public class ServiceElementFactoryTest {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setConfig(getConfigDir() + "/testWebster.config");
         ServiceElement serviceElement = ServiceElementFactory.create(deployment);
-        Assert.assertTrue(serviceElement.getExportURLs().length > 1);
+        assertTrue(serviceElement.getExportURLs().length > 1);
         Assert.assertEquals(serviceElement.getExportURLs()[0].getHost(), "127.0.0.1");
         Assert.assertEquals(serviceElement.getExportURLs()[0].getPort(), 8080);
     }
@@ -150,9 +163,9 @@ public class ServiceElementFactoryTest {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setConfig(getConfigDir()+"/PlannedConfig.groovy");
         ServiceElement service = ServiceElementFactory.create(deployment);
-        Assert.assertTrue(service.getPlanned()==10);
-        Assert.assertTrue(service.getMaxPerMachine()==1);
-        Assert.assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.DYNAMIC);
+        assertTrue(service.getPlanned()==10);
+        assertTrue(service.getMaxPerMachine()==1);
+        assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.DYNAMIC);
     }
 
     @Test
@@ -160,8 +173,8 @@ public class ServiceElementFactoryTest {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setConfig(getConfigDir()+"/FixedConfig.groovy");
         ServiceElement service = ServiceElementFactory.create(deployment);
-        Assert.assertTrue(service.getPlanned()==10);
-        Assert.assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.FIXED);
+        assertTrue(service.getPlanned()==10);
+        assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.FIXED);
     }
 
     @Test
@@ -169,9 +182,9 @@ public class ServiceElementFactoryTest {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setConfig(getConfigDir()+"/plannedConfig.config");
         ServiceElement service = ServiceElementFactory.create(deployment);
-        Assert.assertTrue(service.getPlanned()==10);
-        Assert.assertTrue(service.getMaxPerMachine()==2);
-        Assert.assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.DYNAMIC);
+        assertTrue(service.getPlanned()==10);
+        assertTrue(service.getMaxPerMachine()==2);
+        assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.DYNAMIC);
     }
 
     @Test
@@ -179,9 +192,9 @@ public class ServiceElementFactoryTest {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setConfig(getConfigDir()+"/fixedConfig.config");
         ServiceElement service = ServiceElementFactory.create(deployment);
-        Assert.assertTrue(service.getPlanned()==10);
-        Assert.assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.FIXED);
-        Assert.assertTrue(service.getMaxPerMachine()==-1);
+        assertTrue(service.getPlanned()==10);
+        assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.FIXED);
+        assertTrue(service.getMaxPerMachine()==-1);
     }
 
     private String getConfigDir() {
@@ -192,11 +205,11 @@ public class ServiceElementFactoryTest {
         SystemRequirements systemRequirements = serviceElement.getServiceLevelAgreements().getSystemRequirements();
         Assert.assertEquals(8, systemRequirements.getSystemComponents().length);
 
-        Assert.assertTrue(serviceElement.getPlanned()==1);
+        assertTrue(serviceElement.getPlanned()==1);
 
-        Assert.assertTrue(ServiceElementFactory.isIpAddress("10.131.5.106"));
-        Assert.assertTrue(ServiceElementFactory.isIpAddress("10.131.4.201"));
-        Assert.assertTrue(ServiceElementFactory.isIpAddress("10.0.1.9"));
+        assertTrue(ServiceElementFactory.isIpAddress("10.131.5.106"));
+        assertTrue(ServiceElementFactory.isIpAddress("10.131.4.201"));
+        assertTrue(ServiceElementFactory.isIpAddress("10.0.1.9"));
         Assert.assertFalse(ServiceElementFactory.isIpAddress("macdna.rb.rad-e.wpafb.af.mil"));
 
         verify(get("10.131.5.106", false, systemRequirements.getSystemComponents()), false);
@@ -209,7 +222,7 @@ public class ServiceElementFactoryTest {
     private void verify(SystemComponent s, boolean excluded) {
         Assert.assertNotNull(s);
         if(excluded) {
-            Assert.assertTrue(s.exclude());
+            assertTrue(s.exclude());
         } else {
             Assert.assertFalse(s.exclude());
         }

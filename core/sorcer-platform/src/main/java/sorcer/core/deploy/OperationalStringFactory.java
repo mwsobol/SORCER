@@ -211,7 +211,7 @@ public final class OperationalStringFactory {
         return signatures;
     }
 
-    static String createDeploymentID(ServiceElement service) throws NoSuchAlgorithmException {
+    public static String createDeploymentID(ServiceElement service) throws NoSuchAlgorithmException {
         return DeploymentIdFactory.create(service);
     }
 

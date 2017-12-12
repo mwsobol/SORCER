@@ -20,7 +20,7 @@ int ndx = ref.lastIndexOf("/")
 String branch = ref.substring(ndx+1).trim()
 String branchRef = branch.equals("master")?"":"-$branch"
 
-version = "6.4.1$branchRef"
+version = "6.6$branchRef"
 
 apply plugin: 'idea'
 idea {
@@ -36,6 +36,7 @@ task printVersion {
         logger.quiet "Version: $version"
     }
 }
+
 
 task printClasspath() {
     description = 'Prints the current Java classpath.'
