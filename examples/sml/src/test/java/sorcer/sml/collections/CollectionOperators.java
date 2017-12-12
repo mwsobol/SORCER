@@ -301,7 +301,7 @@ public class CollectionOperators {
 
 		// keys and values of args
 		assertEquals(key(x("name", "Mike")), "name");
-		assertEquals(eval(x("name", "Mike")), "Mike");
+		assertEquals(eval(val("name", "Mike")), "Mike");
 		// when using namespaces use path for the name of context (map) variables
 		assertEquals(path(x("screen/height", 12.0)), "screen/height");
 
@@ -309,7 +309,7 @@ public class CollectionOperators {
 		assertEquals(keyValue(map1, "height"), 174.0);
 
 		assertTrue(key(x("width", 2.0)).equals("width"));
-		assertTrue(eval(x("width", 2.0)).equals(2.0));
+		assertTrue(eval(ent("width", 2.0)).equals(2.0));
 
 		assertEquals(keyValue(map1, "name"), "Mike");
 		assertEquals(keyValue(map1, "height"), 174.0);

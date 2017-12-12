@@ -38,7 +38,9 @@ import static sorcer.eo.operator.add;
  * @author Mike Sobolewski
  */
 public class
-Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparable<T>, EvaluationComponent, SupportComponent, Scopable, Setter, Reactive<T> {
+Entry<T> extends Tuple2<String, T> implements Callable<T>, Evaluation<T>, Dependency, Comparable<T>,
+	EvaluationComponent, SupportComponent, Scopable, Setter, Reactive<T> {
+
 	private static final long serialVersionUID = 5168783170981015779L;
 
 	public int index;
@@ -54,8 +56,11 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 	// if reactive then its values are evaluated if active (either Evaluation or Invocation type)
 	protected boolean isReactive = false;
 
-	// when context of this entry is changed then isValid == false
-	protected boolean isValid = true;
+	// when context of this entry is changed then setValid == false
+	protected boolean isValid = false;
+
+    // if a value is computed then isCached is true - computed only one for all
+    protected boolean isCached = false;
 
 	protected ContextSelection contextSelector;
 
@@ -257,14 +262,22 @@ Entry<T> extends Tuple2<String, T> implements Callable<T>, Dependency, Comparabl
 		return isValid;
 	}
 
-	public void isValid(boolean state) {
+	public void setValid(boolean state) {
 		isValid = state;
 		if (_2  instanceof Entry) {
 			((Entry)_2).isValid = state;
 		}
 	}
 
-	@Override
+    public boolean isCached() {
+        return isCached;
+    }
+
+    public void setCached(boolean cached) {
+        isCached = cached;
+    }
+
+    @Override
 	public void addDependers(Evaluation... dependers) {
 		if (this.dependers == null)
 			this.dependers = new ArrayList<Evaluation>();

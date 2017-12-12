@@ -17,10 +17,7 @@
 
 package sorcer.core.context;
 
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Positioning;
-import sorcer.service.Signature;
+import sorcer.service.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,8 +26,7 @@ import java.util.List;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class PositionalContext<T> extends ServiceContext<T> implements
-		Positioning {
+public class PositionalContext<T> extends ServiceContext<T> implements Positioning {
 
 	private static final long serialVersionUID = -8607789835474515562L;
 	protected int tally = 0;
@@ -204,4 +200,5 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 	public int getTally() {
 		return tally;
 	}
+
 }

@@ -25,7 +25,6 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.monitor.MonitoringManagement;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
-import sorcer.service.Signature.Kind;
 import sorcer.util.Stopwatch;
 
 import java.io.PrintWriter;
@@ -637,7 +636,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		return signatures;
 	}
 
-	public ServiceSignature getSignature(Kind kind) {
+	public ServiceSignature getSignature(Signature.Kind kind) {
 		for (Signature s : signatures) {
 			if (((ServiceSignature) s).isKindOf(kind)) {
 				return (ServiceSignature) s;

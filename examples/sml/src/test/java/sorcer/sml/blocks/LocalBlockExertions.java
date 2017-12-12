@@ -20,6 +20,7 @@ import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.inVal;
+import static sorcer.co.operator.val;
 import static sorcer.eo.operator.alt;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.loop;
@@ -249,7 +250,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 		assertEquals(value(context(block), "condition/eval"), false);
 		assertEquals(value(context(block), "out"), 500.0);
 
-		block = exert(block, proc("block/t4/arg/x1", 200.0), proc("block/t4/arg/x2", 800.0));
+		block = exert(block, val("block/t4/arg/x1", 200.0), val("block/t4/arg/x2", 800.0));
 //		logger.info("block context: " + context(block));
 //		logger.info("result: " + eval(context(block), "out"));
 		assertEquals(value(context(block), "out"), 100.0);
@@ -258,7 +259,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 	@Test
 	public void loopBlockTest() throws Exception {
 		Block block = block("block",
-				context(proc("x1", 10.0), proc("x2", 20.0), proc("z", 100.0)),
+				context(val("x1", 10.0), val("x2", 20.0), val("z", 100.0)),
 				loop(condition((Context<Double> cxt) -> value(cxt, "x1") + value(cxt, "x2")
 								< value(cxt, "z")),
 						task(proc("x1", invoker("x1 + 3", args("x1"))))));
@@ -270,7 +271,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 	}
 
 	@Test
-	public void parBlockTest() throws Exception {
+	public void procBlockTest() throws Exception {
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
@@ -295,10 +296,10 @@ public class  LocalBlockExertions implements SorcerConstants {
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
-//		block = exert(block, proc("x1", 10.0), proc("x2", 6.0));
+//		block = exert(block, val("block/x1", 10.0), val("block/x2", 6.0));
 ////		logger.info("block context: " + context(block));
 ////		logger.info("result: " + eval(context(block), "block/result"));
-//		assertEquals(eval(context(block), "block/result"), 500.00);
+//		assertEquals(value(context(block), "block/result"), 500.00);
 
 	}
 

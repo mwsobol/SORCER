@@ -21,6 +21,7 @@ import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
@@ -198,7 +199,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		}
 	}
 
-	public Proc getPar(String name) throws ContextException {
+	public Proc getProc(String name) throws ContextException {
 		Object obj = get(name);
 		if (obj instanceof Proc)
 			return (Proc) obj;
@@ -288,7 +289,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			Map.Entry<String, Object> entry = i.next();
 			Object val = entry.getValue();
 			if (val instanceof Entry && ((Entry)val).value() instanceof Evaluation) {
-				((Entry) val).isValid(false);
+				((Entry) val).setValid(false);
 			}
 		}
 	}
@@ -488,10 +489,37 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		return this;
 	}
 
+	public void invalidateEntries() {
+		Map<String, Object> data =  getData();
+		Iterator<String> i = data.keySet().iterator();
+		while (i.hasNext()) {
+			Object val = data.get(i.next());
+			if ((val != null || val != Context.none) && val instanceof Entry) {
+				((Entry)val).setValid(false);
+			}
+		}
+	}
+
 	@Override
 	public String toString() {
 		return this.getClass().getName() + ":" + getName() + "\nkeys: " + keySet()
 				+ "\n" + super.toString();
 	}
+
+    public boolean isValid(Entry entry, List<String> paths) {
+        String[] pns = new String[paths.size()];
+        return isValid(entry, paths.toArray(pns));
+    }
+
+	public boolean isValid(Entry entry, String[] paths) {
+	    boolean isValid = true;
+        Object obj;
+	    for (String path : paths) {
+	        obj = asis(path);
+	        if (obj instanceof Entry && !((Entry)obj).isValid())
+                isValid = false;
+        }
+	    return isValid;
+    }
 
 }

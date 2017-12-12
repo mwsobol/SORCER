@@ -360,7 +360,7 @@ public class operator extends sorcer.operator {
 
 	public static Config config(Object path, Setup... entries) {
 		Config ent = new Config(path.toString(), entries);
-		ent.isValid(false);
+		ent.setValid(false);
 		ent.setType(Type.CONFIG);
 		return ent;
 	}
@@ -454,6 +454,11 @@ public class operator extends sorcer.operator {
 		return false;
 	}
 
+	// initialization paths in the model
+	public static DependencyEntry dep(Signature.Paths paths) {
+		return new DependencyEntry(paths);
+	}
+
     public static DependencyEntry dep(String path, Path... paths) {
 		return new DependencyEntry(path, Arrays.asList(paths));
 	}
@@ -477,13 +482,30 @@ public class operator extends sorcer.operator {
         return de;
 	}
 
+	public static Signature.Paths setKind(Signature.Paths paths, Path.State... states) {
+		for (Path.State state : states) {
+			if (paths.kind == null) {
+				paths.kind = new HashSet();
+			}
+			paths.kind.add(state);
+		}
+		return paths;
+	}
+
 	public static DependencyEntry dep(String path, List<Path> paths) {
 		return new DependencyEntry(path, paths);
 	}
 
 
-	public static DependencyEntry dep(String path, Fidelity fi, List<Path> paths) {
-		DependencyEntry de = new DependencyEntry(path, paths);
+    public static DependencyEntry dep(String path, Fidelity fi, List<Path> paths) {
+        DependencyEntry de = new DependencyEntry(path, paths);
+        de.annotation(fi);
+        de.setType(Variability.Type.FIDELITY);
+        return de;
+    }
+
+	public static DependencyEntry dep(Signature.Paths dependees, Fidelity fi, List<Path> paths) {
+		DependencyEntry de = new DependencyEntry(dependees, paths);
 		de.annotation(fi);
 		de.setType(Variability.Type.FIDELITY);
 		return de;
@@ -641,7 +663,7 @@ public class operator extends sorcer.operator {
 				procEntry.getScope().putValue(procEntry.getName(), value);
 			}
 		}
-		entry.isValid(false);
+		entry.setValid(false);
 		return entry;
 	}
 
@@ -1074,8 +1096,12 @@ public class operator extends sorcer.operator {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
-	public static List<Path> paths(Object... paths) {
-		List<Path> list = new ArrayList<>();
+	public static Signature.Paths each(Object... paths) {
+		return paths(paths);
+	}
+
+	public static Signature.Paths paths(Object... paths) {
+		Signature.Paths list = new Signature.Paths();
 		for (Object o : paths) {
 			if (o instanceof String) {
 				list.add(new Path((String) o));
@@ -1102,39 +1128,69 @@ public class operator extends sorcer.operator {
          return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
 
-	public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
+    public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
         String path = null;
-		for (Evaluation d : dependers) {
-            path = d.getName();
-            if (path != null && path.equals("self")) {
-                ((Entry)d)._1 = (((Domain) dependee).getName());
-            }
-            if (d instanceof DependencyEntry && ((DependencyEntry)d).getType().equals(Type.CONDITION)) {
-                ((DependencyEntry)d).getCondition().setConditionalContext((Context)dependee);
-                }
-			if (!dependee.getDependers().contains(d)) {
-                dependee.getDependers().add(d);
-
-
-            }
-		}
-		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof DependencyEntry) {
-			Map<String, List<DependencyEntry>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
-			for (Evaluation e : dependers) {
-				path = e.getName();
-				if (dm.get(path) != null) {
-                    if (!dm.get(path).contains(e)) {
-                        ((List) dm.get(path)).add(e);
+        List<Dependency> dl = new ArrayList<>();
+        // find dependency lists
+        for (int i = 0; i < dependers.length; i++) {
+            if (dependers[i] instanceof DependencyEntry && ((DependencyEntry) dependers[i]).getDependees() != null) {
+                DependencyEntry mde = (DependencyEntry) dependers[i];
+                DependencyEntry de = null;
+                for (Path p : mde.getDependees()) {
+                    if (mde.getType() == Type.FIDELITY) {
+                        de = dep(p.getName(), (Fidelity) mde.annotation(), mde._2);
+                    } else if (mde.getType() == Type.CONDITION) {
+                        de = dep(p.getName(), (Conditional) mde.annotation(), mde._2);
+                    } else {
+                        de = dep(p.getName(), mde._2);
                     }
-				} else {
-					List<DependencyEntry> del = new ArrayList();
-					del.add((DependencyEntry)e);
-					dm.put(path, del);
+                    dl.add(de);
+                }
+                dependers[i] = null;
+            }
+        }
+
+        for (Evaluation d : dependers) {
+            if (d != null) {
+                path = d.getName();
+                if (path != null && path.equals("self")) {
+                    ((Entry) d)._1 = (((Domain) dependee).getName());
+                }
+
+                if (d instanceof DependencyEntry && ((DependencyEntry) d).getType().equals(Type.CONDITION)) {
+                    ((DependencyEntry) d).getCondition().setConditionalContext((Context) dependee);
+                }
+                if (!dependee.getDependers().contains(d)) {
+                    dependee.getDependers().add(d);
+                }
+            }
+        }
+
+        if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof DependencyEntry) {
+            Map<String, List<DependencyEntry>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
+            for (Evaluation e : dependers) {
+				if (e != null) {
+					path = e.getName();
+					if (dm.get(path) != null) {
+						if (!dm.get(path).contains(e)) {
+							((List) dm.get(path)).add(e);
+						}
+					} else {
+						List<DependencyEntry> del = new ArrayList();
+						del.add((DependencyEntry) e);
+						dm.put(path, del);
+					}
 				}
 			}
-		}
-		return dependee;
-	}
+        }
+        // second pass for dependency lists
+        if (dl.size() > 0) {
+            Evaluation[] deps = new Evaluation[dl.size()];
+            dependsOn(dependee, dl.toArray(deps));
+        }
+
+        return dependee;
+    }
 
 	public static Dependency dependsOn(Dependency dependee, Context scope, Evaluation... dependers)
 			throws ContextException {

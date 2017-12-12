@@ -20,6 +20,7 @@ package sorcer.co.tuple;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Conditional;
 import sorcer.service.Path;
+import sorcer.service.Signature;
 
 import java.util.List;
 
@@ -31,9 +32,23 @@ public class DependencyEntry extends Entry<List<Path>> {
 
     private Conditional condition;
 
+    private Signature.Paths dependees;
+
+    private Path.State entryState;
+
     @SuppressWarnings("unchecked")
+    public DependencyEntry(List<Path> paths) {
+        super("_init_", paths);
+    }
+
     public DependencyEntry(String path, List<Path> paths) {
         super(path, paths);
+    }
+
+    public DependencyEntry(Signature.Paths dependees, List<Path> paths) {
+        super("multiplicity");
+        this.dependees = dependees;
+        _2 = paths;
     }
 
     public DependencyEntry(String path, Conditional condition, List<Path> paths) {
@@ -49,4 +64,19 @@ public class DependencyEntry extends Entry<List<Path>> {
         this.condition = condition;
     }
 
+    public List<Path> getDependees() {
+        return dependees;
+    }
+
+    public void setDependees(Signature.Paths dependees) {
+        this.dependees = dependees;
+    }
+
+    public Path.State getEntryState() {
+        return entryState;
+    }
+
+    public void setEntryState(Path.State entryState) {
+        this.entryState = entryState;
+    }
 }

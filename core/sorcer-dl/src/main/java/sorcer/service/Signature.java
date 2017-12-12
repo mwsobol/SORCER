@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * A service <code>Signature</code> is an indirect behavioral feature of
@@ -48,8 +49,8 @@ import java.util.Arrays;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Signature extends Item, Comparable, Dependency, Identifiable,
-		EvaluationComponent, SupportComponent, Serializable {
+public interface Signature extends Request, Comparable, Dependency, Identifiable,
+		Arg, EvaluationComponent, SupportComponent, Serializable {
 
 	/**
 	 * Returns a name of this signature.
@@ -388,6 +389,8 @@ public interface Signature extends Item, Comparable, Dependency, Identifiable,
 
     public static class Paths extends ArrayList<Path> implements Arg {
         private static final long serialVersionUID = 1L;
+
+        public Set<Path.State> kind;
 
         public Paths() {
             super();

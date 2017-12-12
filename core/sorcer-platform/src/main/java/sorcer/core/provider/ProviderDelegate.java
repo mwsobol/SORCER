@@ -1067,10 +1067,10 @@ public class ProviderDelegate {
             Method m = null;
             try {
                 // select the proper method for the bean type
-                if (selector.equals("invoke") && (bean instanceof Exertion || bean instanceof ProcModel)) {
+                if (selector.equals("invoke") && (bean instanceof Mogram)) {
                     m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
                     isContextual = true;
-                } else if (selector.equals("evaluate") && bean instanceof Domain) {
+                } else if (selector.equals("evaluate") || selector.equals("explore")) {
                     m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
                     isContextual = true;
                 } else if (selector.equals("exert") && bean instanceof ServiceShell) {
@@ -1138,7 +1138,7 @@ public class ProviderDelegate {
 				task.getControlContext().getExceptions().addAll(((Exertion) obj).getExceptions());
 				task.getTrace().addAll(((Exertion) obj).getTrace());
 			}
-		} else if (impl instanceof Domain && selector.equals("evaluate")) {
+		} else if (selector.equals("evaluate") ||  selector.equals("explore")) {
 			result = (Context) m.invoke(impl, new Object[] { pars[0], args });
 		} else {
 			logger.debug("getProviderName: {} invoking: {}" + getProviderName(), m);

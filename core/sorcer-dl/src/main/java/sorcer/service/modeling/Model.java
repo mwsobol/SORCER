@@ -44,4 +44,8 @@ public interface Model extends Domain {
      */
     public void setBuilder(Signature signature);
 
+    public void invalidateEntries();
+
+    public void execDependencies(String path, Arg... args) throws ContextException;
+
 }

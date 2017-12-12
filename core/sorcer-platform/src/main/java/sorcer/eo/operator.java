@@ -1656,6 +1656,15 @@ public class operator extends sorcer.operator {
 		return fi;
 	}
 
+	public static Fidelity fis(String fidelity, List<Path> paths, String gradient) {
+		FidelityList fl = new FidelityList(paths.size());
+		for (Path path : paths) {
+			fl.add(fi(fidelity, path.getName(), gradient));
+		}
+		Projection mfi = new Projection(fl);
+		return mfi;
+	}
+
 	public static Fidelity fi(String name, String path) {
 		Fidelity fi = new Fidelity(name, path);
 		fi.fiType = Fidelity.Type.SELECT;
@@ -1684,6 +1693,14 @@ public class operator extends sorcer.operator {
 		return fi;
 	}
 
+	public static Fidelity fis(String fidelity, List<Path> paths, Fidelity subFi) {
+		FidelityList fl = new FidelityList(paths.size());
+		for (Path path : paths) {
+			fl.add(fi(fidelity, path.getName(), subFi));
+		}
+		Projection mfi = new Projection(fl);
+		return mfi;
+	}
 
 	public static ServiceFidelity<Path> rFi(String name, String path) {
 		ServiceFidelity<Path> fi = new ServiceFidelity(name, path(path));
@@ -2530,7 +2547,7 @@ public class operator extends sorcer.operator {
 		return service.exert(mogram, txn, entries);
 	}
 
-	public static Object execItem(Item item, Arg... args) throws ServiceException {
+	public static Object execItem(Call item, Arg... args) throws ServiceException {
 		try {
 			return item.exec(args);
 		} catch (RemoteException e) {

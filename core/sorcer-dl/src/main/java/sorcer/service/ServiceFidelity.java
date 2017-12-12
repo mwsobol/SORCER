@@ -39,7 +39,7 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 		fiName = "fidelity" + count++;
 	}
 
-	public ServiceFidelity(Type type) {
+	public ServiceFidelity(Fi.Type type) {
 		this();
 		this.fiType = type;
 	}
@@ -80,14 +80,14 @@ public class ServiceFidelity<T extends Arg> extends Fidelity<T> implements Multi
 
 	public ServiceFidelity(String... selects) {
 		this.fiName = "";
-		fiType = Type.NAME;
+		fiType = Fi.Type.NAME;
 		for (String s : selects)
 			this.selects.add((T) new Tag(s));
 	}
 
 	public ServiceFidelity(String name, String... selects) {
 		this.fiName = name;
-		fiType = Type.NAME;
+		fiType = Fi.Type.NAME;
 		for (String s : selects)
 			this.selects.add((T) new Tag(s));
 	}

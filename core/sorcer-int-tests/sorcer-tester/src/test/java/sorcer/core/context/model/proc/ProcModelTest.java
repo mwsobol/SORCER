@@ -108,9 +108,9 @@ public class ProcModelTest {
 		logger.info("pm context eval: " + pm.invoke(null));
 		assertEquals(pm.invoke(null), 30.0);
 
-		x = pm.getPar("x");
-		y = pm.getPar("y");
-		add = pm.getPar("add");
+		x = pm.getProc("x");
+		y = pm.getProc("y");
+		add = pm.getProc("add");
 		assertEquals(x.getValue(), 10.0);
 		assertEquals(y.getValue(), 20.0);
 		assertEquals(add.getValue(), 30.0);

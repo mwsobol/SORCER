@@ -70,6 +70,14 @@ public interface Arg extends Serializable {
 		return null;
 	}
 
+	public static Signature.Paths getPaths(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Signature.Paths)
+				return (Signature.Paths)arg;
+		}
+		return null;
+	}
+
 	public static Object getValue(Arg[] args, String path) throws EvaluationException, RemoteException {
 		for (Arg arg : args) {
 			if (arg instanceof Callable && arg.getName().equals(path))

@@ -15,13 +15,11 @@ import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.Modeler;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceModeler;
-import sorcer.service.Block;
-import sorcer.service.Context;
-import sorcer.service.Job;
+import sorcer.service.*;
 import sorcer.service.Strategy.Flow;
-import sorcer.service.Task;
-import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
+
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
@@ -284,6 +282,11 @@ public class ServiceMograms {
                 response("inner/multiply", "subtract", "out"));
 
          dependsOn(outerMdl, dep("subtract", paths("multiply", "add")));
+
+         // initialization of the model
+        dependsOn(outerMdl, dep(paths("multiply", "add")));
+        // state of entries can be updated
+        dependsOn(outerMdl, dep("subtract", setKind(paths("multiply", "add"), Path.State.CACHED, Path.State.AFTER)));
 
         add(outerMdl, innerMdl, inVal("arg/x1", 10.0), inVal("arg/x2", 50.0));
 

@@ -28,6 +28,8 @@ public class Path implements Arg  {
 		PATH, MAP, ENT, CONTEXT, ARRAY, OUT
 	}
 
+	public enum State { CACHED, UNCACHED, VALID, INVALID, CHANGED, BEFORE, AFTER }
+
 	public String path = null;
 
 	public Object info = null;
@@ -119,11 +121,14 @@ public class Path implements Arg  {
 		return sa;
 	}
 
-
 	@Override
 	public int hashCode() {
-		int hash = path.length() + 1;
-		return hash * 31 + path.hashCode();
+		if (path != null) {
+			int hash = path.length() + 1;
+			return hash * 31 + path.hashCode();
+		} else {
+			return super.hashCode();
+		}
 	}
 
 	@Override
@@ -137,7 +142,6 @@ public class Path implements Arg  {
 			return false;
 		}
 	}
-
 
 	public static String[] getPathNames(List<Path> paths) {
 		String[] sa = new String[paths.size()];
