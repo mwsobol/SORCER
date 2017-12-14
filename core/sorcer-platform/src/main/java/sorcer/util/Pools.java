@@ -35,6 +35,9 @@ public class Pools {
 
 	public static final String FI_PROJECTIONS = "projections";
 
+	// a cache pool of shared data contexts for entries
+	final public static Pool<Uuid, ContextPool> cachePool = new Pool<>();
+
 	// a pool of fidelities to configure mograms of this environment
 	final public static Pool<Uuid, Pool<Fidelity, Fidelity>> fiPool = new Pool<>();
 
@@ -52,6 +55,12 @@ public class Pools {
 
 	// a pool of setup configurations  for mograms of this environment
 	final public static Pool<Uuid, Pool<String, Config>> configPool = new Pool<>();
+
+	public static ContextPool getContextPool(Uuid mogramId) {
+		return cachePool.get(mogramId);
+	}
+
+	public static ContextPool getContextPool(Mogram mogram) { return cachePool.get(mogram.getId()); }
 
 	public static Pool<Fidelity, Fidelity> getFiPool(Uuid mogramId) {
 		return fiPool.get(mogramId);

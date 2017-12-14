@@ -42,9 +42,11 @@ public class ContextPool extends Pool<String, Set<String>> {
 				isCached = true;
 			} else {
 				isCached = false;
+				break;
 			}
 		}
-		if (isCached) {
+		Context cxt = contextCache.get(ent);
+		if (isCached  && cxt.isValid()) {
 			return contextCache.get(ent);
 		} else {
 			return null;
