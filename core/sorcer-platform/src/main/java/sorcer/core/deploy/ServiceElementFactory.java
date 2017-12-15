@@ -189,6 +189,17 @@ public final class ServiceElementFactory  {
                                          String[].class,
                                          new String[0]);
         }
+
+        String[] environment = configuration.getEntry("sorcer.core.exertion.deployment",
+                                                      "environment",
+                                                      String[].class,
+                                                      new String[0]);
+
+        String[] systemProperties = configuration.getEntry("sorcer.core.exertion.deployment",
+                                                           "systemProperties",
+                                                           String[].class,
+                                                           new String[0]);
+
         String[] excludeIPs = deployment.getExcludeIps();
         if(excludeIPs.length==0) {
             excludeIPs = configuration.getEntry("sorcer.core.exertion.deployment",
@@ -237,6 +248,8 @@ public final class ServiceElementFactory  {
                                                            implJars,
                                                            providerClass,
                                                            jvmArgs,
+                                                           environment,
+                                                           systemProperties,
                                                            fork,
                                                            planned,
                                                            maxPerNode,
@@ -348,9 +361,34 @@ public final class ServiceElementFactory  {
         /* If the service is to be forked, create an ExecDescriptor */
         if(serviceDetails.fork) {
             service.setFork(true);
-            if(serviceDetails.jvmArgs!=null) {
+            if(serviceDetails.jvmArgs!=null ||
+               serviceDetails.environment.length>0 ||
+                serviceDetails.systemProperties.length>0) {
                 ExecDescriptor execDescriptor = new ExecDescriptor();
-                execDescriptor.setInputArgs(serviceDetails.jvmArgs);
+                StringBuilder jvmArgs = new StringBuilder();
+                for(String sysProp : serviceDetails.systemProperties) {
+                    if(jvmArgs.length()>0)
+                        jvmArgs.append(" ");
+                    if(!sysProp.startsWith("-D"))
+                        jvmArgs.append("-D").append(sysProp);
+                    else
+                        jvmArgs.append(sysProp);
+                }
+                if(serviceDetails.jvmArgs!=null) {
+                    if(jvmArgs.length()>0)
+                        jvmArgs.append(" ");
+                    jvmArgs.append(serviceDetails.jvmArgs);
+                }
+                execDescriptor.setInputArgs(jvmArgs.toString());
+                if(serviceDetails.environment.length>0) {
+                    List<String> env = new ArrayList<>();
+                    for(String s : serviceDetails.environment) {
+                        String[] parts = s.split("=");
+                        env.add(parts[0].trim());
+                        env.add(parts[1].trim());
+                    }
+                    execDescriptor.setEnvironment(env.toArray(new String[env.size()]));
+                }
                 service.setExecDescriptor(execDescriptor);
             }
         }
@@ -511,6 +549,8 @@ public final class ServiceElementFactory  {
         final String providerClass;
         final String jvmArgs;
         final boolean fork;
+        final String[] environment;
+        final String[] systemProperties;
         final int planned;
         final int maxPerNode;
         final String architecture;
@@ -526,6 +566,8 @@ public final class ServiceElementFactory  {
                                String[] implJars,
                                String providerClass,
                                String jvmArgs,
+                               String[] environment,
+                               String[] systemProperties,
                                boolean fork,
                                int planned,
                                int maxPerNode,
@@ -541,6 +583,8 @@ public final class ServiceElementFactory  {
             this.implJars = implJars;
             this.providerClass = providerClass;
             this.jvmArgs = jvmArgs;
+            this.environment = environment;
+            this.systemProperties = systemProperties;
             this.fork = fork;
             this.planned = planned;
             this.maxPerNode = maxPerNode;

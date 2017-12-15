@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
 
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,14 +45,16 @@ public class DeploymentIdFactory {
      */
     public static String create(List<Signature> list) throws NoSuchAlgorithmException, SignatureException {
         StringBuilder ssb = new StringBuilder();
-        List<String> items = new ArrayList<String>();
+        List<String> items = new ArrayList<>();
         for (Signature s : list) {
-            String item = String.format("%s%s", s.getProviderName(), s.getServiceType().getName());
+            String item = String.format("%s:%s", s.getProviderName(), s.getServiceType().getName());
             if(!items.contains(item))
                 items.add(item);
         }
         java.util.Collections.sort(items);
         for (String item : items) {
+            if(ssb.length()>0)
+                ssb.append(";");
             ssb.append(item);
         }
 
@@ -78,15 +79,18 @@ public class DeploymentIdFactory {
     public static String create(ServiceElement service) throws NoSuchAlgorithmException {
         StringBuilder nameBuilder = new StringBuilder();
         List<String> items = new ArrayList<>();
-        items.add(service.getName());
         for (ClassBundle export : service.getExportBundles()) {
-            items.add(export.getClassName());
+            if(!items.contains(export.getClassName()))
+                items.add(export.getClassName());
         }
         java.util.Collections.sort(items);
         for (String item : items) {
+            if(nameBuilder.length()>0)
+                nameBuilder.append(";");
             nameBuilder.append(item);
         }
-        String deploymentID = createDeploymentID(nameBuilder.toString());
+        String deploymentID = String.format("%s:%s", service.getName(), nameBuilder.toString());
+        //String deploymentID = createDeploymentID(nameBuilder.toString());
         if(logger.isDebugEnabled()) {
             logger.debug("Create deployment name from service element: {}\nID: {}",
                          nameBuilder.toString(),
@@ -95,8 +99,8 @@ public class DeploymentIdFactory {
         return deploymentID;
     }
 
-    static String createDeploymentID(final String ssb) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("MD5");
+    private static String createDeploymentID(final String ssb) throws NoSuchAlgorithmException {
+        /*MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(ssb.getBytes());
         byte byteData[] = md.digest();
         // convert the byte to hex
@@ -107,6 +111,7 @@ public class DeploymentIdFactory {
                 hexString.append('0');
             hexString.append(hex);
         }
-        return hexString.toString();
+        return hexString.toString();*/
+        return ssb;
     }
 }

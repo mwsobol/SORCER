@@ -71,6 +71,8 @@ public class OperationalStringFactoryTest {
 
         String id = OperationalStringFactory.createDeploymentID(serviceElement);
         String id1 = OperationalStringFactory.createDeploymentID(serviceElement1);
+        System.out.println("s1: "+id);
+        System.out.println("s2: "+id1);
         Assert.assertTrue(id.equals(id1));
     }
 
