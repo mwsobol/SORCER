@@ -1002,14 +1002,32 @@ public class operator extends sorcer.operator {
 		return map;
 	}
 
-	public static <T extends Identifiable> Pool<String, T> pool(Fi.Type type, T... entries) {
-		Pool<String, T> map = new Pool<>();
+	public static Pool<String, Evaluation> pool(Fi.Type type, Evaluation... entries) {
+		Pool<String, Evaluation> map = new Pool<>();
 		map.setFiType(type);
-		for (T entry : entries) {
+		for (Evaluation entry : entries) {
 			map.put(entry.getName(), entry);
 		}
 		return map;
 	}
+
+    public static Pool<String, Signature> pool(Fi.Type type, Signature... entries) {
+        Pool<String, Signature> map = new Pool<>();
+        map.setFiType(type);
+        for (Signature entry : entries) {
+            map.put(entry.getName(), entry);
+        }
+        return map;
+    }
+
+    public static Pool<String, Config> pool(Fi.Type type, Config... entries) {
+        Pool<String, Config> map = new Pool<>();
+        map.setFiType(type);
+        for (Config entry : entries) {
+            map.put(entry.getName(), entry);
+        }
+        return map;
+    }
 
 	public static <T extends Identifiable> Pool<String, T> pool(T... entries) {
 		Pool<String, T> map = new Pool<>();
