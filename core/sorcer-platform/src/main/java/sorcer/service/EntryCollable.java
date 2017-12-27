@@ -17,7 +17,6 @@
 
 package sorcer.service;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Function;
 import sorcer.service.modeling.Model;
 
 import java.io.Serializable;

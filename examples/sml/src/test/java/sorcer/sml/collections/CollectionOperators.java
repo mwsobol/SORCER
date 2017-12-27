@@ -13,7 +13,7 @@ import sorcer.co.tuple.*;
 import sorcer.core.Tag;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Proc;
-import sorcer.core.context.model.ent.Function;
+import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
@@ -272,7 +272,7 @@ public class CollectionOperators {
 
 		// persist values of args
 		Entry dbp1 = persistent(ent("design/in", 25.0));
-        Function dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
+        Subroutine dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);

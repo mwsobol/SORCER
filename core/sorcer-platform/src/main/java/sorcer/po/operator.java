@@ -119,9 +119,9 @@ public class operator extends Operator {
 		if (object instanceof Context) {
 			p = new Proc(path, argument);
 			p.setScope(object);
-		} else if (object instanceof Function) {
+		} else if (object instanceof Subroutine) {
 			p = new Proc(path, argument);
-			p.setScope(context((Function)object));
+			p.setScope(context((Subroutine)object));
 		} else if (object instanceof Service) {
 			p = new Proc(path, argument, object);
 		}
@@ -230,7 +230,7 @@ public class operator extends Operator {
         return fi;
     }
 
-    public static Fidelity pFi(Function... entries) {
+    public static Fidelity pFi(Subroutine... entries) {
         Fidelity fi = new Fidelity(entries);
         fi.fiType = ServiceFidelity.Type.PROC;
         return fi;
@@ -680,8 +680,8 @@ public class operator extends Operator {
 			return null;
 	}
 
-	public static Function ent(Model model, String path) throws ContextException {
-        return new Function(path, model.asis(path));
+	public static Subroutine ent(Model model, String path) throws ContextException {
+        return new Subroutine(path, model.asis(path));
     }
 
 	public static <T extends Service> Srv ent(String name, MorphFidelity fidelity) {
@@ -772,7 +772,7 @@ public class operator extends Operator {
 			entry = new Proc(path, value);
 			entry.setType(Functionality.Type.PROC);
 		} else if (value.getClass() == Tuple2.class) {
-			entry = new Function(path, value);
+			entry = new Subroutine(path, value);
 			entry.setType(Functionality.Type.CONSTANT);
 		} else {
 			entry = new Entry(path, value);
@@ -788,8 +788,8 @@ public class operator extends Operator {
 			if (entry instanceof Proc) {
 				if (cxt != null) {
 					entry.setScope(cxt);
-				} else if (args.length == 1 && args[0] instanceof Function) {
-					entry.setScope(context((Function) args[0]));
+				} else if (args.length == 1 && args[0] instanceof Subroutine) {
+					entry.setScope(context((Subroutine) args[0]));
 				} else if (args.length == 1 && args[0] instanceof Service) {
 					entry = new Proc(path, value, args[0]);
 				}
@@ -833,8 +833,8 @@ public class operator extends Operator {
 		return assoc;
 	}
 
-	public static Function ent(String path) {
-		return new Function(path, null);
+	public static Subroutine ent(String path) {
+		return new Subroutine(path, null);
 	}
 
 	public static <T> TagEntry<T> ent(String path, T value, String association) {
@@ -845,21 +845,21 @@ public class operator extends Operator {
 			throws ContextException {
 		ArgSet as = new ArgSet();
 		for (String name : entries) {
-			as.add(new Function(name, Context.none));
+			as.add(new Subroutine(name, Context.none));
 		}
 		return as.toArray();
 	}
 
-	public static Arg[] ents(Function... entries)
+	public static Arg[] ents(Subroutine... entries)
 			throws ContextException {
 		ArgSet as = new ArgSet();
-		for (Function e : entries) {
+		for (Subroutine e : entries) {
 			as.add(e);
 		}
 		return as.toArray();
 	}
 
-	public static Function inout(Function entry) {
+	public static Subroutine inout(Subroutine entry) {
 		entry.setType(Functionality.Type.INOUT);
 		return entry;
 	}

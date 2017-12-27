@@ -23,11 +23,11 @@ import sorcer.service.Request;
 
 
 /**
- * A generic combination of two or more things into one.
+ * A generic data holder.
  *
  * @author Mike Sobolewski
  */
-public interface Duo<V> extends Request {
+public interface Data<V> extends Request {
 
     public V getData(Arg... args) throws ContextException;
 }

@@ -124,8 +124,8 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
                     return ((Proc) val).getOut();
                 } else if (((Proc) val).isPersistent) {
                     return ((Proc)val).evaluate();
-                } else if ((((Proc) val).asis() instanceof Function)) {
-                    bindEntry((Function) ((Proc) val).asis());
+                } else if ((((Proc) val).asis() instanceof Subroutine)) {
+                    bindEntry((Subroutine) ((Proc) val).asis());
                 }
             } else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
                 ((Scopable)val).getScope().setScope(this);
@@ -144,7 +144,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			} else if (val != null && val instanceof Evaluation) {
 				return ((Evaluation) val).evaluate(args);
 			}   if (val instanceof ServiceFidelity) {
-				return new Function(path, val).evaluate(args);
+				return new Subroutine(path, val).evaluate(args);
 			} else if (path == null && val == null
 					&& ((ModelStrategy)mogramStrategy).getResponsePaths() != null) {
 				if (((ModelStrategy)mogramStrategy).getResponsePaths().size() == 1)
@@ -217,12 +217,12 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 			return new Proc(name, asis(name), this);
 	}
 
-	public Function bindEntry(Function ent) throws ContextException, RemoteException {
+	public Subroutine bindEntry(Subroutine ent) throws ContextException, RemoteException {
 		ArgSet args = ent.getArgs();
 		if (args != null) {
 			for (Arg v : args)
 				if (get(v.getName()) != null) {
-					((Function) v).setValue(getValue(v.getName()));
+					((Subroutine) v).setValue(getValue(v.getName()));
 				}
 		}
 		return ent;
@@ -393,13 +393,13 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 	}
 
 	@Override
-	public Function entry(String path) {
+	public Subroutine entry(String path) {
 		Object entry = null;
 		if (path != null) {
 			entry = data.get(path);
 		}
-		if (entry instanceof Function) {
-			return (Function)entry;
+		if (entry instanceof Subroutine) {
+			return (Subroutine)entry;
 		} else {
 			return null;
 		}

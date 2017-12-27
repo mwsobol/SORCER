@@ -27,7 +27,7 @@ import sorcer.core.context.FidelityContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Function;
+import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.Jobber;
@@ -604,7 +604,7 @@ public class Job extends CompoundExertion {
 				for (Arg e : entries) {
 					if (e instanceof Entry)
 						if (e.getName().indexOf(key) >= 0)
-							putJobValue(e.getName(), ((Function) e).get());
+							putJobValue(e.getName(), ((Subroutine) e).get());
 
 						else
 							super.putValue(e.getName(), ((Entry) e).get());

@@ -36,7 +36,7 @@ import java.util.Iterator;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Neo extends Function<Double> implements Functionality<Double>, Invocation<Double>,
+public class Neo extends Subroutine<Double> implements Functionality<Double>, Invocation<Double>,
 		Setter, Scopable, Comparable<Double>, func<Double> {
 
 	private static final long serialVersionUID = 1L;
@@ -66,7 +66,7 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 		((Activator)impl).setWeights(weights);
     }
 
-    public Neo(String name, double value, Context<Function> signals) {
+    public Neo(String name, double value, Context<Subroutine> signals) {
         this(name);
         impl = value;
 		((Activator)impl).setScope(signals);
@@ -134,9 +134,9 @@ public class Neo extends Function<Double> implements Functionality<Double>, Invo
 	private boolean isFidelityValid(Object fidelity) throws EvaluationException {
 		if (fidelity == null || fidelity == Context.none)
 			return false;
-		if (fidelity instanceof Function) {
+		if (fidelity instanceof Subroutine) {
 			Object obj = null;
-			obj = ((Function)fidelity).asis();
+			obj = ((Subroutine)fidelity).asis();
 			if (obj == null || obj == Context.none) return false;
 		}
 		 return true;

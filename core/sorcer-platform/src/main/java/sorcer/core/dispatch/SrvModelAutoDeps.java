@@ -23,7 +23,7 @@ import org.codehaus.plexus.util.dag.TopologicalSorter;
 import org.codehaus.plexus.util.dag.Vertex;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Function;
+import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.dispatch.graph.DirectedGraph;
@@ -212,7 +212,7 @@ public class SrvModelAutoDeps {
     private void getMapping(SrvModel srvModel) throws CycleDetectedException, SortingException {
         for (String entryName : srvModel.getData().keySet()) {
             Object entry = srvModel.getData().get(entryName);
-            if (entry instanceof Function) {
+            if (entry instanceof Subroutine) {
                 ReturnPath rp = null;
                 Object entryVal = ((Entry)entry).getImpl();
                 if (entryVal instanceof SignatureEntry) {

@@ -262,7 +262,7 @@ public class Entry<V> extends Association<String, V>
     }
 
     @Override
-    public Duo act(String entryName, Arg... args) throws ServiceException, RemoteException {
+    public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
         Object result = this.execute(args);
         if (result instanceof Entry) {
             return (Entry)result;

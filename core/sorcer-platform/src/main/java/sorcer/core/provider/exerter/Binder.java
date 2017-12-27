@@ -20,7 +20,7 @@ package sorcer.core.provider.exerter;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Function;
+import sorcer.core.context.model.ent.Subroutine;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -104,7 +104,7 @@ public class Binder {
             for (Arg a : entries) {
                 if (a instanceof Entry) {
                     exertion.getContext().putValue(
-                            a.getName(), ((Function) a).get());
+                            a.getName(), ((Subroutine) a).get());
                 }
             }
         }

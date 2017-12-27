@@ -230,7 +230,7 @@ public class operator extends Operator {
 	}
 	public static Context data(Object... entries) throws ContextException {
 		for (Object obj : entries) {
-			if (!(obj instanceof String) || !(obj instanceof Function && ((Function)obj).getType().equals(Functionality.Type.VAL))) {
+			if (!(obj instanceof String) || !(obj instanceof Subroutine && ((Subroutine)obj).getType().equals(Functionality.Type.VAL))) {
 				throw new ContextException("Not execute entry " + obj.toString());
 			}
 		}
@@ -289,7 +289,7 @@ public class operator extends Operator {
 		}
 		String name = getUnknown();
 		List<Entry> entryList = new ArrayList();
-		List<Function> funcEntryList = new ArrayList();
+		List<Subroutine> funcEntryList = new ArrayList();
 		List<Context.Type> types = new ArrayList();
 		List<EntryList> entryLists = new ArrayList();
 		List<ExecDependency> depList = new ArrayList();
@@ -320,8 +320,8 @@ public class operator extends Operator {
 				returnPath = (ReturnPath) o;
 			} else if (o instanceof ExecPath) {
 				execPath = (ExecPath) o;
-			} else if (o instanceof Function) {
-				funcEntryList.add((Function) o);
+			} else if (o instanceof Subroutine) {
+				funcEntryList.add((Subroutine) o);
 			} else if (o instanceof Entry) {
 				entryList.add((Entry) o);
 			} else if (o instanceof Context.Type) {
@@ -409,7 +409,7 @@ public class operator extends Operator {
 				populteContext(cxt, entryList);
 		}
 		if (funcEntryList.size() > 0) {
-			for (Function p : funcEntryList)
+			for (Subroutine p : funcEntryList)
 				cxt.putValue(p.getName(), p);
 		}
 		if (returnPath != null)
@@ -509,7 +509,7 @@ public class operator extends Operator {
 		return cxt;
 	}
 
-	public static Context contextFromList(List<Function> entries) throws ContextException {
+	public static Context contextFromList(List<Subroutine> entries) throws ContextException {
 		ServiceContext cxt = new ServiceContext();
 		for (Object i : entries) {
 			cxt.put(((Entry)i).getName().toString(), ((Entry)i).get());
@@ -658,7 +658,7 @@ public class operator extends Operator {
 				} else {
 					cxt.putInoutValue(ent.getName(), ent.getImpl());
 				}
-			} else if (entryList.get(i) instanceof Function) {
+			} else if (entryList.get(i) instanceof Subroutine) {
 				if (ent.isPersistent()) {
 					setProc(cxt, ent);
 				} else {
@@ -735,8 +735,8 @@ public class operator extends Operator {
 			} else {
 				context.putValue(i.getName(), i);
 			}
-			if (i instanceof Function) {
-				Function e = (Function) i;
+			if (i instanceof Subroutine) {
+				Subroutine e = (Subroutine) i;
 				if (e.isAnnotated()) context.mark(e.getName(), e.annotation().toString());
 				if (e.asis() instanceof Scopable) {
 					((Scopable) e.asis()).setScope(context);
@@ -790,9 +790,9 @@ public class operator extends Operator {
 		return names;
 	}
 
-	public static List<Function> attributes(Function... entries) {
-		List<Function> el = new ArrayList<Function>(entries.length);
-		for (Function e : entries)
+	public static List<Subroutine> attributes(Subroutine... entries) {
+		List<Subroutine> el = new ArrayList<Subroutine>(entries.length);
+		for (Subroutine e : entries)
 			el.add(e);
 		return el;
 	}
@@ -1993,7 +1993,7 @@ public class operator extends Operator {
 				if (mFi.getMorpherFidelity() != null) {
 					// set the default morpher
 					try {
-						mFi.setMorpher((Morpher) ((Function) mFi.getMorpherFidelity().get(0)).get());
+						mFi.setMorpher((Morpher) ((Subroutine) mFi.getMorpherFidelity().get(0)).get());
 					} catch (ContextException e) {
 						throw new ExertionException(e);
 					}
@@ -2056,7 +2056,7 @@ public class operator extends Operator {
 				hasContext = true;
 			} else if (i instanceof Signature) {
 				hasSignature = true;
-			} else if (i instanceof Function) {
+			} else if (i instanceof Subroutine) {
 				hasEntry = true;
 			}
 		}
@@ -2245,7 +2245,7 @@ public class operator extends Operator {
 				mFi.addObserver(fiManager);
 				if (mFi.getMorpherFidelity() != null) {
 					// set the default morpher
-					mFi.setMorpher((Morpher) ((Function) mFi.getMorpherFidelity().get(0)).get());
+					mFi.setMorpher((Morpher) ((Subroutine) mFi.getMorpherFidelity().get(0)).get());
 				}
 			}
 		}
@@ -2801,7 +2801,7 @@ public class operator extends Operator {
 		public Arg[] args() {
 			Arg[] as = new Arg[args.length];
 			for (int i = 0; i < args.length; i++) {
-				as[i] = new Function(args[i].toString());
+				as[i] = new Subroutine(args[i].toString());
 			}
 			return as;
 		}
@@ -2809,7 +2809,7 @@ public class operator extends Operator {
 		public ArgSet argSet() {
 			ArgSet as = new ArgSet();
 			for (int i = 0; i < args.length; i++) {
-				as.add(new Function(args[i].toString()));
+				as.add(new Subroutine(args[i].toString()));
 			}
 			return as;
 		}

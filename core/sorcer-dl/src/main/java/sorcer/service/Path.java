@@ -17,7 +17,7 @@
 
 package sorcer.service;
 
-import sorcer.service.modeling.Duo;
+import sorcer.service.modeling.Data;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -175,12 +175,12 @@ public class Path implements Arg, Request {
 	}
 
 	@Override
-	public Duo act(Arg... args) throws ServiceException, RemoteException {
+	public Data act(Arg... args) throws ServiceException, RemoteException {
 		return new Association(path, this);
 	}
 
 	@Override
-	public Duo act(String entryName, Arg... args) throws ServiceException, RemoteException {
+	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
 		return new Association(entryName, this);
 	}
 

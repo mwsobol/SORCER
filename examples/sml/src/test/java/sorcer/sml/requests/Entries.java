@@ -8,7 +8,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Function;
+import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.context.model.ent.Value;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -47,7 +47,7 @@ public class Entries {
         assertEquals(10.0, eval(x0));
         assertTrue(direction(x0) == null);
 
-        Function x1 = proc("arg/x1", 100.0);
+        Subroutine x1 = proc("arg/x1", 100.0);
         assertEquals(100.0, eval(x1));
         assertTrue(direction(x1) == null);
 
@@ -105,7 +105,7 @@ public class Entries {
 	@Test
 	public void expressionEntry() throws Exception {
 
-		Function z1 = proc("z1", expr("x1 + 4 * x2 + 30",
+		Subroutine z1 = proc("z1", expr("x1 + 4 * x2 + 30",
 					context(proc("x1", 10.0), proc("x2", 20.0)),
                     args("x1", "x2")));
 
@@ -115,7 +115,7 @@ public class Entries {
 	@Test
 	public void bindingEntryArgs() throws Exception {
 
-		Function y = proc("y", expr("x1 + x2", args("x1", "x2")));
+		Subroutine y = proc("y", expr("x1 + x2", args("x1", "x2")));
 
 		assertTrue(eval(y, val("x1", 10.0), val("x2", 20.0)).equals(30.0));
 	}
@@ -182,7 +182,7 @@ public class Entries {
             args = args("cmd",  "/C", "echo %USERNAME%");
         }
 
-        Function cmd = proc("cmd", invoker(args));
+        Subroutine cmd = proc("cmd", invoker(args));
 
         CmdResult result = (CmdResult) eval(cmd);
         logger.info("result: " + result);
@@ -201,7 +201,7 @@ public class Entries {
     @Test
     public void signatureEntry() throws Exception {
 
-        Function y1 = srv("y1", sig("add", AdderImpl.class, result("add/out",
+        Subroutine y1 = srv("y1", sig("add", AdderImpl.class, result("add/out",
                         inPaths("x1", "x2"))),
                     context(inVal("x1", 10.0), inVal("x2", 20.0)));
 
@@ -211,7 +211,7 @@ public class Entries {
     @Test
     public void getEntryValueWithArgSelector() throws Exception {
 
-        Function y1 = srv("y1", sig("add", AdderImpl.class),
+        Subroutine y1 = srv("y1", sig("add", AdderImpl.class),
                 context(inVal("x1", 10.0), inVal("x2", 20.0)));
 
 //        logger.info("out eval: {}", eval(y1, selector("result/eval")));
@@ -221,7 +221,7 @@ public class Entries {
     @Test
     public void getEntryValueWithSelector() throws Exception {
 
-        Function y1 = srv("y1", sig("add", AdderImpl.class),
+        Subroutine y1 = srv("y1", sig("add", AdderImpl.class),
                 context(inVal("x1", 10.0), inVal("x2", 20.0)),
                 selector("result/eval"));
 
@@ -297,7 +297,7 @@ public class Entries {
     @Test
     public void getConditionalBlockSrvValue() throws Exception {
 
-        Function y1 = srv("y1", block(context(proc("x1", 10.0), proc("x2", 20.0)),
+        Subroutine y1 = srv("y1", block(context(proc("x1", 10.0), proc("x2", 20.0)),
             alt(opt(condition((Context<Double> cxt)
                             -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))),
                 opt(condition((Context<Double> cxt)
@@ -324,7 +324,7 @@ public class Entries {
 	@Test
 	public void getConditionalLoopSrvValue() throws Exception {
 
-		Function y1 = proc("y1",
+		Subroutine y1 = proc("y1",
 			loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),
 				invoker("lambda",
                         (Context<Double> cxt) -> { putValue(cxt, "x1", v(cxt, "x1") + 1.0);

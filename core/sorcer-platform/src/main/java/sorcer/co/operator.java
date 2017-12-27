@@ -336,21 +336,21 @@ public class operator extends Operator {
 		return new Path(path, info, Path.Type.MAP);
 	}
 
-	public static <T> Function<T> init(String domain, String path, T value) {
-		Function ent = new Function<T>(path, value);
+	public static <T> Subroutine<T> init(String domain, String path, T value) {
+		Subroutine ent = new Subroutine<T>(path, value);
 		ent.annotation(domain);
 		ent.setType(Type.DOMAIN_PRED);
 		return ent;
 	}
 
-	public static <T> Function<T> init(String path, T value) {
-		Function ent = new Function<T>(path, value);
+	public static <T> Subroutine<T> init(String path, T value) {
+		Subroutine ent = new Subroutine<T>(path, value);
 		ent.setType(Type.PRED);
 		return ent;
 	}
 
-	public static <T> Function<T> val(String domain, String path, T value) {
-		Function ent = new Function<T>(path, value);
+	public static <T> Subroutine<T> val(String domain, String path, T value) {
+		Subroutine ent = new Subroutine<T>(path, value);
 		ent.annotation(domain);
 		ent.setType(Type.DOMAIN_CONSTANT);
 		return ent;
@@ -398,7 +398,7 @@ public class operator extends Operator {
 		return setup(aspect, null, null, entries);
 	}
 
-	public static Setup setup(Object aspect, String entryName, Function... entries) throws ContextException {
+	public static Setup setup(Object aspect, String entryName, Subroutine... entries) throws ContextException {
 		return setup(aspect, entryName, null, entries);
 	}
 
@@ -576,12 +576,12 @@ public class operator extends Operator {
 		return new InputValue(path, null, 0);
 	}
 
-	public static Function at(String path, Object value) {
-		return new Function(path, value, 0);
+	public static Subroutine at(String path, Object value) {
+		return new Subroutine(path, value, 0);
 	}
 
-	public static Function at(String path, Object value, int index) {
-		return new Function(path, value, index);
+	public static Subroutine at(String path, Object value, int index) {
+		return new Subroutine(path, value, index);
 	}
 
 	public static <T> InputValue<T> inVal(String path, T value) {
@@ -858,8 +858,8 @@ public class operator extends Operator {
 	}
 
     public static String fi(Object object) {
-	    if (object instanceof Function) {
-	        return ((Function)object).fiName();
+	    if (object instanceof Subroutine) {
+	        return ((Subroutine)object).fiName();
         } else {
             return object.toString();
         }
@@ -1132,13 +1132,13 @@ public class operator extends Operator {
 			throws ContextException {
 		String path = entry.getName();
 		Object o = asis(entry);
-		while (o instanceof Function && ((Entry)o).getKey().equals(path)) {
-			o = asis((Function)o);;
+		while (o instanceof Subroutine && ((Entry)o).getKey().equals(path)) {
+			o = asis((Subroutine)o);;
 		}
 		return o;
 	}
 
-	public static Object get(Function entry) throws ContextException {
+	public static Object get(Subroutine entry) throws ContextException {
 		return rasis(entry);
 	}
 
@@ -1177,7 +1177,7 @@ public class operator extends Operator {
 		return entry.asis();
 	}
 
-	public static Object asis(Function entry)
+	public static Object asis(Subroutine entry)
 			throws ContextException {
 		return entry.asis();
 	}
@@ -1185,8 +1185,8 @@ public class operator extends Operator {
 	public static Object rasis(Context context, String path)
 			throws ContextException {
 		Object o = context.asis(path);
-		if (o instanceof Function)
-			return rasis((Function)o);
+		if (o instanceof Subroutine)
+			return rasis((Subroutine)o);
 		else
 			return o;
 	}

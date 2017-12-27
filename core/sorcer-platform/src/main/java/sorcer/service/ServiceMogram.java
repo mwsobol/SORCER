@@ -21,7 +21,7 @@ import sorcer.core.service.Projection;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.modeling.Duo;
+import sorcer.service.modeling.Data;
 import sorcer.service.modeling.Functionality;
 import sorcer.util.GenericUtil;
 import sorcer.util.Pool;
@@ -951,7 +951,7 @@ public abstract class ServiceMogram extends Association<String, Object> implemen
     }
 
     @Override
-    public Duo act(String entryName, Arg... args) throws ServiceException, RemoteException {
+    public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
         Object result = this.execute(args);
         if (result instanceof Entry) {
             return (Entry)result;

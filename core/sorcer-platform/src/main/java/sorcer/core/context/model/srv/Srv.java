@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Function;
+import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.service.*;
@@ -26,7 +26,7 @@ import static sorcer.eo.operator.task;
 /**
  * Created by Mike Sobolewski on 4/14/15.
  */
-public class Srv extends Function<Object> implements Functionality<Object>, Serviceableness,
+public class Srv extends Subroutine<Object> implements Functionality<Object>, Serviceableness,
         Comparable<Object>, Reactive<Object>, Serializable, func<Object> {
 
     private static Logger logger = LoggerFactory.getLogger(Srv.class.getName());
@@ -214,8 +214,8 @@ public class Srv extends Function<Object> implements Functionality<Object>, Serv
             ((Scopable)obj).setScope(scope);
             setValid(false);
         }
-        if (obj instanceof Function) {
-            out = ((Function) obj).evaluate(entries);
+        if (obj instanceof Subroutine) {
+            out = ((Subroutine) obj).evaluate(entries);
         } else if (obj instanceof Mogram) {
             Context cxt = ((Mogram)obj).exert(entries).getContext();
             Object val = cxt.getValue(Context.RETURN);

@@ -191,8 +191,8 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     if (obj instanceof Signature)
                         out = evalSignature((Signature)obj, path);
                     else if (obj instanceof Entry) {
-                        ((Function)obj).setScope(this);
-                        out = ((Function) obj).evaluate(args);
+                        ((Subroutine)obj).setScope(this);
+                        out = ((Subroutine) obj).evaluate(args);
                     }
                     ((MorphFidelity) carrier).setChanged();
                     ((MorphFidelity) carrier).notifyObservers(out);
@@ -247,7 +247,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
                     }
                     val = entry;
                 } else if (carrier instanceof Closure) {
-                    Function entry = (Function) ((Closure)carrier).call(this);
+                    Subroutine entry = (Subroutine) ((Closure)carrier).call(this);
                     ((Srv) get(path)).setOut(entry.get());
                     putValue(path, entry.get());
                     if (path != entry.getName())
@@ -425,7 +425,7 @@ public class SrvModel extends ProcModel implements Invocation<Object> {
         Map<String, List<ExecDependency>> dpm = ((ModelStrategy)mogramStrategy).getDependentPaths();
         if (dpm != null && dpm.get(path) != null) {
             List<ExecDependency> del = dpm.get(path);
-            Function entry = entry(path);
+            Subroutine entry = entry(path);
             if (del != null && del.size() > 0) {
                 for (ExecDependency de : del) {
                     List<Path> dpl = (List<Path>) de.getImpl();

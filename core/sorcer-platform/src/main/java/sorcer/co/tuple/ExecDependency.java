@@ -17,7 +17,7 @@
 
 package sorcer.co.tuple;
 
-import sorcer.core.context.model.ent.Function;
+import sorcer.core.context.model.ent.Subroutine;
 import sorcer.service.Conditional;
 import sorcer.service.Path;
 import sorcer.service.Signature;
@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 6/21/15.
  */
-public class ExecDependency extends Function<List<Path>> {
+public class ExecDependency extends Subroutine<List<Path>> {
     private static final long serialVersionUID = 1L;
 
     private Conditional condition;

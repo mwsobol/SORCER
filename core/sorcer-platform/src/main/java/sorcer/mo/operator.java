@@ -109,12 +109,12 @@ public class operator {
         return model;
     }
 
-    public static Model setValue(Model model, String entName, Function... entries)
+    public static Model setValue(Model model, String entName, Subroutine... entries)
             throws ContextException {
         Object entry = model.asis(entName);
         if (entry != null) {
             if (entry instanceof Setup) {
-                for (Function e : entries) {
+                for (Subroutine e : entries) {
                     ((Setup) entry).getContext().putValue(e.getName(), e.get());
                 }
             }
@@ -237,7 +237,7 @@ public class operator {
         return model.get(path);
     }
 
-    public static  ServiceContext substitute(ServiceContext model, Function... entries) throws ContextException {
+    public static  ServiceContext substitute(ServiceContext model, Subroutine... entries) throws ContextException {
         model.substitute(entries);
         return model;
     }
@@ -564,19 +564,19 @@ public class operator {
                     if (i instanceof Reactive) {
                         context.putInValue(i.getName(), i);
                     } else {
-                        context.putInValue(i.getName(), ((Function) i).getImpl());
+                        context.putInValue(i.getName(), ((Subroutine) i).getImpl());
                     }
                 } else if (i instanceof OutputValue) {
                     if (isReactive) {
                         context.putOutValue(i.getName(), i);
                     } else {
-                        context.putOutValue(i.getName(), ((Function) i).getImpl());
+                        context.putOutValue(i.getName(), ((Subroutine) i).getImpl());
                     }
                 } else if (i instanceof InoutValue) {
                     if (isReactive) {
                         context.putInoutValue(i.getName(), i);
                     } else {
-                        context.putInoutValue(i.getName(), ((Function) i).getImpl());
+                        context.putInoutValue(i.getName(), ((Subroutine) i).getImpl());
                     }
                 } else {
                     if (context instanceof ProcModel || isReactive) {
@@ -679,7 +679,7 @@ public class operator {
                     mFi.addObserver(fiManager);
                     if (mFi.getMorpherFidelity() != null) {
                         // set the default morpher
-                        mFi.setMorpher((Morpher) ((Function)mFi.getMorpherFidelity().get(0)).getImpl());
+                        mFi.setMorpher((Morpher) ((Subroutine)mFi.getMorpherFidelity().get(0)).getImpl());
                     }
                 }
             }

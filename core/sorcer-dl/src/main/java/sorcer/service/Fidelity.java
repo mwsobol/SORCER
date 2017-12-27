@@ -1,7 +1,7 @@
 package sorcer.service;
 
 import sorcer.core.Tag;
-import sorcer.service.modeling.Duo;
+import sorcer.service.modeling.Data;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -70,9 +70,9 @@ public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry
             this.selects.add((T) fi);
     }
 
-    public Fidelity(Duo... entries) {
+    public Fidelity(Data... entries) {
         fiType = Type.NAME;
-        for (Duo fi : entries)
+        for (Data fi : entries)
             this.selects.add((T) fi);
     }
 
@@ -250,12 +250,12 @@ public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry
 	}
 
     @Override
-    public Duo act(Arg... args) throws ServiceException, RemoteException {
+    public Data act(Arg... args) throws ServiceException, RemoteException {
         return null;
     }
 
     @Override
-    public Duo act(String entryName, Arg... args) throws ServiceException, RemoteException {
+    public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
         return null;
     }
 }

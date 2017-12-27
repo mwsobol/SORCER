@@ -17,13 +17,9 @@
 
 package sorcer.co.tuple;
 
-import net.jini.id.Uuid;
-import net.jini.id.UuidFactory;
-import sorcer.core.context.model.ent.Function;
 import sorcer.service.*;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 
 @SuppressWarnings("unchecked")
 public class Tuple2<T1, T2>  implements Serializable,  Arg {

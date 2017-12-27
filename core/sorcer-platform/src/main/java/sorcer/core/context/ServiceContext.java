@@ -2805,8 +2805,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public Domain add(Identifiable... objects) throws ContextException, RemoteException {
 		boolean changed = false;
 		for (Identifiable obj : objects) {
-			if (obj instanceof Function) {
-				putValue(obj.getName(), ((Function) obj).asis());
+			if (obj instanceof Subroutine) {
+				putValue(obj.getName(), ((Subroutine) obj).asis());
 			} else {
 				putValue(obj.getName(), obj);
 			}
@@ -2817,13 +2817,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 	
-	public Function entry(String path) {
+	public Subroutine entry(String path) {
 		Object obj = null;
 		if (path != null) {
 			obj = data.get(path);
 		}
-		if (obj instanceof Function) {
-			return (Function)obj;
+		if (obj instanceof Subroutine) {
+			return (Subroutine)obj;
 		} else
 			return null;
 	}
@@ -3463,8 +3463,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.direction = direction;
 	}
 
-	public Function<T> getEntry(String path) {
-		return new Function(path, data.get(path));
+	public Subroutine<T> getEntry(String path) {
+		return new Subroutine(path, data.get(path));
 	}
 
 	public String getSingletonPath() throws ContextException {
@@ -3542,7 +3542,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Duo act(String entryName, Arg... args) throws ServiceException, RemoteException {
+	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
 		Object result = this.execute(args);
 		if (result instanceof Entry) {
 			return (Entry)result;

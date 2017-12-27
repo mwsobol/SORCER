@@ -22,7 +22,7 @@ import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.ProcModel;
-import sorcer.core.context.model.ent.Function;
+import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.service.*;
@@ -110,8 +110,8 @@ public class EvaluationTask extends Task {
 		try {
 			Evaluation evaluator = ((EvaluationSignature) getProcessSignature())
 					.getEvaluator();
-			if (evaluator instanceof Function)
-				((Function)evaluator).setValid(false);
+			if (evaluator instanceof Subroutine)
+				((Subroutine)evaluator).setValid(false);
 
 			if (evaluator instanceof Evaluator) {
 				ArgSet vs = ((Evaluator) evaluator).getArgs();

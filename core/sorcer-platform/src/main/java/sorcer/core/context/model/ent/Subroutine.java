@@ -36,7 +36,7 @@ import static sorcer.mo.operator.add;
 /**
  * @author Mike Sobolewski
  */
-public class Function<T> extends Entry<T> implements Functionality<T>, Dependency, Comparable<T>,
+public class Subroutine<T> extends Entry<T> implements Functionality<T>, Dependency, Comparable<T>,
 		EvaluationComponent, SupportComponent, Scopable {
 
 	private static final long serialVersionUID = 1L;
@@ -56,17 +56,17 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Dependenc
 	// dependency management for this Entry
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
-	public Function() {
+	public Subroutine() {
 	}
 
-	public Function(final String path) {
+	public Subroutine(final String path) {
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");
 		this.key = path;
         this.name = path;
 	}
 
-	public Function(final String path, final T value) {
+	public Subroutine(final String path, final T value) {
         if(path==null)
             throw new IllegalArgumentException("path must not be null");
         this.key = path;
@@ -80,12 +80,12 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Dependenc
         }
 	}
 
-	public Function(final String path, final T value, final int index) {
+	public Subroutine(final String path, final T value, final int index) {
 		this(path, value);
 		this.index = index;
 	}
 
-	public Function(final String path, final T value, final String annotation) {
+	public Subroutine(final String path, final T value, final String annotation) {
 		this(path, value);
 		this.annotation = annotation;
 	}
@@ -215,8 +215,8 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Dependenc
 	public int compareTo(T o) {
 		if (o == null)
 			throw new NullPointerException();
-		if (o instanceof Function<?>)
-			return key.compareTo(((Function<?>) o).getName());
+		if (o instanceof Subroutine<?>)
+			return key.compareTo(((Subroutine<?>) o).getName());
 		else
 			return -1;
 	}
@@ -229,16 +229,16 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Dependenc
 
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof Function) {
-			if (impl != null && ((Function) object).impl == null) {
+		if (object instanceof Subroutine) {
+			if (impl != null && ((Subroutine) object).impl == null) {
 				return false;
-			} else if (impl == null && ((Function) object).impl != null) {
+			} else if (impl == null && ((Subroutine) object).impl != null) {
 				return false;
-			} else if (((Function) object).key.equals(key)
-					&& ((Function) object).impl == impl) {
+			} else if (((Subroutine) object).key.equals(key)
+					&& ((Subroutine) object).impl == impl) {
 				return true;
-			} else if (((Function) object).key.equals(key)
-					&& ((Function) object).impl.equals(impl)) {
+			} else if (((Subroutine) object).key.equals(key)
+					&& ((Subroutine) object).impl.equals(impl)) {
 				return true;
 			}
 		}
@@ -286,7 +286,7 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Dependenc
 		return "[" + key + "=" + en + "]";
 	}
 
-	public Function(String path, T value, boolean isPersistant, int index) {
+	public Subroutine(String path, T value, boolean isPersistant, int index) {
 		this(path, value, index);
 		this.isPersistent = isPersistant;
 	}

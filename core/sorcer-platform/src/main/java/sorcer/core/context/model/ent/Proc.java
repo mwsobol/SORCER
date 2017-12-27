@@ -44,7 +44,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Proc<T> extends Function<T> implements Functionality<T>, Mappable<T>,
+public class Proc<T> extends Subroutine<T> implements Functionality<T>, Mappable<T>,
 		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, func<T> {
 
 	private static final long serialVersionUID = 7495489980319169695L;
