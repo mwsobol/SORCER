@@ -10,9 +10,8 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Proc;
-import sorcer.core.context.model.ent.ProcModel;
-import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.invoker.AltInvoker;
 import sorcer.core.invoker.Updater;
 import sorcer.core.invoker.OptInvoker;
@@ -47,7 +46,7 @@ import static sorcer.so.operator.*;
 public class Invokers {
 	private final static Logger logger = LoggerFactory.getLogger(Invokers.class);
 
-	private ProcModel pm;
+	private EntryModel pm;
 	private Proc x;
 	private Proc y;
 	private Proc z;
@@ -74,7 +73,7 @@ public class Invokers {
 
 	@Before
 	public void initProcModel() throws Exception {
-		pm = new ProcModel();
+		pm = new EntryModel();
 		x = proc("x", 10.0);
 		y = proc("y", 20.0);
 		z = proc("z", invoker("x - y", args("x", "y")));
@@ -110,7 +109,7 @@ public class Invokers {
 
 	@Test
 	public void groovyInvoker() throws Exception {
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, proc("x", 10.0), proc("y", 20.0));
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
 		logger.info("invoke eval: " + invoke(pm, "expr"));
@@ -218,7 +217,7 @@ public class Invokers {
 		// logger.info("return path:" + j1.getReturnJobPath());
 		assertEquals(j1.getReturnPath().path, "j1/t3/result/y");
 
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, as(proc("x1p", "arg/x1"), c4), as(proc("x2p", "arg/x2"), c4), j1);
 		// setting context parameters in a job
 		setValue(pm, "x1p", 10.0);
@@ -277,7 +276,7 @@ public class Invokers {
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		// mapping via the context
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, as(proc("x1p", "arg/x1"), c4), as(proc("x2p", "arg/x2"), c4), j1);
 
 		// setting context parameters in a job
@@ -291,7 +290,7 @@ public class Invokers {
 
 	@Test
 	public void modelConditions() throws Exception {
-		final ProcModel pm = new ProcModel("proc-model");
+		final EntryModel pm = new EntryModel("proc-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
 		pm.putValue("condition", invoker("x > y", args("x", "y")));
@@ -331,7 +330,7 @@ public class Invokers {
 
 	@Test
 	public void optInvoker() throws Exception {
-		ProcModel pm = new ProcModel("proc-model");
+		EntryModel pm = new EntryModel("proc-model");
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
 				"{ x, y -> x > y }", "x", "y"), 
@@ -355,7 +354,7 @@ public class Invokers {
 
 	@Test
 	public void polOptInvoker() throws Exception {
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm,
 				proc("x", 10.0),
 				proc("y", 20.0),
@@ -373,7 +372,7 @@ public class Invokers {
 
 	@Test
 	public void altInvoker() throws Exception {
-		ProcModel pm = new ProcModel("proc-model");
+		EntryModel pm = new EntryModel("proc-model");
 		pm.putValue("x", 30.0);
 		pm.putValue("y", 20.0);
 		pm.putValue("x2", 50.0);
@@ -433,7 +432,7 @@ public class Invokers {
 
 	@Test
 	public void polAltInvoker() throws Exception {
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		// add(pm, entry("x", 10.0), entry("y", 20.0), proc("x2", 50.0),
 		// proc("y2", 40.0), proc("x3", 50.0), proc("y3", 60.0));
 		add(pm, proc("x", 10.0), proc("y", 20.0), proc("x2", 50.0),
@@ -474,7 +473,7 @@ public class Invokers {
 
 	@Test
 	public void invokerLoop() throws Exception {
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, val("x", 1));
 		add(pm, proc("y", invoker("x + 1", args("x"))));
 		add(pm, proc("z", inc(invoker(pm, "y"), 2)));
@@ -487,7 +486,7 @@ public class Invokers {
 
 	@Test
 	public void incrementorStepBy1() throws Exception {
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, val("x", 1));
 		add(pm, proc("y", invoker("x + 1", args("x"))));
 		add(pm, proc("z", inc(invoker(pm, "y"))));
@@ -499,7 +498,7 @@ public class Invokers {
 
 	@Test
 	public void incrementorStepBy2() throws Exception {
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, proc("x", 1));
 		add(pm, proc("y", invoker("x + 1", args("x"))));
 		add(pm, proc("z", inc(invoker(pm, "y"), 2)));
@@ -512,7 +511,7 @@ public class Invokers {
 
 	@Test
 	public void incrementorDouble() throws Exception {
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, proc("x", 1.0));
 		add(pm, proc("y", invoker("x + 1.2", args("x"))));
 		add(pm, proc("z", inc(invoker(pm, "y"), 2.1)));

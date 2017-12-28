@@ -23,8 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Proc;
-import sorcer.core.context.model.ent.ProcModel;
 import sorcer.eo.operator;
 import sorcer.service.*;
 
@@ -114,7 +114,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			this.name = defaultName + count++;
 		else
 			this.name = name;
-		invokeContext = new ProcModel("model/proc");
+		invokeContext = new EntryModel("model/proc");
 	}
 
 	public ServiceInvoker(ValueCallable lambda) throws InvocationException {
@@ -140,13 +140,13 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	public ServiceInvoker(String name, ValueCallable lambda, Context context, ArgSet args) throws InvocationException {
 		this.name = name;
 		if (context == null)
-			invokeContext = new ProcModel("model/proc");
+			invokeContext = new EntryModel("model/proc");
 		else {
 			if (context instanceof ServiceContext) {
 				invokeContext = context;
 			} else {
 				try {
-					invokeContext = new ProcModel(context);
+					invokeContext = new EntryModel(context);
 				} catch (Exception e) {
 					throw new InvocationException("Failed to create invoker!", e);
 				}
@@ -156,18 +156,18 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		this.lambda = lambda;
 	}
 
-	public ServiceInvoker(ProcModel context) {
+	public ServiceInvoker(EntryModel context) {
 		this(context.getName());
 		invokeContext = context;
 	}
 	
-	public ServiceInvoker(ProcModel context, Evaluator evaluator, Proc... procEntries) {
+	public ServiceInvoker(EntryModel context, Evaluator evaluator, Proc... procEntries) {
 		this(context);
 		this.evaluator = evaluator;
 		this.args = new ArgSet(procEntries);
 	}
 	
-	public ServiceInvoker(ProcModel context, Evaluator evaluator, ArgSet args) {
+	public ServiceInvoker(EntryModel context, Evaluator evaluator, ArgSet args) {
 		this(context);
 		this.evaluator = evaluator;
 		this.args = args;
@@ -365,7 +365,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			if (entries != null && entries.length > 0) {
 				valueIsValid = false;
 				if (invokeContext == null)
-					invokeContext = new ProcModel("model/proc");
+					invokeContext = new EntryModel("model/proc");
 					
 				((ServiceContext)invokeContext).substitute(entries);
 			}

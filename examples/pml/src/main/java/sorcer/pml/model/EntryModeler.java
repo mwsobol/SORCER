@@ -1,6 +1,6 @@
 package sorcer.pml.model;
 
-import sorcer.core.context.model.ent.ProcModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
 
@@ -16,11 +16,11 @@ import static sorcer.mo.operator.*;
  *
  */
 @SuppressWarnings("rawtypes")
-public class ProcModeler {
+public class EntryModeler {
 
-	public static ProcModel getProcModel() throws EvaluationException,
+	public static EntryModel getEntryModel() throws EvaluationException,
 			RemoteException, ContextException {
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, val("x", 10.0), val("y", 20.0));
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
 		return pm;

@@ -38,7 +38,7 @@ class StartAll {
         String configPath = "${projectBuildDir}/../configs"
 
         def descriptors = []
-        def configArg = ["${configPath}/parmodel-prv.config"]
+        def configArg = ["${configPath}/entmodel-prv.config"]
         def codebase = "sorcer-dl-${sorcerVersion}.jar sorcer-ui-${sorcerVersion}.jar jsk-dl-${riverVersion}.jar"
 
         descriptors << new SorcerServiceDescriptor(codebase,

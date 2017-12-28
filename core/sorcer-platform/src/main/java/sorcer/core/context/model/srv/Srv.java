@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Subroutine;
-import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
@@ -269,7 +269,7 @@ public class Srv extends Subroutine<Object> implements Functionality<Object>, Se
     public Object execute(Arg... args) throws ServiceException, RemoteException {
         Domain mod = Arg.selectDomain(args);
         if (mod != null) {
-            if (mod instanceof ProcModel && impl instanceof ValueCallable) {
+            if (mod instanceof EntryModel && impl instanceof ValueCallable) {
                 return ((ValueCallable) impl).call((Context) mod);
             } else if (mod instanceof Context && impl instanceof SignatureEntry) {
                 return ((ServiceContext) mod).execSignature((Signature) ((SignatureEntry) impl).getImpl(), args);

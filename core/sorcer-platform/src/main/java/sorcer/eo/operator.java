@@ -2084,7 +2084,7 @@ public class operator extends Operator {
 		Context cxt = null;
 		boolean isBlock =false;
 		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof Exertion || items[i] instanceof ProcModel) {
+			if (items[i] instanceof Exertion || items[i] instanceof EntryModel) {
 				exertions.add((Mogram) items[i]);
 				if (items[i] instanceof ConditionalMogram)
 					isBlock = true;
@@ -3049,8 +3049,8 @@ public class operator extends Operator {
 		return provider;
 	}
 
-	public static Condition condition(ProcModel parcontext, String expression,
-									  String... pars) {
+	public static Condition condition(EntryModel parcontext, String expression,
+                                      String... pars) {
 		return new Condition(parcontext, expression, pars);
 	}
 
@@ -3179,7 +3179,7 @@ public class operator extends Operator {
 		Context context = null;
 		Evaluator evaluator = null;
 		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof Exertion || items[i] instanceof ProcModel) {
+			if (items[i] instanceof Exertion || items[i] instanceof EntryModel) {
 				mograms.add((Mogram) items[i]);
 			} else if (items[i] instanceof Evaluation) {
 				evaluators.add((Evaluator)items[i]);
@@ -3222,19 +3222,19 @@ public class operator extends Operator {
 		} catch (Exception se) {
 			throw new ExertionException(se);
 		}
-		//make sure it has ProcModel as the data context
-		ProcModel pm = null;
+		//make sure it has EntryModel as the data context
+		EntryModel pm = null;
 		Context cxt = null;
 		try {
 			cxt = block.getDataContext();
 			if (cxt == null) {
-				cxt = new ProcModel();
+				cxt = new EntryModel();
 				block.setContext(cxt);
 			}
-			if (cxt instanceof ProcModel) {
-				pm = (ProcModel)cxt;
+			if (cxt instanceof EntryModel) {
+				pm = (EntryModel)cxt;
 			} else {
-				pm = new ProcModel("block context: " + cxt.getName());
+				pm = new EntryModel("block context: " + cxt.getName());
 				block.setContext(pm);
 				pm.append(cxt);
 				pm.setScope(pm);
@@ -3264,7 +3264,7 @@ public class operator extends Operator {
 					e.setScope(pm.getScope());
 					if (((EvaluationTask)e).getEvaluation() instanceof Proc) {
 						Proc p = (Proc)((EvaluationTask)e).getEvaluation();
-						((ProcModel)pm.getScope()).addProc(p);
+						((EntryModel)pm.getScope()).addProc(p);
 //						pm.addPar(p);
 
 					}

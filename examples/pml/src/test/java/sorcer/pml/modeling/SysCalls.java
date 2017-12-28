@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.ProcModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.SysCall;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.SysCaller;
@@ -56,7 +56,7 @@ public class SysCalls {
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 
-		ProcModel pm = procModel(proc(cmd),
+		EntryModel pm = procModel(proc(cmd),
 				proc("x", 10.0), ent("y"),
 				proc("multiply", invoker("x * y", args("x", "y"))),
 				proc("add", invoker("x + y", args("x", "y"))));

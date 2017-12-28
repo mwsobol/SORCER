@@ -131,14 +131,14 @@ public class operator {
         return model;
     }
 
-    public static ProcModel procModel(String name, Signature builder) throws SignatureException {
-        ProcModel model = (ProcModel) instance(builder);
+    public static EntryModel procModel(String name, Signature builder) throws SignatureException {
+        EntryModel model = (EntryModel) instance(builder);
         model.setBuilder(builder);
         return model;
     }
 
-    public static ProcModel parModel(String name, Signature builder) throws SignatureException {
-        ProcModel model = (ProcModel) instance(builder);
+    public static EntryModel parModel(String name, Signature builder) throws SignatureException {
+        EntryModel model = (EntryModel) instance(builder);
         model.setBuilder(builder);
         return model;
     }
@@ -149,21 +149,21 @@ public class operator {
         return model;
     }
 
-    public static ProcModel procModel(Object... entries)
+    public static EntryModel procModel(Object... entries)
             throws ContextException {
         if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
             ((Context)entries[0]).setModeling(true);
             try {
-                return new ProcModel((Context)entries[0]);
+                return new EntryModel((Context)entries[0]);
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }
         }
-        ProcModel model = new ProcModel();
+        EntryModel model = new EntryModel();
         Object[] dest = new Object[entries.length+1];
         System.arraycopy(entries,  0, dest,  1, entries.length);
         dest[0] = model;
-        return (ProcModel) context(dest);
+        return (EntryModel) context(dest);
     }
 
     public static Model inConn(Model model, Context inConnector) {
@@ -552,7 +552,7 @@ public class operator {
                     if (i instanceof Value) {
                         pc.putValueAt(i.getName(), ((Entry) i).getOut(), pc.getTally() + 1);
                     } else {
-                        if (context instanceof ProcModel || isReactive) {
+                        if (context instanceof EntryModel || isReactive) {
                             pc.putValueAt(i.getName(), i, pc.getTally() + 1);
                         } else {
                             pc.putValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
@@ -579,7 +579,7 @@ public class operator {
                         context.putInoutValue(i.getName(), ((Subroutine) i).getImpl());
                     }
                 } else {
-                    if (context instanceof ProcModel || isReactive) {
+                    if (context instanceof EntryModel || isReactive) {
                         context.putValue(i.getName(), i);
                     } else {
                         context.putValue(i.getName(), ((Entry) i).getImpl());
@@ -606,9 +606,9 @@ public class operator {
         return srvModel(name, objects);
     }
 
-    public static ProcModel procModel(String name, Object... objects)
+    public static EntryModel procModel(String name, Object... objects)
             throws RemoteException, ContextException {
-        ProcModel pm = new ProcModel(name);
+        EntryModel pm = new EntryModel(name);
         for (Object o : objects) {
             if (o instanceof Identifiable)
                 pm.add((Identifiable)o);
@@ -616,7 +616,7 @@ public class operator {
         return pm;
     }
 
-    public static Object get(ProcModel pm, String parname, Arg... parametrs)
+    public static Object get(EntryModel pm, String parname, Arg... parametrs)
             throws ContextException, RemoteException {
         Object obj = pm.asis(parname);
         if (obj instanceof Proc)

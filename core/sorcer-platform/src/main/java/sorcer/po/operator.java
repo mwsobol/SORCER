@@ -218,7 +218,7 @@ public class operator extends Operator {
 		return procEntry;
 	}
 
-	public static Proc proc(ProcModel pm, String name) throws ContextException, RemoteException {
+	public static Proc proc(EntryModel pm, String name) throws ContextException, RemoteException {
 		Proc parameter = new Proc(name, pm.asis(name));
 		parameter.setScope(pm);
 		return parameter;
@@ -262,24 +262,24 @@ public class operator extends Operator {
 			((ServiceInvoker)invoker).clearPars();
 	}
 
-	public static ProcModel procModel(Identifiable... objects)
+	public static EntryModel procModel(Identifiable... objects)
 			throws ContextException, RemoteException {
-		return new ProcModel(objects);
+		return new EntryModel(objects);
 	}
 
-	public static ProcModel append(ProcModel parContext, Arg... objects)
+	public static EntryModel append(EntryModel parContext, Arg... objects)
 			throws RemoteException, ContextException {
 		parContext.append(objects);
 		return parContext;
 	}
 
-	public static Proc put(ProcModel procModel, String name, Object value) throws ContextException, RemoteException {
+	public static Proc put(EntryModel procModel, String name, Object value) throws ContextException, RemoteException {
 		procModel.putValue(name, value);
 		procModel.setContextChanged(true);
 		return proc(procModel, name);
 	}
 
-	public static ProcModel put(ProcModel procModel, Entry... entries) throws ContextException {
+	public static EntryModel put(EntryModel procModel, Entry... entries) throws ContextException {
 		for (Entry e : entries) {
 			procModel.putValue(e.getName(), e.getImpl());
 		}
@@ -358,17 +358,17 @@ public class operator extends Operator {
             if (neo.getMultiFi() != null) {
                 List<Fidelity> fiList = Arg.selectFidelities(args);
                 ((FidelityManager) model.getFidelityManager()).reconfigure(fiList);
-                return invoke((ProcModel) model, path, args);
+                return invoke((EntryModel) model, path, args);
 
             } else {
-                return invoke((ProcModel) model, path, args);
+                return invoke((EntryModel) model, path, args);
             }
         } catch (RemoteException | ContextException e) {
             throw new InvocationException(e);
         }
     }
 
-	public static Object invoke(ProcModel procModel, String parname, Arg... parameters)
+	public static Object invoke(EntryModel procModel, String parname, Arg... parameters)
 			throws RemoteException, InvocationException {
 		try {
 			Object obj;
@@ -412,7 +412,7 @@ public class operator extends Operator {
 		return invoker.getArgs();
 	}
 
-	public static Arg[] args(ProcModel pm, String... parnames)
+	public static Arg[] args(EntryModel pm, String... parnames)
 			throws ContextException {
 		ArgSet ps = new ArgSet();
 		for (String name : parnames) {
@@ -566,7 +566,7 @@ public class operator extends Operator {
 		return incrementor.next();
 	}
 
-	public static <T> T next(ProcModel model, String name) throws ContextException {
+	public static <T> T next(EntryModel model, String name) throws ContextException {
 		Incrementor<T> inceremntor = (Incrementor<T>)invoker(model, name);
 		return inceremntor.next();
 	}

@@ -7,9 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.ent.Proc;
-import sorcer.core.context.model.ent.ProcModel;
 import sorcer.service.Context;
-import sorcer.service.Domain;
 import sorcer.service.modeling.*;
 
 import java.net.URL;

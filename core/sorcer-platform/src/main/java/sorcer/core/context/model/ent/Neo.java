@@ -30,7 +30,7 @@ import java.util.Iterator;
 
 /**
  * In service-based modeling, a service neuron (for short a neo) is a special kind of
- * function, used in a service model {@link ProcModel} to refer to one of the
+ * function, used in a service model {@link EntryModel} to refer to one of the
  * pieces of data provided as input to other neurons.
  * 
  * @author Mike Sobolewski

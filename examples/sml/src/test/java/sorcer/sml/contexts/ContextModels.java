@@ -41,7 +41,7 @@ public class ContextModels {
 	@Test
 	public void entryModel() throws Exception {
 
-		// use procModel to create an ProcModel the same way as a regular context
+		// use procModel to create an EntryModel the same way as a regular context
 		// or convert any context to procModel(<context>)
 		Model mdl = procModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
 				val("arg/x3", 3.0), val("arg/x4", 4.0), val("arg/x5", 5.0));

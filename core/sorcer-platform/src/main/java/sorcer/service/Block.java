@@ -21,7 +21,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.ProcModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.exertion.AltMogram;
 import sorcer.core.exertion.LoopMogram;
 import sorcer.core.exertion.OptMogram;
@@ -55,7 +55,7 @@ public abstract class Block extends CompoundExertion {
 			((ServiceFidelity)multiFi).getSelects().add(sFi);// Add the signature
 			multiFi.setSelect(sFi);
 
-			setContext(new ProcModel("block context: " + getName()));
+			setContext(new EntryModel("block context: " + getName()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

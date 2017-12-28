@@ -48,7 +48,6 @@ import sorcer.core.SorcerNotifierProtocol;
 import sorcer.core.analytics.AnalyticsRecorder;
 import sorcer.core.context.Contexts;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.exertion.ExertionEnvelop;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.loki.member.LokiMemberUtil;
@@ -60,7 +59,6 @@ import sorcer.core.proxy.Partnership;
 import sorcer.core.proxy.ProviderProxy;
 import sorcer.core.service.Configurer;
 import sorcer.core.signature.NetSignature;
-import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.jini.jeri.RecordingInvocationDispatcher;
 import sorcer.jini.jeri.SorcerILFactory;
@@ -74,7 +72,6 @@ import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.jobber.JobberAccessor;
 import sorcer.service.Domain;
-import sorcer.service.modeling.Model;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.*;
@@ -1003,7 +1000,7 @@ public class ProviderDelegate {
 //			Method m = null;
 //			try {
 //				// select the proper method for the bean type
-//				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof ProcModel)) {
+//				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof EntryModel)) {
 //					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
 //					isContextual = true;
 //				} else if (selector.equals("process") && impl instanceof Domain) {

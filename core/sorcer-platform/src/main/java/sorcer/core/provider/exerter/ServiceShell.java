@@ -893,13 +893,13 @@ public class ServiceShell implements Exerter, Client, Callable, RemoteServiceShe
 				return evaluate((Mogram)se.interpret());
 			} else if (service instanceof Exertion) {
 				return eval((Entry) service, args);
-			} else if (service instanceof ProcModel) {
+			} else if (service instanceof EntryModel) {
 				((Model)service).getResponse(args);
 			} else if (service instanceof Context) {
 				ServiceContext cxt = (ServiceContext)service;
 				cxt.substitute(args);
 				ReturnPath returnPath = cxt.getReturnPath();
-				if (cxt instanceof ProcModel) {
+				if (cxt instanceof EntryModel) {
 					return ((Model)service).getResponse(args);
 				} else if (returnPath != null){
 					return cxt.getValue(returnPath.path, args);

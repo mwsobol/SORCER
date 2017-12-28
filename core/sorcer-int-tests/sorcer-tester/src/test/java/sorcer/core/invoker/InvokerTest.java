@@ -12,8 +12,8 @@ import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.arithmetic.tester.volume.Volume;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Proc;
-import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -50,7 +50,7 @@ import static sorcer.so.operator.*;
 public class InvokerTest {
 	private final static Logger logger = LoggerFactory.getLogger(InvokerTest.class);
 
-	private ProcModel pm;
+	private EntryModel pm;
 	private Proc x;
 	private Proc y;
 	private Proc z;
@@ -77,7 +77,7 @@ public class InvokerTest {
 
 	@Before
 	public void initProcModel() throws Exception {
-		pm = new ProcModel();
+		pm = new EntryModel();
 		x = proc("x", 10.0);
 		y = proc("y", 20.0);
 		z = proc("z", invoker("x - y", x, y));
@@ -114,7 +114,7 @@ public class InvokerTest {
 	@Test
 	public void groovyInvokerTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, proc("x", 10.0), proc("y", 20.0));
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
 		logger.info("invoke eval: " + invoke(pm, "expr"));
@@ -126,7 +126,7 @@ public class InvokerTest {
 	@Test
 	public void lambdaInvokerTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
-		ProcModel pm = procModel("model");
+		EntryModel pm = procModel("model");
 		add(pm, proc("x", 10.0), proc("y", 20.0));
 		add(pm, invoker("lambda", cxt -> (double)value(cxt, "x") + (double)value(cxt, "y") + 30));
 		logger.info("invoke eval: " + invoke(pm, "lambda"));
@@ -230,7 +230,7 @@ public class InvokerTest {
 		// logger.info("return path:" + j1.getReturnJobPath());
 		assertEquals(j1.getReturnPath().path, "j1/t3/result/y");
 
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, as(proc("x1p", "arg/x1"), c4), as(proc("x2p", "arg/x2"), c4), j1);
 		// setting context parameters in a job
 		setValue(pm, "x1p", 10.0);
@@ -290,7 +290,7 @@ public class InvokerTest {
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, as(proc("x1p", "arg/x1"), c4), as(proc("x2p", "arg/x2"), c4), j1);
 		// setting context parameters in a job
 		setValue(pm, "x1p", 10.0);
@@ -322,7 +322,7 @@ public class InvokerTest {
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 
-		ProcModel pm = procModel(proc(cmd),
+		EntryModel pm = procModel(proc(cmd),
 				ent("x", 10.0), ent("y"),
 				ent("multiply", invoker("x * y", args("x", "y"))),
 				ent("add", invoker("x + y", args("x", "y"))));
@@ -343,7 +343,7 @@ public class InvokerTest {
 
 	@Test
 	public void conditionalInvoker() throws RemoteException, ContextException {
-		final ProcModel pm = new ProcModel("proc-model");
+		final EntryModel pm = new EntryModel("proc-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
         pm.putValue("condition", invoker("x > y", args("x", "y")));
@@ -392,7 +392,7 @@ public class InvokerTest {
 
 	@Test
 	public void optInvokerTest1() throws RemoteException, ContextException {
-		ProcModel pm = new ProcModel("proc-model");
+		EntryModel pm = new EntryModel("proc-model");
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
 				"{ x, y -> x > y }", "x", "y"), invoker("x + y",
@@ -413,7 +413,7 @@ public class InvokerTest {
 	@Test
 	public void optInvokerTest2() throws RemoteException, ContextException {
 		// Java 8 lambdas style
-		ProcModel pm = new ProcModel("proc-model");
+		EntryModel pm = new EntryModel("proc-model");
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
 				cxt -> (double)v(cxt, "x") > (double)v(cxt, "y")), invoker("x + y",
@@ -433,7 +433,7 @@ public class InvokerTest {
 
 	@Test
 	public void polOptInvokerTest() throws RemoteException, ContextException {
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm,
 				proc("x", 10.0),
 				proc("y", 20.0),
@@ -451,7 +451,7 @@ public class InvokerTest {
 
 	@Test
 	public void altInvokerTest() throws RemoteException, ContextException {
-		ProcModel pm = new ProcModel("proc-model");
+		EntryModel pm = new EntryModel("proc-model");
 		pm.putValue("x", 30.0);
 		pm.putValue("y", 20.0);
 		pm.putValue("x2", 50.0);
@@ -511,7 +511,7 @@ public class InvokerTest {
 
 	@Test
 	public void polAltInvokerTest() throws RemoteException, ContextException {
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		// add(pm, entry("x", 10.0), entry("y", 20.0), proc("x2", 50.0),
 		// proc("y2", 40.0), proc("x3", 50.0), proc("y3", 60.0));
 		add(pm, proc("x", 10.0), proc("y", 20.0), proc("x2", 50.0),
@@ -553,7 +553,7 @@ public class InvokerTest {
 	@Test
 	public void invokerLoopTest() throws Exception {
 
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, proc("x", 1));
 		add(pm, proc("y", invoker("x + 1", args("x"))));
 		add(pm, proc("z", inc(invoker(pm, "y"), 2)));
@@ -567,7 +567,7 @@ public class InvokerTest {
 
 	@Test
 	public void incrementorBy1Test() throws Exception {
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, proc("x", 1));
 		add(pm, proc("y", invoker("x + 1", args("x"))));
 		add(pm, proc("z", inc(invoker(pm, "y"))));
@@ -580,7 +580,7 @@ public class InvokerTest {
 
 	@Test
 	public void incrementorBy2Test() throws Exception {
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, proc("x", 1));
 		add(pm, proc("y", invoker("x + 1", args("x"))));
 		add(pm, proc("z", inc(invoker(pm, "y"), 2)));

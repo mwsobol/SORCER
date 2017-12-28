@@ -22,7 +22,7 @@ import sorcer.Operator;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.ProcModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.Exerter;
@@ -130,8 +130,8 @@ public class operator extends Operator {
             throws ContextException {
         try {
             synchronized (model) {
-                if (model instanceof ProcModel) {
-                    return ((ProcModel) model).getValue(args);
+                if (model instanceof EntryModel) {
+                    return ((EntryModel) model).getValue(args);
                 } else {
                     return ((ServiceContext) model).getValue(args);
                 }

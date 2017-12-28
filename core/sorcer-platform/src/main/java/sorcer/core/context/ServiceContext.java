@@ -3205,7 +3205,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public Proc appendPar(Proc p) throws ContextException {
 		put(p.getName(), (T)p);
 		if (p.getScope() == null)
-			p.setScope(new ProcModel(p.getName()).append(this));
+			p.setScope(new EntryModel(p.getName()).append(this));
 		if (p.asis() instanceof ServiceInvoker) {
 			((ServiceInvoker) p.asis()).setScope(this);
 		}

@@ -102,8 +102,8 @@ public class Agent<T> extends Proc<T> implements Serializable {
 				Object obj = constructor
 						.newInstance(new Object[] { scope });
 				invoker = new MethodInvoker(name, obj, name, entries);
-				if (scope instanceof ProcModel)
-					invoker.setScope((ProcModel)scope);
+				if (scope instanceof EntryModel)
+					invoker.setScope((EntryModel)scope);
 				invoker.setContext(scope);
 			} finally {
 				AccessController.doPrivileged(new PrivilegedAction() {

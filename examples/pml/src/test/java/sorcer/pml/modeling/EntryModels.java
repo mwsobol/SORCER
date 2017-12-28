@@ -38,11 +38,11 @@ import static sorcer.so.operator.*;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/pml")
-public class ProcModels {
+public class EntryModels {
 
-	private final static Logger logger = LoggerFactory.getLogger(ProcModels.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(EntryModels.class.getName());
 
-	private ProcModel pm;
+	private EntryModel pm;
 	private Proc<Double> x;
 	private Proc<Double> y;
 
@@ -50,7 +50,7 @@ public class ProcModels {
 	@Before
 	public void initProcModel() throws Exception {
 
-		pm = new ProcModel();
+		pm = new EntryModel();
 		x = proc("x", 10.0);
 		y = proc("y", 20.0);
 
@@ -74,7 +74,7 @@ public class ProcModels {
 	@Test
 	public void createProcModel() throws Exception {
 
-		ProcModel model = procModel(
+		EntryModel model = procModel(
 				"Hello Arithmetic Domain #1",
 				// inputs
 				val("x1"), val("x2"), val("x3", 20.0),
@@ -106,7 +106,7 @@ public class ProcModels {
 	@Test
 	public void createMogram() throws Exception {
 
-		ProcModel vm = procModel(
+		EntryModel vm = procModel(
 				"Hello Arithmetic #2",
 				// inputs
 				ent("x1"), ent("x2"), proc("x3", 20.0), ent("x4"),
@@ -130,7 +130,7 @@ public class ProcModels {
 	@Test
 	public void procInvoker() throws Exception {
 
-		ProcModel pm = new ProcModel("proc-model");
+		EntryModel pm = new EntryModel("proc-model");
 		add(pm, proc("x", 10.0));
 		add(pm, proc("y", 20.0));
 		add(pm, proc("add", invoker("x + y", args("x", "y"))));
@@ -156,7 +156,7 @@ public class ProcModels {
 
 	@Test
 	public void procModelTest() throws Exception {
-		ProcModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
+		EntryModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
 				proc("add", invoker("x + y", args("x", "y"))));
 
 		assertTrue(eval(pm, "x").equals(10.0));
@@ -171,7 +171,7 @@ public class ProcModels {
 
 	@Test
 	public void expendingProcModelTest() throws Exception {
-		ProcModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
+		EntryModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
 				proc("add", invoker("x + y", args("x", "y"))));
 
 		Proc x = proc(pm, "x");
@@ -217,7 +217,7 @@ public class ProcModels {
 		Proc y2 = proc("y2", invoker("x * y1", args("x", "y1")));
 		Proc y1 = proc("y1", invoker("x1 * 5", ent("x1")));
 
-		ProcModel pc = procModel(y1, y2, y3);
+		EntryModel pc = procModel(y1, y2, y3);
 		// any dependent values or args can be updated or added any time
 		put(pc, "x", 10.0);
 		put(pc, "x1", 20.0);
@@ -320,7 +320,7 @@ public class ProcModels {
 		setValue(x2, 55.0);
 		assertTrue(eval(x2).equals(55.0));
 
-		ProcModel pc = procModel(x1, x2);
+		EntryModel pc = procModel(x1, x2);
 		assertTrue(eval(pc, "x1").equals(45.0));
 		assertTrue(eval(pc, "x2").equals(55.0));
 
@@ -404,7 +404,7 @@ public class ProcModels {
 		assertTrue(eval(j1p).equals(1000.0));
 
 		// map args are aliased args
-		ProcModel pc = procModel(x1p, x2p, j1p);
+		EntryModel pc = procModel(x1p, x2p, j1p);
 		logger.info("y eval: " + eval(pc, "y"));
 
 	}
@@ -468,7 +468,7 @@ public class ProcModels {
 	@Test
 	public void procModelConditions() throws Exception {
 
-		final ProcModel pm = new ProcModel("proc-model");
+		final EntryModel pm = new EntryModel("proc-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
 
@@ -490,7 +490,7 @@ public class ProcModels {
 	@Test
 	public void closingConditions() throws Exception {
 
-		ProcModel pm = new ProcModel("proc-model");
+		EntryModel pm = new EntryModel("proc-model");
 		pm.putValue(Condition._closure_, new ServiceInvoker(pm));
 		// free variables, no args for the invoker
 		((ServiceInvoker) pm.get(Condition._closure_))
@@ -537,7 +537,7 @@ public class ProcModels {
 	@Test
 	public void invokerLoopTest() throws Exception {
 
-		ProcModel pm = procModel("proc-model");
+		EntryModel pm = procModel("proc-model");
 		add(pm, proc("x", 1));
 		add(pm, proc("y", invoker("x + 1", args("x"))));
 		add(pm, proc("z", inc(invoker(pm, "y"), 2)));
@@ -553,7 +553,7 @@ public class ProcModels {
 	@Test
 	public void callableAttachment() throws Exception {
 
-		final ProcModel pm = procModel();
+		final EntryModel pm = procModel();
 		final Proc<Double> x = proc("x", 10.0);
 		final Proc<Double> y = proc("y", 20.0);
 		Proc z = proc("z", invoker("x + y", x, y));
@@ -580,7 +580,7 @@ public class ProcModels {
 	@Test
 	public void callableAttachmentWithArgs() throws Exception {
 
-		final ProcModel pm = procModel();
+		final EntryModel pm = procModel();
 		final Proc<Double> x = proc("x", 10.0);
 		final Proc<Double> y = proc("y", 20.0);
 		Proc z = proc("z", invoker("x + y", x, y));

@@ -12,9 +12,9 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.tuple.*;
 import sorcer.core.Tag;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Subroutine;
-import sorcer.core.context.model.ent.ProcModel;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -416,7 +416,7 @@ public class CollectionOperators {
 		Proc j1p = as(proc("j1p", "j1/t3/result/y"), j1);
 
 		// proc model with contexts and exertion
-		ProcModel pc = procModel(x1p, x2p, j1p);
+		EntryModel pc = procModel(x1p, x2p, j1p);
 
 		// setting context arguments
 		setValue(x1p, 10.0);

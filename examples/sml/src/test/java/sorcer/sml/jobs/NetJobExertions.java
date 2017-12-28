@@ -10,7 +10,7 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.core.SorcerConstants;
-import sorcer.core.context.model.ent.ProcModel;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.provider.*;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
@@ -359,7 +359,7 @@ public class NetJobExertions implements SorcerConstants {
 	@Test
 	public void createModelWithTask() throws Exception {
 
-		ProcModel vm = procModel(
+		EntryModel vm = procModel(
 				"Hello Arithmetic #2",
 				// inputs
 				ent("x1"), ent("x2"), proc("x3", 20.0), ent("x4"),

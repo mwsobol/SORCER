@@ -49,51 +49,51 @@ import java.util.*;
  */
 
 /**
- * The ProcModel is an active shared service context as a map of parameters (Pars),
- * parameter key and its argument <key, argument> is the definition of a
- * independent and dependent arguments. Arguments that dependent on other
- * arguments are subroutines (invokers), so that, each time the subroutine is
- * called, its arguments for that call can be assigned to the corresponding
- * parameters of invokers.
+ * The EntryModel is an active shared service context as a map of associations,
+ * key and its value (argument). The association <key, argument> is the definition
+ * of an independent or a dependent argument. Arguments that dependent on other
+ * arguments are subroutines (evaluators, invokers), so that, each time the
+ * subroutine is called, its arguments for that call can be assigned to
+ * the corresponding parameters of evaluators and invokers.
  *
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class ProcModel extends PositionalContext<Object> implements Model, Invocation<Object>, Contexter<Object> {
+public class EntryModel extends PositionalContext<Object> implements Model, Invocation<Object>, Contexter<Object> {
 
     private static final long serialVersionUID = -6932730998474298653L;
 
-	public static ProcModel instance(Signature builder) throws SignatureException {
-		ProcModel model = (ProcModel) sorcer.co.operator.instance(builder);
+	public static EntryModel instance(Signature builder) throws SignatureException {
+		EntryModel model = (EntryModel) sorcer.co.operator.instance(builder);
 		model.setBuilder(builder);
 		return model;
 	}
 
-    public ProcModel() {
+    public EntryModel() {
 		super();
 		key = PROC_MODEL;
 		setSubject("proc/model", new Date());
 		isRevaluable = true;
 	}
 
-    public ProcModel(String name) {
+    public EntryModel(String name) {
         super(name);
 		isRevaluable = true;
 	}
 
-	public ProcModel(String name, Signature builder) {
+	public EntryModel(String name, Signature builder) {
 		this(name);
 		this.builder = builder;
 	}
 
-    public ProcModel(Context context) throws RemoteException, ContextException {
+    public EntryModel(Context context) throws RemoteException, ContextException {
         super(context);
         key = PROC_MODEL;
         setSubject("proc/model", new Date());
 		isRevaluable = true;
 	}
 
-    public ProcModel(Identifiable... objects) throws RemoteException,
+    public EntryModel(Identifiable... objects) throws RemoteException,
             ContextException {
         this();
         add(objects);
@@ -228,14 +228,14 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 		return ent;
 	}
 
-	public ProcModel add(List<Identifiable> objects) throws RemoteException, ContextException {
+	public EntryModel add(List<Identifiable> objects) throws RemoteException, ContextException {
 		Identifiable[] objs = new Identifiable[objects.size()];
 		objects.toArray(objs);
 		add(objs);
 		return this;
 	}
 
-	public ProcModel append(Arg... objects) throws ContextException {
+	public EntryModel append(Arg... objects) throws ContextException {
 		Proc p = null;
 		boolean changed = false;
 		for (Arg obj : objects) {
@@ -248,7 +248,7 @@ public class ProcModel extends PositionalContext<Object> implements Model, Invoc
 						((Entry) obj).getOut());
 			} else if (obj instanceof Identifiable) {
 				String pn = obj.getName();
-				p = new Proc(pn, obj, new ProcModel(pn).append(this));
+				p = new Proc(pn, obj, new EntryModel(pn).append(this));
 			}
 
 			if (p != null) {

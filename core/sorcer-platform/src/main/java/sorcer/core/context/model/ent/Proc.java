@@ -37,7 +37,7 @@ import java.util.*;
 
 /**
  * In service-based modeling, a parameter (for short a proc) is a special kind of
- * variable, used in a service context {@link ProcModel} to refer to one of the
+ * variable, used in a service context {@link EntryModel} to refer to one of the
  * pieces of data provided as input to the invokers (subroutines of the
  * context). These pieces of data are called arguments.
  * 
@@ -333,7 +333,7 @@ public class Proc<T> extends Subroutine<T> implements Functionality<T>, Mappable
                         out = ((Entry<T>) arg).getData();
                     } else {
 					    if (scope == null) {
-					        scope = new ProcModel();
+					        scope = new EntryModel();
                         }
                         ((ServiceContext)scope).put(arg.getName(), ((Entry)arg).getData());
 					}
