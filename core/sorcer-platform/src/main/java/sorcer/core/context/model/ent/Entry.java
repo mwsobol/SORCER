@@ -189,7 +189,7 @@ public class Entry<V> extends Association<String, V>
                 for (Arg arg : args) {
                     if (arg instanceof Fidelity) {
                         if (((Fidelity)arg).getPath().equals(key)) {
-                            ((ServiceFidelity)val).setSelect(arg.getName());
+                            ((ServiceFidelity)val).selectSelect(arg.getName());
                             break;
                         }
                     }

@@ -113,7 +113,7 @@ public class ServiceFidelity extends Fidelity<Service> {
 		this.fiName = name;
 	}
 
-	public Service setSelect(String fiName) {
+	public Service selectSelect(String fiName) {
 		for (Service item : selects) {
 			if (((Identifiable) item).getName().equals(fiName)) {
 				this.select = item;

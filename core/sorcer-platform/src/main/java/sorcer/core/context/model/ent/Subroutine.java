@@ -130,7 +130,7 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Depende
 				for (Arg arg : args) {
 					if (arg instanceof Fidelity) {
 						if (((Fidelity)arg).getPath().equals(key)) {
-							((ServiceFidelity)val).setSelect(arg.getName());
+							((ServiceFidelity)val).selectSelect(arg.getName());
 							break;
 						}
 					}

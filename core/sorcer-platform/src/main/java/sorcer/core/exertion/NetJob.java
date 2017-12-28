@@ -37,11 +37,15 @@ public class NetJob extends Job implements Invocation<Object> {
 	public NetJob(String name) {
 		super(name);
 	}
-	
-	public NetJob(String name, Signature signature) {
-		super(name);
-		addSignature(signature);
-	}
+
+    public NetJob(String name, Signature... signatures) {
+        super(name);
+        if (multiFi != null) {
+            multiFi.getSelects().clear();
+            multiFi.setSelect(null);
+        }
+        addSignature(signatures);
+    }
 	
 	public NetJob(SorcerPrincipal principal) throws ExertionException {
 		this("undefined" + count++, principal);

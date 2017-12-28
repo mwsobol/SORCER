@@ -63,7 +63,7 @@ public interface Fi<T> extends Identifiable, Request {
 
     public T get(int index);
 
-    public T setSelect(String fiName);
+    public T selectSelect(String fiName);
 
     public List<T> getSelects();
 

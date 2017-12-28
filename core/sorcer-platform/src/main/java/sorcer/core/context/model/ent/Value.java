@@ -2,7 +2,6 @@ package sorcer.core.context.model.ent;
 
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Getter;
 import sorcer.service.modeling.Valuation;
 import sorcer.service.modeling.val;
 import sorcer.util.bdb.objects.UuidObject;
@@ -118,7 +117,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
             for (Arg arg : args) {
                 if (arg instanceof Fidelity && multiFi != null) {
                     if (((Fidelity) arg).getPath() == null || ((Fidelity) arg).getPath().equals(key)) {
-                        impl = multiFi.setSelect(arg.getName());
+                        impl = multiFi.selectSelect(arg.getName());
                         out = (T) ((Entry) impl).getData(args);
                         multiFi.setChanged(false);
                         isValid = true;

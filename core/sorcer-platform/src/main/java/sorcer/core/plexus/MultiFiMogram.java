@@ -135,10 +135,10 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
     @Override
     public Fidelity selectFidelity(String selector) {
         if (requestFidelity != null) {
-            requestFidelity.setSelect(selector);
+            requestFidelity.selectSelect(selector);
             return requestFidelity;
         } else {
-            morphFidelity.getFidelity().setSelect(selector);
+            morphFidelity.getFidelity().selectSelect(selector);
             return morphFidelity.getFidelity();
         }
     }
@@ -290,8 +290,8 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
     }
 
     @Override
-    public Fi setSelect(String name) {
-        return (Fi) getMultifidelity().setSelect(name);
+    public Fi selectSelect(String name) {
+        return (Fi) getMultifidelity().selectSelect(name);
     }
 
     @Override

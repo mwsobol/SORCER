@@ -443,7 +443,7 @@ public class SrvModel extends EntryModel implements Invocation<Object> {
                             continue;
                         } else {
                             // first select the requested fidelity
-                            entry.getServiceFidelity().setSelect(((Fidelity) de.annotation()).getName());
+                            entry.getServiceFidelity().selectSelect(((Fidelity) de.annotation()).getName());
                         }
                     } else if (de.getType().equals(Functionality.Type.CONDITION)) {
                         Conditional condition = de.getCondition();

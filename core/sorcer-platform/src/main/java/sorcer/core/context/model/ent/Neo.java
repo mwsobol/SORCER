@@ -117,7 +117,7 @@ public class Neo extends Subroutine<Double> implements Functionality<Double>, In
 
 					}
 				} else if (p instanceof Fidelity && multiFi != null) {
-                    multiFi.setSelect(p.getName());
+                    multiFi.selectSelect(p.getName());
 				} else if (p instanceof Context) {
 					if (scope == null)
 						scope = (Context) p;

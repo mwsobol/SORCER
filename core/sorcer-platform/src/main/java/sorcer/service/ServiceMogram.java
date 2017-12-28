@@ -778,7 +778,7 @@ public abstract class ServiceMogram extends Association<String, Object> implemen
     }
 
     public Fidelity selectFidelity(String selector) {
-        multiFi.setSelect(selector);
+        multiFi.selectSelect(selector);
         return (Fidelity) multiFi.getSelect();
     }
 

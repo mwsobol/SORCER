@@ -1629,7 +1629,7 @@ public class operator extends Operator {
 	public static Fidelity fi(String name, String path, String gradientName, Fidelity subFi) {
 		Fidelity fi = new Fidelity(name, path);
 		fi.fiType = Fi.Type.GRADIENT;
-		fi.setSelect(gradientName);
+		fi.selectSelect(gradientName);
         fi.setOption(subFi);
         return fi;
 	}
@@ -1645,7 +1645,7 @@ public class operator extends Operator {
 	public static ServiceFidelity rFi(String name, String path) {
 		ServiceFidelity fi = new ServiceFidelity(name, path(path));
 		fi.setPath(path);
-		fi.setSelect(path);
+		fi.selectSelect(path);
 		fi.fiType = Fi.Type.SELECT;
 		return fi;
 	}

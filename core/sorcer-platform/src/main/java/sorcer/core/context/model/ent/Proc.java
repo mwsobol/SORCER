@@ -338,7 +338,7 @@ public class Proc<T> extends Subroutine<T> implements Functionality<T>, Mappable
                         ((ServiceContext)scope).put(arg.getName(), ((Entry)arg).getData());
 					}
 				} else if (arg instanceof Fidelity && multiFi != null) {
-					multiFi.setSelect(arg.getName());
+					multiFi.selectSelect(arg.getName());
 					multiFi.setChanged(true);
 				} else if (arg instanceof Context) {
 					if (scope == null)

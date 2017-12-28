@@ -28,14 +28,12 @@ import sorcer.co.tuple.Tuple2;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.invoker.Observer;
-import sorcer.eo.operator;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static sorcer.eo.operator.mog;
 import static sorcer.eo.operator.rFi;
 
 /**
@@ -248,13 +246,13 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
                         if (morphFidelities.get(name) != null) {
                             morphFidelities.get(name).setMorpherSelect(path);
                         }
-                        fiEnt.getValue().setSelect(path);
+                        fiEnt.getValue().selectSelect(path);
                         mogram.applyFidelity(name);
                     } else if (fiEnt.getKey().equals(path)) {
                         if (morphFidelities.get(path) != null) {
                             morphFidelities.get(path).setMorpherSelect(path);
                         }
-                        fiEnt.getValue().setSelect(name);
+                        fiEnt.getValue().selectSelect(name);
                         mogram.applyFidelity(path);
                     }
                 }
@@ -306,7 +304,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
             if (fi == null) {
                 fi = getFidelity(fiNames[0]);
             }
-            fi.setSelect(fiNames[0]);
+            fi.selectSelect(fiNames[0]);
             fi.setChanged(true);
             if (isTraced) {
                 ServiceFidelity nsf = new ServiceFidelity(fiNames[0]);
@@ -347,7 +345,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         for (Fidelity fi : fidelities) {
             Fidelity sFi = this.fidelities.get(fi.getName());
             if (sFi != null) {
-                sFi.setSelect(fi.getPath());
+                sFi.selectSelect(fi.getPath());
                 sFi.setChanged(true);
                 if (mogram instanceof Exertion) {
                     ((ServiceMogram)mogram).setSelectedFidelity((ServiceFidelity) sFi.getSelect());
