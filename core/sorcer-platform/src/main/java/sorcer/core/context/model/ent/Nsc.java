@@ -29,74 +29,74 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 
 /**
- * In service-based modeling, a service neuron (for short a neo) is a special kind of
+ * In service-based modeling, a service neuron (for short a nsc - neuron specific) is a special kind of
  * function, used in a service model {@link EntryModel} to refer to one of the
  * pieces of data provided as input to other neurons.
  * 
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Neo extends Subroutine<Double> implements Functionality<Double>, Invocation<Double>,
+public class Nsc extends Subroutine<Double> implements Functionality<Double>, Invocation<Double>,
 		Setter, Scopable, Comparable<Double>, func<Double> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static Logger logger = LoggerFactory.getLogger(Neo.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(Nsc.class.getName());
 
 	protected double bias;
 
-	public Neo(String name) {
+	public Nsc(String name) {
 		super(name);
         impl = new Activator(name);
 		type = Type.NEURON;
 	}
 
-       public Neo(String name, double value) {
+       public Nsc(String name, double value) {
         this(name);
         out = value;
     }
 
-    public Neo(String name, operator.Args args) {
+    public Nsc(String name, operator.Args args) {
         this(name);
 		((Activator)impl).setArgs(args.argSet());
     }
 
-    public Neo(String name, Context<Float> weights, operator.Args args) {
+    public Nsc(String name, Context<Float> weights, operator.Args args) {
         this(name, args);
 		((Activator)impl).setWeights(weights);
     }
 
-    public Neo(String name, double value, Context<Subroutine> signals) {
+    public Nsc(String name, double value, Context<Subroutine> signals) {
         this(name);
         impl = value;
 		((Activator)impl).setScope(signals);
     }
 
-	public Neo(String name, Context<Value> signals, Context<Float> weights, operator.Args args) {
+	public Nsc(String name, Context<Value> signals, Context<Float> weights, operator.Args args) {
 		this(name, args);
 		((Activator)impl).setScope(signals);
 
 	}
 
-	public Neo(String name, Context<Value> signals, Context<Float> weights) {
+	public Nsc(String name, Context<Value> signals, Context<Float> weights) {
 		this(name);
 		((Activator)impl).setScope(signals);
 
 	}
 
-	public Neo(String name, double value, Context<Value> signals, Context<Float> weights) {
+	public Nsc(String name, double value, Context<Value> signals, Context<Float> weights) {
         this(name);
 		impl = value;
 		((Activator)impl).setScope(signals);
 
     }
 
-	public Neo(String name, Context<Float> weights, Arg... args) {
+	public Nsc(String name, Context<Float> weights, Arg... args) {
 		this(name, new operator.Args(args));
 		((Activator)impl).setWeights(weights);
 	}
 
-	public Neo(String name, ServiceFidelity fidelities) {
+	public Nsc(String name, ServiceFidelity fidelities) {
 		this(name);
 		this.multiFi= fidelities;
 	}
@@ -110,10 +110,10 @@ public class Neo extends Subroutine<Double> implements Functionality<Double>, In
 			return;
 		for (Arg p : parameters) {
 			try {
-				if (p instanceof Neo) {
-					if (key.equals(((Neo) p).key)) {
-						if (((Neo) p).getScope() != null)
-							scope.append(((Neo) p).getScope());
+				if (p instanceof Nsc) {
+					if (key.equals(((Nsc) p).key)) {
+						if (((Nsc) p).getScope() != null)
+							scope.append(((Nsc) p).getScope());
 
 					}
 				} else if (p instanceof Fidelity && multiFi != null) {
@@ -274,7 +274,7 @@ public class Neo extends Subroutine<Double> implements Functionality<Double>, In
 	public void addArgs(ArgSet set) throws EvaluationException {
 		Iterator<Arg> i = set.iterator();
 		while (i.hasNext()) {
-			Neo procEntry = (Neo)i.next();
+			Nsc procEntry = (Nsc)i.next();
 			try {
 				((Activator)impl).getScope().putValue(procEntry.getName(), procEntry.asis());
 			} catch (Exception e) {
@@ -292,8 +292,8 @@ public class Neo extends Subroutine<Double> implements Functionality<Double>, In
 
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof Neo
-				&& ((Neo) object).key.equals(key))
+		if (object instanceof Nsc
+				&& ((Nsc) object).key.equals(key))
 			return true;
 		else
 			return false;

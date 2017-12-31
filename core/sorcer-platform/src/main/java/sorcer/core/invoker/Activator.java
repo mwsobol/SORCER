@@ -18,7 +18,6 @@
 package sorcer.core.invoker;
 
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Neo;
 import sorcer.core.context.model.ent.Value;
 import sorcer.eo.operator;
 import sorcer.service.*;
@@ -26,7 +25,6 @@ import sorcer.service.modeling.Activation;
 import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
-import java.util.List;
 
 /**
  * @author Mike Sobolewski
