@@ -1012,7 +1012,7 @@ public class operator extends sorcer.operator {
 		return s;
 	}
 
-	public static Signature sig(ServiceType serviceType, Object... items) throws SignatureException {
+	public static Signature sig(ServiceMultitype serviceType, Object... items) throws SignatureException {
 		if (items == null || items.length == 0) {
             if (serviceType.providerType != null) {
                 return defaultSig(serviceType.providerType);
@@ -1065,7 +1065,7 @@ public class operator extends sorcer.operator {
 	}
 
 	public static Signature sig(Class classType, Object... items) throws SignatureException {
-		ServiceType serviceType = new ServiceType(classType);
+		ServiceMultitype serviceType = new ServiceMultitype(classType);
 		return sig(serviceType, items);
 	}
 
@@ -1083,7 +1083,7 @@ public class operator extends sorcer.operator {
 		ProviderName providerName = null;
 		Provision p = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
-		ServiceType srvType = null;
+		ServiceMultitype srvType = null;
 		Args args = null;
 		Provider provider = null;
 		if (items != null) {
@@ -1096,8 +1096,8 @@ public class operator extends sorcer.operator {
 					p = (Provision) o;
 				} else if (o instanceof MapContext) {
 					connList.add(((MapContext) o));
-				} else if (o instanceof ServiceType) {
-					srvType = (ServiceType) o;
+				} else if (o instanceof ServiceMultitype) {
+					srvType = (ServiceMultitype) o;
 					// check if class can be loaded
 //                    serviceType = srvType.providerType;
 //                    try {
@@ -1250,13 +1250,13 @@ public class operator extends sorcer.operator {
 		return sop;
 	}
 
-	public static ServiceType type(Class providerType) {
-		ServiceType st = new ServiceType(providerType);
+	public static ServiceMultitype type(Class providerType) {
+		ServiceMultitype st = new ServiceMultitype(providerType);
 		return st;
 	}
 
-	public static ServiceType type(String typeName) {
-		ServiceType st = new ServiceType(typeName);
+	public static ServiceMultitype type(String typeName) {
+		ServiceMultitype st = new ServiceMultitype(typeName);
 		return st;
 	}
 
