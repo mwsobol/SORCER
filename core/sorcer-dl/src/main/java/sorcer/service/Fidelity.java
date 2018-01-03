@@ -7,11 +7,12 @@ import javax.swing.*;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Mike Sobolewski on 6/27/16.
  */
-public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry, Service {
+public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry, Activity {
     static final long serialVersionUID = 1L;
 
 	protected static int count = 0;
@@ -250,4 +251,13 @@ public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry
 		return dependers;
 	}
 
+	@Override
+	public Data act(Arg... args) throws ServiceException, RemoteException {
+		return new Association(((Identifiable)select).getName(), ((Service)select).execute(args));
+	}
+
+	@Override
+	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+		return new Association(entryName, ((Service)select).execute(args));
+	}
 }
