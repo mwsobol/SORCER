@@ -121,7 +121,7 @@ public class Metafidelity extends Fidelity<Fi> implements MetaFi, Dependency, Ar
     @Override
     public Object execute(Arg... args) throws ServiceException, RemoteException {
         if (select instanceof Service) {
-            return select.execute(args);
+            return ((Service)select).execute(args);
         } else return select;
     }
 

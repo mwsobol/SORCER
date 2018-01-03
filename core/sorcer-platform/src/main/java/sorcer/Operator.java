@@ -17,6 +17,7 @@
 package sorcer;
 
 import sorcer.service.*;
+import sorcer.service.modeling.Data;
 
 import java.rmi.RemoteException;
 
@@ -43,6 +44,16 @@ public class Operator implements Activity {
 		} else {
 			throw new ServiceException("invalid service arguments");
 		}
+	}
+
+	@Override
+	public Data act(Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
+
+	@Override
+	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+		return null;
 	}
 
 }

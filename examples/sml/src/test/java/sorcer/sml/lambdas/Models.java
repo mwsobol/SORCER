@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.*;

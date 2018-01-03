@@ -631,7 +631,7 @@ public class ModelMultiFidelities {
         Metafidelity fi4 = fi("sysFi4", fi("mFi3", "average"));
         Metafidelity fi5 = fi("sysFi5", fi("mFi4", "t4"));
 
-        // four entry multifidelity model with morphers
+        // four entry multifidelity model with four morphers
         Model mdl = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 ent("mFi1", mrpFi(morpher1, add, multiply)),
                 ent("mFi2", mrpFi(entFi(ent("ph2", morpher2), ent("ph4", morpher4)), average, divide, subtract)),

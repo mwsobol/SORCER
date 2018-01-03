@@ -80,7 +80,7 @@ public class ServiceModeler extends SystemServiceBean implements Modeler {
                     model = (Model) ((ObjectSignature)builder).newInstance();
                 }
                 if (model != null) {
-                    model.substitute(result);
+                    model.substitute((Arg) result);
                     result = model.exert(args);
                 }
                 if (contextSelector != null) {

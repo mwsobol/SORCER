@@ -27,6 +27,7 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.eo.operator;
 import sorcer.service.*;
+import sorcer.service.modeling.Data;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -603,4 +604,13 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		return null;
 	}
 
+	@Override
+	public Data act(Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
+
+	@Override
+	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
 }

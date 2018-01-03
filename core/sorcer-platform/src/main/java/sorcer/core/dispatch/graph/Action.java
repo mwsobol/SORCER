@@ -15,6 +15,8 @@
  */
 package sorcer.core.dispatch.graph;
 
+import sorcer.service.Service;
+
 /**
  * Performs some action against objects of type T.
  *

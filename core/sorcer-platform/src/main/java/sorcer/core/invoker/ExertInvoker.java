@@ -22,6 +22,8 @@ import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
+import sorcer.service.modeling.Data;
+
 import java.rmi.RemoteException;
 
 /**
@@ -110,4 +112,5 @@ public class ExertInvoker extends ServiceInvoker implements ExertionInvoking {
 	public void setUpdatedValue(Object updatedValue) {
 		this.updatedValue = updatedValue;
 	}
+
 }

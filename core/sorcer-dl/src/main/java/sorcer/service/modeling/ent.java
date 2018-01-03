@@ -1,4 +1,6 @@
 package sorcer.service.modeling;
 
-public interface ent<V> extends Data<V> {
+import sorcer.service.Service;
+
+public interface ent<V> extends Service, Data<V> {
 }

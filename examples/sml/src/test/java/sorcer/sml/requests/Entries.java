@@ -11,6 +11,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.context.model.ent.Value;
 import sorcer.service.*;
+import sorcer.service.modeling.Data;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.func;
 import sorcer.util.GenericUtil;
@@ -140,6 +141,17 @@ public class Entries {
         public Object execute(Arg... args) throws ServiceException, RemoteException {
             return invoke(null, args);
         }
+
+        @Override
+        public Data act(Arg... args) throws ServiceException, RemoteException {
+            return ent(getClass().getSimpleName(), invoke(null, args));
+        }
+
+        @Override
+        public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+            return ent(entryName, invoke(null, args));
+        }
+
     }
 
     @Test

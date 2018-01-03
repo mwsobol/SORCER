@@ -27,6 +27,7 @@ import sorcer.core.exertion.LoopMogram;
 import sorcer.core.exertion.OptMogram;
 import sorcer.core.invoker.GroovyInvoker;
 import sorcer.core.invoker.ServiceInvoker;
+import sorcer.service.modeling.Data;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -356,4 +357,13 @@ import java.util.Map;
 		return name;
 	}
 
+	@Override
+	public Data act(Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
+
+	@Override
+	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
 }

@@ -236,7 +236,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
             if (isTraced) {
                 fiTrace.add(new Fidelity(fiName, fis));
             }
-            for (Service fi : fis) {
+            for (Fi fi : fis) {
                 name = ((Fidelity)fi).getName();
                 path = ((Fidelity)fi).getPath();
                 Iterator<Map.Entry<String, Fidelity>> i = fidelities.entrySet().iterator();

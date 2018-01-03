@@ -42,7 +42,7 @@ import java.util.Set;
  *
  * Created by Mike Sobolewski
  */
-public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
+public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 
     protected Fidelity requestFidelity;
 
@@ -258,7 +258,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
     }
 
     @Override
-    public void setSelect(Request select) {
+    public void setSelect(Mogram select) {
 
     }
 
@@ -268,34 +268,34 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Request> {
     }
 
     @Override
-    public Request getSelect() {
-        Request req = null;
+    public Mogram getSelect() {
+        Mogram req = null;
         Object select = getMultifidelity().getSelect();
         if (select instanceof Ref) {
-            req =  (Request) ((Ref) getMultifidelity().getSelect()).get();
+            req =  (Mogram) ((Ref) getMultifidelity().getSelect()).get();
         } else{
-            req = (Request) getMultifidelity().getSelect();
+            req = (Mogram) getMultifidelity().getSelect();
         }
         return req;
     }
 
     @Override
-    public Request get(int index) {
+    public Mogram get(int index) {
         if (requestFidelity != null) {
-            return (Request) requestFidelity.get(index);
+            return (Mogram) requestFidelity.get(index);
         } else if (morphFidelity != null) {
-            return (Request) morphFidelity.get(index);
+            return (Mogram) morphFidelity.get(index);
         }
         return null;
     }
 
     @Override
-    public Fi selectSelect(String name) {
-        return (Fi) getMultifidelity().selectSelect(name);
+    public  Mogram selectSelect(String name) {
+        return (Mogram) getMultifidelity().selectSelect(name);
     }
 
     @Override
-    public void addSelect(Request fidelity) {
+    public void addSelect(Mogram fidelity) {
         getMultifidelity().addSelect(fidelity);
     }
 
