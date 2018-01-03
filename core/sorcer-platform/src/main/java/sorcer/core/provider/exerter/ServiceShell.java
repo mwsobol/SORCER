@@ -52,6 +52,7 @@ import sorcer.service.*;
 import sorcer.service.Exec.State;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
+import sorcer.service.modeling.Data;
 import sorcer.service.modeling.Model;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.ProviderLocator;
@@ -920,7 +921,7 @@ public class ServiceShell implements Exerter, Client, Callable, RemoteServiceShe
 						else {
 							Context cxt = ((MultiFiMogram)service).getScope();
 							if (select instanceof Signature && cxt != null)
-								out = ((Service) select).execute(cxt);
+								out = ((Service) select).execute((Arg) cxt);
 							else
 								out = ((Service) select).execute(args);
 						}
@@ -928,7 +929,7 @@ public class ServiceShell implements Exerter, Client, Callable, RemoteServiceShe
 				}
 				Context cxt = ((MultiFiMogram)service).getScope();
 				if (sfi.getSelect() instanceof Signature && cxt != null) {
-					out = sfi.getSelect().execute(cxt);
+					out = sfi.getSelect().execute((Arg) cxt);
 				} else {
 					out = sfi.getSelect().execute(args);
 				}
@@ -949,12 +950,12 @@ public class ServiceShell implements Exerter, Client, Callable, RemoteServiceShe
 	public Context exec(Service service, Context context, Arg[] args) throws ServiceException, RemoteException {
 		Arg[] extArgs = new Arg[args.length+1];
 		Arrays.copyOf(args, args.length+1);
-		extArgs[args.length] = context;
+		extArgs[args.length] = (Arg) context;
 		return (Context) exec(service, extArgs);
 	}
 
 
-	public <T extends Mogram> T  exert(Arg... args) throws TransactionException,
+	public <T extends Mogram> T exert(Arg... args) throws TransactionException,
 			MogramException, RemoteException {
 		return exert((Transaction) null, (String) null, args);
 	}
@@ -962,6 +963,16 @@ public class ServiceShell implements Exerter, Client, Callable, RemoteServiceShe
 	@Override
 	public Object execute(Arg... args) throws MogramException, RemoteException {
 		return evaluate(args);
+	}
+
+	@Override
+	public Data act(Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
+
+	@Override
+	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+		return null;
 	}
 
 }

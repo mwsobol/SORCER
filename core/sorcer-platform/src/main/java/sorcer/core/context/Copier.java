@@ -19,6 +19,7 @@ package sorcer.core.context;
 
 import sorcer.service.*;
 import sorcer.service.Domain;
+import sorcer.service.modeling.Data;
 
 import java.rmi.RemoteException;
 
@@ -102,4 +103,13 @@ public class Copier implements Evaluation<Context>, Identifiable {
 		return name;
 	}
 
+	@Override
+	public Data act(Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
+
+	@Override
+	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
 }

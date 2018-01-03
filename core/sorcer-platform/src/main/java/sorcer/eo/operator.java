@@ -1643,7 +1643,7 @@ public class operator extends Operator {
 
 
 	public static ServiceFidelity rFi(String name, String path) {
-		ServiceFidelity fi = new ServiceFidelity(name, path(path));
+		ServiceFidelity fi = new ServiceFidelity(name, (List<Service>) path(path));
 		fi.setPath(path);
 		fi.selectSelect(path);
 		fi.fiType = Fi.Type.SELECT;

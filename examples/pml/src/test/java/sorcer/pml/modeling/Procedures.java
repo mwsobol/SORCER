@@ -69,7 +69,7 @@ public class Procedures {
 	public void closingProcWitScope() throws Exception {
 
 		// invokers use contextual scope of args
-		Proc<?> add = proc("add", invoker("x + y", args("x", "y")));
+		Proc add = proc("add", invoker("x + y", args("x", "y")));
 
 		Context<Double> cxt = context(val("x", 10.0), val("y", 20.0));
 		logger.info("proc eval: " + eval(add, cxt));

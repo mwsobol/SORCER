@@ -59,6 +59,7 @@ import sorcer.scratch.ScratchManagerSupport;
 import sorcer.service.*;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
+import sorcer.service.modeling.Data;
 import sorcer.serviceui.UIComponentFactory;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.serviceui.UIFrameFactory;
@@ -593,6 +594,16 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		if (srv != null) {
 			return service(srv);
 		}
+		return null;
+	}
+
+	@Override
+	public Data act(Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
+
+	@Override
+	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
 		return null;
 	}
 

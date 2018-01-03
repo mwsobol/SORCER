@@ -22,7 +22,6 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Ref;
 import sorcer.core.invoker.Observable;
 import sorcer.service.*;
-import sorcer.service.modeling.Data;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -30,7 +29,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 04/26/16.
  */
-public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>, Arg {
+public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>, Service, Arg {
 
     // fidelity of fidelities thatare observable
     private Fidelity<T> fidelity;
@@ -178,14 +177,5 @@ public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>,
         return fidelity.getSelects().get(index);
     }
 
-    @Override
-    public Data act(Arg... args) throws ServiceException, RemoteException {
-        return new Entry(path, fidelity);
-    }
-
-    @Override
-    public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
-        return new Entry(entryName, fidelity);
-    }
 }
 

@@ -3,6 +3,7 @@ package sorcer.service;
 import sorcer.core.Tag;
 import sorcer.service.modeling.Data;
 
+import javax.swing.*;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 6/27/16.
  */
-public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry {
+public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry, Service {
     static final long serialVersionUID = 1L;
 
 	protected static int count = 0;
@@ -133,7 +134,7 @@ public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry
 				break;
 			}
 		}
-		return select;
+		return (T) select;
 	}
 
 	public T getSelect(String name) {
@@ -221,8 +222,8 @@ public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry
 
     @Override
     public Object execute(Arg... args) throws ServiceException, RemoteException {
-        if (select instanceof Request) {
-            return ((Request)select).execute(args);
+        if (select instanceof Activity) {
+            return ((Activity)select).execute(args);
         } else {
             return select;
         }
@@ -249,13 +250,4 @@ public class Fidelity<T> implements Fi<T>, Dependency, net.jini.core.entry.Entry
 		return dependers;
 	}
 
-    @Override
-    public Data act(Arg... args) throws ServiceException, RemoteException {
-        return null;
-    }
-
-    @Override
-    public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
-        return null;
-    }
 }

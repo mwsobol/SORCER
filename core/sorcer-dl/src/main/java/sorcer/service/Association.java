@@ -232,16 +232,6 @@ public class Association<K, I> implements Service, net.jini.core.entry.Entry, Da
         return false;
     }
 
-    @Override
-    public Data act(Arg... args) throws ServiceException, RemoteException {
-        return new Association<>(key, impl);
-    }
-
-    @Override
-    public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
-        return new Association<>(entryName, impl);
-    }
-
     protected Object realizeFidelity(Fi fidelity) {
         // reimplement in suclasses
         // define how the select of a fidelity is implemented by this association

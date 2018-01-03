@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.plexus.Morpher;
 import sorcer.eo.operator;
 import sorcer.service.*;
@@ -157,5 +158,11 @@ public class SmlOperators {
 		assertTrue(get(out, "mFi1").equals(900.0));
 		assertTrue(get(out, "mFi2").equals(50.0));
 		assertTrue(get(out, "mFi3").equals(9.0));
+	}
+
+
+	@Test
+	public void morphingMultiFidelityModel1() throws Exception {
+		logger.info("" + (new ServiceContext("NN") instanceof Arg));
 	}
 }

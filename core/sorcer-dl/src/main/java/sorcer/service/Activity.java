@@ -17,6 +17,10 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.Data;
+
+import java.rmi.RemoteException;
+
 /**
  * An top-level common interface for all primitive service in SORCER.
  * Actiities are defined by common interface types.
@@ -24,5 +28,9 @@ package sorcer.service;
  * @author Mike Sobolewski
  */
 public interface Activity extends Service  {
+
+    public Data act(Arg... args) throws ServiceException, RemoteException;
+
+    public Data act(String entryName, Arg... args) throws ServiceException, RemoteException;
 
 }

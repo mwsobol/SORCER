@@ -27,6 +27,7 @@ import sorcer.core.exertion.ObjectBlock;
 import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.*;
 import sorcer.service.*;
+import sorcer.service.modeling.Data;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ModelingTask;
 import sorcer.util.Sorcer;
@@ -61,7 +62,7 @@ abstract public class SystemServiceBean implements Exerter, ServiceBean {
 
 	}
 
-    public String getProviderName()  {
+    public String getProviderName() throws RemoteException {
         return provider.getProviderName();
 	}
 	
@@ -205,6 +206,16 @@ abstract public class SystemServiceBean implements Exerter, ServiceBean {
 			}
 		else
 			return null;
+	}
+
+	@Override
+	public Data act(Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
+
+	@Override
+	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+		return null;
 	}
 
 }
