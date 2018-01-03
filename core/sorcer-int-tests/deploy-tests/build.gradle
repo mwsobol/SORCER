@@ -40,6 +40,7 @@ test {
     systemProperty "java.rmi.server.codebase",
                    "${websterUrl}/${repoPath()}/sorcer-tester-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
     systemProperty "deploy.configs", "${project.projectDir.path}/src/test/resources/deploy/configs"
+    systemProperty "build.dir", "${project.buildDir.path}"
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut"*/, "standardError"
     }

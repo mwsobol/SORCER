@@ -63,11 +63,12 @@ ext {
     websterPort = sorcerEnv.provider.webster.port
     if(sorcerEnv.provider.webster.interface.contains("localhost") ||
        sorcerEnv.provider.webster.interface.contains("127.0.0.1")) {
-        websterAddress = InetAddress.getLocalHost().getHostName()
+        websterAddress = InetAddress.getLocalHost().getHostAddress()
     } else {
         websterAddress = sorcerEnv.provider.webster.interface
     }
     websterUrl = "http://${websterAddress}:${websterPort}"
+    println "WEBSTER URL: ${websterUrl}"
 
     startClassPath = files("${rioHome}/lib/groovy-all-${groovyVersion}.jar",
                              "${rioHome}/lib/logging/slf4j-api-${slf4jVersion}.jar",

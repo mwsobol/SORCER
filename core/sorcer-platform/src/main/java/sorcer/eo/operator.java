@@ -3512,7 +3512,7 @@ public class operator extends Operator {
 				for(String ipAddress : ip.getIps()) {
 					try {
 						InetAddress inetAddress = InetAddress.getByName(ipAddress);
-						if(inetAddress.isReachable(1000)) {
+						if(!inetAddress.isReachable(1000)) {
 							logger.warn(getWarningBanner("The signature declares an ip address or hostname.\n" +
 									ipAddress+" is not reachable on the current network"));
 						}

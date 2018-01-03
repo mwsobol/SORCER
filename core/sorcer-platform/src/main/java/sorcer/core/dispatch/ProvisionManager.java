@@ -186,7 +186,24 @@ public class ProvisionManager {
                 throw (DispatcherException)e;
 
             if (exertion != null) {
-                logger.warn("Unable to process deployment for {}", exertion.getName(), e);
+                java.io.OptionalDataException ode = null;
+                if(e instanceof java.rmi.ServerException) {
+                    if(e.getCause() instanceof java.rmi.UnmarshalException) {
+                        if(e.getCause().getCause() instanceof java.io.OptionalDataException) {
+                            ode = (java.io.OptionalDataException)e.getCause().getCause();
+                        }
+                    }
+                }
+
+                if(ode!=null) {
+                    logger.warn("Unable to process exertion deployment for {}, {}:\n" +
+                                        "\tread past the end of consumable data? {}\n"+
+                                        "\tnumber of bytes of primitive data immediately readable from the stream: {}",
+                                exertion.getName(), ode.getClass().getName(), ode.eof, ode.length, ode);
+                } else {
+                    logger.warn("Unable to process exertion deployment for {}, {}: {}, cause: {}", exertion.getName(),
+                                e.getClass().getName(), e.getMessage(), e.getCause(), e);
+                }
                 throw new DispatcherException(String.format("While trying to provision exertion %s", exertion.getName()), e);
             } else {
                 logger.warn("Unable to process deployment for {}", signatures, e);

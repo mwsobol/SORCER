@@ -13,6 +13,7 @@ import org.rioproject.deploy.DeployAdmin;
 import org.rioproject.deploy.ServiceBeanInstance;
 import org.rioproject.deploy.ServiceProvisionListener;
 import org.rioproject.deploy.SystemRequirements;
+import org.rioproject.net.HostUtil;
 import org.rioproject.opstring.OperationalString;
 import org.rioproject.opstring.ServiceElement;
 import org.slf4j.Logger;
@@ -24,12 +25,14 @@ import sorcer.core.SorcerConstants;
 import sorcer.service.Job;
 
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.rmi.RemoteException;
 import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
@@ -66,7 +69,7 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
     public void testDeployToCurrentMachine() throws Exception {
         String opSys = System.getProperty("os.name");
         String architecture = System.getProperty("os.arch");
-        String hostAddress = InetAddress.getLocalHost().getHostAddress();
+        String hostAddress = getHostAddress();
 
         Job job = JobUtil.createJobWithIPAndOpSys(new String[]{opSys}, architecture, new String[]{hostAddress}, false);
 
@@ -87,13 +90,16 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
         assertEquals(3, systemRequirements.getSystemComponents().length);
         DeployAdmin deployAdmin = (DeployAdmin) monitor.getAdmin();
         try {
-
+            System.out.println("===> Check for existing deployment for: "+multiply.getName());
+            undeploy(deployAdmin, multiply.getName());
+            System.out.println("===> Setup listener for: "+multiply.getName());
             DeployListener deployListener = new DeployListener(1);
+            System.out.println("===> Deploy: "+multiply.getName());
             deployAdmin.deploy(multiply, deployListener.export());
             deployListener.await();
             Assert.assertTrue(deployListener.success.get());
         } finally {
-            deployAdmin.undeploy(multiply.getName());
+            undeploy(deployAdmin, multiply.getName());
         }
     }
 
@@ -102,7 +108,7 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
     public void testDeployFailToCurrentMachine() throws Exception {
         String opSys = "CICS";
         String architecture = System.getProperty("os.arch");
-        String hostAddress = InetAddress.getLocalHost().getHostAddress();
+        String hostAddress = getHostAddress();
 
         Job job = JobUtil.createJobWithIPAndOpSys(new String[]{opSys}, architecture, new String[]{hostAddress}, false);
 
@@ -120,7 +126,7 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
         deployAdmin.deploy(multiply, deployListener.export());
         deployListener.await();
         Assert.assertFalse(deployListener.success.get());
-        deployAdmin.undeploy(multiply.getName());
+        undeploy(deployAdmin, multiply.getName());
     }
 
     @Category(TestsRequiringRio.class)
@@ -128,7 +134,7 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
     public void testDeployFailToCurrentMachineIPExcludes() throws Exception {
         String opSys = System.getProperty("os.name");
         String architecture = System.getProperty("os.arch");
-        String hostAddress = InetAddress.getLocalHost().getHostAddress();
+        String hostAddress = getHostAddress();
 
         Job job = JobUtil.createJobWithIPAndOpSys(new String[]{opSys}, architecture, new String[]{hostAddress}, true);
 
@@ -146,7 +152,11 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
         deployAdmin.deploy(multiply, deployListener.export());
         deployListener.await();
         Assert.assertFalse(deployListener.success.get());
-        deployAdmin.undeploy(multiply.getName());
+        undeploy(deployAdmin, multiply.getName());
+    }
+
+    private String getHostAddress() throws SocketException {
+        return HostUtil.getFirstNonLoopbackAddress(true, false).getHostAddress();
     }
 
     class DeployListener implements ServiceProvisionListener {
@@ -183,7 +193,7 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
         }
 
         boolean await() throws InterruptedException {
-            countDownLatch.await();
+            countDownLatch.await(3, TimeUnit.SECONDS);
             return success.get();
         }
 
