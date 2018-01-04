@@ -68,7 +68,7 @@ ext {
         websterAddress = sorcerEnv.provider.webster.interface
     }
     websterUrl = "http://${websterAddress}:${websterPort}"
-    println "WEBSTER URL: ${websterUrl}"
+    println "Webster URL: ${websterUrl}"
 
     startClassPath = files("${rioHome}/lib/groovy-all-${groovyVersion}.jar",
                              "${rioHome}/lib/logging/slf4j-api-${slf4jVersion}.jar",

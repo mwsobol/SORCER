@@ -42,7 +42,7 @@ import static org.junit.Assert.assertTrue;
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
 public class ProvisionManagerTest extends DeploySetup {
 
-    @Category(TestsRequiringRio.class)
+    //@Category(TestsRequiringRio.class)
     @Test
     public void testDeployServicesSync() throws Exception {
         banner("testDeploy");
@@ -57,7 +57,7 @@ public class ProvisionManagerTest extends DeploySetup {
         assertTrue(provisionManager.getDeploymentNames().size()==0);
     }
 
-    @Category(TestsRequiringRio.class)
+    //@Category(TestsRequiringRio.class)
     @Test(timeout = 90000)
     public void testConcurrentDeploy2() throws Exception {
         banner("testConcurrentDeploy2");
@@ -89,7 +89,7 @@ public class ProvisionManagerTest extends DeploySetup {
         assertTrue(provisionManager.getDeploymentNames().size()==0);
     }
 
-    @Category(TestsRequiringRio.class)
+    //@Category(TestsRequiringRio.class)
     @Test(timeout = 90000)
     public void testConcurrentDeploy() throws Exception {
         banner("testConcurrentDeploy");

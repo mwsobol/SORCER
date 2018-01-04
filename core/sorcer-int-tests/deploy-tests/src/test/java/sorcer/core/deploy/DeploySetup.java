@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
 /**
  * Class
  */
-@Category(TestsRequiringRio.class)
+//@Category(TestsRequiringRio.class)
 public class DeploySetup {
     static ProvisionMonitor monitor;
 

@@ -46,7 +46,7 @@ import static sorcer.so.operator.exert;
 public class DeployExertionTest extends DeploySetup implements SorcerConstants {
     private final static Logger logger = LoggerFactory.getLogger(DeployExertionTest.class.getName());
 
-    @Category(TestsRequiringRio.class)
+    //@Category(TestsRequiringRio.class)
     @Test
     public void deployAndExec() throws Exception {
         Job f1 = JobUtil.createJob();
@@ -60,7 +60,7 @@ public class DeployExertionTest extends DeploySetup implements SorcerConstants {
             }
         }
         assertNotNull(name);
-        undeploy(name);
+        //undeploy(name);
         verifyExertion(f1);
         /* Run it again to make sure that the existing deployment is used */
         verifyExertion(f1);
