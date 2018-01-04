@@ -61,7 +61,7 @@ public class ProvisionManagerTest extends DeploySetup {
     @Test(timeout = 90000)
     public void testConcurrentDeploy2() throws Exception {
         banner("testConcurrentDeploy2");
-        Job f1 = JobUtil.createJob(true);
+        Job f1 = JobUtil.createJob();
         List<ProvisionManager> provisionManagers = new ArrayList<ProvisionManager>();
         for(int i=0; i<100; i++) {
             provisionManagers.add(new ProvisionManager(f1));
