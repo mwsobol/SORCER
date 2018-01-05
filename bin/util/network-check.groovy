@@ -65,12 +65,13 @@ rioHome.eachFileRecurse (FileType.FILES) { file ->
        file.name.startsWith("slf4j-api") ||
        file.name.startsWith("logback")) {
         /* Skip the logging/logback directory to avoid having multiple slf4j bindings */
-        if(!file.parentFile.path.endsWith("logback"))
+        if(!file.parentFile.path.contains("logging")) {
             jars << file.toURI().toURL()
+		}
     }
 }
 sorcerDist.eachFileRecurse (FileType.FILES) { file ->
-    if(file.name.startsWith("sorcer-dl"))
+    if(file.name.startsWith("sorcer-platform"))
         jars << file.toURI().toURL()
 }
 
@@ -242,5 +243,6 @@ if (client || server) {
         multicastServer()
     }
 } else {
-    discover(options.u)
+	if(options.u)
+        discover(options.u)
 }
