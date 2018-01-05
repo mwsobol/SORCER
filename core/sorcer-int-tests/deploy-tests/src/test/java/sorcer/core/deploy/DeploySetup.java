@@ -11,15 +11,10 @@ import org.sorcer.test.TestsRequiringRio;
 
 import java.rmi.RemoteException;
 
-/**
- * Class
- */
-//@Category(TestsRequiringRio.class)
-public class DeploySetup {
+class DeploySetup {
     static ProvisionMonitor monitor;
 
-    @BeforeClass
-    public static void verifySorcerRunning() throws Exception {
+    static void verifySorcerRunning() throws Exception {
         long t0 = System.currentTimeMillis();
         monitor = ServiceUtil.waitForService(ProvisionMonitor.class, 20);
         Assert.assertNotNull(monitor);
@@ -36,6 +31,10 @@ public class DeploySetup {
         t0 = System.currentTimeMillis();
         ServiceUtil.waitForDeployment(manager);
         System.out.println("Waited " + (System.currentTimeMillis() - t0) + " millis for [Sorcer OS] provisioning");
+    }
+
+    static ProvisionMonitor monitor() {
+        return monitor;
     }
 
     static void undeploy(String s) throws RemoteException, OperationalStringException {

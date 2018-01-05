@@ -15,6 +15,7 @@
  */
 package sorcer.core.deploy;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -43,8 +44,14 @@ import static sorcer.so.operator.exert;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
+@Category(TestsRequiringRio.class)
 public class DeployExertionTest extends DeploySetup implements SorcerConstants {
     private final static Logger logger = LoggerFactory.getLogger(DeployExertionTest.class.getName());
+
+    @BeforeClass
+    public static void before() throws Exception {
+        verifySorcerRunning();
+    }
 
     //@Category(TestsRequiringRio.class)
     @Test

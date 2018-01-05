@@ -6,6 +6,7 @@ import net.jini.jeri.BasicJeriExporter;
 import net.jini.jeri.tcp.TcpServerEndpoint;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -21,10 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import org.sorcer.test.TestsRequiringRio;
-import sorcer.core.SorcerConstants;
 import sorcer.service.Job;
 
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.rmi.RemoteException;
 import java.rmi.server.ExportException;
@@ -37,6 +36,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static sorcer.core.deploy.DeploySetup.monitor;
+import static sorcer.core.deploy.DeploySetup.undeploy;
+import static sorcer.core.deploy.DeploySetup.verifySorcerRunning;
 
 /**
  * This test verifies that an exertion can be deployed to a specific machine, and also that an exertion will not be
@@ -56,15 +58,20 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
-public class DeployConstrainedExertionTest  extends DeploySetup implements SorcerConstants {
+@Category(TestsRequiringRio.class)
+public class DeployConstrainedExertionTest {
     private final static Logger logger = LoggerFactory.getLogger(DeployConstrainedExertionTest.class.getName());
+
+    @BeforeClass
+    public static void before() throws Exception {
+        verifySorcerRunning();
+    }
 
     @Before
     public void init() {
         ServiceElementFactory.clear();
     }
 
-    @Category(TestsRequiringRio.class)
     @Test
     public void testDeployToCurrentMachine() throws Exception {
         String opSys = System.getProperty("os.name");
@@ -74,7 +81,7 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
         Job job = JobUtil.createJobWithIPAndOpSys(new String[]{opSys}, architecture, new String[]{hostAddress}, false);
 
         Map<ServiceDeployment.Unique, List<OperationalString>> deployments = OperationalStringFactory.create(job);
-        List<OperationalString> allOperationalStrings = new ArrayList<OperationalString>();
+        List<OperationalString> allOperationalStrings = new ArrayList<>();
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.YES));
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.NO));
         assertTrue("Expected 2, got " + allOperationalStrings.size(), allOperationalStrings.size() == 2);
@@ -88,7 +95,7 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
             System.out.println("["+i+"] "+systemRequirements.getSystemComponents()[i]);
         }
         assertEquals(3, systemRequirements.getSystemComponents().length);
-        DeployAdmin deployAdmin = (DeployAdmin) monitor.getAdmin();
+        DeployAdmin deployAdmin = (DeployAdmin) monitor().getAdmin();
         try {
             System.out.println("===> Check for existing deployment for: "+multiply.getName());
             undeploy(deployAdmin, multiply.getName());
@@ -103,7 +110,6 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
         }
     }
 
-    @Category(TestsRequiringRio.class)
     @Test
     public void testDeployFailToCurrentMachine() throws Exception {
         String opSys = "CICS";
@@ -113,7 +119,7 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
         Job job = JobUtil.createJobWithIPAndOpSys(new String[]{opSys}, architecture, new String[]{hostAddress}, false);
 
         Map<ServiceDeployment.Unique, List<OperationalString>> deployments = OperationalStringFactory.create(job);
-        List<OperationalString> allOperationalStrings = new ArrayList<OperationalString>();
+        List<OperationalString> allOperationalStrings = new ArrayList<>();
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.YES));
         allOperationalStrings.addAll(deployments.get(ServiceDeployment.Unique.NO));
         assertTrue("Expected 2, got " + allOperationalStrings.size(), allOperationalStrings.size() == 2);
@@ -129,7 +135,6 @@ public class DeployConstrainedExertionTest  extends DeploySetup implements Sorce
         undeploy(deployAdmin, multiply.getName());
     }
 
-    @Category(TestsRequiringRio.class)
     @Test
     public void testDeployFailToCurrentMachineIPExcludes() throws Exception {
         String opSys = System.getProperty("os.name");

@@ -15,6 +15,7 @@
  */
 package sorcer.core.deploy;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -32,6 +33,7 @@ import java.util.concurrent.FutureTask;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static sorcer.core.deploy.DeploySetup.verifySorcerRunning;
 
 /**
  * Test {@code ProvisionManager} interactions
@@ -40,9 +42,14 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
-public class ProvisionManagerTest extends DeploySetup {
+@Category(TestsRequiringRio.class)
+public class ProvisionManagerTest {
 
-    //@Category(TestsRequiringRio.class)
+    @BeforeClass
+    public static void before() throws Exception {
+        verifySorcerRunning();
+    }
+
     @Test
     public void testDeployServicesSync() throws Exception {
         banner("testDeploy");
@@ -57,7 +64,6 @@ public class ProvisionManagerTest extends DeploySetup {
         assertTrue(provisionManager.getDeploymentNames().size()==0);
     }
 
-    //@Category(TestsRequiringRio.class)
     @Test(timeout = 90000)
     public void testConcurrentDeploy2() throws Exception {
         banner("testConcurrentDeploy2");
@@ -89,7 +95,6 @@ public class ProvisionManagerTest extends DeploySetup {
         assertTrue(provisionManager.getDeploymentNames().size()==0);
     }
 
-    //@Category(TestsRequiringRio.class)
     @Test(timeout = 90000)
     public void testConcurrentDeploy() throws Exception {
         banner("testConcurrentDeploy");
