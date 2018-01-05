@@ -18,7 +18,7 @@
 package sorcer.service.modeling;
 
 
-import sorcer.service.Activity;
+import sorcer.service.Request;
 import sorcer.service.ContextException;
 
 /**
@@ -26,7 +26,7 @@ import sorcer.service.ContextException;
  * 
  * @author Mike Sobolewski
  */
-public interface Valuation<T> extends Activity {
+public interface Valuation<T> extends Request {
 
 	/**
 	 * Returns the current execute of this valuation.

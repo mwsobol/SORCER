@@ -166,7 +166,7 @@ public class operator extends Operator {
         return context;
     }
 
-    public static Object execItem(Activity item, Arg... args) throws ServiceException {
+    public static Object execItem(Request item, Arg... args) throws ServiceException {
         try {
             return item.execute(args);
         } catch (RemoteException e) {
