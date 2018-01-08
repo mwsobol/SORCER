@@ -25,17 +25,41 @@ def cli = new CliBuilder(usage: 'network-check.groovy -[cst|u] [-hd]')
 cli.header = "Check the status of multicast broadcast and receive capabilities as well as unicast discovery"
 cli.c('Run as multicast client')
 cli.d('Show classloader details')
-cli.h('Show usage information')
+cli.h('Run hostname tests')
 cli.s('Run as multicast-server')
 cli.t('Specify timeout in seconds', args: 2, argName: 'timeout',)
 cli.u('Perform unicast discovery to another machine', args: 1, argName: 'hostname[:port]')
 def options = cli.parse(args)
 
-if (args.length == 0 || options.h) {
+if (args.length == 0) {
     cli.usage()
     return
 }
 
+if(options.h) {
+    long t0 = System.currentTimeMillis()
+    String address = InetAddress.getLocalHost().getHostAddress()
+    println "Took ${(System.currentTimeMillis()-t0)} millis to run InetAddress.getLocalHost().getHostAddress(): $address"
+
+    t0 = System.currentTimeMillis()
+    String name = InetAddress.getLocalHost().getHostName()
+    println "Took ${(System.currentTimeMillis()-t0)} millis to InetAddress.getLocalHost().getHostName(): $name"
+
+    t0 = System.currentTimeMillis()
+    InetAddress addr = InetAddress.getByName(name)
+    println "Took ${(System.currentTimeMillis()-t0)} millis to get: ${addr} running InetAddress.getByName($name)"
+
+    t0 = System.currentTimeMillis()
+    InetAddress addr1 = InetAddress.getByName(address)
+    println "Took ${(System.currentTimeMillis()-t0)} millis to get: ${addr1} running InetAddress.getByName($address)"
+    if(addr1.isReachable(1000)) {
+        println "${address} is reachable"
+    } else {
+        println "${address} is NOT reachable"
+    }
+
+    return
+}
 String scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
 File sorcerDist =  new File(scriptDir, "../../")
 System.setProperty("java.security.policy", new File(sorcerDist, "policy/policy.all").absolutePath)
