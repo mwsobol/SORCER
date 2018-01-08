@@ -1,18 +1,18 @@
 #!/usr/bin/env groovy
 /*
- * Distribution Statement
+ * Copyright to the original author or authors.
  *
- * This computer software has been developed under sponsorship of the United States Air Force Research Lab. Any further
- * distribution or use by anyone or any data contained therein, unless otherwise specifically provided for,
- * is prohibited without the written approval of AFRL/RQVC-MSTC, 2210 8th Street Bldg 146, Room 218, WPAFB, OH  45433
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Disclaimer
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * This material was prepared as an account of work sponsored by an agency of the United States Government. Neither
- * the United States Government nor the United States Air Force, nor any of their employees, makes any warranty,
- * express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness
- * of any information, apparatus, product, or process disclosed, or represents that its use would not infringe privately
- * owned rights.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 import groovy.io.FileType
 
@@ -37,20 +37,12 @@ if (args.length == 0 || options.h) {
 }
 
 String scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
-File projectRoot =  new File(scriptDir, "../../")
-System.setProperty("java.security.policy", new File(projectRoot, "policy/policy.all").absolutePath)
+File sorcerDist =  new File(scriptDir, "../../")
+System.setProperty("java.security.policy", new File(sorcerDist, "policy/policy.all").absolutePath)
 if(System.securityManager==null)
     System.securityManager = new SecurityManager()
 
-File distDir = new File(projectRoot, "distribution/build")
-File sorcerDist = null
-for(File dir : distDir.listFiles()) {
-    if(dir.name.startsWith("sorcer-")) {
-        sorcerDist = dir
-        break
-    }
-}
-if(sorcerDist==null) {
+if(!sorcerDist.exists()) {
     println "You must build the SORCER distribution first"
     System.exit(-1)
 }
@@ -73,12 +65,13 @@ rioHome.eachFileRecurse (FileType.FILES) { file ->
        file.name.startsWith("slf4j-api") ||
        file.name.startsWith("logback")) {
         /* Skip the logging/logback directory to avoid having multiple slf4j bindings */
-        if(!file.parentFile.path.endsWith("logback"))
+        if(!file.parentFile.path.contains("logging")) {
             jars << file.toURI().toURL()
+		}
     }
 }
 sorcerDist.eachFileRecurse (FileType.FILES) { file ->
-    if(file.name.startsWith("sorcer-dl"))
+    if(file.name.startsWith("sorcer-platform"))
         jars << file.toURI().toURL()
 }
 
@@ -98,7 +91,8 @@ try {
 }
 
 ["java.rmi.server.useCodebaseOnly" : "false",
- "logback.configurationFile" : "${projectRoot.path}/configs/sorcer-logging.groovy",
+ "logback.configurationFile" : "${sorcerDist.path}/configs/sorcer-logging.groovy",
+ "java.net.preferIPv4Stack"  : "true",
  //"java.rmi.server.RMIClassLoaderSpi" : "org.rioproject.rmi.ResolvingLoader",
  //"org.rioproject.resolver.jar" : new File(rioHome, "lib/resolver/resolver-aether-${props['rio.version']}.jar").path,
  "rio.home" : rioHome.absolutePath].each { key, value ->
@@ -249,5 +243,6 @@ if (client || server) {
         multicastServer()
     }
 } else {
-    discover(options.u)
+	if(options.u)
+        discover(options.u)
 }

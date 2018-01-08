@@ -21,6 +21,7 @@ import org.rioproject.opstring.ServiceElement;
 import org.rioproject.opstring.UndeployOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.Exertion;
 import sorcer.service.ServiceExertion;
@@ -40,29 +41,22 @@ import java.util.concurrent.TimeUnit;
  */
 public final class OperationalStringFactory {
     private static final Logger logger = LoggerFactory.getLogger(OperationalStringFactory.class.getName());
-    private OperationalStringFactory() throws Exception {
-    }
-
-    public static List<String> getDeploymentIds(final Exertion exertion) {
-        List<String> deploymentIds = new ArrayList<>();
-        Iterable<Signature> netSignatures = getNetSignatures(exertion);
-        return deploymentIds;
+    private OperationalStringFactory() {
     }
 
     public static Map<ServiceDeployment.Unique, List<OperationalString>> create(List<Signature> signatures) throws Exception {
-        List<Signature> netSignatures = signatures;
         List<Signature> selfies = new ArrayList<>();
         List<Signature> federated = new ArrayList<>();
 
         List<OperationalString> uniqueOperationalStrings = new ArrayList<>();
 
-        for(Signature netSignature : netSignatures) {
+        for(Signature netSignature : signatures) {
             if(netSignature.getDeployment()==null)
                 continue;
             if(netSignature.getDeployment().getType()==ServiceDeployment.Type.SELF) {
                 selfies.add(netSignature);
             } else if(netSignature.getDeployment().getType()==ServiceDeployment.Type.FED) {
-                federated.add(netSignature);
+                checkAddToFederatedList((NetSignature) netSignature, federated);
             }
         }
 
@@ -93,7 +87,7 @@ public final class OperationalStringFactory {
             logger.warn("No services configured for signatures: {}", signatures);
             return null;
         }
-        OpString opString = new OpString(DeploymentIdFactory.create(netSignatures), null);
+        OpString opString = new OpString(DeploymentIdFactory.create(federated), null);
         for(ServiceElement service : services) {
             service.setOperationalStringName(opString.getName());
             opString.addService(service);
@@ -107,17 +101,17 @@ public final class OperationalStringFactory {
         return opStringMap;
     }
 
-        /**
-         * Create {@link OperationalString}s from an {@code Exertion}.
-         *
-         * @param exertion The exertion, must not be {@code null}.
-         *
-         * @return An {@code Map} of {@code Deployment.Type} keys with{@code List<OperationalString> values composed of
-         * services created from {@link ServiceSignature}s. If there are no services, return and empty {@code Map}.
-         *
-         * @throws IllegalArgumentException if the {@code exertion} is {@code null}.
-         * @throws Exception if there are configuration issues, if the iGrid opstring cannot be loaded
-         */
+    /**
+     * Create {@link OperationalString}s from an {@code Exertion}.
+     *
+     * @param exertion The exertion, must not be {@code null}.
+     *
+     * @return An {@code Map} of {@code Deployment.Type} keys with{@code List<OperationalString> values composed of
+     * services created from {@link ServiceSignature}s. If there are no services, return and empty {@code Map}.
+     *
+     * @throws IllegalArgumentException if the {@code exertion} is {@code null}.
+     * @throws Exception if there are configuration issues, if the iGrid opstring cannot be loaded
+     */
     public static Map<ServiceDeployment.Unique, List<OperationalString>> create(final Exertion exertion) throws Exception {
         if(exertion==null)
             throw new IllegalArgumentException("exertion is null");
@@ -134,7 +128,7 @@ public final class OperationalStringFactory {
             if(netSignature.getDeployment().getType()==ServiceDeployment.Type.SELF) {
                 selfies.add(netSignature);
             } else if(netSignature.getDeployment().getType()==ServiceDeployment.Type.FED) {
-                federated.add(netSignature);
+                checkAddToFederatedList((NetSignature) netSignature, federated);
             }
         }
 
@@ -165,7 +159,7 @@ public final class OperationalStringFactory {
             logger.warn(String.format("No services configured for exertion %s", exertion.getName()));
             return null;
         }
-        OpString opString = new OpString(exertion.getDeploymentId(), null);
+        OpString opString = new OpString(DeploymentIdFactory.create(federated), null);
         for(ServiceElement service : services) {
             service.setOperationalStringName(opString.getName());
             opString.addService(service);
@@ -211,7 +205,23 @@ public final class OperationalStringFactory {
         return signatures;
     }
 
-    public static String createDeploymentID(ServiceElement service) throws NoSuchAlgorithmException {
+
+    private static void checkAddToFederatedList(NetSignature netSignature, List<Signature> federated) {
+        if(netSignature.getDeployment() != null) {
+            ServiceDeployment serviceDeployment = netSignature.getDeployment();
+            if(serviceDeployment.getConfig()!=null) {
+                if(logger.isDebugEnabled())
+                    logger.debug("Adding ServiceDeployment: {}", serviceDeployment);
+                federated.add(netSignature);
+            } else {
+                logger.warn("No configuration found for ServiceDeployment: {}", serviceDeployment);
+            }
+        } else {
+            logger.warn("Unknown type of Deployment: {}", netSignature.getDeployment().getClass().getName());
+        }
+    }
+
+    static String createDeploymentID(ServiceElement service) throws NoSuchAlgorithmException {
         return DeploymentIdFactory.create(service);
     }
 
