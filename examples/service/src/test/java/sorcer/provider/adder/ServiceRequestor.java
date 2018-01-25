@@ -41,14 +41,6 @@ public class ServiceRequestor {
 
 		// get a single context argument
 		assertEquals(300.0, value(cxt, "out/y"));
-
-
-		ModelTable dataTable = dataTable(header("x1", "x2"),
-				row(1.0, 0.1),
-				row(2.0, 0.2),
-				row(3.0, 0.3),
-				row(4.0, 0.4));
-
 	}
 
 }
