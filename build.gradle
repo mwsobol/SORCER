@@ -124,7 +124,7 @@ subprojects {
             mavenLocal()
             if (!enclave) {
                 maven { url "http://www.rio-project.org/maven2" }
-                //maven { url "http://mvn.sorcersoft.com/content/groups/public" }
+                maven { url"http://pol.sytes.net/repository/public/" }
                 mavenCentral()
             } else {
                 maven { url "http://$enclaveRepo" }
