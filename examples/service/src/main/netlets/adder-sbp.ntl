@@ -25,6 +25,6 @@ task(sig("add", Adder.class,
         /* Dynamic deployment configuration is an artifact, and we declare
          * that the provider will be undeployed if idle for 1 minute */
         deploy(configuration("org.sorcer:adder:config:5.3.11"), idle(1))),
-     context("adder", inEnt("arg/x1", v1), inEnt("arg/x2", v2), result("out/y")));
+     context("adder", inVal("arg/x1", v1), inVal("arg/x2", v2), result("out/y")));
 
 
