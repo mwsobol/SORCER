@@ -16,8 +16,8 @@ public class DeliveryImpl implements Delivery {
         // from/to any place the flat rate $0.60
         Integer flatRate = 60;
         context.putValue("delivery/cost", flatRate);
-        if (context.getValue("delivery/paid") != null) {
-            context.putValue("deliver/change", ((Integer) context.getValue("delivery/paid")) - flatRate);
+        if (context.getValue("coffee/change") != null) {
+            context.putValue("change$", ((Integer) context.getValue("coffee/change")) - flatRate);
         }
 
         if (context.getReturnPath() != null) {

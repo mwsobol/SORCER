@@ -168,11 +168,16 @@ public class CoffeeServiceTest {
 				inVal("location", "PJATK"),
 				inVal("room", "101")));
 
-		Job drinkCoffee = job(sig("exert", ServiceJobber.class), coffee, delivery);
+		Job drinkCoffee = job(sig("exert", ServiceJobber.class), coffee, delivery,
+                pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "coffee/change")));
 
 		Context out = upcontext(exert(drinkCoffee));
 
 		logger.info("out: " + out);
+        assertEquals(value(out, "coffee/paid"), 120);
+        assertEquals(value(out, "coffee/price"), 50);
+        assertEquals(value(out, "delivery/cost"), 60);
+        assertEquals(value(out, "change$"), 10);
 	}
 }
 

@@ -250,12 +250,14 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
 		if (recipeContext != null)
 			addRecipe(recipeContext);
 		int amtPaid = 0;
-		if (context.getValue("coffee/paid") != null)
-			amtPaid  = (Integer)context.getValue("coffee/paid");
+		if (context.getValue("coffee/paid") != null) {
+			amtPaid = (Integer) context.getValue("coffee/paid");
+		}
 		Recipe r = getRecipeForName(recipeName);
-		if (amtPaid != 0)
+		if (amtPaid != 0) {
 			context.putValue("coffee/change", makeCoffee(r, amtPaid));
-		context.putValue("price", r.getPrice());
+		}
+		context.putValue("coffee/price", r.getPrice());
 
 		if (context.getReturnPath() != null) {
 			context.setReturnValue(r.getPrice());
