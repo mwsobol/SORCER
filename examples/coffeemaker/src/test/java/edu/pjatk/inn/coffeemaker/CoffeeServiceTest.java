@@ -171,10 +171,17 @@ public class CoffeeServiceTest {
 				inVal("location", "PJATK"),
 				inVal("room", "101")));
 
-		Job drinkCoffee = job("jcd", sig("exert", ServiceJobber.class), coffee, delivery,
+		Job jcd = job("jcd", sig("exert", ServiceJobber.class), coffee, delivery,
                 pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "coffee/change")));
 
-		Context out = upcontext(exert(drinkCoffee));
+        jcd = exert(jcd);
+
+        //TODO where selfContext is created?
+        // should be only when outPaths in thr job are declared
+//        Context selfOut = selfContext(jcd);
+//        Context out = upcontext(jcd);
+
+		Context out = upcontext(exert(jcd));
 
 		logger.info("out: " + out);
         assertEquals(value(out, "jcd/tc/coffee/paid"), 120);
@@ -201,10 +208,10 @@ public class CoffeeServiceTest {
                 inVal("location", "PJATK"),
                 inVal("room", "101")));
 
-        Job drinkCoffee = job("jcd", sig("exert", ServiceJobber.class), coffee, delivery,
+        Job jcd = job("jcd", coffee, delivery,
                 pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "coffee/change")));
 
-        Context out = upcontext(exert(drinkCoffee));
+        Context out = upcontext(exert(jcd));
 
         logger.info("out: " + out);
         assertEquals(value(out, "jcd/tc/coffee/paid"), 120);

@@ -191,6 +191,14 @@ public class operator extends Operator {
 		return snapshot(mogram);
 	}
 
+	public static Context selfContext(Mogram mogram) throws ContextException {
+		return mogram.getDataContext();
+	}
+
+	public static Context dataContext(Mogram mogram) throws ContextException {
+		return mogram.getDataContext();
+	}
+
 	public static Context upcontext(Mogram mogram) throws ContextException {
 		if (mogram instanceof CompoundExertion)
 			return mogram.getContext();
