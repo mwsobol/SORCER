@@ -25,6 +25,7 @@ import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.result;
 import static sorcer.po.operator.ent;
+import static sorcer.po.operator.ents;
 import static sorcer.po.operator.invoker;
 import static sorcer.so.operator.*;
 
@@ -143,7 +144,7 @@ public class CoffeeServiceTest {
 						result("delivery$", inPaths("location", "room")))));
 //				ent("change$", invoker("paid$ - (coffee$ + delivery$)", args("paid$", "coffee$", "delivery$"))));
 
-		add(mod, ent("change$", invoker("paid$ - (coffee$ + delivery$)", operator.ents("paid$", "coffee$", "delivery$"))));
+		add(mod, ent("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
 		dependsOn(mod, dep("change$", paths("makeCoffee")), dep("change$", paths("deliver")));
 
 		responseUp(mod, "makeCoffee", "deliver", "change$", "paid$");

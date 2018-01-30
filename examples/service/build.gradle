@@ -84,7 +84,7 @@ dependencies {
 
 def deployConfig = file("configs/adder-prv.config")
 artifacts {
-    archives deployConfig
+    archives file: deployConfig, classifier: "deploy"
 }
 
 def repoPath() {
