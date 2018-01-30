@@ -162,17 +162,15 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 				alt(opt(condition((Context <Double> cxt) -> value(cxt, "t4") > value(cxt, "t5")), t3),
 					opt(condition(cxt -> (double)value(cxt, "t4") <= (double)value(cxt, "t5")), t6)));
 
-
 		block = exert(block);
 //		logger.info("block context 1: " + context(block));
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 400.00);
 
-		block = exert(block, proc("block/t5/arg/x1", 200.0), proc("block/t5/arg/x2", 800.0));
+		block = exert(block, val("block/t5/arg/x1", 200.0), val("block/t5/arg/x2", 800.0));
 //		logger.info("block context 2: " + context(block));
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 750.00);
-
 	}
 
 	@Test
