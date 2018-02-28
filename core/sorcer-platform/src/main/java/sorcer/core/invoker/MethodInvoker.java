@@ -21,11 +21,9 @@ import net.jini.core.transaction.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Proc;
-import sorcer.eo.operator;
+import sorcer.eo.operator.Args;
 import sorcer.service.*;
 import sorcer.util.SorcerUtil;
-import sorcer.eo.operator.Args;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -256,18 +254,19 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 						paramTypes = null;
 						parameters = null;
 					}
-					m = evalClass.getMethod(selector, paramTypes);
-					if (m == null) {
-						Method[] mts = evalClass.getMethods();
-						if (Context.class.isAssignableFrom(paramTypes[0])) {
-							for (Method mt : mts) {
-								if (mt.getName()!=null && mt.getName().equals(selector)) {
-									m = mt;
-									break;
-								}
-							}
-						}
-					}
+					try {
+						m = evalClass.getMethod(selector, paramTypes);
+                    } catch(NoSuchMethodException e) {
+                        Method[] mts = evalClass.getMethods();
+                        if (Context.class.isAssignableFrom(paramTypes[0])) {
+                            for (Method mt : mts) {
+                                if (mt.getName() != null && mt.getName().equals(selector)) {
+                                    m = mt;
+                                    break;
+                                }
+                            }
+                        }
+                    }
 				}
 			}
 			if (context != null)

@@ -107,6 +107,9 @@ public class ServiceDeployment implements Serializable, Deployment {
     }
 
     public String getConfig() {
+        if(config==null) {
+            return "-";
+        }
         return config;
     }
 
