@@ -33,6 +33,10 @@ import sorcer.core.analytics.MethodAnalytics;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Dennis Reedy
@@ -62,16 +66,22 @@ public class MonitorImpl implements Monitor {
     }
 
     @Override public MonitorRegistration register(String identifier, String owner, long duration) throws MonitorException {
-        MonitorRegistrationResource registrationResource = new MonitorRegistrationResource(UuidFactory.generate());
-        ServiceResource sr = new ServiceResource(registrationResource);
-        try {
-            Lease lease = landlord.newLease(sr, duration);
-			if(logger.isDebugEnabled())
-                logger.debug("Created new MonitorRegistration identifier: {}, owner: {}, proxy: {}",
-                             identifier, owner, monitorProxy);
-            return new MonitorRegistration(lease, registrationResource.uuid, identifier, owner, monitorProxy);
-        } catch (LeaseDeniedException e) {
-            throw new MonitorException("Lease request denied", e);
+        MonitorRegistrationResource registrationResource = findMonitorRegistrationResource(identifier, owner);
+        if(registrationResource==null) {
+            registrationResource = new MonitorRegistrationResource(UuidFactory.generate(), owner, identifier);
+            ServiceResource sr = new ServiceResource(registrationResource);
+            try {
+                Lease lease = landlord.newLease(sr, duration);
+                registrationResource.lease = lease;
+                if (logger.isDebugEnabled())
+                    logger.debug("Created new MonitorRegistration identifier: {}, owner: {}, proxy: {}",
+                                 identifier, owner, monitorProxy);
+                return new MonitorRegistration(lease, registrationResource.uuid, identifier, owner, monitorProxy);
+            } catch (LeaseDeniedException e) {
+                throw new MonitorException("Lease request denied", e);
+            }
+        } else {
+            return new MonitorRegistration(registrationResource.lease, registrationResource.uuid, identifier, owner, monitorProxy);
         }
     }
 
@@ -103,6 +113,19 @@ public class MonitorImpl implements Monitor {
         return valid;
     }
 
+    private MonitorRegistrationResource findMonitorRegistrationResource(String identifier, String owner) {
+        MonitorRegistrationResource monitorRegistrationResource = null;
+        for(LeasedResource resource : landlord.getLeasedResources()) {
+            ServiceResource sR = (ServiceResource) resource;
+            MonitorRegistrationResource registrationResource = (MonitorRegistrationResource) sR.getResource();
+            if(registrationResource.owner.equals(owner) && registrationResource.identifier.equals(identifier)) {
+                monitorRegistrationResource = registrationResource;
+                break;
+            }
+        }
+        return monitorRegistrationResource;
+    }
+
     @Override
     public EventRegistration register(MonitorEventFilter eventFilter, RemoteEventListener listener, long duration) throws MonitorException {
         if(listener==null)
@@ -115,19 +138,38 @@ public class MonitorImpl implements Monitor {
         }
     }
 
+    @Override public Map<String, List<String>> getRegisteredIdentifiers() {
+        Map<String, List<String>> registeredIdentifiers = new HashMap<>();
+        for(LeasedResource resource : landlord.getLeasedResources()) {
+            ServiceResource sR = (ServiceResource) resource;
+            MonitorRegistrationResource registrationResource = (MonitorRegistrationResource) sR.getResource();
+            List<String> identifiers = registeredIdentifiers.get(registrationResource.owner);
+            if(identifiers==null) {
+                identifiers = new ArrayList<>();
+            }
+            identifiers.add(registrationResource.identifier);
+            registeredIdentifiers.put(registrationResource.owner, identifiers);
+        }
+        return registeredIdentifiers;
+    }
+
     /**
      * Container class for event registration objects that are created and
      * behave as the resource that is being leased and controlled by the
      * ServiceResource
      */
     private static class MonitorRegistrationResource {
-        private Uuid uuid;
+        Uuid uuid;
+        String owner;
+        String identifier;
+        Lease lease;
 
-        MonitorRegistrationResource(Uuid uuid) {
+        MonitorRegistrationResource(Uuid uuid, String owner, String identifier) {
             this.uuid = uuid;
+            this.owner = owner;
+            this.identifier = identifier;
         }
     }
-
 
     /*
      * Opened up for testing

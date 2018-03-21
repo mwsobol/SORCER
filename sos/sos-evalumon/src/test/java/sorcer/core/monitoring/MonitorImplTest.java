@@ -19,6 +19,7 @@ import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertNotNull;
@@ -64,6 +65,13 @@ public class MonitorImplTest {
         monitor.update(registration, Monitor.Status.SUBMITTED, null);
         monitor.update(registration, Monitor.Status.FAILED, null);
         assertTrue(monitorListener.states.size()==4);
+
+        Map<String, List<String>> info = monitor.getRegisteredIdentifiers();
+        for(Map.Entry<String, List<String>> entry : info.entrySet()) {
+            System.out.println(entry.getKey());
+            for(String i : entry.getValue())
+                System.out.println("\t"+i);
+        }
     }
 
     @Test(expected=MonitorException.class)

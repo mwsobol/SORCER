@@ -20,6 +20,8 @@ import net.jini.core.event.RemoteEventListener;
 import sorcer.core.analytics.MethodAnalytics;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Dennis Reedy
@@ -31,11 +33,12 @@ public interface Monitor {
      * Clients first register with the {@code Monitor} service in order provide status. Clients are responsible
      * for maintaining the {@code MonitorRegistration}'s provided {@code Lease}.
      *
-     * @param identifier An identity or name used to associate event with.
+     * @param identifier An identity or name used to associate the event with.
      * @param owner The owner, a userid or organization that is producing the event.
      * @param duration The requested lease duration in milliseconds.
      *
-     * @return A new {@code MonitorRegistration}
+     * @return A new {@code MonitorRegistration} if a matching registration for the same identifier and owner
+     * is not found.
      *
      * @throws IOException If there is a communication failure between the client and the service.
      * @throws MonitorException If the {@code Monitor} service is unable or unwilling to grant this registration request.
@@ -83,4 +86,6 @@ public interface Monitor {
      */
     EventRegistration register(MonitorEventFilter eventFilter, RemoteEventListener listener, long duration) throws IOException,
                                                                                                                    MonitorException;
+
+    Map<String, List<String>> getRegisteredIdentifiers() throws IOException;
 }
