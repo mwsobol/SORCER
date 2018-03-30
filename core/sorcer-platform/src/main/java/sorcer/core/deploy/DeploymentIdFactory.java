@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Utility to create deployment ids using a MessageDigest
+ * Utility to create deployment ids
  *
  * @author Dennis Reedy
  */
@@ -46,7 +46,7 @@ public class DeploymentIdFactory {
         StringBuilder ssb = new StringBuilder();
         List<String> items = new ArrayList<>();
         for (Signature s : list) {
-            String item = String.format("%s:%s", s.getProviderName(), s.getServiceType().getName());
+            String item = String.format("%s_%s", s.getProviderName(), s.getServiceType().getName());
             if(!items.contains(item))
                 items.add(item);
         }
@@ -63,7 +63,7 @@ public class DeploymentIdFactory {
                          ssb.toString(),
                          deploymentID);
         }
-        return deploymentID;
+        return replaceIllegalWindowsCharacters(deploymentID);
 
     }
 
@@ -86,12 +86,19 @@ public class DeploymentIdFactory {
                 nameBuilder.append(";");
             nameBuilder.append(item);
         }
-        String deploymentID = String.format("%s:%s", service.getName(), nameBuilder.toString());
+        String deploymentID = String.format("%s_%s", service.getName(), nameBuilder.toString());
         if(logger.isDebugEnabled()) {
             logger.debug("Create deployment name from service element: {}\nID: {}",
                          nameBuilder.toString(),
                          deploymentID);
         }
-        return deploymentID;
+        return replaceIllegalWindowsCharacters(deploymentID);
+    }
+
+    private static String replaceIllegalWindowsCharacters(String s) {
+        String newName = s.replace("*", "#");
+        /*if(System.getProperty("os.name").startsWith("Windows"))
+            newName = String.format("\"%s\"", newName);*/
+        return newName;
     }
 }

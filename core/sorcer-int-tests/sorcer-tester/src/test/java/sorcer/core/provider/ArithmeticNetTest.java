@@ -617,7 +617,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Job job = createProvisionedJob();
 		String did =  job.getDeploymentId();
 		logger.info("job deploy id: " + did);
-		assertEquals("*:sorcer.arithmetic.tester.provider.Adder;*:sorcer.arithmetic.tester.provider.Multiplier;*:sorcer.arithmetic.tester.provider.Subtractor",
+		assertEquals("#_sorcer.arithmetic.tester.provider.Adder;#_sorcer.arithmetic.tester.provider.Multiplier;#_sorcer.arithmetic.tester.provider.Subtractor",
 					 did);
 	}
 
