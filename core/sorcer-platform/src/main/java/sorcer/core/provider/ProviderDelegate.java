@@ -657,6 +657,10 @@ public class ProviderDelegate {
         return set;
     }
 
+    public int getWorkerCount() {
+        return workerCount;
+    }
+
     private void initThreadGroups() {
         namedGroup = new ThreadGroup("Provider Group: " + getProviderName());
         namedGroup.setDaemon(true);
