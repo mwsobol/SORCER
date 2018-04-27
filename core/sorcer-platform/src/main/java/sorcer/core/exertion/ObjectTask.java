@@ -104,16 +104,15 @@ public class ObjectTask extends Task {
 			else
 				dataContext.updateContext();
 
-			if (dataContext.getArgs() != null)
-				os.setArgs(dataContext.getArgs());
-			if (dataContext.getParameterTypes() != null)
-				os.setParameterTypes(dataContext.getParameterTypes());
-			evaluator = ((ObjectSignature) getProcessSignature())
-					.getEvaluator();
-			Object result = null;
-			if (evaluator == null) {
+            if (dataContext.getArgs() != null)
+                os.setArgs(dataContext.getArgs());
+            if (dataContext.getParameterTypes() != null)
+                os.setParameterTypes(dataContext.getParameterTypes());
+            evaluator = ((ObjectSignature) getProcessSignature()).getEvaluator();
+            Object result = null;
+            if (evaluator == null) {
 				// create a provider of this object signature
-				Object prv = null;
+				Object prv;
 				if (os.getInitSelector() == null) {
 					if (os.getTargetSignature() != null) {
 						prv = ((ObjectSignature)os.getTargetSignature()).getProviderType().newInstance();
@@ -141,7 +140,19 @@ public class ObjectTask extends Task {
 				if (os.getSelector().equals("evaluate") || os.getSelector().equals("explore")) {
 					evaluator.setParameterTypes(new Class[]{Context.class, Arg[].class});
 				} else {
-					evaluator.setParameterTypes(new Class[]{Context.class});
+                    if(evaluator.getParameterTypes()==null)
+                        evaluator.setParameterTypes(new Class[]{Context.class});
+                    else {
+                        if(logger.isDebugEnabled()) {
+                            StringBuilder b = new StringBuilder();
+                            for (Class<?> c : evaluator.getParameterTypes()) {
+                                if (b.length() > 0)
+                                    b.append(", ");
+                                b.append(c.getName());
+                            }
+                            logger.debug("evaluator already had parameter types set as: [{}]", b.toString());
+                        }
+                    }
 				}
 			}
 			if (os.getReturnPath() != null)
