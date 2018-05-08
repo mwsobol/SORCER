@@ -25,8 +25,4 @@ import java.rmi.RemoteException;
  */
 public interface Request extends Service, Arg {
 
-    public Data act(Arg... args) throws ServiceException, RemoteException;
-
-    public Data act(String entryName, Arg... args) throws ServiceException, RemoteException;
-
 }

@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
 /**
  * Copier copies values of args from one Context to another one.
  */
-public class Copier implements Evaluation<Context>, Identifiable {
+public class Copier implements Service, Evaluation<Context>, Identifiable {
 	private String name;
 	private Context fromContext;
 	private Arg[] fromEntries;

@@ -174,14 +174,4 @@ public class Path implements Arg, Request {
 		return path;
 	}
 
-	@Override
-	public Data act(Arg... args) throws ServiceException, RemoteException {
-		return new Association(path, this);
-	}
-
-	@Override
-	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
-		return new Association(entryName, this);
-	}
-
 }

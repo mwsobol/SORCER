@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public interface  Evaluator <T> extends Evaluation<T> {
+public interface  Evaluator <T> extends Evaluation<T>, Activity {
 
 	
 	/**

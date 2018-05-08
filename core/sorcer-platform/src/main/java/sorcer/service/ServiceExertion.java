@@ -347,7 +347,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     public Service getService() throws SignatureException {
         NetSignature ps = (NetSignature) getProcessSignature();
-        return ps.getService();
+        return (Service) ps.getService();
     }
 
     public Flow getFlowType() {

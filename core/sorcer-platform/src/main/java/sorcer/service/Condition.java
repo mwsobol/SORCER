@@ -46,7 +46,7 @@ import java.util.Map;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
- public class Condition implements Evaluation<Object>, Conditional, Serializable {
+ public class Condition implements Evaluation<Object>, Conditional,  Service, Serializable {
 
 	final static public String _closure_ = "_closure_";
 
