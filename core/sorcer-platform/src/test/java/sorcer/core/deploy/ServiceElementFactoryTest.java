@@ -43,6 +43,7 @@ public class ServiceElementFactoryTest {
     public void testUsingDeploymentForService() throws Exception {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setImpl("foo.Impl");
+        deployment.setConfig("-");
         deployment.setServiceType("foo.Interface");
         deployment.setName("The Great and wonderful Oz");
         deployment.setMultiplicity(10);
@@ -121,6 +122,7 @@ public class ServiceElementFactoryTest {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setIps("10.0.1.9", "canebay.local");
         deployment.setExcludeIps("10.0.1.7", "stingray.foo.local.net");
+        deployment.setConfig("-");
         ServiceElement serviceElement = ServiceElementFactory.create(deployment);
         SystemRequirements systemRequirements = serviceElement.getServiceLevelAgreements().getSystemRequirements();
         Assert.assertEquals(4, systemRequirements.getSystemComponents().length);

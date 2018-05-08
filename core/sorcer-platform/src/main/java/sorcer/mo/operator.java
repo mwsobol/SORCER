@@ -467,7 +467,7 @@ public class operator {
                     hasEntry = true;
                     if (i instanceof Proc)
                         procType = true;
-                    else if (i instanceof Srv || i instanceof Neo) {
+                    else if (i instanceof Srv || i instanceof Nsc) {
                         srvType = true;
                     }
                 } catch (Exception e) {

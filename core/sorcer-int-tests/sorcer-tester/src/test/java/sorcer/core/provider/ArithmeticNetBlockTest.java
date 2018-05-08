@@ -95,7 +95,7 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 		logger.info("block context 1: " + context(block));
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 400.00);
-		
+
 		block = exert(block, val("block/t5/arg/x1", 200.0), val("block/t5/arg/x2", 800.0));
 		logger.info("block context 2: " + context(block));
 //		logger.info("result: " + eval(context(block), "block/result"));

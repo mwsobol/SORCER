@@ -33,11 +33,8 @@ import java.rmi.RemoteException;
  * @author Mike Sobolewski
  */
 public interface Exerter {
-
 	/**
-	 * A generic service request as specified by a mogram - a generic compound service.
-	 * It can be carried out dynamically by any
-	 * <code>Service</code> peer matching the exertion's {@link Signature}.
+	 * A generic federated execution.
 	 *
 	 * @param mogram an input mogram
 	 * @param txn      The transaction (if any) under which to provide service.

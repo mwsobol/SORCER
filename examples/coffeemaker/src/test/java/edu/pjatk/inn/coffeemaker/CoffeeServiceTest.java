@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.po.operator;
 import sorcer.service.*;
@@ -20,11 +21,13 @@ import static edu.pjatk.inn.coffeemaker.impl.Recipe.getRecipe;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.co.operator.inVal;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.result;
 import static sorcer.po.operator.ent;
+import static sorcer.po.operator.ents;
 import static sorcer.po.operator.invoker;
 import static sorcer.so.operator.*;
 
@@ -143,7 +146,7 @@ public class CoffeeServiceTest {
 						result("delivery$", inPaths("location", "room")))));
 //				ent("change$", invoker("paid$ - (coffee$ + delivery$)", args("paid$", "coffee$", "delivery$"))));
 
-		add(mod, ent("change$", invoker("paid$ - (coffee$ + delivery$)", operator.ents("paid$", "coffee$", "delivery$"))));
+		add(mod, ent("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
 		dependsOn(mod, dep("change$", paths("makeCoffee")), dep("change$", paths("deliver")));
 
 		responseUp(mod, "makeCoffee", "deliver", "change$", "paid$");
@@ -157,22 +160,114 @@ public class CoffeeServiceTest {
 	}
 
 	@Test
-	public void getCoffee() throws Exception {
+	public void getJobLocalCoffee() throws Exception {
 
-		Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
+		Task coffee = task("tc", sig("makeCoffee", CoffeeMaker.class), context(
 				inVal("recipe/key", "espresso"),
 				inVal("coffee/paid", 120),
 				inVal("recipe", espresso)));
 
-		Task delivery = task("delivery", sig("deliver", DeliveryImpl.class), context(
+		Task delivery = task("td", sig("deliver", DeliveryImpl.class), context(
 				inVal("location", "PJATK"),
 				inVal("room", "101")));
 
-		Job drinkCoffee = job(sig("exert", ServiceJobber.class), coffee, delivery);
+		Job jcd = job("jcd", sig("exert", ServiceJobber.class), coffee, delivery,
+                pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "coffee/change")));
 
-		Context out = upcontext(exert(drinkCoffee));
+        jcd = exert(jcd);
+
+        //TODO where selfContext is created?
+        // should be only when outPaths in thr job are declared
+//        Context selfOut = selfContext(jcd);
+//        Context out = upcontext(jcd);
+
+		Context out = upcontext(exert(jcd));
 
 		logger.info("out: " + out);
+        assertEquals(value(out, "jcd/tc/coffee/paid"), 120);
+        assertEquals(value(out, "jcd/tc/coffee/price"), 50);
+        assertEquals(value(out, "jcd/td/delivery/cost"), 60);
+        assertEquals(value(out, "jcd/td/change$"), 10);
+
+        //shortcut with the job context (no context links)
+        assertEquals(value(out, "coffee/paid"), 120);
+        assertEquals(value(out, "coffee/price"), 50);
+        assertEquals(value(out, "delivery/cost"), 60);
+        assertEquals(value(out, "change$"), 10);
 	}
+
+    @Test
+    public void getJobRemoteCoffee() throws Exception {
+
+        Task coffee = task("tc", sig("makeCoffee", CoffeeService.class), context(
+                inVal("recipe/key", "espresso"),
+                inVal("coffee/paid", 120),
+                inVal("recipe", espresso)));
+
+        Task delivery = task("td", sig("deliver", Delivery.class), context(
+                inVal("location", "PJATK"),
+                inVal("room", "101")));
+
+        Job jcd = job("jcd", coffee, delivery,
+                pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "coffee/change")));
+
+        Context out = upcontext(exert(jcd));
+
+        logger.info("out: " + out);
+        assertEquals(value(out, "jcd/tc/coffee/paid"), 120);
+        assertEquals(value(out, "jcd/tc/coffee/price"), 50);
+        assertEquals(value(out, "jcd/td/delivery/cost"), 60);
+        assertEquals(value(out, "jcd/td/change$"), 10);
+    }
+
+    @Test
+    public void getBlockLocalCoffee() throws Exception {
+
+        Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
+                inVal("recipe/key", "espresso"),
+                inVal("coffee/paid", 120),
+                inVal("recipe", espresso),
+                outPaths("coffee/change")));
+
+        Task delivery = task("delivery", sig("deliver", DeliveryImpl.class), context(
+                inVal("location", "PJATK"),
+                inVal("room", "101"),
+                outPaths("coffee/change", "delivery/cost", "change$")));
+
+        Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
+
+        Context out = context(exert(drinkCoffee));
+
+        logger.info("out: " + out);
+        assertEquals(value(out, "coffee/paid"), 120);
+        assertEquals(value(out, "coffee/change"), 70);
+        assertEquals(value(out, "delivery/cost"), 60);
+        assertEquals(value(out, "change$"), 10);
+    }
+
+    @Test
+    public void getBlockRemoteCoffee() throws Exception {
+
+        Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
+                inVal("recipe/key", "espresso"),
+                inVal("coffee/paid", 120),
+                inVal("recipe", espresso),
+                outPaths("coffee/change")));
+
+        Task delivery = task("delivery", sig("deliver", Delivery.class), context(
+                inVal("location", "PJATK"),
+                inVal("room", "101"),
+                outPaths("coffee/change", "delivery/cost", "change$")));
+
+        Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
+
+        Context out = context(exert(drinkCoffee));
+
+        logger.info("out: " + out);
+        assertEquals(value(out, "coffee/paid"), 120);
+        assertEquals(value(out, "coffee/change"), 70);
+        assertEquals(value(out, "delivery/cost"), 60);
+        assertEquals(value(out, "change$"), 10);
+    }
 }
 

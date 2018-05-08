@@ -9,15 +9,12 @@ import org.rioproject.opstring.OperationalStringException;
 import org.rioproject.opstring.OperationalStringManager;
 import org.sorcer.test.TestsRequiringRio;
 
-/**
- * Class
- */
-@Category(TestsRequiringRio.class)
-public class DeploySetup {
+import java.rmi.RemoteException;
+
+class DeploySetup {
     static ProvisionMonitor monitor;
 
-    @BeforeClass
-    public static void verifySorcerRunning() throws Exception {
+    static void verifySorcerRunning() throws Exception {
         long t0 = System.currentTimeMillis();
         monitor = ServiceUtil.waitForService(ProvisionMonitor.class, 20);
         Assert.assertNotNull(monitor);
@@ -34,5 +31,20 @@ public class DeploySetup {
         t0 = System.currentTimeMillis();
         ServiceUtil.waitForDeployment(manager);
         System.out.println("Waited " + (System.currentTimeMillis() - t0) + " millis for [Sorcer OS] provisioning");
+    }
+
+    static ProvisionMonitor monitor() {
+        return monitor;
+    }
+
+    static void undeploy(String s) throws RemoteException, OperationalStringException {
+        undeploy((DeployAdmin) monitor.getAdmin(), s);
+    }
+
+    static void undeploy(DeployAdmin deployAdmin, String s) throws RemoteException, OperationalStringException {
+        if(deployAdmin.hasDeployed(s)) {
+            System.out.println("===> Undeploy: "+s);
+            deployAdmin.undeploy(s);
+        }
     }
 }

@@ -64,7 +64,7 @@ public class operator extends Operator {
                 if (entry instanceof Valuation) {
                     return (T) ((Entry) entry).get(args);
                 } else if (((Entry) entry).asis() instanceof ServiceContext) {
-                    return (T) ((ServiceContext) ((Entry) entry).asis()).getValue(entry.getName());
+                    return (T) ((ServiceContext) ((Entry) entry).asis()).getValue(((Identifiable)entry).getName());
                 } else if (entry instanceof Incrementor) {
                     return ((Incrementor<T>) entry).next();
                 } else if (entry instanceof Evaluation) {
@@ -166,7 +166,7 @@ public class operator extends Operator {
         return context;
     }
 
-    public static Object execItem(Activity item, Arg... args) throws ServiceException {
+    public static Object execItem(Request item, Arg... args) throws ServiceException {
         try {
             return item.execute(args);
         } catch (RemoteException e) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package sorcer.service;
 
 import sorcer.service.modeling.Data;
@@ -21,8 +22,13 @@ import sorcer.service.modeling.Data;
 import java.rmi.RemoteException;
 
 /**
- * Created by Mike Sobolewski on 5/16/16.
+ * An top-level common interface for all request service in SORCER.
+ * Request services are frontend service created by users. Standalone
+ * request services are called subroutine services and request federated
+ * services are called mograms.
+ *
+ * @author Mike Sobolewski
  */
-public interface Request extends Service, Arg {
+public interface Request extends Service  {
 
 }

@@ -28,14 +28,13 @@ import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * An top-level common interface for all mograms in SORCER.
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Identifiable, Exerter, Scopable, Substitutable, Request {
+public interface Mogram extends Identifiable, Exerter, Request, Scopable, Substitutable, Arg {
 
     /**
      * Exerts this mogram by the assigned service provider if it is set. If a service

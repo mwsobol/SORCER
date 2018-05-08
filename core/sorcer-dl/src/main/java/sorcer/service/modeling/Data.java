@@ -19,7 +19,6 @@ package sorcer.service.modeling;
 
 import sorcer.service.Arg;
 import sorcer.service.ContextException;
-import sorcer.service.Request;
 
 
 /**
@@ -27,7 +26,7 @@ import sorcer.service.Request;
  *
  * @author Mike Sobolewski
  */
-public interface Data<V> extends Request {
+public interface Data<V>  {
 
     public V getData(Arg... args) throws ContextException;
 }

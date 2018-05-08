@@ -59,6 +59,7 @@ import sorcer.scratch.ScratchManagerSupport;
 import sorcer.service.*;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
+import sorcer.service.modeling.Data;
 import sorcer.serviceui.UIComponentFactory;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.serviceui.UIFrameFactory;

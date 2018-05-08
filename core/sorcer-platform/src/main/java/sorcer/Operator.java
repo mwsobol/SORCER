@@ -24,7 +24,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Mike  Sobolewski on 5/4/17.
  */
-public class Operator implements Service {
+public class Operator implements Service, Activity {
 	private static Operator op = new Operator();
 
 	public static Operator getInstance() {
@@ -44,6 +44,16 @@ public class Operator implements Service {
 		} else {
 			throw new ServiceException("invalid service arguments");
 		}
+	}
+
+	@Override
+	public Data act(Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
+
+	@Override
+	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+		return null;
 	}
 
 }

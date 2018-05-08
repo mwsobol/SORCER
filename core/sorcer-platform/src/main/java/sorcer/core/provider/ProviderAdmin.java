@@ -24,6 +24,7 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
+import java.rmi.RemoteException;
 
 /**
  * Implements ProviderMBean as a standard MBean

@@ -206,11 +206,21 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 //		}
 		
 		ServiceContext cxt = (ServiceContext)xrt.getDataContext();
-		if (exertion.getDataContext().getReturnPath() != null)
-            cxt.putValue(((ReturnPath)exertion.getContext().getReturnPath()).path,
+        SignatureReturnPath rp = exertion.getDataContext().getReturnPath();
+		if (rp != null) {
+            cxt.putValue(((ReturnPath) exertion.getContext().getReturnPath()).path,
                     exertion.getDataContext().getReturnValue());
-		else
-             cxt.updateEntries(exertion.getDataContext());
+            String[] outPaths = rp.getOutPaths();
+            if (outPaths != null) {
+               for (String path : outPaths) {
+                   Object obj = exertion.getDataContext().get(path);
+                   if (obj != null)
+                   cxt.put(path, obj);
+               }
+            }
+        } else {
+            cxt.updateEntries(exertion.getDataContext());
+        }
 
         if (! (exertion instanceof Block))
 		    ((ServiceContext)exertion.getDataContext()).setScope(null);

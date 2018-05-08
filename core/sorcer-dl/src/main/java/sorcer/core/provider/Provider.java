@@ -22,7 +22,6 @@ import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceID;
 import org.slf4j.Logger;
 import sorcer.core.analytics.AnalyticsProducer;
-import sorcer.service.Activity;
 import sorcer.service.Monitorable;
 import sorcer.service.Service;
 

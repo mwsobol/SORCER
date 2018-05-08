@@ -191,6 +191,14 @@ public class operator extends Operator {
 		return snapshot(mogram);
 	}
 
+	public static Context selfContext(Mogram mogram) throws ContextException {
+		return mogram.getDataContext();
+	}
+
+	public static Context dataContext(Mogram mogram) throws ContextException {
+		return mogram.getDataContext();
+	}
+
 	public static Context upcontext(Mogram mogram) throws ContextException {
 		if (mogram instanceof CompoundExertion)
 			return mogram.getContext();
@@ -937,7 +945,7 @@ public class operator extends Operator {
 		return s;
 	}
 
-	public static Signature sig(ServiceType serviceType, Object... items) throws SignatureException {
+	public static Signature sig(ServiceMultitype serviceType, Object... items) throws SignatureException {
 		if (items == null || items.length == 0) {
             if (serviceType.providerType != null) {
                 return defaultSig(serviceType.providerType);
@@ -990,7 +998,7 @@ public class operator extends Operator {
 	}
 
 	public static Signature sig(Class classType, Object... items) throws SignatureException {
-		ServiceType serviceType = new ServiceType(classType);
+		ServiceMultitype serviceType = new ServiceMultitype(classType);
 		return sig(serviceType, items);
 	}
 
@@ -1008,7 +1016,7 @@ public class operator extends Operator {
 		ProviderName providerName = null;
 		Provision p = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
-		ServiceType srvType = null;
+		ServiceMultitype srvType = null;
 		Args args = null;
 		Provider provider = null;
 		if (items != null) {
@@ -1021,8 +1029,8 @@ public class operator extends Operator {
 					p = (Provision) o;
 				} else if (o instanceof MapContext) {
 					connList.add(((MapContext) o));
-				} else if (o instanceof ServiceType) {
-					srvType = (ServiceType) o;
+				} else if (o instanceof ServiceMultitype) {
+					srvType = (ServiceMultitype) o;
 					// check if class can be loaded
 //                    serviceType = srvType.providerType;
 //                    try {
@@ -1175,13 +1183,13 @@ public class operator extends Operator {
 		return sop;
 	}
 
-	public static ServiceType type(Class providerType) {
-		ServiceType st = new ServiceType(providerType);
+	public static ServiceMultitype type(Class providerType) {
+		ServiceMultitype st = new ServiceMultitype(providerType);
 		return st;
 	}
 
-	public static ServiceType type(String typeName) {
-		ServiceType st = new ServiceType(typeName);
+	public static ServiceMultitype type(String typeName) {
+		ServiceMultitype st = new ServiceMultitype(typeName);
 		return st;
 	}
 
@@ -1643,7 +1651,7 @@ public class operator extends Operator {
 
 
 	public static ServiceFidelity rFi(String name, String path) {
-		ServiceFidelity fi = new ServiceFidelity(name, path(path));
+		ServiceFidelity fi = new ServiceFidelity(name, (List<Service>) path(path));
 		fi.setPath(path);
 		fi.selectSelect(path);
 		fi.fiType = Fi.Type.SELECT;
@@ -3512,7 +3520,7 @@ public class operator extends Operator {
 				for(String ipAddress : ip.getIps()) {
 					try {
 						InetAddress inetAddress = InetAddress.getByName(ipAddress);
-						if(inetAddress.isReachable(1000)) {
+						if(!inetAddress.isReachable(1000)) {
 							logger.warn(getWarningBanner("The signature declares an ip address or hostname.\n" +
 									ipAddress+" is not reachable on the current network"));
 						}

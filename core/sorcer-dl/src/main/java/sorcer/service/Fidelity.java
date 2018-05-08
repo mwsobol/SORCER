@@ -10,7 +10,8 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 6/27/16.
  */
-public class Fidelity<T> implements Fi<T>, Dependency, Activity, net.jini.core.entry.Entry {
+public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.entry.Entry, Arg, Request {
+
     static final long serialVersionUID = 1L;
 
 	protected static int count = 0;
@@ -133,7 +134,7 @@ public class Fidelity<T> implements Fi<T>, Dependency, Activity, net.jini.core.e
 				break;
 			}
 		}
-		return select;
+		return (T) select;
 	}
 
 	public T getSelect(String name) {
@@ -249,13 +250,13 @@ public class Fidelity<T> implements Fi<T>, Dependency, Activity, net.jini.core.e
 		return dependers;
 	}
 
-    @Override
-    public Data act(Arg... args) throws ServiceException, RemoteException {
-        return null;
-    }
+	@Override
+	public Data act(Arg... args) throws ServiceException, RemoteException {
+		return new Association(((Identifiable)select).getName(), ((Service)select).execute(args));
+	}
 
-    @Override
-    public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
-        return null;
-    }
+	@Override
+	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+		return new Association(entryName, ((Service)select).execute(args));
+	}
 }

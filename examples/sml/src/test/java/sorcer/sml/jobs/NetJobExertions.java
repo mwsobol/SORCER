@@ -271,48 +271,6 @@ public class NetJobExertions implements SorcerConstants {
 		
 	}
 
-	public Job createProvisionedJob() throws Exception {
-		
-		Task f4 = task(
-				"f4",
-				sig("multiply", Multiplier.class,
-					deploy(implementation(ServiceTasker.class.getName()),
-						classpath("ex6-arithmetic-beans.jar"),
-						codebase("ex6-arithmetic-dl.jar"),
-						configuration("bin/examples/ex6/configs/multiplier-prv.config"),
-						maintain(1),
-						idle("3h"))),
-				context("multiply", inVal("arg/x1", 10.0d),
-						inVal("arg/x2", 50.0d), outVal("result/y1")));
-
-		Task f5 = task(
-				"f5",
-				sig("add", Adder.class,
-					deploy(classpath("arithmetic-beans.jar"),
-						codebase("arithmetic-dl.jar"),
-						configuration("bin/examples/ex6/configs/adder-prv.config"),
-						idle(60*3))),
-				context("add", inVal("arg/x3", 20.0d), inVal("arg/x4", 80.0d),
-						outVal("result/y2")));
-
-		Task f3 = task(
-				"f3",
-				sig("subtract", Subtractor.class,
-					deploy(classpath("arithmetic-beans.jar"),
-						codebase("arithmetic-dl.jar"),
-						configuration("bin/examples/ex6/configs/subtractor-prv.config"))),
-				context("subtract", inVal("arg/x5", null),
-						inVal("arg/x6"), outVal("result/y3")));
-
-		// job("f1", job("f2", f4, f5), f3,
-		// job("f1", job("f2", f4, f5, strategy(Flow.PAR, Access.PULL)), f3,
-		Job f1 = job("f1", job("f2", f4, f5), f3, strategy(Provision.NO),
-				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
-				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
-		
-		return f1;
-	}
-
 	@Test
 	public void arithmeticJobNetExerter() throws Exception {
 

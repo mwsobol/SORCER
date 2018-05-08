@@ -15,7 +15,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 
 public class Entry<V> extends Association<String, V>
-        implements Identifiable, Request, Evaluation<V>, Callable<V>, Setter, Reactive<V>, ent<V> {
+        implements Identifiable, Request, Evaluation<V>, Activity, Callable<V>, Setter, Reactive<V>, ent<V> {
 
     private static final long serialVersionUID = 1L;
 
