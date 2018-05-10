@@ -19,30 +19,28 @@ package sorcer.core.context.model.ent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ApplicationDescription;
-import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.Soma;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Variability;
 
 
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 
 /**
- * In service-based modeling, a service neuron (for short a neo) is a special kind of
+ * In service-based modeling, a service neuron (for short nsc - neuron specific) is a special kind of
  * function, used in a service model {@link ProcModel} to refer to one of the
  * pieces of data provided as input to other neurons.
  * 
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Neo extends Entry<Double> implements Variability<Double>, Invocation<Double>, Setter, Scopable, Comparable<Double>{
+public class Nsc extends Entry<Double> implements Variability<Double>, Invocation<Double>, Setter, Scopable, Comparable<Double>{
 
 	private static final long serialVersionUID = 1L;
 
-	private static Logger logger = LoggerFactory.getLogger(Neo.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(Nsc.class.getName());
 
 	protected double bias;
 
@@ -51,41 +49,41 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 	protected ServiceFidelity<NeoFidelity> fidelities;
 
 
-	public Neo(String name) {
+	public Nsc(String name) {
 		super(name);
         soma = new Soma(name);
 		type = Type.NEURON;
 	}
 
-       public Neo(String name, double value) {
+       public Nsc(String name, double value) {
         this(name);
         _2 = value;
     }
 
-    public Neo(String name, operator.Args args) {
+    public Nsc(String name, operator.Args args) {
         this(name);
         soma.setArgs(args.argSet());
     }
 
-    public Neo(String name, operator.Args args, Context<Float> weights) {
+    public Nsc(String name, operator.Args args, Context<Float> weights) {
         this(name, args);
         soma.setWeights(weights);
     }
 
-    public Neo(String name, double value, Context<Entry> signals) {
+    public Nsc(String name, double value, Context<Entry> signals) {
         this(name);
         _2 = value;
         soma.setScope(signals);
     }
 
-    public Neo(String name, double value, Context<Entry> signals, Context<Float> weights) {
+    public Nsc(String name, double value, Context<Entry> signals, Context<Float> weights) {
         this(name);
         _2 = value;
         soma.setScope(signals);
 
     }
 
-	public Neo(String name, ServiceFidelity<NeoFidelity> fidelities) {
+	public Nsc(String name, ServiceFidelity<NeoFidelity> fidelities) {
 		this(name);
 		this.fidelities= fidelities;
 	}
@@ -99,10 +97,10 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 			return;
 		for (Arg p : parameters) {
 			try {
-				if (p instanceof Neo) {
-					if (_1.equals(((Neo) p)._1)) {
-						if (((Neo) p).getScope() != null)
-							scope.append(((Neo) p).getScope());
+				if (p instanceof Nsc) {
+					if (_1.equals(((Nsc) p)._1)) {
+						if (((Nsc) p).getScope() != null)
+							scope.append(((Nsc) p).getScope());
 
 					}
 				} else if (p instanceof Fidelity && fidelities != null) {
@@ -278,7 +276,7 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 	public void addArgs(ArgSet set) throws EvaluationException {
 		Iterator<Arg> i = set.iterator();
 		while (i.hasNext()) {
-			Neo procEntry = (Neo)i.next();
+			Nsc procEntry = (Nsc)i.next();
 			try {
 				soma.getScope().putValue(procEntry.getName(), procEntry.asis());
 			} catch (Exception e) {
@@ -296,8 +294,8 @@ public class Neo extends Entry<Double> implements Variability<Double>, Invocatio
 
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof Neo
-				&& ((Neo) object)._1.equals(_1))
+		if (object instanceof Nsc
+				&& ((Nsc) object)._1.equals(_1))
 			return true;
 		else
 			return false;

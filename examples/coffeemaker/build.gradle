@@ -136,7 +136,6 @@ test {
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
     }
-    dependsOn([install])
     dependsOn([install, bootme])
     finalizedBy(stopme)
 }
