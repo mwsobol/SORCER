@@ -99,8 +99,8 @@ public class OperationalStringFactoryTest {
         assertTrue(1L==undeployOption.getWhen());
 
         OperationalString federated = allOperationalStrings.get(1);
-        String name = job.getDeploymentId();
-        assertTrue(name.equals(federated.getName()));
+        String[] parts = federated.getName().split(";");
+        assertEquals("expected 2 interface names in the opstring name, got: "+parts.length, 2, parts.length);
         assertEquals(2, federated.getServices().length);
         assertTrue(SorcerEnv.getActualName("Adder").equals(federated.getServices()[0].getName())
             || SorcerEnv.getActualName("Subtractor").equals(federated.getServices()[0].getName()));

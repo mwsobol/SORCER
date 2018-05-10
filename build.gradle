@@ -20,7 +20,7 @@ int ndx = ref.lastIndexOf("/")
 String branch = ref.substring(ndx+1).trim()
 String branchRef = branch.equals("master")?"":"-$branch"
 
-version = "6.4.1$branchRef"
+version = "7.2$branchRef"
 
 apply plugin: 'idea'
 idea {
@@ -36,6 +36,7 @@ task printVersion {
         logger.quiet "Version: $version"
     }
 }
+
 
 task printClasspath() {
     description = 'Prints the current Java classpath.'
@@ -123,7 +124,7 @@ subprojects {
             mavenLocal()
             if (!enclave) {
                 maven { url "http://www.rio-project.org/maven2" }
-                maven { url "http://mvn.sorcersoft.com/content/groups/public" }
+                //maven { url "http://mvn.sorcersoft.com/content/groups/public" }
                 mavenCentral()
             } else {
                 maven { url "http://$enclaveRepo" }
@@ -154,6 +155,7 @@ gradle.taskGraph.whenReady { graph ->
             tasks.withType(Test) {
                 if(isAnAggregateTest(graph))
                     reports.html.enabled = false
+                // to debug Rio tests with InteliJ comment 159-163
                 if(!isAnAllTest(graph, project.path)) {
                     useJUnit {
                         excludeCategories 'org.sorcer.test.TestsRequiringRio'
@@ -170,7 +172,7 @@ task tests(type: TestReport, dependsOn: "bootSorcer") {
 
     project.subprojects { project ->
         tasks.withType(Test) {
-            ignoreFailures true
+            //ignoreFailures true
             reportOn it
         }
     }
@@ -185,7 +187,7 @@ task allTests(type: TestReport, dependsOn: "bootSorcerRio") {
     destinationDir = file("$buildDir/reports/allTests")
     project.subprojects { project ->
         tasks.withType(Test) {
-            ignoreFailures true
+            //ignoreFailures true
             reportOn it
         }
     }

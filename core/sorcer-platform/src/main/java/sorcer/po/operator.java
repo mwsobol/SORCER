@@ -48,20 +48,20 @@ public class operator extends sorcer.operator {
 
 	private static final Logger logger = LoggerFactory.getLogger(operator.class.getName());
 
-	public static Neo neo(String path, double signal) {
-		return new Neo(path, signal);
+	public static Nsc neo(String path, double signal) {
+		return new Nsc(path, signal);
 	}
 
-	public static Neo neo(String path, Args signals) {
-		return new Neo(path, signals);
+	public static Nsc neo(String path, Args signals) {
+		return new Nsc(path, signals);
 	}
 
-	public static Neo neo(String path, Args signals, Context<Float> weights) {
-		return new Neo(path, signals, weights);
+	public static Nsc neo(String path, Args signals, Context<Float> weights) {
+		return new Nsc(path, signals, weights);
 	}
 
-	public static Neo neo(String path, ServiceFidelity<NeoFidelity> fidelities) {
-		return new Neo(path, fidelities);
+	public static Nsc neo(String path, ServiceFidelity<NeoFidelity> fidelities) {
+		return new Nsc(path, fidelities);
 	}
 
 	public static Entry th(String path, double threshold) {

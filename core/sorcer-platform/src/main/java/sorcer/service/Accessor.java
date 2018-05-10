@@ -58,7 +58,7 @@ public class Accessor {
             if(System.getSecurityManager()==null)
                 System.setSecurityManager(new SecurityManager());
             String providerType =
-                Sorcer.getProperties().getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME);
+                Sorcer.getProperties().getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME, "sorcer.util.ServiceAccessor");
             try {
                 logger.debug("SORCER DynamicAccessor provider: {}", providerType);
                 Class<?> type = Class.forName(providerType, true, Thread.currentThread().getContextClassLoader());

@@ -60,7 +60,6 @@ import sorcer.core.proxy.Partnership;
 import sorcer.core.proxy.ProviderProxy;
 import sorcer.core.service.Configurer;
 import sorcer.core.signature.NetSignature;
-import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.jini.jeri.RecordingInvocationDispatcher;
 import sorcer.jini.jeri.SorcerILFactory;
@@ -73,7 +72,6 @@ import sorcer.security.sign.TaskAuditor;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.jobber.JobberAccessor;
-import sorcer.service.Domain;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.*;
@@ -659,6 +657,10 @@ public class ProviderDelegate {
         return set;
     }
 
+    public int getWorkerCount() {
+        return workerCount;
+    }
+
     private void initThreadGroups() {
         namedGroup = new ThreadGroup("Provider Group: " + getProviderName());
         namedGroup.setDaemon(true);
@@ -1187,8 +1189,8 @@ public class ProviderDelegate {
 	}
 
 	protected ServiceExertion forwardTask(ServiceExertion task,
-			Provider requestor) throws MogramException,
-			RemoteException, SignatureException, ContextException {
+										  Provider requestor) throws MogramException,
+																	 RemoteException, SignatureException {
 		// check if we do not look with the same exertion
 		Service recipient = null;
 		String prvName = task.getProcessSignature().getProviderName().getName();
@@ -1834,7 +1836,7 @@ public class ProviderDelegate {
 		// providerName + "'");
 
 		String pn = task.getProcessSignature().getProviderName().getName();
-		if (pn != null && !matchInterfaceOnly) {
+		if (pn != null && !pn.equals("*") && !matchInterfaceOnly) {
 			if (!pn.equals(getProviderName())) {
 				servicetask.getContext().reportException(
 						new ExertionException(
