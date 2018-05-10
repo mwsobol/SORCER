@@ -80,7 +80,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 	/** signature operation */
 	protected Operation operation = new Operation();
 
-	protected ServiceType serviceType = new ServiceType();
+	protected ServiceMultitype serviceType = new ServiceMultitype();
 
 	// associated exertion only if needed
 	protected Exertion exertion;
@@ -141,7 +141,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		this.operation.selector = selector;
 	}
 
-    public ServiceSignature(String selector, ServiceType serviceType, ProviderName providerName) {
+    public ServiceSignature(String selector, ServiceMultitype serviceType, ProviderName providerName) {
 		signatureId = UuidFactory.generate();
 		this.name = selector;
         this.operation.selector = selector;
@@ -205,7 +205,7 @@ public class ServiceSignature implements Signature, SorcerConstants {
 		this.serviceType.providerType = serviceType;
 	}
 
-	public void setServiceType(ServiceType serviceType) {
+	public void setServiceType(ServiceMultitype serviceType) {
 		this.serviceType = serviceType;
 	}
 

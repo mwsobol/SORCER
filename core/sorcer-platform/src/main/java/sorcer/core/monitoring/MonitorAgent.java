@@ -161,8 +161,9 @@ public class MonitorAgent {
     }
 
     private class MonitorRegistrationNotifier implements MonitorRegistrationListener {
-
         @Override public void notify(MonitorRegistration registration) {
+            if(monitorRegistration!=null)
+                return;
             monitorRegistration = registration;
             leaseManager = new LeaseRenewalManager(monitorRegistration.getLease(), Lease.FOREVER, null);
             for(Request r : pendingUpdateRequests) {

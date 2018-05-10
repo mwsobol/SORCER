@@ -21,11 +21,9 @@ import net.jini.core.transaction.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Proc;
-import sorcer.eo.operator;
+import sorcer.eo.operator.Args;
 import sorcer.service.*;
 import sorcer.util.SorcerUtil;
-import sorcer.eo.operator.Args;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -40,37 +38,21 @@ import java.security.PrivilegedAction;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvoking<T> {
-
 	private static final long serialVersionUID = -1158778636907725414L;
-
-	final protected static Logger logger = LoggerFactory.getLogger(MethodInvoker.class
-			.getName());
-
+	final protected static Logger logger = LoggerFactory.getLogger(MethodInvoker.class.getName());
 	protected String className;
-
 	private String selector;
-
 	private Class<?>[] paramTypes;
-
 	private Object[] params;
-
 	private Arg[] pars = new Arg[0];
-
 	private Context context;
-
 	transient private Method m;
-
 	transient private URLClassLoader miLoader;
-
 	private URL[] exportURL;
-
 	// the object used in the constructor of the target object
 	private Object initObject;
-
 	protected Object target;
-
 	protected static int count;
-
 	{
 		defaultName = "methodInvoker-";
 	}
@@ -155,14 +137,12 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 		selector = methodName;
 	}
 
-	public MethodInvoker(URL[] exportURL, String className, String methodName,
-			Object initObject) {
+	public MethodInvoker(URL[] exportURL, String className, String methodName, Object initObject) {
 		this(exportURL, className, methodName);
 		this.initObject = initObject;
 	}
 
-	public void setArgs(String methodName, Class<?>[] paramTypes,
-			Object[] parameters) {
+	public void setArgs(String methodName, Class<?>[] paramTypes, Object[] parameters) {
 		selector = methodName;
 		this.paramTypes = paramTypes;
 		params = parameters;
@@ -256,18 +236,19 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 						paramTypes = null;
 						parameters = null;
 					}
-					m = evalClass.getMethod(selector, paramTypes);
-					if (m == null) {
-						Method[] mts = evalClass.getMethods();
-						if (Context.class.isAssignableFrom(paramTypes[0])) {
-							for (Method mt : mts) {
-								if (mt.getName()!=null && mt.getName().equals(selector)) {
-									m = mt;
-									break;
-								}
-							}
-						}
-					}
+					try {
+						m = evalClass.getMethod(selector, paramTypes);
+                    } catch(NoSuchMethodException e) {
+                        Method[] mts = evalClass.getMethods();
+                        if (Context.class.isAssignableFrom(paramTypes[0])) {
+                            for (Method mt : mts) {
+                                if (mt.getName() != null && mt.getName().equals(selector)) {
+                                    m = mt;
+                                    break;
+                                }
+                            }
+                        }
+                    }
 				}
 			}
 			if (context != null)
@@ -290,7 +271,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 		return (T) val;
 	}
 
-	Class<?>[] getParameterTypes() {
+	public Class<?>[] getParameterTypes() {
 		return paramTypes;
 	}
 

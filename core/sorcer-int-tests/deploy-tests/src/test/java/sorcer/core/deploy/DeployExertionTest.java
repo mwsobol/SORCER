@@ -15,9 +15,11 @@
  */
 package sorcer.core.deploy;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.rioproject.opstring.OperationalString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
@@ -28,6 +30,8 @@ import sorcer.service.Exertion;
 import sorcer.service.Job;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 import static sorcer.eo.operator.*;
@@ -37,15 +41,31 @@ import static sorcer.eo.operator.*;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("core/sorcer-int-tests/deploy-tests")
+@Category(TestsRequiringRio.class)
 public class DeployExertionTest extends DeploySetup implements SorcerConstants {
     private final static Logger logger = LoggerFactory.getLogger(DeployExertionTest.class.getName());
 
-    @Category(TestsRequiringRio.class)
+    @BeforeClass
+    public static void before() throws Exception {
+        verifySorcerRunning();
+    }
+
+    //@Category(TestsRequiringRio.class)
     @Test
     public void deployAndExec() throws Exception {
         Job f1 = JobUtil.createJob();
         assertTrue(f1.isProvisionable());
-         verifyExertion(f1);
+        Map<ServiceDeployment.Unique, List<OperationalString>> deployments = OperationalStringFactory.create(f1);
+        String name = null;
+        for(Map.Entry<ServiceDeployment.Unique, List<OperationalString>> entry : deployments.entrySet()) {
+            if(entry.getValue().size()>0) {
+                name = entry.getValue().get(0).getName();
+                break;
+            }
+        }
+        assertNotNull(name);
+        //undeploy(name);
+        verifyExertion(f1);
         /* Run it again to make sure that the existing deployment is used */
         verifyExertion(f1);
     }
@@ -57,7 +77,7 @@ public class DeployExertionTest extends DeploySetup implements SorcerConstants {
         System.out.println("Waited "+(System.currentTimeMillis()-t0)+" millis for exerting: " + out.getName());
         assertNotNull(out);
         System.out.println("===> out: "+ upcontext(out));
-        assertEquals(get(out, "f1/f3/result/y3"), 400.0);
+        assertEquals(400.0, get(out, "f1/f3/result/y3"));
 
         ServiceDeployment deployment = (ServiceDeployment)out.getProcessSignature().getDeployment();
         assertNotNull(deployment);

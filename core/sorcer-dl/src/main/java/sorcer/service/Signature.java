@@ -515,7 +515,7 @@ public interface Signature extends Request, Comparable, Dependency, Identifiable
         }
     }
 
-	public static class ServiceType implements Serializable, Arg {
+	public static class ServiceMultitype implements Serializable, Arg {
 		static final long serialVersionUID = 1L;
 		public String typeName;
 		// default prvType
@@ -523,15 +523,15 @@ public interface Signature extends Request, Comparable, Dependency, Identifiable
         // service types implemented by the service provider
         public Class[] matchTypes;
 
-		public ServiceType() {
+		public ServiceMultitype() {
 			// do nothing
 		}
 
-		public ServiceType(String className) {
+		public ServiceMultitype(String className) {
 			typeName = className;
 		}
 
-		public ServiceType(Class classType) {
+		public ServiceMultitype(Class classType) {
 			providerType = classType;
 		}
 

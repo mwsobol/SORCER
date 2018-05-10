@@ -23,12 +23,11 @@ import org.slf4j.LoggerFactory;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Utility to create deployment ids using a MessageDigest
+ * Utility to create deployment ids
  *
  * @author Dennis Reedy
  */
@@ -41,13 +40,13 @@ public class DeploymentIdFactory {
      * @param list A list of signatures
      * @return A deployment ID
      *
-     * @throws NoSuchAlgorithmException
+     * @throws SignatureException
      */
-    public static String create(List<Signature> list) throws NoSuchAlgorithmException, SignatureException {
+    public static String create(List<Signature> list) throws SignatureException {
         StringBuilder ssb = new StringBuilder();
         List<String> items = new ArrayList<>();
         for (Signature s : list) {
-            String item = String.format("%s:%s", s.getProviderName(), s.getServiceType().getName());
+            String item = String.format("%s_%s", s.getProviderName(), s.getServiceType().getName());
             if(!items.contains(item))
                 items.add(item);
         }
@@ -58,13 +57,13 @@ public class DeploymentIdFactory {
             ssb.append(item);
         }
 
-        String deploymentID = createDeploymentID(ssb.toString());
+        String deploymentID = ssb.toString();
         if(logger.isDebugEnabled()) {
             logger.debug("Create deployment name from Signature list: {}\nID: {}",
                          ssb.toString(),
                          deploymentID);
         }
-        return deploymentID;
+        return replaceIllegalWindowsCharacters(deploymentID);
 
     }
 
@@ -73,10 +72,8 @@ public class DeploymentIdFactory {
      *
      * @param service A ServiceElement
      * @return A deployment ID
-     *
-     * @throws NoSuchAlgorithmException
      */
-    public static String create(ServiceElement service) throws NoSuchAlgorithmException {
+    public static String create(ServiceElement service) {
         StringBuilder nameBuilder = new StringBuilder();
         List<String> items = new ArrayList<>();
         for (ClassBundle export : service.getExportBundles()) {
@@ -89,29 +86,19 @@ public class DeploymentIdFactory {
                 nameBuilder.append(";");
             nameBuilder.append(item);
         }
-        String deploymentID = String.format("%s:%s", service.getName(), nameBuilder.toString());
-        //String deploymentID = createDeploymentID(nameBuilder.toString());
+        String deploymentID = String.format("%s_%s", service.getName(), nameBuilder.toString());
         if(logger.isDebugEnabled()) {
             logger.debug("Create deployment name from service element: {}\nID: {}",
                          nameBuilder.toString(),
                          deploymentID);
         }
-        return deploymentID;
+        return replaceIllegalWindowsCharacters(deploymentID);
     }
 
-    private static String createDeploymentID(final String ssb) throws NoSuchAlgorithmException {
-        /*MessageDigest md = MessageDigest.getInstance("MD5");
-        md.update(ssb.getBytes());
-        byte byteData[] = md.digest();
-        // convert the byte to hex
-        StringBuilder hexString = new StringBuilder();
-        for (byte data : byteData) {
-            String hex = Integer.toHexString(0xff & data);
-            if (hex.length() == 1)
-                hexString.append('0');
-            hexString.append(hex);
-        }
-        return hexString.toString();*/
-        return ssb;
+    private static String replaceIllegalWindowsCharacters(String s) {
+        String newName = s.replace("*", "#");
+        /*if(System.getProperty("os.name").startsWith("Windows"))
+            newName = String.format("\"%s\"", newName);*/
+        return newName;
     }
 }
