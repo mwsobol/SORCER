@@ -1120,9 +1120,9 @@ public class operator extends Operator {
 		return map;
 	}
 
-	public static <K, V> Map<K, V> map(Association<K, V>... entries) throws ContextException {
+	public static <K, V> Map<K, V> map(MultiFiFunction<K, V>... entries) throws ContextException {
 		Map<K, V> map = new HashMap<K, V>();
-		for (Association<K, V> entry : entries) {
+		for (MultiFiFunction<K, V> entry : entries) {
 			map.put(entry.getKey(), entry.getData());
 		}
 		return map;
@@ -1165,7 +1165,7 @@ public class operator extends Operator {
 	public static Object impl(Context context, String path)
 			throws ContextException {
 		Object obj = context.get(path);
-		if (obj instanceof Association) {
+		if (obj instanceof MultiFiFunction) {
 			return ((Entry)obj).getImpl();
 		} else {
 			return obj;

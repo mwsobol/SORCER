@@ -36,7 +36,7 @@ public class Pools {
 	public static final String FI_PROJECTIONS = "projections";
 
 	// a pool of fidelities to configure mograms of this environment
-	final public static Pool<Uuid, Pool<Fidelity, Fidelity>> fiPool = new Pool<>();
+	final public static Pool<Uuid, Pool<Fidelity, Service>> fiPool = new Pool<>();
 
 	// a pool of signatures to configure mograms of this environment
 	final public static Pool<Uuid, Pool<String, Signature>> sigPool = new Pool<>();
@@ -53,15 +53,15 @@ public class Pools {
 	// a pool of setup configurations  for mograms of this environment
 	final public static Pool<Uuid, Pool<String, Config>> configPool = new Pool<>();
 
-	public static Pool<Fidelity, Fidelity> getFiPool(Uuid mogramId) {
+	public static Pool<Fidelity, Service> getFiPool(Uuid mogramId) {
 		return fiPool.get(mogramId);
 	}
 
-	public static Pool<Fidelity, Fidelity> getFiPool(Mogram mogram) {
+	public static Pool<Fidelity, Service> getFiPool(Mogram mogram) {
 		return fiPool.get(mogram.getId());
 	}
 
-	public static void putFiPool(Mogram mogram, Pool<Fidelity, Fidelity> pool) {
+	public static void putFiPool(Mogram mogram, Pool<Fidelity, Service> pool) {
 		fiPool.put(mogram.getId(), pool);
 	}
 

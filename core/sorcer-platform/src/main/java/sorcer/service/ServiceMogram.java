@@ -36,7 +36,7 @@ import java.util.*;
 /**
  * Created by sobolemw on 5/4/15.
  */
-public abstract class ServiceMogram extends Association<String, Object> implements Mogram, Activity, ServiceBean, Exec, Serializable, SorcerConstants {
+public abstract class ServiceMogram extends MultiFiFunction<String, Object> implements Mogram, Activity, ServiceBean, Exec, Serializable, SorcerConstants {
 
     protected final static Logger logger = LoggerFactory.getLogger(ServiceMogram.class.getName());
 
@@ -117,6 +117,11 @@ public abstract class ServiceMogram extends Association<String, Object> implemen
     protected MorphFidelity serviceMorphFidelity;
 
     protected SorcerPrincipal principal;
+
+    // the current fidelity alias, as it is named in 'fidelities'
+    // its original name might be different if aliasing is used
+    // for already existing names
+    protected String serviceFidelitySelector;
 
     // Date of creation of this Exertion
     protected Date creationDate = new Date();
@@ -860,7 +865,7 @@ public abstract class ServiceMogram extends Association<String, Object> implemen
                     .getClassLoader());
 
             Pool[] pools = (Pool[]) config.getEntry(Pools.COMPONENT, Pools.FI_POOL, Pool[].class);
-            Pool<Fidelity, Fidelity> pool = new Pool<>();
+            Pool<Fidelity, Service> pool = new Pool<>();
             for (int i = 0; i < pools.length; i++) {
                 pool.putAll((Map<? extends Fidelity, ? extends ServiceFidelity>) pools[i]);
             }
@@ -981,6 +986,14 @@ public abstract class ServiceMogram extends Association<String, Object> implemen
     public void reportException(String message, Throwable t, Provider provider, ProviderInfo info) {
         // reimplement in sublasses
         mogramStrategy.addException(t);
+    }
+
+    public String getServiceFidelitySelector() {
+        return serviceFidelitySelector;
+    }
+
+    public void setServiceFidelitySelector(String serviceFidelitySelector) {
+        this.serviceFidelitySelector = serviceFidelitySelector;
     }
 
 }

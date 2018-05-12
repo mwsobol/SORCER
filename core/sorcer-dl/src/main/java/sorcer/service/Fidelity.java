@@ -183,6 +183,11 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 		return hash * 31 + id.hashCode();
 	}
 
+	public void clear() {
+		selects.clear();
+		select = null;
+	}
+
 	@Override
 	public boolean equals(Object object) {
 
@@ -212,7 +217,17 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 		return true;
 	}
 
-    @Override
+	@Override
+	public int size() {
+		return this.selects.size();
+	}
+
+	@Override
+	public void removeSelect(T select) {
+		this.selects.remove(select);
+	}
+
+	@Override
 	public String toString() {
 		return (path == null ? fiName :
 				fiName + "@" + path)
@@ -252,11 +267,11 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 
 	@Override
 	public Data act(Arg... args) throws ServiceException, RemoteException {
-		return new Association(((Identifiable)select).getName(), ((Service)select).execute(args));
+		return new MultiFiFunction(((Identifiable)select).getName(), ((Service)select).execute(args));
 	}
 
 	@Override
 	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
-		return new Association(entryName, ((Service)select).execute(args));
+		return new MultiFiFunction(entryName, ((Service)select).execute(args));
 	}
 }

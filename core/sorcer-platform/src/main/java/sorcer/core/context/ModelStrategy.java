@@ -213,9 +213,10 @@ public class ModelStrategy implements MogramStrategy, Serializable {
         this.responsePaths = Arrays.asList(responsePaths);
     }
 
-    public void setResponsePaths(List<Path> responsePaths) {
+    public void setResponsePaths(List responsePaths) {
         this.responsePaths = responsePaths;
     }
+
 
     public <T extends Mogram> Mogram exert(Transaction txn, Arg... entries) throws TransactionException, MogramException, RemoteException {
         return target.exert(txn, entries);

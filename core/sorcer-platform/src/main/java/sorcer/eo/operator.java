@@ -2584,7 +2584,7 @@ public class operator extends Operator {
 	}
 
 
-	public static class Range extends Association<Integer, Integer> {
+	public static class Range extends MultiFiFunction<Integer, Integer> {
 		private static final long serialVersionUID = 1L;
 		public Integer[] range;
 
@@ -2959,7 +2959,7 @@ public class operator extends Operator {
 
 		Complement(String path, T value) {
 			this.key = path;
-			this.impl = value;
+			this.out = value;
 		}
 	}
 

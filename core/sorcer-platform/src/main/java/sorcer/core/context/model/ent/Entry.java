@@ -14,7 +14,7 @@ import sorcer.util.url.sos.SdbUtil;
 import java.net.URL;
 import java.rmi.RemoteException;
 
-public class Entry<V> extends Association<String, V>
+public class Entry<V> extends MultiFiFunction<String, V>
         implements Identifiable, Request, Evaluation<V>, Activity, Callable<V>, Setter, Reactive<V>, ent<V> {
 
     private static final long serialVersionUID = 1L;
@@ -58,14 +58,6 @@ public class Entry<V> extends Association<String, V>
     @Override
     public Uuid getId() {
         return id;
-    }
-
-    public V getOut() {
-        return out;
-    }
-
-    public void setOut(V out) {
-        this.out = out;
     }
 
     public Object getImpl() {
@@ -250,7 +242,6 @@ public class Entry<V> extends Association<String, V>
         this.negative = negative;
     }
 
-
     @Override
     public Entry act(Arg... args) throws ServiceException, RemoteException {
         Object result = this.execute(args);
@@ -314,6 +305,9 @@ public class Entry<V> extends Association<String, V>
         return key;
     }
 
+    public void setName(String name) {
+        key = name;
+    }
 
     public String getKey() {
         return key;

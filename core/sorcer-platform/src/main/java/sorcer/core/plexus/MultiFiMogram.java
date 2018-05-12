@@ -263,8 +263,20 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
+    public void removeSelect(Mogram select) {
+        morphFidelity.removeSelect(select);
+        morphFidelity.setSelect(null);
+    }
+
+    @Override
     public Type getFiType() {
         return Type.MULTI;
+    }
+
+    @Override
+    public void clear() {
+        morphFidelity.clear();
+        morphFidelity.setSelect(null);
     }
 
     @Override
@@ -287,6 +299,11 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
             return (Mogram) morphFidelity.get(index);
         }
         return null;
+    }
+
+    @Override
+    public int size() {
+       return morphFidelity.size();
     }
 
     @Override

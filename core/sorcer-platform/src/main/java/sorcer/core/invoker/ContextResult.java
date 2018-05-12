@@ -55,15 +55,15 @@ public class ContextResult<Objec> extends ServiceContext<Object> {
 		//putValue("method/invokeContext", invoker.getInvokeContext());
 	}
 	
-	public void setOut(Object object) throws ContextException {
+	public void setResult(Object object) throws ContextException {
 		putOutValue("result/out", object);
 	}
 	
-	public int getExitValue() throws ContextException {
+	public int getExitState() throws ContextException {
 		return (Integer)getValue("exit/eval");
 	}
 
-	public Object getOut() throws ContextException {
+	public Object getExitValue() throws ContextException {
 		return getValue("result/out");
 	}
 

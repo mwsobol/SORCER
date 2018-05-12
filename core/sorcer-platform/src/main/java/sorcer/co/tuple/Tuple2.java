@@ -30,6 +30,10 @@ public class Tuple2<T1, T2>  implements Serializable,  Arg {
 
 	public T2 _2 = null;
 
+	public Tuple2() {
+		// do nothing
+	}
+
 	public Tuple2(T1 x1, T2 x2) {
 		_1 = x1;
 		_2 = x2;
@@ -42,6 +46,10 @@ public class Tuple2<T1, T2>  implements Serializable,  Arg {
     public T2 value() {
 	    return _2;
     }
+
+	public void setValue(T2 val) {
+		_2 = val;
+	}
 
     @Override
     public int hashCode() {

@@ -1,59 +1,59 @@
 package sorcer.core.context.model.ent;
 
+import sorcer.co.tuple.Tuple2;
+import sorcer.service.MultiFiFunction;
+
 /**
  * Created by Mike Sobolewski on 5/15/17.
  */
-public class Tie extends Entry<String> {
+public class Tie extends Tuple2<String, String> {
 
     private static final long serialVersionUID = 1L;
 
     public Tie(String domain, String entry) {
-        key = domain;
-        out = entry;
+        _1 = domain;
+        _2 = entry;
     }
 
     public String domain() {
-        return key;
+        return _1;
     }
 
     public String entry() {
-        return out;
+        return _2;
     }
 
 
     public String domain(String domain) {
-        key = domain;
-        return key;
+        _1 = domain;
+        return _1;
     }
 
     public String entry(String entry) {
-        impl = entry;
-        return out;
+        _2 = entry;
+        return _2;
     }
 
     @Override
     public String toString() {
-        return  key + ":" + out;
+        return  _1 + ":" + _2;
     }
 
     @Override
     public int hashCode() {
-        int hash = key.length() + key.length() + 1;
-        return hash * 31 + key.hashCode() + impl.hashCode();
+        int hash = _1.length() + _2.length() + 1;
+        return hash * 31 + _1.hashCode() + _2.hashCode();
     }
 
     @Override
     public boolean equals(Object object) {
         if (object instanceof Tie) {
-            if (impl != null && ((Tie) object).out == null) {
+            if (_1 != null && ((Tie) object)._2 == null) {
                 return false;
-            } else if (out == null && ((Tie) object).out != null) {
+            } else if (_2 == null && ((Tie) object)._2 != null) {
                 return false;
-            } else if (((Tie) object).key.equals(key)
-                    && ((Tie) object).out == out) {
-                return true;
-            } else if (((Tie) object).key.equals(key)
-                    && ((Tie) object).out.equals(out)) {
+            } else if (((Tie) object)._1.equals(_1)
+                    && ((Tie) object)._2 == _2) {
                 return true;
             }
         }

@@ -43,6 +43,11 @@ public class Projection extends ServiceFidelity {
         this.selects = fidelities;
     }
 
+	public Projection(FidelityList fiList) {
+		super();
+		this.selects.addAll(fiList);
+	}
+
 	public Projection(ServiceFidelity fidelity) {
 		this.fiName = fidelity.getName();
 		this.path = fidelity.getPath();

@@ -92,6 +92,11 @@ public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>,
     }
 
     @Override
+    public void removeSelect(T select) {
+        fidelity.removeSelect(select);
+    }
+
+    @Override
     public boolean isValid() {
         return false;
     }
@@ -104,6 +109,12 @@ public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>,
     @Override
     public void setChanged(boolean state) {
         fidelity.setChanged(state);
+    }
+
+    @Override
+    public void clear() {
+        fidelity.clear();
+        fidelity.setSelect(null);
     }
 
     public T getSelect(String name) {

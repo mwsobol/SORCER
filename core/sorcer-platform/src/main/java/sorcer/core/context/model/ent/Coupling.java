@@ -1,37 +1,38 @@
 package sorcer.core.context.model.ent;
 
-import sorcer.service.Association;
+import sorcer.co.tuple.Tuple2;
+import sorcer.service.MultiFiFunction;
 
 /**
  * Created by Mike Sobolewski on 5/15/17.
  */
-public class Coupling extends Association<Tie, Tie> {
+public class Coupling extends Tuple2<Tie, Tie> {
 
     public Coupling(Tie from, Tie to) {
-        key = from;
-        out = to;
+        _1 = from;
+        _2 = to;
     }
 
     public Tie from() {
-        return key;
+        return _1;
     }
 
     public Tie to() {
-        return out;
+        return _2;
     }
 
     public Tie from(Tie from) {
-        key = from;
-        return key;
+        _1 = from;
+        return _1;
     }
 
     public Tie to(Tie to) {
-        impl = to;
-        return out;
+        _2 = to;
+        return _2;
     }
 
     @Override
     public String toString() {
-        return "[" + key + "->" + out + "]";
+        return "[" + _1 + "->" + _2 + "]";
     }
 }

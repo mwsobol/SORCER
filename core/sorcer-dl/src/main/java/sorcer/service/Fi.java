@@ -63,6 +63,8 @@ public interface Fi<T> extends Identifiable, Request {
 
     public T get(int index);
 
+	public int size();
+
     public T selectSelect(String fiName);
 
     public List<T> getSelects();
@@ -75,6 +77,8 @@ public interface Fi<T> extends Identifiable, Request {
 
     public void setSelect(T select);
 
+	public void removeSelect(T select);
+
     public boolean isValid();
 
     public Type getFiType();
@@ -82,6 +86,8 @@ public interface Fi<T> extends Identifiable, Request {
     public boolean isChanged();
 
     public void setChanged(boolean state);
+
+	public void clear();
 
 }
 
