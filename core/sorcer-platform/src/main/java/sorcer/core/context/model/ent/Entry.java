@@ -105,6 +105,10 @@ public class Entry<V> extends MultiFiFunction<String, V>
         }
     }
 
+    public void setId(Uuid id) {
+        this.id = id;
+    }
+
     public void setContextSelector(ContextSelection contextSelector) {
         this.contextSelector = contextSelector;
     }
