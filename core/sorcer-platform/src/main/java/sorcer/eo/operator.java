@@ -705,7 +705,7 @@ public class operator extends Operator {
 		return context;
 	}
 
-	public static Context put(Model model, Identifiable... objects)
+	public static Context put(EntryModel model, Identifiable... objects)
 			throws RemoteException, ContextException {
 		return put((Context) model, objects);
 	}

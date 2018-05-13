@@ -149,6 +149,19 @@ public class operator {
         return model;
     }
 
+    public static EntryModel procModel(String name, Identifiable... objects)
+            throws ContextException, RemoteException {
+        EntryModel entModel = new EntryModel(objects);
+        entModel.setName(name);
+        return entModel;
+
+    }
+
+    public static EntryModel procModel(Identifiable... objects)
+            throws ContextException, RemoteException {
+        return new EntryModel(objects);
+    }
+
     public static EntryModel procModel(Object... entries)
             throws ContextException {
         if (entries != null && entries.length == 1 && entries[0] instanceof Context) {

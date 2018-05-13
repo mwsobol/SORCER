@@ -10,6 +10,7 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.po.operator;
@@ -43,10 +44,10 @@ public class ContextModels {
 
 		// use procModel to create an EntryModel the same way as a regular context
 		// or convert any context to procModel(<context>)
-		Model mdl = procModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
+		EntryModel mdl = procModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
 				val("arg/x3", 3.0), val("arg/x4", 4.0), val("arg/x5", 5.0));
 
-		add(mdl, ent("arg/x6", 6.0));
+		put(mdl, ent("arg/x6", 6.0));
 		assertTrue(eval(mdl, "arg/x6").equals(6.0));
 
 		// proc is of the Evaluation type
@@ -55,12 +56,12 @@ public class ContextModels {
 		assertTrue(eval(mdl, "arg/x6").equals(20.0));
 
 		// invoker is of the Invocation type
-		add(mdl, ent("arg/x7", invoker("x1 + x3", operator.ents("x1", "x3"))));
+		put(mdl, ent("arg/x7", invoker("x1 + x3", operator.ents("x1", "x3"))));
 
 		assertTrue(eval(mdl, "arg/x7").equals(4.0));
 		assertTrue(get(mdl, "arg/x7") instanceof Subroutine);
 		assertTrue(get(mdl, "arg/x7") instanceof Proc);
-		assertTrue(impl(mdl, "arg/x7") instanceof Invocation);
+		assertTrue(get(mdl, "arg/x7") instanceof Invocation);
 	}
 
 	@Test

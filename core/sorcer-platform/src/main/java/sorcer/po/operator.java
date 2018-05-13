@@ -262,11 +262,6 @@ public class operator extends Operator {
 			((ServiceInvoker)invoker).clearPars();
 	}
 
-	public static EntryModel procModel(Identifiable... objects)
-			throws ContextException, RemoteException {
-		return new EntryModel(objects);
-	}
-
 	public static EntryModel append(EntryModel parContext, Arg... objects)
 			throws RemoteException, ContextException {
 		parContext.append(objects);
@@ -804,32 +799,38 @@ public class operator extends Operator {
 		return srv(sig);
 	}
 
-	public static <T> Tuple2<Fidelity, Fidelity> ent(Fidelity selectFi, Fidelity srvFi) throws ConfigurationException {
-		if (!srvFi.isValid()) {
-			String msg = "Misconfigured entry fidelity: " + srvFi + " for: " + selectFi;
-			logger.warn(msg);
+	public static <T> Tuple2<Fidelity, Service> ent(Fidelity selectFi, Service srvFi) throws ConfigurationException {
+		Tuple2<Fidelity, Service> assoc = new Tuple2<>(selectFi, srvFi);
+		Fidelity fi = (Fidelity)srvFi;
+		if (srvFi instanceof Fidelity) {
+			if (!fi.isValid()) {
+				String msg = "Misconfigured entry fidelity: " + srvFi + " for: " + selectFi;
+				logger.warn(msg);
 //			throw new ConfigurationException("Misconfigured fidelity: " + srvFi + " for: " + selectFi);
-		}
-		Tuple2<Fidelity, Fidelity> assoc =  new Tuple2<>(selectFi, srvFi);
-		if (srvFi.getFiType().equals(Fi.Type.GRADIENT)) {
-			// if no path set use its key - no multifidelities
-			if (selectFi.getPath().equals("")) {
-				selectFi.setPath(selectFi.getName());
 			}
-			// use a select gradient key if declared
-			if (selectFi.getSelect() == null) {
-				if (srvFi.getSelect() != null) {
-					selectFi.setSelect(srvFi.getSelect());
-				} else {
-					selectFi.setSelect((T) selectFi.getName());
-					srvFi.setSelect((T) selectFi.getName());
+
+			if (fi.getFiType().equals(Fi.Type.GRADIENT)) {
+				// if no path set use its key - no multifidelities
+				if (selectFi.getPath().equals("")) {
+					selectFi.setPath(selectFi.getName());
+				}
+				// use a select gradient key if declared
+				if (selectFi.getSelect() == null) {
+					if (fi.getSelect() != null) {
+						selectFi.setSelect(fi.getSelect());
+					} else {
+						selectFi.setSelect((T) selectFi.getName());
+						fi.setSelect((T) selectFi.getName());
+					}
 				}
 			}
+
+			fi.setName(selectFi.getName());
+			fi.setPath(selectFi.getPath());
+//		fi.setSelect((T) selectFi.getSelect());
+			selectFi.setType(fi.getFiType());
 		}
-		srvFi.setName(selectFi.getName());
-		srvFi.setPath(selectFi.getPath());
-//		srvFi.setSelect((T) selectFi.getSelect());
-		selectFi.setType(srvFi.getFiType());
+
 		return assoc;
 	}
 
