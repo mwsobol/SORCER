@@ -57,7 +57,11 @@ public class CollectionOperators {
 	@Test
 	public void tuplesOfTypedObjects() throws Exception {
 
-        Tuple2 t2 = x("Mike", "Sobolewski");
+		Slot s1 = slot("Mike");
+
+		Slot s2 = slot("Mike", "Sobolewski");
+
+		Tuple2 t2 = x("Mike", "Sobolewski");
 
 		Tuple3 t3 = x("Mike", "Sobolewski", "SORCER");
 
@@ -67,7 +71,7 @@ public class CollectionOperators {
 
 		Tuple6 t6 = x("Mike", "Sobolewski", "SORCER", 2010, "TTU", "AFRL/WPAFB");
 
-
+		assertTrue(s1 instanceof Slot);
 		assertTrue(t2 instanceof Tuple2);
 
 		// no casting required
@@ -76,6 +80,9 @@ public class CollectionOperators {
 
 		// casting required
 		String first = (String)t5._1;
+
+		assertEquals(s1.key(), "Mike");
+		assertEquals(s2.get(), "Sobolewski");
 
 		assertEquals(t2._1, t2._1);
 		assertEquals(t2._2, t3._2);

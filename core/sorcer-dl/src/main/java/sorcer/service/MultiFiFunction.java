@@ -29,12 +29,8 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public class MultiFiFunction<K, O> implements Service, net.jini.core.entry.Entry, Data<O>, Getter, Serializable, Identifiable, Arg {
+public class MultiFiFunction<K, O> extends Slot<K, O> {
 	private  static final long serialVersionUID =  1L;
-
-	protected K key;
-
-    protected O out;
 
     // selectable carrier (fidelity) of out
 	protected Object impl;
@@ -75,34 +71,6 @@ public class MultiFiFunction<K, O> implements Service, net.jini.core.entry.Entry
         }
 	}
 
-    public K getKey() {
-		return key;
-	}
-
-    public K key() {
-        return key;
-    }
-
-    public K path() {
-        return key;
-    }
-
-    public O out() {
-        return out;
-    }
-
-    public O getOut() {
-        return out;
-    }
-
-    public void setOut(O out) {
-        this.out = out;
-    }
-
-    public void setKey(K key) {
-		this.key = key;
-	}
-
 	public Object getImpl() {
 		if (!isValid && multiFi != null) {
             impl = ((MultiFiFunction)multiFi.getSelect()).getImpl();
@@ -113,10 +81,7 @@ public class MultiFiFunction<K, O> implements Service, net.jini.core.entry.Entry
         }
 	}
 
-    public O get(Arg... args) throws ContextException {
-        return out;
-    }
-
+	@Override
     public O getData(Arg... args) throws ContextException {
         if (out != null) {
             return out;
@@ -125,21 +90,8 @@ public class MultiFiFunction<K, O> implements Service, net.jini.core.entry.Entry
         }
     }
 
-    public O asis() throws EvaluationException, RemoteException {
-        return out;
-    }
-
     public void setImpl(Object impl) {
 		this.impl = impl;
-	}
-
-    public void set(O value) {
-        this.out = value;
-    }
-
-	@Override
-	public String toString() {
-		return "[" + key + ":" + impl + "]";
 	}
 
 	public Object execute(Arg... entries) throws ServiceException, RemoteException {
@@ -156,16 +108,6 @@ public class MultiFiFunction<K, O> implements Service, net.jini.core.entry.Entry
     public void setIndex(int i) {
         index = i;
     }
-
-    @Override
-	public Object getId() {
-		return key.toString();
-	}
-
-	@Override
-	public String getName() {
-		return key.toString();
-	}
 
     public Functionality.Type getType() {
         return type;
@@ -222,11 +164,6 @@ public class MultiFiFunction<K, O> implements Service, net.jini.core.entry.Entry
         this.valClass = valClass;
     }
 
-    @Override
-    public int hashCode() {
-        return 2 * 31 + key.hashCode();
-    }
-
     public boolean equals(Object object) {
         if (object instanceof MultiFiFunction) {
             if (impl != null && ((MultiFiFunction) object).impl == null) {
@@ -236,7 +173,7 @@ public class MultiFiFunction<K, O> implements Service, net.jini.core.entry.Entry
             } else if (((MultiFiFunction) object).key.equals(key)
                     && ((MultiFiFunction) object).impl == impl) {
                 return true;
-            } else if (((MultiFiFunction) object).key.equals(key)
+            }  else if (((MultiFiFunction) object).key.equals(key)
                     && ((MultiFiFunction) object).impl.equals(impl)) {
                 return true;
             }

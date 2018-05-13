@@ -73,6 +73,14 @@ public class operator extends Operator {
 		return new Tuple2<T1,T2>( x1, x2 );
 	}
 
+	public static <K,Oobject> Slot<K, Object> slot(K x1) {
+		return new Slot<K,Object>( x1 );
+	}
+
+	public static <K,O> Slot<K,O> slot(K x1, O x2 ){
+		return new Slot<K,O>( x1, x2 );
+	}
+
 	public static <T1,T2,T3> Tuple3<T1,T2,T3> x(T1 x1, T2 x2, T3 x3 ){
 		return new Tuple3<T1,T2,T3>( x1, x2, x3 );
 	}
@@ -336,21 +344,21 @@ public class operator extends Operator {
 		return new Path(path, info, Path.Type.MAP);
 	}
 
-	public static <T> Subroutine<T> init(String domain, String path, T value) {
-		Subroutine ent = new Subroutine<T>(path, value);
+	public static <T> Value<T> init(String domain, String path, T value) {
+		Value ent = new Value<T>(path, value);
 		ent.annotation(domain);
 		ent.setType(Type.DOMAIN_PRED);
 		return ent;
 	}
 
-	public static <T> Subroutine<T> init(String path, T value) {
-		Subroutine ent = new Subroutine<T>(path, value);
+	public static <T> Value<T> init(String path, T value) {
+		Value ent = new Value<T>(path, value);
 		ent.setType(Type.PRED);
 		return ent;
 	}
 
-	public static <T> Subroutine<T> val(String domain, String path, T value) {
-		Subroutine ent = new Subroutine<T>(path, value);
+	public static <T> Value<T> val(String domain, String path, T value) {
+		Value ent = new Value<T>(path, value);
 		ent.annotation(domain);
 		ent.setType(Type.DOMAIN_CONSTANT);
 		return ent;

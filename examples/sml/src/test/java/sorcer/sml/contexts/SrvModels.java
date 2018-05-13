@@ -52,7 +52,7 @@ public class SrvModels {
     }
 
     @Test
-    public void lambdaInvokerWithScopel() throws Exception {
+    public void lambdaInvokerWithScope() throws Exception {
 
         Context scope = context(ent("x1", 20.0), ent("y1", 40.0));
 
