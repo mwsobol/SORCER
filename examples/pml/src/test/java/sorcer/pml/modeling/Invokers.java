@@ -120,9 +120,9 @@ public class Invokers {
 
 	@Test
 	public void serviceNeurons() throws Exception {
-		Model nm = neoModel("neural-model");
-		add(nm, neo("x1", 10.0), neo("x2", 20.0));
-		add(nm, neo("x3", weights(val("x1", 2.0), val("x2", 10.0)), signals("x1", "x2")));
+		Model nm = aneModel("neural-model");
+		add(nm, ane("x1", 10.0), ane("x2", 20.0));
+		add(nm, ane("x3", weights(val("x1", 2.0), val("x2", 10.0)), signals("x1", "x2")));
 
 //        logger.info("activate x1: " + activate(pm, "x1"));
         assertEquals(activate(nm, "x1"), 10.0);
@@ -140,9 +140,9 @@ public class Invokers {
 	@Test
 	public void serviceNeuronFidelities() throws Exception {
 		Model nm = model("neural-model",
-			neo("x1", 10.0), neo("x2", 20.0),
-			neo("x3", weights(val("x1", 2.0), val("x2", 5.0)), signals("x1", "x2")),
-			neo("x4", mnFi(
+			ane("x1", 10.0), ane("x2", 20.0),
+			ane("x3", weights(val("x1", 2.0), val("x2", 5.0)), signals("x1", "x2")),
+			ane("x4", mnFi(
 					nFi("n1", signals("x1", "x2"), weights(val("x1", 1.5), val("x2", 10.0))),
 					nFi("n2", signals("x1", "x2"), weights(val("x1", 2.0), val("x2", 12.0))))));
 

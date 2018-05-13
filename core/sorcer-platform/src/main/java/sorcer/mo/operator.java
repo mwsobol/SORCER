@@ -461,7 +461,7 @@ public class operator {
     public static Model model(Object... items) throws ContextException {
         String name = "unknown" + count++;
         boolean hasEntry = false;
-        boolean neoType = false;
+        boolean aneType = false;
         boolean procType = false;
         boolean srvType = false;
         boolean hasExertion = false;
@@ -480,7 +480,7 @@ public class operator {
                     hasEntry = true;
                     if (i instanceof Proc)
                         procType = true;
-                    else if (i instanceof Srv || i instanceof Nsc) {
+                    else if (i instanceof Srv || i instanceof Ane) {
                         srvType = true;
                     }
                 } catch (Exception e) {
@@ -614,7 +614,7 @@ public class operator {
         return context;
     }
 
-    public static Model neoModel(String name, Object... objects)
+    public static Model aneModel(String name, Object... objects)
             throws ContextException, RemoteException {
         return srvModel(name, objects);
     }

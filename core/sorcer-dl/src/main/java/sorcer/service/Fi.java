@@ -36,7 +36,7 @@ public interface Fi<T> extends Identifiable, Request {
     final static int dVar = 11;
 
     public enum Type implements Arg {
-        VAL, ENTRY, SIG, REF, COMPONENT, MORPH, VAR, VAR_FI, PROC, SRV, NEO, EVALUATOR, GETTER, SETTER, GRADIENT, DERIVATIVE,
+        VAL, ENTRY, SIG, REF, COMPONENT, MORPH, VAR, VAR_FI, PROC, SRV, ANE, EVALUATOR, GETTER, SETTER, GRADIENT, DERIVATIVE,
         MULTI, REQUEST, RESPONSE, UPDATE, ADD, REPLACE, DELETE, SELECT, META, NAME, SOA, IF, IF_SOA, SYS, CONTEXT, MODEL, MDA, CONFIG;
 
 		static public String name(int fiType) {

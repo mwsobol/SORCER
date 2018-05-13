@@ -10,7 +10,6 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.plexus.Morpher;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
 
@@ -50,7 +49,7 @@ public class SmlOperators {
 		func f1 = proc("x2", 20.0);
 		func f2 = func("v1 + f1", args("v1", "f1"));
 		func f3 = lmbd("s1", args("v1", "f1"));
-		func f4 = neo("x3", 1.0);
+		func f4 = ane("x3", 1.0);
 		func f5 = srv(sig("s1", Class.class));
 		ent e1 = ent("x1", 10.0);
 		ent f5b = srv(s1);

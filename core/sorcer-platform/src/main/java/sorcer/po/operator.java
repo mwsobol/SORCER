@@ -52,24 +52,24 @@ public class operator extends Operator {
 
 	private static final Logger logger = LoggerFactory.getLogger(operator.class.getName());
 
-	public static Nsc neo(String path, double signal) {
-		return new Nsc(path, signal);
+	public static Ane ane(String path, double signal) {
+		return new Ane(path, signal);
 	}
 
-    public static Nsc neo(String path, Args signals) {
-        return new Nsc(path, signals);
+    public static Ane ane(String path, Args signals) {
+        return new Ane(path, signals);
     }
 
-    public static Nsc neo(String path, Context<Float> weights, Args signals) {
-        return new Nsc(path, weights, signals);
+    public static Ane ane(String path, Context<Float> weights, Args signals) {
+        return new Ane(path, weights, signals);
     }
 
-    public static Nsc neo(String path, Context<Float> weights, double signal, Args signals) {
-        return new Nsc(path, weights, signals);
+    public static Ane ane(String path, Context<Float> weights, double signal, Args signals) {
+        return new Ane(path, weights, signals);
     }
 
-    public static Nsc neo(String path, ServiceFidelity fidelities) {
-		return new Nsc(path, fidelities);
+    public static Ane ane(String path, ServiceFidelity fidelities) {
+		return new Ane(path, fidelities);
 	}
 
     public static Entry th(String path, double threshold) {
@@ -348,9 +348,9 @@ public class operator extends Operator {
 	}
 
     public static Object activate(Model model, String path, Arg... args) throws InvocationException {
-        Nsc neo = (Nsc) model.get(path);
+        Ane ane = (Ane) model.get(path);
         try {
-            if (neo.getMultiFi() != null) {
+            if (ane.getMultiFi() != null) {
                 List<Fidelity> fiList = Arg.selectFidelities(args);
                 ((FidelityManager) model.getFidelityManager()).reconfigure(fiList);
                 return invoke((EntryModel) model, path, args);
@@ -727,7 +727,7 @@ public class operator extends Operator {
 				|| value instanceof  List || value instanceof Map || value.getClass().isArray()) {
 			return new Value(path, value);
 		} else if (value instanceof Context && args != null && args.length > 0) {
-			return new Nsc(path, (Context)value, new Args(args));
+			return new Ane(path, (Context)value, new Args(args));
 		} else if (value instanceof Signature) {
 			Mogram mog = Arg.selectMogram(args);
 			Context cxt = null;

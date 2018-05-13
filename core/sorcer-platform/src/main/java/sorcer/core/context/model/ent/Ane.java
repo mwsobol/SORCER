@@ -29,74 +29,74 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 
 /**
- * In service-based modeling, a service neuron (for short a nsc - neuron specific) is a special kind of
+ * In service-based modeling, an artificial neuron entry (for short a ane) is a special kind of
  * function, used in a service model {@link EntryModel} to refer to one of the
  * pieces of data provided as input to other neurons.
  * 
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Nsc extends Subroutine<Double> implements Functionality<Double>, Invocation<Double>,
+public class Ane extends Subroutine<Double> implements Functionality<Double>, Invocation<Double>,
 		Setter, Scopable, Comparable<Double>, func<Double> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static Logger logger = LoggerFactory.getLogger(Nsc.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(Ane.class.getName());
 
 	protected double bias;
 
-	public Nsc(String name) {
+	public Ane(String name) {
 		super(name);
         impl = new Activator(name);
 		type = Type.NEURON;
 	}
 
-       public Nsc(String name, double value) {
+       public Ane(String name, double value) {
         this(name);
         out = value;
     }
 
-    public Nsc(String name, operator.Args args) {
+    public Ane(String name, operator.Args args) {
         this(name);
 		((Activator)impl).setArgs(args.argSet());
     }
 
-    public Nsc(String name, Context<Float> weights, operator.Args args) {
+    public Ane(String name, Context<Float> weights, operator.Args args) {
         this(name, args);
 		((Activator)impl).setWeights(weights);
     }
 
-    public Nsc(String name, double value, Context<Subroutine> signals) {
+    public Ane(String name, double value, Context<Subroutine> signals) {
         this(name);
         impl = value;
 		((Activator)impl).setScope(signals);
     }
 
-	public Nsc(String name, Context<Value> signals, Context<Float> weights, operator.Args args) {
+	public Ane(String name, Context<Value> signals, Context<Float> weights, operator.Args args) {
 		this(name, args);
 		((Activator)impl).setScope(signals);
 
 	}
 
-	public Nsc(String name, Context<Value> signals, Context<Float> weights) {
+	public Ane(String name, Context<Value> signals, Context<Float> weights) {
 		this(name);
 		((Activator)impl).setScope(signals);
 
 	}
 
-	public Nsc(String name, double value, Context<Value> signals, Context<Float> weights) {
+	public Ane(String name, double value, Context<Value> signals, Context<Float> weights) {
         this(name);
 		impl = value;
 		((Activator)impl).setScope(signals);
 
     }
 
-	public Nsc(String name, Context<Float> weights, Arg... args) {
+	public Ane(String name, Context<Float> weights, Arg... args) {
 		this(name, new operator.Args(args));
 		((Activator)impl).setWeights(weights);
 	}
 
-	public Nsc(String name, ServiceFidelity fidelities) {
+	public Ane(String name, ServiceFidelity fidelities) {
 		this(name);
 		this.multiFi= fidelities;
 	}
@@ -110,10 +110,10 @@ public class Nsc extends Subroutine<Double> implements Functionality<Double>, In
 			return;
 		for (Arg p : parameters) {
 			try {
-				if (p instanceof Nsc) {
-					if (key.equals(((Nsc) p).key)) {
-						if (((Nsc) p).getScope() != null)
-							scope.append(((Nsc) p).getScope());
+				if (p instanceof Ane) {
+					if (key.equals(((Ane) p).key)) {
+						if (((Ane) p).getScope() != null)
+							scope.append(((Ane) p).getScope());
 
 					}
 				} else if (p instanceof Fidelity && multiFi != null) {
@@ -274,7 +274,7 @@ public class Nsc extends Subroutine<Double> implements Functionality<Double>, In
 	public void addArgs(ArgSet set) throws EvaluationException {
 		Iterator<Arg> i = set.iterator();
 		while (i.hasNext()) {
-			Nsc procEntry = (Nsc)i.next();
+			Ane procEntry = (Ane)i.next();
 			try {
 				((Activator)impl).getScope().putValue(procEntry.getName(), procEntry.asis());
 			} catch (Exception e) {
@@ -292,8 +292,8 @@ public class Nsc extends Subroutine<Double> implements Functionality<Double>, In
 
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof Nsc
-				&& ((Nsc) object).key.equals(key))
+		if (object instanceof Ane
+				&& ((Ane) object).key.equals(key))
 			return true;
 		else
 			return false;

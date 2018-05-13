@@ -1490,7 +1490,7 @@ public class operator extends Operator {
 
 	public static ServiceFidelity mnFi(Activation... activations) {
 		ServiceFidelity fi = new ServiceFidelity(activations);
-		fi.fiType = Fi.Type.NEO;
+		fi.fiType = Fi.Type.ANE;
 		return fi;
 	}
 
