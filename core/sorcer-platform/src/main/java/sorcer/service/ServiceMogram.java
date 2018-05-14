@@ -36,7 +36,7 @@ import java.util.*;
 /**
  * Created by sobolemw on 5/4/15.
  */
-public abstract class ServiceMogram extends MultiFiFunction<String, Object> implements Mogram, Activity, ServiceBean, Exec, Serializable, SorcerConstants {
+public abstract class ServiceMogram extends MultiFiSlot<String, Object> implements Mogram, Activity, ServiceBean, Exec, Serializable, SorcerConstants {
 
     protected final static Logger logger = LoggerFactory.getLogger(ServiceMogram.class.getName());
 

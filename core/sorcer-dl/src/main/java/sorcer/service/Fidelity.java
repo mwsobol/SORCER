@@ -267,11 +267,11 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 
 	@Override
 	public Data act(Arg... args) throws ServiceException, RemoteException {
-		return new MultiFiFunction(((Identifiable)select).getName(), ((Service)select).execute(args));
+		return new MultiFiSlot(((Identifiable)select).getName(), ((Service)select).execute(args));
 	}
 
 	@Override
 	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
-		return new MultiFiFunction(entryName, ((Service)select).execute(args));
+		return new MultiFiSlot(entryName, ((Service)select).execute(args));
 	}
 }

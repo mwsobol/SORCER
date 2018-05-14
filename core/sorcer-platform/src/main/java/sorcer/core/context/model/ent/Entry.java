@@ -14,7 +14,7 @@ import sorcer.util.url.sos.SdbUtil;
 import java.net.URL;
 import java.rmi.RemoteException;
 
-public class Entry<V> extends MultiFiFunction<String, V>
+public class Entry<V> extends MultiFiSlot<String, V>
         implements Identifiable, Request, Evaluation<V>, Activity, Callable<V>, Setter, Reactive<V>, ent<V> {
 
     private static final long serialVersionUID = 1L;

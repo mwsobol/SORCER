@@ -2584,7 +2584,7 @@ public class operator extends Operator {
 	}
 
 
-	public static class Range extends MultiFiFunction<Integer, Integer> {
+	public static class Range extends MultiFiSlot<Integer, Integer> {
 		private static final long serialVersionUID = 1L;
 		public Integer[] range;
 

@@ -17,19 +17,16 @@
 
 package sorcer.service;
 
-import sorcer.service.modeling.Data;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Getter;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 
 /**
- * An pair of objects as an identifiable impl.
+ * An pair of objects as an identifiable multifidelity containers.
  *
  * @author Mike Sobolewski
  */
-public class MultiFiFunction<K, O> extends Slot<K, O> {
+public class MultiFiSlot<K, O> extends Slot<K, O> {
 	private  static final long serialVersionUID =  1L;
 
     // selectable carrier (fidelity) of out
@@ -51,14 +48,14 @@ public class MultiFiFunction<K, O> extends Slot<K, O> {
     // when scope of this entry is changed then is not valid
     protected boolean isValid = true;
 
-    public MultiFiFunction() {
+    public MultiFiSlot() {
 	}
 
-    public MultiFiFunction(K key) {
+    public MultiFiSlot(K key) {
         this.key = key;
     }
 
-    public MultiFiFunction(K key, Object item) {
+    public MultiFiSlot(K key, Object item) {
         if(key==null)
             throw new IllegalArgumentException("key must not be null");
         this.key = key;
@@ -73,7 +70,7 @@ public class MultiFiFunction<K, O> extends Slot<K, O> {
 
 	public Object getImpl() {
 		if (!isValid && multiFi != null) {
-            impl = ((MultiFiFunction)multiFi.getSelect()).getImpl();
+            impl = ((MultiFiSlot)multiFi.getSelect()).getImpl();
             isValid = true;
             return impl;
         } else {
@@ -143,8 +140,8 @@ public class MultiFiFunction<K, O> extends Slot<K, O> {
 
     public void setValid(boolean state) {
         isValid = state;
-        if (impl instanceof MultiFiFunction) {
-            ((MultiFiFunction) impl).isValid = state;
+        if (impl instanceof MultiFiSlot) {
+            ((MultiFiSlot) impl).isValid = state;
         }
     }
 
@@ -165,16 +162,16 @@ public class MultiFiFunction<K, O> extends Slot<K, O> {
     }
 
     public boolean equals(Object object) {
-        if (object instanceof MultiFiFunction) {
-            if (impl != null && ((MultiFiFunction) object).impl == null) {
+        if (object instanceof MultiFiSlot) {
+            if (impl != null && ((MultiFiSlot) object).impl == null) {
                 return false;
-            } else if (impl == null && ((MultiFiFunction) object).impl != null) {
+            } else if (impl == null && ((MultiFiSlot) object).impl != null) {
                 return false;
-            } else if (((MultiFiFunction) object).key.equals(key)
-                    && ((MultiFiFunction) object).impl == impl) {
+            } else if (((MultiFiSlot) object).key.equals(key)
+                    && ((MultiFiSlot) object).impl == impl) {
                 return true;
-            }  else if (((MultiFiFunction) object).key.equals(key)
-                    && ((MultiFiFunction) object).impl.equals(impl)) {
+            }  else if (((MultiFiSlot) object).key.equals(key)
+                    && ((MultiFiSlot) object).impl.equals(impl)) {
                 return true;
             }
         }

@@ -1,7 +1,6 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.co.tuple.Tuple2;
-import sorcer.service.MultiFiFunction;
 
 /**
  * Created by Mike Sobolewski on 5/15/17.
