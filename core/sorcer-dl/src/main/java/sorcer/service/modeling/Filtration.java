@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Filtration<T> extends Request, EvaluationComponent, SupportComponent {
+public interface Filtration<T> extends EvaluationComponent, SupportComponent {
 
     public String getName();
 

@@ -547,10 +547,10 @@ public class operator extends Operator {
 		return oe;
 	}
 
-	public static class DataEntry<T> extends Entry<T> {
+	public static class DataSlot<T> extends Slot<String, T> implements  Valuation {
 		private static final long serialVersionUID = 1L;
 
-		DataEntry(String path, T value) {
+		DataSlot(String path, T value) {
 			T v = value;
 			if (v == null)
 				v = (T) Context.none;
@@ -558,10 +558,21 @@ public class operator extends Operator {
 			this.setKey(path);
 			this.set(v);
 		}
+
+		@Override
+		public Object valuate() throws ContextException {
+			return out;
+		}
+
+		@Override
+		public void set(Object value) {
+			out = (T) value;
+		}
+
 	}
 
-	public static DataEntry data(Object data) {
-		return new DataEntry(Context.DSD_PATH, data);
+	public static DataSlot data(Object data) {
+		return new DataSlot(Context.DSD_PATH, data);
 	}
 
 	public static <T> OutputValue<T> outVal(String path, T value, int index) {

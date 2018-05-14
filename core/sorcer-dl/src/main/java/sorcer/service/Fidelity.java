@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 6/27/16.
  */
-public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.entry.Entry, Arg, Request {
+public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.entry.Entry, Arg {
 
     static final long serialVersionUID = 1L;
 

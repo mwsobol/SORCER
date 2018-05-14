@@ -36,7 +36,7 @@ import java.util.Iterator;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Ane extends Subroutine<Double> implements Functionality<Double>, Invocation<Double>,
+public class Ane extends Subroutine<Double> implements Invocation<Double>,
 		Setter, Scopable, Comparable<Double>, func<Double> {
 
 	private static final long serialVersionUID = 1L;

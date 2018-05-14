@@ -34,10 +34,6 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
 
     protected Fi multiFi;
 
-    protected Functionality.Type type = Functionality.Type.VAL;
-
-    public Integer index;
-
     protected Object annotation;
 
     // used for returning the requested value of this type
@@ -47,6 +43,10 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
 
     // when scope of this entry is changed then is not valid
     protected boolean isValid = true;
+
+    public Integer index;
+
+    protected Functionality.Type type = Functionality.Type.VAL;
 
     public MultiFiSlot() {
 	}

@@ -27,7 +27,7 @@ import java.io.Serializable;
  *
  * @author Mike Sobolewski
  */
-public interface Functionality<T> extends Identifiable, Evaluation<T>, Perturbation<T>, Serializable, ent<T> {
+public interface Functionality<T> extends Identifiable, ent<T> {
 
 	/**
 	 * Types allow for grouping in the functional model so all variables of a

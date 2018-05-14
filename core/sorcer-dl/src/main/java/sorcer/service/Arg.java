@@ -106,10 +106,10 @@ public interface Arg extends Serializable {
 		return value;
 	}
 
-	public static Callable entry(Arg[] args, String name) {
+	public static Service selectService(Arg[] args, String name) {
 		for (Arg arg : args) {
-			if (arg instanceof Callable && arg.getName().equals(name))
-				return (Callable)arg;
+			if (arg instanceof Service && arg.getName().equals(name))
+				return (Service)arg;
 		}
 		return null;
 	}

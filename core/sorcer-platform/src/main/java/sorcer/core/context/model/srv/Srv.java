@@ -26,7 +26,7 @@ import static sorcer.eo.operator.task;
 /**
  * Created by Mike Sobolewski on 4/14/15.
  */
-public class Srv extends Subroutine<Object> implements Functionality<Object>, Serviceableness,
+public class Srv extends Subroutine<Object> implements Serviceableness,
         Comparable<Object>, Reactive<Object>, Serializable, func<Object> {
 
     private static Logger logger = LoggerFactory.getLogger(Srv.class.getName());

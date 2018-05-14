@@ -22,7 +22,7 @@ import net.jini.core.lookup.ServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.Operator;
-import sorcer.co.operator.DataEntry;
+import sorcer.co.operator.DataSlot;
 import sorcer.co.tuple.*;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
@@ -632,7 +632,7 @@ public class operator extends Operator {
 					}
 				}
 
-			} else if (ent instanceof DataEntry) {
+			} else if ((Slot)ent instanceof DataSlot) {
 				pcxt.putValueAt(Context.DSD_PATH, ent.getImpl(), i + 1);
 			}
 		}
@@ -672,7 +672,7 @@ public class operator extends Operator {
 				} else {
 					cxt.putValue(ent.getName(), ent.getImpl());
 				}
-			} else if (entryList.get(i) instanceof DataEntry) {
+			} else if ((Slot)entryList.get(i) instanceof DataSlot) {
 				cxt.putValue(Context.DSD_PATH, ent.getImpl());
 			}
 		}
@@ -1488,7 +1488,7 @@ public class operator extends Operator {
 		return fi;
 	}
 
-	public static ServiceFidelity mnFi(Activation... activations) {
+	public static ServiceFidelity mnFi(Activator... activations) {
 		ServiceFidelity fi = new ServiceFidelity(activations);
 		fi.fiType = Fi.Type.ANE;
 		return fi;
@@ -2342,7 +2342,7 @@ public class operator extends Operator {
 		}
 	}
 
-	public static <V> V take(Functionality<V> variability)
+	public static <V> V take(Subroutine<V> variability)
 			throws EvaluationException {
 		try {
 			synchronized (variability) {
@@ -2584,7 +2584,7 @@ public class operator extends Operator {
 	}
 
 
-	public static class Range extends MultiFiSlot<Integer, Integer> {
+	public static class Range extends Slot<Integer, Integer> {
 		private static final long serialVersionUID = 1L;
 		public Integer[] range;
 

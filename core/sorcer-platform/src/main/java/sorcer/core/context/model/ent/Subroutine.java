@@ -26,6 +26,7 @@ import sorcer.service.modeling.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ import static sorcer.mo.operator.add;
 /**
  * @author Mike Sobolewski
  */
-public class Subroutine<T> extends Entry<T> implements Functionality<T>, Dependency, Comparable<T>,
+public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluation<T>, Perturbation<T>, Dependency, Comparable<T>,
 		EvaluationComponent, SupportComponent, Scopable {
 
 	private static final long serialVersionUID = 1L;

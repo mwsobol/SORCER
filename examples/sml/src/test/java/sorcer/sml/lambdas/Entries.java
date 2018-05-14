@@ -121,7 +121,7 @@ public class Entries {
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
                 lambda("s1", (Arg[] args) -> {
                     Arg.set(args, "x",  Arg.get(args, "y"));
-                    return exec(Arg.entry(args, "x")); },
+                    return exec(Arg.selectService(args, "x")); },
                         args("x", "y")));
 
         logger.info("s1 eval: ", eval(mo, "s1"));

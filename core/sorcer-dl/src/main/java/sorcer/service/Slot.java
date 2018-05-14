@@ -6,7 +6,7 @@ import sorcer.service.modeling.Getter;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-public class Slot<K, O> implements Identifiable, Getter, Data<O>, Arg, net.jini.core.entry.Entry, Serializable {
+public class Slot<K, O> implements Identifiable, Getter, Service, Data<O>, Arg, net.jini.core.entry.Entry, Serializable {
 
     protected K key;
 
@@ -99,6 +99,11 @@ public class Slot<K, O> implements Identifiable, Getter, Data<O>, Arg, net.jini.
 
     @Override
     public O getData(Arg... args) throws ContextException {
+        return out;
+    }
+
+    @Override
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
         return out;
     }
 }
