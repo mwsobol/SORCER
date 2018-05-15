@@ -46,14 +46,15 @@ public class SmlOperators {
 
 		// Entries
 		val v1 = val("x1", 10.8);
+		ent v2 = val("x1", 10.8);
+		ent e1 = ent("x1", 10.0);
+		ent e2 = srv(s1);
 		func f1 = proc("x2", 20.0);
-		func f2 = func("v1 + f1", args("v1", "f1"));
+		func f2 = proc("v1 + f1", args("v1", "f1"));
 		func f3 = lmbd("s1", args("v1", "f1"));
 		func f4 = ane("x3", 1.0);
 		func f5 = srv(sig("s1", Class.class));
-		ent e1 = ent("x1", 10.0);
-		ent f5b = srv(s1);
-		ent v1b = val("x1", 10.8);
+
 
 		// Data Contexts
 		cxt c1 = context(v1, val("x4", 10.8), f1);
@@ -78,9 +79,9 @@ public class SmlOperators {
 		Object o10 = response(model(), "path");
 
 		// returning entries
-		ent e2 = act(v1);
-		ent e3 = act(f1);
-		ent e4 = act(context(), "path");
+		ent e3 = act(v1);
+		ent e4 = act(f1);
+		ent e5 = act(context(), "path");
 
 		// exerting mograms
 		mog m3 = exert(task());

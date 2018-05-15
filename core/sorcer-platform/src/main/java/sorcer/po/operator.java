@@ -304,20 +304,20 @@ public class operator extends Operator {
 		return null;
 	}
 
-	public static Proc func() {
+	public static Proc proc() {
 		GroovyInvoker gi = new GroovyInvoker();
 		return new Proc(gi.getName(), gi);
 	}
 
-    public static Proc func(String expression,  Arg... parameters) {
-        return fun(null, expression, null, parameters);
+    public static Proc proc(String expression,  Arg... parameters) {
+        return proc(null, expression, null, parameters);
     }
 
-	public static Proc func(String expression, Context context,  Arg... parameters) {
-		return fun(null, expression, context, parameters);
+	public static Proc proc(String expression, Context context,  Arg... parameters) {
+		return proc(null, expression, context, parameters);
 	}
 
-	public static Proc fun(String path, String expression, Context context,  Arg... parameters) {
+	public static Proc proc(String path, String expression, Context context,  Arg... parameters) {
 		GroovyInvoker gi = new GroovyInvoker(expression, parameters);
 		if (context != null) {
             gi.setScope(context);
