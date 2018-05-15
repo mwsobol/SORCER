@@ -26,7 +26,7 @@ import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
 
 public interface Modeling extends Model {
-
+	
 	public EventRegistration register(long eventID, MarshalledObject handback,
 			RemoteEventListener toInform, long leaseLenght)
 			throws UnknownEventException, RemoteException;

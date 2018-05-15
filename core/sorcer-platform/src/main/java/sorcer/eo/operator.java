@@ -2692,7 +2692,7 @@ public class operator extends Operator {
 
 	public static EntryList designInputs(Value...  entries) {
 		EntryList el = new EntryList(entries);
-		el.setType(Functionality.Type.INPUT);
+		el.setType(Functionality.Type.INITIAL_DESIGN);
 		return el;
 	}
 
