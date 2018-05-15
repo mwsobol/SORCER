@@ -35,16 +35,19 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
 
     public Value(final String path, Object item) {
         super(path, item);
+        isValid = true;
     }
 
     public Value(final String path,  Object item, int index) {
         this(path, item);
         this.index = index;
+        isValid = true;
     }
 
     public Value(final String path, Object item, boolean isPersistant, int index) {
         this(path, item, index);
         this.isPersistent = isPersistant;
+        isValid = true;
     }
 
     public void setValue(Object value) throws SetterException {
@@ -54,6 +57,20 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
             throw new SetterException(e);
         }
         this.impl = (T) value;
+    }
+
+    public T getData(Arg... args) throws ContextException {
+        if (out != null) {
+            if (multiFi == null) {
+                return out;
+            } else if (!multiFi.isChanged() && isValid) {
+                return out;
+            }
+        } else {
+            out = get(args);
+            isValid = true;
+        }
+        return out;
     }
 
     public boolean isPersistent() {

@@ -72,6 +72,8 @@ import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.jobber.JobberAccessor;
 import sorcer.service.Domain;
+import sorcer.service.modeling.Model;
+import sorcer.service.modeling.Modeling;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.*;
@@ -1069,7 +1071,10 @@ public class ProviderDelegate {
                         ||  bean instanceof Exertion)) {
                     m = bean.getClass().getMethod(selector, Mogram.class, Transaction.class, Arg[].class);
                     isContextual = true;
-                } else if (selector.equals("invoke") && (bean instanceof Exertion || bean instanceof Context)) {
+                } else if (selector.equals("evaluate") && bean instanceof Domain) {
+					m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
+					isContextual = true;
+				} else if (selector.equals("invoke") && (bean instanceof Exertion || bean instanceof Context)) {
                     m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
                     isContextual = true;
                 } else if (selector.equals("exert") && bean instanceof ServiceShell) {
@@ -1139,7 +1144,9 @@ public class ProviderDelegate {
 			}
 		} else if (impl instanceof Mogram && selector.equals("exert")) {
             result = ((Mogram)m.invoke(impl, new Object[] { pars[0], null, args })).getContext();
-        } else {
+        } else if (impl instanceof Domain && selector.equals("evaluate")) {
+			result = ((Domain)m.invoke(impl, new Object[] { pars[0], args })).getContext();
+		} else {
 			logger.debug("getProviderName: {} invoking: {}" + getProviderName(), m);
 			logger.debug("imp: {} args: {}" + impl, Arrays.toString(pars));
 			result = (Context) m.invoke(impl, pars);
