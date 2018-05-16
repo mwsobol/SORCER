@@ -60,6 +60,18 @@ public class DataModels {
 
     }
 
+    @Test
+    public void slotValues() throws Exception {
+
+        Context cxt = context("add", inVal("arg/x2", 80.0), slot("arg/x1", 20.0));
+
+        // context slot values correspond to as-is out values of slots
+        // no multifidelities (different inheritance hierarchy than Tuples)
+        assertEquals(value(cxt, "arg/x1"), 20.0);
+        assertEquals(value(cxt, "x1"), null);
+        assertEquals(softValue(cxt, "arg/var/x1"), 20.0);
+
+    }
 
     @Test
     public void softValues() throws Exception {

@@ -297,6 +297,7 @@ public class operator extends Operator {
 		}
 		String name = getUnknown();
 		List<Entry> entryList = new ArrayList();
+		List<Slot> slotList = new ArrayList();
 		List<Subroutine> funcEntryList = new ArrayList();
 		List<Context.Type> types = new ArrayList();
 		List<EntryList> entryLists = new ArrayList();
@@ -332,6 +333,8 @@ public class operator extends Operator {
 				funcEntryList.add((Subroutine) o);
 			} else if (o instanceof Entry) {
 				entryList.add((Entry) o);
+			} else if (o instanceof Slot) {
+				slotList.add((Slot) o);
 			} else if (o instanceof Context.Type) {
 				types.add((Context.Type) o);
 			} else if (o instanceof String) {
@@ -410,11 +413,19 @@ public class operator extends Operator {
 
 		if (cxt instanceof PositionalContext) {
 			PositionalContext pcxt = (PositionalContext) cxt;
-			if (entryList.size() > 0)
+			if (entryList.size() > 0) {
 				popultePositionalContext(pcxt, entryList);
+			}
+			if (slotList.size() > 0) {
+				usePositionalSlots(pcxt, slotList);
+			}
 		} else {
-			if (entryList.size() > 0)
+			if (entryList.size() > 0) {
 				populteContext(cxt, entryList);
+			}
+			if (slotList.size() > 0) {
+				useSlots(cxt, slotList);
+			}
 		}
 		if (funcEntryList.size() > 0) {
 			for (Subroutine p : funcEntryList)
@@ -565,6 +576,24 @@ public class operator extends Operator {
 			throw new ContextException(e);
 		}
 		return cxt;
+	}
+
+
+	protected static void useSlots(ServiceContext pcxt,
+												   List<Slot> slotList) throws ContextException {
+		for (int i = 0; i < slotList.size(); i++) {
+			Slot ent = slotList.get(i);
+				pcxt.put(ent.getName(), ent.getOut());
+			}
+	}
+
+	protected static void usePositionalSlots(PositionalContext pcxt,
+								   List<Slot> slotList) throws ContextException {
+		int k = pcxt.getIndex();
+		for (int i = 0; i < slotList.size(); i++) {
+			Slot ent = slotList.get(i);
+			pcxt.putValueAt(ent.getName(), ent.getOut(), k + i + 1);
+		}
 	}
 
 	protected static void popultePositionalContext(PositionalContext pcxt,
