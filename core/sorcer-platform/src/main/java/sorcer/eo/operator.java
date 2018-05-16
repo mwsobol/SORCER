@@ -333,7 +333,7 @@ public class operator extends Operator {
 				funcEntryList.add((Subroutine) o);
 			} else if (o instanceof Entry) {
 				entryList.add((Entry) o);
-			} else if (o instanceof Slot) {
+			} else if (o.getClass() == Slot.class) {
 				slotList.add((Slot) o);
 			} else if (o instanceof Context.Type) {
 				types.add((Context.Type) o);

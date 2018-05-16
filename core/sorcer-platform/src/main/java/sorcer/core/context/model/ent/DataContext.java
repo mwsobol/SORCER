@@ -33,6 +33,7 @@ public class DataContext<T> extends PositionalContext<T> {
     public DataContext() {
         super();
         key = DATA_MODEL;
+        out = new Date();
         setSubject("data/model", new Date());
         isRevaluable = false;
     }

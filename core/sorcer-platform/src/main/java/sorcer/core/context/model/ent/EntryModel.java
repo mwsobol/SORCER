@@ -72,6 +72,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
     public EntryModel() {
 		super();
 		key = PROC_MODEL;
+		out = new Date();
 		setSubject("proc/model", new Date());
 		isRevaluable = true;
 	}
