@@ -1008,7 +1008,7 @@ public class operator extends Operator {
 				} else if (obj instanceof Value) {
 					out = (T) ((Value) obj).getData();
 				} else if (obj instanceof Proc) {
-                    out = (T) ((Proc) obj).evaluate(args);
+                    out = (T) ((Proc) obj).get(args);
                 } else if (SdbUtil.isSosURL(obj)) {
 					out = (T) ((URL) obj).getContent();
 				} else if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {

@@ -31,6 +31,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.rmi.RemoteException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -186,8 +187,13 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 	}
 
 	@Override
-	public T evaluate(Arg... args) throws EvaluationException {
-		Object[] parameters = getParameters();
+	public T evaluate(Arg... entries) throws RemoteException, InvocationException {
+		Object[] parameters = new Object[0];
+		try {
+			parameters = getParameters();
+		} catch (EvaluationException e) {
+			throw new InvocationException(e);
+		}
 		Object val;
 		Class<?> evalClass = null;
 
@@ -285,7 +291,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 			message.append("parameters: ")
 					.append((parameters == null ? "null" : SorcerUtil.arrayToString(parameters)));
 			logger.error(message.toString(), e);
-			throw new EvaluationException(message.toString(), e);
+			throw new InvocationException(message.toString(), e);
 		}
 		return (T) val;
 	}

@@ -81,9 +81,9 @@ public class CallableInvoker<T> extends ServiceInvoker<T> {
 	}
 	
 	@Override
-	public T invoke(Arg... entries) throws RemoteException,
+	public T process(Arg... args) throws RemoteException,
 			InvocationException {
-		return invoke((Context) null, entries);
+		return invoke((Context) Arg.selectDomain(args), args);
 	}
 
 }

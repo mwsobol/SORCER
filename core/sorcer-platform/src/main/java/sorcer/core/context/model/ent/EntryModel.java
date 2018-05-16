@@ -350,7 +350,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 							Object i = ((Proc) get(((ServiceContext) context)
 									.getExecPath().path())).asis();
 							if (i instanceof ServiceInvoker) {
-								result = ((ServiceInvoker) i).invoke(entries);
+								result = ((ServiceInvoker) i).process(entries);
 							} else
 								throw new InvocationException(
 										"No such invoker at: "

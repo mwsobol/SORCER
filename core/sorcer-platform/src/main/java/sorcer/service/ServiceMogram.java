@@ -797,14 +797,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return cf;
     }
 
-    public ServiceFidelity selectCompositeFidelity(ServiceFidelity fidelity) {
-        if (fidelity.fiType == ServiceFidelity.Type.META) {
+    public Fidelity selectCompositeFidelity(Fidelity fidelity) {
+        if (fidelity.fiType == Fi.Type.META) {
             for (Object obj : fidelity.selects) {
                 if (obj instanceof ServiceFidelity) {
                     if (((ServiceFidelity) obj).fiType == ServiceFidelity.Type.COMPONENT)
                         selectComponentFidelity((ServiceFidelity) obj);
                     else
-                        selectFidelity(((ServiceFidelity) obj).getName());
+                        selectFidelity(((Fidelity) obj).getName());
                 }
             }
         }

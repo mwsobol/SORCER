@@ -254,7 +254,7 @@ public class SrvModel extends EntryModel implements Invocation<Object> {
                         putValue(entry.getName(), entry.get());
                     val = entry;
                 } else if (carrier instanceof ServiceInvoker) {
-                    val =  ((ServiceInvoker)carrier).invoke(args);
+                    val =  ((ServiceInvoker)carrier).process(args);
                 } else if (carrier instanceof Service && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
                     String[] paths = ((Srv)val).getPaths();
                     Arg[] nargs = null;
@@ -313,6 +313,8 @@ public class SrvModel extends EntryModel implements Invocation<Object> {
                         // assume default dereference of Entry is inner Entry
                         val = ((Entry) deref).get(args);
                     }
+                } else if (val instanceof Subroutine){
+                    val = ((Subroutine)val).getValue(args);
                 } else {
                     val = ((Entry)val).get(args);
                 }

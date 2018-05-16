@@ -28,11 +28,6 @@ import java.util.List;
  */
 public class Projection extends ServiceFidelity {
 
-	public Projection(Fidelity fidelity) {
-		this.fiName = fidelity.getName();
-		this.path = fidelity.getPath();
-	}
-
 	public Projection(Fidelity[] fidelities) {
 		super();
 		this.selects = Arrays.asList(fidelities);
@@ -48,15 +43,14 @@ public class Projection extends ServiceFidelity {
 		this.selects.addAll(fiList);
 	}
 
-	public Projection(ServiceFidelity fidelity) {
+	public Projection(Fidelity fidelity) {
 		this.fiName = fidelity.getName();
 		this.path = fidelity.getPath();
 		for (Object fi : fidelity.getSelects()) {
 			if (fi.getClass() == Fidelity.class) {
 				this.selects.add((Fidelity) fi);
-			} else if (fi instanceof ServiceFidelity
-					&& ((ServiceFidelity)fi).getFiType().equals(Type.META)) {
-				this.selects.add(new Projection((ServiceFidelity)fi));
+			} else if (fi instanceof Metafidelity) {
+				this.selects.add(new Projection((List<Service>) fi));
 			}
 		}
 	}

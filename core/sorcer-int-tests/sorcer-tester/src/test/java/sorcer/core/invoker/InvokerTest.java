@@ -500,12 +500,12 @@ public class InvokerTest {
 		pm.putValue("y2", 50.0);
 		pm.putValue("x3", 50.0);
 		pm.putValue("y3", 60.0);
-		logger.info("opt eval: " + alt.invoke());
+		logger.info("opt eval: " + alt.process());
 		assertEquals(eval(alt), 70.0);
 
 		pm.putValue("x2", 50.0);
 		pm.putValue("y2", 40.0);
-		logger.info("opt eval: " + alt.invoke());
+		logger.info("opt eval: " + alt.process());
 		assertEquals(eval(alt), 50.0);
 	}
 

@@ -74,7 +74,7 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
     }
 
     @Override
-    public Double invoke(Arg... entries) throws InvocationException, RemoteException,
+    public Double process(Arg... entries) throws InvocationException, RemoteException,
             InvocationException {
         try {
             return activate(entries);

@@ -221,24 +221,6 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		this.args = new ArgSet(args);
 		return this;
 	}
-	
-	/**
-	 * <p>
-	 * Return the valid eval
-	 * </p>
-	 * 
-	 * @return the valid eval
-	 * @throws EvaluationException 
-	 * @throws RemoteException 
-	 */
-	@Override
-	public T evaluate(Arg... entries) throws EvaluationException, RemoteException {
-			if (lambda != null || evaluator != null)
-				return (T) invokeEvaluator(entries);
-			else
-				throw new EvaluationException("Evaluation#execute() not implemented by: " + this.getClass().getName());
-			
-	}
 
 	public void valueValid(boolean state) {
 		valueIsValid = state;
@@ -343,14 +325,17 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			addPars(pl);
 		}
 	}
-	
+
+	@Override
 	public T invoke(Context context, Arg... args)
-			throws RemoteException, InvocationException {
+		throws RemoteException, EvaluationException {
 		try {
-			if (invokeContext == null)
-				invokeContext = context;
-			else {
-				invokeContext.append(context);
+			if (context != null) {
+				if (invokeContext == null) {
+					invokeContext = context;
+				} else {
+					invokeContext.append(context);
+				}
 			}
 		} catch (ContextException e) {
 			throw new InvocationException(e);
@@ -358,10 +343,11 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		if (evaluator != null)
 			return (T) invokeEvaluator();
 		else
-			return invoke(args);
+			return evaluate(args);
 	}
-	
-	public T invoke(Arg... entries) throws RemoteException, InvocationException {
+
+	@Override
+	public T evaluate(Arg... entries) throws EvaluationException, RemoteException {
 		try {
 			if (entries != null && entries.length > 0) {
 				valueIsValid = false;
@@ -370,7 +356,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 					
 				((ServiceContext)invokeContext).substitute(entries);
 			}
-			if (((ServiceContext)invokeContext).isChanged()) {
+			if (invokeContext.isChanged()) {
 				valueIsValid = false;
 				if (args != null)
 					args.clearArgs();
@@ -382,9 +368,9 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 					   value = (T) lambda.call(invokeContext);
 				} else if (evaluator != null)
 					value = (T) invokeEvaluator(entries);
-				else
-					value = evaluate(entries);
-
+				else {
+					throw new InvocationException("no evalautor for invoker: " + name);
+				}
 				valueIsValid = true;
 			}
 		} catch (Exception e) {
@@ -526,7 +512,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	 */
 	@Override
 	public T process(Arg... entries) throws EvaluationException, RemoteException {
-		return invoke(entries);
+		return invoke((Context)Arg.selectDomain(entries), entries);
 	}
 
 	/* (non-Javadoc)
