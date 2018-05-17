@@ -69,6 +69,7 @@ public class operator {
 
     public static <T> T putValue(Context<T> context, String path, T value) throws ContextException {
         context.putValue(path, value);
+        ((ServiceMogram)context).setChanged(true);
         return value;
     }
 

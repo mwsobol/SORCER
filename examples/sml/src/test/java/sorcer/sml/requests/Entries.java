@@ -335,7 +335,7 @@ public class Entries {
 	@Test
 	public void getConditionalLoopSrvValue() throws Exception {
 
-		Subroutine y1 = proc("y1",
+		func y1 = proc("y1",
 			loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),
 				invoker("lambda",
                         (Context<Double> cxt) -> { putValue(cxt, "x1", v(cxt, "x1") + 1.0);
@@ -351,7 +351,7 @@ public class Entries {
 	public void getConditionalLoopSrvModel() throws Exception {
 
 		Model mdl = model(
-			proc("x1", 10.0), proc("x2", 20.0), proc("x3", 40.0),
+			val("x1", 10.0), val("x2", 20.0), val("x3", 40.0),
 			proc("y1",
 				loop(condition((Context<Double> cxt) -> v(cxt, "x1") < v(cxt, "x2")),
 					invoker("lambda",

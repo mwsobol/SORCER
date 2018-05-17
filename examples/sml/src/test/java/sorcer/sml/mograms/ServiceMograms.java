@@ -147,7 +147,7 @@ public class ServiceMograms {
         logger.info("result: " + value(context(looping), "out"));
         logger.info("model result: " + value(result(mdl), "out"));
         logger.info("multiply result: " + value(result(mdl), "multiply"));
-        // out variable in blosck
+        // out variable in block
         assertTrue(value(context(looping), "out").equals(1000.0));
         // out variable in model
         assertTrue(value(result(mdl), "out").equals(1000.0));

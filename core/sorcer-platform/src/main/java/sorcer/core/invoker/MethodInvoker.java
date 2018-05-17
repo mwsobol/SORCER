@@ -254,7 +254,13 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 						Object[] parameters2 = new Object[3];
 						parameters2[0] = parameters[0];
 						parameters2[1] = null; // Transaction
-						parameters2[2] = args;
+						if (entries != null && entries.length > 0) {
+							parameters2[2] = entries;
+						} else if (args.size() > 0) {
+							parameters2[2] = args.toArray();
+						} else {
+							parameters2[2] = new Arg[0];
+						}
 						parameters = parameters2;
 						// ignore default setup for exertion tasks the call the object provider
 					} else if (parameters != null && paramTypes.length == 1 && (paramTypes[0] == Context.class)

@@ -93,7 +93,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	private boolean isReactive = false;
 
 	// indication that eval has been calculated with recent arguments
-	private boolean valueIsValid = false;
+	protected boolean valueIsValid = false;
 
 	protected Context invokeContext;
 
@@ -327,7 +327,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	}
 
 	@Override
-	public T invoke(Context context, Arg... args)
+	public T invoke(Context context, Arg... entries)
 		throws RemoteException, EvaluationException {
 		try {
 			if (context != null) {
@@ -340,10 +340,10 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		} catch (ContextException e) {
 			throw new InvocationException(e);
 		}
-		if (evaluator != null)
-			return (T) invokeEvaluator();
-		else
-			return evaluate(args);
+//		if (evaluator != null)
+//			return (T) invokeEvaluator();
+//		else
+			return evaluate(entries);
 	}
 
 	@Override
@@ -351,9 +351,9 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		try {
 			if (entries != null && entries.length > 0) {
 				valueIsValid = false;
-				if (invokeContext == null)
+				if (invokeContext == null) {
 					invokeContext = new EntryModel("model/proc");
-					
+				}
 				((ServiceContext)invokeContext).substitute(entries);
 			}
 			if (invokeContext.isChanged()) {
@@ -364,13 +364,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			if (valueIsValid)
 				return value;
 			else {
-				if (lambda != null) {
-					   value = (T) lambda.call(invokeContext);
-				} else if (evaluator != null)
-					value = (T) invokeEvaluator(entries);
-				else {
-					throw new InvocationException("no evalautor for invoker: " + name);
-				}
+				value = (T) invoke(entries);
 				valueIsValid = true;
 			}
 		} catch (Exception e) {
@@ -379,7 +373,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		return value;
 	}
 	
-	private Object invokeEvaluator(Arg... entries)
+	private Object invoke(Arg... entries)
 			throws InvocationException {
 		try {
 			init(this.args);
