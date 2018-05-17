@@ -73,7 +73,7 @@ public class Procedures {
 
 		Context<Double> cxt = context(val("x", 10.0), val("y", 20.0));
 		logger.info("proc eval: " + eval(add, cxt));
-		// process a proc
+		// compute a proc
 		assertTrue(eval(add, cxt).equals(30.0));
 
 	}

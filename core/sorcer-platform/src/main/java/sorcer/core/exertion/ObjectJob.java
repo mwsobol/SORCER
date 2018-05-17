@@ -20,9 +20,7 @@ package sorcer.core.exertion;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
-import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 
@@ -81,7 +79,7 @@ public class ObjectJob extends Job {
 			}
 			evaluator.setParameterTypes(new Class[] { Mogram.class });
 			evaluator.setParameters(new Object[] { this });
-			result = (Job)evaluator.process();
+			result = (Job)evaluator.compute();
 			getControlContext().appendTrace("job by: " + evaluator.getClass().getName());
 		} catch (Exception e) {
 			e.printStackTrace();

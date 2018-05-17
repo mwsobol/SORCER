@@ -204,7 +204,7 @@ public class ControlFlowManager {
      *             exception from other methods
      */
     public Mogram process() throws ExertionException {
-        logger.info("process exertion: " + exertion.getName());
+        logger.info("compute exertion: " + exertion.getName());
         try {
             Mogram result = null;
             if (exertion.isConditional()) {

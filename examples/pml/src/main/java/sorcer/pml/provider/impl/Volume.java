@@ -94,7 +94,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	}
 	
 	private static void processLine(String line) {
-		// use a second Scanner to process the content of each line
+		// use a second Scanner to compute the content of each line
 		Scanner scanner = new Scanner(line);
 		scanner.useDelimiter("=");
 		if (scanner.hasNext()) {
@@ -106,7 +106,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 			else if (key.equals("cylinder/height"))
 				height = new Double(value);
 		} else {
-			logger.info("Empty or invalid line. Unable to process.");
+			logger.info("Empty or invalid line. Unable to compute.");
 		}
 		// no need to call scanner.close(), since the source is a String
 	}

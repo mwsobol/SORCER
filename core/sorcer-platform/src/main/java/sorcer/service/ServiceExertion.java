@@ -658,7 +658,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     public String info() {
         StringBuffer info = new StringBuffer()
                 .append(this.getClass().getName()).append(": " + key);
-        info.append("\n  process sig=").append(getProcessSignature());
+        info.append("\n  compute sig=").append(getProcessSignature());
         info.append("\n  status=").append(status);
         info.append(", exertion ID=").append(mogramId);
         String time = getControlContext().getExecTime();

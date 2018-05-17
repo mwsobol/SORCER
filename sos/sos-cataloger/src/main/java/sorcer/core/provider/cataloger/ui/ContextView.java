@@ -577,7 +577,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 			loadOtherPanel.setSize(300, 100);
 
 		} else if (DELETE_CONTEXT_CONFIRM.equals(command)) {
-			// Confirm a delete and process the action
+			// Confirm a delete and compute the action
 			loadOtherPanel.dispose();
 			if (signatureDispatcher.deleteContext(loadOtherBox
 				.getSelectedItem().toString())) {

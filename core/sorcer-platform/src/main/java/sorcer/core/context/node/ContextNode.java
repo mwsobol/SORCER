@@ -521,7 +521,7 @@ public class ContextNode implements Serializable {
 		}
 
 		if (itemDataVect.elementAt(0).equals("Method")) {
-			// process out the signature of the method
+			// compute out the signature of the method
 			// assuming the following structure "methodName(Type1 arg1, Type2
 			// arg2, ...)"
 
@@ -551,7 +551,7 @@ public class ContextNode implements Serializable {
 
 					StringTokenizer pair = new StringTokenizer((argPair
 							.nextToken()).trim(), " ");
-					// process each pair into type eval and instantiate the
+					// compute each pair into type eval and instantiate the
 					// object
 					String type = (pair.nextToken()).trim();
 					String argV = (pair.nextToken()).trim();
@@ -751,7 +751,7 @@ public class ContextNode implements Serializable {
 			if (((String) itemDataVect.elementAt(1)).equals("String"))
 				obj = obj.toString();
 		} else if (itemDataVect.elementAt(0).equals("Method")) {
-			// process out the signature of the method
+			// compute out the signature of the method
 			// assuming the following structure "methodName(Type1 arg1, Type2
 			// arg2, ...)"
 			// NOTE: The Typei have to be java objects and fully qualified
@@ -789,7 +789,7 @@ public class ContextNode implements Serializable {
 					StringTokenizer pair = new StringTokenizer((argPair
 							.nextToken()).trim(), " ");
 
-					// process each pair into type eval and instantiate the
+					// compute each pair into type eval and instantiate the
 					// object
 					String type = (pair.nextToken()).trim();
 					String argV = (pair.nextToken()).trim();

@@ -35,7 +35,7 @@ public interface  Evaluator <T> extends Evaluation<T>, Activity {
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */
-	public T process(Arg... entries) throws EvaluationException, RemoteException;
+	public T compute(Arg... entries) throws EvaluationException, RemoteException;
 
 	public void addArgs(ArgSet set) throws EvaluationException, RemoteException;
 	

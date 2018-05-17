@@ -284,7 +284,7 @@ public class Task extends ServiceExertion {
 	public String describe() {
 		StringBuilder sb = new StringBuilder(this.getClass().getName() + ": "
 				+ key);
-		sb.append(" task ID: ").append(getId()).append("\n  process sig: ")
+		sb.append(" task ID: ").append(getId()).append("\n  compute sig: ")
 				.append(getProcessSignature());
 		sb.append("\n  status: ").append(getStatus());
 		String time = getControlContext().getExecTime();
@@ -425,7 +425,7 @@ public class Task extends ServiceExertion {
 	}
 
 	public void correctBatchSignatures() {
-		// if all signatures are of service process SRV fiType make all
+		// if all signatures are of service compute SRV fiType make all
 		// except the last one of preprocess PRE fiType
 		List<Service> alls = ((ServiceFidelity)multiFi.getSelect()).getSelects();
 		if (alls.size() > 1) {

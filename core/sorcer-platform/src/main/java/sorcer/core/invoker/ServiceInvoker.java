@@ -28,6 +28,7 @@ import sorcer.core.context.model.ent.Proc;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Data;
+import sorcer.service.modeling.Functionality;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -73,7 +74,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	
 	protected String name;
 	
-	protected String defaultName = "invoker-";
+	protected String defaultName = "invoke   r-";
 	
 	// counter for unnamed instances
 	protected static int count;
@@ -502,10 +503,10 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluator#process(sorcer.service.Arg[])
+	 * @see sorcer.service.Evaluator#compute(sorcer.service.Arg[])
 	 */
 	@Override
-	public T process(Arg... entries) throws EvaluationException, RemoteException {
+	public T compute(Arg... entries) throws EvaluationException, RemoteException {
 		return invoke((Context)Arg.selectDomain(entries), entries);
 	}
 

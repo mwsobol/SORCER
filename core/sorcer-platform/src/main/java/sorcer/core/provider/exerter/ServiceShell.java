@@ -688,7 +688,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				}
 				return finalize((Exertion) out, args);
 			} catch (Exception e) {
-				logger.error("Failed in process", e);
+				logger.error("Failed in compute", e);
 				throw new ExertionException(e);
 			}
 		} else {

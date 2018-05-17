@@ -99,7 +99,7 @@ public class operator extends Operator {
             if (invoker instanceof Incrementor){
                 return ((Incrementor<T>) invoker).next();
             } else {
-                return invoker.process(args);
+                return invoker.compute(args);
             }
         } catch (RemoteException e) {
             throw new EvaluationException(e);

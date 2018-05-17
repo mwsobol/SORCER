@@ -398,7 +398,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 			String currentSelection = (String) cb.getSelectedItem();
 			if (currentSelection.equals("Groovy")) {
 				instructions
-						.setText("<html><b>This is groovy expression</b><p>Instructions for groovy expressions: <ul> <li>Specify paths using _ as a seperator<li>Provider must support the ContextNode object to process</ul><p>  ");
+						.setText("<html><b>This is groovy expression</b><p>Instructions for groovy expressions: <ul> <li>Specify paths using _ as a seperator<li>Provider must support the ContextNode object to compute</ul><p>  ");
 				editField.setColumns(60);
 				editField.setRows(4);
 				// mainPanel.setPreferredSize(new Dimension(500,200));

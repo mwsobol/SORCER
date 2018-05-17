@@ -84,7 +84,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
              "\t\t\t\tand eval commands specified in file\n" +
              "\t-c <command [args]> \t- start non-interactive shell and run <command> with arguments\n" +
              "\t\t\t\tto see the full list of available commands run 'nsh -c help'\n" +
-             "\t-e <file[.ext]> \t- process groovy script contained in specified file\n" +
+             "\t-e <file[.ext]> \t- compute groovy script contained in specified file\n" +
              "\t-f <file[.ext]> \t- eval the sorcer.netlet script provided in the specified file\n"+
              "\t-help \t\t\t- show this help\n" +
              "\t-version \t\t- show NSH version info";
@@ -444,12 +444,12 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                 }
             } else if (args.length > 1) {
                 if (args[0].equals("-f") || args[0].equals("-n")) {
-                    // process file
+                    // compute file
                     ShellCmd cmd = commandTable.get("eval");
                     waitForReggie();
                     cmd.execute();
                 } else if (args[0].equals("-e")) {
-                    // process command line expression
+                    // compute command line expression
                     EvalCmd cmd = (EvalCmd) commandTable.get("eval");
                     // cmd.setScript(instance.getText(args[1]));
                     cmd.setScript(EvalCmd.readFile(huntForTheScriptFile(args[1])));
@@ -1311,7 +1311,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 	 * Initialize the nsh, parsing arguments, loading configuration.
 	 * 
 	 * @param args
-	 *            Command line arguments to process, must not be null
+	 *            Command line arguments to compute, must not be null
 	 * 
 	 * @return Array of string args to be parsed
 	 * 

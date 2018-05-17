@@ -30,7 +30,7 @@ public class ExecUtils {
 	/**
 	 * Execute specified command and return its results. Waits for the command
 	 * to complete and returns its completion status and data written to
-	 * standard output and error streams. The process' standard input is set to
+	 * standard output and error streams. The compute' standard input is set to
 	 * EOF. Example:
 	 * 
 	 * <pre>
@@ -68,7 +68,7 @@ public class ExecUtils {
 	 * Added by E. D. Thompson AFRL/RZTT 20100827 Execute specified command and
 	 * it arguments and return its results. Waits for the command to complete
 	 * and returns its completion status and data written to standard output and
-	 * error streams. The process' standard input is set to EOF. Example:
+	 * error streams. The compute' standard input is set to EOF. Example:
 	 * 
 	 * <pre>
 	 * String[] cmd = { &quot;/bin/ls&quot;, &quot;-lah&quot; };
@@ -101,9 +101,9 @@ public class ExecUtils {
 	}
 
 	/**
-	 * Attach to the specified process and return its results. Waits for the
-	 * process to complete and returns its completion status and data written to
-	 * standard output and error streams. The process' standard input is set to
+	 * Attach to the specified compute and return its results. Waits for the
+	 * compute to complete and returns its completion status and data written to
+	 * standard output and error streams. The compute' standard input is set to
 	 * EOF. Example:
 	 * 
 	 * <pre>
@@ -112,12 +112,12 @@ public class ExecUtils {
 	 * </pre>
 	 * 
 	 * @param process
-	 *            the process to attach to
-	 * @return the results of the process
+	 *            the compute to attach to
+	 * @return the results of the compute
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 * @throws InterruptedException
-	 *             if thread is interrupted before process ends
+	 *             if thread is interrupted before compute ends
 	 */
 	public static CmdResult execCommand(Process process) throws IOException,
 			InterruptedException {
@@ -126,8 +126,8 @@ public class ExecUtils {
 
 	/**
 	 * Added by E. D. Thompson AFRL/RZTT 20100827 Attach to the specified
-	 * process and return its results. Returns data written to standard output
-	 * and error streams. The process standard input is set to EOF. Example:
+	 * compute and return its results. Returns data written to standard output
+	 * and error streams. The compute standard input is set to EOF. Example:
 	 * 
 	 * <pre>
 	 * Process p = runtime.act(&quot;/bin/ls&quot;);
@@ -135,12 +135,12 @@ public class ExecUtils {
 	 * </pre>
 	 * 
 	 * @param process
-	 *            the process to attach to
-	 * @return the results of the process
+	 *            the compute to attach to
+	 * @return the results of the compute
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 * @throws InterruptedException
-	 *             if thread is interrupted before process ends
+	 *             if thread is interrupted before compute ends
 	 */
 	public static CmdResult execCommandNoBlocking(Process process)
 			throws IOException, InterruptedException {
@@ -153,21 +153,21 @@ public class ExecUtils {
 	}
 
 	/**
-	 * Attach to the specified process, feed specified standard input, and
-	 * return process' results. Waits for the process to complete and returns
+	 * Attach to the specified compute, feed specified standard input, and
+	 * return compute' results. Waits for the compute to complete and returns
 	 * completion status and data written to standard output and error streams.
 	 * 
 	 * @see #execCommand(Process)
 	 * 
 	 * @param process
-	 *            the process to attach to
+	 *            the compute to attach to
 	 * @param stdin
-	 *            the data to redirect to process' standard input
-	 * @return the results of the process
+	 *            the data to redirect to compute' standard input
+	 * @return the results of the compute
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 * @throws InterruptedException
-	 *             if thread is interrupted before process ends
+	 *             if thread is interrupted before compute ends
 	 */
 	public static CmdResult execCommand(final Process process,
 			final InputStream stdin, boolean outLogged) throws IOException,
@@ -203,20 +203,20 @@ public class ExecUtils {
 
 	/**
 	 * Added by E. D. Thompson AFRL/RZTT 20100827 Attach to the specified
-	 * process, feed specified standard input, and return process' results.
+	 * compute, feed specified standard input, and return compute' results.
 	 * returns data written to standard output and error streams.
 	 * 
 	 * @see #execCommand(Process)
 	 * 
 	 * @param process
-	 *            the process to attach to
+	 *            the compute to attach to
 	 * @param stdin
-	 *            the data to redirect to process' standard input
-	 * @return the results of the process
+	 *            the data to redirect to compute' standard input
+	 * @return the results of the compute
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 * @throws InterruptedException
-	 *             if thread is interrupted before process ends
+	 *             if thread is interrupted before compute ends
 	 */
 	public static CmdResult execCommandNoBlocking(final Process process,
 			final InputStream stdin) throws IOException, InterruptedException {
@@ -259,14 +259,14 @@ public class ExecUtils {
 	}
 
 	/**
-	 * User-specified handler invoked when associated native process exits.
+	 * User-specified handler invoked when associated native compute exits.
 	 */
 	public static interface ProcessExitHandler {
 		/**
-		 * Invoked when associated process has exited.
+		 * Invoked when associated compute has exited.
 		 * 
 		 * @param process
-		 *            the process that exited.
+		 *            the compute that exited.
 		 */
 		void processExited(Process process);
 	}
@@ -284,7 +284,7 @@ public class ExecUtils {
 	}
 
 	/**
-	 * Represents the result of a native command. Consists of the process exit
+	 * Represents the result of a native command. Consists of the compute exit
 	 * eval together with stdout and stderr dumped to strings.
 	 * 
 	 * @author Dawid Kurzyniec

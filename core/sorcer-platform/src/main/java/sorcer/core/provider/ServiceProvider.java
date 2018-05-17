@@ -1081,7 +1081,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/**
 	 * Defines rediness of the provider: true if this provider is ready to
-	 * process the incoming exertion, otherwise false.
+	 * compute the incoming exertion, otherwise false.
 	 *
 	 * @return true if the provider is redy to exert the exertion
 	 */
@@ -1447,7 +1447,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
     public Exertion doExertion(final Exertion exertion, Transaction txn) throws ExertionException {
         logger.debug("service: {}", exertion.getName());
         // create an instance of the ControlFlowManager and call on the
-        // process method, returns an Exertion
+        // compute method, returns an Exertion
         Exertion out;
         try {
 			if(delegate.isRemoteLogging()) {

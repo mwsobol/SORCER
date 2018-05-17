@@ -1005,7 +1005,7 @@ public class ProviderDelegate {
 //				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof EntryModel)) {
 //					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
 //					isContextual = true;
-//				} else if (selector.equals("process") && impl instanceof Domain) {
+//				} else if (selector.equals("compute") && impl instanceof Domain) {
 //					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
 //					isContextual = true;
 //				} else if (selector.equals("exert") && impl instanceof ServiceShell) {

@@ -129,13 +129,13 @@ public class EvalCmd extends ShellCmd {
 					ifMogramControl = true;
 				} else if (nextToken.equals("-m")) {
 					ifMarshalled = true;
-					// process text
+					// compute text
 				} else if (nextToken.equals("-t")) {
 					if (script == null || script.length() == 0) {
 						throw new NullPointerException("Must have not empty script");
 					}
 				}
-				// process file script
+				// compute file script
 				else if (nextToken.equals("-f")) {
 					scriptFilename = argsList.get(i + 1);
 				} else {

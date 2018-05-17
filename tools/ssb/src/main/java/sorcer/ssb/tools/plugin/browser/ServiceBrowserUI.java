@@ -647,7 +647,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 			while (_inDiscoveredImpl) {
 				try {
 					_logger
-							.error("#### updateFilters: discovery in process: waiting...");
+							.error("#### updateFilters: discovery in compute: waiting...");
 					_discoveryLock.wait();
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -1105,7 +1105,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 			public void actionPerformed(ActionEvent evt) {
 				// sortWindows();
 				int nw = _windows.size();
-				// first process to Maximized windows
+				// first compute to Maximized windows
 				for (int i = 0; i < nw; i++) {
 					final JFrame jf = (JFrame) _windows.get(i);
 					jf.setState(Frame.NORMAL);

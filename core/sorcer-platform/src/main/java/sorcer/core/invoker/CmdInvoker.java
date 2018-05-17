@@ -104,9 +104,9 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	 * @param background
 	 *            true if the script to be run in background
 	 * @param stdin
-	 *            The standard input for the system process
+	 *            The standard input for the system compute
 	 * @param logFile
-	 *            The standard output for the system process
+	 *            The standard output for the system compute
 	 * @throws EvaluationException
 	 */
 	public CmdInvoker(String argarray[], File script, boolean background,
@@ -138,7 +138,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	 * @param background
 	 *            true if the script to be run in background
 	 * @param logFile
-	 *            The standard output for the system process
+	 *            The standard output for the system compute
 	 * @throws EvaluationException
 	 */
 	public CmdInvoker(String argarray[], File scriptFile, boolean background,
@@ -147,7 +147,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	}
 	
 	/**
-	 * Feed specified standard input to the command executing process.
+	 * Feed specified standard input to the command executing compute.
 	 */
 	public CmdInvoker(String cmd, InputStream stdin)
 			throws EvaluationException {

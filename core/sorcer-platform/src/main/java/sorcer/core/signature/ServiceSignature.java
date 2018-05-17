@@ -88,7 +88,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	// associated exertion only if needed
 	protected Exertion exertion;
 
-	/** preprocess, process, postprocess, append context */
+	/** preprocess, compute, postprocess, append context */
 	protected Type execType = Type.PROC;
 
 	// true if is sharesd by multiple evalators associated with this signature

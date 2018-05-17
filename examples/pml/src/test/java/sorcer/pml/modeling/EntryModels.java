@@ -163,7 +163,7 @@ public class EntryModels {
 		assertTrue(eval(pm, "y").equals(20.0));
 		assertTrue(eval(pm, "add").equals(30.0));
 
-		// now process model for its target
+		// now compute model for its target
         responseUp(pm, "add");
 		assertEquals(eval(pm), 30.0);
 	}

@@ -102,7 +102,7 @@ public class LoopInvoker<V> extends ServiceInvoker<V> implements ConditionalInvo
 		try {
 			if (condition == null) {
 				for (int i = 0; i < max - min; i++) {
-					obj = target.process(entries);
+					obj = target.compute(entries);
 				}
 				return obj;
 			} else if (condition != null && max - min == 0) {
@@ -112,17 +112,17 @@ public class LoopInvoker<V> extends ServiceInvoker<V> implements ConditionalInvo
 					condition.setConditionalContext(invokeContext);
 				}
 				while (condition.isTrue()) {
-					obj = target.process(entries);
+					obj = target.compute(entries);
 				}
 			} else if (condition != null && max - min > 0) {
 				// exert min times
 				for (int i = 0; i < min; i++) {
-					obj = target.process(entries);
+					obj = target.compute(entries);
 				}
 				for (int i = 0; i < max - min; i++) {
-					obj = target.process(entries);
+					obj = target.compute(entries);
 					if (condition.isTrue())
-						obj = target.process(entries);
+						obj = target.compute(entries);
 					else
 						return obj;
 				}

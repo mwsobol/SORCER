@@ -78,7 +78,7 @@ public class Models {
 
 	@Test
 	public void lazyLambdaModel() throws Exception {
-		// process multiply only once
+		// compute multiply only once
 
 		Model mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			    ent("add/x1", 20.0), ent("add/x2", 80.0),

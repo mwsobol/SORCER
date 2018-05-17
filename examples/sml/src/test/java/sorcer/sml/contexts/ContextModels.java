@@ -74,15 +74,15 @@ public class ContextModels {
 
 		// declare the modeling responses
 		responseUp(mdl, "invoke");
-		// process the model
+		// compute the model
 		eval(mdl);
 		assertTrue(eval(mdl).equals(4.0));
 
-		// process the model with overwritten inputs
+		// compute the model with overwritten inputs
 		Double result = (Double) eval(mdl, ent("arg/x1", 2.0), ent("arg/x2", 3.0));
 		assertTrue(result.equals(5.0));
 
-		// process the model with new inputs
+		// compute the model with new inputs
 		add(mdl, ent("invoke", invoker("x6 * x7 + x1", args("x1", "x6", "x7"))));
 		result = (Double) eval(mdl, ent("arg/x6", 6.0), ent("arg/x7", 7.0));
 		assertTrue(result.equals(44.0));
@@ -123,7 +123,7 @@ public class ContextModels {
 		// two respnse paths declared for the result
 		responseUp(mdl, "add", "multiply");
 
-		// process the model
+		// compute the model
 		Context result = response(mdl);
 
 		logger.info("result: " + result);

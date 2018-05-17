@@ -93,11 +93,11 @@ public class TaskTest {
 //		
 //		put(task, entry("arg/x1", 1.0), entry("arg/x2", 5.0));
 //		val = (Double)eval(task);
-//		logger.info("process: " + val);
+//		logger.info("compute: " + val);
 //		assertTrue("Wrong eval for 6.0", val == 6.0);
 //				
 //		val = (Double)eval(task, entry("arg/x1", 2.0), entry("arg/x2", 10.0));
-//		logger.info("process: " + val);
+//		logger.info("compute: " + val);
 //		assertTrue("Wrong eval for 12.0", val == 12.0);
 //		
 //		logger.info("task context: " + context(task));

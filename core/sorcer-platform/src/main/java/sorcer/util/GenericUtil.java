@@ -82,11 +82,11 @@ public class GenericUtil {
 				System.out.println("***worker exception = " + e);
 				return;
 			} finally {
-				// keep the process alive so that threads reading
-				// streams can shut down before process is destroyed
+				// keep the compute alive so that threads reading
+				// streams can shut down before compute is destroyed
 				// as a result of a timeout
-				//System.out.println("***worker destroying process.");
-				//process.destroy();
+				//System.out.println("***worker destroying compute.");
+				//compute.destroy();
 			}
 		}
 	}
@@ -124,7 +124,7 @@ public class GenericUtil {
 		 */
 		public void run() {
 			// try {
-			// //exitValue = process.waitFor();
+			// //exitValue = compute.waitFor();
 			// } catch (InterruptedException e) {
 			// return;
 			// }
@@ -1503,7 +1503,7 @@ public class GenericUtil {
 	 *            Script file contents
 	 * @param shellCommand
 	 *            Shell command
-	 * @return Script execution process
+	 * @return Script execution compute
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
@@ -1613,19 +1613,19 @@ public class GenericUtil {
 		// JAVA 7
 		// pb.redirectOutput(stdout);
 		// pb.redirectError(stderr);
-		// Starting process
+		// Starting compute
 		Process p = pb.start();
 
 		// JAVA 6 and below
 		redirectOutput(p, stdout);
 		redirectError(p, stderr);
 
-		// Wait for the process then return the exit eval
+		// Wait for the compute then return the exit eval
 		return p.waitFor();
 	}
 
 	/**
-	 * Redirecting the standard output of a process to a file
+	 * Redirecting the standard output of a compute to a file
 	 * 
 	 * @param p
 	 *            Process
@@ -1639,7 +1639,7 @@ public class GenericUtil {
 	}
 
 	/**
-	 * Redirecting the standard error of a process to a file
+	 * Redirecting the standard error of a compute to a file
 	 * 
 	 * @param p
 	 *            Process
@@ -1712,22 +1712,22 @@ public class GenericUtil {
 		
 		String wrapperLog = childScriptFile.getName() + "_wrap" + wrapperId + ".log";
 		
-		// kill process function
+		// kill compute function
 		script.add("function killChildProcess () {");
 		script.add("\tfor child in `ps -ef | awk -v parent=$1 '{if ($3==parent){print $2}}'`; do");
 		script.add("\t\tkillChildProcess $child");
 		script.add("\tdone");
-		script.add("\techo \"attempting to kill process (dropping kill.txt too) $1:\"");
-		script.add("\techo \"attempting to kill process (dropping kill.txt too) $1:\" >> " + wrapperLog);
+		script.add("\techo \"attempting to kill compute (dropping kill.txt too) $1:\"");
+		script.add("\techo \"attempting to kill compute (dropping kill.txt too) $1:\" >> " + wrapperLog);
 		script.add("\techo genericUtilFileWrapperScript>kill.txt");
 		script.add("\tsleep 2");
 		script.add("\t#ps -efp $1");
 		script.add("\tkill -9 $1");
-		script.add("\techo \"waiting for process $1 to die...\"");
-		script.add("\techo \"waiting for process $1 to die...\" >> " + wrapperLog);
+		script.add("\techo \"waiting for compute $1 to die...\"");
+		script.add("\techo \"waiting for compute $1 to die...\" >> " + wrapperLog);
 		script.add("\twait $1");
-		script.add("\techo \"process $1 is dead.\"");
-		script.add("\techo \"process $1 is dead.\" >> " + wrapperLog); 
+		script.add("\techo \"compute $1 is dead.\"");
+		script.add("\techo \"compute $1 is dead.\" >> " + wrapperLog);
 		script.add("}");
 		script.add("function killChildProcess0 () {");
 		script.add("\tfor child in `ps -ef | awk -v parent=$1 '{if ($3==parent){print $2}}'`; do");
@@ -1828,13 +1828,13 @@ public class GenericUtil {
 //		script.add("\tIS_RUN=`ps -p $SCRIPT_PID > psCheck.txt ; awk -v p=\"$SCRIPT_PID\" 'BEGIN{flag=0} {if ($0~p) {flag=1}} END{print flag}' psCheck.txt`");
 //		script.add("\techo \"check: IS_RUN = $IS_RUN\" >> " + wrapperLog);
 //		script.add("if [ $IS_RUN -eq 0 ]; then");
-//		script.add("\t# need to capture background process exit code");
+//		script.add("\t# need to capture background compute exit code");
 //		script.add("\t#");
 //		script.add("\tEXIT_CODE=0");
 //		script.add("\techo \"calling wait to get exit code\"");
 //		script.add("\techo \"calling wait to get exit code\" >> " + wrapperLog);
 		
-		// drop kill.txt just in case background process didn't die and is checking for kill.txt
+		// drop kill.txt just in case background compute didn't die and is checking for kill.txt
 		script.add("echo \"dropping kill.txt for good measure...\"");
 		script.add("echo \"dropping kill.txt for good measure...\" >> " + wrapperLog);
 		script.add("echo good_measure_kill>kill.txt");
@@ -1850,8 +1850,8 @@ public class GenericUtil {
 		script.add("wait $SCRIPT_PID");
 		script.add("EXIT_CODE=$?");
 		
-		script.add("echo \"done waiting, setting exit code from background process = $EXIT_CODE\"");
-		script.add("echo \"done waiting, setting exit code from background process = $EXIT_CODE\" >> " + wrapperLog );
+		script.add("echo \"done waiting, setting exit code from background compute = $EXIT_CODE\"");
+		script.add("echo \"done waiting, setting exit code from background compute = $EXIT_CODE\" >> " + wrapperLog );
 		//script.add("fi");
 
 //		script.add("echo \"0 ps coming====v\"");
@@ -1995,12 +1995,12 @@ public class GenericUtil {
 	 *            by standard killing of child processes; this is usefull in Windows
 	 *            and possibly other OS when a provider uses a script to run compiled Matlab
 	 *            which, in-turn, makes a system call to a native code.  In this case, the
-	 *            parent-child relationship of process ids appears to be lost (at least on
-	 *            Windows) so specific commands to kill child process may be included in
+	 *            parent-child relationship of compute ids appears to be lost (at least on
+	 *            Windows) so specific commands to kill child compute may be included in
 	 *            this argument.  For example,
 	 *            
-	 *            wmic /interactive:off process where key=\"analyzeWingNoise.exe\" delete
-	 *	     	  wmic /interactive:off process where key=\"NAFNoise.exe\" delete
+	 *            wmic /interactive:off compute where key=\"analyzeWingNoise.exe\" delete
+	 *	     	  wmic /interactive:off compute where key=\"NAFNoise.exe\" delete
 	 *
 	 *			 kill all processes matching the act names in "".
 	 *
@@ -2938,7 +2938,7 @@ public class GenericUtil {
 					worker.interrupt();
 				}
 
-				GenericUtil.appendFileContents("executeCommandWithWorker(): calling process.destroy()...", dir);
+				GenericUtil.appendFileContents("executeCommandWithWorker(): calling compute.destroy()...", dir);
 				process.destroy();
 
 				GenericUtil.appendFileContents("executeCommandWithWorker(): exitValue = " + exitValue, dir);
@@ -3660,10 +3660,10 @@ public class GenericUtil {
 		middleScriptRecords.add("   echo \"EXPIRED=$EXPIRED\"");
 		middleScriptRecords.add("	if [ $EXPIRED -eq 1 ]; then");
 		middleScriptRecords
-				.add("   	echo \"user timeout, SCRIPT_TIMEOUT_SEC=$SCRIPT_TIMEOUT_SEC, reached, killing user script process...\"");
+				.add("   	echo \"user timeout, SCRIPT_TIMEOUT_SEC=$SCRIPT_TIMEOUT_SEC, reached, killing user script compute...\"");
 		middleScriptRecords.add("		kill -9 $SCRIPT_PID");
 		middleScriptRecords
-				.add("		echo \"killed user script process due to timeout, "
+				.add("		echo \"killed user script compute due to timeout, "
 						+ scriptFile.getName() + ", with PID=$SCRIPT_PID\"");
 		// middleScriptRecords.add(" 	scancel $SLURM_JOB_ID");
 		// middleScriptRecords.add("		echo \"killed slurm job id = $SLURM_JOB_ID\" >> "

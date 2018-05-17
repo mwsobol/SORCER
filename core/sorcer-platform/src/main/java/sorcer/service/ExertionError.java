@@ -19,7 +19,7 @@ package sorcer.service;
 
 /**
  * The <code>ExertionError</code> represents an error that is thrown
- * if an exertion is performed by a service provider failing to process it
+ * if an exertion is performed by a service provider failing to compute it
  * correctly. A complementary related throwable and/or ill behaving exertion can
  * be embedded into this exception.
  * 

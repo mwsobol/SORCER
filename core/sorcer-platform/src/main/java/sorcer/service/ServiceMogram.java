@@ -407,7 +407,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
             }
         }
         if (sig != null) {
-            // a select is just a process signature for the selection
+            // a select is just a compute signature for the selection
             selectedFi.select = sig;
         }
         return sig;

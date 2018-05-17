@@ -254,7 +254,7 @@ public class SrvModel extends EntryModel implements Invocation<Object> {
                         putValue(entry.getName(), entry.get());
                     val = entry;
                 } else if (carrier instanceof ServiceInvoker) {
-                    val =  ((ServiceInvoker)carrier).process(args);
+                    val =  ((ServiceInvoker)carrier).compute(args);
                 } else if (carrier instanceof Service && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
                     String[] paths = ((Srv)val).getPaths();
                     Arg[] nargs = null;
@@ -512,7 +512,7 @@ public class SrvModel extends EntryModel implements Invocation<Object> {
                 Exertion xrt = out.exert();
                 return xrt.getDataContext();
             } else {
-                // process model response
+                // compute model response
                 getResponse(entries);
                 return this;
             }

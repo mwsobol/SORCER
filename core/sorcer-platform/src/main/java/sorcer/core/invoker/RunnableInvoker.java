@@ -70,7 +70,7 @@ public class RunnableInvoker<T> extends ServiceInvoker<T> {
 	}
 	
 	@Override
-	public T process(Arg... entries) throws RemoteException,
+	public T compute(Arg... entries) throws RemoteException,
 			InvocationException {
 		return invoke((Context)Arg.selectDomain(entries), entries);
 	}

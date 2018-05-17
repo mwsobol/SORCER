@@ -138,7 +138,7 @@ public class ObjectTask extends Task {
 				}
 			}
 			if (evaluator != null) {
-				if (os.getSelector().equals("process") || os.getSelector().equals("explore")) {
+				if (os.getSelector().equals("compute") || os.getSelector().equals("explore")) {
 					evaluator.setParameterTypes(new Class[]{Context.class, Arg[].class});
 				} else {
 					evaluator.setParameterTypes(new Class[]{Context.class});
@@ -156,7 +156,7 @@ public class ObjectTask extends Task {
 				} else if (dataContext.getArgsPath() != null) {
 					evaluator.setArgs(getParameterTypes(), (Object[]) getArgs());
 				}
-				result = evaluator.process(args);
+				result = evaluator.compute(args);
 			}
 
 			if (result instanceof Context) {

@@ -1284,7 +1284,7 @@ public class operator extends Operator {
 
 	public static Signature defaultSig(Class<?> serviceType) throws SignatureException {
 		if (Modeling.class.isAssignableFrom(serviceType)) {
-			return sig("process", serviceType);
+			return sig("compute", serviceType);
 		} else if (Service.class.isAssignableFrom(serviceType)) {
 			return sig("exert", serviceType);
 		} else {

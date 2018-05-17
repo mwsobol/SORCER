@@ -26,7 +26,7 @@ public interface Reactive<T> {
 
 	/**
 	 * Returns the current eval of this evaluation. The current eval can be
-	 * exiting eval with no need to process it if it's still valid.
+	 * exiting eval with no need to compute it if it's still valid.
 	 * 
 	 * @return the current eval of this evaluation
 	 * @throws EvaluationException

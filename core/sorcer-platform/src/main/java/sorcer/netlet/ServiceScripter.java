@@ -114,7 +114,7 @@ public class ServiceScripter {
             result = scripterThread.getResult();
             return result;
         }
-        throw new ScriptExertException("You must first call process() before calling exert() ");
+        throw new ScriptExertException("You must first call compute() before calling exert() ");
     }
 
     public Object interpret() throws Throwable {
