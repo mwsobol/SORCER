@@ -49,7 +49,7 @@ public interface Modeling extends Model {
 	public Context setInputs(Context entries)
 			throws ContextException, RemoteException;
 
-	public void evaluate(ServiceFidelity... fidelities)
+	public void evaluate(Fidelity... fidelities)
 			throws EvaluationException, RemoteException;
 
 	/**
