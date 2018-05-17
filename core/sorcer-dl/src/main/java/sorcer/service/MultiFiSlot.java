@@ -41,8 +41,11 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
 
     protected Context scope;
 
-    // when scope of this entry is changed then is not valid
+    // when out is still valid
     protected boolean isValid = true;
+
+    // when this slot has changed
+    protected boolean isChanged = false;
 
     public Integer index;
 
@@ -143,6 +146,14 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
         if (impl instanceof MultiFiSlot) {
             ((MultiFiSlot) impl).isValid = state;
         }
+    }
+
+    public void setChanged(boolean state) {
+        isChanged = state;
+    }
+
+    public boolean isChanged() {
+        return isChanged;
     }
 
     public Fi getMultiFi() {

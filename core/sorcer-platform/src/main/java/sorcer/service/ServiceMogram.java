@@ -101,8 +101,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     protected boolean isRevaluable = false;
 
-    protected boolean isChanged = false;
-
     // indicates that is the parent of another mogram
     protected boolean isSuper = false;
 
@@ -602,14 +600,6 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public ExecPath getExecPath() {
         return execPath;
-    }
-
-    public boolean isChanged() {
-        return isChanged;
-    }
-
-    public void setChanged(boolean isChanged) {
-        this.isChanged = isChanged;
     }
 
     public boolean isSuper() {

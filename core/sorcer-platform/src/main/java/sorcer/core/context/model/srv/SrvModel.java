@@ -333,6 +333,8 @@ public class SrvModel extends EntryModel implements Invocation<Object> {
 
         ((Entry)get(path)).setOut(val);
         ((Entry)get(path)).setValid(true);
+        ((Entry)get(path)).setChanged(true);
+        this.setChanged(true);
         return val;
     }
 
