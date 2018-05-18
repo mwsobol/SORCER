@@ -17,7 +17,7 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.util.Response;
+import sorcer.util.TableResponse;
 import sorcer.util.Sorcer;
 
 import java.net.URL;
@@ -95,7 +95,7 @@ public class EntryModels {
 		assertTrue(eval(model, "j1").equals(400.0));
 
 		// get model response
-		Response mr = (Response) eval(model, //proc("x1", 10.0), proc("x2", 50.0),
+		TableResponse mr = (TableResponse) eval(model, //proc("x1", 10.0), proc("x2", 50.0),
 				result("y", outPaths("t4", "t5", "j1")));
 		assertTrue(names(mr).equals(list("t4", "t5", "j1")));
 		assertTrue(values(mr).equals(list(500.0, 100.0, 400.0)));

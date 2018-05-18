@@ -2,11 +2,13 @@ package sorcer.service;
 
 import sorcer.service.modeling.Data;
 import sorcer.service.modeling.Getter;
+import sorcer.service.modeling.slot;
+import sorcer.service.modeling.val;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-public class Slot<K, O> implements Identifiable, Getter, Service, Data<O>, Arg, net.jini.core.entry.Entry, Serializable {
+public class Slot<K, O> implements Identifiable, Getter, Service, Data<O>, Arg, slot<O>, net.jini.core.entry.Entry, Serializable {
 
     protected K key;
 
@@ -57,6 +59,10 @@ public class Slot<K, O> implements Identifiable, Getter, Service, Data<O>, Arg, 
     }
 
     public O asis() throws EvaluationException, RemoteException {
+        return out;
+    }
+
+    public O valuate() throws ContextException {
         return out;
     }
 

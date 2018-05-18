@@ -18,7 +18,9 @@
 package sorcer.service;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
-public interface ModelResponse extends Identifiable, Serializable {
-	
+public interface Response extends Identifiable, Serializable {
+
+	public Object getValue(String path, Arg... args) throws ContextException, RemoteException;
 }

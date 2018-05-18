@@ -34,8 +34,6 @@ public class ExecDependency extends Subroutine<List<Path>> {
 
     private Signature.Paths dependees;
 
-    private Path.State entryState;
-
     @SuppressWarnings("unchecked")
     public ExecDependency(String path, List<Path> paths) {
         key = path;
@@ -66,14 +64,6 @@ public class ExecDependency extends Subroutine<List<Path>> {
 
     public void setCondition(Conditional condition) {
         this.condition = condition;
-    }
-
-    public Path.State getEntryState() {
-        return entryState;
-    }
-
-    public void setEntryState(Path.State entryState) {
-        this.entryState = entryState;
     }
 
 }

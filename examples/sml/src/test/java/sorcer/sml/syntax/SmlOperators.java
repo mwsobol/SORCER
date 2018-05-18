@@ -19,7 +19,7 @@ import static sorcer.co.operator.inVal;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.job;
-import static sorcer.mo.operator.model;
+import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.response;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.srv;
@@ -45,16 +45,16 @@ public class SmlOperators {
 		Object o1 = exec(s1);
 
 		// Entries
-		val v1 = val("x1", 10.8);
-		ent v2 = val("x1", 10.8);
-		ent e1 = ent("x1", 10.0);
+		slot v0 = slot(s1, 10.6);
+		val v1 = val("x2", 10.6);
+		ent v2 = val("x3", 10.7);
+		ent e1 = ent("x4", 10.8);
 		ent e2 = srv(s1);
-		func f1 = proc("x2", 20.0);
+		func f1 = proc("x5", 20.0);
 		func f2 = proc("v1 + f1", args("v1", "f1"));
 		func f3 = lmbd("s1", args("v1", "f1"));
-		func f4 = ane("x3", 1.0);
+		func f4 = ane("x6", 1.0);
 		func f5 = srv(sig("s1", Class.class));
-
 
 		// Data Contexts
 		cxt c1 = context(v1, val("x4", 10.8), f1);
@@ -64,10 +64,10 @@ public class SmlOperators {
 		mog t2 = task(s1, s2, c1);
 		mog m1 = model(v1, f1, f2, f3);
 		mog m2 = model(m1, s1, t1);
-		mog x1 = block(t1, t2, m1);
-		mog x2 = job(t1, job(t2, m1));
+		mog ex1 = block(t1, t2, m1);
+		mog ex2 = job(t1, job(t2, m1));
 
-		// Outputs
+		// Object outputs
 		Object o2 = value(v1);
 		Object o3 = eval(f1);
 		Object o4 = eval(e1);
@@ -87,9 +87,13 @@ public class SmlOperators {
 		mog m3 = exert(task());
 		mog m4 = exert(job());
 		mog m5 = exert(model());
-		cxt c3 = response(model());
-		cxt c4 = context(job());
-		cxt c5 = context(exert(job()));
+		cxt c2 = context(job());
+		cxt c3 = context(exert(job()));
+		cxt c4 = response(model());
+		cxt c5 = response(ex2);
+		rsp r1 = response(model());
+		cxt r2 = out(model());
+		clear(ex2);
 	}
 
 	@Test

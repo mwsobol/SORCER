@@ -25,7 +25,7 @@ import sorcer.service.*;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
-import sorcer.util.Response;
+import sorcer.util.TableResponse;
 import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
@@ -331,7 +331,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 						for (int j = 0; j < rp.outPaths.length; j++)   {
 							vals.add(getValue(rp.outPaths[j].path));
 						}
-						val = new Response(Path.getPathList(rp.outPaths), vals);
+						val = new TableResponse(Path.getPathList(rp.outPaths), vals);
 					}
 					((ServiceContext)context).setFinalized(true);
 					return val;
@@ -381,7 +381,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				for (int j = 0; j < rp.outPaths.length; j++) {
 					vals.add(getValue(rp.outPaths[j].path));
 				}
-				val = new Response(Path.getPathList(rp.outPaths), vals);
+				val = new TableResponse(Path.getPathList(rp.outPaths), vals);
 			}
 		} else if (rp != null && rp.path != null) {
 			val = getValue(rp.path);

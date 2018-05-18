@@ -160,6 +160,12 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	private List<String> traceList = new ArrayList<String>();
 
+	// reponse paths of this context startegu
+	protected List<Path> responsePaths = new ArrayList<Path>();
+
+	// evaluated response for responsePaths
+	protected Context outcome;
+
 	private Object mutexId;
 
 	// for getting execution time
@@ -280,6 +286,16 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	public Flow getFlowType() {
 		return (Flow) get(EXERTION_FLOW);
+	}
+
+	@Override
+	public List<Path> getResponsePaths() {
+		return responsePaths;
+	}
+
+	@Override
+	public void setResponsePaths(List<Path> responsePaths) {
+		this.responsePaths = responsePaths;
 	}
 
 	public void setFlowType(Flow type) {
@@ -644,6 +660,14 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 			}
 		}
 		return null;
+	}
+
+	public Context getOutcome() {
+		return outcome;
+	}
+
+	public void setOutcome(Context outcome) {
+		this.outcome = outcome;
 	}
 
 	public void setSignatures(List<Signature> signatures) {

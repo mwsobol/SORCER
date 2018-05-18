@@ -112,8 +112,8 @@ public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>,
     }
 
     @Override
-    public void clear() {
-        fidelity.clear();
+    public void clearFi() {
+        fidelity.clearFi();
         fidelity.setSelect(null);
     }
 

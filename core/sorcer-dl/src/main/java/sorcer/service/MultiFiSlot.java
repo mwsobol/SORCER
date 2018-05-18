@@ -47,6 +47,9 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
     // when this slot has changed
     protected boolean isChanged = false;
 
+    // if a value is computed then isCached is true - computed only one for all
+    protected boolean isCached = false;
+
     public Integer index;
 
     protected Functionality.Type type = Functionality.Type.VAL;
@@ -146,6 +149,14 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
         if (impl instanceof MultiFiSlot) {
             ((MultiFiSlot) impl).isValid = state;
         }
+    }
+
+    public boolean isCached() {
+        return isCached;
+    }
+
+    public void setCached(boolean cached) {
+        isCached = cached;
     }
 
     public void setChanged(boolean state) {

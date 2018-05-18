@@ -55,6 +55,12 @@ public interface MogramStrategy {
 
     public Strategy.Flow getFlowType();
 
+    public List<Path> getResponsePaths();
+
+    public void setResponsePaths(List<Path> responsePaths);
+
+    public Context getOutcome();
+
     public Strategy.Opti getOpti();
 
 }

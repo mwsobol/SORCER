@@ -98,6 +98,8 @@ public interface Mogram extends Identifiable, Exerter, Request, Scopable, Substi
 
     public Mogram clearScope() throws MogramException;
 
+	public Mogram clear() throws MogramException;
+
     public void reportException(Throwable t);
 
     /**

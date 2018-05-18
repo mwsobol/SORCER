@@ -17,6 +17,7 @@
 
 package sorcer.service;
 
+import sorcer.core.Index;
 import sorcer.core.Tag;
 
 import java.io.Serializable;
@@ -79,6 +80,14 @@ public interface Arg extends Serializable {
 				return (Path)arg;
 		}
 		return null;
+	}
+
+	public static int selectIndex(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Index)
+				return ((Index)arg).getIndex();
+		}
+		return -1;
 	}
 
 	public static Signature.Paths selectPaths(Arg[] args) {

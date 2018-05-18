@@ -158,10 +158,10 @@ public class UtilTest {
 		List<Double> expectedValues = list(2.0, 26193.577, 0.888, 12980.178, 1450.230);
 		String result = "2.0000000e+00   2.6193577e+04   8.8827207e-01   1.2980178e+04   1.4502304e+03";
 
-		Response r1 = new Response(null, result, " ");
+		TableResponse r1 = new TableResponse(null, result, " ");
 //		logger.info("r1:\n" + r1);
 
-		Response r2 = new Response(null, expectedValues);
+		TableResponse r2 = new TableResponse(null, expectedValues);
 //		logger.info("r2:\n" + r2);
 		assertTrue(r1.compareTo(r2, 0.005));
 

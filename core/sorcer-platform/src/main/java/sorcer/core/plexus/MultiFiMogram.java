@@ -274,8 +274,8 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public void clear() {
-        morphFidelity.clear();
+    public void clearFi() {
+        morphFidelity.clearFi();
         morphFidelity.setSelect(null);
     }
 

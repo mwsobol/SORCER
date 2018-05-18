@@ -87,7 +87,7 @@ public interface Fi<T> extends Identifiable, Request {
 
     public void setChanged(boolean state);
 
-	public void clear();
+	public void clearFi();
 
 }
 

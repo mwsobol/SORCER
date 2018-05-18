@@ -183,7 +183,7 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 		return hash * 31 + id.hashCode();
 	}
 
-	public void clear() {
+	public void clearFi() {
 		selects.clear();
 		select = null;
 	}

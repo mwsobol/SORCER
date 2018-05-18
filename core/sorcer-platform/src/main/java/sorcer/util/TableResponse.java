@@ -17,8 +17,11 @@
 
 package sorcer.util;
 
-import sorcer.service.ModelResponse;
+import sorcer.service.Arg;
+import sorcer.service.ContextException;
+import sorcer.service.Response;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,25 +31,25 @@ import java.util.List;
  *
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class Response extends DataTable implements ModelResponse {
+public class TableResponse extends DataTable implements Response {
 
 	private static final long serialVersionUID = 227568394484135275L;
 	
-	public Response() {
+	public TableResponse() {
 		super(1, 0);
 		name = "Response";
 	}
 	
-	public Response(List<String> names) {
+	public TableResponse(List<String> names) {
 		super(names, 1);
 	}
 	
-	public Response(List<String> names, List rowData) {
+	public TableResponse(List<String> names, List rowData) {
 		super(names, 1);
 		addRow(rowData);
 	}
 
-	public Response(List<String> names, String rowData, String delimeter) {
+	public TableResponse(List<String> names, String rowData, String delimeter) {
 		super(names, 1);
 		String[] tokens = SorcerUtil.getTokens(rowData, delimeter);
 		List<Double> doubles = new ArrayList<>();
@@ -61,11 +64,17 @@ public class Response extends DataTable implements ModelResponse {
 		return getColumnIdentifiers();
 	}
 	
-	public Object getValue(String name) {
+@Override
+public Object getValue(String name, Arg... args) throws ContextException, RemoteException {
+		int index = Arg.selectIndex(args);
 		List<String> cns = getColumnNames();
 		for (int i = 0; i < cns.size(); i++) {
 			if (name.equals(cns.get(i))) {
-				return dataList.get(0).get(i);
+				if (index >=0) {
+					return dataList.get(index).get(i);
+				} else {
+					return dataList.get(0).get(i);
+				}
 			}
 		}
 		return null;
@@ -75,7 +84,6 @@ public class Response extends DataTable implements ModelResponse {
 		return getRow(0);
 	}
 
-	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(getClass().getName() + ": " + name +"\n");

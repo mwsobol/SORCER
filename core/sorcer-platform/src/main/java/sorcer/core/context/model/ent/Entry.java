@@ -25,9 +25,6 @@ public class Entry<V> extends MultiFiSlot<String, V>
 
     protected boolean negative;
 
-    // if a value is computed then isCached is true - computed only one for all
-    protected boolean isCached = false;
-
     // its arguments is persisted
     protected boolean isPersistent = false;
 
@@ -35,6 +32,8 @@ public class Entry<V> extends MultiFiSlot<String, V>
     protected boolean isReactive = false;
 
     protected ContextSelection contextSelector;
+
+    private Path.State state;
 
     public Entry() {
     }
@@ -296,14 +295,6 @@ public class Entry<V> extends MultiFiSlot<String, V>
         }
     }
 
-    public boolean isCached() {
-        return isCached;
-    }
-
-    public void setCached(boolean cached) {
-        isCached = cached;
-    }
-
     @Override
     public String getName() {
         return key;
@@ -315,6 +306,14 @@ public class Entry<V> extends MultiFiSlot<String, V>
 
     public String getKey() {
         return key;
+    }
+
+    public Path.State getState() {
+        return state;
+    }
+
+    public void setState(Path.State state) {
+        this.state = state;
     }
 
     public V asis() {

@@ -211,8 +211,8 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 				if (impl instanceof String
 						&& mappable != null && mappable.getValue((String) impl) != null)
 					return (T) mappable.getValue((String) impl);
-				else if (impl instanceof Value || impl instanceof Slot) {
-					return (T) ((Value) impl).getData();
+				else if (impl instanceof Value) {
+					return (T) ((Value)impl).getData();
 				}
 			} catch (ContextException e) {
 				throw new EvaluationException(e);

@@ -986,4 +986,11 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.serviceFidelitySelector = serviceFidelitySelector;
     }
 
+    public Mogram clear() throws MogramException {
+        mogramStrategy.getOutcome().clear();
+        isValid = false;
+        isChanged = true;
+        clearScope();
+        return this;
+    }
 }

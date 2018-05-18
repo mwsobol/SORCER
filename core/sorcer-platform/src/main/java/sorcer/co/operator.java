@@ -22,6 +22,7 @@ import org.rioproject.resolver.ResolverException;
 import org.rioproject.resolver.ResolverHelper;
 import sorcer.Operator;
 import sorcer.co.tuple.*;
+import sorcer.core.Index;
 import sorcer.core.Tag;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
@@ -274,11 +275,11 @@ public class operator extends Operator {
         return list;
 	}
 
-	public static List<Object> values(Response response) {
+	public static List<Object> values(TableResponse response) {
 		return response.getValues();
 	}
 
-	public static List<String> names(Response response) {
+	public static List<String> names(TableResponse response) {
 		return response.getNames();
 	}
 
@@ -547,7 +548,7 @@ public class operator extends Operator {
 		return oe;
 	}
 
-	public static class DataSlot<T> extends Slot<String, T> implements  Valuation {
+	public static class DataSlot<T> extends Slot<String, T> implements  Valuation<T> {
 		private static final long serialVersionUID = 1L;
 
 		DataSlot(String path, T value) {
@@ -560,7 +561,7 @@ public class operator extends Operator {
 		}
 
 		@Override
-		public Object valuate() throws ContextException {
+		public T valuate() throws ContextException {
 			return out;
 		}
 
@@ -1506,6 +1507,10 @@ public class operator extends Operator {
 
 	public static Tag tag(Object object) {
 		return new Tag(object.toString());
+	}
+
+	public static Index ind(int index) {
+		return new Index(index);
 	}
 
 	public static String name(Object identifiable) {
