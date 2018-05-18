@@ -1034,10 +1034,6 @@ public class operator extends Operator {
 		}
 	}
 
-	public static Object eval(Domain domain, String path, Arg... args) throws ContextException {
-		return value((Context)domain, path, args);
-	}
-
 	public static <T> T value(Valuation<T> valuation) throws ContextException {
 		return valuation.valuate();
 	}

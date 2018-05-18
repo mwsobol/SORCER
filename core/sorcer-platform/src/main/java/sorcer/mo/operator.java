@@ -333,6 +333,14 @@ public class operator {
             return (ServiceContext) mogram.getMogramStrategy().getOutcome();
     }
 
+    public static Object eval(Domain domain, String path, Arg... args) throws ContextException {
+        if (domain instanceof Model) {
+            return response(domain, path, args);
+        } else {
+            return value((Context) domain, path, args);
+        }
+    }
+
     public static Object response(Domain model, String path) throws ContextException {
         try {
             return ((ServiceContext)model).getResponseAt(path);

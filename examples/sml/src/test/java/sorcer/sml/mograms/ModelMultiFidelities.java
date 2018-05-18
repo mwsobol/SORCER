@@ -687,7 +687,7 @@ public class ModelMultiFidelities {
         Block mdlBlock = block(
                 loop(
                     condition(cxt -> (double)
-                        eval(cxt, "mFi4") < 900.0), mdl));
+                        value(cxt, "mFi4") < 900.0), mdl));
 
 //        logger.info("DEPS: " + printDeps(mdl));
         mdlBlock = exert(mdlBlock, fi("mFi1", "multiply"));
