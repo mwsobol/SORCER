@@ -335,7 +335,12 @@ public class operator {
 
     public static Object eval(Domain domain, String path, Arg... args) throws ContextException {
         if (domain instanceof Model) {
-            return response(domain, path, args);
+//            return response(domain, path, args);
+            try {
+                return domain.getValue(path, args);
+            } catch (RemoteException e) {
+                throw new ContextException(e);
+            }
         } else {
             return value((Context) domain, path, args);
         }

@@ -76,7 +76,7 @@ public class SmlOperators {
 		Object o7 = eval(job());
 		Object o8 = exec(m1);
 		Object o9 = value(context(), "path");
-		Object o10 = response(model(), "path");
+		Object o10 = eval(model(), "path");
 
 		// returning entries
 		ent e3 = act(v1);
