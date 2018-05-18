@@ -165,6 +165,7 @@ public class SrvModel extends EntryModel implements Invocation<Object> {
                     return ((Srv) val).getOut();
                 } else if (isChanged()) {
                     ((Srv) val).setValid(false);
+                    ((Srv) val).setChanged(true);
                 }
                 Object carrier = ((Srv) val).getImpl();
                 if (carrier instanceof Signature) {
