@@ -800,8 +800,8 @@ public class operator extends Operator {
 
 	public static <T> Tuple2<Fidelity, Service> ent(Fidelity selectFi, Service srvFi) throws ConfigurationException {
 		Tuple2<Fidelity, Service> assoc = new Tuple2<>(selectFi, srvFi);
-		Fidelity fi = (Fidelity)srvFi;
 		if (srvFi instanceof Fidelity) {
+			Fidelity fi = (Fidelity)srvFi;
 			if (!fi.isValid()) {
 				String msg = "Misconfigured entry fidelity: " + srvFi + " for: " + selectFi;
 				logger.warn(msg);
