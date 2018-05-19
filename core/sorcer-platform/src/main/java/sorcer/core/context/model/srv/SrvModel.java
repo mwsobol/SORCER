@@ -430,14 +430,14 @@ public class SrvModel extends EntryModel implements Invocation<Object> {
         Map<String, List<ExecDependency>> dpm = ((ModelStrategy)mogramStrategy).getDependentPaths();
         if (dpm != null && dpm.get(path) != null) {
             List<ExecDependency> del = dpm.get(path);
-            Subroutine entry = entry(path);
+            Entry entry = entry(path);
             if (del != null && del.size() > 0) {
                 for (ExecDependency de : del) {
                     List<Path> dpl = (List<Path>) de.getImpl();
                     if (de.getType().equals(Functionality.Type.FIDELITY)) {
                         Fidelity deFi = (Fidelity) de.annotation();
                         if (deFi.getOption() == Fi.Type.IF) {
-                            if (((Fidelity) entry.getSelectedFidelity()).getName().equals(deFi.getName())) {
+                            if (((Fidelity) entry.getMultiFi().getSelect()).getName().equals(deFi.getName())) {
                                 // apply only to matched fidelity
                                 if (dpl != null && dpl.size() > 0) {
                                     for (Path p : dpl) {
@@ -448,7 +448,7 @@ public class SrvModel extends EntryModel implements Invocation<Object> {
                             continue;
                         } else {
                             // first select the requested fidelity
-                            entry.getServiceFidelity().selectSelect(((Fidelity) de.annotation()).getName());
+                            entry.getMultiFi().selectSelect(((Fidelity) de.annotation()).getName());
                         }
                     } else if (de.getType().equals(Functionality.Type.CONDITION)) {
                         Conditional condition = de.getCondition();

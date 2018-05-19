@@ -701,8 +701,8 @@ public class operator extends Operator {
 				} else {
 					cxt.putValue(ent.getName(), ent.getImpl());
 				}
-			} else if ((Slot)entryList.get(i) instanceof DataSlot) {
-				cxt.putValue(Context.DSD_PATH, ent.getImpl());
+			} else if ((Entry)entryList.get(i) instanceof Entry) {
+				cxt.putValue(entryList.get(i).getName(), ent.getOut());
 			}
 		}
 	}

@@ -335,14 +335,6 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
 		this.negative = negative;
 	}
 
-	public Fi getServiceFidelity() {
-		return multiFi;
-	}
-
-	public String fiName() {
-		return ((Identifiable)multiFi.getSelect()).getName();
-	}
-
 	public Object getSelectedFidelity() {
 		return multiFi.getSelect();
 	}

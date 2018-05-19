@@ -75,9 +75,8 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
 	}
 
 	public Object getImpl() {
-		if (!isValid && multiFi != null) {
-            impl = ((MultiFiSlot)multiFi.getSelect()).getImpl();
-            isValid = true;
+		if (multiFi != null) {
+            impl = multiFi.getSelect();
             return impl;
         } else {
             return impl;
@@ -183,6 +182,9 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
         this.valClass = valClass;
     }
 
+    public String fiName() {
+        return ((Identifiable)multiFi.getSelect()).getName();
+    }
     public boolean equals(Object object) {
         if (object instanceof MultiFiSlot) {
             if (impl != null && ((MultiFiSlot) object).impl == null) {

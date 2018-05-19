@@ -771,7 +771,6 @@ public class operator extends Operator {
 			entry.setType(Functionality.Type.CONSTANT);
 		} else {
 			entry = new Entry(path, value);
-			entry.setType(Functionality.Type.ENT);
 		}
 
 		Context cxt = null;

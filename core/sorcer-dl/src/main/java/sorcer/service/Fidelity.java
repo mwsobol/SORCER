@@ -131,6 +131,7 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 		for (T item : selects) {
 			if (((Identifiable)item).getName().equals(fiName)) {
 				this.select = item;
+				changed = true;
 				break;
 			}
 		}

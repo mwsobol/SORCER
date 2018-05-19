@@ -2816,7 +2816,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 	
-	public Subroutine entry(String path) {
+	public Entry entry(String path) {
 		Object obj = null;
 		if (path != null) {
 			obj = data.get(path);

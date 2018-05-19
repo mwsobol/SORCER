@@ -394,7 +394,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	}
 
 	@Override
-	public Subroutine entry(String path) {
+	public Entry entry(String path) {
 		Object entry = null;
 		if (path != null) {
 			entry = data.get(path);

@@ -878,8 +878,8 @@ public class operator extends Operator {
 	}
 
     public static String fi(Object object) {
-	    if (object instanceof Subroutine) {
-	        return ((Subroutine)object).fiName();
+	    if (object instanceof Entry) {
+	        return ((Entry)object).fiName();
         } else {
             return object.toString();
         }

@@ -38,7 +38,7 @@ public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>,
 
     private String path;
 
-    private ServiceFidelity morpherFidelity;
+    private Fidelity morpherFidelity;
 
     private Uuid id = UuidFactory.generate();
 
@@ -61,14 +61,14 @@ public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>,
 
     public T getSelect() {
         Object obj = fidelity.getSelect();;
-        T select = null;
+        T selection = null;
 
         if (obj instanceof Ref) {
-            select = (T) ((Ref) obj).get();
+            selection = (T) ((Ref) obj).get();
         } else{
-            select = (T) obj;
+            selection = (T) obj;
         }
-        return select;
+        return selection;
     }
 
     public T selectSelect(String name) {
@@ -129,11 +129,11 @@ public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>,
         fidelity.setSelects(selects);
     }
 
-    public ServiceFidelity getMorpherFidelity() {
+    public Fidelity getMorpherFidelity() {
         return morpherFidelity;
     }
 
-    public void setMorpherFidelity(ServiceFidelity morpherFidelity) {
+    public void setMorpherFidelity(Fidelity morpherFidelity) {
         this.morpherFidelity = morpherFidelity;
     }
 
