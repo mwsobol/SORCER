@@ -2869,6 +2869,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public T getValue(String path, Arg... args)
 			throws ContextException {
+	    substitute(args);
         // first managed dependencies
         String currentPath = path;
         if (((ModelStrategy) mogramStrategy).dependers != null
@@ -2885,7 +2886,15 @@ public class ServiceContext<T> extends ServiceMogram implements
         if (obj instanceof Number) {
             return obj;
         } else if (obj instanceof Entry) {
-            return (T) ((Entry)obj).getData();
+        	if (isRevaluable) {
+				try {
+					return (T) ((Entry)obj).evaluate(args);
+				} catch (RemoteException e) {
+					throw new ContextException(e);
+				}
+			} else {
+        		return (T) ((Entry)obj).getData(args);
+			}
         }
 		try {
 			substitute(args);

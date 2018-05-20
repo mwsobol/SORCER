@@ -126,6 +126,13 @@ public class operator {
         return model;
     }
 
+    public static Model setValue(Model model, Slot... entries) throws ContextException {
+        for(Slot slot :entries) {
+            setValue(model, slot.getName(), slot.get());
+        }
+        return model;
+    }
+
     public static Model setValue(Model model, Entry... entries) throws ContextException {
         for(Entry ent :entries) {
             setValue(model, ent.getName(), ent.get());
@@ -333,19 +340,6 @@ public class operator {
             return (ServiceContext) mogram.getMogramStrategy().getOutcome();
     }
 
-    public static Object eval(Domain domain, String path, Arg... args) throws ContextException {
-        if (domain instanceof Model) {
-//            return response(domain, path, args);
-            try {
-                return domain.getValue(path, args);
-            } catch (RemoteException e) {
-                throw new ContextException(e);
-            }
-        } else {
-            return value((Context) domain, path, args);
-        }
-    }
-
     public static Object response(Domain model, String path) throws ContextException {
         try {
             return ((ServiceContext)model).getResponseAt(path);
@@ -398,6 +392,7 @@ public class operator {
             if (model.getFidelityManager() != null) {
                 ((FidelityManager) model.getFidelityManager()).reconfigure(Arg.selectFidelities(args));
             }
+            model.substitute(args);
             return (ServiceContext) model.getResponse(args);
         } catch (RemoteException e) {
             throw new ContextException(e);

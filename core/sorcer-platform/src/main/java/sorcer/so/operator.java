@@ -36,6 +36,8 @@ import sorcer.service.modeling.ent;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import static sorcer.co.operator.value;
+
 /**
  * Created by Mike Sobolewski on 9/10/20.
  */
@@ -106,14 +108,27 @@ public class operator extends Operator {
         }
     }
 
-    public static Object eval(Model model, String selector,
-                              Arg... args) throws ContextException {
-        try {
-            return model.getValue(selector, args);
-        } catch (RemoteException e) {
-            throw new ContextException(e);
+    public static Object eval(Domain domain, String path, Arg... args) throws ContextException {
+        if (domain instanceof Model) {
+//            return response(domain, path, args);
+            try {
+                return domain.getValue(path, args);
+            } catch (RemoteException e) {
+                throw new ContextException(e);
+            }
+        } else {
+            return sorcer.co.operator.value((Context) domain, path, args);
         }
     }
+
+//    public static Object eval(Model model, String selector,
+//                              Arg... args) throws ContextException {
+//        try {
+//            return model.getValue(selector, args);
+//        } catch (RemoteException e) {
+//            throw new ContextException(e);
+//        }
+//    }
 
     public static Context eval(Model model, Context context)
             throws ContextException {
