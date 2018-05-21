@@ -18,6 +18,7 @@
 package sorcer.service.modeling;
 
 
+import sorcer.service.Arg;
 import sorcer.service.Request;
 import sorcer.service.ContextException;
 
@@ -33,7 +34,7 @@ public interface Valuation<T> {
 	 * 
 	 * @return the current execute of this valuation
 	 */
-	public T valuate() throws ContextException;
+	public T valuate(Arg... args) throws ContextException;
 
 	/**
 	 * Sets the current execute of this valuation.

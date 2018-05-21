@@ -124,8 +124,8 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
     }
 
     @Override
-    public T valuate() throws ContextException {
-        return getData();
+    public T valuate(Arg... args) throws ContextException {
+        return getData(args);
     }
 
     public T get(Arg... args) throws ContextException {

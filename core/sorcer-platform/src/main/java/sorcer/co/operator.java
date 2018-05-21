@@ -561,7 +561,7 @@ public class operator extends Operator {
 		}
 
 		@Override
-		public T valuate() throws ContextException {
+		public T valuate(Arg... args) throws ContextException {
 			return out;
 		}
 

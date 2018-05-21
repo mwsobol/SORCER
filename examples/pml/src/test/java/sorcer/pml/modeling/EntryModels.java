@@ -102,8 +102,6 @@ public class EntryModels {
 		assertTrue(values(mr).equals(list(500.0, 100.0, 400.0)));
 	}
 
-
-	@Ignore
 	@Test
 	public void createProcModelWithTask() throws Exception {
 

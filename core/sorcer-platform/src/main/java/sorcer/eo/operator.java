@@ -2814,7 +2814,7 @@ public class operator extends Operator {
 	public static Args signals(Object... args) {
 		return new Args(args);
 	}
-
+	
 	public static Args args(Object... args) {
 		return new Args(args);
 	}

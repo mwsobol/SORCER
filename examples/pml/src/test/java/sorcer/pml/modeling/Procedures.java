@@ -115,7 +115,6 @@ public class Procedures {
 		assertEquals(asis(dbp2).getClass(), URL.class);
 	}
 
-	@Ignore
 	@Test
 	public void procFidelities() throws Exception {
 		

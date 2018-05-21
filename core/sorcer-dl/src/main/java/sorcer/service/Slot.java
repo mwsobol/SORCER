@@ -62,7 +62,7 @@ public class Slot<K, O> implements Identifiable, Getter, Service, Data<O>, Arg, 
         return out;
     }
 
-    public O valuate() throws ContextException {
+    public O valuate(Arg... args) throws ContextException {
         return out;
     }
 

@@ -314,7 +314,6 @@ public class NetJobExertions implements SorcerConstants {
 		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 	}
 
-	@Ignore
 	@Test
 	public void createModelWithTask() throws Exception {
 

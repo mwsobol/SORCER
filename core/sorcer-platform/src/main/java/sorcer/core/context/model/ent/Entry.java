@@ -327,10 +327,22 @@ public class Entry<V> extends MultiFiSlot<String, V>
     @Override
     public V evaluate(Arg... args) throws EvaluationException, RemoteException {
         try {
-            if (this instanceof Functionality) {
-                return (V) ((Functionality)this).getValue(args);
+            Object result = null;
+            if (multiFi == null && impl == null) {
+                return out;
+            } else if (this instanceof Functionality) {
+                result = (V) ((Functionality)this).getValue(args);
+            } else if (this instanceof Valuation){
+                result =  (V) this.valuate(args);
             } else {
-                return getData(args);
+                result = this.get(args);
+            }
+
+            if (result instanceof Exertion) {
+                // we assume that exrtion is asked to be evaluated
+                return (V) ((Exertion) result).getContext();
+            } else {
+                return (V) result;
             }
         } catch (ContextException e) {
             throw new EvaluationException(e);

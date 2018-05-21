@@ -72,6 +72,8 @@ public class operator extends Operator {
                     return (T) ((ServiceContext) ((Entry) entry).getOut()).getValue(((Identifiable)entry).getName());
                 } else if (entry instanceof Incrementor) {
                     return ((Incrementor<T>) entry).next();
+                } else if (entry instanceof Exertion) {
+                    return (T) ((Exertion) entry).exert(args).getContext();
                 } else if (entry instanceof Evaluation) {
                     return (T) ((Evaluation) entry).evaluate(args);
                 } else {
