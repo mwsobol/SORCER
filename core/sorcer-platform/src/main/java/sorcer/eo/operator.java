@@ -1511,7 +1511,7 @@ public class operator extends Operator {
 		return fi;
 	}
 
-	public static ServiceFidelity entFi(String fiName, Value... entries) {
+	public static ServiceFidelity entFi(String fiName, Entry... entries) {
 		ServiceFidelity fi = new ServiceFidelity(fiName, entries);
 		fi.fiType = Fi.Type.ENTRY;
 		return fi;

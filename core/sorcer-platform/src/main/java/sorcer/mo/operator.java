@@ -74,6 +74,24 @@ public class operator {
         return value;
     }
 
+    public static EntryModel setValues(EntryModel model, Entry... entries) throws ContextException {
+        for (Entry e : entries) {
+            Object v = model.get(e.getName());
+            if (v instanceof Entry) {
+                try {
+                    ((Entry)v).setValue(e.asis());
+                } catch (RemoteException e1) {
+                    e1.printStackTrace();
+                }
+            } else {
+                model.put(e.getName(), e.asis());
+            }
+            model.setChanged(true);
+        }
+        ent ("");
+        return model;
+    }
+
     public static Domain setValue(Domain model, String entName, Object value)
         throws ContextException {
         Object entry = model.get(entName);
@@ -296,14 +314,6 @@ public class operator {
         }
     }
 
-    public static Object resp(Mogram model, String path) throws ContextException {
-        return response(model, path);
-    }
-
-    public static Context resp(Mogram model) throws ContextException {
-        return response(model);
-    }
-
     public static Mogram setResponse(Mogram mogram, Path... mogramPaths) throws ContextException {
         List<Path> paths = Arrays.asList(mogramPaths);
         mogram.getMogramStrategy().setResponsePaths(paths);
@@ -344,90 +354,6 @@ public class operator {
         try {
             return ((ServiceContext)model).getResponseAt(path);
         } catch (RemoteException e) {
-            throw new ContextException(e);
-        }
-    }
-
-    public static Object response(Exertion exertion, String path) throws ContextException {
-        try {
-            return ((ServiceContext)exertion.exert().getContext()).getResponseAt(path);
-        } catch (RemoteException | TransactionException | MogramException e) {
-            throw new ContextException(e);
-        }
-    }
-
-    public static ServiceContext response(Mogram mogram, Object... items) throws ContextException {
-        if (mogram instanceof Exertion) {
-            return exertionResponse((Exertion) mogram, items);
-        } else if (mogram instanceof Domain) {
-            return modelResponse((Domain) mogram, items);
-        }
-        return null;
-    }
-
-    public static ServiceContext modelResponse(Domain model, Object... items) throws ContextException {
-        try {
-            List<Arg> argl = new ArrayList();
-            List<Path> paths = new ArrayList();;
-            for (Object item : items) {
-                if (item instanceof Path) {
-                    paths.add((Path) item);
-                } if (item instanceof String) {
-                    paths.add(new Path((String) item));
-                } else if (item instanceof FidelityList) {
-                    argl.addAll((Collection<? extends Arg>) item);
-                } else if (item instanceof List
-                    && ((List) item).size() > 0
-                    && ((List) item).get(0) instanceof Path) {
-                    paths.addAll((List<Path>) item);
-                } else if (item instanceof Arg) {
-                    argl.add((Arg) item);
-                }
-            }
-            if (paths != null && paths.size() > 0) {
-                model.getMogramStrategy().setResponsePaths(paths);
-            }
-            Arg[] args = new Arg[argl.size()];
-            argl.toArray(args);
-            if (model.getFidelityManager() != null) {
-                ((FidelityManager) model.getFidelityManager()).reconfigure(Arg.selectFidelities(args));
-            }
-            model.substitute(args);
-            return (ServiceContext) model.getResponse(args);
-        } catch (RemoteException e) {
-            throw new ContextException(e);
-        }
-    }
-
-    public static ServiceContext exertionResponse(Exertion exertion, Object... items) throws ContextException {
-        try {
-            List<Arg> argl = new ArrayList();
-            List<Path> paths = new ArrayList();;
-            for (Object item : items) {
-                if (item instanceof Path) {
-                    paths.add((Path) item);
-                } if (item instanceof String) {
-                    paths.add(new Path((String) item));
-                } else if (item instanceof FidelityList) {
-                    argl.addAll((Collection<? extends Arg>) item);
-                } else if (item instanceof List
-                    && ((List) item).size() > 0
-                    && ((List) item).get(0) instanceof Path) {
-                    paths.addAll((List<Path>) item);
-                } else if (item instanceof Arg) {
-                    argl.add((Arg) item);
-                }
-            }
-            if (paths != null && paths.size() > 0) {
-                exertion.getMogramStrategy().setResponsePaths(paths);
-            }
-            Arg[] args = new Arg[argl.size()];
-            argl.toArray(args);
-            if (exertion.getFidelityManager() != null) {
-                ((FidelityManager) exertion.getFidelityManager()).reconfigure(Arg.selectFidelities(args));
-            }
-            return (ServiceContext) exertion.exert(args).getContext();
-        } catch (RemoteException | TransactionException | MogramException e) {
             throw new ContextException(e);
         }
     }
@@ -788,13 +714,6 @@ public class operator {
         System.arraycopy(items,  0, dest,  1, items.length);
         dest[0] = model;
         return (Model)context(dest);
-    }
-
-    public static Fidelity<Path> response(String... paths) {
-        Fidelity resp = new Fidelity("RESPONSE");
-        resp.setSelects(Path.getPathList(paths));
-        resp.setType(Fi.Type.RESPONSE);
-        return resp;
     }
 
     public static void update(Mogram mogram, Setup... entries) throws ContextException {

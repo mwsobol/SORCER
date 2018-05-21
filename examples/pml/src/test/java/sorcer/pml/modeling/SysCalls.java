@@ -57,7 +57,7 @@ public class SysCalls {
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 
 		EntryModel pm = procModel(proc(cmd),
-				proc("x", 10.0), ent("y"),
+				val("x", 10.0), val("y"),
 				proc("multiply", invoker("x * y", args("x", "y"))),
 				proc("add", invoker("x + y", args("x", "y"))));
 
@@ -163,7 +163,7 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-		Model sm = srvModel(proc("x", 10.0), ent("y"),
+		Model sm = srvModel(val("x", 10.0), val("y"),
 				proc("multiply", invoker("x * y", args("x", "y"))),
 				proc("add", invoker("x + y", args("x", "y"))),
 				srv("volume", sig("exec", SysCaller.class,
@@ -202,7 +202,7 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-		Model sm = srvModel(proc("x", 10.0), ent("y"),
+		Model sm = srvModel(proc("x", 10.0), val("y"),
 				proc("multiply", invoker("x * y", args("x", "y"))),
 				proc("add", invoker("x + y", args("x", "y"))),
 				srv("volume", sig("exec", SysCallerProvider.class,

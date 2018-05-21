@@ -224,18 +224,6 @@ public class operator extends Operator {
 		return parameter;
 	}
 
-    public static Fidelity pFi(String name) {
-        Fidelity fi =  new Fidelity(name);
-        fi.setType(Fi.Type.SELECT);
-        return fi;
-    }
-
-    public static Fidelity pFi(Subroutine... entries) {
-        Fidelity fi = new Fidelity(entries);
-        fi.fiType = ServiceFidelity.Type.PROC;
-        return fi;
-    }
-
 	public static Invocation invoker(Mappable mappable, String path)
 			throws ContextException {
 		Object obj = mappable.asis(path);
@@ -268,19 +256,19 @@ public class operator extends Operator {
 		return parContext;
 	}
 
-	public static Proc put(EntryModel procModel, String name, Object value) throws ContextException, RemoteException {
-		procModel.putValue(name, value);
-		procModel.setContextChanged(true);
-		return proc(procModel, name);
-	}
-
-	public static EntryModel put(EntryModel procModel, Entry... entries) throws ContextException {
-		for (Entry e : entries) {
-			procModel.putValue(e.getName(), e.getImpl());
-		}
-		procModel.setContextChanged(true);
-		return procModel;
-	}
+//	public static Proc put(EntryModel procModel, String name, Object value) throws ContextException, RemoteException {
+//		procModel.putValue(name, value);
+//		procModel.setContextChanged(true);
+//		return proc(procModel, name);
+//	}
+//
+//	public static EntryModel put(EntryModel procModel, Entry... entries) throws ContextException {
+//		for (Entry e : entries) {
+//			procModel.putValue(e.getName(), e.getImpl());
+//		}
+//		procModel.setContextChanged(true);
+//		return procModel;
+//	}
 
 	public static Proc add(Proc procEntry, Object to)
 			throws ContextException {
@@ -675,7 +663,7 @@ public class operator extends Operator {
 			return null;
 	}
 
-	public static Subroutine ent(Model model, String path) throws ContextException {
+	public static Subroutine proc(Model model, String path) throws ContextException {
         return new Subroutine(path, model.asis(path));
     }
 
@@ -698,6 +686,10 @@ public class operator extends Operator {
 	public static Srv ent(ServiceFidelity fidelity) {
         return srv(fidelity);
     }
+
+	public static Entry ent(String path) {
+		return new Entry(path, null);
+	}
 
 	public static Entry ent(Path path, Object value, Arg... args) {
 		Entry entry = ent(path.getName(), value, args);
@@ -833,7 +825,7 @@ public class operator extends Operator {
 		return assoc;
 	}
 
-	public static Subroutine ent(String path) {
+	public static Subroutine proc(String path) {
 		return new Subroutine(path, null);
 	}
 

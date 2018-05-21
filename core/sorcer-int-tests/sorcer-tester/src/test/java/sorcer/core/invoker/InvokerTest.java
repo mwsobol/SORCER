@@ -37,7 +37,6 @@ import static sorcer.po.operator.*;
 import static sorcer.po.operator.get;
 import static sorcer.po.operator.loop;
 import static sorcer.po.operator.opt;
-import static sorcer.po.operator.put;
 import static sorcer.mo.operator.*;
 import static sorcer.so.operator.*;
 
@@ -510,12 +509,12 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void polAltInvokerTest() throws RemoteException, ContextException {
+	public void multiOptAltInvokerTest() throws RemoteException, ContextException {
 		EntryModel pm = procModel("proc-model");
 		// add(pm, entry("x", 10.0), entry("y", 20.0), proc("x2", 50.0),
 		// proc("y2", 40.0), proc("x3", 50.0), proc("y3", 60.0));
-		add(pm, proc("x", 10.0), proc("y", 20.0), proc("x2", 50.0),
-				proc("y2", 40.0), proc("x3", 50.0), proc("y3", 60.0));
+		add(pm, val("x", 10.0), val("y", 20.0), val("x2", 50.0),
+				val("y2", 40.0), val("x3", 50.0), val("y3", 60.0));
 
 		AltInvoker alt = alt(
 				"alt",
@@ -540,12 +539,12 @@ public class InvokerTest {
 		logger.info("alt eval: " + eval(alt));
 		assertEquals(eval(alt), 50.0);
 
-		put(pm, proc("x", 300.0), proc("y", 200.0));
+		setValues(pm, val("x", 300.0), val("y", 200.0));
 		logger.info("alt eval: " + eval(alt));
 		assertEquals(eval(alt), 510.0);
 
-		put(pm, proc("x", 10.0), proc("y", 20.0), proc("x2", 40.0),
-				proc("y2", 50.0), proc("x3", 50.0), proc("y3", 60.0));
+		setValues(pm, val("x", 10.0), val("y", 20.0), val("x2", 40.0),
+				val("y2", 50.0), val("x3", 50.0), val("y3", 60.0));
 		logger.info("alt eval: " + eval(alt));
 		assertEquals(eval(alt), 70.0);
 	}

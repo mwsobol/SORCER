@@ -275,11 +275,11 @@ public class operator extends Operator {
         return list;
 	}
 
-	public static List<Object> values(TableResponse response) {
+	public static List<Object> values(Row response) {
 		return response.getValues();
 	}
 
-	public static List<String> names(TableResponse response) {
+	public static List<String> names(Row response) {
 		return response.getNames();
 	}
 

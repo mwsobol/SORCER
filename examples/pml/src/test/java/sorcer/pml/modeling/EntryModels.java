@@ -2,6 +2,7 @@ package sorcer.pml.modeling;
 
 import groovy.lang.Closure;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.util.TableResponse;
+import sorcer.util.Row;
 import sorcer.util.Sorcer;
 
 import java.net.URL;
@@ -95,39 +96,37 @@ public class EntryModels {
 		assertTrue(eval(model, "j1").equals(400.0));
 
 		// get model response
-		TableResponse mr = (TableResponse) eval(model, //proc("x1", 10.0), proc("x2", 50.0),
+		Row mr = (Row) query(model, //proc("x1", 10.0), proc("x2", 50.0),
 				result("y", outPaths("t4", "t5", "j1")));
 		assertTrue(names(mr).equals(list("t4", "t5", "j1")));
 		assertTrue(values(mr).equals(list(500.0, 100.0, 400.0)));
-
 	}
 
 
+	@Ignore
 	@Test
-	public void createMogram() throws Exception {
+	public void createProcModelWithTask() throws Exception {
 
 		EntryModel vm = procModel(
 				"Hello Arithmetic #2",
 				// inputs
-				ent("x1"), ent("x2"), proc("x3", 20.0), ent("x4"),
+				val("x1"), val("x2"), val("x3", 20.0), val("x4"),
 				// outputs
 				proc("t4", invoker("x1 * x2", args("x1", "x2"))),
 				proc("t5",
 						task(sig("add", AdderImpl.class),
-								cxt("add", inVal("arg/x3"),
-										inVal("arg/x4"),
+								cxt("add", inVal("x3"), inVal("x4"),
 										result("result/y")))),
 				proc("j1", invoker("t4 - t5", args("t4", "t5"))));
 
-		vm = put(vm, proc("x1", 10.0), proc("x2", 50.0),
-				proc("x4", 80.0));
+		setValues(vm, val("x1", 10.0), val("x2", 50.0),
+				val("x4", 80.0));
 
 		assertTrue(eval(proc(vm, "j1")).equals(400.0));
 
 	}
 
-
-	@Test
+    @Test
 	public void procInvoker() throws Exception {
 
 		EntryModel pm = new EntryModel("proc-model");
@@ -215,7 +214,7 @@ public class EntryModels {
 		// all var parameters (x1, y1, y2) are not initialized
 		Proc y3 = proc("y3", invoker("x + y2", args("x", "y2")));
 		Proc y2 = proc("y2", invoker("x * y1", args("x", "y1")));
-		Proc y1 = proc("y1", invoker("x1 * 5", ent("x1")));
+		Proc y1 = proc("y1", invoker("x1 * 5", args("x1")));
 
 		EntryModel pc = procModel(y1, y2, y3);
 		// any dependent values or args can be updated or added any time

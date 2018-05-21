@@ -31,25 +31,25 @@ import java.util.List;
  *
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class TableResponse extends DataTable implements Response {
+public class Row extends DataTable implements Response {
 
 	private static final long serialVersionUID = 227568394484135275L;
 	
-	public TableResponse() {
+	public Row() {
 		super(1, 0);
 		name = "Response";
 	}
 	
-	public TableResponse(List<String> names) {
+	public Row(List<String> names) {
 		super(names, 1);
 	}
 	
-	public TableResponse(List<String> names, List rowData) {
+	public Row(List<String> names, List rowData) {
 		super(names, 1);
 		addRow(rowData);
 	}
 
-	public TableResponse(List<String> names, String rowData, String delimeter) {
+	public Row(List<String> names, String rowData, String delimeter) {
 		super(names, 1);
 		String[] tokens = SorcerUtil.getTokens(rowData, delimeter);
 		List<Double> doubles = new ArrayList<>();

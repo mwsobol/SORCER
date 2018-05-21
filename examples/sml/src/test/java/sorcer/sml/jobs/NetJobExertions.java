@@ -1,5 +1,6 @@
 package sorcer.sml.jobs;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -27,7 +28,6 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.pipe;
 import static sorcer.po.operator.*;
-import static sorcer.po.operator.put;
 import static sorcer.mo.operator.*;
 import static sorcer.so.operator.*;
 
@@ -314,24 +314,25 @@ public class NetJobExertions implements SorcerConstants {
 		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 	}
 
+	@Ignore
 	@Test
 	public void createModelWithTask() throws Exception {
 
 		EntryModel vm = procModel(
 				"Hello Arithmetic #2",
 				// inputs
-				ent("x1"), ent("x2"), proc("x3", 20.0), ent("x4"),
+				val("x1"), val("x2"), proc("x3", 20.0), val("x4"),
 				// outputs
 				proc("t4", invoker("x1 * x2", args("x1", "x2"))),
 				proc("t5",
 					task("t5",
 						sig("add", Adder.class),
-						cxt("add", inVal("arg/x3"), inVal("arg/x4"),
+						cxt("add", inVal("x3"), inVal("x4"),
 						result("result/y")))),
 				proc("j1", invoker("t4 - t5", args("t4", "t5"))));
 
-		vm = put(vm, proc("x1", 10.0), proc("x2", 50.0),
-				proc("x4", 80.0));
+		vm = setValues(vm, val("x1", 10.0), val("x2", 50.0),
+				val("x4", 80.0));
 				 
 		assertTrue(eval(proc(vm, "j1")).equals(400.0));
 	}

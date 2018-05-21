@@ -17,6 +17,7 @@ import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.printDeps;
 import static sorcer.mo.operator.*;
+import static sorcer.so.operator.*;
 import static sorcer.po.operator.ent;
 
 /**

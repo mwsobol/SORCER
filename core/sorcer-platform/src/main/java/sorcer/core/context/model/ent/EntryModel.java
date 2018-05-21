@@ -25,7 +25,7 @@ import sorcer.service.*;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
-import sorcer.util.TableResponse;
+import sorcer.util.Row;
 import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
@@ -110,9 +110,9 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				ReturnPath rp = Arg.getReturnPath(args);
 				if (rp != null)
 					val = getReturnValue(rp);
-				else if (((ModelStrategy)mogramStrategy).getResponsePaths() != null
-						&& ((ModelStrategy)mogramStrategy).getResponsePaths().size() == 1) {
-					val = asis(((ModelStrategy)mogramStrategy).getResponsePaths().get(0).getName());
+				else if (mogramStrategy.getResponsePaths() != null
+						&& mogramStrategy.getResponsePaths().size() == 1) {
+					val = asis(mogramStrategy.getResponsePaths().get(0).getName());
 				} else {
 					val = super.getValue(path, args);
 				}
@@ -147,11 +147,12 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			}   if (val instanceof ServiceFidelity) {
 				return new Subroutine(path, val).evaluate(args);
 			} else if (path == null && val == null
-					&& ((ModelStrategy)mogramStrategy).getResponsePaths() != null) {
-				if (((ModelStrategy)mogramStrategy).getResponsePaths().size() == 1)
-					return getValue(((ModelStrategy)mogramStrategy).getResponsePaths().get(0).getName(), args);
-				else
+					&& mogramStrategy.getResponsePaths() != null) {
+				if (mogramStrategy.getResponsePaths().size() == 1) {
+					return getValue(mogramStrategy.getResponsePaths().get(0).getName(), args);
+				} else {
 					return getResponse();
+				}
 			} else {
 				if (val == null && scope != null && scope != this) {
 					Object o = scope.getValue(path);
@@ -331,7 +332,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 						for (int j = 0; j < rp.outPaths.length; j++)   {
 							vals.add(getValue(rp.outPaths[j].path));
 						}
-						val = new TableResponse(Path.getPathList(rp.outPaths), vals);
+						val = new Row(Path.getPathList(rp.outPaths), vals);
 					}
 					((ServiceContext)context).setFinalized(true);
 					return val;
@@ -381,7 +382,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				for (int j = 0; j < rp.outPaths.length; j++) {
 					vals.add(getValue(rp.outPaths[j].path));
 				}
-				val = new TableResponse(Path.getPathList(rp.outPaths), vals);
+				val = new Row(Path.getPathList(rp.outPaths), vals);
 			}
 		} else if (rp != null && rp.path != null) {
 			val = getValue(rp.path);

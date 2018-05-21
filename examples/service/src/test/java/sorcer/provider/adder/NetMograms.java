@@ -16,6 +16,7 @@ import sorcer.service.modeling.Model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.so.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.mo.operator.*;
@@ -162,7 +163,7 @@ public class NetMograms {
 		// three entry model
 		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
 				ent(sig("add", Adder.class, prvName("Adder"), result("result/y", inPaths("arg/x1", "arg/x2")))),
-				sorcer.mo.operator.response("add", "arg/x1", "arg/x2"));
+				response("add", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);
 
