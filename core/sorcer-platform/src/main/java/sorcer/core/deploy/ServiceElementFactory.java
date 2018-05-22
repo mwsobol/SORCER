@@ -25,9 +25,7 @@ import org.rioproject.opstring.ClassBundle;
 import org.rioproject.opstring.ServiceBeanConfig;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.resolver.Artifact;
-import org.rioproject.resolver.Resolver;
 import org.rioproject.resolver.ResolverException;
-import org.rioproject.resolver.ResolverHelper;
 import org.rioproject.sla.ServiceLevelAgreements;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
 import org.rioproject.system.capability.platform.OperatingSystem;
@@ -43,9 +41,8 @@ import sorcer.util.SorcerEnv;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.rmi.MarshalledObject;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Create a {@link ServiceElement} from a {@link ServiceSignature}.
@@ -55,14 +52,8 @@ import java.util.concurrent.*;
 public final class ServiceElementFactory  {
     private static final Logger logger = LoggerFactory.getLogger(ServiceElementFactory.class.getName());
     /* The default provider codebase jars */
-    private static final List<String> commonDLJars = Arrays.asList("rio-api-"+ RioVersion.VERSION+".jar");
-    private static final Map<String, ServiceElement> resolvedArtifacts = new ConcurrentHashMap<>();
-    private static final BlockingQueue<ResolveRequest> resolverQueue = new LinkedBlockingDeque<>();
-    private static final ExecutorService futureExecutor = Executors.newCachedThreadPool();
-    private static final ExecutorService execService = Executors.newSingleThreadExecutor();
-    static {
-        execService.submit(new ResolverRunner());
-    }
+    private static final List<String> commonDLJars = Collections.singletonList("rio-api-" +RioVersion.VERSION +".jar");
+    private static final Map<File, ServiceElement> serviceElementsCreated = new ConcurrentHashMap<>();
 
     private ServiceElementFactory(){}
 
@@ -75,11 +66,11 @@ public final class ServiceElementFactory  {
      *
      * @throws ConfigurationException if there are problem reading the configuration
      */
-    public static ServiceElement create(final ServiceSignature signature) throws IOException,
-                                                                                 ConfigurationException,
-                                                                                 ResolverException,
-                                                                                 URISyntaxException {
-        return create(signature.getDeployment());
+    public static ServiceElement create(final ServiceSignature signature, File configFile) throws IOException,
+                                                                                            ConfigurationException,
+                                                                                            ResolverException,
+                                                                                            URISyntaxException {
+        return create(signature.getDeployment(), configFile);
     }
 
     /**
@@ -91,32 +82,20 @@ public final class ServiceElementFactory  {
      *
      * @throws ConfigurationException if there are problem reading the configuration
      */
-    public static ServiceElement create(final ServiceDeployment deployment) throws IOException,
-                                                                                   ConfigurationException,
-                                                                                   ResolverException,
-                                                                                   URISyntaxException {
-        if (Artifact.isArtifact(deployment.getConfig())) {
-            ServiceElement service = resolvedArtifacts.get(deployment.getConfig());
-            if (service == null) {
-                ResolverFutureTask resolverFutureTask = new ResolverFutureTask();
-                ResolveRequest resolveRequest = new ResolveRequest(deployment.getConfig(),
-                                                                   deployment,
-                                                                   resolverFutureTask);
-                futureExecutor.submit(resolverFutureTask);
-                resolverQueue.offer(resolveRequest);
-                try {
-                    service = resolverFutureTask.call();
-                    return service;
-                } catch (InterruptedException | ClassNotFoundException e) {
-                    throw new ResolverException("Failed to get artifact location", e);
-                }
-            } else {
-                return service;
-            }
-        } else {
-            String configurationFilePath = deployment.getConfig();
-            return create(deployment, configurationFilePath);
+    public static ServiceElement create(final ServiceDeployment deployment, File configFile) throws IOException,
+                                                                                         ConfigurationException,
+                                                                                         ResolverException,
+                                                                                         URISyntaxException {
+        if(configFile==null) {
+            return create(deployment, deployment.getConfig());
         }
+        ServiceElement service = serviceElementsCreated.get(configFile);
+        if (service == null) {
+            service = create(deployment, configFile.getAbsolutePath());
+            serviceElementsCreated.put(configFile, service);
+        }
+        return service;
+
     }
 
     private static ServiceElement create(ServiceDeployment deployment,
@@ -443,7 +422,7 @@ public final class ServiceElementFactory  {
         return stringBuilder.toString();
     }
 
-    private static class ResolveRequest {
+    /*private static class ResolveRequest {
         String artifactConfig;
         ResolverFutureTask resolverFutureTask;
         ServiceDeployment deployment;
@@ -478,14 +457,14 @@ public final class ServiceElementFactory  {
                 while (true) {
                     try {
                         ResolveRequest resolveRequest = resolverQueue.take();
-                        ServiceElement serviceElement = resolvedArtifacts.get(resolveRequest.artifactConfig);
+                        ServiceElement serviceElement = serviceElementsCreated.get(resolveRequest.artifactConfig);
                         if(serviceElement==null) {
                             logger.debug("Resolve {}", resolveRequest.artifactConfig);
                             Artifact artifact = new Artifact(resolveRequest.artifactConfig);
                             URL configLocation = resolver.getLocation(artifact.getGAV(), artifact.getType());
                             String configurationFilePath = new File(configLocation.toURI()).getPath();
                             serviceElement = create(resolveRequest.deployment, configurationFilePath);
-                            resolvedArtifacts.put(resolveRequest.artifactConfig, serviceElement);
+                            serviceElementsCreated.put(resolveRequest.artifactConfig, serviceElement);
                         }
                         resolveRequest.resolverFutureTask.setServiceElement(serviceElement);
                     } catch (InterruptedException | ResolverException | URISyntaxException | ConfigurationException | IOException e) {
@@ -497,10 +476,10 @@ public final class ServiceElementFactory  {
             }
 
         }
-    }
+    }*/
 
     static void clear() {
-        resolvedArtifacts.clear();
+        serviceElementsCreated.clear();
     }
 
     private static class ServiceDetails {
