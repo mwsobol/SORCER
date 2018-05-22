@@ -58,7 +58,7 @@ public class CollectionOperators {
 
 
 	@Test
-	public void tuplesOfTypedObjects() throws Exception {
+	public void slotsAndTuples() throws Exception {
 
 		Slot s1 = slot("Mike");
 
@@ -76,6 +76,7 @@ public class CollectionOperators {
 
 		assertTrue(s1 instanceof Slot);
 		assertTrue(t2 instanceof Tuple2);
+		assertTrue(t3 instanceof Tuple3);
 
 		// no casting required
 		String last = t4._2;
