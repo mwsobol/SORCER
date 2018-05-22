@@ -604,13 +604,13 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 					List<Setter> ps = ((ServiceExertion) mogram).getPersisters();
 					if (ps != null) {
 						for (Setter p : ps) {
-							if (p != null && (p instanceof Proc) && ((Proc) p).isMappable()) {
-								String from = ((Proc) p).getName();
+							if (p != null && p instanceof Proc) {
+								String from = p.getName();
 								Object obj;
 								if (mogram instanceof Job)
 									obj = ((Job) mogram).getJobContext().getValue(from);
 								else {
-									obj = ((Exertion) mogram).getContext().getValue(from);
+									obj = mogram.getContext().getValue(from);
 								}
 
 								if (obj != null)

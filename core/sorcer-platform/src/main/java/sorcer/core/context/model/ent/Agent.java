@@ -125,13 +125,13 @@ public class Agent<T> extends Proc<T> implements Serializable {
 		} catch (RemoteException e) {
 			throw new EvaluationException();
 		}
-		invoker.valueValid(true);
+		invoker.setValid(true);
 		return out;
 	}
 	
 	@Override
 	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
-		if (out != null && invoker != null && invoker.valueValid())
+		if (out != null && invoker != null && invoker.isValid())
 			return out;
 		else
 			return (T)process(args);

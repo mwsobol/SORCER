@@ -14,6 +14,7 @@ import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.po.operator;
+import sorcer.service.Arg;
 import sorcer.service.Context;
 import sorcer.service.Domain;
 import sorcer.service.Invocation;
@@ -29,6 +30,7 @@ import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.ent;
 import static sorcer.po.operator.invoker;
+import static sorcer.po.operator.proc;
 import static sorcer.so.operator.*;
 
 /**
@@ -47,16 +49,16 @@ public class ContextModels {
 		EntryModel mdl = procModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
 				val("arg/x3", 3.0), val("arg/x4", 4.0), val("arg/x5", 5.0));
 
-		put(mdl, ent("arg/x6", 6.0));
+		setValues(mdl, val("arg/x6", 6.0));
 		assertTrue(eval(mdl, "arg/x6").equals(6.0));
 
 		// proc is of the Evaluation type
 		// args in models are evaluated
-		put(mdl, ent("arg/x6", ent("overwrite", 20.0)));
+		setValues(mdl, val("arg/x6", val("overwrite", 20.0)));
 		assertTrue(eval(mdl, "arg/x6").equals(20.0));
 
 		// invoker is of the Invocation type
-		put(mdl, ent("arg/x7", invoker("x1 + x3", operator.ents("x1", "x3"))));
+		put(mdl, proc("arg/x7", invoker("x1 + x3", args("x1", "x3"))));
 
 		assertTrue(eval(mdl, "arg/x7").equals(4.0));
 		assertTrue(get(mdl, "arg/x7") instanceof Subroutine);
@@ -67,23 +69,23 @@ public class ContextModels {
 	@Test
 	public void modelingInputsResponses() throws Exception {
 
-		Model mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
-				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
+		Model mdl = procModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
+				val("arg/x3", 3.0), val("arg/x4", 4.0), val("arg/x5", 5.0));
 
-		add(mdl, ent("invoke", invoker("x1 + x3", args("x1", "x3"))));
+		add(mdl, proc("invoke", invoker("x1 + x3", args("x1", "x3"))));
 
 		// declare the modeling responses
 		responseUp(mdl, "invoke");
 		// compute the model
-		eval(mdl);
 		assertTrue(eval(mdl).equals(4.0));
 
 		// compute the model with overwritten inputs
-		Double result = (Double) eval(mdl, ent("arg/x1", 2.0), ent("arg/x2", 3.0));
+		Arg inCxt = context(val("arg/x1", 2.0), val("arg/x2", 3.0));
+		Double result = (Double) eval(mdl, inCxt);
 		assertTrue(result.equals(5.0));
 
 		// compute the model with new inputs
-		add(mdl, ent("invoke", invoker("x6 * x7 + x1", args("x1", "x6", "x7"))));
+		add(mdl, proc("invoke", invoker("x6 * x7 + x1", args("x1", "x6", "x7"))));
 		result = (Double) eval(mdl, ent("arg/x6", 6.0), ent("arg/x7", 7.0));
 		assertTrue(result.equals(44.0));
 	}

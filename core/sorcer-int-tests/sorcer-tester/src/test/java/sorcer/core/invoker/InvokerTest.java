@@ -65,12 +65,9 @@ public class InvokerTest {
 		public Double update(Context arg) throws Exception {
 			setValue(x, value(arg, "x"));
 			setValue(y, value(context, "y"));
-			// x set from 'arg'
-			assertTrue(eval(x).equals(200.0));
-			// y set from construtor's context 'in'
-			assertTrue(eval(y).equals(30.0));
-			assertTrue(eval(z).equals(170.0));
-			return (double)eval(x) + (double)eval(y) + (double)value(pm, "z");
+			logger.info("update x: " + eval(x));
+			logger.info("update y: " + eval(y));
+			return (double)eval(x) + (double)eval(y) + (double)eval(pm, "z");
 		}
 	};
 
@@ -107,7 +104,7 @@ public class InvokerTest {
 		Context arg = context(val("x", 200.0), val("y", 300.0));
 		add(pm, methodInvoker("update", new ContextUpdater(in), arg));
 		logger.info("call eval:" + invoke(pm, "update"));
-		assertEquals(invoke(pm, "update"), 400.0);
+		assertEquals(eval(pm, "update"), 400.0);
 	}
 
 	@Test
@@ -205,48 +202,12 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void invokeProcJobTest() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
-		Context c4 = context("multiply", inVal("arg/x1"), inVal("arg/x2"),
-				result("result/y"));
-		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-				result("result/y"));
-
-		// mograms
-		Task t3 = task(
-				"t3",
-				sig("subtract", SubtractorImpl.class),
-				context("subtract", inVal("arg/x1"), inVal("arg/x2"), outVal("result/y")));
-		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
-		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
-
-		Job j1 = job("j1", sig("exert", ServiceJobber.class),
-					job("j2", t4, t5, sig("exert", ServiceJobber.class)), t3,
-					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-					result("j1/t3/result/y"));
-
-		// logger.info("return path:" + j1.getReturnJobPath());
-		assertEquals(j1.getReturnPath().path, "j1/t3/result/y");
-
-		EntryModel pm = procModel("proc-model");
-		add(pm, as(proc("x1p", "arg/x1"), c4), as(proc("x2p", "arg/x2"), c4), j1);
-		// setting context parameters in a job
-		setValue(pm, "x1p", 10.0);
-		setValue(pm, "x2p", 50.0);
-
-		add(pm, j1);
-		// logger.info("call eval:" + invoke(pm, "j1"));
-		assertEquals(invoke(pm, "j1"), 400.0);
-	}
-
-	@Test
 	public void invokeProcTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
 
-		Proc<Double> x1 = proc("x1", 1.0);
+		Proc x1 = proc("x1", 1.0);
 		// logger.info("invoke eval:" + invoke(x1));
-		assertEquals(invoke(x1), 1.0);
+		assertEquals(eval(x1), 1.0);
 	}
 
 	@Test
@@ -263,41 +224,6 @@ public class InvokerTest {
 		invoke(y, proc("x1", 10.0), proc("x2", 20.0));
 //		logger.info("y: " + eval(y));
 		assertTrue(eval(y).equals(30.0));
-
-//		logger.info("y scope: " + scope(y));
-		assertEquals(((Context)scope(y)).size(), 2);
-	}
-
-	@Test
-	public void exertionInvokerTest() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
-		Context c4 = context("multiply", inVal("arg/x1"), inVal("arg/x2"),
-				result("result/y"));
-		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-				result("result/y"));
-
-		// mograms
-		Task t3 = task(
-				"t3",
-				sig("subtract", SubtractorImpl.class),
-				context("subtract", inVal("arg/x1"), inVal("arg/x2"), outVal("result/y")));
-		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
-		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
-
-		Job j1 = job("j1", sig("exert", ServiceJobber.class),
-				job("j2", t4, t5, sig("exert", ServiceJobber.class)), t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
-
-		EntryModel pm = procModel("proc-model");
-		add(pm, as(proc("x1p", "arg/x1"), c4), as(proc("x2p", "arg/x2"), c4), j1);
-		// setting context parameters in a job
-		setValue(pm, "x1p", 10.0);
-		setValue(pm, "x2p", 50.0);
-
-		add(pm, exertInvoker("invoke j1", j1, "j1/t3/result/y"));
-		// logger.info("call eval:" + invoke(pm, "invoke j1"));
-		assertEquals(invoke(pm, "invoke j1"), 400.0);
 	}
 
 	@Test
@@ -431,20 +357,19 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void polOptInvokerTest() throws RemoteException, ContextException {
+	public void smlOptInvokerTest() throws RemoteException, ContextException {
 		EntryModel pm = procModel("proc-model");
 		add(pm,
-				proc("x", 10.0),
-				proc("y", 20.0),
+				val("x", 10.0),
+				val("y", 20.0),
 				opt("opt", condition(pm, "{ x, y -> x > y }", "x", "y"),
 						invoker("x + y", args("x", "y"))));
 
 		logger.info("opt eval: " + value(pm, "opt"));
 		assertEquals(value(pm, "opt"), null);
 
-		put(pm, "x", 300.0);
-		put(pm, "y", 200.0);
-		logger.info("opt eval: " + value(pm, "opt"));
+		setValues(pm, val("x", 300.0), val("y", 200.0));
+		logger.info("opt eval: " + eval(pm, "opt"));
 		assertEquals(value(pm, "opt"), 500.0);
 	}
 

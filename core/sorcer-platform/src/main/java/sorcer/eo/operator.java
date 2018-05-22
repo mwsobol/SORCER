@@ -734,51 +734,12 @@ public class operator extends Operator {
 		return context;
 	}
 
-	public static Context put(EntryModel model, Identifiable... objects)
-			throws RemoteException, ContextException {
-		return put((Context) model, objects);
-	}
 
 	public static Context put(Context context, Identifiable... objects)
-			throws RemoteException, ContextException {
-		for (Identifiable i : objects) {
+		throws RemoteException, ContextException {
+		for (Identifiable obj : objects) {
 			// just replace the eval
-			if (((ServiceContext) context).containsPath(i.getName())) {
-				context.putValue(i.getName(), i);
-				continue;
-			}
-
-			if (context instanceof PositionalContext) {
-				PositionalContext pc = (PositionalContext) context;
-				if (i instanceof InputValue) {
-					pc.putInValueAt(i.getName(), i, pc.getTally() + 1);
-				} else if (i instanceof OutputValue) {
-					pc.putOutValueAt(i.getName(), i, pc.getTally() + 1);
-				} else if (i instanceof InoutValue) {
-					pc.putInoutValueAt(i.getName(), i, pc.getTally() + 1);
-				} else {
-					pc.putValueAt(i.getName(), i, pc.getTally() + 1);
-				}
-			} else if (context instanceof ServiceContext) {
-				if (i instanceof InputValue) {
-					context.putInValue(i.getName(), i);
-				} else if (i instanceof OutputValue) {
-					context.putOutValue(i.getName(), i);
-				} else if (i instanceof InoutValue) {
-					context.putInoutValue(i.getName(), i);
-				} else {
-					context.putValue(i.getName(), i);
-				}
-			} else {
-				context.putValue(i.getName(), i);
-			}
-			if (i instanceof Subroutine) {
-				Subroutine e = (Subroutine) i;
-				if (e.isAnnotated()) context.mark(e.getName(), e.annotation().toString());
-				if (e.asis() instanceof Scopable) {
-					((Scopable) e.asis()).setScope(context);
-				}
-			}
+			((ServiceContext)context).put(obj.getName(), obj);
 		}
 		return context;
 	}
@@ -2395,7 +2356,6 @@ public class operator extends Operator {
 		Object obj = null;
 		if (mogram instanceof Context) {
 			obj = ((ServiceContext) mogram).get(path);
-
 			if (obj != null && obj instanceof Mappable) {
 				while (obj instanceof Mappable ||
 						(obj instanceof Reactive && ((Reactive) obj).isReactive())) {

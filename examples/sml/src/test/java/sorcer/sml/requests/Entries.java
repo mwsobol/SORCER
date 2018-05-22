@@ -126,8 +126,8 @@ public class Entries {
 
         @Override
         public Double invoke(Context<Double> cxt, Arg... args) throws RemoteException, ContextException {
-            Entry<Double> x = proc("x", 20.0);
-            Entry<Double> y = proc("y", 30.0);
+            Entry<Double> x = val("x", 20.0);
+            Entry<Double> y = val("y", 30.0);
             Entry<Double> z = proc("z", invoker("x - y", x, y));
 
             if (value(cxt, "x") != null)
@@ -179,7 +179,7 @@ public class Entries {
         assertEquals(eval(m1), 40.0);
 
         // method invocation with a scope
-        Model scope = model(proc("x", 200.0), proc("y", 300.0));
+        Context scope = context(val("x", 200.0), val("y", 300.0));
         m1 = proc("m1", methodInvoker("invoke", obj, scope));
         assertEquals(eval(m1), 400.0);
     }

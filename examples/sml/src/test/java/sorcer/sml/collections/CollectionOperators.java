@@ -18,6 +18,9 @@ import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ent;
+import sorcer.service.modeling.func;
+import sorcer.service.modeling.val;
 import sorcer.util.Runner;
 import sorcer.util.DataTable;
 
@@ -99,6 +102,22 @@ public class CollectionOperators {
 
 	}
 
+
+	@Test
+	public void valuesAndSubroutines() throws Exception {
+
+		val v1 = val("x", 30.0);
+		assertEquals(value(v1), 30.0);
+
+		func p2 = proc("x", 20.0);
+		assertEquals(eval(p2), 20.0);
+
+		ent p1 = proc("x", 10.0);
+		assertEquals(eval(p1), 10.0);
+
+	}
+
+
 	@Test
 	public void genericArrayOperator() throws Exception {
 
@@ -166,59 +185,13 @@ public class CollectionOperators {
 	}
 
 	@Test
-	public void entryOperator() throws Exception {
-
-		Entry<Double> e = val("arg/x1", 10.0);
-		assertEquals("arg/x1", key(e));
-		// a path is a String - usually a sequence of attributes
-		assertEquals("arg/x1", path(e));
-
-		assertFalse(isPersistent(e));
-		assertTrue(asis(e) instanceof Double);
-		assertTrue(eval(e).equals(10.0));
-		assertTrue(asis(e).equals(10.0));
-
-		// make the entry persistent
-		// eval is not yet persisted
-		persistent(e);
-		assertTrue(isPersistent(e));
-		assertFalse(asis(e) instanceof URL);
-		assertTrue(eval(e).equals(10.0));
-		assertTrue(asis(e) instanceof URL);
-		setValue(e, 50.0);
-		assertTrue(eval(e).equals(50.0));
-		assertTrue(asis(e) instanceof URL);
-
-		// create service strategy entry
-		Entry se1 = strategyEnt("j1/j2",
-				strategy(Strategy.Access.PULL, Strategy.Flow.PAR));
-		assertEquals(flow(se1), Strategy.Flow.PAR);
-		assertEquals(access(se1), Strategy.Access.PULL);
-
-		// store the valuate of the entry (parameter)
-		URL se1Url = storeVal(se1);
-		Strategy st1 = (Strategy)content(se1Url);
-		assertTrue(isPersistent(se1));
-		assertTrue(impl(se1) instanceof URL);
-		assertTrue(flow(se1).equals(flow(st1)));
-		assertTrue(access(se1).equals(access(st1)));
-
-		// store an object
-		store(eval(se1));
-		Strategy st2 = (Strategy)content(se1Url);
-		assertTrue(flow(se1).equals(flow(st2)));
-		assertTrue(access(se1).equals(access(st2)));
-
-	}
-
-	@Test
 	public void dbValandStoreValOperators() throws Exception {
 
 		// create a persistent entry
 		Entry<Double> de = dbVal("x3", 110.0);
-		assertFalse(asis(de) instanceof URL);
+		assertFalse(impl(de) instanceof URL);
 		assertTrue(eval(de).equals(110.0));
-		assertTrue(asis(de) instanceof URL);
+		assertTrue(impl(de) instanceof URL);
 
 		// create an entry
 		Entry<Double> e = ent("x1", 10.0);
@@ -275,20 +248,15 @@ public class CollectionOperators {
 	}
 
 	@Test
-	public void dbEntOperator() throws Exception {
+	public void persistentOperator() throws Exception {
 
 		// persist values of args
-		Entry dbp1 = persistent(ent("design/in", 25.0));
-        Subroutine dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
+        Subroutine dbp2 = proc("url/sobol", "http://sorcersoft.org/sobol");
+		persistent(dbp2);
 
-		assertFalse(asis(dbp1) instanceof URL);
-		assertTrue(asis(dbp2) instanceof URL);
-
-		assertTrue(eval(dbp1).equals(25.0));
+		assertFalse(asis(dbp2) instanceof URL);
 		assertEquals(eval(dbp2), "http://sorcersoft.org/sobol");
-
-		assertTrue(asis(dbp1) instanceof URL);
-		assertTrue(asis(dbp2) instanceof URL);
+		assertTrue(impl(dbp2) instanceof URL);
 
 		// store args, not their arguments) in the data store
 		URL p1Url = store(val("design/in", 30.0));
@@ -296,6 +264,44 @@ public class CollectionOperators {
 
 		assertEquals(eval((Entry)content(p1Url)), 30.0);
 		assertEquals(eval((Entry)content(p2Url)), "http://sorcersoft.org");
+
+	}
+
+	@Test
+	public void dbEntOperator() throws Exception {
+
+		Entry<Double> e = dbEnt("arg/x1", 10.0);
+		assertEquals("arg/x1", key(e));
+		// a path is a String - usually a sequence of attributes
+		assertEquals("arg/x1", path(e));
+
+		assertTrue(eval(e).equals(10.0));
+		assertTrue(isPersistent(e));
+		assertTrue(eval(e).equals(10.0));
+		assertTrue(asis(e) instanceof URL);
+		setValue(e, 50.0);
+		assertTrue(eval(e).equals(50.0));
+		assertTrue(asis(e) instanceof URL);
+
+		// create service strategy entry
+		Entry se1 = strategyEnt("j1/j2",
+			strategy(Strategy.Access.PULL, Strategy.Flow.PAR));
+		assertEquals(flow(se1), Strategy.Flow.PAR);
+		assertEquals(access(se1), Strategy.Access.PULL);
+
+		// store the valuate of the entry (parameter)
+		URL se1Url = storeVal(se1);
+		Strategy st1 = (Strategy)content(se1Url);
+		assertTrue(isPersistent(se1));
+		assertTrue(impl(se1) instanceof URL);
+		assertTrue(flow(se1).equals(flow(st1)));
+		assertTrue(access(se1).equals(access(st1)));
+
+		// store an object
+		store(eval(se1));
+		Strategy st2 = (Strategy)content(se1Url);
+		assertTrue(flow(se1).equals(flow(st2)));
+		assertTrue(access(se1).equals(access(st2)));
 
 	}
 
@@ -390,62 +396,6 @@ public class CollectionOperators {
 		assertEquals(eval(pm, "add"), 30.0);
 		setValue(pm, "x", 20.0);
 		assertEquals(eval(pm, "add"), 40.0);
-
-	}
-
-	@Test
-	public void mogramsAsProcedures() throws Exception {
-
-		Context c4 = context("multiply", inVal("arg/x1"), inVal("arg/x2"),
-				outVal("result/y"));
-
-		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-				outVal("result/y"));
-
-		Exertion t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				context("subtract", inVal("arg/x1", null), inVal("arg/x2"),
-						outVal("result/y")));
-
-		Exertion t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
-
-		Exertion t5 = task("t5", sig("add", AdderImpl.class), c5);
-
-		Exertion j1 = job("j1", sig("exert", ServiceJobber.class),
-				job("j2", t4, t5, sig("exert", ServiceJobber.class)),
-				t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
-
-
-		// context and exertion parameters
-		Proc x1p = as(proc("x1p", "arg/x1"), c4);
-		Proc x2p = as(proc("x2p", "arg/x2"), c4);
-		Proc j1p = as(proc("j1p", "j1/t3/result/y"), j1);
-
-		// proc model with contexts and exertion
-		EntryModel pc = procModel(x1p, x2p, j1p);
-
-		// setting context arguments
-		setValue(x1p, 10.0);
-		setValue(x2p, 50.0);
-
-		// update proc references
-		Exertion j2 = exert(j1);
-		Context c4s = taskContext("j1/t4", j2);
-
-		// get service j2 direct result eval
-		assertEquals(get(j2, "j1/t3/result/y"), 400.0);
-		// get service proc j1p eval
-		assertEquals(eval(j1p), 400.0);
-
-		// set job parameter eval
-		setValue(j1p, 1000.0);
-		assertEquals(eval(j1p), 1000.0);
-
-		// exert original service and get its proc eval
-		exert(j1);
-		// j1p is the alias to context eval of j1 at j1/t3/result/y
-		assertEquals(value(pc, "j1p"), 400.0);
 
 	}
 

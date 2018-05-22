@@ -86,10 +86,10 @@ public class Procedures {
 		Proc<String> dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
 
 		// dbp1 is declared to be persisted
-		assertTrue(asis(dbp1).equals(25.0));
-		assertEquals(asis(dbp1).getClass(), Double.class);
+		assertTrue(dbp1.getOut().equals(25.0));
+		assertEquals(dbp1.getOut().getClass(), Double.class);
 		// dbp2 is persisted already
-		assertEquals(asis(dbp2).getClass(), URL.class);
+		assertEquals(impl(dbp2).getClass(), URL.class);
 			
 		URL dbp1Url = storeVal(dbp1);
 		URL dbp2Url = (URL) impl(dbp2);
@@ -116,7 +116,7 @@ public class Procedures {
 	}
 
 	@Test
-	public void procFidelities() throws Exception {
+	public void substitutingValuesWithEntFidelities() throws Exception {
 		
 		Proc<Double> dbp = dbEnt("shared/eval", 25.0);
 		
@@ -125,28 +125,27 @@ public class Procedures {
 					dbp,
 					proc("invoke", invoker("x + y", args("x", "y")))));
 
-		Model mdl = model(val("x", 10.0),
+		Context cxt = context(val("x", 10.0),
 				val("y", 20.0), val("init/eval", 49.0));
 
 		setValue(dbp, 50.0);
 		assertTrue(eval(dbp).equals(50.0));
-
-		assertTrue(eval(multi, mdl, fi("shared/eval")).equals(50.0));
-		assertTrue(eval(multi, mdl, fi("init/eval")).equals(49.0));
-		assertTrue(eval(multi, mdl, fi("invoke")).equals(30.0));
-
+		assertTrue(eval(multi, cxt, fi("shared/eval")).equals(50.0));
+		assertTrue(eval(multi, cxt, fi("init/eval")).equals(49.0));
+		assertTrue(eval(multi, cxt, fi("invoke")).equals(30.0));
 	}
-	
+
+	@Ignore
 	@Test
 	public void procModelOperator() throws Exception {
 		
-		Model mdl = procModel("proc-model", proc("v1", 1.0), proc("v2", 2.0));
-		add(mdl, proc("x", 10.0), proc("y", 20.0));
+		Model mdl = procModel("proc-model", val("v1", 1.0), val("v2", 2.0));
+		add(mdl, val("x", 10.0), val("y", 20.0));
 		// add an active proc, no scope
 		add(mdl, invoker("add1", "x + y", args("x", "y")));
 		// add a proc with own scope
 		add(mdl, proc(invoker("add2", "x + y", args("x", "y")),
-				context(proc("x", 30.0), proc("y", 40.0))));
+				context(val("x", 30.0), val("y", 40.0))));
 		
 		assertEquals(eval(mdl, "add1"), 30.0);
 		// change the scope of add1

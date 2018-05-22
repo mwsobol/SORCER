@@ -9,6 +9,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.model.ent.Value;
 import sorcer.service.Context;
+import sorcer.service.modeling.Model;
 
 import java.net.URL;
 import java.util.List;
@@ -25,6 +26,7 @@ import static sorcer.mo.operator.inputs;
 import static sorcer.mo.operator.returnPath;
 import static sorcer.po.operator.ent;
 import static sorcer.po.operator.inoutVal;
+import static sorcer.po.operator.proc;
 import static sorcer.so.operator.*;
 
 /**
@@ -260,7 +262,7 @@ public class DataModels {
 
         // two contexts ac and mc sharing arg1/eval
         // and arg3/eval values over the network
-        Context ac = context("add",
+        Model ac = procModel("add",
                 inVal("arg1/eval", 90.0),
                 inVal("arg2/eval", 110.0),
                 inVal("arg3/eval", 100.0));
@@ -269,28 +271,28 @@ public class DataModels {
         URL a1vURL = storeVal(ac, "arg1/eval");
 
         // make arg1/eval in mc the same as in ac
-        Context mc = context("multiply",
+        Model mc = procModel("multiply",
                 dbInVal("arg1/eval", a1vURL),
                 inVal("arg2/eval", 70.0),
                 inVal("arg3/eval", 200.0));
 
         // sharing arg1/eval from mc in ac
-        assertTrue(value(ac, "arg1/eval").equals(90.0));
-        assertTrue(value(mc, "arg1/eval").equals(90.0));
+        assertTrue(eval(ac, "arg1/eval").equals(90.0));
+        assertTrue(eval(mc, "arg1/eval").equals(90.0));
 
-        put(mc, "arg1/eval", 200.0);
-        assertTrue(value(ac, "arg1/eval").equals(200.0));
-        assertTrue(value(mc, "arg1/eval").equals(200.0));
+        setValues(mc, val("arg1/eval", 200.0));
+        assertTrue(eval(ac, "arg1/eval").equals(200.0));
+        assertTrue(eval(mc, "arg1/eval").equals(200.0));
 
         // sharing arg3/eval from ac in mc
-        assertTrue(value(ac, "arg3/eval").equals(100.0));
-        assertTrue(value(mc, "arg3/eval").equals(200.0));
+        assertTrue(eval(ac, "arg3/eval").equals(100.0));
+        assertTrue(eval(mc, "arg3/eval").equals(200.0));
         URL a3vURL = storeVal(mc, "arg3/eval");
-        add(ac, ent("arg3/eval", a3vURL));
+        add(ac, proc("arg3/eval", a3vURL));
 
-        put(ac, "arg1/eval", 300.0);
-        assertTrue(value(ac, "arg1/eval").equals(300.0));
-        assertTrue(value(mc, "arg1/eval").equals(300.0));
+        setValues(mc, val("arg1/eval", 300.0));
+        assertTrue(eval(ac, "arg1/eval").equals(300.0));
+        assertTrue(eval(mc, "arg1/eval").equals(300.0));
 
     }
 

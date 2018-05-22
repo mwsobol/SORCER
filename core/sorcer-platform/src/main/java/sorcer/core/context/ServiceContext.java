@@ -55,6 +55,7 @@ import java.util.regex.Pattern;
 
 import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.task;
+import static sorcer.mo.operator.setValues;
 
 /**
  * Implements the base-level service context interface {@link Context}.
@@ -3009,14 +3010,28 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Context evaluate(Context inputContext, Arg... args) throws ContextException, RemoteException {
-		Object pars = inputContext.getValue(argsPath);
-		if (pars != null && args != Context.none)
-			substitute((Arg[])args);
+	public Context evaluate(Context inputContext,  Arg... args) throws ContextException, RemoteException {
+		if (args != null) {
+			substitute((Arg[]) args);
+		}
 		Context inputs = inputContext.getInputs();
-		this.append(inputs);
-		getResponse();
-		return this;
+		setValues(this, inputs);
+		return getResponse();
+	}
+
+	public Object evaluate(Context inputContext, String path, Arg... args) throws ContextException, RemoteException {
+		if (args != null) {
+			substitute((Arg[]) args);
+		}
+		Context inputs = inputContext.getInputs();
+		setValues(this, inputs);
+
+		if (this instanceof Model) {
+//            return response(domain, path, args);
+				return this.getValue(path, args);
+		} else {
+			return sorcer.co.operator.value((Context) this, path, args);
+		}
 	}
 
 	public Context getInputs() throws ContextException, RemoteException {
@@ -3211,7 +3226,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return p;
 	}
 
-	public Proc appendPar(Proc p) throws ContextException {
+	public Proc appendProc(Proc p) throws ContextException {
 		put(p.getName(), (T)p);
 		if (p.getScope() == null)
 			p.setScope(new EntryModel(p.getName()).append(this));

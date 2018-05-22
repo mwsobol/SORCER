@@ -330,10 +330,9 @@ public class NetJobExertions implements SorcerConstants {
 						result("result/y")))),
 				proc("j1", invoker("t4 - t5", args("t4", "t5"))));
 
-		vm = setValues(vm, val("x1", 10.0), val("x2", 50.0),
-				val("x4", 80.0));
+		setValues(vm, val("x1", 10.0), val("x2", 50.0), val("x4", 80.0));
 				 
-		assertTrue(eval(proc(vm, "j1")).equals(400.0));
+		assertTrue(eval(vm, "j1").equals(400.0));
 	}
 
 }

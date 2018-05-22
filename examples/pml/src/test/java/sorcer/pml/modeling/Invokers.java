@@ -193,41 +193,6 @@ public class Invokers {
 	}
 
 	@Test
-	public void invokeProcJob() throws Exception {
-		Context c4 = context("multiply", inVal("arg/x1"), inVal("arg/x2"),
-				result("result/y"));
-		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-				result("result/y"));
-
-		// mograms
-		Task t3 = task(
-				"t3",
-				sig("subtract", SubtractorImpl.class),
-				context("subtract", inVal("arg/x1"), inVal("arg/x2"), outVal("result/y")));
-		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
-		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
-
-		Job j1 = job("j1", sig("exert", ServiceJobber.class),
-					job("j2", t4, t5, sig("exert", ServiceJobber.class)), t3,
-					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-					result("j1/t3/result/y"));
-
-		// logger.info("return path:" + j1.getReturnJobPath());
-		assertEquals(j1.getReturnPath().path, "j1/t3/result/y");
-
-		EntryModel pm = procModel("proc-model");
-		add(pm, as(proc("x1p", "arg/x1"), c4), as(proc("x2p", "arg/x2"), c4), j1);
-		// setting context parameters in a job
-		setValue(pm, "x1p", 10.0);
-		setValue(pm, "x2p", 50.0);
-
-		add(pm, j1);
-		// logger.info("call eval:" + invoke(pm, "j1"));
-		assertEquals(invoke(pm, "j1"), 400.0);
-	}
-
-	@Test
 	public void invokerProc() throws Exception {
 
 		Proc<Double> x1 = proc("x1", 1.0);
@@ -252,39 +217,6 @@ public class Invokers {
 
 		logger.info("y: " + eval(y));
 		assertTrue(eval(y).equals(30.0));
-	}
-
-	@Test
-	public void exertionInvoker() throws Exception {
-		Context c4 = context("multiply", inVal("arg/x1"), inVal("arg/x2"),
-				result("result/y"));
-		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-				result("result/y"));
-
-		// mograms
-		Task t3 = task(
-				"t3",
-				sig("subtract", SubtractorImpl.class),
-				context("subtract", inVal("arg/x1"), inVal("arg/x2"), outVal("result/y")));
-		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
-		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
-
-		Job j1 = job("j1", sig("exert", ServiceJobber.class),
-				job("j2", t4, t5, sig("exert", ServiceJobber.class)), t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
-
-		// mapping via the context
-		EntryModel pm = procModel("proc-model");
-		add(pm, as(proc("x1p", "arg/x1"), c4), as(proc("x2p", "arg/x2"), c4), j1);
-
-		// setting context parameters in a job
-		setValue(pm, "x1p", 10.0);
-		setValue(pm, "x2p", 50.0);
-
-		add(pm, exertInvoker(j1, "j1/t3/result/y"));
-		// logger.info("call eval:" + invoke(pm, "invoke j1"));
-		assertEquals(invoke(pm, "j1"), 400.0);
 	}
 
 	@Test

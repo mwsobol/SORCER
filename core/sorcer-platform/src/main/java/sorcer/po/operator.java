@@ -104,11 +104,6 @@ public class operator extends Operator {
 		return p;
 	}
 
-	public static Proc as(Proc proc, Service target) {
-		proc.setMappable((Mappable)target);
-		return proc;
-	}
-
 	public static Proc proc(Mappable argument, String name, String path) {
 		Proc p = new Proc(argument, name, path);
 		return p;
@@ -565,8 +560,8 @@ public class operator extends Operator {
 		if (context == null) {
 			cxt = new ServiceContext();
 		}
-		mi.setArgs(new Class[]{Context.class});
 		mi.setContext(cxt);
+		mi.setParameterTypes(new Class[]{ Context.class });
 		return mi;
 	}
 

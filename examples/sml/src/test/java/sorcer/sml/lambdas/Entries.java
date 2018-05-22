@@ -106,7 +106,7 @@ public class Entries {
     @Test
     public void entryAsLambdaInvoker() throws Exception {
 
-        Model mo = model(ent("x", 10.0), ent("y", 20.0),
+        Model mo = model(val("x", 10.0), val("y", 20.0),
                 proc(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
                         + value(cxt, "y")
                         + 30, args("x", "y"))));

@@ -10,11 +10,12 @@ import sorcer.util.url.sos.SdbUtil;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * @author Mike Sobolewski
  */
-public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, Arg, val<T> {
+public class Value<T> extends Entry<T> implements Valuation<T>, Setter, Comparable<T>, Arg, val<T> {
 
     private static final long serialVersionUID = 1L;
 
@@ -125,7 +126,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
 
     @Override
     public T valuate(Arg... args) throws ContextException {
-        return getData(args);
+        return get(args);
     }
 
     public T get(Arg... args) throws ContextException {
@@ -138,6 +139,8 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
                         out = (T) ((Entry) impl).getData(args);
                         multiFi.setChanged(false);
                         isValid = true;
+                        isChanged = true;
+                        isCached = true;
                     }
                 }
             }
@@ -168,9 +171,11 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Comparable<T>, A
         } else if (impl instanceof Entry) {
             out = (T) ((Entry) impl).get(args);
             isValid = true;
+            isChanged = true;
         } else {
             out = (T) impl;
             isValid = true;
+            isChanged = true;
         }
         return out;
     }

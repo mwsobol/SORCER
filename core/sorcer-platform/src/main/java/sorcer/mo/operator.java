@@ -40,7 +40,9 @@ import sorcer.service.*;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
+import sorcer.util.url.sos.SdbUtil;
 
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
 
@@ -74,21 +76,49 @@ public class operator {
         return value;
     }
 
-    public static EntryModel setValues(EntryModel model, Entry... entries) throws ContextException {
-        for (Entry e : entries) {
-            Object v = model.get(e.getName());
+    public static Context setValues(Context model, Context context) throws ContextException {
+        ServiceContext cxt = (ServiceContext)context;
+        String path;
+        Object obj;
+        Object v;
+        Iterator i = cxt.keyIterator();
+        while (i.hasNext()) {
+            path = (String) i.next();
+            obj =  cxt.get(path);
+            v = model.get(path);
             if (v instanceof Entry) {
                 try {
-                    ((Entry)v).setValue(e.asis());
+                    ((Entry)v).setValue(obj);
                 } catch (RemoteException e1) {
                     e1.printStackTrace();
                 }
             } else {
-                model.put(e.getName(), e.asis());
+                model.putValue(path, obj);
             }
-            model.setChanged(true);
+            ((ServiceContext)model).setChanged(true);
+
         }
-        ent ("");
+        return model;
+    }
+
+    public static Domain setValues(Domain model, Entry... entries) throws ContextException {
+        for (Entry e : entries) {
+            Object v = model.asis(e.getName());
+            Object nv = e.asis();
+            String en = e.getName();
+            try {
+                if (v instanceof Setter) {
+                    ((Setter) v).setValue(nv);
+                } else if (SdbUtil.isSosURL(v)) {
+                    SdbUtil.update((URL) v, e.asis());
+                } else {
+                    ((Context)model).putValue(e.getName(), e.asis());
+                }
+            } catch (RemoteException | MogramException | SignatureException re) {
+                throw new ContextException(re);
+            }
+            ((ServiceContext)model).setChanged(true);
+        }
         return model;
     }
 
@@ -111,7 +141,7 @@ public class operator {
 
         if (entry instanceof Proc) {
             Proc proc = (Proc) entry;
-            if (proc.getScope() != null && proc.getContextable() == null)
+            if (proc.getScope() != null)
                 proc.getScope().putValue(proc.getName(), value);
         }
         ((ServiceMogram)model).setChanged(true);

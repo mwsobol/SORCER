@@ -16,6 +16,7 @@
  */
 package sorcer.core.context.model.ent;
 
+import groovy.util.Eval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
@@ -34,6 +35,10 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.*;
+
+import static sorcer.mo.operator.setValues;
+import static sorcer.so.operator.eval;
+import static sorcer.so.operator.exec;
 
 /**
  * In service-based modeling, a parameter (for short a proc) is a special kind of
@@ -56,11 +61,6 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 	// data store URL for this proc
 	private URL dbURL;
 
-	// A context returning eval at the path
-	// that is this proc key
-	// Sorcer Mappable: Context, Exertion, or Entry args
-	protected Mappable mappable;
-
 	public Proc(String name) {
 		super(name);
 		this.name = name;
@@ -69,7 +69,7 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 	
 	public Proc(Identifiable identifiable) {
 		this(identifiable.getName());
-		out = (T)identifiable;
+		impl = (T)identifiable;
 	}
 
 	public Proc(String path, Object entity) {
@@ -92,12 +92,11 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 					}
 				}
 			}
-		} else if ((entity instanceof Fidelity) && ((Fidelity)entity).getFiType().equals(Fi.Type.PROC)) {
+            impl = entity;
+		} else if ((entity instanceof Fidelity) && ((Fidelity)entity).getFiType().equals(Fi.Type.ENTRY)) {
 			multiFi = (Fi) entity;
 			impl = multiFi.getSelects().get(0);
-			return;
 		}
-		this.impl = entity;
 	}
 
 	public Proc(String path, Object entity, Object scope)
@@ -108,7 +107,6 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
             out = (T) entity;
         }
 		if (entity instanceof String && scope instanceof Service) {
-			mappable = (Mappable) scope;
 			if (scope instanceof Context) {
 				if (((ServiceContext) scope).containsPath(Condition._closure_))
 					((Context) scope).remove(Condition._closure_);
@@ -125,58 +123,31 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 	public Proc(Mappable map, String name, String path) {
 		this(name);
 		impl =  path;
-		mappable = map;
 	}
 
-    public void setValue(Object value) throws SetterException {
-        if (isPersistent && mappable == null) {
-            try {
-                if (SdbUtil.isSosURL(this.impl)) {
-                    SdbUtil.update((URL) this.impl, value);
-                } else {
-                    this.impl = (T) SdbUtil.store(value);
-                }
-            } catch (Exception e) {
-                throw new SetterException(e);
-            }
-            return;
-        }
-
-        if (mappable != null) {
-            try {
-                if (this.impl instanceof String) {
-                    Object val = mappable.asis((String) impl);
-                    if (val instanceof Proc) {
-                        ((Proc) val).setValue(value);
-                    } else if (isPersistent) {
-                        if (SdbUtil.isSosURL(val)) {
-                            SdbUtil.update((URL) val, value);
-                        } else {
-                            URL url = SdbUtil.store(value);
-                            Proc p = new Proc((String) this.out, url);
-                            p.setPersistent(true);
-                            if (mappable instanceof ServiceContext) {
-                                ((ServiceContext) mappable).put((String) this.out, p);
-                            } else {
-                                mappable.putValue((String) this.out, p);
-                            }
-                        }
-                    } else {
-                        mappable.putValue((String) impl, value);
-                    }
-                } else if (impl instanceof URL) {
-                    SdbUtil.update(SdbUtil.getUuid((URL) impl), value);
-                }
-            } catch (Exception e) {
-                throw new SetterException(e);
-            }
-        } else if (value instanceof Evaluation) {
-            this.out = (T) value;
-        } else {
-            this.out = (T) value;
-            impl = (T) value;
-        }
-    }
+	public void setValue(Object value) throws SetterException {
+		try {
+			if (isPersistent) {
+				if (SdbUtil.isSosURL(value)) {
+					impl = (T) value;
+				} else if (SdbUtil.isSosURL(impl)) {
+					if (((URL) impl).getRef() == null) {
+						impl = (T) SdbUtil.store(value);
+					} else {
+						SdbUtil.update((URL) impl, value);
+					}
+				}
+				return;
+			}
+			if (value instanceof Evaluation) {
+				this.out = (T) ((Evaluation)value).evaluate();
+			} else {
+				this.out = (T) value;
+			}
+		} catch (Exception e) {
+			throw new SetterException(e);
+		}
+	}
 
 	@Override
 	public T get(Arg... args) {
@@ -199,126 +170,97 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 	@Override
 	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
 		// check for a constant or cached eval
-		if (impl instanceof Number && !isPersistent) {
-			return (T) impl;
+		if (out instanceof Number &&  isValid && impl == null && !isPersistent) {
+			return (T) out;
 		} else if (impl instanceof Incrementor || ((impl instanceof ServiceInvoker) &&
-				scope != null && scope.isChanged())) {
+			scope != null && scope.isChanged())) {
 			isValid = false;
 		}
 
-		if (impl != null && isValid && args.length == 0 && !isPersistent) {
-			try {
-				if (impl instanceof String
-						&& mappable != null && mappable.getValue((String) impl) != null)
-					return (T) mappable.getValue((String) impl);
-				else if (impl instanceof Value) {
-					return (T) ((Value)impl).getData();
-				}
-			} catch (ContextException e) {
-				throw new EvaluationException(e);
-			}
-		}
 		Object val = null;
 		try {
 			substitute(args);
 			if (multiFi != null) {
-			    val = ((Evaluation)multiFi.getSelect()).evaluate(args);
-			    if (val instanceof String) {
-                    return (T) scope.asis(val.toString());
+				val = ((Evaluation)multiFi.getSelect()).evaluate(args);
+				if (val instanceof String) {
+					return (T) scope.asis(val.toString());
 				}
-                return (T) val;
+				return (T) val;
 			}
-			if (mappable != null && out instanceof String) {
-				Object obj = mappable.asis((String) out);
-				if (obj instanceof Proc && ((Proc)obj).isPersistent())
-					return (T)((Proc)obj).evaluate();
-				else
-					val = (T) mappable.getValue((String) out);
-			} else if (impl == null && scope != null) {
-				val = (T) ((ServiceContext<T>) scope).get(name);
-			} else {
-				val = impl;
-			}
-			if (val instanceof Evaluation) {
-				if (val instanceof Proc && ((Proc)val).asis() == null && out == null) {
-					logger.warn("undefined proc: " + val);
-					return null;
-				}
-				// direct scope
-				if (val instanceof Scopable) {
-					if (((Scopable)val).getScope() == null || ((Scopable)val).getScope().size() == 0) {
-						((Scopable)val).setScope(scope);
-					} else {
-						((Scopable) val).getScope().append(scope);
-					}
-				}
 
-                if (val instanceof Entry) {
-                    // indirect scope for entry values
-					Object ev = ((Entry)val).asis();
-					if (ev instanceof Scopable && ((Scopable)ev).getScope() != null) {
-						if (scope instanceof VariabilityModeling) {
-							((Scopable)ev).getScope().setScope(scope);
-						} else {
-							((Scopable)ev).getScope().append(scope);
-						}
-					}
-				} else if (val instanceof Exertion) {
-					// TODO context binding for all mograms, works for tasks only
-					Context cxt = ((Exertion)val).getDataContext();
-					List<String> paths = cxt.getPaths();
-					for (String an : (Set<String>)((ServiceContext)scope).keySet()) {
-						for (String p : paths) {
-							if (p.endsWith(an)) {
-								cxt.putValue(p, scope.getValue(an));
-								break;
-							}
-						}
+			if (impl == null && scope != null) {
+				val = (T) ((ServiceContext<T>) scope).get(name);
+			} else if (out == null) {
+				val = impl;
+			} else {
+				val = out;
+			}
+			if (val instanceof Proc && ((Proc)val).asis() == null && out == null) {
+				logger.warn("undefined proc: " + val);
+				return null;
+			}
+			// direct scope
+			if (val instanceof Scopable) {
+				if (((Scopable)val).getScope() == null || ((Scopable)val).getScope().size() == 0) {
+					((Scopable)val).setScope(scope);
+				} else {
+					((Scopable) val).getScope().append(scope);
+				}
+			}
+			if (val instanceof Entry) {
+				// indirect scope for entry values
+				Object ev = ((Entry) val).asis();
+				if (ev instanceof Scopable && ((Scopable) ev).getScope() != null) {
+					if (scope instanceof VariabilityModeling) {
+						((Scopable) ev).getScope().setScope(scope);
+					} else {
+						((Scopable) ev).getScope().append(scope);
 					}
 				}
-				out = ((Evaluation<T>) val).evaluate(args);
-				isValid = true;
 			}
+			if (val instanceof Invocation) {
+				Context cxt = (Context) Arg.selectDomain(args);
+				val = (T) ((Invocation) val).invoke(cxt, args);
+			} else if (val instanceof Evaluation) {
+				val = ((Evaluation<T>) val).evaluate(args);
+			}  else if (val instanceof Mogram) {
+				try {
+					val = exec((Mogram)val, args);
+				} catch (ServiceException e) {
+					throw new EvaluationException(e);
+				}
+			}
+			out = (T) val;
+			isValid = true;
+
 
 			if (isPersistent) {
-				val = impl;
-				URL url = null;
+				if (out == null && impl != null) {
+					val = impl;
+				} else {
+					val = out;
+				}
 				if (SdbUtil.isSosURL(val)) {
 					val = ((URL) val).getContent();
 					if (val instanceof UuidObject) {
 						val = ((UuidObject) val).getObject();
 					}
 				} else {
-					Proc p = null;
-                    if (mappable != null && this.out instanceof String
-                            && mappable.asis((String) out) != null) {
-                        val = mappable.getValue((String) out);
-                        url = SdbUtil.store(val);
-                        p = new Proc((String) out, url);
-                        p.setPersistent(true);
-                        mappable.putValue((String) out, p);
-                    } else if (out instanceof Identifiable) {
-                        url = SdbUtil.store(val);
-                        p = new Proc(((Identifiable) out).getName(), url);
-                        p.setPersistent(true);
-                    } else {
-                        url = SdbUtil.store(val);
-                    }
-                    impl = (T) url;
-                    out = null;
-                }
-				return (T) val;
+					URL url = SdbUtil.store(val);
+					impl = url;
+					out = null;
+				}
 			}
-			return out;
 		} catch (IOException | MogramException | SignatureException e) {
 			// make the cache invalid
-			impl = null;
+			out = null;
 			isValid = false;
 			e.printStackTrace();
 			throw new EvaluationException(e);
 		}
+		return (T) val;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see sorcer.service.Evaluation#substitute(sorcer.co.tuple.Parameter[])
 	 */
@@ -340,6 +282,7 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 				} else if (arg instanceof Fidelity && multiFi != null) {
 					multiFi.selectSelect(arg.getName());
 					multiFi.setChanged(true);
+					isValid = false;
 				} else if (arg instanceof Context) {
 					if (scope == null)
 						scope = (Context) arg;
@@ -443,18 +386,6 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 		}
 	}
 
-	/**
-	 * <p>
-	 * Returns a Contextable (Context or Exertion) of this Proc that by a its
-	 * key provides values of this Proc.
-	 * </p>
-	 * 
-	 * @return the contextable
-	 */
-	public Mappable getContextable() {
-		return mappable;
-	}
-
 	/* (non-Javadoc)
 	 * @see sorcer.vfe.Variability#isValueCurrent()
 	 */
@@ -494,10 +425,7 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 
 	public URL getURL() throws ContextException {
 		if (isPersistent) {
-			if (mappable != null)
-				return (URL)mappable.asis((String) out);
-			else
-				return (URL) out;
+				return (URL) impl;
 		}
 		return null;
 	}
@@ -518,28 +446,18 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 		isPersistent = state;
 	}
 	
-	public Mappable getMappable() {
-		return mappable;
-	}
-
-	public void setMappable(Mappable mappable) {
-		this.mappable = mappable;
-	}
-	
-	public boolean isMappable() {
-		return (mappable != null);
-	}
-	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Invocation#invoke(sorcer.service.Context, sorcer.service.Arg[])
 	 */
 	@Override
-	public T invoke(Context context, Arg... args) throws RemoteException,
-			InvocationException {
+	public T invoke(Context context, Arg... args) throws RemoteException, InvocationException {
 		try {
-			if (context != null)
-				scope.append(context);
-			return evaluate(args);
+			Context inCxt = (Context) Arg.selectDomain(args);
+			if (inCxt != null) {
+				return (T) ((Invocation)impl).invoke(inCxt, args);
+			} else {
+				return (T) ((Evaluation)impl).evaluate(args);
+			}
 		} catch (Exception e) {
 			throw new InvocationException(e);
 		}
@@ -558,12 +476,6 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 				} catch (RemoteException e) {
 					throw new ContextException(e);
 				}
-			else if (mappable != null)
-				try {
-					return (T)mappable.getValue(path.substring(name.length()), args);
-				} catch (RemoteException e) {
-					throw new ContextException(e);
-				}
 		}
 		return null;
 	}
@@ -577,8 +489,6 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 		if (attributes[0].equals(name)) {
 			if (attributes.length == 1)
 				return out;
-			else if (mappable != null)
-				return (T)mappable.asis(path.substring(name.length()));
 		}
 		return null;
 	}
@@ -592,8 +502,6 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 		if (attributes[0].equals(name)) {
 			if (attributes.length == 1)
 				this.out = (T)value;
-			else if (mappable != null)
-				mappable.putValue(path.substring(name.length()), value);
 		}
 		return (T)value;	
 	}

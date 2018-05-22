@@ -29,6 +29,7 @@ import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.Exerter;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
+import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Modeling;
 import sorcer.service.modeling.Valuation;
@@ -67,17 +68,17 @@ public class operator extends Operator {
         try {
             synchronized (entry) {
                 if (entry instanceof Valuation) {
-                    return (T) ((Entry) entry).get(args);
+                    return (T) ((Entry) entry).valuate(args);
                 } else if (entry instanceof Entry && ((Entry) entry).getOut() instanceof ServiceContext) {
-                    return (T) ((ServiceContext) ((Entry) entry).getOut()).getValue(((Identifiable)entry).getName());
+                    return (T) ((ServiceContext) ((Entry) entry).getOut()).getValue(((Identifiable)entry).getName(), args);
                 } else if (entry instanceof Incrementor) {
                     return ((Incrementor<T>) entry).next();
                 } else if (entry instanceof Exertion) {
                     return (T) ((Exertion) entry).exert(args).getContext();
-                } else if (entry instanceof Evaluation) {
-                    return (T) ((Evaluation) entry).evaluate(args);
+                } else if (entry instanceof Functionality) {
+                    return (T) ((Functionality) entry).getValue(args);
                 } else {
-                    return (T) ((Entry) entry).get(args);
+                    return (T) ((Entry) entry).evaluate(args);
                 }
             }
         } catch (Exception e) {
@@ -134,7 +135,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Context eval(Model model, Context context)
+    public static Context response(Model model, Context context)
             throws ContextException {
         Context rc = null;
         try {
@@ -147,12 +148,15 @@ public class operator extends Operator {
 
     public static Object eval(Mogram mogram, Arg... args) throws ContextException {
         try {
+            Object out = null;
             synchronized (mogram) {
                 if (mogram instanceof Exertion) {
-                    return exec(mogram, args);
+                    out = exec(mogram, args);
                 } else {
-                    return ((ServiceContext) mogram).getValue(args);
+                    out = ((ServiceContext) mogram).getValue(args);
                 }
+                ((ServiceMogram)mogram).setChanged(true);
+                return out;
             }
         } catch (RemoteException | ServiceException e) {
             throw new ContextException(e);

@@ -28,7 +28,6 @@ import sorcer.core.context.model.ent.Proc;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Data;
-import sorcer.service.modeling.Functionality;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -94,7 +93,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	private boolean isReactive = false;
 
 	// indication that eval has been calculated with recent arguments
-	protected boolean valueIsValid = false;
+	protected boolean isValid = false;
 
 	protected Context invokeContext;
 
@@ -223,12 +222,12 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		return this;
 	}
 
-	public void valueValid(boolean state) {
-		valueIsValid = state;
+	public void setValid(boolean state) {
+		isValid = state;
 	}
 	
-	public boolean valueValid() {
-		return valueIsValid;
+	public boolean isValid() {
+		return isValid;
 	}
 	
 	public void valueChanged() throws EvaluationException {
@@ -246,7 +245,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		// one of my dependent args changed
 		// the 'observable' is the dependent invoker that has changed as indicated by 'obj'
 		// ignore updates from itself
-		valueValid(false);
+		setValid(false);
 		
 		// set eval to null so getValueAsIs returns null
 		value = null;
@@ -276,7 +275,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 					value = null;
 					setChanged();
 					notifyObservers(this);
-					valueValid(false);
+					setValid(false);
 				} catch (RemoteException e) {
 					throw new EvaluationException(e);
 				}
@@ -351,22 +350,22 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	public T evaluate(Arg... entries) throws EvaluationException, RemoteException {
 		try {
 			if (entries != null && entries.length > 0) {
-				valueIsValid = false;
+				isValid = false;
 				if (invokeContext == null) {
 					invokeContext = new EntryModel("model/proc");
 				}
 				((ServiceContext)invokeContext).substitute(entries);
 			}
 			if (invokeContext.isChanged()) {
-				valueIsValid = false;
+				isValid = false;
 				if (args != null)
 					args.clearArgs();
 			}
-			if (valueIsValid)
+			if (isValid)
 				return value;
 			else {
 				value = (T) invoke(entries);
-				valueIsValid = true;
+				isValid = true;
 			}
 		} catch (Exception e) {
 			throw new InvocationException(e);

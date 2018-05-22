@@ -347,7 +347,7 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
 	@Override
 	public T getValue(Arg... args) throws EvaluationException {
 		try {
-			return evaluate();
+			return evaluate(args);
 		} catch (RemoteException e) {
 			throw new EvaluationException(e);
 		}

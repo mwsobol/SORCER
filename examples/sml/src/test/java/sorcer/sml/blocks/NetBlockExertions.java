@@ -233,7 +233,7 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 	public void loopBlockTest() throws Exception {
 
 		Block block = block("block", sig(Concatenator.class),
-				context(proc("x1", 10.0), proc("x2", 20.0), proc("z", 100.0)),
+				context(val("x1", 10.0), val("x2", 20.0), val("z", 100.0)),
 				loop(condition(cxt -> (double)value(cxt, "x1") + (double)value(cxt, "x2")
 								< (double)value(cxt, "z")),
 						task(proc("x1", invoker("x1 + 3", args("x1"))))));

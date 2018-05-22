@@ -17,7 +17,6 @@
 package sorcer.core.context.model.ent;
 
 import sorcer.core.context.Contexts;
-import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.ServiceInvoker;
@@ -27,9 +26,16 @@ import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
 import sorcer.util.Row;
 import sorcer.service.Signature.ReturnPath;
+import sorcer.util.bdb.objects.UuidObject;
+import sorcer.util.url.sos.SdbUtil;
 
+import java.io.IOException;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
+
+import static sorcer.mo.operator.setValues;
+import static sorcer.so.operator.exec;
 
 /*
  * Copyright 2013 the original author or authors.
@@ -111,43 +117,65 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				if (rp != null)
 					val = getReturnValue(rp);
 				else if (mogramStrategy.getResponsePaths() != null
-						&& mogramStrategy.getResponsePaths().size() == 1) {
+					&& mogramStrategy.getResponsePaths().size() == 1) {
 					val = asis(mogramStrategy.getResponsePaths().get(0).getName());
 				} else {
 					val = super.getValue(path, args);
 				}
 			}
 
-            if (val instanceof Value) {
-                return ((Value)val).valuate();
-            } if (val instanceof Proc) {
-                if (((Proc) val).isCached()) {
-                    return ((Proc) val).getOut();
-                } else if (((Proc) val).isPersistent) {
-                    return ((Proc)val).evaluate();
-                } else if ((((Proc) val).asis() instanceof Subroutine)) {
-                    bindEntry((Subroutine) ((Proc) val).asis());
-                }
-            } else if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
-                ((Scopable)val).getScope().setScope(this);
-            } else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
-                ((Scopable) ((Entry)val).asis()).setScope(this);
-            }
-			if (val != null && val instanceof Invocation) {
-				if (isChanged && val instanceof ServiceInvoker) {
-					((ServiceInvoker)val).valueValid(false);
+			if (val instanceof Number || val instanceof String) {
+				return val;
+			} else if (val instanceof Value) {
+				return ((Value) val).valuate();
+			} else if (SdbUtil.isSosURL(val)) {
+				val = ((URL) val).getContent();
+				if (val instanceof UuidObject) {
+					val = ((UuidObject) val).getObject();
 				}
-				if (get(path) instanceof Proc) {
-					return ((Invocation) val).invoke(((Entry) get(path)).getScope(), args);
+				return val;
+			} else if (val instanceof Proc) {
+				if (((Proc) val).isCached()) {
+					return ((Proc) val).getOut();
+				} else if (((Proc) val).isPersistent) {
+					return ((Proc) val).evaluate();
+				} else if ((((Proc) val).asis() instanceof Subroutine)) {
+					bindEntry((Subroutine) ((Proc) val).asis());
+				}
+			}
+
+			if (val instanceof Scopable && ((Scopable)val).getScope() != null) {
+				((Scopable)val).getScope().setScope(this);
+			} else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
+				((Scopable) ((Entry)val).asis()).setScope(this);
+			}
+			if (val != null && val instanceof Proc) {
+				Context inCxt = (Context) Arg.selectDomain(args);
+				if (inCxt != null) {
+					setValues(this, inCxt);
+					isChanged = true;
+				}
+				Object impl = ((Proc)val).getImpl();
+				if (impl instanceof Mogram) {
+					return exec((Mogram)impl, args);
+				} else if (impl instanceof Invocation) {
+					if (isChanged) {
+						((ServiceInvoker) impl).setValid(false);
+					}
+					return ((Invocation) impl).invoke(this, args);
+				} else if (impl instanceof Evaluation) {
+					return ((Evaluation) impl).evaluate(args);
 				} else {
-					return ((Invocation) val).invoke(this, args);
+					return ((Proc)val).getValue(args);
 				}
-			} else if (val != null && val instanceof Evaluation) {
+			} else if (val instanceof Evaluation) {
 				return ((Evaluation) val).evaluate(args);
-			}   if (val instanceof ServiceFidelity) {
+			}  else if (val instanceof Mogram) {
+				return exec((Mogram)val, args);
+			}  else  if (val instanceof ServiceFidelity) {
 				return new Subroutine(path, val).evaluate(args);
 			} else if (path == null && val == null
-					&& mogramStrategy.getResponsePaths() != null) {
+				&& mogramStrategy.getResponsePaths() != null) {
 				if (mogramStrategy.getResponsePaths().size() == 1) {
 					return getValue(mogramStrategy.getResponsePaths().get(0).getName(), args);
 				} else {
@@ -248,13 +276,15 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			} else if (obj instanceof Entry) {
 				putValue((String) ((Entry) obj).key(),
 						((Entry) obj).getOut());
-			} else if (obj instanceof Identifiable) {
-				String pn = obj.getName();
-				p = new Proc(pn, obj, new EntryModel(pn).append(this));
 			}
+//			restrict identifiables
+//			else if (obj instanceof Identifiable) {
+//				String pn = obj.getName();
+//				p = new Proc(pn, obj, new EntryModel(pn).append(this));
+//			}
 
 			if (p != null) {
-				appendPar(p);
+				appendProc(p);
 				changed = true;
 			}
 		}

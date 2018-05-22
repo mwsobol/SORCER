@@ -104,7 +104,7 @@ public class Binder {
             for (Arg a : entries) {
                 if (a instanceof Entry) {
                     exertion.getContext().putValue(
-                            a.getName(), ((Subroutine) a).get());
+                            a.getName(), ((Entry) a).get());
                 }
             }
         }

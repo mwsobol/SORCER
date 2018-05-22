@@ -38,8 +38,8 @@ public class Mograms {
     @Test
     public void evaluateModel() throws Exception  {
 
-        Model context = model(ent("x1", 20.0), ent("x2", 80.0),
-                ent("result/y", invoker("x1 + x2", operator.ents("x1", "x2"))));
+        Model context = model(val("x1", 20.0), val("x2", 80.0),
+                proc("result/y", invoker("x1 + x2", args("x1", "x2"))));
 
         // declare response paths
         responseUp(context, "result/y");
@@ -57,7 +57,7 @@ public class Mograms {
     public void modelInsOutsRsp() throws Exception  {
 
         Model context = model(inVal("x1", 20.0), inVal("x2", 80.0),
-                outVal("result/y", invoker("x1 + x2", operator.ents("x1", "x2"))));
+                outVal("result/y", invoker("x1 + x2", args("x1", "x2"))));
 
         Context inputs = inputs(context);
         logger.info("inputs : " + inputs(context));

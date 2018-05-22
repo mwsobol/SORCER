@@ -59,7 +59,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
         return id;
     }
 
-    public Object getImpl() {
+    public Object selectImpl() {
         if (!isValid && multiFi != null) {
             Object select = multiFi.getSelect();
             if (select instanceof Entry) {
@@ -88,7 +88,6 @@ public class Entry<V> extends MultiFiSlot<String, V>
             try {
                 if (SdbUtil.isSosURL(value)) {
                     this.out = (V) value;
-                    this.impl = value;
                 } else if (SdbUtil.isSosURL(this.impl)) {
                     if (((URL) this.impl).getRef() == null) {
                         this.impl = (V) SdbUtil.store(value);
@@ -102,6 +101,8 @@ public class Entry<V> extends MultiFiSlot<String, V>
         } else {
             this.out = (V) value;
         }
+        isValid = true;
+        isChanged = true;
     }
 
     public void setId(Uuid id) {
@@ -329,6 +330,13 @@ public class Entry<V> extends MultiFiSlot<String, V>
         try {
             Object result = null;
             if (multiFi == null && impl == null) {
+                Context context = (Context) Arg.selectDomain(args);
+                Object inCxt = context.getValue(key);
+                if (inCxt != null) {
+                    out = (V) inCxt;
+                    isValid = true;
+                    isChanged = true;
+                }
                 return out;
             } else if (this instanceof Functionality) {
                 result = (V) ((Functionality)this).getValue(args);

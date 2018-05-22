@@ -773,19 +773,15 @@ public class operator extends Operator {
 	}
 
 	public static <T> Entry<T> dbVal(String path, T value) throws EvaluationException {
-		Value<T> e = new Value<T>(path, value);
+		Proc<T> e = new Proc<T>(path, value);
 		e.setPersistent(true);
 		if (SdbUtil.isSosURL(value)) {
-			try {
-				e.get();
-			} catch (ContextException ex) {
-				throw new EvaluationException(ex);
-			}
+			e.get();
 		}
 		return e;
 	}
 
-    public static URL storeVal(Context context, String path) throws EvaluationException {
+    public static URL storeVal(Domain context, String path) throws EvaluationException {
 		URL dburl = null;
 		try {
 			Object v = context.asis(path);
@@ -803,11 +799,11 @@ public class operator extends Operator {
 				Entry dbe = new Entry(path, context.asis(path));
 				dbe.setPersistent(true);
 				dbe.get();
-				context.putValue(path, dbe);
+				((Context)context).putValue(path, dbe);
 				dburl = (URL) dbe.asis();
 			} else {
 				dburl = store(v);
-				context.putValue(path, dburl);
+				((Context)context).putValue(path, dburl);
 			}
 		} catch (Exception e) {
 			throw new EvaluationException(e);
@@ -968,11 +964,12 @@ public class operator extends Operator {
         }
         if (entry instanceof Proc) {
             Proc procEntry = (Proc)entry;
-            if (procEntry.getScope() != null && procEntry.getContextable() == null) {
+            if (procEntry.getScope() != null) {
                 procEntry.getScope().putValue(procEntry.getName(), value);
             }
         }
         entry.setValid(true);
+		entry.setChanged(true);
         return entry;
     }
 
@@ -1157,6 +1154,7 @@ public class operator extends Operator {
 	public static Object get(Subroutine entry) throws ContextException {
 		return rasis(entry);
 	}
+
 
 	public static Object impl(Entry entry)
 			throws ContextException {

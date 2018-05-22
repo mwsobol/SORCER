@@ -18,6 +18,9 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ent;
+import sorcer.service.modeling.func;
+import sorcer.service.modeling.val;
 import sorcer.util.Row;
 import sorcer.util.Sorcer;
 
@@ -56,7 +59,6 @@ public class EntryModels {
 		y = proc("y", 20.0);
 
 	}
-
 
 	@Test
 	public void closingProcScope() throws Exception {
@@ -106,22 +108,21 @@ public class EntryModels {
 	public void createProcModelWithTask() throws Exception {
 
 		EntryModel vm = procModel(
-				"Hello Arithmetic #2",
-				// inputs
-				val("x1"), val("x2"), val("x3", 20.0), val("x4"),
-				// outputs
-				proc("t4", invoker("x1 * x2", args("x1", "x2"))),
-				proc("t5",
-						task(sig("add", AdderImpl.class),
-								cxt("add", inVal("x3"), inVal("x4"),
-										result("result/y")))),
-				proc("j1", invoker("t4 - t5", args("t4", "t5"))));
+			"Hello Arithmetic #2",
+			// inputs
+			val("x1"), val("x2"), val("x3", 20.0), val("x4"),
+			// outputs
+			proc("t4", invoker("x1 * x2", args("x1", "x2"))),
+			proc("t5",
+				task(sig("add", AdderImpl.class),
+					cxt("add", inVal("x3"), inVal("x4"),
+						result("result/y")))),
+			proc("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		setValues(vm, val("x1", 10.0), val("x2", 50.0),
-				val("x4", 80.0));
+			val("x4", 80.0));
 
-		assertTrue(eval(proc(vm, "j1")).equals(400.0));
-
+		assertTrue(eval(vm, "j1").equals(400.0));
 	}
 
     @Test
@@ -290,177 +291,14 @@ public class EntryModels {
 		store(p1);
 		store(p2);
 
-		assertTrue(asis(p1) instanceof Double);
+		assertTrue(p1.getOut() instanceof Double);
 		assertEquals(content(url1), 30.0);
 		assertEquals(eval(p1), 30.0);
 
-		assertTrue(asis(p2) instanceof URL);
+		assertTrue(p2.getOut() instanceof URL);
 		assertEquals(content(url2), sUrl);
 		assertEquals(eval(p2), sUrl);
-
 	}
-
-	@Test
-	public void aliasedProcsTest() throws Exception {
-
-		Model cxt = model(proc("design/in1", 25.0), proc("design/in2", 35.0));
-
-		// mapping parameters to cxt, x1 and x2 are proc aliases
-		Proc x1 = proc(cxt, "x1", "design/in1");
-		Proc x2 = as(proc("x2", "design/in2"), cxt);
-
-		assertTrue(eval(x1).equals(25.0));
-		setValue(x1, 45.0);
-		assertTrue(eval(x1).equals(45.0));
-
-		assertTrue(eval(x2).equals(35.0));
-		setValue(x2, 55.0);
-		assertTrue(eval(x2).equals(55.0));
-
-		EntryModel pc = procModel(x1, x2);
-		assertTrue(eval(pc, "x1").equals(45.0));
-		assertTrue(eval(pc, "x2").equals(55.0));
-
-	}
-
-	@Test
-	public void mappableProcPersistence() throws Exception {
-
-		Context cxt = context(val("url", "htt://sorcersoft.org"), val("design/in", 25.0));
-
-		// persistent proc
-		Entry dbIn = persistent(as(proc("dbIn", "design/in"), cxt));
-
-		assertTrue(eval(dbIn).equals(25.0));  	// is persisted
-		assertTrue(dbIn.asis() instanceof  URL);
-		assertTrue(eval((Entry) asis(cxt, "design/in")).equals(25.0));
-		assertTrue(value(cxt, "design/in").equals(25.0));
-
-		setValue(dbIn, 30.0); 	// is persisted
-		assertTrue(eval(dbIn).equals(30.0));
-
-		// associated context is updated accordingly
-		assertTrue(value(cxt, "design/in").equals(30.0));
-		assertTrue(asis(cxt, "design/in") instanceof Proc);
-		assertTrue(asis((Proc)asis(cxt, "design/in")) instanceof URL);
-
-		// not persistent proc
-		Proc sorcer = as(proc("sorcer", "url"), cxt);
-		assertEquals(eval(sorcer), "htt://sorcersoft.org");
-
-		setValue(sorcer, "htt://sorcersoft.org/sobol");
-		assertTrue(eval(sorcer).equals("htt://sorcersoft.org/sobol"));
-
-	}
-
-
-	@Test
-	public void exertionProcs() throws Exception {
-
-		Context c4 = context("multiply", inVal("arg/x1"), inVal("arg/x2"),
-				outVal("result/y"));
-
-		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-				outVal("result/y", null));
-
-		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				context("subtract", inVal("arg/x1", null), inVal("arg/x2", null),
-						outVal("result/y")));
-
-		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
-
-		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
-
-		Job j1 = job("j1", sig("exert", ServiceJobber.class),
-				job("j2", t4, t5, sig("exert", ServiceJobber.class)),
-				t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
-
-
-		// context and job parameters
-		Proc x1p = as(proc("x1p", "arg/x1"), c4);
-		Proc x2p = as(proc("x2p", "arg/x2"), c4);
-		Proc j1p = as(proc("j1p", "j1/t3/result/y"), j1);
-
-		// setting context parameters in a job
-		setValue(x1p, 10.0);
-		setValue(x2p, 50.0);
-
-		// update proc references
-		j1 = exert(j1);
-		c4 = taskContext("j1/t4", j1);
-//		logger.info("j1 eval: " + jobContext(job));
-//		logger.info("j1p eval: " + eval(j1p));
-
-		// get job parameter eval
-		assertTrue(eval(j1p).equals(400.0));
-
-		// set job parameter eval
-		setValue(j1p, 1000.0);
-		assertTrue(eval(j1p).equals(1000.0));
-
-		// map args are aliased args
-		EntryModel pc = procModel(x1p, x2p, j1p);
-		logger.info("y eval: " + eval(pc, "y"));
-
-	}
-
-
-	@Test
-	public void associatingContexts() throws Exception {
-
-		Context c4 = context("multiply", inVal("arg/x1"), inVal("arg/x2"),
-				outVal("result/y"));
-
-		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-				outVal("result/y"));
-
-		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				context("subtract", inVal("arg/x1"), inVal("arg/x2"),
-						outVal("result/y", null)));
-
-		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
-
-		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
-
-		Job j1 = job("j1", sig("exert", ServiceJobber.class),
-				job("j2", t4, t5, sig("exert", ServiceJobber.class)),
-				t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
-
-
-		Proc c4x1p = as(proc("c4x1p", "arg/x1"), c4);
-		Proc c4x2p = as(proc("c4x2p", "arg/x2"), c4);
-		// job j1 parameter j1/t3/result/y is used in the context of task t6
-		Proc j1p = proc("j1p", "j1/t3/result/y", j1);
-		Proc t4x1p = proc("t4x1p", "j1/j2/t4/arg/x1", j1);
-
-		// setting context parameters in a job
-		setValue(c4x1p, 10.0);
-		setValue(c4x2p, 50.0);
-
-		// update proc references
-		j1 = exert(j1);
-		c4 = taskContext("j1/t4", j1);
-
-		// get job parameter eval
-		assertTrue(eval(j1p).equals(400.0));
-
-		logger.info("j1 job context: " + upcontext(j1));
-
-
-		Task t6 = task("t6", sig("add", AdderImpl.class),
-				context("add", inVal("arg/x1", t4x1p), inVal("arg/x2", j1p),
-						outVal("result/y")));
-
-		Task task = exert(t6);
-//		logger.info("t6 context: " + context(task));
-		assertTrue(get(task, "result/y").equals(410.0));
-
-	}
-
 
 	@Test
 	public void procModelConditions() throws Exception {
