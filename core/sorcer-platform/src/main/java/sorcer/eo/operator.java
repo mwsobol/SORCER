@@ -749,11 +749,56 @@ public class operator extends Operator {
 	}
 
 
-	public static Context put(Context context, Identifiable... objects)
+	public static Context set(Context context, Identifiable... objects)
 		throws RemoteException, ContextException {
 		for (Identifiable obj : objects) {
 			// just replace the eval
 			((ServiceContext)context).put(obj.getName(), obj);
+		}
+		return context;
+	}
+
+
+	public static Context put(Context context, Identifiable... objects)
+		throws RemoteException, ContextException {
+		for (Identifiable i : objects) {
+			// just replace the eval
+			if (context.containsPath(i.getName())) {
+				context.putValue(i.getName(), i);
+				continue;
+			}
+
+			if (context instanceof PositionalContext) {
+				PositionalContext pc = (PositionalContext) context;
+				if (i instanceof InputValue) {
+					pc.putInValueAt(i.getName(), i, pc.getTally() + 1);
+				} else if (i instanceof OutputValue) {
+					pc.putOutValueAt(i.getName(), i, pc.getTally() + 1);
+				} else if (i instanceof InoutValue) {
+					pc.putInoutValueAt(i.getName(), i, pc.getTally() + 1);
+				} else {
+					pc.putValueAt(i.getName(), i, pc.getTally() + 1);
+				}
+			} else if (context instanceof ServiceContext) {
+				if (i instanceof InputValue) {
+					context.putInValue(i.getName(), i);
+				} else if (i instanceof OutputValue) {
+					context.putOutValue(i.getName(), i);
+				} else if (i instanceof InoutValue) {
+					context.putInoutValue(i.getName(), i);
+				} else {
+					context.putValue(i.getName(), i);
+				}
+			} else {
+				context.putValue(i.getName(), i);
+			}
+			if (i instanceof Subroutine) {
+				Subroutine e = (Subroutine) i;
+				if (e.isAnnotated()) context.mark(e.getName(), e.annotation().toString());
+				if (e.asis() instanceof Scopable) {
+					((Scopable) e.asis()).setScope(context);
+				}
+			}
 		}
 		return context;
 	}
