@@ -75,12 +75,7 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
 	}
 
 	public Object getImpl() {
-		if (multiFi != null) {
-            impl = multiFi.getSelect();
-            return impl;
-        } else {
-            return impl;
-        }
+        return impl;
 	}
 
 	@Override

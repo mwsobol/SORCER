@@ -1005,7 +1005,7 @@ public class operator extends Operator {
 						|| obj.getClass().isArray() || obj instanceof Collection) {
 					out = (T) obj;
 				} else if (obj instanceof Valuation) {
-					out = (T) ((Value) obj).valuate(args);
+					out = (T)  ((Valuation)obj).valuate(args);
 				} else if (obj instanceof Proc) {
 					out = (T) ((Proc) obj).evaluate(args);
                 } else if (SdbUtil.isSosURL(obj)) {
@@ -1193,6 +1193,11 @@ public class operator extends Operator {
 		} else {
 			return obj;
 		}
+	}
+
+	public static Object output(Slot entry)
+		throws ContextException {
+		return entry.getOut();
 	}
 
 	public static Object asis(Entry entry)
