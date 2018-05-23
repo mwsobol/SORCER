@@ -65,4 +65,8 @@ public class Ref<T> extends Entry<T> implements Reference, SupportComponent {
 		return out;
 	}
 
+	@Override
+	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
+		return get(args);
+	}
 }
