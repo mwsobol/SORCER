@@ -776,7 +776,8 @@ public class operator extends Operator {
 		Proc<T> e = new Proc<T>(path, value);
 		e.setPersistent(true);
 		if (SdbUtil.isSosURL(value)) {
-			e.get();
+			e.setImpl(value);
+			e.setOut(null);
 		}
 		return e;
 	}
@@ -1155,10 +1156,16 @@ public class operator extends Operator {
 		return rasis(entry);
 	}
 
-
 	public static Object impl(Entry entry)
 			throws ContextException {
 		return entry.getImpl();
+	}
+
+	public static Entry setImpl(Entry entry, Object impl)
+			throws ContextException {
+		 entry.setImpl(impl);
+		 entry.setOut(null);
+		 return entry;
 	}
 
 	public static Object impl(Model context, String path)

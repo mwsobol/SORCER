@@ -57,8 +57,6 @@ public class EntryModelServices {
 				context(result("invoke/result", outPaths("expr"))));
 
 		assertTrue(eval(pmt).equals(60.0));
-		
-//		assertTrue(get(exert(pmt), "invoke/result").equals(60.0));
 	}
 	
 }

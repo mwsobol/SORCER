@@ -135,7 +135,6 @@ public class Procedures {
 		assertTrue(eval(multi, cxt, fi("invoke")).equals(30.0));
 	}
 
-	@Ignore
 	@Test
 	public void procModelOperator() throws Exception {
 		

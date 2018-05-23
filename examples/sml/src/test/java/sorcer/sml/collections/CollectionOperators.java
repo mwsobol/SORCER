@@ -26,10 +26,7 @@ import sorcer.util.DataTable;
 
 import java.io.Serializable;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
@@ -116,6 +113,10 @@ public class CollectionOperators {
 		ent p1 = proc("x", 10.0);
 		assertEquals(eval(p1), 10.0);
 
+		Date td = new Date();
+		ent d1 = proc("x", td);
+		assertEquals(eval(d1), td);
+
 	}
 
 
@@ -186,7 +187,7 @@ public class CollectionOperators {
 	}
 
 	@Test
-	public void dbValandStoreValOperators() throws Exception {
+	public void dbValAndStoreValOperators() throws Exception {
 
 		// create a persistent entry
 		Entry<Double> de = dbVal("x3", 110.0);
@@ -212,7 +213,7 @@ public class CollectionOperators {
 
 		// assign a given URL
 		Entry<Object> dbe = dbVal("y1", 1.0);
-		setValue(dbe, valUrl);
+		setImpl(dbe, valUrl);
 		assertTrue(eval(dbe).equals(10.0));
 		assertTrue(impl(dbe) instanceof URL);
 

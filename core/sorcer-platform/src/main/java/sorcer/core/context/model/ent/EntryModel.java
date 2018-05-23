@@ -162,7 +162,8 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 					if (isChanged) {
 						((ServiceInvoker) impl).setValid(false);
 					}
-					return ((Invocation) impl).invoke(this, args);
+					// this is set as the scope for impl
+					return ((Invocation) impl).invoke(null, args);
 				} else if (impl instanceof Evaluation) {
 					return ((Evaluation) impl).evaluate(args);
 				} else {

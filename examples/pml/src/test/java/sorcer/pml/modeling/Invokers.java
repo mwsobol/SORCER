@@ -195,10 +195,10 @@ public class Invokers {
 	@Test
 	public void invokerProc() throws Exception {
 
-		Proc<Double> x1 = proc("x1", 1.0);
+		Proc x1 = proc("x1", 1.0);
 
 		// logger.info("invoke eval:" + invoke(x1));
-		assertEquals(invoke(x1), 1.0);
+		assertEquals(eval(x1), 1.0);
 	}
 
 	@Test
@@ -212,11 +212,9 @@ public class Invokers {
 		logger.info("y: " + eval(y));
 		assertTrue(eval(y).equals(3.0));
 
-		Object val = invoke(y, ent("x1", 10.0), ent("x2", 20.0));
+		Object val = eval(y, context(val("x1", 10.0), val("x2", 20.0)));
 		logger.info("y: " + val);
-
-		logger.info("y: " + eval(y));
-		assertTrue(eval(y).equals(30.0));
+		assertTrue(val.equals(30.0));
 	}
 
 	@Test
@@ -361,7 +359,7 @@ public class Invokers {
 	}
 
 	@Test
-	public void polAltInvoker() throws Exception {
+	public void smlAltInvoker() throws Exception {
 		EntryModel pm = procModel("proc-model");
 		add(pm, val("x", 10.0), val("y", 20.0), val("x2", 50.0),
 				val("y2", 40.0), val("x3", 50.0), val("y3", 60.0));
@@ -394,7 +392,7 @@ public class Invokers {
 		assertEquals(eval(alt), 510.0);
 
 		setValues(pm, val("x", 10.0), val("y", 20.0), val("x2", 40.0),
-				proc("y2", 50.0), proc("x3", 50.0), proc("y3", 60.0));
+				val("y2", 50.0), val("x3", 50.0), val("y3", 60.0));
 		logger.info("alt eval: " + eval(alt));
 		assertEquals(eval(alt), 70.0);
 	}

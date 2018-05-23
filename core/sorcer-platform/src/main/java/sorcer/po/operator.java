@@ -100,7 +100,7 @@ public class operator extends Operator {
 		if (identifiable instanceof Scopable) {
 			((Scopable) identifiable).setScope(context);
 		}
-		p.setScope(context);
+		p.setType(Functionality.Type.PROC);
 		return p;
 	}
 

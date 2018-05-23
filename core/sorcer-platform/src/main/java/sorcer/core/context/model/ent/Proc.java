@@ -179,7 +179,10 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 
 		Object val = null;
 		try {
-			substitute(args);
+            substitute(args);
+            if (!isValid || isCached) {
+				out = null;
+			}
 			if (multiFi != null) {
 				val = ((Evaluation)multiFi.getSelect()).evaluate(args);
 				if (val instanceof String) {
@@ -286,8 +289,11 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 				} else if (arg instanceof Context) {
 					if (scope == null)
 						scope = (Context) arg;
-					else
-						scope.append((Context) arg);
+					else {
+						setValues(scope, (Context) arg);
+					}
+					isValid = false;
+					isChanged = false;
 				}
 			} catch (ContextException e) {
 				throw new SetterException(e);

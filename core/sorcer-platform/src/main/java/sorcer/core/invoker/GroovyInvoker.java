@@ -27,6 +27,8 @@ import java.io.*;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 
+import static sorcer.mo.operator.setValues;
+
 /**
  * @author Mike Sobolewski
  */
@@ -100,10 +102,14 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		shell = new GroovyShell(Thread.currentThread().getContextClassLoader());
 		try {
 			if (entries != null) {
-				for (Arg a : entries)
-					if (a instanceof Entry) {
-						invokeContext.putValue(a.getName(), ((Entry) a).get());
+				Domain inCxt = Arg.selectDomain(entries);
+				if (inCxt != null) {
+					if (invokeContext == null) {
+						invokeContext = (Context) inCxt;
 					}
+					setValues(invokeContext, (Context) inCxt);
+					setValid(false);
+				}
 			}
 			initBindings();
 			synchronized (shell) {

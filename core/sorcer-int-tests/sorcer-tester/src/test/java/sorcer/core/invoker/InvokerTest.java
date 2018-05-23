@@ -217,13 +217,10 @@ public class InvokerTest {
 		x1 = proc("x1", 1.0);
 		x2 = proc("x2", 2.0);
 		y = proc("y", invoker("x1 + x2", args("x1", "x2")));
-		
-//		logger.info("y: " + eval(y));
-//		assertEquals(eval(y), 3.0);
 
-		invoke(y, proc("x1", 10.0), proc("x2", 20.0));
-//		logger.info("y: " + eval(y));
-		assertTrue(eval(y).equals(30.0));
+		Object out = eval(y, proc("x1", 10.0), proc("x2", 20.0));
+//		logger.info("y: " + out);
+		assertTrue(out.equals(30.0));
 	}
 
 	@Test
