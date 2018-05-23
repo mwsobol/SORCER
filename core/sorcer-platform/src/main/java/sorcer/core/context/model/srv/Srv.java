@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.plexus.MorphFidelity;
@@ -159,6 +160,17 @@ public class Srv extends Subroutine<Object> implements Serviceableness,
 
     @Override
     public Object evaluate(Arg... args) throws EvaluationException, RemoteException {
+
+        if (impl instanceof EntryCollable) {
+            Entry entry = null;
+            try {
+                entry = ((EntryCollable) impl).call((Model) scope);
+            } catch (MogramException e) {
+                throw new EvaluationException(e);
+            }
+            out = entry.asis();
+            return out;
+        }
         
         if (impl instanceof Invocation) {
             return super.evaluate(args);

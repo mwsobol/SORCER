@@ -1004,18 +1004,20 @@ public class operator extends Operator {
 				if (obj instanceof Number || obj instanceof Number
 						|| obj.getClass().isArray() || obj instanceof Collection) {
 					out = (T) obj;
-				} else if (obj instanceof Value) {
-					out = (T) ((Value) obj).getData();
+				} else if (obj instanceof Valuation) {
+					out = (T) ((Value) obj).valuate(args);
 				} else if (obj instanceof Proc) {
-                    out = (T) ((Proc) obj).get(args);
+					out = (T) ((Proc) obj).evaluate(args);
                 } else if (SdbUtil.isSosURL(obj)) {
 					out = (T) ((URL) obj).getContent();
 				} else if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
 					out = (T) ((ServiceContext) context).getEvalValue(path);
-				} else if (obj instanceof Srv && ((Srv) obj).asis() instanceof EntryCollable) {
-					Entry entry = ((EntryCollable) ((Srv) obj).asis()).call((Model) context);
-					out = (T) entry.asis();
-				} else {
+				}
+//				else if (obj instanceof Srv && ((Srv) obj).asis() instanceof EntryCollable) {
+//					Entry entry = ((EntryCollable) ((Srv) obj).asis()).call((Model) context);
+//					out = (T) entry.asis();
+//				}
+				else {
 					// linked contexts and other special case of ServiceContext
 					out = context.getValue(path, args);
 				}
