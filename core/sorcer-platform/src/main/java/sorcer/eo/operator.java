@@ -36,6 +36,7 @@ import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.exertion.*;
 import sorcer.core.invoker.Activator;
 import sorcer.core.invoker.IncrementInvoker;
+import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.*;
 import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
@@ -428,8 +429,18 @@ public class operator extends Operator {
 			}
 		}
 		if (funcEntryList.size() > 0) {
-			for (Subroutine p : funcEntryList)
+			for (Subroutine p : funcEntryList) {
 				cxt.putValue(p.getName(), p);
+				if (((Entry)p).getImpl()  instanceof Evaluator) {
+					// preserve invokeContexr of the invoker
+					if (((Evaluator)((Entry)p).getImpl()).getScope() != null
+						&& ((Evaluator)((Entry)p).getImpl()).getScope().size() > 0) {
+						((Evaluator) ((Entry) p).getImpl()).getScope().setScope(cxt);
+					} else {
+						((Evaluator) ((Entry) p).getImpl()).setScope(cxt);
+					}
+				}
+			}
 		}
 		if (returnPath != null)
 			cxt.setReturnPath(returnPath);
@@ -648,6 +659,9 @@ public class operator extends Operator {
 					}
 				}
 			} else if (ent instanceof Entry) {
+				if (ent instanceof Proc && ((Proc)ent).getImpl() instanceof Invocation) {
+					((ServiceInvoker)((Proc)ent).getImpl()).setScope(pcxt);
+				}
 				if (ent.isPersistent()) {
 					setProc(pcxt, entryList.get(i), i);
 				} else {

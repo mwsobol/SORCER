@@ -141,7 +141,7 @@ public class Procedures {
 		Model mdl = procModel("proc-model", val("v1", 1.0), val("v2", 2.0));
 		add(mdl, val("x", 10.0), val("y", 20.0));
 		// add an active proc, no scope
-		add(mdl, invoker("add1", "x + y", args("x", "y")));
+		add(mdl, proc(invoker("add1", "x + y", args("x", "y"))));
 		// add a proc with own scope
 		add(mdl, proc(invoker("add2", "x + y", args("x", "y")),
 				context(val("x", 30.0), val("y", 40.0))));

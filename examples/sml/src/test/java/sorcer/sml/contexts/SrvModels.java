@@ -54,7 +54,7 @@ public class SrvModels {
     @Test
     public void lambdaInvokerWithScope() throws Exception {
 
-        Context scope = context(ent("x1", 20.0), ent("y1", 40.0));
+        Context scope = context(val("x1", 20.0), val("y1", 40.0));
 
         Model mdl = model(ent("x", 10.0), ent("y", 20.0),
             proc(invoker("lambda", (cxt) -> {

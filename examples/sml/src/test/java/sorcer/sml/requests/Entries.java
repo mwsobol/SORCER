@@ -295,7 +295,7 @@ public class Entries {
 	public void getConditionalValueProcModel() throws Exception {
 
 		Model mdl = model(
-			proc("x1", 10.0), proc("x2", 20.0),
+			val("x1", 10.0), val("x2", 20.0),
 			proc("y1", alt(opt(condition((Context<Double> cxt)
                             -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
 				opt(condition((Context<Double> cxt)

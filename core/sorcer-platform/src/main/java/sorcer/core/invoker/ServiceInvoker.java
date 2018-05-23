@@ -140,19 +140,20 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 
 	public ServiceInvoker(String name, ValueCallable lambda, Context context, ArgSet args) throws InvocationException {
 		this.name = name;
-		if (context == null)
-			invokeContext = new EntryModel("model/proc");
-		else {
-			if (context instanceof ServiceContext) {
-				invokeContext = context;
-			} else {
-				try {
-					invokeContext = new EntryModel(context);
-				} catch (Exception e) {
-					throw new InvocationException("Failed to create invoker!", e);
-				}
-			}
-		}
+		invokeContext = context;
+//		if (context == null)
+//			invokeContext = new EntryModel("model/proc");
+//		else {
+//			if (context instanceof ServiceContext) {
+//				invokeContext = context;
+//			} else {
+//				try {
+//					invokeContext = new EntryModel(context);
+//				} catch (Exception e) {
+//					throw new InvocationException("Failed to create invoker!", e);
+//				}
+//			}
+//		}
 		this.args = args;
 		this.lambda = lambda;
 	}

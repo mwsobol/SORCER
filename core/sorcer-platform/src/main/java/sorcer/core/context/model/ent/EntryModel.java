@@ -152,7 +152,6 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			if (val != null && val instanceof Proc) {
 				Context inCxt = (Context) Arg.selectDomain(args);
 				if (inCxt != null) {
-					setValues(this, inCxt);
 					isChanged = true;
 				}
 				Object impl = ((Proc)val).getImpl();
@@ -163,9 +162,16 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 						((ServiceInvoker) impl).setValid(false);
 					}
 					// this is set as the scope for impl
-					ServiceContext sCxt = new ServiceContext();
-					sCxt.setScope(this);
-					return ((Invocation) impl).invoke(sCxt, args);
+					if (inCxt != null) {
+						inCxt.setScope(this);
+						return ((Invocation) impl).invoke(inCxt, args);
+					} else {
+					    Context ic = ((ServiceInvoker)impl).getScope();
+					    if (ic != null && ic.size() > 0) {
+					        ic.setScope(this);
+                        }
+						return ((Invocation) impl).invoke(ic, args);
+					}
 				} else if (impl instanceof Evaluation) {
 					return ((Evaluation) impl).evaluate(args);
 				} else {

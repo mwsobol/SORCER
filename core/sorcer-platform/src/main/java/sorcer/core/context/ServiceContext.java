@@ -474,6 +474,17 @@ public class ServiceContext<T> extends ServiceMogram implements
 	// we assume that a path ending with key refers to its eval
 	public T getValueEndsWith(String name) throws EvaluationException,
 			RemoteException {
+		T val = getValueEndsWith(this, name);
+		if (val == null && scope != null) {
+			val = getValueEndsWith((ServiceContext) scope, name);
+		}
+		return val;
+	}
+
+	// we assume that a path ending with key refers to its eval
+	public T getValueEndsWith(ServiceContext context,
+							  String name) throws EvaluationException,
+			RemoteException {
 		T val = null;
 		Iterator<Map.Entry<String, T>> i = entryIterator();
 		Map.Entry<String, T> entry;

@@ -33,6 +33,7 @@ import sorcer.core.dispatch.DispatcherException;
 import sorcer.core.dispatch.ProvisionManager;
 import sorcer.core.dispatch.SortingException;
 import sorcer.core.dispatch.SrvModelAutoDeps;
+import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
@@ -643,6 +644,11 @@ public class operator {
                 if (e.asis() instanceof Scopable) {
                     ((Scopable) e.asis()).setScope(context);
                 }
+            }
+
+            if (i instanceof Proc && ((Proc)i).getImpl() instanceof Invocation) {
+                ((Proc)i).setScope(context);
+                ((ServiceInvoker)((Proc)i).getImpl()).setScope(context);
             }
         }
         context.isChanged();

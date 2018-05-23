@@ -259,7 +259,6 @@ public class  LocalBlockExertions implements SorcerConstants {
 		assertEquals(value(context(block), "out"), 100.0);
 	}
 
-	@Ignore
 	@Test
 	public void loopBlockTest() throws Exception {
 		Block block = block("block",
