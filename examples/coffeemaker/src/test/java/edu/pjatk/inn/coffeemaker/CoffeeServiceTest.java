@@ -135,10 +135,10 @@ public class CoffeeServiceTest {
 
 		// order espresso with delivery
 		Domain mod = model(
-				ent("recipe/key", "espresso"),
-				ent("paid$", 120),
-				ent("location", "PJATK"),
-				ent("room", "101"),
+				val("recipe/key", "espresso"),
+				val("paid$", 120),
+				val("location", "PJATK"),
+				val("room", "101"),
 
 				ent(sig("makeCoffee", CoffeeService.class,
 						result("coffee$", inPaths("recipe/key")))),
@@ -146,7 +146,7 @@ public class CoffeeServiceTest {
 						result("delivery$", inPaths("location", "room")))));
 //				ent("change$", invoker("paid$ - (coffee$ + delivery$)", args("paid$", "coffee$", "delivery$"))));
 
-		add(mod, ent("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
+		add(mod, ent("change$", invoker("paid$ - (coffee$ + delivery$)", args("paid$", "coffee$", "delivery$"))));
 		dependsOn(mod, dep("change$", paths("makeCoffee")), dep("change$", paths("deliver")));
 
 		responseUp(mod, "makeCoffee", "deliver", "change$", "paid$");

@@ -223,7 +223,9 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 			}
 			if (val instanceof Invocation) {
 				Context cxt = (Context) Arg.selectDomain(args);
-				cxt.setScope(this.scope);
+				if (cxt != null) {
+                    cxt.setScope(this.scope);
+                }
 				val = (T) ((Invocation) val).invoke(cxt, args);
 			} else if (val instanceof Evaluation) {
 				val = ((Evaluation<T>) val).evaluate(args);
