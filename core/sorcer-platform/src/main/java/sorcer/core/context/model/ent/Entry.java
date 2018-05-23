@@ -331,11 +331,13 @@ public class Entry<V> extends MultiFiSlot<String, V>
             Object result = null;
             if (multiFi == null && impl == null) {
                 Context context = (Context) Arg.selectDomain(args);
-                Object inCxt = context.getValue(key);
-                if (inCxt != null) {
-                    out = (V) inCxt;
-                    isValid = true;
-                    isChanged = true;
+                if (context != null) {
+                    Object inCxt = context.getValue(key);
+                    if (inCxt != null) {
+                        out = (V) inCxt;
+                        isValid = true;
+                        isChanged = true;
+                    }
                 }
                 return out;
             } else if (this instanceof Functionality) {
