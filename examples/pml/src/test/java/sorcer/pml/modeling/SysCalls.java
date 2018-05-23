@@ -94,7 +94,7 @@ public class SysCalls {
                 + Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
                 + Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-        Model pm = procModel(ent("x", 10.0), args("y"),
+        Model pm = procModel(val("x", 10.0), args("y"),
                 proc("multiply", invoker("x * y", args("x", "y"))),
                 proc("add", invoker("x + y", args("x", "y"))));
 

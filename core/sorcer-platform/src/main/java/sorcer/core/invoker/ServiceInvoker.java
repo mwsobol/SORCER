@@ -331,7 +331,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		throws RemoteException, EvaluationException {
 		try {
 			if (context != null) {
-				if (invokeContext == null) {
+				if (invokeContext == null || invokeContext.size() == 0) {
 					invokeContext = context;
 				} else {
 					invokeContext.append(context);

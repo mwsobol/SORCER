@@ -85,7 +85,7 @@ public class Invokers {
 				proc(invoker("lambda",
 					(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
 					args("x", "y"))));
-		logger.info("invoke eval: " + eval(mo, "lambda"));
+//		logger.info("invoke eval: " + eval(mo, "lambda"));
 		assertEquals(eval(mo, "lambda"), 60.0);
 	}
 
