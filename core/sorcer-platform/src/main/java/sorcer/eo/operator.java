@@ -1624,6 +1624,22 @@ public class operator extends Operator {
 		return p;
 	}
 
+	public static Fidelity fis(String fidelity, List<Path> paths, String gradient) {
+		FidelityList  fl = new FidelityList(paths.size());
+		for (Path path : paths) {
+			fl.add(fi(fidelity, path.getName(), gradient));
+		}
+		return new Projection(fl);
+	}
+
+    public static Fidelity fis(String fidelity, List<Path> paths, Fidelity subFi) {
+        FidelityList  fl = new FidelityList(paths.size());
+        for (Path path : paths) {
+            fl.add(fi(fidelity, path.getName(), subFi));
+        }
+        return new Projection(fl);
+    }
+
 	public static FidelityList fis(Fidelity... fidelities) {
 		return new FidelityList(fidelities);
 	}

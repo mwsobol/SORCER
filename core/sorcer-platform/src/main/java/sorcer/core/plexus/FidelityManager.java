@@ -28,6 +28,7 @@ import sorcer.co.tuple.Tuple2;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.invoker.Observer;
+import sorcer.core.service.Projection;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -52,7 +53,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     protected Map<String, Fidelity> fidelities = new ConcurrentHashMap<>();
 
     // fidelities for fidelites
-    protected Map<String, Metafidelity> metafidelities = new ConcurrentHashMap<>();
+    protected Map<String, MetaFi> metafidelities = new ConcurrentHashMap<>();
 
     // fidelities for signatures and other selection of T
     protected Map<String, MorphFidelity> morphFidelities = new ConcurrentHashMap<>();
@@ -83,11 +84,11 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
         this.mogram = mogram;
     }
 
-    public Map<String, Metafidelity> getMetafidelities() {
+    public Map<String, MetaFi> getMetafidelities() {
         return metafidelities;
     }
 
-    public void setMetafidelities(Map<String, Metafidelity> metafidelities) {
+    public void setMetafidelities(Map<String, MetaFi> metafidelities) {
         this.metafidelities = metafidelities;
     }
     public void addMetaFidelity(String path, Metafidelity  fi) {
@@ -229,7 +230,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     @Override
     public void morph(String... fiNames)  throws EvaluationException {
         for (String fiName : fiNames) {
-            Metafidelity mFi = metafidelities.get(fiName);
+            Metafidelity mFi = (Metafidelity)metafidelities.get(fiName);
             List<Fi> fis = mFi.getSelects();
             String name = null;
             String path = null;
@@ -367,23 +368,29 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
 
     public void add(Fidelity... fidelities) {
         for (Fidelity fi : fidelities){
-           this.fidelities.put(fi.getName(), fi);
+            if (fi instanceof MetaFi) {
+                this.metafidelities.put(fi.getName(), (Metafidelity)fi);
+            } else {
+                this.fidelities.put(fi.getName(), fi);
+            }
         }
     }
 
-    public void add(Metafidelity... metaFidelities) {
-        for (Metafidelity sysFi : metaFidelities){
-            metafidelities.put(sysFi.getName(), sysFi);
+    public void put(String fiName, Fi fi) {
+        if (fi instanceof MetaFi) {
+            metafidelities.put(fiName, (MetaFi)fi);
+        } else {
+            fidelities.put(fiName, (Fidelity)fi);
         }
     }
 
-    public void put(String sysFiName, Metafidelity sysFi) {
-        metafidelities.put(sysFiName, sysFi);
-    }
-
-    public void put(Entry<Metafidelity>... entries) throws ContextException {
-        for(Entry<Metafidelity> e : entries) {
-            metafidelities.put(e.getName(), e.getData());
+    public void put(Entry<Fi>... entries) throws ContextException {
+        for(Entry<Fi> e : entries) {
+            if (e.getOut() instanceof MetaFi) {
+                metafidelities.put(e.getName(), (MetaFi) e.getData());
+            } else {
+                fidelities.put(e.getName(), (Fidelity) e.getData());
+            }
         }
     }
 

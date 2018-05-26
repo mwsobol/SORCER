@@ -407,7 +407,7 @@ public class operator extends Operator {
 		return setup(aspect, null, null, entries);
 	}
 
-	public static Setup setup(Object aspect, String entryName, Subroutine... entries) throws ContextException {
+	public static Setup setup(Object aspect, String entryName, Entry... entries) throws ContextException {
 		return setup(aspect, entryName, null, entries);
 	}
 

@@ -18,6 +18,7 @@ package sorcer.util;
 
 import net.jini.id.Uuid;
 import sorcer.core.context.model.ent.Config;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.service.*;
 
@@ -42,13 +43,13 @@ public class Pools {
 	final public static Pool<Uuid, Pool<String, Signature>> sigPool = new Pool<>();
 
 	// a pool of entries to configure mograms of this environment
-	final public static Pool<Uuid, Pool<String, Subroutine<Object>>> entPool = new Pool<>();
+	final public static Pool<Uuid, Pool<String, Entry<Object>>> entPool = new Pool<>();
 
 	// a pool of mograms to configure top-level mograms of this environment
 	final public static Pool<Uuid, Pool<String, Mogram>> mogPool = new Pool<>();
 
 	// a pool of entries to configure mograms of this environment
-	final public static Pool<Uuid, Pool<String, Subroutine<Object>>> derivativePool = new Pool<>();
+	final public static Pool<Uuid, Pool<String, Entry<Object>>> derivativePool = new Pool<>();
 
 	// a pool of setup configurations  for mograms of this environment
 	final public static Pool<Uuid, Pool<String, Config>> configPool = new Pool<>();
@@ -73,11 +74,11 @@ public class Pools {
 		sigPool.put(mogram.getId(), pool);
 	}
 
-	public static Pool<String, Subroutine<Object>> getEntPool(Mogram mogram) {
+	public static Pool<String, Entry<Object>> getEntPool(Mogram mogram) {
 		return entPool.get(mogram.getId());
 	}
 
-	public static void putEntPool(Mogram mogram, Pool<String, Subroutine<Object>>  pool) {
+	public static void putEntPool(Mogram mogram, Pool<String, Entry<Object>>  pool) {
 		entPool.put(mogram.getId(), pool);
 	}
 
@@ -89,11 +90,11 @@ public class Pools {
 		mogPool.put(mogram.getId(), pool);
 	}
 
-	public static Pool<String, Subroutine<Object>> getDerivativePool(Mogram mogram) {
+	public static Pool<String, Entry<Object>> getDerivativePool(Mogram mogram) {
 		return derivativePool.get(mogram.getId());
 	}
 
-	public static void putDerivativePool(Mogram mogram, Pool<String, Subroutine<Object>> pool) {
+	public static void putDerivativePool(Mogram mogram, Pool<String, Entry<Object>> pool) {
 		derivativePool.put(mogram.getId(), pool);
 	}
 

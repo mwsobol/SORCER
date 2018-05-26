@@ -40,12 +40,12 @@ public class Row extends DataTable implements Response {
 		name = "Response";
 	}
 	
-	public Row(List<String> names) {
-		super(names, 1);
+	public Row(List<String> name) {
+		super(name, 1);
 	}
 	
-	public Row(List<String> names, List rowData) {
-		super(names, 1);
+	public Row(List<String> name, List rowData) {
+		super(name, 1);
 		addRow(rowData);
 	}
 

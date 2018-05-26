@@ -37,6 +37,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
+import sorcer.core.service.Projection;
 import sorcer.service.*;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
@@ -441,8 +442,8 @@ public class operator {
         return paradigm;
     }
 
-    public static Mogram addProjection(Mogram mogram, Metafidelity... fidelities) {
-        for ( Metafidelity fi : fidelities) {
+    public static Mogram addFidelities(Mogram mogram, Fidelity... fidelities) {
+        for (Fidelity fi : fidelities) {
             ((FidelityManager)mogram.getFidelityManager()).put(fi.getName(), fi);
         }
         return mogram;
