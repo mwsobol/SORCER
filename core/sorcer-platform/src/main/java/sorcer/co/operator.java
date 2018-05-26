@@ -1239,8 +1239,8 @@ public class operator extends Operator {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
-	public static List<Path> paths(Object... paths) {
-		List<Path> list = new ArrayList<>();
+	public static Signature.Paths paths(Object... paths) {
+        Signature.Paths list = new Signature.Paths();
 		for (Object o : paths) {
 			if (o instanceof String) {
 				list.add(new Path((String) o));
