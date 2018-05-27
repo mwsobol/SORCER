@@ -72,6 +72,7 @@ import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.jobber.JobberAccessor;
 import sorcer.service.Domain;
+import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Modeling;
 import sorcer.service.space.SpaceAccessor;
@@ -1081,9 +1082,12 @@ public class ProviderDelegate {
                     m = bean.getClass().getMethod(selector, Mogram.class, Arg[].class);
                     isContextual = false;
                 } else if (selector.equals("execute") && bean instanceof Service) {
-                    m = bean.getClass().getMethod(selector, Arg[].class);
-                    isContextual = false;
-                } else {
+					m = bean.getClass().getMethod(selector, Arg[].class);
+					isContextual = false;
+				} else if (selector.equals("explore") && bean instanceof Exploration) {
+					m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
+					isContextual = true;
+				} else {
 					m = bean.getClass().getMethod(selector, argTypes);
 				}
                 if(logger.isTraceEnabled())
@@ -1146,7 +1150,9 @@ public class ProviderDelegate {
             result = ((Mogram)m.invoke(impl, new Object[] { pars[0], null, args })).getContext();
         } else if (impl instanceof Domain && selector.equals("evaluate")) {
 			result = ((Domain)m.invoke(impl, new Object[] { pars[0], args })).getContext();
-		} else {
+		} else if (impl instanceof Exploration && selector.equals("explore")) {
+            result = (Context) m.invoke(impl, new Object[] { pars[0], args });
+        } else {
 			logger.debug("getProviderName: {} invoking: {}" + getProviderName(), m);
 			logger.debug("imp: {} args: {}" + impl, Arrays.toString(pars));
 			result = (Context) m.invoke(impl, pars);
@@ -1162,6 +1168,7 @@ public class ProviderDelegate {
 		String selector = task.getProcessSignature().getSelector();
 		Class[] argTypes = ((ServiceContext)result).getParameterTypes();
 		Object[] pars = ((ServiceContext)result).getArgs();
+		Object obj = null;
 		if (selector.equals("exert") && impl instanceof ServiceShell) {
 			Exertion xrt = null;
 			if (pars.length == 1) {
@@ -1177,14 +1184,15 @@ public class ProviderDelegate {
 			.addAll(xrt.getExceptions());
 			task.getTrace().addAll(xrt.getTrace());
 			//((ServiceContext) result).setReturnValue(result);
-
-		} else if (selector.equals("execute") && impl instanceof Evaluation) {
-			Object obj;
+		} else if (selector.equals("evaluate") && impl instanceof Evaluation) {
 			if (argTypes == null) {
 				obj = m.invoke(impl, new Object[] { args });
 			} else {
 				obj = m.invoke(impl, pars);
 			}
+			result.setReturnValue(obj);
+		} else if (selector.equals("explore") && impl instanceof Exploration) {
+			obj = m.invoke(impl, new Object[] { pars[0], args });
 			result.setReturnValue(obj);
 		} else {
 			result.setReturnValue(m.invoke(impl, pars));
