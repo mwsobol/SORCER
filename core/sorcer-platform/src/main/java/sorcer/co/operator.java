@@ -1054,7 +1054,12 @@ public class operator extends Operator {
 	    return response.getValue(path, args);
     }
 
-	public static <T> T value(Context<T> context, String path,
+    public static Object value(Row response, int index)  {
+        return response.get(index);
+    }
+
+
+    public static <T> T value(Context<T> context, String path,
 							  Arg... args) throws ContextException {
 		try {
 			T out = null;
@@ -1579,6 +1584,18 @@ public class operator extends Operator {
 	public static Index ind(int index) {
 		return new Index(index);
 	}
+
+    public static Index rowInd(int index) {
+        return new Index(index, Index.Direction.row);
+    }
+
+    public static Index columnInd(int index) {
+        return new Index(index, Index.Direction.column);
+    }
+
+    public static Index ind(int index, Index.Direction type) {
+        return new Index(index, type);
+    }
 
 	public static String name(Object identifiable) {
 		if (identifiable instanceof Identifiable) {

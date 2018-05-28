@@ -82,7 +82,15 @@ public interface Arg extends Serializable {
 		return null;
 	}
 
-	public static Integer selectIndex(Arg[] args) {
+	public static Index selectIndex(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Index)
+				return (Index) arg;
+		}
+		return null;
+	}
+
+	public static Integer selectIndexInt(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Index)
 				return ((Index)arg).getIndex();

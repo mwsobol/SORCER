@@ -4,13 +4,22 @@ import sorcer.service.Arg;
 import java.io.Serializable;
 
 public class Index implements Arg, Serializable, Comparable {
+	public enum Direction { column, row };
 
 	private int index;
+
+	private Direction type = Direction.column;
+
 	public Index(int index) {
 		this.index = index;
 	}
 
-	@Override
+    public Index(int index, Direction type) {
+        this.index = index;
+        this.type = type;
+    }
+
+    @Override
 	public boolean equals(Object object) {
 		if (object instanceof Index)
 			return this.index == (((Index) object).getIndex());
@@ -44,6 +53,14 @@ public class Index implements Arg, Serializable, Comparable {
 
 	public void setIndex(int index) {
 		this.index = index;
+	}
+
+	public Direction getType() {
+		return type;
+	}
+
+	public void setType(Direction type) {
+		this.type = type;
 	}
 
 	@Override

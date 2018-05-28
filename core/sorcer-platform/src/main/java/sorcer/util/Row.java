@@ -74,13 +74,17 @@ public class Row extends DataTable implements Response, rsp {
 		addRow(doubles);
 	}
 
+	public Object get(int index) {
+		return getRow(0).get(index);
+	}
+
 	public List<String> getNames() {
 		return getColumnIdentifiers();
 	}
 	
 @Override
 public Object getValue(String name, Arg... args) throws ContextException, RemoteException {
-		int index = Arg.selectIndex(args);
+		int index = Arg.selectIndexInt(args);
 		List<String> cns = getColumnNames();
 		for (int i = 0; i < cns.size(); i++) {
 			if (name.equals(cns.get(i))) {

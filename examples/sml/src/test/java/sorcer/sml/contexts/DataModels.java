@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.core.Index;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.model.ent.Value;
 import sorcer.service.Context;
@@ -365,6 +366,7 @@ public class DataModels {
     @Test
     public void responeDataTable() throws Exception {
 
+        // default row identifiers in the table are subsequent integers
         DataTable data = dataTable(header("x", "y", "area", "aspect", "perimeter"),
                 list(1.0, 1.0, 1.0, 1.0, 4.0),
                 list(1.0, 2.0, 2.0, 2.0, 6.0),
@@ -380,5 +382,17 @@ public class DataModels {
         Row row3 = row(data, 3);
 //        logger.info("row3: " + row3);
         assertTrue(row3.getRow(0).equals(list(2.0, 2.0, 4.0, 1.0, 8.0)));
+//        logger.info("row3/2: " + value(row3, 2));
+        assertTrue(value(row3, 2).equals(4.0));
+
+//        logger.info("area/2: " + value(data, "area", ind(3)));
+        // default syntax for columnInd
+        assertTrue(value(data, "area", ind(3)).equals(4.0));
+
+        assertTrue(value(data, "area", columnInd(3)).equals(4.0));
+
+//        logger.info("3/3 row: " + value(data, "3", rowInd(3)));
+        //the forth element at the forth index
+        assertTrue(value(data, "3", rowInd(3)).equals(1.0));
     }
 }

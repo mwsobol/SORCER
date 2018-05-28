@@ -21,6 +21,7 @@ import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.Index;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.StorageManagement;
@@ -66,14 +67,18 @@ public class DataTable implements ModelTable, Response, rsp {
 	private String fiColumnName = "fis";
 
 	@Override
-	public Object getValue(String path, Arg... args) throws ContextException, RemoteException {
-		Integer index = Arg.selectIndex(args);
-		if (index != null) {
-			return getRow(path).get(index);
-		} else {
-			return getRow(path);
-		}
-	}
+    public Object getValue(String path, Arg... args) throws ContextException, RemoteException {
+        Index index = Arg.selectIndex(args);
+        if (index != null) {
+            if (index.getType() == Index.Direction.column) {
+                return getColumn(path).get(index.getIndex());
+            } else {
+                return getRow(path).get(index.getIndex());
+            }
+        } else {
+            return getColumn(path);
+        }
+    }
 
 	public enum LengthUnits {
 		FEET, INCH, METER
@@ -261,7 +266,12 @@ public class DataTable implements ModelTable, Response, rsp {
 	}
 
 	public List getRow(String rowName) {
-		return dataList.get(rowIndexOf(rowName));
+	    Integer index = new Integer(rowName);
+	    if (index != null) {
+            return dataList.get(rowIndexOf(index));
+        } else {
+            return dataList.get(rowIndexOf(rowName));
+        }
 	}
 
 	public List getColumn(int colIndex){
