@@ -424,7 +424,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         request = arrayToRequest(args);
         shellTokenizer = new WhitespaceTokenizer(request);
         System.err.println("----------------------------------------------------");
-        System.err.println("Starting non-interactive act of request: " + request);
+        System.err.println("Starting non-interactive turn of request: " + request);
 
         if (debug) shellOutput.println("initializing nsh: " + (System.currentTimeMillis() - startTime) + "ms");
         try {
@@ -436,7 +436,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
                 } else {
                     // Added reading the file as default first argument
                     // Check if file exists
-                    shellOutput.println("act nsh: " + (System.currentTimeMillis() - startTime) + "ms");
+                    shellOutput.println("turn nsh: " + (System.currentTimeMillis() - startTime) + "ms");
                     ShellCmd cmd = commandTable.get("eval");
                     waitForReggie();
                     shellOutput.println("found reggie: " + (System.currentTimeMillis() - startTime) + "ms");
@@ -959,7 +959,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 						e.printStackTrace();
 					}
 				}
-			}, tName("act-" + cmd));
+			}, tName("turn-" + cmd));
 			edt.setDaemon(true);
 			edt.start();
 		}
@@ -1746,9 +1746,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		aliases.put("shh", "sh -h");
 		aliases.put("shn", "sh -n");
 		aliases.put("shd", "sh -d");
-		aliases.put("more", "act");
-		aliases.put("cat", "act");
-		aliases.put("less", "act");
+		aliases.put("more", "turn");
+		aliases.put("cat", "turn");
+		aliases.put("less", "turn");
         aliases.put("sb", "boot");
         aliases.put("sorcer-boot", "boot");
 	}
@@ -1768,7 +1768,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
     static final String[] shellCommands = { "start", "disco", "ls", "chgrp",
 			"groups", "lup", "chgrp", "chport", "help", "eval", "exert", "http", "emx",
-			"gvy", "edit", "clearSessions", "act", "about", "sos", "ds", "sp" };
+			"gvy", "edit", "clearSessions", "turn", "about", "sos", "ds", "sp" };
 
 	static final Class[] shellCmdClasses = { StartStopCmd.class, DiscoCmd.class,
 			DirCmd.class, ChgrpCmd.class, GroupsCmd.class, LookupCmd.class,

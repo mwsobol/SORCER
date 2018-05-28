@@ -90,7 +90,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 		this.args = new ArgSet(procEntries);
 		if (!scriptFile.canExecute()) {
 			scriptFile.setExecutable(true);
-			logger.warn("script act permission corrected for: " + scriptFile);
+			logger.warn("script turn permission corrected for: " + scriptFile);
 		}
 	}
 		
@@ -116,7 +116,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 		this.args = new ArgSet(procEntries);
 		if (!scriptFile.canExecute()) {
 			scriptFile.setExecutable(true);
-			logger.warn("script act permission corrected for: " + scriptFile);
+			logger.warn("script turn permission corrected for: " + scriptFile);
 		}
 
 		System.arraycopy(argarray, 0, cmdarray, 0, argarray.length);
@@ -177,7 +177,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 				if (cmd != null) {
 					if (stdin != null) {
 						out = CommonsExecUtil.execCommand(cmd, null, stdin);
-						//ExecUtils.execCommand(Runtime.getRuntime().act(
+						//ExecUtils.execCommand(Runtime.getRuntime().turn(
 						//		cmd), stdin);
 					} else {
 						out = CommonsExecUtil.execCommand(cmd);
@@ -232,14 +232,14 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 						logOut.println(line);
 						if (logOut.checkError()) {
 							System.err
-									.println("scipt act log file encountered check error"
+									.println("scipt turn log file encountered check error"
 											+ logFile);
 						}
 						logOut.flush();
 					}
 				} catch (IOException e) {
 					System.err
-							.println("scipt act log file encountered IO error"
+							.println("scipt turn log file encountered IO error"
 									+ logFile);
 				}
 			}

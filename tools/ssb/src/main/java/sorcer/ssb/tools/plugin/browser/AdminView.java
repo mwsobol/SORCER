@@ -649,8 +649,8 @@ public class AdminView {
 	 * 
 	 * public int getRowCount() { return _data.size(); }
 	 * 
-	 * public Object getValueAt(int row, int col) { if(row >= _data.size())
-	 * return "row out of bounds"; Object rowData[] = (Object[])_data.get(row);
+	 * public Object getValueAt(int listing, int col) { if(listing >= _data.size())
+	 * return "listing out of bounds"; Object rowData[] = (Object[])_data.get(listing);
 	 * if(col >= rowData.length) return ""; else return rowData[col]; }
 	 * 
 	 * public boolean isCellEditable(int rowIndex, int columnIndex) {

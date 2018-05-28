@@ -17,9 +17,11 @@
 
 package sorcer.util;
 
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.Arg;
 import sorcer.service.ContextException;
 import sorcer.service.Response;
+import sorcer.service.modeling.rsp;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ import java.util.List;
  *
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class Row extends DataTable implements Response {
+public class Row extends DataTable implements Response, rsp {
 
 	private static final long serialVersionUID = 227568394484135275L;
 	
@@ -44,9 +46,21 @@ public class Row extends DataTable implements Response {
 		super(name, 1);
 	}
 	
-	public Row(List<String> name, List rowData) {
-		super(name, 1);
+	public Row(List<String> names, List rowData) {
+		super(names, 1);
 		addRow(rowData);
+	}
+
+	public Row(Entry... entries) {
+		super();
+		List<String> names = new ArrayList<>();
+		List<Object> values = new ArrayList<>();
+		for (Entry e : entries) {
+			names.add(e.getKey());
+			values.add(e.getOut());
+		}
+		setColumnIdentifiers(names);
+		addRow(values);
 	}
 
 	public Row(List<String> names, String rowData, String delimeter) {

@@ -221,7 +221,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                 afterExec(result);
                 //this.removeExertionListener(result.getId());
             } catch (ContextException ce) {
-                logger.error("Problem sending status after act to monitor");
+                logger.error("Problem sending status after turn to monitor");
             }
         }
     }

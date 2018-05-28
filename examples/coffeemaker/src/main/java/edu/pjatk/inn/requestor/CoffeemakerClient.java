@@ -39,10 +39,10 @@ public class CoffeemakerClient {
     }
 	public static void addRecipe() {
 	    //Read in recipe key
-	    String name = inputOutput("\nPlease act the recipe key: ");
+	    String name = inputOutput("\nPlease turn the recipe key: ");
 	    
 	    //Read in recipe price
-	    String priceString = inputOutput("\nPlease act the recipe price: $");
+	    String priceString = inputOutput("\nPlease turn the recipe price: $");
 	    int price = stringToInt(priceString);
 	    if(price < 0) {
 	    	System.out.println(name + " could not be added. Price can not be negative");
@@ -50,7 +50,7 @@ public class CoffeemakerClient {
 	    }
 	    
 	    //Read in amt coffee
-	    String coffeeString = inputOutput("\nPlease act the units of coffee in the recipe: ");
+	    String coffeeString = inputOutput("\nPlease turn the units of coffee in the recipe: ");
 	    int amtCoffee = stringToInt(coffeeString);
 	    if(amtCoffee < 0) {
 	    	System.out.println(name + " could not be added. Units of coffee can not be negative");
@@ -58,7 +58,7 @@ public class CoffeemakerClient {
 	    }
 	    
 	    //Read in amt milk
-	    String milkString = inputOutput("\nPlease act the units of milk in the recipe: ");
+	    String milkString = inputOutput("\nPlease turn the units of milk in the recipe: ");
 	    int amtMilk = stringToInt(milkString);
 	    if(amtMilk < 0) {
 	    	System.out.println(name + " could not be added. Units of milk can not be negative");
@@ -66,7 +66,7 @@ public class CoffeemakerClient {
 	    }
 	    
 	    //Read in amt sugar
-	    String sugarString = inputOutput("\nPlease act the units of sugar in the recipe: ");
+	    String sugarString = inputOutput("\nPlease turn the units of sugar in the recipe: ");
 	    int amtSugar = stringToInt(sugarString);
 	    if(amtSugar < 0) {
 	    	System.out.println(name + " could not be added. Units of sugar can not be negative");
@@ -74,7 +74,7 @@ public class CoffeemakerClient {
 	    }
 	    
 	    //Read in amt chocolate
-	    String chocolateString = inputOutput("\nPlease act the units of chocolate in the recipe: ");
+	    String chocolateString = inputOutput("\nPlease turn the units of chocolate in the recipe: ");
 	    int amtChocolate = stringToInt(chocolateString);
 	    if(amtChocolate < 0) {
 	    	System.out.println(name + " could not be added. Units of chocolate can not be negative");
@@ -150,10 +150,10 @@ public class CoffeemakerClient {
 	        Recipe oldRecipe = recipes[recipeToEdit];
 	        
 		    //Read in recipe key
-		    String name = inputOutput("\nPlease act the recipe key: ");
+		    String name = inputOutput("\nPlease turn the recipe key: ");
 		    
 		    //Read in recipe price
-		    String priceString = inputOutput("\nPlease act the recipe price: $");
+		    String priceString = inputOutput("\nPlease turn the recipe price: $");
 		    int price = stringToInt(priceString);
 		    if(price < 0) {
 		    	System.out.println(name + " could not be edited. Price can not be negative");
@@ -161,7 +161,7 @@ public class CoffeemakerClient {
 		    }
 		    
 		    //Read in amt coffee
-		    String coffeeString = inputOutput("\nPlease act the units of coffee in the recipe: ");
+		    String coffeeString = inputOutput("\nPlease turn the units of coffee in the recipe: ");
 		    int amtCoffee = stringToInt(coffeeString);
 		    if(amtCoffee < 0) {
 		    	System.out.println(name + " could not be edited. Units of coffee can not be negative");
@@ -169,7 +169,7 @@ public class CoffeemakerClient {
 		    }
 		    
 		    //Read in amt milk
-		    String milkString = inputOutput("\nPlease act the units of milk in the recipe: ");
+		    String milkString = inputOutput("\nPlease turn the units of milk in the recipe: ");
 		    int amtMilk = stringToInt(milkString);
 		    if(amtMilk < 0) {
 		    	System.out.println(name + " could not be edited. Units of milk can not be negative");
@@ -177,7 +177,7 @@ public class CoffeemakerClient {
 		    }
 		    
 		    //Read in amt sugar
-		    String sugarString = inputOutput("\nPlease act the units of sugar in the recipe: ");
+		    String sugarString = inputOutput("\nPlease turn the units of sugar in the recipe: ");
 		    int amtSugar = stringToInt(sugarString);
 		    if(amtSugar < 0) {
 		    	System.out.println(name + " could not be edited. Units of sugar can not be negative");
@@ -185,7 +185,7 @@ public class CoffeemakerClient {
 		    }
 		    
 		    //Read in amt chocolate
-		    String chocolateString = inputOutput("\nPlease act the units of chocolate in the recipe: ");
+		    String chocolateString = inputOutput("\nPlease turn the units of chocolate in the recipe: ");
 		    int amtChocolate = stringToInt(chocolateString);
 		    if(amtChocolate < 0) {
 		    	System.out.println(name + " could not be edited. Units of chocolate can not be negative");
@@ -213,7 +213,7 @@ public class CoffeemakerClient {
     
     public static void addInventory() {
 	    //Read in amt coffee
-	    String coffeeString = inputOutput("\nPlease act the units of coffee to add: ");
+	    String coffeeString = inputOutput("\nPlease turn the units of coffee to add: ");
 	    int amtCoffee = stringToInt(coffeeString);
 	    if(amtCoffee < 0) {
 	    	System.out.println("Cannot add inventory. Units of coffee can not be negative");
@@ -221,7 +221,7 @@ public class CoffeemakerClient {
 	    }
 	    
 	    //Read in amt milk
-	    String milkString = inputOutput("\nPlease act the units of milk to add: ");
+	    String milkString = inputOutput("\nPlease turn the units of milk to add: ");
 	    int amtMilk = stringToInt(milkString);
 	    if(amtMilk < 0) {
 	    	System.out.println("Cannot add inventory. Units of milk can not be negative");
@@ -229,7 +229,7 @@ public class CoffeemakerClient {
 	    }
 	    
 	    //Read in amt sugar
-	    String sugarString = inputOutput("\nPlease act the units of sugar to add: ");
+	    String sugarString = inputOutput("\nPlease turn the units of sugar to add: ");
 	    int amtSugar = stringToInt(sugarString);
 	    if(amtSugar < 0) {
 	    	System.out.println("Cannot add inventory. Units of sugar can not be negative");
@@ -237,7 +237,7 @@ public class CoffeemakerClient {
 	    }
 	    
 	    //Read in amt chocolate
-	    String chocolateString = inputOutput("\nPlease act the units of chocolate to add: ");
+	    String chocolateString = inputOutput("\nPlease turn the units of chocolate to add: ");
 	    int amtChocolate = stringToInt(chocolateString);
 	    if(amtChocolate < 0) {
 	    	System.out.println("Cannot add inventory. Units of chocolate can not be negative");
@@ -267,7 +267,7 @@ public class CoffeemakerClient {
 	    	mainMenu();
 	    }
         
-        String amountPaid = inputOutput("Please act the amount you wish to pay");
+        String amountPaid = inputOutput("Please turn the amount you wish to pay");
         int amountToPay = stringToInt(amountPaid);
 	    if(amountToPay < 0) {
 	    	mainMenu();

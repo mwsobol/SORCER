@@ -44,7 +44,7 @@ import sorcer.core.context.node.ContextNode;
  * selected impl is a path or if it is a data node.
  * 
  * <li>For paths user can specify the pathname and direction. <li>For data nodes
- * the user can select the data type and act the types eval
+ * the user can select the data type and turn the types eval
  * 
  * <b>Note if the provider is not complied with Groovy support the Groovy option
  * will not be available</b>

@@ -142,12 +142,12 @@ public class Entries {
         }
 
 //        @Override
-//        public Data act(Arg... args) throws ServiceException, RemoteException {
+//        public Data turn(Arg... args) throws ServiceException, RemoteException {
 //            return ent(getClass().getSimpleName(), invoke(null, args));
 //        }
 //
 //        @Override
-//        public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+//        public Data turn(String entryName, Arg... args) throws ServiceException, RemoteException {
 //            return ent(entryName, invoke(null, args));
 //        }
 

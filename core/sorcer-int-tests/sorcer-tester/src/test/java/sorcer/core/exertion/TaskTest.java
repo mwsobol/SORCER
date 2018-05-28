@@ -74,7 +74,7 @@ public class TaskTest {
 		double val = (Double) eval(task);
 		//logger.info("get eval: " + val);
 		assertTrue("Wrong eval for 100.0", val == 100.0);
-		//logger.info("act trace: " + trace(task));
+		//logger.info("turn trace: " + trace(task));
 		//logger.info("trace  size: " + trace(task).size());
 		//assertTrue(trace(task).size() == 1);
 		logger.info("exceptions: " + exceptions(task));

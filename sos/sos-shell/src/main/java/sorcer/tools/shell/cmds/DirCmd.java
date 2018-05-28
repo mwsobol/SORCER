@@ -145,7 +145,7 @@ public class DirCmd extends ShellCmd {
 				if (!value.endsWith("*"))
 					changeDir(value, out);
 			} else {
-				out.print("(act a directory to change to) ");
+				out.print("(turn a directory to change to) ");
 				try {
 					String response = br.readLine();
 					if (response.length() == 0) {

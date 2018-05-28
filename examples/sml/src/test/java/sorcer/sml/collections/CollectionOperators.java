@@ -6,16 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.tuple.*;
 import sorcer.core.Tag;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Proc;
 import sorcer.core.context.model.ent.Subroutine;
-import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ent;
@@ -37,7 +32,6 @@ import static sorcer.co.operator.persistent;
 import static sorcer.co.operator.set;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.pipe;
 import static sorcer.eo.operator.print;
 import static sorcer.eo.operator.put;
 import static sorcer.mo.operator.*;
@@ -167,9 +161,9 @@ public class CollectionOperators {
 	public void tableOperator() throws Exception {
 
 		DataTable t = dataTable(
-				row(1.1, 1.2, 1.3, 1.4, 1.5),
-				row(2.1, 2.2, 2.3, 2.4, 2.5),
-				row(3.1, 3.2, 3.3, 3.4, 3.5));
+				listing(1.1, 1.2, 1.3, 1.4, 1.5),
+				listing(2.1, 2.2, 2.3, 2.4, 2.5),
+				listing(3.1, 3.2, 3.3, 3.4, 3.5));
 
 		columnNames(t, list("x1", "x2", "x3", "x4", "x5"));
 		rowNames(t, list("f1", "f2", "f3"));

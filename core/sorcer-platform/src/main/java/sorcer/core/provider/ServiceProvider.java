@@ -98,7 +98,7 @@ import static sorcer.util.StringUtils.tName;
  *  <code>buildMyBean</code> of the class <code>MyServiceBean</code>.
  * <p>
  * In the simplest case, the provider exports and registers its own (outer) proxy with
- * the primary methods {@code Service.act(Arg[])} and service federation request
+ * the primary methods {@code Service.turn(Arg[])} and service federation request
  * {@code Exerter.exert(Mogram, Transaction, Arg[])}. The functionality of an
  * outer proxy can be extended by its inner server functionality with its Remote
  * inner proxy. In this case, the outer proxies have to implement {@link sorcer.core.proxy.Outer}
@@ -1293,7 +1293,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				   + "\ntotal service op calls = " + numCalls + " "
 				   + "\nnumber of service op calls running = "	+ numThreads + " "
 				   + "\nservice op call ids running = " + threadIds + " "
-		           + "\naverage act time [s]       = " + avgExecTime;
+		           + "\naverage turn time [s]       = " + avgExecTime;
         return msg;
 	}
 

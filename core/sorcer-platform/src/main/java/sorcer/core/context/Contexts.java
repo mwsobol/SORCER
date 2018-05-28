@@ -68,11 +68,11 @@ public class Contexts implements SorcerConstants {
 
 	final static String JOB_FEEDBACK = "job" + CPS + "feedback";
 
-	final static String GET_EXEC_TIME = "get" + CPS + "act/time";
+	final static String GET_EXEC_TIME = "get" + CPS + "turn/time";
 
 	final static String TASK_REVIEW = "task" + CPS + "review";
 
-	final static String EXEC_TIME = "act" + CPS + "time";
+	final static String EXEC_TIME = "turn" + CPS + "time";
 
 	final static String PRIORITY = "priority";
 

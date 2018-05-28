@@ -9,15 +9,15 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.model.ent.Value;
 import sorcer.service.Context;
+import sorcer.service.Response;
 import sorcer.service.modeling.Model;
+import sorcer.util.Row;
 
 import java.net.URL;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.path;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.put;
@@ -308,7 +308,7 @@ public class DataModels {
     public void contextModelService() throws Exception {
         Context cxt = context(inVal("x1", 20.0d), inVal("x2", 40.0d),
                 returnPath("x2"));
-//        logger.info("service: " + act(cxt));
+//        logger.info("service: " + turn(cxt));
         assertEquals(exec(cxt), 40.0);
     }
 
@@ -341,6 +341,22 @@ public class DataModels {
         Context cxt = context(list(inVal("x1", 20.0d), inVal("x2", 40.0d)));
         assertTrue(value(cxt, "x1").equals(20.0));
         assertTrue(value(cxt, "x2").equals(40.0));
+    }
+
+    @Test
+    public void ResponseRowToContexToRow() throws Exception {
+
+        Response row = row(inVal("x1", 20.0d), inVal("x2", 40.0d));
+        assertTrue(value(row, "x1").equals(20.0));
+        assertTrue(value(row, "x2").equals(40.0));
+
+        Context cxt = context(row);
+        assertTrue(value(cxt, "x1").equals(20.0));
+        assertTrue(value(cxt, "x2").equals(40.0));
+
+        row = row(cxt);
+        assertTrue(value(row, "x1").equals(20.0));
+        assertTrue(value(row, "x2").equals(40.0));
     }
 
 }

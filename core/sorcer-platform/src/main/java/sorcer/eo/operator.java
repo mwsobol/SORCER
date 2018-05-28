@@ -52,6 +52,7 @@ import sorcer.service.Strategy.*;
 import sorcer.service.modeling.*;
 import sorcer.util.Loop;
 import sorcer.util.ObjectCloner;
+import sorcer.util.Row;
 import sorcer.util.Sorcer;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -260,6 +261,8 @@ public class operator extends Operator {
 			return (ServiceContext)((Mogram)entries[0]).getContext();
 		} else if (entries.length == 1 && entries[0] instanceof List) {
 			return (ServiceContext)contextFromList((List) entries[0]);
+		} else if (entries.length == 1 && entries[0] instanceof Row) {
+			return rowContext((Row) entries[0]);
 		}
 
 		ServiceContext cxt = null;

@@ -498,7 +498,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 		final EntryPropsTable model = new EntryPropsTable(iter.next());
 
 		JTable jt = new JTable(model);
-		jt.setToolTipText("Click a row to view entry values");
+		jt.setToolTipText("Click a listing to view entry values");
 		jp.add(new JScrollPane(jt), BorderLayout.CENTER);
 		// add ctrls
 		final JButton next = new JButton(" Next ");

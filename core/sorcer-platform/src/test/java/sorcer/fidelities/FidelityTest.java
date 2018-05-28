@@ -69,12 +69,12 @@ public class FidelityTest {
 	@Test
 	public void fidelityTable() {
 		DataTable dataTable = dataTable(header("span"),
-				row(110.0),
-				row(120.0),
-				row(130.0),
-				row(140.0),
-				row(150.0),
-				row(160.0));
+				listing(110.0),
+				listing(120.0),
+				listing(130.0),
+				listing(140.0),
+				listing(150.0),
+				listing(160.0));
 
 		ModelTable fiTable = appendFidelities(dataTable,
 				fiEnt(1, fis(fi("atX", "x1"))),
@@ -94,12 +94,12 @@ public class FidelityTest {
     @Test
     public void populateFidelityTable() {
         DataTable dataTable = dataTable(header("span"),
-                row(110.0),
-                row(120.0),
-                row(130.0),
-                row(140.0),
-                row(150.0),
-                row(160.0));
+                listing(110.0),
+                listing(120.0),
+                listing(130.0),
+                listing(140.0),
+                listing(150.0),
+                listing(160.0));
 
         ModelTable fiTable = populateFidelities(dataTable,
                 fiEnt(1, fis(fi("atX", "x1"))),
@@ -118,10 +118,10 @@ public class FidelityTest {
     @Test
 	public void selectFiMap() {
 		DataTable dataTable = dataTable(header("span", "fis"),
-				row(110.0,  fiList(fi("tip/displacement", "astros"))),
-				row(120.0),
-				row(130.0,  fiList(fi("tip/displacement", "nastran"))),
-				row(140.0));
+				listing(110.0,  fiList(fi("tip/displacement", "astros"))),
+				listing(120.0),
+				listing(130.0,  fiList(fi("tip/displacement", "nastran"))),
+				listing(140.0));
 
 
 		FiMap fiMap = new FiMap(dataTable);

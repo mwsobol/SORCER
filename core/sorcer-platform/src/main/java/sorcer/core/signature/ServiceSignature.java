@@ -690,7 +690,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 
 	@Override
 	public Object execute(Arg... args) throws MogramException, RemoteException {
-	    throw new MogramException("Signature service act should be implementd in subclasses");
+	    throw new MogramException("Signature service turn should be implementd in subclasses");
 	}
 	
 	public Entry act(Arg... args) throws ServiceException, RemoteException {

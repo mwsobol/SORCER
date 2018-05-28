@@ -2002,7 +2002,7 @@ public class GenericUtil {
 	 *            wmic /interactive:off compute where key=\"analyzeWingNoise.exe\" delete
 	 *	     	  wmic /interactive:off compute where key=\"NAFNoise.exe\" delete
 	 *
-	 *			 kill all processes matching the act names in "".
+	 *			 kill all processes matching the turn names in "".
 	 *
 	 * @return Exit eval of exert command with worker method
 	 * @throws Exception 

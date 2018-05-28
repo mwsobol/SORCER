@@ -9,8 +9,6 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
@@ -25,7 +23,6 @@ import static sorcer.so.operator.*;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.*;
 import static sorcer.po.operator.srv;
-import static sorcer.so.operator.*;
 import static sorcer.so.operator.exert;
 
 /**
@@ -81,9 +78,11 @@ public class SmlOperators {
 		Object o10 = eval(model(), "path");
 
 		// returning entries
-		ent e3 = act(v1);
-		ent e4 = act(f1);
-		ent e5 = act(context(), "path");
+		ent e3 = turn(v1);
+		ent e4 = turn(f1);
+		ent e5 = turn(context(), "path");
+		ent e6 = turn(job());
+		ent e7 = turn(model());
 
 		// exerting mograms
 		mog m3 = exert(task());
@@ -94,7 +93,8 @@ public class SmlOperators {
 		cxt c4 = response(model());
 		cxt c5 = response(ex2);
 		rsp r1 = response(model());
-		cxt r2 = out(model());
+		rsp r2 = row(c2);
+		cxt r3 = out(model());
 		clear(ex2);
 	}
 

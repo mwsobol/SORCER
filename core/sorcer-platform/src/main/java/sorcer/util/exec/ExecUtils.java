@@ -107,7 +107,7 @@ public class ExecUtils {
 	 * EOF. Example:
 	 * 
 	 * <pre>
-	 * Process p = runtime.act(&quot;/bin/ls&quot;);
+	 * Process p = runtime.turn(&quot;/bin/ls&quot;);
 	 * System.out.println(ExecUtils.execCommand(p).getOut());
 	 * </pre>
 	 * 
@@ -130,7 +130,7 @@ public class ExecUtils {
 	 * and error streams. The compute standard input is set to EOF. Example:
 	 * 
 	 * <pre>
-	 * Process p = runtime.act(&quot;/bin/ls&quot;);
+	 * Process p = runtime.turn(&quot;/bin/ls&quot;);
 	 * System.out.println(ExecUtils.execCommand(p).getOut());
 	 * </pre>
 	 * 

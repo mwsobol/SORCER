@@ -112,7 +112,7 @@ public class DataTable implements ModelTable {
 	/** The <code>List</code> of column identifiers. */
 	protected List<String> columnIdentifiers;
 
-	/** The <code>List</code> of row identifiers. */
+	/** The <code>List</code> of listing identifiers. */
 	protected List<Object> rowIdentifiers;
 
 	protected boolean lazy = false;
@@ -214,7 +214,7 @@ public class DataTable implements ModelTable {
 	 * Constructs a <code>DefaultTableModel</code> and initializes the dataTable by
 	 * passing <code>data</code> and <code>columnNames</code> to the
 	 * <code>setDataList</code> method. The first index in the
-	 * <code>Object[][]</code> array is the row index and the second is the
+	 * <code>Object[][]</code> array is the listing index and the second is the
 	 * column index.
 	 * 
 	 * @param data
@@ -232,7 +232,7 @@ public class DataTable implements ModelTable {
 	/**
 	 * Returns the <code>List</code> of <code>Lists</code> that contains the
 	 * dataTable's data values. The lists contained in the outer list are each a
-	 * single row of values. In other words, to get to the cell at row 1, column
+	 * single listing of values. In other words, to get to the cell at listing 1, column
 	 * 5:
 	 * <p>
 	 * 
@@ -302,11 +302,11 @@ public class DataTable implements ModelTable {
 
 	/**
 	 * Replaces the current <code>dataList</code> instance variable with the new
-	 * <code>List</code> of rows, <code>dataList</code>. Each row is represented
+	 * <code>List</code> of rows, <code>dataList</code>. Each listing is represented
 	 * in <code>dataList</code> as a <code>List</code> of <code>Object</code>
 	 * values. <code>columnIdentifiers</code> are the names of the new columns.
 	 * The first key in <code>columnIdentifiers</code> is mapped to column 0 in
-	 * <code>dataList</code>. Each row in <code>dataList</code> is adjusted to
+	 * <code>dataList</code>. Each listing in <code>dataList</code> is adjusted to
 	 * match the number of columns in <code>columnIdentifiers</code> either by
 	 * truncating the <code>List</code> if it is too long, or adding
 	 * <code>null</code> values if it is too short.
@@ -329,7 +329,7 @@ public class DataTable implements ModelTable {
 	/**
 	 * Replaces the eval in the <code>dataList</code> instance variable with
 	 * the values in the array <code>dataList</code>. The first index in the
-	 * <code>Object[][]</code> array is the row index and the second is the
+	 * <code>Object[][]</code> array is the listing index and the second is the
 	 * column index. <code>columnIdentifiers</code> are the names of the new
 	 * columns.
 	 * 
@@ -344,34 +344,34 @@ public class DataTable implements ModelTable {
 	}
 
 	/**
-	 * Adds a row to the end of the list of rows. The new row will contain
+	 * Adds a listing to the end of the list of rows. The new listing will contain
 	 * <code>null</code> values unless <code>rowData</code> is specified.
-	 * Notification of the row being added will be generated.
+	 * Notification of the listing being added will be generated.
 	 * 
 	 * @param rowData
-	 *            optional data of the row being added
+	 *            optional data of the listing being added
 	 */
 	public void addRow(List rowData) {
 		insertRow(getRowCount(), rowData);
 	}
 
 	/**
-	 * Adds a row to the end of the list of rows. The new row will contain
+	 * Adds a listing to the end of the list of rows. The new listing will contain
 	 * <code>null</code> values unless <code>rowData</code> is specified.
-	 * Notification of the row being added will be generated.
+	 * Notification of the listing being added will be generated.
 	 * 
 	 * @param rowData
-	 *            optional data of the row being added
+	 *            optional data of the listing being added
 	 */
 	public void addRow(Object[] rowData) {
 		addRow(convertToList(rowData));
 	}
 
 	/**
-	 * Adds a row of doubles to the end of the list of rows.
+	 * Adds a listing of doubles to the end of the list of rows.
 	 *
 	 * @param rowData
-	 *            optional data of the row being added
+	 *            optional data of the listing being added
 	 */
 	public void addRow(double[] rowData) {
 		List<Double> doa = new ArrayList<>();
@@ -381,32 +381,32 @@ public class DataTable implements ModelTable {
 		addRow(doa);
 	}
 	/**
-	 * Inserts a row at <code>row</code> in the list of rows. The new row will contain
+	 * Inserts a listing at <code>listing</code> in the list of rows. The new listing will contain
 	 * <code>null</code> values unless <code>rowData</code> is specified.
-	 * Notification of the row being added will be generated.
+	 * Notification of the listing being added will be generated.
 	 * 
 	 * @param row
-	 *            the row index of the row to be inserted
+	 *            the listing index of the listing to be inserted
 	 * @param rowData
-	 *            optional data of the row being added
+	 *            optional data of the listing being added
 	 * @exception ArrayIndexOutOfBoundsException
-	 *                if the row was invalid
+	 *                if the listing was invalid
 	 */
 	public void insertRow(int row, List rowData) {
 		dataList.add(row, rowData);
 	}
 
 	/**
-	 * Inserts a row at <code>row</code> in the model. The new row will contain
+	 * Inserts a listing at <code>listing</code> in the model. The new listing will contain
 	 * <code>null</code> values unless <code>rowData</code> is specified.
-	 * Notification of the row being added will be generated.
+	 * Notification of the listing being added will be generated.
 	 * 
 	 * @param row
-	 *            the row index of the row to be inserted
+	 *            the listing index of the listing to be inserted
 	 * @param rowData
-	 *            optional data of the row being added
+	 *            optional data of the listing being added
 	 * @exception ArrayIndexOutOfBoundsException
-	 *                if the row was invalid
+	 *                if the listing was invalid
 	 */
 	public void insertRow(int row, Object[] rowData) {
 		insertRow(row, convertToList(rowData));
@@ -434,7 +434,7 @@ public class DataTable implements ModelTable {
 	/**
 	 * Moves one or more rows from the inclusive range <code>start</code> to
 	 * <code>end</code> to the <code>to</code> position in the model. After the
-	 * move, the row that was at index <code>start</code> will be at index
+	 * move, the listing that was at index <code>start</code> will be at index
 	 * <code>to</code>. This method will send a <code>tableChanged</code>
 	 * notification message to all the listeners.
 	 * <p>
@@ -453,9 +453,9 @@ public class DataTable implements ModelTable {
 	 * </pre>
 	 * 
 	 * @param start
-	 *            the starting row index to be moved
+	 *            the starting listing index to be moved
 	 * @param end
-	 *            the ending row index to be moved
+	 *            the ending listing index to be moved
 	 * @param to
 	 *            the destination of the rows to be moved
 	 * @exception ArrayIndexOutOfBoundsException
@@ -477,13 +477,13 @@ public class DataTable implements ModelTable {
 	}
 
 	/**
-	 * Removes the row at <code>row</code> from the model. Notification of the
-	 * row being removed will be sent to all the listeners.
+	 * Removes the listing at <code>listing</code> from the model. Notification of the
+	 * listing being removed will be sent to all the listeners.
 	 * 
 	 * @param row
-	 *            the row index of the row to be removed
+	 *            the listing index of the listing to be removed
 	 * @exception ArrayIndexOutOfBoundsException
-	 *                if the row was invalid
+	 *                if the listing was invalid
 	 */
 	public void removeRow(int row) {
 		dataList.remove(row);
@@ -497,9 +497,9 @@ public class DataTable implements ModelTable {
 	/**
 	 * Replaces the column identifiers in the model. If the number of
 	 * <code>newIdentifier</code>s is greater than the current number of
-	 * columns, new columns are added to the end of each row in the model. If
+	 * columns, new columns are added to the end of each listing in the model. If
 	 * the number of <code>newIdentifier</code>s is less than the current number
-	 * of columns, all the extra columns at the end of a row are discarded.
+	 * of columns, all the extra columns at the end of a listing are discarded.
 	 * <p>
 	 *
 	 * @param columnIdentifiers
@@ -517,9 +517,9 @@ public class DataTable implements ModelTable {
 	/**
 	 * Replaces the column identifiers in the model. If the number of
 	 * <code>newIdentifier</code>s is greater than the current number of
-	 * columns, new columns are added to the end of each row in the model. If
+	 * columns, new columns are added to the end of each listing in the model. If
 	 * the number of <code>newIdentifier</code>s is less than the current number
-	 * of columns, all the extra columns at the end of a row are discarded.
+	 * of columns, all the extra columns at the end of a listing are discarded.
 	 * <p>
 	 *
 	 * @param newIdentifiers
@@ -567,7 +567,7 @@ public class DataTable implements ModelTable {
 	 * <code>columnName</code>, which may be null. <code>columnData</code> is
 	 * the optional list of data for the column. If it is <code>null</code> the
 	 * column is filled with <code>null</code> values. Otherwise, the new data
-	 * will be added to model starting with the first element going to row 0,
+	 * will be added to model starting with the first element going to listing 0,
 	 * etc. This method will send a <code>tableChanged</code> notification
 	 * message to all the listeners.
 	 * 
@@ -589,7 +589,7 @@ public class DataTable implements ModelTable {
 	}
 
 	/**
-	 * Remove a column to the model at the specified colID. All row data is shifted to the left.
+	 * Remove a column to the model at the specified colID. All listing data is shifted to the left.
 	 * 
 	 * @param colID
 	 *            the index of the column being deleted
@@ -610,7 +610,7 @@ public class DataTable implements ModelTable {
 	 * <code>columnName</code>, which may be null. <code>columnData</code> is
 	 * the optional list of data for the column. If it is <code>null</code> the
 	 * column is filled with <code>null</code> values. Otherwise, the new data
-	 * will be added to model starting with the first element going to row 0,
+	 * will be added to model starting with the first element going to listing 0,
 	 * etc. This method will send a <code>tableChanged</code> notification
 	 * message to all the listeners.
 	 * 
@@ -642,7 +642,7 @@ public class DataTable implements ModelTable {
 	 * <code>columnName</code>. <code>columnData</code> is the optional array of
 	 * data for the column. If it is <code>null</code> the column is filled with
 	 * <code>null</code> values. Otherwise, the new data will be added to model
-	 * starting with the first element going to row 0, etc. This method will
+	 * starting with the first element going to listing 0, etc. This method will
 	 * send a <code>tableChanged</code> notification message to all the
 	 * listeners.
 	 *
@@ -698,16 +698,16 @@ public class DataTable implements ModelTable {
 	}
 
 	/**
-	 * Returns an attribute eval for the cell at <code>row</code> and
+	 * Returns an attribute eval for the cell at <code>listing</code> and
 	 * <code>column</code>.
 	 * 
 	 * @param row
-	 *            the row whose eval is to be queried
+	 *            the listing whose eval is to be queried
 	 * @param column
 	 *            the column whose eval is to be queried
 	 * @return the eval Object at the specified cell
 	 * @exception ArrayIndexOutOfBoundsException
-	 *                if an invalid row or column was given
+	 *                if an invalid listing or column was given
 	 */
 	public Object getValueAt(int row, int column) {
 		List rowList = (List) dataList.get(row);
@@ -831,9 +831,9 @@ public class DataTable implements ModelTable {
 	}
 
 //	public Object execute(Object rowName, String columnName) {
-//		int row = rowIndexOf(rowName);
+//		int listing = rowIndexOf(rowName);
 //		int column = columnIndexOf(columnName);
-//		List rowList = (List) dataList.get(row);
+//		List rowList = (List) dataList.get(listing);
 //		return rowList.get(column);
 //	}
 
@@ -850,16 +850,16 @@ public class DataTable implements ModelTable {
 
 	/**
 	 * Sets the object eval for the cell at <code>column</code> and
-	 * <code>row</code>. <code>aValue</code> is the new eval.
+	 * <code>listing</code>. <code>aValue</code> is the new eval.
 	 * 
 	 * @param aValue
 	 *            the new eval; this can be null
 	 * @param row
-	 *            the row whose eval is to be changed
+	 *            the listing whose eval is to be changed
 	 * @param column
 	 *            the column whose eval is to be changed
 	 * @exception ArrayIndexOutOfBoundsException
-	 *                if an invalid row or column was given
+	 *                if an invalid listing or column was given
 	 */
 	public void setValueAt(Object aValue, int row, int column) {
 		List rowList = (List) dataList.get(row);
@@ -1104,7 +1104,7 @@ public class DataTable implements ModelTable {
 				}
 			}
 			if (rowCount > 100) {
-				sb.append("\n...\ntotal row count: " + dataList.size());
+				sb.append("\n...\ntotal listing count: " + dataList.size());
                 sb.append("\n");
 			}
 		}

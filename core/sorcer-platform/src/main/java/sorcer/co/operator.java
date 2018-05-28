@@ -269,11 +269,48 @@ public class operator extends Operator {
 		return list;
 	}
 
-	public static List<Object> row(Object... elems) {
+	public static List<Object> listing(Object... elems) {
         List<Object> list = new ArrayList<>();
         Collections.addAll(list, elems);
         return list;
 	}
+
+    public static Row row(Entry...  entries) {
+	    return new Row(entries);
+    }
+
+	public static Row row(Context context) {
+		Iterator it = ((ServiceContext)context).keyIterator();
+		Row row = new Row();
+		row.setName(context.getName());
+		String path = null;
+		Object obj;
+		List<String> columnNames = new ArrayList<>();
+		List<Object> rowValues = new ArrayList<>();
+		while (it.hasNext()) {
+			path = (String) it.next();
+			obj = context.get(path);
+			columnNames.add(path);
+			if (obj == null) {
+				rowValues.add(Context.none);
+			} else {
+				rowValues.add(obj);
+			}
+		}
+		row. setColumnIdentifiers(columnNames);
+		row.addRow(rowValues);
+		return row;
+	}
+
+    public static ServiceContext rowContext(Row row) {
+        ServiceContext cxt = new ServiceContext();
+        List<String> identifires = row.getColumnIdentifiers();
+        List<Object> values = row.getRow(0);
+        for (int i = 0; i < identifires.size(); i++) {
+            cxt.put(identifires.get(i), values.get(i));
+        }
+        return cxt;
+    }
 
 	public static List<Object> values(Row response) {
 		return response.getValues();
@@ -994,6 +1031,10 @@ public class operator extends Operator {
 							  Arg... args) throws ContextException {
 		return value(context, path, args);
 	}
+
+    public static Object value(Response response, String path, Arg... args) throws ContextException, RemoteException {
+	    return response.getValue(path, args);
+    }
 
 	public static <T> T value(Context<T> context, String path,
 							  Arg... args) throws ContextException {

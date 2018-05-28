@@ -53,7 +53,7 @@ public class ObjectBlock extends Block {
 	
 	public Block doBlock(Transaction txn, Arg... args) throws ExertionException,
 			SignatureException, RemoteException {
-		// return (Job) new ServiceJobber().act(job, txn);
+		// return (Job) new ServiceJobber().turn(job, txn);
 		Block result = null;
 		try {
 			ObjectSignature os = (ObjectSignature) getProcessSignature();
