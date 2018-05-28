@@ -237,9 +237,9 @@ public class operator extends Operator {
 		return elems;
 	}
 
-	public static double[] vector(double... elems) {
-		return elems;
-	}
+//	public static double[] vector(double... elems) {
+//		return elems;
+//	}
 
 	public static int[] vector(int... elems) {
 		return elems;
@@ -269,13 +269,25 @@ public class operator extends Operator {
 		return list;
 	}
 
-	public static List<Object> listing(Object... elems) {
+	public static List<Object> vector(Object... elems) {
         List<Object> list = new ArrayList<>();
         Collections.addAll(list, elems);
         return list;
 	}
 
-    public static Row row(Entry...  entries) {
+    public static Row column(DataTable table, String column) throws ContextException {
+        return new Row(table.getRowNames(), table.getColumn(column));
+    }
+
+    public static Row row(DataTable table, int index) throws ContextException {
+        return new Row(table.getColumnNames(), table.getRow(index));
+    }
+
+    public static Row row(DataTable table, String row) throws ContextException {
+		return new Row(table.getColumnNames(), table.getRow(row));
+	}
+
+	public static Row row(Entry...  entries) {
 	    return new Row(entries);
     }
 
@@ -877,19 +889,25 @@ public class operator extends Operator {
 		return entry.getName();
 	}
 
-	public static <T extends List> DataTable dataTable(T... elems) {
-		int rowCount = elems.length;
-		int columnCount = elems[0].size();
-		DataTable out = new DataTable(rowCount, columnCount);
-		for (int i = 0; i < rowCount; i++) {
-			if (elems[i] instanceof Header) {
-				out.setColumnIdentifiers(elems[0]);
-			} else {
-				out.addRow((List<?>) elems[i]);
-			}
-		}
-		return out;
-	}
+    public static DataTable dataTable(Object... elems)  {
+        int count = elems.length;
+        DataTable out = null;
+        int start = 0;
+        List<Object> columnIds = null;
+        if ((elems[0] instanceof Header)) {
+            start = 1;
+            columnIds = (List)elems[0];
+        }
+        List<Integer> rowIds = new ArrayList<>(count - 1);
+        out = new DataTable(columnIds, count - 1);
+        for (int i = start; i < count; i++) {
+            out.addRow((List) elems[i]);
+            rowIds.add(i - 1);
+        }
+        out.setRowIdentifiers(rowIds);
+        return out;
+    }
+
 
 	public static OutType out(Type type) {
 		return new OutType(type);

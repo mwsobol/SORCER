@@ -161,9 +161,9 @@ public class CollectionOperators {
 	public void tableOperator() throws Exception {
 
 		DataTable t = dataTable(
-				listing(1.1, 1.2, 1.3, 1.4, 1.5),
-				listing(2.1, 2.2, 2.3, 2.4, 2.5),
-				listing(3.1, 3.2, 3.3, 3.4, 3.5));
+				list(1.1, 1.2, 1.3, 1.4, 1.5),
+				list(2.1, 2.2, 2.3, 2.4, 2.5),
+				list(3.1, 3.2, 3.3, 3.4, 3.5));
 
 		columnNames(t, list("x1", "x2", "x3", "x4", "x5"));
 		rowNames(t, list("f1", "f2", "f3"));

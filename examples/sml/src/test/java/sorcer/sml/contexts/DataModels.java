@@ -11,6 +11,8 @@ import sorcer.core.context.model.ent.Value;
 import sorcer.service.Context;
 import sorcer.service.Response;
 import sorcer.service.modeling.Model;
+import sorcer.util.DataTable;
+import sorcer.util.ModelTable;
 import sorcer.util.Row;
 
 import java.net.URL;
@@ -359,4 +361,24 @@ public class DataModels {
         assertTrue(value(row, "x2").equals(40.0));
     }
 
+
+    @Test
+    public void responeDataTable() throws Exception {
+
+        DataTable data = dataTable(header("x", "y", "area", "aspect", "perimeter"),
+                list(1.0, 1.0, 1.0, 1.0, 4.0),
+                list(1.0, 2.0, 2.0, 2.0, 6.0),
+                list(2.0, 1.0, 2.0, 0.5, 6.0),
+                list(2.0, 2.0, 4.0, 1.0, 8.0),
+                list(1.1, 1.0, 1.1, 0.9090909090909091, 4.2),
+                list(0.1, 0.1, 0.010000000000000002, 1.0, 0.4));
+
+        Row area = column(data, "area");
+//        logger.info("area: " + area);
+        assertTrue(area.getRow(0).equals(list(1.0, 2.0, 2.0, 4.0, 1.1, 0.010000000000000002)));
+
+        Row row3 = row(data, 3);
+//        logger.info("row3: " + row3);
+        assertTrue(row3.getRow(0).equals(list(2.0, 2.0, 4.0, 1.0, 8.0)));
+    }
 }

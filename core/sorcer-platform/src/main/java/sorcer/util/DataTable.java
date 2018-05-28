@@ -24,16 +24,15 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.StorageManagement;
-import sorcer.service.Accessor;
-import sorcer.service.Context;
-import sorcer.service.EvaluationException;
-import sorcer.service.Signature;
+import sorcer.service.*;
+import sorcer.service.modeling.rsp;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.Collections;
 
@@ -47,7 +46,7 @@ import java.util.Collections;
  * @see Serializable
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class DataTable implements ModelTable {
+public class DataTable implements ModelTable, Response, rsp {
 	/** Serial version user identification number */
 	static final long serialVersionUID = -1968282524723965792L;
 	/** Logger */
@@ -65,6 +64,16 @@ public class DataTable implements ModelTable {
 	/*  Enumeration type for length units */
 
 	private String fiColumnName = "fis";
+
+	@Override
+	public Object getValue(String path, Arg... args) throws ContextException, RemoteException {
+		Integer index = Arg.selectIndex(args);
+		if (index != null) {
+			return getRow(path).get(index);
+		} else {
+			return getRow(path);
+		}
+	}
 
 	public enum LengthUnits {
 		FEET, INCH, METER

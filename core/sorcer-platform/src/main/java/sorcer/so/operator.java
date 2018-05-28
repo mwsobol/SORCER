@@ -33,6 +33,8 @@ import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Modeling;
 import sorcer.service.modeling.Valuation;
+import sorcer.util.DataTable;
+import sorcer.util.Row;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;

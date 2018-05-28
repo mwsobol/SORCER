@@ -50,10 +50,7 @@ import sorcer.service.*;
 import sorcer.service.Signature.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.modeling.*;
-import sorcer.util.Loop;
-import sorcer.util.ObjectCloner;
-import sorcer.util.Row;
-import sorcer.util.Sorcer;
+import sorcer.util.*;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.io.File;
@@ -61,10 +58,12 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.Collections;
 
 import static sorcer.co.operator.path;
 import static sorcer.co.operator.*;
@@ -3640,7 +3639,6 @@ public class operator extends Operator {
 	public static Version version(String ver) {
 		return new Version(ver);
 	}
-
 
 
 	private static String getWarningBanner(String message) {
