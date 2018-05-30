@@ -195,13 +195,14 @@ public class Entry<V> extends MultiFiSlot<String, V>
                 out = (V) ((Callable)val).call(args);
             } else if (val instanceof Service) {
                 out = (V) ((Service)val).execute(args);
-            } else
+            } else {
                 // impl is just the out
                 // it is recommended to set out and impl to the same valuate
                 // when the impl is implementation of the out valuate
                 if (out == null && impl != null) {
                     out = (V) impl;
                 }
+            }
         } catch (Exception e) {
             throw new ContextException(e);
         }

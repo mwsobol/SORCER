@@ -756,9 +756,6 @@ public class operator extends Operator {
 		} else if (value instanceof Service) {
 			entry = new Proc(path, value);
 			entry.setType(Functionality.Type.PROC);
-		} else if (value.getClass() == Tuple2.class) {
-			entry = new Subroutine(path, value);
-			entry.setType(Functionality.Type.CONSTANT);
 		} else {
 			entry = new Entry(path, value);
 		}
@@ -788,14 +785,13 @@ public class operator extends Operator {
 		return srv(sig);
 	}
 
-	public static <T> Tuple2<Fidelity, Service> ent(Fidelity selectFi, Service srvFi) throws ConfigurationException {
-		Tuple2<Fidelity, Service> assoc = new Tuple2<>(selectFi, srvFi);
-		if (srvFi instanceof Fidelity) {
-			Fidelity fi = (Fidelity)srvFi;
+	public static Slot<Fidelity, Service> ent(Fidelity selectFi, Service service) throws ConfigurationException {
+		Slot<Fidelity, Service> assoc = new Slot(selectFi, service);
+		if (service instanceof Fidelity) {
+			Fidelity fi = (Fidelity)service;
 			if (!fi.isValid()) {
-				String msg = "Misconfigured entry fidelity: " + srvFi + " for: " + selectFi;
+				String msg = "Misconfigured entry fidelity: " + service + " for: " + selectFi;
 				logger.warn(msg);
-//			throw new ConfigurationException("Misconfigured fidelity: " + srvFi + " for: " + selectFi);
 			}
 
 			if (fi.getFiType().equals(Fi.Type.GRADIENT)) {
@@ -808,15 +804,14 @@ public class operator extends Operator {
 					if (fi.getSelect() != null) {
 						selectFi.setSelect(fi.getSelect());
 					} else {
-						selectFi.setSelect((T) selectFi.getName());
-						fi.setSelect((T) selectFi.getName());
+						selectFi.setSelect(selectFi.getName());
+						fi.setSelect(selectFi.getName());
 					}
 				}
 			}
 
 			fi.setName(selectFi.getName());
 			fi.setPath(selectFi.getPath());
-//		fi.setSelect((T) selectFi.getSelect());
 			selectFi.setType(fi.getFiType());
 		}
 

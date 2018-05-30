@@ -144,7 +144,6 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 		assertEquals(value(context(block), "block/result"), 500.0);
 	}
 
-	@Ignore
 	@Test
 	public void taskAltBlockTest() throws Exception {
 
@@ -166,19 +165,19 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 
 		Block block = block("block", t4, t5,
 				alt(opt(condition((Context <Double> cxt) ->
-						value(cxt, "atg/t4") > value(cxt, "arg/t5")), t3),
+						value(cxt, "arg/t4") > value(cxt, "arg/t5")), t3),
 					opt(condition(cxt ->
 						(double)value(cxt, "arg/t4") <= (double)value(cxt, "arg/t5")), t6)));
 
 		block = exert(block);
 		logger.info("block context 1: " + context(block));
 		logger.info("result: " + eval(context(block), "block/result"));
-//		assertEquals(value(context(block), "block/result"), 400.00);
+		assertEquals(value(context(block), "block/result"), 400.00);
 
 		block = exert(block, val("block/t5/arg/x1", 200.0), val("block/t5/arg/x2", 800.0));
 		logger.info("block context 2: " + context(block));
 		logger.info("result: " + eval(context(block), "block/result"));
-//		assertEquals(value(context(block), "block/result"), 750.00);
+		assertEquals(value(context(block), "block/result"), 750.00);
 	}
 
 	@Test

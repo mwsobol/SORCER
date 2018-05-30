@@ -41,7 +41,7 @@ public class Config extends Entry<List<Setup>> {
 
 	public Config(String path, Setup[] setups) {
 		key = path;
-		impl = new ArrayList(setups.length);
+		out = new ArrayList(setups.length);
 		for (Setup s :setups) {
 			out.add(s);
 		}
