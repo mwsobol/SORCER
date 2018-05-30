@@ -426,7 +426,7 @@ public interface SorcerConstants {
 
 	final static String IND = "index";
 
-	final static String OUT_VALUE = "out" + CPS + "execute";
+	final static String OUT_VALUE = "out" + CPS + "value";
 
 	final static String SCRATCH_DIR_KEY = OUT_VALUE + CPS + "scratchDir";
 	final static String SCRATCH_URL_KEY = OUT_VALUE + CPS + "scratchUrl";
@@ -447,9 +447,9 @@ public interface SorcerConstants {
 
 	final static String OUT_SCRIPT = "out/path/script";
 
-	final static String VALUE = "execute";
+	final static String VALUE = "value";
 
-	final static String IN_VALUE = "in" + CPS + "execute";
+	final static String IN_VALUE = "in" + CPS + "value";
 
 	final static String IN_PATH = "in" + CPS + "path";
 

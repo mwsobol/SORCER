@@ -154,9 +154,9 @@ public class CoffeeServiceTest {
 		logger.info("out: " + out);
 		logger.info("result: " + result(mod));
 		assertEquals(value(result(mod), "paid$"), 120);
+		assertEquals(value(result(mod), "change$"), 10);
 		assertEquals(value(result(mod), "makeCoffee"), 50);
 		assertEquals(value(result(mod), "deliver"), 60);
-		assertEquals(value(result(mod), "change$"), 10);
 	}
 
 	@Test

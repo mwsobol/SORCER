@@ -96,6 +96,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected Functionality.Type type = Functionality.Type.CONTEXT;
 	Signature.Direction direction = Signature.Direction.INOUT;
 
+	protected boolean isSoft = false;
+
 	/**
 	 * For persistence layers to differentiate with saved context already
 	 * associated to task or not.
@@ -1947,7 +1949,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			key = (String) e.next();
 			if (key.startsWith(PRIVATE) && key.endsWith(PRIVATE))
 				continue;
-			attributes = (Hashtable) cxt.metacontext.get(key);
+			attributes = (Map) cxt.metacontext.get(key);
 			if (attributes.containsKey(mappedKey))
 				attributes.remove(mappedKey);
 		}
@@ -3584,6 +3586,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 		} else {
 			return new Entry(entryName, result);
 		}
+	}
+
+	public boolean isSoft() {
+		return isSoft;
+	}
+
+	public void setSoft(boolean soft) {
+		isSoft = soft;
 	}
 
 	public void clean() {

@@ -193,17 +193,20 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			} else {
 				if (val == null && scope != null && scope != this) {
 					Object o = scope.getValue(path);
-					if (o != Context.none && o != null)
+					if (o != Context.none && o != null) {
 						return o;
-					else
+					} else if (isSoft) {
 						return scope.getSoftValue(path);
+					}
 				} else {
-					if (val == null)
+					if (val == null & isSoft) {
 						return getSoftValue(path);
-					else
+					} else {
 						return val;
+					}
 				}
 			}
+			return null;
 		} catch (Exception e) {
 			throw new EvaluationException(e);
 		}

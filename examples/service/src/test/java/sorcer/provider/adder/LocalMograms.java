@@ -174,7 +174,7 @@ public class LocalMograms {
 	}
 
 	@Test
-	public void evalauteLocalModel() throws Exception {
+	public void evaluateLocalModel() throws Exception {
 
 		// three entry model
 		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
@@ -182,8 +182,8 @@ public class LocalMograms {
 					response("add", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);
-		assertTrue(get(out, "add").equals(100.0));
 
+		assertTrue(get(out, "add").equals(100.0));
 		assertTrue(get(mod, "result/y").equals(100.0));
 	}
 

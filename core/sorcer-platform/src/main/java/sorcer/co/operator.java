@@ -347,13 +347,13 @@ public class operator extends Operator {
 	}
 
 	public static List<String> names(String... elems) {
-        List<String> list = new ArrayList<>();
+        List<String> list = new Header<>();
         Collections.addAll(list, elems);
 		return list;
 	}
 
 	public static List<String> names(List<String>... nameLists) {
-		List<String> out = new ArrayList<String>();
+		List<String> out = new Header<String>();
 		for (List<String> each : nameLists) {
 			out.addAll(each);
 		}

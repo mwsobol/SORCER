@@ -191,8 +191,8 @@ public class  LocalBlockExertions implements SorcerConstants {
 						result("block/result", Direction.OUT)));
 
 		Block block = block("block", t4, t5,
-				alt(opt(condition((Context<Double> cxt) -> value(cxt, "t4") > value(cxt, "t5")), t3),
-						opt(condition((Context<Double> cxt) -> value(cxt, "t4") <= value(cxt, "t5")), t6)));
+				alt(opt(condition((Context<Double> cxt) -> value(cxt, "arg/t4") > value(cxt, "arg/t5")), t3),
+						opt(condition((Context<Double> cxt) -> value(cxt, "arg/t4") <= value(cxt, "arg/t5")), t6)));
 
 //		logger.info("block: " + block);
 //		logger.info("mograms: " + mograms(block));
@@ -228,8 +228,8 @@ public class  LocalBlockExertions implements SorcerConstants {
 						result("block/result", Direction.OUT)));
 
 		block = block("block", t4, t5,
-				alt(opt(condition((Context<Double> cxt) -> (double)value(cxt, "t4") > (double)value(cxt, "t5")), t3),
-						opt(condition((Context<Double> cxt) -> value(cxt, "t4") <= value(cxt, "t5")), t6)));
+				alt(opt(condition((Context<Double> cxt) -> (double)value(cxt, "arg/t4") > (double)value(cxt, "arg/t5")), t3),
+						opt(condition((Context<Double> cxt) -> value(cxt, "arg/t4") <= value(cxt, "arg/t5")), t6)));
 		result = exert(block, val("block/t5/arg/x1", 200.0), val("block/t5/arg/x2", 800.0));
 		assertEquals(value(context(result), "block/result"), 750.00);
 	}

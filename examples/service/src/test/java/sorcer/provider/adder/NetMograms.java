@@ -158,7 +158,7 @@ public class NetMograms {
 	}
 
 	@Test
-	public void evalauteRemoteModel() throws Exception {
+	public void evaluateRemoteModel() throws Exception {
 
 		// three entry model
 		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),

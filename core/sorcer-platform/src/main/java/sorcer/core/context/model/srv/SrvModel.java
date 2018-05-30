@@ -339,13 +339,29 @@ public class SrvModel extends EntryModel implements Invocation<Object> {
         return val;
     }
 
+    private Object setSigResult(Signature signature, Object value) {
+        ReturnPath rp = (ReturnPath) signature.getReturnPath();
+        if (rp != null && rp.path != null) {
+            put(rp.path, value);
+        }
+        return value;
+    }
+
     public Object evalSignature(Signature sig, String path, Arg... args) throws MogramException {
         Context out = execSignature(sig, args);
+        String sigrp = null;
+        String  crp = null;
         if (sig.getReturnPath() != null) {
+            sigrp = sig.getReturnPath().getPath();
+        }
+        if (returnPath != null) {
+            crp = returnPath.path;
+        }
+        if (crp != null) {
             Object obj = null;
             try {
-                obj = out.getValue(((ReturnPath)sig.getReturnPath()).path);
-
+//                obj = out.getValue(((ReturnPath)sig.getReturnPath()).path);
+                obj = out.getValue(crp);
                 if (obj == null)
                     obj = out.getValue(path);
                 if (obj != null) {
@@ -359,8 +375,12 @@ public class SrvModel extends EntryModel implements Invocation<Object> {
                 throw new MogramException(e);
             }
         } else {
-            return out;
+            if (sigrp != null) {
+                // add response for this signature
+                return out.get(sigrp);
+            }
         }
+        return out;
     }
 
     private Object evalMogram(MogramEntry mogramEntry, String path, Arg... entries)
