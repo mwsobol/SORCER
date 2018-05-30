@@ -262,6 +262,8 @@ public class operator extends Operator {
 			return (ServiceContext)contextFromList((List) entries[0]);
 		} else if (entries.length == 1 && entries[0] instanceof Row) {
 			return rowContext((Row) entries[0]);
+		} else if (entries.length == 1 && entries[0] instanceof Args) {
+			return argsContext((Args)entries[0]);
 		}
 
 		ServiceContext cxt = null;
@@ -321,10 +323,8 @@ public class operator extends Operator {
 			if (o instanceof Complement) {
 				subject = (Complement) o;
 			} else if (o instanceof Args) {
-//					&& ((Args) o).args.getClass().isArray()) {
 				cxtArgs = (Args) o;
 			} else if (o instanceof ParTypes)  {
-//					&& ((ParTypes) o).types.getClass().isArray()) {
 				parTypes = (ParTypes) o;
 			} else if (o instanceof PathResponse) {
 				response = (PathResponse) o;

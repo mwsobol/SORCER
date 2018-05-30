@@ -157,4 +157,14 @@ public class Procedures {
 		assertEquals(eval(mdl, "add2"), 70.0);
 		
 	}
+
+	@Test
+	public void arguments() throws Exception {
+		Args as = args("span/filter", "span/url", ent("span", 10.0));
+		Context cxt = context(as);
+		logger.info("cxt " + cxt);
+		assertEquals(value(cxt, "span/filter"), Context.none);
+		assertEquals(value(cxt, "span"), 10.0);
+		assertEquals(asis(cxt, "span"), val("span", 10.0));
+	}
 }

@@ -114,9 +114,12 @@ public class operator extends Operator {
 		if (object instanceof Context) {
 			p = new Proc(path, argument);
 			p.setScope(object);
-		} else if (object instanceof Subroutine) {
+		} else if (object instanceof Entry) {
 			p = new Proc(path, argument);
-			p.setScope(context((Subroutine)object));
+			p.setScope(context((Entry)object));
+		} else if (object instanceof Args) {
+			p = new Proc(path, argument);
+			p.setScope(context((Args)object));
 		} else if (object instanceof Service) {
 			p = new Proc(path, argument, object);
 		}

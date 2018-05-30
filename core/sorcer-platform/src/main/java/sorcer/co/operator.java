@@ -324,6 +324,18 @@ public class operator extends Operator {
         return cxt;
     }
 
+	public static ServiceContext argsContext(sorcer.eo.operator.Args args) {
+		ServiceContext cxt = new ServiceContext();
+		for (int i = 0; i < args.args.length; i++) {
+			if (args.args[i] instanceof String) {
+				cxt.put((String) args.args[i], Context.none);
+			} else if (args.args[i] instanceof Identifiable) {
+				cxt.put(((Identifiable) args.args[i]).getName(), args.args[i]);
+			}
+		}
+		return cxt;
+	}
+
 	public static List<Object> values(Row response) {
 		return response.getValues();
 	}
