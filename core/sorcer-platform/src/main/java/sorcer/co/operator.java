@@ -485,7 +485,7 @@ public class operator extends Operator {
 			}
 
 			for (Entry e : entries) {
-				cxt.put(e.getName(), e.get());
+				cxt.put(e.getName(), e.getOut());
 			}
 			cxt.setValid(false);
 			return new Setup(aspect.toString(), cxt);

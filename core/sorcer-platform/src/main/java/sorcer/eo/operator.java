@@ -431,15 +431,15 @@ public class operator extends Operator {
 			}
 		}
 		if (funcEntryList.size() > 0) {
-			for (Subroutine p : funcEntryList) {
+			for (Entry p : funcEntryList) {
 				cxt.putValue(p.getName(), p);
-				if (((Entry)p).getImpl()  instanceof Evaluator) {
+				if (p.getImpl()  instanceof Evaluator) {
 					// preserve invokeContexr of the invoker
-					if (((Evaluator)((Entry)p).getImpl()).getScope() != null
-						&& ((Evaluator)((Entry)p).getImpl()).getScope().size() > 0) {
-						((Evaluator) ((Entry) p).getImpl()).getScope().setScope(cxt);
+					if (((Evaluator)p.getImpl()).getScope() != null
+						&& ((Evaluator) p.getImpl()).getScope().size() > 0) {
+						((Evaluator) p.getImpl()).getScope().setScope(cxt);
 					} else {
-						((Evaluator) ((Entry) p).getImpl()).setScope(cxt);
+						((Evaluator) p.getImpl()).setScope(cxt);
 					}
 				}
 			}
@@ -541,7 +541,7 @@ public class operator extends Operator {
 		return cxt;
 	}
 
-	public static Context contextFromList(List<Subroutine> entries) throws ContextException {
+	public static Context contextFromList(List<Entry> entries) throws ContextException {
 		ServiceContext cxt = new ServiceContext();
 		for (Object i : entries) {
 			cxt.put(((Entry)i).getName().toString(), ((Entry)i).get());
@@ -717,7 +717,7 @@ public class operator extends Operator {
 				} else {
 					cxt.putValue(ent.getName(), ent.getImpl());
 				}
-			} else if ((Entry)entryList.get(i) instanceof Entry) {
+			} else if (entryList.get(i) instanceof Entry) {
 				cxt.putValue(entryList.get(i).getName(), ent.getOut());
 			}
 		}
@@ -2068,7 +2068,7 @@ public class operator extends Operator {
 				if (mFi.getMorpherFidelity() != null) {
 					// set the default morpher
 					try {
-						mFi.setMorpher((Morpher) ((Subroutine) mFi.getMorpherFidelity().get(0)).get());
+						mFi.setMorpher((Morpher) ((Entry) mFi.getMorpherFidelity().get(0)).get());
 					} catch (ContextException e) {
 						throw new ExertionException(e);
 					}
@@ -2320,7 +2320,7 @@ public class operator extends Operator {
 				mFi.addObserver(fiManager);
 				if (mFi.getMorpherFidelity() != null) {
 					// set the default morpher
-					mFi.setMorpher((Morpher) ((Subroutine) mFi.getMorpherFidelity().get(0)).get());
+					mFi.setMorpher((Morpher) ((Entry) mFi.getMorpherFidelity().get(0)).get());
 				}
 			}
 		}
