@@ -1196,10 +1196,27 @@ public class operator extends Operator {
 		return map;
 	}
 
+	public static <K, V> Pool<K, V> entPool(Fi.Type type, Slot<K, V>... entries) {
+		Pool<K, V> map = new Pool<>();
+		map.setFiType(type);
+		for (Slot<K, V> entry : entries) {
+			map.put(entry.getKey(), entry.getOut());
+		}
+		return map;
+	}
+
 	public static <K, V> Pool<K, V> entPool(Tuple2<K, V>... entries) {
 		Pool<K, V> map = new Pool<>();
 		for (Tuple2<K, V> entry : entries) {
 			map.put(entry._1, entry._2);
+		}
+		return map;
+	}
+
+	public static <K, V> Pool<K, V> entPool(Slot<K, V>... entries) {
+		Pool<K, V> map = new Pool<>();
+		for (Slot<K, V> entry : entries) {
+			map.put(entry.getKey(), entry.getOut());
 		}
 		return map;
 	}
