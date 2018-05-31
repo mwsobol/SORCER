@@ -30,11 +30,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import sorcer.core.analytics.AnalyticsRecorder;
+import sorcer.core.provider.Exerter;
 import sorcer.core.provider.Modeler;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.SessionBeanProvider;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
+import sorcer.service.modeling.Exploration;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -386,7 +388,9 @@ public class SorcerILFactory extends BasicILFactory {
             if (target instanceof CompoundExertion
                     || Modeler.class.isAssignableFrom(serviceType)
                     || Evaluation.class.isAssignableFrom(serviceType)
-                    || Invocation.class.isAssignableFrom(serviceType)) {
+                    || Invocation.class.isAssignableFrom(serviceType)
+                    || Exerter.class.isAssignableFrom(serviceType)
+                    || Exploration.class.isAssignableFrom(serviceType)) {
                 return true;
             } else {
                 return false;
