@@ -388,9 +388,7 @@ public class SorcerILFactory extends BasicILFactory {
             if (target instanceof CompoundExertion
                     || Modeler.class.isAssignableFrom(serviceType)
                     || Evaluation.class.isAssignableFrom(serviceType)
-                    || Invocation.class.isAssignableFrom(serviceType)
-                    || Exerter.class.isAssignableFrom(serviceType)
-                    || Exploration.class.isAssignableFrom(serviceType)) {
+                    || Invocation.class.isAssignableFrom(serviceType)) {
                 return true;
             } else {
                 return false;
