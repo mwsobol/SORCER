@@ -3470,6 +3470,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return keySet().iterator();
 	}
 
+	public Iterator<T> valueIterator() {
+		return data.values().iterator();
+	}
+
 	public Iterator<Map.Entry<String,T>> entryIterator() {
 		return data.entrySet().iterator();
 	}
