@@ -35,7 +35,7 @@ import sorcer.service.ContextException;
 import sorcer.service.Exertion;
 import sorcer.service.Identifiable;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.VariabilityModeling;
+import sorcer.service.modeling.Variability;
 import sorcer.util.ModelTable;
 import sorcer.util.bdb.objects.SorcerDatabase;
 import sorcer.util.bdb.objects.SorcerDatabaseViews;
@@ -625,7 +625,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 			dt = new DeleteThread(id, Store.exertion);
 		} else if (object instanceof Functionality) {
 			dt = new DeleteThread(id, Store.var);
-		} else if (object instanceof VariabilityModeling) {
+		} else if (object instanceof Variability) {
 			dt = new DeleteThread(id, Store.varmodel);
 		} else if (object instanceof ModelTable) {
             dt = new DeleteThread(id, Store.table);
@@ -658,7 +658,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 			type = Store.exertion;
 		} else if (object instanceof Functionality) {
 			type = Store.var;
-		} else if (object instanceof VariabilityModeling) {
+		} else if (object instanceof Variability) {
 			type = Store.varmodel;
 		} else if (object instanceof ModelTable) {
             type = Store.table;
