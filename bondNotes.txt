@@ -1,0 +1,12 @@
+files to update for unicast PORT
+================================
+distribution/resources/rio/config/reggie.groovy
+
+bin/jini/configs
+    mahalo-boot.config
+    mahalo.config
+    outrigger-boot.config
+    outrigger.config
+    reggie-boot.config
+    reggie.config
+
