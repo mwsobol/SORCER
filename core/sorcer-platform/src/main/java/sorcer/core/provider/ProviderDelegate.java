@@ -2753,21 +2753,21 @@ public class ProviderDelegate {
                 beanSignature = (ServiceSignature) signature;
                 logger.info("session bean signature: {} \nfor: {}", signature, getProviderName());
                 // non session bean to be exported, session beans are created by BeanSessionProvider
-                Object bean = sorcer.co.operator.instance(beanSignature);
-                initBean(bean);
-                allBeans.add(bean);
-                exports.put(bean, this);
+				Object bean = sorcer.co.operator.instance(beanSignature);
+				initBean(bean);
+				allBeans.add(bean);
+				exports.put(bean, this);
 				logger.warn("session bean: {} \nfor: {}", beanSignature, getProviderName());
 			} else {
-                // find it out if session service bean is available
-                sessionBean = config.getEntry(ServiceProvider.COMPONENT,
-                        SESSION_BEAN,
-                        Object.class,
-                        null);
-                if (sessionBean != null) {
-                    initBean(sessionBean);
-                    allBeans.add(sessionBean);
-                    exports.put(sessionBean, this);
+				// find it out if session service bean is available
+				sessionBean = config.getEntry(ServiceProvider.COMPONENT,
+											  SESSION_BEAN,
+											  Object.class,
+											  null);
+				if (sessionBean != null) {
+					initBean(sessionBean);
+					allBeans.add(sessionBean);
+					exports.put(sessionBean, this);
 					logger.warn("session bean: {} \nfor: {}", sessionBean, getProviderName());
 				} else {
                     otherServiceBeans(config, allBeans);
@@ -2816,7 +2816,7 @@ public class ProviderDelegate {
                 }
             }
         } catch (Exception ex) {
-            logger.warn("Error getting exporters", ex);
+            logger.error("Error getting exporters", ex);
             // ignore missing exporters and use default configurations for exporters
         }
     }
