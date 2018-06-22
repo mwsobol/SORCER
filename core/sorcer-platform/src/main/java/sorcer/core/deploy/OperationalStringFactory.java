@@ -28,10 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.service.Exertion;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -125,7 +122,7 @@ public final class OperationalStringFactory {
             String config = ((ServiceSignature)self).getDeployment().getConfig();
 
             File configFile = getConfigFile(config);
-            OpString opString = checkIsOpstring(configFile);
+            OpString opString = checkIsOpstring(configFile, (ServiceDeployment) self.getDeployment());
             if(opString==null) {
                 ServiceElement service = ServiceElementFactory.create((ServiceSignature) self,
                                                                       configFile.exists()?configFile:null);
@@ -143,7 +140,7 @@ public final class OperationalStringFactory {
         return operationalStrings;
     }
 
-    private static OpString checkIsOpstring(File configFile) throws ConfigurationException {
+    private static OpString checkIsOpstring(File configFile, ServiceDeployment deployment) throws ConfigurationException {
         OpString opString = null;
         if(configFile.exists()) {
             Configuration configuration = Configuration.getInstance(configFile.getPath());
@@ -157,6 +154,8 @@ public final class OperationalStringFactory {
                 try {
                     OperationalString[] opStrings = loader.parseOperationalString(configFile);
                     opString = (OpString) opStrings[0];
+                    for(ServiceElement service : opString.getServices())
+                        ServiceElementFactory.adjustDeployment(service, deployment);
                 } catch (Exception e) {
                     throw new ConfigurationException("Failed creating opstring", e);
                 }
@@ -185,7 +184,7 @@ public final class OperationalStringFactory {
         for(Signature signature : federated) {
             String config = ((ServiceSignature)signature).getDeployment().getConfig();
             File configFile = getConfigFile(config);
-            OpString opString = checkIsOpstring(configFile);
+            OpString opString = checkIsOpstring(configFile, (ServiceDeployment) signature.getDeployment());
             if(opString==null) {
                 services.add(ServiceElementFactory.create((ServiceSignature) signature, configFile));
             } else {
