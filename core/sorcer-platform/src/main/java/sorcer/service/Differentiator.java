@@ -18,6 +18,7 @@
 package sorcer.service;
 
 
+import sorcer.service.modeling.Functionality;
 import sorcer.util.DataTable;
 
 public interface Differentiator {
@@ -27,4 +28,7 @@ public interface Differentiator {
 	public double[] getGradient(String gradientName) throws EvaluationException;
 
     public DataTable getTableGradients(String... gradientNames) throws EvaluationException;
+
+	public Functionality.Type getType();
+
 }
