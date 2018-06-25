@@ -344,7 +344,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 		return build(null);
 	}
 
-	public Object build(Context<?> inContext) throws SignatureException {
+	public Object build(Context inContext) throws SignatureException {
 		Object obj;
 		if ((operation.selector == null && initSelector == null)
 				|| (operation.selector != null && operation.selector.equals("new"))

@@ -78,6 +78,9 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     protected Projection projection;
 
+    // list of fidelities of this mogram
+    protected String[] profile;
+
     protected MogramStrategy mogramStrategy;
 
     protected Differentiator differentiator;
@@ -757,6 +760,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.projection = projection;
     }
 
+    public String[] getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String[] profile) {
+        this.profile = profile;
+    }
+
     public Fidelity selectFidelity(Arg... entries) {
         Fidelity fi = null;
         if (entries != null && entries.length > 0) {
@@ -818,6 +829,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     public void morph(String... metaFiNames) throws ContextException, RemoteException {
         if (fiManager != null) {
             fiManager.morph(metaFiNames);
+            profile = metaFiNames;
         } else {
             throw new ContextException("No fiManager available in " + this.getClass().getName());
         }
