@@ -161,7 +161,7 @@ public class SrvModel extends EntryModel implements Invocation<Object> {
                 ((Entry) val).applyFidelity();
             }
             if (val instanceof Srv) {
-                if (((Srv) val).isCached()) {
+                if (((Srv) val).isCached() && ((Srv) val).isValid()) {
                     return ((Srv) val).getOut();
                 } else if (isChanged()) {
                     ((Srv) val).setValid(false);
