@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static sorcer.co.operator.value;
+import static sorcer.service.Fi.dVar;
 import static sorcer.service.Fi.e;
 
 /**
@@ -218,11 +219,27 @@ public class operator extends Operator {
         }
     }
 
+    public static Object response(Context model, String domain, String path) throws ContextException {
+        if (((ServiceContext)model).getType().equals(Functionality.Type.MADO)) {
+            return ((ServiceContext)model.getDomain(domain)).getEvalValue(path);
+        } else {
+            try {
+                return model.getDomain(domain).getValue(path);
+            } catch (RemoteException ex) {
+                throw new ContextException(ex);
+            }
+        }
+    }
+
     public static ServiceContext response(Mogram mogram, Object... items) throws ContextException {
         if (mogram instanceof Exertion) {
             return exertionResponse((Exertion) mogram, items);
         } else if (mogram instanceof Domain) {
-            return modelResponse((Domain) mogram, items);
+            if (((ServiceContext)mogram).getType().equals(Functionality.Type.MADO)) {
+                return (ServiceContext) ((ServiceContext)((ServiceContext)mogram).getDomain((String) items[0])).getEvalValue((String) items[1]);
+            } else {
+                return modelResponse((Domain) mogram, items);
+            }
         }
         return null;
     }

@@ -50,6 +50,11 @@ public class ExecDependency extends Subroutine<List<Path>> {
         this.condition = condition;
     }
 
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<Path> getDependees() {
         return dependees;
     }

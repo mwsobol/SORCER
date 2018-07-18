@@ -17,7 +17,6 @@
 
 package sorcer.mo;
 
-import net.jini.core.transaction.TransactionException;
 import sorcer.co.tuple.ExecDependency;
 import sorcer.co.tuple.InoutValue;
 import sorcer.co.tuple.InputValue;
@@ -37,9 +36,9 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
-import sorcer.core.service.Projection;
 import sorcer.service.*;
 import sorcer.service.Domain;
+import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.util.url.sos.SdbUtil;
@@ -384,7 +383,11 @@ public class operator {
 
     public static Object response(Domain model, String path) throws ContextException {
         try {
-            return ((ServiceContext)model).getResponseAt(path);
+            if (((ServiceContext)model).getType().equals(Functionality.Type.MADO)) {
+                return ((ServiceContext)model).getEvalValue(path);
+            } else {
+                return ((ServiceContext) model).getResponseAt(path);
+            }
         } catch (RemoteException e) {
             throw new ContextException(e);
         }

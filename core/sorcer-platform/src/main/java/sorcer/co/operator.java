@@ -1386,7 +1386,7 @@ public class operator extends Operator {
 			if (d != null) {
 				path = ((Identifiable)d).getName();
 				if (path != null && path.equals("self")) {
-					((Entry) d).setKey(((Domain) dependee).getName());
+					((Entry) d).setName(((Domain) dependee).getName());
 				}
 
 				if (d instanceof ExecDependency && ((ExecDependency) d).getType().equals(Type.CONDITION)) {
