@@ -713,8 +713,14 @@ public class operator extends Operator {
 
     public static Entry ent(String path, Object value, Arg... args) {
 		Entry entry = null;
-		if (value instanceof  Number || value instanceof  String || value instanceof  Date
-				|| value instanceof  List || value instanceof Map || value.getClass().isArray()) {
+		if (value instanceof List) {
+			if  (((List)value).get(0) instanceof Path) {
+				entry = new ExecDependency(path, (List) value);
+			} else {
+				entry = new Value(path, value);
+			}
+		} else if (value instanceof  Number || value instanceof  String || value instanceof  Date
+				|| value instanceof Map || value.getClass().isArray()) {
 			return new Value(path, value);
 		} else if (value instanceof Context && args != null && args.length > 0) {
 			return new Ane(path, (Context)value, new Args(args));
@@ -748,8 +754,6 @@ public class operator extends Operator {
 				e.printStackTrace();
 			}
 			entry = new Srv(path, value);
-		} else if (value instanceof List && ((List)value).get(0) instanceof Path) {
-			entry = new ExecDependency(path, (List)value);
 		} else if (value instanceof ServiceMogram) {
 			entry = new MogramEntry(path, (Mogram) value);
 			entry.setType(Functionality.Type.MOGRAM);
