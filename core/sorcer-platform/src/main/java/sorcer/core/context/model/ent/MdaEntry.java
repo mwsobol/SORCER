@@ -66,13 +66,13 @@ public class MdaEntry extends Entry<Mda> implements Mda {
     @Override
     public void analyze(Model model, Context context) throws EvaluationException {
         try {
-            if (out != null && out instanceof Mda) {
-                out.analyze(model, context);
+            if (impl != null && impl instanceof Mda) {
+                ((Mda)impl).analyze(model, context);
             } else if (signature != null) {
-                out = (Mda) ((ObjectSignature)signature).initInstance();
-                out.analyze(model, context);
-            } else if (out == null) {
-                throw new InvocationException("No MDA anslysis available!");
+                impl = (Mda) ((ObjectSignature)signature).initInstance();
+                ((Mda)impl).analyze(model, context);
+            } else if (impl == null) {
+                throw new InvocationException("No MDA analysis available!");
             }
         } catch (ContextException | SignatureException e) {
             e.printStackTrace();
