@@ -10,3 +10,5 @@ bin/jini/configs
     reggie-boot.config
     reggie.config
 
+blitz memory; deploy strings
+configs/opstrings
