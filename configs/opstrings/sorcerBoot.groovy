@@ -72,7 +72,7 @@ deployment(name: "Sorcer OS") {
     //codebase SorcerEnv.getWebsterUrl()
 
     //service(name: SorcerEnv.getActualName('Transaction Manager')) {
-    service(name: SorcerEnv.getActualName('Transaction Manager'), fork:"yes", jvmArgs: "-Xmx8G") {
+    service(name: SorcerEnv.getActualName('Transaction Manager'), fork:"yes", jvmArgs: "-Xmx4G") {
         interfaces {
             classes 'net.jini.core.transaction.server.TransactionManager'
             resources "mahalo-dl-${Sorcer.riverVersion}.jar",
@@ -102,7 +102,7 @@ deployment(name: "Sorcer OS") {
     }
 
     //service(name: SorcerEnv.getActualName("Rendezvous"), fork:getForkMode()) {
-    service(name: SorcerEnv.getActualName("Rendezvous"), fork:"yes", jvmArgs: "-Xmx8G") {
+    service(name: SorcerEnv.getActualName("Rendezvous"), fork:"yes", jvmArgs: "-Xmx4G") {
         interfaces {
             classes "sorcer.core.provider.Rendezvous",
                     "sorcer.core.provider.Jobber",
@@ -174,7 +174,7 @@ deployment(name: "Sorcer OS") {
             maintain 1
         }
 
-        service(name: SorcerEnv.getActualName("Database Storage"), fork: getForkMode(), jvmArgs: "-Xmx8G") {
+        service(name: SorcerEnv.getActualName("Database Storage"), fork: getForkMode(), jvmArgs: "-Xmx4G") {
             interfaces {
                 classes 'sorcer.core.provider.DatabaseStorer'
                 resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
