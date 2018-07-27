@@ -72,7 +72,7 @@ deployment(name: "Sorcer OS") {
     //codebase SorcerEnv.getWebsterUrl()
 
     //service(name: SorcerEnv.getActualName('Transaction Manager')) {
-    service(name: SorcerEnv.getActualName('Transaction Manager'), fork:"yes", jvmArgs: "-Xmx4G") {
+    service(name: SorcerEnv.getActualName('Transaction Manager'), fork:"yes", jvmArgs: "-Xmx8G") {
         interfaces {
             classes 'net.jini.core.transaction.server.TransactionManager'
             resources "mahalo-dl-${Sorcer.riverVersion}.jar",
@@ -86,7 +86,7 @@ deployment(name: "Sorcer OS") {
     }
 
     //service(name: SorcerEnv.getActualSpaceName(), fork:getForkMode()) {
-    service(name: SorcerEnv.getActualSpaceName(), fork:"yes", jvmArgs: "-Xmx4G") {
+    service(name: SorcerEnv.getActualSpaceName(), fork:"yes", jvmArgs: "-Xmx8G") {
         interfaces {
             classes 'net.jini.space.JavaSpace05'
             resources "blitz-dl-${Sorcer.blitzVersion}.jar", "blitzui-${Sorcer.blitzVersion}.jar"
@@ -102,7 +102,7 @@ deployment(name: "Sorcer OS") {
     }
 
     //service(name: SorcerEnv.getActualName("Rendezvous"), fork:getForkMode()) {
-    service(name: SorcerEnv.getActualName("Rendezvous"), fork:"yes", jvmArgs: "-Xmx4G") {
+    service(name: SorcerEnv.getActualName("Rendezvous"), fork:"yes", jvmArgs: "-Xmx8G") {
         interfaces {
             classes "sorcer.core.provider.Rendezvous",
                     "sorcer.core.provider.Jobber",
@@ -174,7 +174,7 @@ deployment(name: "Sorcer OS") {
             maintain 1
         }
 
-        service(name: SorcerEnv.getActualName("Database Storage"), fork: getForkMode(), jvmArgs: "-Xmx4G") {
+        service(name: SorcerEnv.getActualName("Database Storage"), fork: getForkMode(), jvmArgs: "-Xmx8G") {
             interfaces {
                 classes 'sorcer.core.provider.DatabaseStorer'
                 resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
