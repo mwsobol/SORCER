@@ -24,7 +24,7 @@ import org.rioproject.net.HostUtil
 
 @Component('com.sun.jini.reggie')
 class ReggieConfig {
-    int initialUnicastDiscoveryPort = 2187
+    int initialUnicastDiscoveryPort = 2188
 
     String[] getInitialMemberGroups() {
         //String groups = System.getProperty(Constants.GROUPS_PROPERTY_NAME, System.getProperty('user.name') + "-BOWIE")
