@@ -406,7 +406,7 @@ public class operator extends Operator {
 		return new Path(path, info, Path.Type.MAP);
 	}
 
-	public static <T> Value<T> init(String domain, String path, T value) {
+	public static <T> Value<T> init(String path, String domain, T value) {
 		Value ent = new Value<T>(path, value);
 		ent.annotation(domain);
 		ent.setType(Type.DOMAIN_PRED);
@@ -414,12 +414,24 @@ public class operator extends Operator {
 	}
 
 	public static <T> Value<T> init(String path, T value) {
-		Value ent = new Value<T>(path, value);
-		ent.setType(Type.PRED);
+	    String pn = path;
+	    String domain = null;
+        if (path.indexOf("$") > 0) {
+            int ind = path.indexOf("$");
+            pn = path.substring(0, ind);
+            domain = path.substring(ind + 1);
+        }
+        Value ent = null;
+        if (domain != null) {
+            ent = init(pn, domain, value);
+        } else {
+            ent = new Value<T>(pn, value);
+            ent.setType(Type.PRED);
+        }
 		return ent;
 	}
 
-	public static <T> Value<T> val(String domain, String path, T value) {
+	public static <T> Value<T> val(String path, String domain, T value) {
 		Value ent = new Value<T>(path, value);
 		ent.annotation(domain);
 		ent.setType(Type.DOMAIN_CONSTANT);
