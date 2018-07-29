@@ -381,18 +381,6 @@ public class operator {
             return (ServiceContext) mogram.getMogramStrategy().getOutcome();
     }
 
-    public static Object response(Domain model, String path) throws ContextException {
-        try {
-            if (((ServiceContext)model).getType().equals(Functionality.Type.MADO)) {
-                return ((ServiceContext)model).getEvalValue(path);
-            } else {
-                return ((ServiceContext) model).getResponseAt(path);
-            }
-        } catch (RemoteException e) {
-            throw new ContextException(e);
-        }
-    }
-
     public static void traced(Model model, boolean isTraced) throws ContextException {
         ((FidelityManager)model.getFidelityManager()).setTraced(isTraced);
     }

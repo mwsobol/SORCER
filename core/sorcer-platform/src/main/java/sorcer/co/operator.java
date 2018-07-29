@@ -413,13 +413,13 @@ public class operator extends Operator {
 		return ent;
 	}
 
-	public static <T> Value<T> init(String path, T value) {
-	    String pn = path;
+	public static <T> Value<T> init(String domainPath, T value) {
+	    String pn = domainPath;
 	    String domain = null;
-        if (path.indexOf("$") > 0) {
-            int ind = path.indexOf("$");
-            pn = path.substring(0, ind);
-            domain = path.substring(ind + 1);
+        if (domainPath.indexOf("$") > 0) {
+            int ind = domainPath.indexOf("$");
+            pn = domainPath.substring(0, ind);
+            domain = domainPath.substring(ind + 1);
         }
         Value ent = null;
         if (domain != null) {

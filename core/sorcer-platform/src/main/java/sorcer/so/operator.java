@@ -219,7 +219,28 @@ public class operator extends Operator {
         }
     }
 
-    public static Object response(Context model, String domain, String path) throws ContextException {
+    public static Object response(Domain model, String domainPath) throws ContextException {
+        try {
+            String path = domainPath;
+            String domain = null;
+            if (domainPath.indexOf("$") > 0) {
+                int ind = domainPath.indexOf("$");
+                path = domainPath.substring(0, ind);
+                domain = domainPath.substring(ind + 1);
+            }
+            if (domain != null) {
+                return response(model, path, domain);
+            } else if (((ServiceContext)model).getType().equals(Functionality.Type.MADO)) {
+                return ((ServiceContext)model).getEvalValue(path);
+            } else {
+                return ((ServiceContext) model).getResponseAt(path);
+            }
+        } catch (RemoteException e) {
+            throw new ContextException(e);
+        }
+    }
+
+    public static Object response(Context model, String path, String domain) throws ContextException {
         if (((ServiceContext)model).getType().equals(Functionality.Type.MADO)) {
             return ((ServiceContext)model.getDomain(domain)).getEvalValue(path);
         } else {
