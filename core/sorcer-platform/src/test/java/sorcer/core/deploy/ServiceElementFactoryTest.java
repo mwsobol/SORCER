@@ -15,8 +15,8 @@
  */
 package sorcer.core.deploy;
 
-import org.junit.Assert;
 import net.jini.config.ConfigurationException;
+import org.junit.Assert;
 import org.junit.Test;
 import org.rioproject.deploy.SystemComponent;
 import org.rioproject.deploy.SystemRequirements;
@@ -28,6 +28,7 @@ import sorcer.core.signature.NetSignature;
 import sorcer.tools.webster.Webster;
 import sorcer.util.SorcerEnv;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URISyntaxException;
@@ -47,7 +48,7 @@ public class ServiceElementFactoryTest {
         deployment.setServiceType("foo.Interface");
         deployment.setName("The Great and wonderful Oz");
         deployment.setMultiplicity(10);
-        ServiceElement serviceElement = ServiceElementFactory.create(deployment);
+        ServiceElement serviceElement = ServiceElementFactory.create(deployment, null);
         Assert.assertEquals(10, serviceElement.getPlanned());
         Assert.assertEquals(SorcerEnv.getActualName("The Great and wonderful Oz"),
                             serviceElement.getName());
@@ -61,7 +62,7 @@ public class ServiceElementFactoryTest {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setConfig(getConfigDir() + "/TestIP.groovy");
         deployment.setWebsterUrl("http://spongebob:8080");
-        ServiceElement serviceElement = ServiceElementFactory.create(deployment);
+        ServiceElement serviceElement = ServiceElementFactory.create(deployment, new File(getConfigDir() + "/TestIP.groovy"));
         Assert.assertTrue(serviceElement.getExportURLs().length > 1);
         Assert.assertEquals(serviceElement.getExportURLs()[0].getHost(), "spongebob");
         Assert.assertEquals(serviceElement.getExportURLs()[0].getPort(), 8080);
@@ -75,7 +76,8 @@ public class ServiceElementFactoryTest {
         methodEN.setDeployment(deploy(configuration(getConfigDir() + "/TestIP.groovy"),
                                       webster("http://spongebob:8080")));
 
-        ServiceElement serviceElement = ServiceElementFactory.create(methodEN.getDeployment());
+        ServiceElement serviceElement = ServiceElementFactory.create(methodEN.getDeployment(),
+                                                                     new File(getConfigDir() + "/TestIP.groovy"));
         Assert.assertTrue(serviceElement.getExportURLs().length>1);
         Assert.assertEquals(serviceElement.getExportURLs()[0].getHost(), "spongebob");
         Assert.assertEquals(serviceElement.getExportURLs()[0].getPort(), 8080);
@@ -85,7 +87,7 @@ public class ServiceElementFactoryTest {
     public void setDeploymentWebsterFromConfig() throws IOException, ConfigurationException, URISyntaxException, ResolverException {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setConfig(getConfigDir() + "/testWebster.config");
-        ServiceElement serviceElement = ServiceElementFactory.create(deployment);
+        ServiceElement serviceElement = ServiceElementFactory.create(deployment, new File(getConfigDir() + "/testWebster.config"));
         Assert.assertTrue(serviceElement.getExportURLs().length > 1);
         Assert.assertEquals(serviceElement.getExportURLs()[0].getHost(), "127.0.0.1");
         Assert.assertEquals(serviceElement.getExportURLs()[0].getPort(), 8080);
@@ -123,7 +125,7 @@ public class ServiceElementFactoryTest {
         deployment.setIps("10.0.1.9", "canebay.local");
         deployment.setExcludeIps("10.0.1.7", "stingray.foo.local.net");
         deployment.setConfig("-");
-        ServiceElement serviceElement = ServiceElementFactory.create(deployment);
+        ServiceElement serviceElement = ServiceElementFactory.create(deployment, null);
         SystemRequirements systemRequirements = serviceElement.getServiceLevelAgreements().getSystemRequirements();
         Assert.assertEquals(4, systemRequirements.getSystemComponents().length);
 
@@ -137,21 +139,21 @@ public class ServiceElementFactoryTest {
     public void testIPAddressestisingConfiguration() throws IOException, ConfigurationException, URISyntaxException, ResolverException {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setConfig(getConfigDir() + "/testIP.config");
-        verifyServiceElement(ServiceElementFactory.create(deployment));
+        verifyServiceElement(ServiceElementFactory.create(deployment, new File(getConfigDir() + "/testIP.config")));
     }
 
     @Test
     public void testIPAddressesUsingGroovyConfiguration() throws IOException, ConfigurationException, URISyntaxException, ResolverException {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setConfig(getConfigDir()+"/TestIP.groovy");
-        verifyServiceElement(ServiceElementFactory.create(deployment));
+        verifyServiceElement(ServiceElementFactory.create(deployment, new File(getConfigDir()+"/TestIP.groovy")));
     }
 
     @Test
     public void testPlannedUsingGroovyConfiguration() throws URISyntaxException, ResolverException, ConfigurationException, IOException {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setConfig(getConfigDir()+"/PlannedConfig.groovy");
-        ServiceElement service = ServiceElementFactory.create(deployment);
+        ServiceElement service = ServiceElementFactory.create(deployment, new File(getConfigDir()+"/PlannedConfig.groovy"));
         Assert.assertTrue(service.getPlanned()==10);
         Assert.assertTrue(service.getMaxPerMachine()==1);
         Assert.assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.DYNAMIC);
@@ -161,7 +163,7 @@ public class ServiceElementFactoryTest {
     public void testFixedUsingGroovyConfiguration() throws URISyntaxException, ResolverException, ConfigurationException, IOException {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setConfig(getConfigDir()+"/FixedConfig.groovy");
-        ServiceElement service = ServiceElementFactory.create(deployment);
+        ServiceElement service = ServiceElementFactory.create(deployment, new File(getConfigDir()+"/FixedConfig.groovy"));
         Assert.assertTrue(service.getPlanned()==10);
         Assert.assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.FIXED);
     }
@@ -170,7 +172,7 @@ public class ServiceElementFactoryTest {
     public void testPlannedUsingConfiguration() throws URISyntaxException, ResolverException, ConfigurationException, IOException {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setConfig(getConfigDir()+"/plannedConfig.config");
-        ServiceElement service = ServiceElementFactory.create(deployment);
+        ServiceElement service = ServiceElementFactory.create(deployment, new File(getConfigDir()+"/plannedConfig.config"));
         Assert.assertTrue(service.getPlanned()==10);
         Assert.assertTrue(service.getMaxPerMachine()==2);
         Assert.assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.DYNAMIC);
@@ -180,7 +182,7 @@ public class ServiceElementFactoryTest {
     public void testFixedUsingConfiguration() throws URISyntaxException, ResolverException, ConfigurationException, IOException {
         ServiceDeployment deployment = new ServiceDeployment();
         deployment.setConfig(getConfigDir()+"/fixedConfig.config");
-        ServiceElement service = ServiceElementFactory.create(deployment);
+        ServiceElement service = ServiceElementFactory.create(deployment, new File(getConfigDir()+"/fixedConfig.config"));
         Assert.assertTrue(service.getPlanned()==10);
         Assert.assertTrue(service.getProvisionType() == ServiceElement.ProvisionType.FIXED);
         Assert.assertTrue(service.getMaxPerMachine()==-1);

@@ -73,6 +73,7 @@ test {
     testLogging {
         events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
     }
+    systemProperty "project.version", "${project.version}"
     systemProperty "deploy.configs", "${project.projectDir.path}/src/test/resources/deploy/configs"
     systemProperty "java.security.policy", "${project.rootDir.path}/policy/policy.all"
 }

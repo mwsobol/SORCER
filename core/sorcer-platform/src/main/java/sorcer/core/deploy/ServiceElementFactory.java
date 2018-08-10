@@ -25,9 +25,7 @@ import org.rioproject.opstring.ClassBundle;
 import org.rioproject.opstring.ServiceBeanConfig;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.resolver.Artifact;
-import org.rioproject.resolver.Resolver;
 import org.rioproject.resolver.ResolverException;
-import org.rioproject.resolver.ResolverHelper;
 import org.rioproject.sla.ServiceLevelAgreements;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
 import org.rioproject.system.capability.platform.OperatingSystem;
@@ -43,9 +41,8 @@ import sorcer.util.SorcerEnv;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.rmi.MarshalledObject;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Create a {@link ServiceElement} from a {@link ServiceSignature}.
@@ -55,14 +52,8 @@ import java.util.concurrent.*;
 public final class ServiceElementFactory  {
     private static final Logger logger = LoggerFactory.getLogger(ServiceElementFactory.class.getName());
     /* The default provider codebase jars */
-    private static final List<String> commonDLJars = Arrays.asList("rio-api-"+ RioVersion.VERSION+".jar");
-    private static final Map<String, ServiceElement> resolvedArtifacts = new ConcurrentHashMap<>();
-    private static final BlockingQueue<ResolveRequest> resolverQueue = new LinkedBlockingDeque<>();
-    private static final ExecutorService futureExecutor = Executors.newCachedThreadPool();
-    private static final ExecutorService execService = Executors.newSingleThreadExecutor();
-    static {
-        execService.submit(new ResolverRunner());
-    }
+    private static final List<String> commonDLJars = Collections.singletonList("rio-api-" +RioVersion.VERSION +".jar");
+    private static final Map<File, ServiceElement> serviceElementsCreated = new ConcurrentHashMap<>();
 
     private ServiceElementFactory(){}
 
@@ -75,11 +66,11 @@ public final class ServiceElementFactory  {
      *
      * @throws ConfigurationException if there are problem reading the configuration
      */
-    public static ServiceElement create(final ServiceSignature signature) throws IOException,
-                                                                                 ConfigurationException,
-                                                                                 ResolverException,
-                                                                                 URISyntaxException {
-        return create(signature.getDeployment());
+    public static ServiceElement create(final ServiceSignature signature, File configFile) throws IOException,
+                                                                                            ConfigurationException,
+                                                                                            ResolverException,
+                                                                                            URISyntaxException {
+        return create(signature.getDeployment(), configFile);
     }
 
     /**
@@ -91,32 +82,20 @@ public final class ServiceElementFactory  {
      *
      * @throws ConfigurationException if there are problem reading the configuration
      */
-    public static ServiceElement create(final ServiceDeployment deployment) throws IOException,
-                                                                                   ConfigurationException,
-                                                                                   ResolverException,
-                                                                                   URISyntaxException {
-        if (Artifact.isArtifact(deployment.getConfig())) {
-            ServiceElement service = resolvedArtifacts.get(deployment.getConfig());
-            if (service == null) {
-                ResolverFutureTask resolverFutureTask = new ResolverFutureTask();
-                ResolveRequest resolveRequest = new ResolveRequest(deployment.getConfig(),
-                                                                   deployment,
-                                                                   resolverFutureTask);
-                futureExecutor.submit(resolverFutureTask);
-                resolverQueue.offer(resolveRequest);
-                try {
-                    service = resolverFutureTask.call();
-                    return service;
-                } catch (InterruptedException | ClassNotFoundException e) {
-                    throw new ResolverException("Failed to get artifact location", e);
-                }
-            } else {
-                return service;
-            }
-        } else {
-            String configurationFilePath = deployment.getConfig();
-            return create(deployment, configurationFilePath);
+    public static ServiceElement create(final ServiceDeployment deployment, File configFile) throws IOException,
+                                                                                         ConfigurationException,
+                                                                                         ResolverException,
+                                                                                         URISyntaxException {
+        if(configFile==null) {
+            return create(deployment, deployment.getConfig());
         }
+        ServiceElement service = serviceElementsCreated.get(configFile);
+        if (service == null) {
+            service = create(deployment, configFile.getAbsolutePath());
+            serviceElementsCreated.put(configFile, service);
+        }
+        return service;
+
     }
 
     private static ServiceElement create(ServiceDeployment deployment,
@@ -302,6 +281,78 @@ public final class ServiceElementFactory  {
         if(!serviceDetails.fixed && serviceDetails.maxPerNode>0) {
             service.setMaxPerMachine(serviceDetails.maxPerNode);
         }
+        adjustDeployment(service, serviceDetails);
+        /*if(serviceDetails.architecture!=null || serviceDetails.operatingSystems.length>0) {
+            ServiceLevelAgreements slas = new ServiceLevelAgreements();
+            SystemRequirements systemRequirements = new SystemRequirements();
+            if(serviceDetails.architecture!=null) {
+                Map<String, Object> attributeMap = new HashMap<>();
+                attributeMap.put(ProcessorArchitecture.ARCHITECTURE, serviceDetails.architecture);
+                SystemComponent systemComponent = new SystemComponent("Processor",
+                                                                      ProcessorArchitecture.class.getName(),
+                                                                      attributeMap);
+                systemRequirements.addSystemComponent(systemComponent);
+            }
+            for(String s : serviceDetails.operatingSystems) {
+                String opSys = checkAndMaybeFixOpSys(s);
+                Map<String, Object> attributeMap = new HashMap<>();
+                attributeMap.put(OperatingSystem.NAME, opSys);
+                SystemComponent operatingSystem =
+                    new SystemComponent("OperatingSystem", OperatingSystem.class.getName(), attributeMap);
+                systemRequirements.addSystemComponent(operatingSystem);
+            }
+            slas.setServiceRequirements(systemRequirements);
+            service.setServiceLevelAgreements(slas);
+        }
+        if(serviceDetails.ips.length>0) {
+            SystemRequirements systemRequirements = service.getServiceLevelAgreements().getSystemRequirements();
+            systemRequirements.addSystemComponent(getSystemComponentAddresses(false, serviceDetails.ips));
+        }
+
+        if(serviceDetails.excludeIps.length>0) {
+            SystemRequirements systemRequirements = service.getServiceLevelAgreements().getSystemRequirements();
+            systemRequirements.addSystemComponent(getSystemComponentAddresses(true, serviceDetails.excludeIps));
+        }
+        */
+
+		/* Create simple ServiceBeanConfig */
+        Map<String, Object> configMap = new HashMap<>();
+        configMap.put(ServiceBeanConfig.NAME, serviceName);
+        configMap.put(ServiceBeanConfig.GROUPS, Sorcer.getLookupGroups());
+        ServiceBeanConfig sbc = new ServiceBeanConfig(configMap, new String[]{deployment.getConfig()});
+        sbc.addAdditionalEntries(new DeployInfo(deployment.getType().name(), deployment.getUnique().name(), deployment.getIdle()));
+        service.setServiceBeanConfig(sbc);
+        service.setPlanned(serviceDetails.planned);
+        if(serviceDetails.fixed)
+            service.setProvisionType(ServiceElement.ProvisionType.FIXED);
+
+        /* If the service is to be forked, create an ExecDescriptor */
+        if(serviceDetails.fork) {
+            service.setFork(true);
+            if(serviceDetails.jvmArgs!=null) {
+                ExecDescriptor execDescriptor = new ExecDescriptor();
+                execDescriptor.setInputArgs(serviceDetails.jvmArgs);
+                service.setExecDescriptor(execDescriptor);
+            }
+        }
+        if(logger.isDebugEnabled())
+            logger.debug("Generated Service Element: {}", service.getName());
+        else if(logger.isTraceEnabled()){
+            logger.trace("Generated Service Element: {}", service);
+        }
+        return service;
+    }
+
+
+    static void adjustDeployment(ServiceElement serviceElement, ServiceDeployment deployment) {
+        ServiceDetails serviceDetails = new ServiceDetails(deployment.getArchitecture(),
+                                                           deployment.getOperatingSystems(),
+                                                           deployment.getIps(),
+                                                           deployment.getExcludeIps());
+        adjustDeployment(serviceElement, serviceDetails);
+    }
+
+    private static void adjustDeployment(ServiceElement service, ServiceDetails serviceDetails) {
         if(serviceDetails.architecture!=null || serviceDetails.operatingSystems.length>0) {
             ServiceLevelAgreements slas = new ServiceLevelAgreements();
             SystemRequirements systemRequirements = new SystemRequirements();
@@ -334,32 +385,6 @@ public final class ServiceElementFactory  {
             systemRequirements.addSystemComponent(getSystemComponentAddresses(true, serviceDetails.excludeIps));
         }
 
-		/* Create simple ServiceBeanConfig */
-        Map<String, Object> configMap = new HashMap<>();
-        configMap.put(ServiceBeanConfig.NAME, serviceName);
-        configMap.put(ServiceBeanConfig.GROUPS, Sorcer.getLookupGroups());
-        ServiceBeanConfig sbc = new ServiceBeanConfig(configMap, new String[]{deployment.getConfig()});
-        sbc.addAdditionalEntries(new DeployInfo(deployment.getType().name(), deployment.getUnique().name(), deployment.getIdle()));
-        service.setServiceBeanConfig(sbc);
-        service.setPlanned(serviceDetails.planned);
-        if(serviceDetails.fixed)
-            service.setProvisionType(ServiceElement.ProvisionType.FIXED);
-
-        /* If the service is to be forked, create an ExecDescriptor */
-        if(serviceDetails.fork) {
-            service.setFork(true);
-            if(serviceDetails.jvmArgs!=null) {
-                ExecDescriptor execDescriptor = new ExecDescriptor();
-                execDescriptor.setInputArgs(serviceDetails.jvmArgs);
-                service.setExecDescriptor(execDescriptor);
-            }
-        }
-        if(logger.isDebugEnabled())
-            logger.debug("Generated Service Element: {}", service.getName());
-        else if(logger.isTraceEnabled()){
-            logger.trace("Generated Service Element: {}", service);
-        }
-        return service;
     }
 
     private static SystemComponent[] getSystemComponentAddresses(boolean exclude, String[] addresses) {
@@ -443,7 +468,7 @@ public final class ServiceElementFactory  {
         return stringBuilder.toString();
     }
 
-    private static class ResolveRequest {
+    /*private static class ResolveRequest {
         String artifactConfig;
         ResolverFutureTask resolverFutureTask;
         ServiceDeployment deployment;
@@ -478,14 +503,14 @@ public final class ServiceElementFactory  {
                 while (true) {
                     try {
                         ResolveRequest resolveRequest = resolverQueue.take();
-                        ServiceElement serviceElement = resolvedArtifacts.get(resolveRequest.artifactConfig);
+                        ServiceElement serviceElement = serviceElementsCreated.get(resolveRequest.artifactConfig);
                         if(serviceElement==null) {
                             logger.debug("Resolve {}", resolveRequest.artifactConfig);
                             Artifact artifact = new Artifact(resolveRequest.artifactConfig);
                             URL configLocation = resolver.getLocation(artifact.getGAV(), artifact.getType());
                             String configurationFilePath = new File(configLocation.toURI()).getPath();
                             serviceElement = create(resolveRequest.deployment, configurationFilePath);
-                            resolvedArtifacts.put(resolveRequest.artifactConfig, serviceElement);
+                            serviceElementsCreated.put(resolveRequest.artifactConfig, serviceElement);
                         }
                         resolveRequest.resolverFutureTask.setServiceElement(serviceElement);
                     } catch (InterruptedException | ResolverException | URISyntaxException | ConfigurationException | IOException e) {
@@ -497,28 +522,28 @@ public final class ServiceElementFactory  {
             }
 
         }
-    }
+    }*/
 
     static void clear() {
-        resolvedArtifacts.clear();
+        serviceElementsCreated.clear();
     }
 
     private static class ServiceDetails {
-        final String name;
-        final String[] interfaces;
-        final String[] codebaseJars;
-        final String[] implJars;
-        final String providerClass;
-        final String jvmArgs;
-        final boolean fork;
-        final int planned;
-        final int maxPerNode;
-        final String architecture;
-        final String[] operatingSystems;
-        final String[] ips;
-        final String[] excludeIps;
-        final String webster;
-        final boolean fixed;
+        String name;
+        String[] interfaces;
+        String[] codebaseJars;
+        String[] implJars;
+        String providerClass;
+        String jvmArgs;
+        boolean fork;
+        int planned;
+        int maxPerNode;
+        String architecture;
+        String[] operatingSystems;
+        String[] ips;
+        String[] excludeIps;
+        String webster;
+        boolean fixed;
 
         private ServiceDetails(String name,
                                String[] interfaces,
@@ -550,6 +575,16 @@ public final class ServiceElementFactory  {
             this.excludeIps = excludeIps;
             this.webster = webster;
             this.fixed = fixed;
+        }
+
+        private ServiceDetails(String architecture,
+                               String[] operatingSystems,
+                               String[] ips,
+                               String[] excludeIps) {
+            this.architecture = architecture;
+            this.operatingSystems = operatingSystems;
+            this.ips = ips;
+            this.excludeIps = excludeIps;
         }
     }
 }

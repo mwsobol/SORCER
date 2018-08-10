@@ -20,9 +20,7 @@ import net.jini.core.discovery.LookupLocator;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
-import net.jini.discovery.DiscoveryEvent;
-import net.jini.discovery.DiscoveryListener;
-import net.jini.discovery.LookupDiscoveryManager;
+import net.jini.discovery.*;
 import net.jini.lookup.ServiceDiscoveryManager;
 import org.rioproject.config.Constants;
 import org.rioproject.deploy.DeployAdmin;
@@ -54,16 +52,21 @@ public class ProvisionMonitorCache {
                 locators = JiniClient.parseLocators(System.getProperty(Constants.LOCATOR_PROPERTY_NAME));
             }
             StringBuilder g = new StringBuilder();
-            for(String group : Sorcer.getLookupGroups()) {
-                if(g.length()>0)
-                    g.append(", ");
-                g.append(group);
+            String[] groups = Sorcer.getLookupGroups();
+            if(groups != DiscoveryGroupManagement.ALL_GROUPS) {
+                for (String group : groups) {
+                    if (g.length() > 0)
+                        g.append(", ");
+                    g.append(group);
+                }
+                discoveryInfo.put("groups", g.toString());
+            } else {
+                discoveryInfo.put("groups", null);
             }
-            discoveryInfo.put("groups", g.toString());
             Class cl = org.rioproject.deploy.ProvisionManager.class;
             listener = new Listener();
             ServiceDiscoveryManager lookupMgr =
-                    new ServiceDiscoveryManager(new LookupDiscoveryManager(Sorcer.getLookupGroups(),
+                    new ServiceDiscoveryManager(new LookupDiscoveryManager(groups,
                                                                            locators,
                                                                            listener), // DiscoveryListener
                                                 null);
