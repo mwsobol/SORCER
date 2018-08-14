@@ -52,23 +52,23 @@ public class ServiceModeler extends SystemServiceBean implements Modeler {
         Signature builder = null;
         ContextSelection contextSelector = null;
         Context dataContext = null;
-        TaskModel taskModel = null;
+        ModelTask taskModel = null;
         try {
             if (mogram instanceof SrvModel) {
                   return ((SrvModel)mogram).exert(args);
             } else if (mogram instanceof ModelerObjectTask) {
-                taskModel = ((ModelerObjectTask) mogram).getTaskModel();
+                taskModel = ((ModelerObjectTask) mogram).getModelTask();
                 if (taskModel != null) {
                     model = taskModel.getModel();
                     builder = taskModel.getBuilder();
-                    contextSelector = taskModel.getModelSelector();
+                    contextSelector = taskModel.getContextFilter();
                 }
             } else if (mogram instanceof ModelerNetTask) {
-                taskModel = ((ModelerNetTask) mogram).getTaskModel();
+                taskModel = ((ModelerNetTask) mogram).getModelTask();
                 if (taskModel != null) {
                     model = taskModel.getModel();
                     builder = taskModel.getBuilder();
-                    contextSelector = taskModel.getModelSelector();
+                    contextSelector = taskModel.getContextFilter();
                 }
             }
 

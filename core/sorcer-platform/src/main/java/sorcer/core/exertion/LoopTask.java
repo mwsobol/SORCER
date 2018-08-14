@@ -38,7 +38,7 @@ import java.util.List;
  * @author Mike Sobolewski
  * 
  */
-public class LoopMogram extends ConditionalMogram {
+public class LoopTask extends ConditionalTask {
 
 	private static final long serialVersionUID = 8538804142085766935L;
 	
@@ -52,7 +52,7 @@ public class LoopMogram extends ConditionalMogram {
 	 * @param name
 	 * @param exertion
 	 */
-	public LoopMogram(String name, Exertion exertion) {
+	public LoopTask(String name, Exertion exertion) {
 		super(name);
 		condition = new Condition(true);
 		target = exertion;
@@ -66,7 +66,7 @@ public class LoopMogram extends ConditionalMogram {
 	 * @param max
 	 * @param mogram
 	 */
-	public LoopMogram(String name, int min, int max, Mogram mogram) {
+	public LoopTask(String name, int min, int max, Mogram mogram) {
 		super(name);
 		this.min = min;
 		this.max = max;
@@ -80,7 +80,7 @@ public class LoopMogram extends ConditionalMogram {
 	 * @param condition
 	 * @param mogram
 	 */
-	public LoopMogram(String name, Condition condition, Mogram mogram) {
+	public LoopTask(String name, Condition condition, Mogram mogram) {
 		super(name);
 		this.condition = condition;
 		target = mogram;
@@ -96,8 +96,8 @@ public class LoopMogram extends ConditionalMogram {
 	 * @param condition
 	 * @param invoker
 	 */
-	public LoopMogram(String name, int min, int max, Condition condition,
-					  Mogram invoker) {
+	public LoopTask(String name, int min, int max, Condition condition,
+                    Mogram invoker) {
 		super(name);
 		this.min = min;
 		this.max = max;

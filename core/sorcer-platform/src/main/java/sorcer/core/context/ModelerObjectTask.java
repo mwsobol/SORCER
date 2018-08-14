@@ -34,11 +34,11 @@ public class ModelerObjectTask extends ObjectTask implements ModelingTask {
 
 	static final long serialVersionUID = 1L;
 
-	private TaskModel taskModel;
+	private ModelTask modelTask;
 
-	public ModelerObjectTask(String name, TaskModel task) {
+	public ModelerObjectTask(String name, ModelTask task) {
 		super(name);
-		taskModel = task;
+		modelTask = task;
 	}
 
 	public ModelerObjectTask(String name, Signature... signatures) {
@@ -55,23 +55,23 @@ public class ModelerObjectTask extends ObjectTask implements ModelingTask {
 		super(signature, context);
 	}
 
-	public TaskModel getTaskModel() {
-		return taskModel;
+	public ModelTask getModelTask() {
+		return modelTask;
 	}
 
-	public void setTaskModel(TaskModel taskModel) {
-		this.taskModel = taskModel;
+	public void setModelTask(ModelTask modelTask) {
+		this.modelTask = modelTask;
 	}
 
 	public Model getModel() {
-		return taskModel.getModel();
+		return modelTask.getModel();
 	}
 
 	public Signature getBuilder() {
-		return taskModel.getBuilder();
+		return modelTask.getBuilder();
 	}
 
 	public ContextSelection getModelSelector() {
-		return taskModel.getModelSelector();
+		return modelTask.getContextFilter();
 	}
 }

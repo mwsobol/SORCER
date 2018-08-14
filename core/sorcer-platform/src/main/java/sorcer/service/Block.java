@@ -22,9 +22,9 @@ import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.exertion.AltMogram;
-import sorcer.core.exertion.LoopMogram;
-import sorcer.core.exertion.OptMogram;
+import sorcer.core.exertion.AltTask;
+import sorcer.core.exertion.LoopTask;
+import sorcer.core.exertion.OptTask;
 import sorcer.util.SorcerUtil;
 import sorcer.util.url.sos.SdbUtil;
 import sorcer.service.Signature.ReturnPath;
@@ -323,12 +323,12 @@ public abstract class Block extends CompoundExertion {
 	private void updateConditions() throws ContextException {
 		for (Mogram e : mograms) {
 			if (e instanceof Exertion && ((Exertion)e).isConditional()) {
-				if (e instanceof OptMogram) {
-					((OptMogram)e).getCondition().getConditionalContext().append(dataContext);
-				} else if (e instanceof LoopMogram && ((LoopMogram) e).getCondition() != null) {
-					((LoopMogram) e).getCondition().getConditionalContext().append(dataContext);
-				} else if (e instanceof AltMogram) {
-					for (OptMogram oe : ((AltMogram) e).getOptExertions()) {
+				if (e instanceof OptTask) {
+					((OptTask)e).getCondition().getConditionalContext().append(dataContext);
+				} else if (e instanceof LoopTask && ((LoopTask) e).getCondition() != null) {
+					((LoopTask) e).getCondition().getConditionalContext().append(dataContext);
+				} else if (e instanceof AltTask) {
+					for (OptTask oe : ((AltTask) e).getOptExertions()) {
 						oe.getCondition().getConditionalContext().append(dataContext);
 					}
 				}

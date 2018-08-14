@@ -709,7 +709,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public Signature getBuilder(Arg... args) throws ContextException {
+    public Signature getBuilder(Arg... args)  {
         return builder;
     }
 

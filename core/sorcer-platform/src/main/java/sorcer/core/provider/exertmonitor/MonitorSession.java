@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.StrategyContext;
-import sorcer.core.exertion.AltMogram;
+import sorcer.core.exertion.AltTask;
 import sorcer.core.monitor.MonitorEvent;
 import sorcer.core.monitor.MonitorableSession;
 import sorcer.core.monitor.MonitoringManagement;
@@ -131,8 +131,8 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		if (initialExertion.isJob() || initialExertion.isBlock())
 			addSessions((CompoundExertion) initialExertion, (CompoundExertion) runtimeExertion, this);
 
-        if (initialExertion instanceof ConditionalMogram)
-            addSessionsForConditionals((ConditionalMogram)initialExertion, (ConditionalMogram)runtimeExertion, this);
+        if (initialExertion instanceof ConditionalTask)
+            addSessionsForConditionals((ConditionalTask)initialExertion, (ConditionalTask)runtimeExertion, this);
     }
 
 	private void addSessions(CompoundExertion initial, CompoundExertion runtime, MonitorSession parent) throws MonitorException {
@@ -147,7 +147,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
         }
 	}
 
-    private void addSessionsForConditionals(ConditionalMogram initial, ConditionalMogram runtime, MonitorSession parent)
+    private void addSessionsForConditionals(ConditionalTask initial, ConditionalTask runtime, MonitorSession parent)
         throws MonitorException {
         for (int i = 0; i<initial.getTargets().size(); i++) {
             try {
@@ -376,7 +376,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		logger.debug("failed count=" + failedCount + " suspended count="
                 + suspendedCount + " doneCount=" + doneCount);
 
-		if (doneCount == size() || (runtimeExertion instanceof AltMogram && doneCount>0)) {
+		if (doneCount == size() || (runtimeExertion instanceof AltTask && doneCount>0)) {
             runtimeExertion.setStatus(Exec.DONE);
             runtimeExertion.stopExecTime();
             mLandlord.remove(this);

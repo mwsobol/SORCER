@@ -34,28 +34,28 @@ import java.util.List;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class OptMogram extends ConditionalMogram {
+public class OptTask extends ConditionalTask {
 
 	private static final long serialVersionUID = 172930501527871L;
 	
 	protected boolean isActive = false;
 	
-	public OptMogram(String name) {
+	public OptTask(String name) {
 		super(name);
 	}
 		
-	public OptMogram(String name, Exertion exertion) {
+	public OptTask(String name, Exertion exertion) {
 		super(name);
 		this.condition = new Condition(true);
 		this.target = exertion;
 	}
-	public OptMogram(Condition condition, Exertion exertion) {
+	public OptTask(Condition condition, Exertion exertion) {
 		super();
 		this.condition = condition;
 		this.target = exertion;
 	}
 	
-	public OptMogram(String name, Condition condition, Exertion exertion) {
+	public OptTask(String name, Condition condition, Exertion exertion) {
 		super(name);
 		this.condition = condition;
 		this.target = exertion;

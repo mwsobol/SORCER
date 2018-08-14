@@ -20,17 +20,17 @@ package sorcer.service;
 import java.util.List;
 
 
-abstract public class ConditionalMogram extends Task {
+abstract public class ConditionalTask extends Task {
 
 	protected Condition condition;
 
 	protected Mogram target;
 
-	public ConditionalMogram() {
+	public ConditionalTask() {
 		super();
 	}
 
-	public ConditionalMogram(String name) {
+	public ConditionalTask(String name) {
 		super(name);
 	}
 

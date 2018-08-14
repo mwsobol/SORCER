@@ -35,7 +35,7 @@ public class ModelTask extends Task {
 	
 	protected Model model;
 
-	protected ContextSelector contextFilter;
+    protected ContextSelection contextFilter;
 
 	protected ServiceContext modelContext;
 
@@ -84,12 +84,20 @@ public class ModelTask extends Task {
 			return signature.initInstance();
 	}
 	
-	public Domain getModel() {
+	public Model getModel() {
 		return model;
 	}
 	
 	public void setModel(Model model) {
 		this.model = model;
 	}
+
+    public ContextSelection getContextFilter() {
+        return contextFilter;
+    }
+
+    public void setContextFilter(ContextSelection contextFilter) {
+        this.contextFilter = contextFilter;
+    }
 
 }

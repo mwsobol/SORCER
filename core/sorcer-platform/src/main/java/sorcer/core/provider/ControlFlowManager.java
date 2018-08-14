@@ -346,8 +346,8 @@ public class ControlFlowManager {
     }
     /**
      * This method handles the {@link Conditional} Exertions. It determines if
-     * the conditional Exertion: {@link OptMogram}, {@link AltMogram}, and
-     * {@link LoopMogram}.
+     * the conditional Exertion: {@link OptTask}, {@link AltTask}, and
+     * {@link LoopTask}.
      *
      * @param exertion
      *            Conditional type Exertion

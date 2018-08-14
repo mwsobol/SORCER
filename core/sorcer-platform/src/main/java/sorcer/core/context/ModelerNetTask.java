@@ -19,6 +19,7 @@ package sorcer.core.context;
 
 import sorcer.core.exertion.NetTask;
 import sorcer.service.Context;
+import sorcer.service.ContextException;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
 import sorcer.service.modeling.Model;
@@ -33,7 +34,7 @@ public class ModelerNetTask extends NetTask implements ModelingTask {
 
 	private static final long serialVersionUID = 1L;
 
-	private TaskModel taskModel;
+	private ModelTask modelTask;
 
 	public ModelerNetTask() {
 		// do nothing
@@ -62,23 +63,23 @@ public class ModelerNetTask extends NetTask implements ModelingTask {
 		super(name, signatures, context);
 	}
 
-	public TaskModel getTaskModel() {
-		return taskModel;
+	public ModelTask getModelTask() {
+		return modelTask;
 	}
 
-	public void setTaskModel(TaskModel taskModel) {
-		this.taskModel = taskModel;
+	public void setModelTask(ModelTask modelTask) {
+		this.modelTask = modelTask;
 	}
 
 	public Model getModel() {
-		return taskModel.getModel();
+		return modelTask.getModel();
 	}
 
-	public Signature getBuilder() {
-		return taskModel.getBuilder();
+	public Signature getBuilder() throws ContextException {
+		return modelTask.getBuilder();
 	}
 
 	public ContextSelection getModelSelector() {
-		return taskModel.getModelSelector();
+		return modelTask.getContextFilter();
 	}
 }

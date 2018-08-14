@@ -35,23 +35,23 @@ import java.util.List;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("unchecked")
-public class AltMogram extends ConditionalMogram {
+public class AltTask extends ConditionalTask {
 
 	private static final long serialVersionUID = 4012356285896459828L;
 	
-	protected List<OptMogram> optExertions;
+	protected List<OptTask> optExertions;
 
-	public AltMogram(OptMogram... optExertions) {
+	public AltTask(OptTask... optExertions) {
 		super();
 		this.optExertions = Arrays.asList(optExertions);
 	}
 	
-	public AltMogram(String name, OptMogram... optExertions) {
+	public AltTask(String name, OptTask... optExertions) {
 		super(name);
 		this.optExertions = Arrays.asList(optExertions);
 	}
 
-	public AltMogram(String name, List<OptMogram> optExertions) {
+	public AltTask(String name, List<OptTask> optExertions) {
 		super(name);
 		this.optExertions = optExertions;
 	}
@@ -59,7 +59,7 @@ public class AltMogram extends ConditionalMogram {
 	@Override
 	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
 			SignatureException, RemoteException {
-		OptMogram opt = null;
+		OptTask opt = null;
 		try {
 			for (int i = 0; i < optExertions.size(); i++) {
 				opt = optExertions.get(i);
@@ -89,24 +89,24 @@ public class AltMogram extends ConditionalMogram {
 		return this;
 	}
 	
-	public OptMogram getActiveOptExertion() {
-		OptMogram active = null;
-		for (OptMogram oe : optExertions) {
+	public OptTask getActiveOptExertion() {
+		OptTask active = null;
+		for (OptTask oe : optExertions) {
 			if (oe.isActive())
 				return oe;
 		}
 		return active;
 	}
 		
-	public List<OptMogram> getOptExertions() {
+	public List<OptTask> getOptExertions() {
 		return optExertions;
 	}
 
-	public void setOptExertions(List<OptMogram> optExertions) {
+	public void setOptExertions(List<OptTask> optExertions) {
 		this.optExertions = optExertions;
 	}
 
-	public OptMogram getOptExertion(int index) {
+	public OptTask getOptExertion(int index) {
 		return optExertions.get(index);
 	}
 	
@@ -127,7 +127,7 @@ public class AltMogram extends ConditionalMogram {
 	@Override
 	public List<Conditional> getConditions() {
 		List<Conditional> cs = new ArrayList<Conditional>(optExertions.size());
-		for (OptMogram oe : optExertions)
+		for (OptTask oe : optExertions)
 			cs.add(oe.getCondition());
 		return cs;
 	}
@@ -166,7 +166,7 @@ public class AltMogram extends ConditionalMogram {
 	@Override
 	public List<Mogram> getTargets() {
 		List<Mogram> tl = new ArrayList<Mogram>(optExertions.size());
-		for (OptMogram oe : optExertions)
+		for (OptTask oe : optExertions)
 			tl.add(oe.getTarget());
 		return tl;
 	}

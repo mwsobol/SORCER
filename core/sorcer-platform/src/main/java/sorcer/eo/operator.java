@@ -58,7 +58,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
@@ -2161,7 +2160,7 @@ public class operator extends Operator {
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] instanceof Exertion || items[i] instanceof EntryModel) {
 				exertions.add((Mogram) items[i]);
-				if (items[i] instanceof ConditionalMogram)
+				if (items[i] instanceof ConditionalTask)
 					isBlock = true;
 			} else if (items[i] instanceof Signature) {
 				sig = (Signature) items[i];
@@ -3145,47 +3144,47 @@ public class operator extends Operator {
 		return new Condition(condition);
 	}
 
-	public static OptMogram opt(String name, Exertion target) {
-		return new OptMogram(name, target);
+	public static OptTask opt(String name, Exertion target) {
+		return new OptTask(name, target);
 	}
 
-	public static OptMogram opt(Condition condition,
-								Exertion target) {
-		return new OptMogram(condition, target);
-	}
-
-
-	public static OptMogram opt(String name, Condition condition,
-								Exertion target) {
-		return new OptMogram(name, condition, target);
-	}
-
-	public static AltMogram alt(OptMogram... exertions) {
-		return new AltMogram(exertions);
-	}
-
-	public static AltMogram alt(String name, OptMogram... exertions) {
-		return new AltMogram(name, exertions);
+	public static OptTask opt(Condition condition,
+                              Exertion target) {
+		return new OptTask(condition, target);
 	}
 
 
-	public static LoopMogram loop(Condition condition,
-								  Mogram target) {
-		return new LoopMogram(null, condition, target);
+	public static OptTask opt(String name, Condition condition,
+                              Exertion target) {
+		return new OptTask(name, condition, target);
 	}
 
-	public static LoopMogram loop(int from, int to, Condition condition,
-								  Mogram target) {
-		return new LoopMogram(null, from, to, condition, target);
+	public static AltTask alt(OptTask... exertions) {
+		return new AltTask(exertions);
 	}
 
-	public static LoopMogram loop(int from, int to, Exertion target) {
-		return new LoopMogram(null, from, to, null, target);
+	public static AltTask alt(String name, OptTask... exertions) {
+		return new AltTask(name, exertions);
 	}
 
-	public static LoopMogram loop(String name, Condition condition,
-								  Exertion target) {
-		return new LoopMogram(name, condition, target);
+
+	public static LoopTask loop(Condition condition,
+                                Mogram target) {
+		return new LoopTask(null, condition, target);
+	}
+
+	public static LoopTask loop(int from, int to, Condition condition,
+                                Mogram target) {
+		return new LoopTask(null, from, to, condition, target);
+	}
+
+	public static LoopTask loop(int from, int to, Exertion target) {
+		return new LoopTask(null, from, to, null, target);
+	}
+
+	public static LoopTask loop(String name, Condition condition,
+                                Exertion target) {
+		return new LoopTask(name, condition, target);
 	}
 
 	public static Exertion xrt(Mappable mappable, String path)
@@ -3315,17 +3314,17 @@ public class operator extends Operator {
 				pm.setInitContext(context);
 			}
 			for (Mogram e : mograms) {
-				if (e instanceof AltMogram) {
-					List<OptMogram> opts = ((AltMogram) e).getOptExertions();
-					for (OptMogram oe : opts) {
+				if (e instanceof AltTask) {
+					List<OptTask> opts = ((AltTask) e).getOptExertions();
+					for (OptTask oe : opts) {
 						oe.getCondition().setConditionalContext(pm);
 					}
-				} else if (e instanceof OptMogram) {
-					((OptMogram)e).getCondition().setConditionalContext(pm);
-				} else if (e instanceof LoopMogram) {
-					if (((LoopMogram)e).getCondition() != null)
-						((LoopMogram)e).getCondition().setConditionalContext(pm);
-					Mogram target = ((LoopMogram)e).getTarget();
+				} else if (e instanceof OptTask) {
+					((OptTask)e).getCondition().setConditionalContext(pm);
+				} else if (e instanceof LoopTask) {
+					if (((LoopTask)e).getCondition() != null)
+						((LoopTask)e).getCondition().setConditionalContext(pm);
+					Mogram target = ((LoopTask)e).getTarget();
 					if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Proc) {
 						Proc p = (Proc)((EvaluationTask)target).getEvaluation();
 						p.setScope(pm);

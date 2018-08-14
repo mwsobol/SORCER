@@ -22,12 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Proc;
-import sorcer.core.exertion.AltMogram;
-import sorcer.core.exertion.LoopMogram;
-import sorcer.core.exertion.OptMogram;
+import sorcer.core.exertion.AltTask;
+import sorcer.core.exertion.LoopTask;
+import sorcer.core.exertion.OptTask;
 import sorcer.core.invoker.GroovyInvoker;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.service.modeling.Data;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -40,9 +39,9 @@ import java.util.Map;
  * A Condition specifies a conditional eval in a given service context for its free variables
  * in the form of path/eval pairs with paths being guard parameters of a closure expression.
  * 
- * @see LoopMogram
- * @see OptMogram
- * @see AltMogram
+ * @see LoopTask
+ * @see OptTask
+ * @see AltTask
 
  * @author Mike Sobolewski
  */
@@ -325,13 +324,13 @@ import java.util.Map;
 
 	public static void clenupExertionScripts(Exertion exertion)
 			throws ContextException {
-		if (exertion instanceof ConditionalMogram) {
-			List<Conditional> cs = ((ConditionalMogram) exertion)
+		if (exertion instanceof ConditionalTask) {
+			List<Conditional> cs = ((ConditionalTask) exertion)
 					.getConditions();
 			for (Conditional c : cs) {
 				((Condition) c).setClosure(null);
 			}
-			List<Mogram> tl = ((ConditionalMogram) exertion).getTargets();
+			List<Mogram> tl = ((ConditionalTask) exertion).getTargets();
 			for (Mogram vt : tl) {
 				if (vt != null && vt instanceof Exertion)
 					clenupContextScripts(((Exertion)vt).getContext());
