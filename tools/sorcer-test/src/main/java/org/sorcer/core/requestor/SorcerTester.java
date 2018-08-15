@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * This class defines the JUnit requestor's scaffolding. The init method of the
+ * This class defines the JUnit consumer's scaffolding. The init method of the
  * class initializes system properties; if required an internal Webster is
  * started. If one is running it attempts to get the webster roots paths.
  * 
@@ -40,7 +40,7 @@ import java.util.*;
 	/** Logger for logging information about this instance */
 	protected static final Logger logger = LoggerFactory.getLogger(SorcerTester.class.getName());
     private static final ScratchManager scratchManager = new ScratchManagerSupport();
-	public static String R_PROPERTIES_FILENAME = "requestor.properties";
+	public static String R_PROPERTIES_FILENAME = "consumer.properties";
 	public static String R_VERSIONS_FILENAME = "versions.properties.file";
 
 	protected static SorcerTester tester = null;
@@ -66,7 +66,7 @@ import java.util.*;
 		String filename = System.getProperty(R_PROPERTIES_FILENAME);
 		logger.info(R_PROPERTIES_FILENAME + " = " + filename);
 		if (filename != null && filename != "") {
-			logger.info("loading requestor properties:" + filename);
+			logger.info("loading consumer properties:" + filename);
 			props = Sorcer.loadProperties(filename);
   		}
 		filename = System.getProperty(R_VERSIONS_FILENAME);

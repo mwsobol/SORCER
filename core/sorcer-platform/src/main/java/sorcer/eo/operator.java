@@ -84,8 +84,12 @@ public class operator extends Operator {
 		((ServiceExertion) exertion).setExecTimeRequested(true);
 	}
 
-	public static ServiceConsumer requestor(Class requestorType, String... args) {
-		return  new ServiceConsumer(requestorType, args);
+	public static ServiceConsumer consumer(Class consumerType, String... args) {
+		return  new ServiceConsumer(consumerType, args);
+	}
+
+	public static ServiceConsumer consumer(Class consumerType, Context inContext, Arg... args) {
+		return  new ServiceConsumer(consumerType, inContext, args);
 	}
 
 	public static Evaluation neg(Evaluation evaluation) {

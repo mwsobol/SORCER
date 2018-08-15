@@ -37,7 +37,7 @@
 			<sysproperty key="java.security.policy" value="../policy/${requestor.name}.policy" />
 			<sysproperty key="java.rmi.server.codebase" value="${j1} ${j2} ${j3}" />
 			<sysproperty key="sorcer.env.file" value="${sorcer.home}/configs/sorcer.env" />
-			<sysproperty key="requestor.properties" value="../configs/ex6-exertlet.properties" />
+			<sysproperty key="consumer.properties" value="../configs/ex6-exertlet.properties" />
 		</java>
 	</target>
 

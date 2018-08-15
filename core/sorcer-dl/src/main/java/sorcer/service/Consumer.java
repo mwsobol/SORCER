@@ -29,6 +29,8 @@ import java.util.List;
  */
 public interface Consumer {
 
-    Context exec(List<Service> services, Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException;
+    Context consume(Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException;
+
+    List<Service> getService(String... args) throws ServiceException;
 
 }

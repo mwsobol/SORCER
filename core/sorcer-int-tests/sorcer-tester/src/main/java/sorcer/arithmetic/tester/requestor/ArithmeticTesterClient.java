@@ -27,7 +27,7 @@ import static sorcer.so.operator.*;
  * numbers are added by the first task, then two numbers are multiplied by the
  * second one. The results of the first task and the second task are passed on
  * to the third task that subtracts the result of task two from the result of
- * task one. The {@link sorcer.core.context.PositionalContext} is used for requestor's
+ * task one. The {@link sorcer.core.context.PositionalContext} is used for consumer's
  * data in this test.
  *
  * @author Mike Sobolewski

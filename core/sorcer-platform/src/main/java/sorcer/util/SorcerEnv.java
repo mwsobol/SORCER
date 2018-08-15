@@ -499,7 +499,7 @@ public class SorcerEnv extends SOS {
         throws ConfigurationException {
 		update(properties, expanding);
 		// setValue the document root for HTTP server either for provider ormstc.data.dir
-		// requestor
+		// consumer
         //rootDir = properties.getProperty(P_DATA_ROOT_DIR);
 		String rootDir = DataService.getDataDir();
         String dataDir = dataDir = properties.getProperty(P_DATA_DIR);

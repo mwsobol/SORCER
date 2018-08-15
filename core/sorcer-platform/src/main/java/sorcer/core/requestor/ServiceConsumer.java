@@ -48,23 +48,34 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 
     protected String name;
 	protected Properties props;
-	static protected Class target;
-	static protected String[] args;
+    static protected Class target;
+    static protected String[] args;
 	protected Mogram mogram;
 	protected String jobberName;
 	protected GroovyShell shell;
 	protected RemoteLoggerListener listener;
 	protected static ServiceConsumer requestor = null;
-	final static String REQUESTOR_PROPERTIES_FILENAME = "requestor.properties";
+	final static String REQUESTOR_PROPERTIES_FILENAME = "consumer.properties";
+
+	// Consumer inputs
+    protected List<Service> services;
+    protected Context inContext;
+    static protected Arg[] consumerArgs;
 
 	public ServiceConsumer() {
 		// do nothing
 	}
 
-	public ServiceConsumer(Class requestorType, String... args) {
-		target = requestorType;
-		ServiceConsumer.args = args;
-	}
+    public ServiceConsumer(Class consumerType, String... args) {
+        target = consumerType;
+        ServiceConsumer.args = args;
+    }
+
+	public ServiceConsumer(Class consumerType, Context inContext, Arg... args) {
+        target = consumerType;
+        this.inContext = inContext;
+        ServiceConsumer.consumerArgs = args;
+    }
 
 	public static void main(String... args) throws Exception {
 		prepareToRun(args);
@@ -78,7 +89,7 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 		requestor.preprocess(Arg.asStrings(args));
 		try {
 			if (args.length == 1 && args[0] instanceof Signature) {
-				// requestor services
+				// consumer services
 				Signature rs = (Signature) args[0];
 				return rs.execute(rs);
 			} else if (requestor.jobberName != null) {
@@ -109,7 +120,7 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 		String requestorType = null;
 		if (args.length == 0 && target == null) {
 			System.err
-					.println("Usage: java sorcer.core.requestor.ExertRequestor  <requestorType>");
+					.println("Usage: java sorcer.core.consumer.ExertRequestor  <requestorType>");
 			System.exit(1);
 		}
 		try {
@@ -122,7 +133,7 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.info("Not able to create service requestor: " + requestorType);
+			logger.info("Not able to create service consumer: " + requestorType);
 			System.exit(1);
 		}
 		String str = System.getProperty(REQUESTOR_PROPERTIES_FILENAME);
@@ -155,11 +166,16 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 	}
 
 	public Mogram getMogram(String... args) throws MogramException {
-		// implement in subclsses
-		throw new MogramException("Mograms should be declared in subclasses!");
-	}
+        // implement in subclsses
+        throw new MogramException("Mograms should be declared in subclasses!");
+    }
 
-	public String getJobberName() {
+    public List<Service> getService(String... args) throws ServiceException {
+        // implement in subclsses
+        throw new ServiceException("Consumer services should be declared in subclasses!");
+    }
+
+    public String getJobberName() {
 		return jobberName;
 	}
 
@@ -168,7 +184,7 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 		try {
 			in = requestor.getMogram(args);
 			if (in == null)
-				throw new ExertionException("No mogram definde for this requestor!");
+				throw new ExertionException("No mogram definde for this consumer!");
 
 			if (logger.isDebugEnabled())
 				logger.debug("ServiceConsumer java.rmi.server.codebase: "
@@ -254,12 +270,12 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 	}
 
 	/**
-	 * Loads service requestor properties from a <code>filename</code> file. By
-	 * default a service requestor loads its properties from
-	 * <code>requestor.properties</code> file located in the requestor's
-	 * package. Also, a service requestor properties file key can be specified
-	 * as a system property when starting the requestor with
-	 * <code>-DrequestorProperties=&ltfilename&gt<code>. In this case the requestor loads 
+	 * Loads service consumer properties from a <code>filename</code> file. By
+	 * default a service consumer loads its properties from
+	 * <code>consumer.properties</code> file located in the consumer's
+	 * package. Also, a service consumer properties file key can be specified
+	 * as a system property when starting the consumer with
+	 * <code>-DrequestorProperties=&ltfilename&gt<code>. In this case the consumer loads
 	 * properties from <code>filename</code> file. Properties are accessible
 	 * calling the <code>
 	 * getProperty(String)</code> method.
@@ -284,13 +300,13 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 					System.err
 							.println("Not able to open stream on properties: "
 									+ filename);
-					System.err.println("Service requestor class: "
+					System.err.println("Service consumer class: "
 							+ this.getClass());
 					return;
 				}
 			}
 		} catch (IOException ioe) {
-			logger.info("Not able to load requestor properties");
+			logger.info("Not able to load consumer properties");
 			// ioe.printStackTrace();
 		}
 
@@ -353,7 +369,7 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 		} if (obj instanceof Exertion) {
 			return context.append(((Exertion)obj).getContext());
 		} else {
-			context.putValue("requestor/result", obj);
+			context.putValue("consumer/result", obj);
 			return context;
 		}
 
@@ -364,13 +380,40 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
     }
 
 	@Override
-	public Context exec(List<Service> services, Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException {
-		Context inContext = context;
+	public Context consume(Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException {
+        inContext = context;
+        consumerArgs = args;
 		Context outContext = context;
 		for (Service service: services) {
 			inContext = outContext;
-			outContext = exec(service, inContext, args);
+			outContext = exec(service, inContext, consumerArgs);
 		}
 		return outContext;
 	}
+
+    public List<Service> getServices() {
+        return services;
+    }
+
+    public void setServices(List<Service> services) {
+        this.services = services;
+    }
+
+
+    public Context getInContext() {
+        return inContext;
+    }
+
+    public void setInContext(Context inContext) {
+        this.inContext = inContext;
+    }
+
+    public static Arg[] getConsumerArgs() {
+        return consumerArgs;
+    }
+
+    public static void setConsumerArgs(Arg[] consumerArgs) {
+        ServiceConsumer.consumerArgs = consumerArgs;
+    }
+
 }

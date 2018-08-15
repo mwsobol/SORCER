@@ -35,7 +35,7 @@
 			<arg value="${requestor.impl}" />
 			<arg value="f1" />
 			<classpath refid="project.classpath" />
-			<sysproperty key="requestor.properties" value="../configs/arithmetic-req.properties" />
+			<sysproperty key="consumer.properties" value="../configs/arithmetic-req.properties" />
 			<sysproperty key="local.repo.path" value="org/sorcer/arithmetic/${sorcer.version}" />
 			<sysproperty key="java.util.logging.config.file" value="${sorcer.home}/configs/sorcer.logging" />
 			<sysproperty key="java.security.policy" value="../policy/${requestor.name}-tester-req.policy" />

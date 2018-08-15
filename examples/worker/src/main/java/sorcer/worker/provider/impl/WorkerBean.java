@@ -61,11 +61,11 @@ public class WorkerBean implements Worker {
 			path = sigPrefix + "/" + path;
 		Object workToDo = context.getValue(path);
 		if (workToDo != null && (workToDo instanceof Work)) {
-			// requestor's work to be done
+			// consumer's work to be done
 			Context out = ((Work) workToDo).exec(context);
 			context.putValue(((ServiceContext) out).getReturnPath().path, out.getReturnValue());
 		} else {
-			throw new InvalidWork("No Work found to do at path requestor/work'!");
+			throw new InvalidWork("No Work found to do at path consumer/work'!");
 		}
 
 		String reply = "Done work by: "

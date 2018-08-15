@@ -55,24 +55,24 @@ public class WorkerJobApplication {
 
         Context context1 = new ServiceContext("work1");
         context1.putValue("requstor/key", hostname);
-        context1.putValue("requestor/operand/1", 1);
-        context1.putValue("requestor/operand/2", 1);
+        context1.putValue("consumer/operand/1", 1);
+        context1.putValue("consumer/operand/2", 1);
         context1.putValue("to/provider/key", pn1);
-        context1.putValue("requestor/work", Works.work1);
+        context1.putValue("consumer/work", Works.work1);
 
         Context context2 = new ServiceContext("work2");
         context2.putValue("requstor/key", hostname);
-        context2.putValue("requestor/operand/1", 2);
-        context2.putValue("requestor/operand/2", 2);
+        context2.putValue("consumer/operand/1", 2);
+        context2.putValue("consumer/operand/2", 2);
         context2.putValue("to/provider/key", pn2);
-        context2.putValue("requestor/work", Works.work2);
+        context2.putValue("consumer/work", Works.work2);
 
         Context context3 = new ServiceContext("work3");
         context3.putValue("requstor/key", hostname);
-        context3.putValue("requestor/operand/1", 3);
-        context3.putValue("requestor/operand/2", 3);
+        context3.putValue("consumer/operand/1", 3);
+        context3.putValue("consumer/operand/2", 3);
         context3.putValue("to/provider/key", pn3);
-        context3.putValue("requestor/work", Works.work3);
+        context3.putValue("consumer/work", Works.work3);
 
 		NetSignature signature1 = new NetSignature("doWork", Worker.class, pn1);
 		NetSignature signature2 = new NetSignature("doWork", Worker.class, pn2);

@@ -89,15 +89,15 @@ bootme {
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
 task runRequestor(type:JavaExec, dependsOn:[install]) {
     description = 'Runs a service requestor executing a local or remote service.'
-    main = "sorcer.core.requestor.ServiceRequestor"
+    main = "sorcer.core.requestor.ServiceConsumer"
     classpath = sourceSets.main.runtimeClasspath
     systemProperty "java.util.logging.config.file", "${projectDir.path}/configs/sorcer-req.logging"
-    systemProperty "requestor.properties", "configs/adder-req.properties"
+    systemProperty "consumer.properties", "configs/adder-req.properties"
     systemProperty "java.rmi.server.codebase",
             "${websterUrl}/${repoPath()}/exchange-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 //    args = ["sorcer.requestor.adder.AdderRequestor", "sorcer.netlet"]
 //  Requires service provisioning support - bootSorcerRio
-    args = ["sorcer.requestor.exchange.ExchangeRequestor", "dynamic"]
+    args = ["sorcer.requestor.exchange.ExchangeConsumer", "dynamic"]
 	finalizedBy (":stopme")
 }
 

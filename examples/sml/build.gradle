@@ -131,7 +131,7 @@ task runRequestor(type:JavaExec, dependsOn:[jar]) {
 	description = 'Runs a service requestor executing a local or remote service.'
 	main = "sorcer.core.requestor.SorcerRequestor"
 	classpath = sourceSets.main.runtimeClasspath
-	systemProperty "requestor.properties", "configs/arithmetic-req.properties"
+	systemProperty "consumer.properties", "configs/arithmetic-req.properties"
 	systemProperty "project.version", "${version}"
 	systemProperty "java.rmi.server.codebase",
 			"${websterUrl}/${repoPath()}/sml-${version}.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"

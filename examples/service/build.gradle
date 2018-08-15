@@ -102,25 +102,25 @@ bootme {
 
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
 task runRequestor(type:JavaExec, dependsOn:[install]) {
-    description = 'Runs a service requestor executing a local or remote service.'
-    main = "sorcer.core.requestor.ServiceRequestor"
+    description = 'Runs a service consumer executing a local or remote service.'
+    main = "sorcer.core.requestor.ServiceConsumer"
     classpath = sourceSets.main.runtimeClasspath
     systemProperty "java.util.logging.config.file", "${projectDir}/configs/sorcer-req.logging"
-    systemProperty "requestor.properties", "${projectDir}/configs/adder-req.properties"
+    systemProperty "consumer.properties", "${projectDir}/configs/adder-req.properties"
     systemProperty "java.rmi.server.codebase",
             "${websterUrl}/${repoPath()}/adder-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
     dependsOn([install, bootme])
     //  Dynamic option requires service provisioning support - bootSorcerRio
-//  args = ["sorcer.requestor.adder.AdderRequestor", "dynamic"]
-//  args = ["sorcer.requestor.adder.AdderRequestor", "model"]
-//  args = ["sorcer.requestor.adder.AdderRequestor", "exertion"]
-    args = ["sorcer.requestor.adder.AdderRequestor", "netlet"]
+//  args = ["sorcer.requestor.adder.AdderConsumer", "dynamic"]
+//  args = ["sorcer.requestor.adder.AdderConsumer", "model"]
+//  args = ["sorcer.requestor.adder.AdderConsumer", "exertion"]
+    args = ["sorcer.requestor.adder.AdderConsumer", "netlet"]
     finalizedBy (stopme)
 }
 
 test {
     description = 'Tests local and remote services with JUnit test case.'
-    systemProperties = ["requestor.properties" : "${projectDir}/configs/adder-req.properties",
+    systemProperties = ["consumer.properties" : "${projectDir}/configs/adder-req.properties",
     "java.rmi.server.codebase":
             "${websterUrl}/${repoPath()}/adder-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"]
 

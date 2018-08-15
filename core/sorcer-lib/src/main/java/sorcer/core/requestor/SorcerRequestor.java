@@ -39,12 +39,12 @@ import java.util.StringTokenizer;
 
 /**
  * This an abstract class with the abstract methods that defines the initialization
- * of SORCER requestor. This class implements {@link SorcerConstants}. The 
+ * of SORCER consumer. This class implements {@link SorcerConstants}. The
  * main method of the class initializes system properties. Then it parses the 
  * arguments passed to method if no arguments are passed to the method it 
  * terminates the Java Virtual Machine with an exit code of 1. Else, the first 
  * argument is setValue as the runnerType. Then the code attempts to create a
- * new instance of the requestor as service runner if it fails the Virtual 
+ * new instance of the consumer as service runner if it fails the Virtual
  * Machine exits with a code of 2. Next the code determines if an internal 
  * Webster is running. If one is running it attempts to get the webster 
  * roots paths. Finally the method call the {@code run} function. 
@@ -56,7 +56,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	/** Logger for logging information about this instance */
 	protected static final Logger logger = LoggerFactory.getLogger(SorcerRequestor.class.getName());
     private final ScratchManager scratchManager = new ScratchManagerSupport();
-	public static String R_PROPERTIES_FILENAME = "requestor.properties";
+	public static String R_PROPERTIES_FILENAME = "consumer.properties";
 	protected static SorcerRequestor requestor = null;
 	protected Properties props;
 	protected int port;
@@ -76,7 +76,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		// Determine runner type from argument array 
 		String runnerType = null;
 		if (args.length == 0) {
-			System.err.println("Usage: Java sorcer.core.requestor.ServiceRunner <runnerType>");
+			System.err.println("Usage: Java sorcer.core.consumer.ServiceRunner <runnerType>");
 			System.exit(1);
 		} else {
 			runnerType = args[0];
@@ -91,13 +91,13 @@ abstract public class SorcerRequestor implements SorcerConstants {
 			System.exit(2);
 		}
 		
-		// Attempt to load the requestor properties file
+		// Attempt to load the consumer properties file
 		String str = System.getProperty(R_PROPERTIES_FILENAME);
 		logger.info(R_PROPERTIES_FILENAME + " = " + str);
 		if (str != null) {
 			requestor.loadProperties(str); // search the provider package
 		} else {
-			throw new RuntimeException("No requestor properties file available!");
+			throw new RuntimeException("No consumer properties file available!");
 		}
 		
 		// Determine if an internal web server is running if so obtain the root paths
@@ -118,7 +118,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 			}
 		}
 			
-		// Initialize the requestor
+		// Initialize the consumer
 		requestor.run(args);
 	}
 	
@@ -131,14 +131,14 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	
 	
 	/**
-	 * Loads service requestor properties from a <code>filename</code> file. 
+	 * Loads service consumer properties from a <code>filename</code> file.
 	 * 
 	 * @param filenames
 	 *            the properties file key see #getProperty
 	 * @throws ConfigurationException 
 	 */
 	public void loadProperties(String... filenames) throws ConfigurationException {
-		logger.info("loading requestor properties:" + Arrays.toString(filenames));
+		logger.info("loading consumer properties:" + Arrays.toString(filenames));
 		props = Sorcer.loadProperties(filenames);
 	}
 
@@ -155,16 +155,16 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	}
 	
 	/**
-	 * Returns a URL for the requestor's data server.
+	 * Returns a URL for the consumer's data server.
 	 * 
-	 * @return the current URL for the requestor's data server.
+	 * @return the current URL for the consumer's data server.
 	 */
 	public String getDataServerUrl() {
 		return "http://" + getProperty(DATA_SERVER_INTERFACE) + ':' + getProperty(DATA_SERVER_PORT);
 	}
 
 	/**
-	 * Returns the hostname of a requestor data server.
+	 * Returns the hostname of a consumer data server.
 	 * 
 	 * @return a data server key.
 	 */
@@ -174,7 +174,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	
 
 	/**
-	 * Returns the port of a requestor data server.
+	 * Returns the port of a consumer data server.
 	 * 
 	 * @return a data server port.
 	 */
@@ -192,7 +192,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	}
 
 	/**
-	 * Returns the hostname of a requestor class server.
+	 * Returns the hostname of a consumer class server.
 	 * 
 	 * @return a webster host key.
 	 */
@@ -232,7 +232,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	}
 	
 	/**
-	 * Checks which port to use for a requestor class server.
+	 * Checks which port to use for a consumer class server.
 	 * 
 	 * @return a port number
 	 */
@@ -242,27 +242,27 @@ abstract public class SorcerRequestor implements SorcerConstants {
 
 		String wp = System.getenv("IGRID_WEBSTER_PORT");
 		if (wp != null && wp.length() > 0) {
-			logger.debug("requestor webster port as 'IGRID_WEBSTER_PORT': " + wp);
+			logger.debug("consumer webster port as 'IGRID_WEBSTER_PORT': " + wp);
 			return new Integer(wp);
 		}
 
 		wp = System.getProperty(R_WEBSTER_PORT);
 		if (wp != null && wp.length() > 0) {
-			logger.debug("requestor webster port as System '" + R_WEBSTER_PORT + "': "
+			logger.debug("consumer webster port as System '" + R_WEBSTER_PORT + "': "
 					+ wp);
 			return new Integer(wp);
 		}
 
 		wp = props.getProperty(R_WEBSTER_PORT);
 		if (wp != null && wp.length() > 0) {
-			logger.debug("requestor webster port as Sorcer '" + R_WEBSTER_PORT + "': "
+			logger.debug("consumer webster port as Sorcer '" + R_WEBSTER_PORT + "': "
 					+ wp);
 			return new Integer(wp);
 		}
 
 		try {
 			port = Sorcer.getAnonymousPort();
-			logger.debug("anonymous requestor webster port: " + wp);
+			logger.debug("anonymous consumer webster port: " + wp);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -282,7 +282,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	}
 		
 	/**
-	 * Returns a directory for requestor's scratch files
+	 * Returns a directory for consumer's scratch files
 	 * 
 	 * @return a scratch directory
 	 */
@@ -295,18 +295,18 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	}
 	
 	/**
-	 * Returns a directory for requestor's data root.
+	 * Returns a directory for consumer's data root.
 	 * 
-	 * @return a requestor data root directory
+	 * @return a consumer data root directory
 	 */
 	public File getDataRootDir() {
 		return new File(getProperty(R_DATA_ROOT_DIR));
 	}
 	
 	/**
-	 * Returns a directory for requestor's data.
+	 * Returns a directory for consumer's data.
 	 * 
-	 * @return a requestor data directory
+	 * @return a consumer data directory
 	 */
 	public File getDataDir() {
 		//return new File(getProperty(R_DATA_ROOT_DIR) + File.separator + getProperty(R_DATA_DIR));
@@ -343,7 +343,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 	}	
 	
 	/**
-	 * Returns the requestor's scratch directory
+	 * Returns the consumer's scratch directory
 	 * 
 	 * @return a scratch directory
 	 */

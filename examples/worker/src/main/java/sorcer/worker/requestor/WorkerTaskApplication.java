@@ -46,10 +46,10 @@ public class WorkerTaskApplication {
 
         Context context = new ServiceContext("work");
         context.putValue("requstor/key", hostname);
-        context.putValue("requestor/operand/1", 4);
-        context.putValue("requestor/operand/2", 4);
+        context.putValue("consumer/operand/1", 4);
+        context.putValue("consumer/operand/2", 4);
         context.putValue("to/provider/key", pn);
-        context.putValue("requestor/work", Works.work2);
+        context.putValue("consumer/work", Works.work2);
 
 
         NetSignature signature = new NetSignature("doWork", Worker.class, pn);

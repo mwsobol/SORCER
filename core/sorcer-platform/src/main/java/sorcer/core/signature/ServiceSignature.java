@@ -465,8 +465,8 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	}
 
 	/**
-	 * Returns a method provided by the requestor itself to substitute the
-	 * existing provider'smethod. The implementation of this requestor's method
+	 * Returns a method provided by the consumer itself to substitute the
+	 * existing provider'smethod. The implementation of this consumer's method
 	 * overrides the existing implementation of the provider if one exists.Thus
 	 * a new functionality is inserted into the executing provider if the
 	 * alternative inserted method is acceptable (valid).
@@ -481,7 +481,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 		} catch (NoSuchMethodException nsme) {
 			nsme.printStackTrace();
 			// logger.info("The method: \"" + selector
-			// + "\" doesn't exist in requestor's signature code");
+			// + "\" doesn't exist in consumer's signature code");
 		}
 		return m;
 	}

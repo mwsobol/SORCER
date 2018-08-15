@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.requestor.ServiceConsumer;
+import sorcer.eo.operator;
 import sorcer.requestor.adder.AdderConsumer;
 import sorcer.service.Context;
 
@@ -29,8 +30,8 @@ public class ServiceRequestor {
 //		ExertRequestor req = new ExertRequestor(AdderConsumer.class, "exertion");
 //		Context cxt = (Context) req.turn();
 
-		ServiceConsumer req = requestor(AdderConsumer.class, "exertion");
-//		sorcer.core.requestor.ServiceConsumer req = requestor(AdderConsumer.class, "netlet");
+		ServiceConsumer req = consumer(AdderConsumer.class, "exertion");
+//		sorcer.core.consumer.ServiceConsumer req = consumer(AdderConsumer.class, "netlet");
 
 		Context cxt = (Context) exec(req);
 

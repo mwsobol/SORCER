@@ -388,7 +388,7 @@ public class operator extends Operator {
                     ((Modeling) service).evaluate();
                 }
                 return ((Model)service).getResult();
-            }else {
+            } else {
                 return service.execute(args);
             }
         } catch (Exception e) {

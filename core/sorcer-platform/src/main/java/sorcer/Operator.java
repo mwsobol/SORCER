@@ -38,7 +38,7 @@ public class Operator implements Service, Activity {
 	public Object execute(Arg... args) throws ServiceException, RemoteException {
 
 		if (args.length == 1 && args[0] instanceof Signature) {
-			// requestor services
+			// consumer services
 			Signature rs = (Signature) args[0];
 			return rs.execute(rs);
 		} else {
