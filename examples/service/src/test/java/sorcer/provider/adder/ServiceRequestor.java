@@ -6,9 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.requestor.adder.AdderRequestor;
+import sorcer.core.requestor.ServiceConsumer;
+import sorcer.requestor.adder.AdderConsumer;
 import sorcer.service.Context;
-import sorcer.util.ModelTable;
 
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.*;
@@ -26,11 +26,11 @@ public class ServiceRequestor {
 	@Test
 	public void adderRequestorAsService() throws Exception {
 
-//		ExertRequestor req = new ExertRequestor(AdderRequestor.class, "exertion");
+//		ExertRequestor req = new ExertRequestor(AdderConsumer.class, "exertion");
 //		Context cxt = (Context) req.turn();
 
-		sorcer.core.requestor.ServiceRequestor req = requestor(AdderRequestor.class, "exertion");
-//		sorcer.core.requestor.ServiceRequestor req = requestor(AdderRequestor.class, "netlet");
+		ServiceConsumer req = requestor(AdderConsumer.class, "exertion");
+//		sorcer.core.requestor.ServiceConsumer req = requestor(AdderConsumer.class, "netlet");
 
 		Context cxt = (Context) exec(req);
 

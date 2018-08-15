@@ -176,8 +176,7 @@ public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>,
     public int size() {
         return fidelity.getSelects().size();
     }
-
-    @Override
+    
     public Object execute(Arg... args) throws ServiceException, RemoteException {
         if (fidelity.getSelect() instanceof Service) {
             return ((Service)fidelity.getSelect()).execute(args);

@@ -1,30 +1,30 @@
-package sorcer.arithmetic.tester.requestor;
+package sorcer.arithmetic.requestor;
 
-
-import sorcer.arithmetic.tester.provider.Adder;
-import sorcer.arithmetic.tester.provider.Averager;
-import sorcer.arithmetic.tester.provider.Multiplier;
-import sorcer.arithmetic.tester.provider.Subtractor;
-import sorcer.arithmetic.tester.provider.impl.AdderImpl;
-import sorcer.arithmetic.tester.provider.impl.AveragerImpl;
-import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
-import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
+import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.Averager;
+import sorcer.arithmetic.provider.Multiplier;
+import sorcer.arithmetic.provider.Subtractor;
+import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.arithmetic.provider.impl.AveragerImpl;
+import sorcer.arithmetic.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.co.operator;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.core.requestor.ServiceRequestor;
+import sorcer.core.requestor.ServiceConsumer;
 import sorcer.service.*;
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 
-public class ArithmeticServiceRequestor extends ServiceRequestor {
+public class ArithmeticServiceConsumer extends ServiceConsumer {
 
 	/* (non-Javadoc)
-	 * @see sorcer.core.requestor.ExertionRunner#getMogram(java.lang.String[])
-	 */
+         * @see sorcer.core.requestor.ServiceConsumer#getMogram(java.lang.String[])
+         */
 	@Override
 	public Mogram getMogram(String... args) throws MogramException {
+
 		Job job = null;
 		try {
 			Task t3 = task("t3", sFi("object/subtract", sig("subtract", SubtractorImpl.class)),
@@ -43,8 +43,7 @@ public class ArithmeticServiceRequestor extends ServiceRequestor {
 					sFi("net", sig("add", Adder.class)),
 					context("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
 							outVal("result/y")));
-
-			job = job("j1", sFi("object", sig("exert", ServiceJobber.class)),
+			job = job("j1", sFi("object", sig("service", ServiceJobber.class)),
 					sFi("net", sig("exert", Jobber.class)),
 					job("j2", sig("exert", ServiceJobber.class), t4, t5),
 					t3,
@@ -52,7 +51,8 @@ public class ArithmeticServiceRequestor extends ServiceRequestor {
 					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
 					fi("job1", fi("net", "j1"), fi("net", "j1/j2/t4")),
 					fi("job2", fi("net", "j1"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")));
-		} catch(Exception e) {
+
+		} catch (Exception e) {
 			throw new MogramException(e);
 		}
 		return job;
@@ -61,6 +61,6 @@ public class ArithmeticServiceRequestor extends ServiceRequestor {
 	@Override
 	public void postprocess(String... args) throws ExertionException, ContextException {
 		super.postprocess();
-		logger.info("<<<<<<<<<< f5 context: \n" + upcontext(mogram));
+		logger.info("<<<<<<<<<< f5 context: \n" + upcontext((Exertion)mogram));
 	}
 }

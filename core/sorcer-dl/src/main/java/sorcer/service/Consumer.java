@@ -1,6 +1,6 @@
 /*
- * Copyright 2016 the original author or authors.
- * Copyright 2016 SorcerSoft.org.
+ * Copyright 2018 the original author or authors.
+ * Copyright 2018 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,18 @@
 
 package sorcer.service;
 
-import sorcer.service.modeling.Data;
+import net.jini.core.transaction.TransactionException;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
- * An top-level common interface for all request service in SORCER.
- * Request services are frontend service created by users. Standalone
- * request services are called subroutine services and request federated
- * services are called mograms.
+ * Created by Mike Sobolewski on 08/14/18.
  *
- * @author Mike Sobolewski
+ * Execute provided list of services as a service pipe.
  */
-public interface Request extends Service {
+public interface Consumer {
 
-    public Fi getMultiFi();
+    Context exec(List<Service> services, Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException;
+
 }

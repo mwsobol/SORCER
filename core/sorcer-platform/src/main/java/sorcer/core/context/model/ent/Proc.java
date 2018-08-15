@@ -230,7 +230,7 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 				val = ((Evaluation<T>) val).evaluate(args);
 			}  else if (val instanceof Mogram) {
 				try {
-					val = exec((Mogram)val, args);
+					val = exec((Service)val, args);
 				} catch (ServiceException e) {
 					throw new EvaluationException(e);
 				}

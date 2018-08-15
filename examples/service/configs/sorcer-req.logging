@@ -87,7 +87,7 @@ local.level=ALL
 #sorcer.core.context.model.explore.ExploreDispatcher.level=ALL
 #sorcer.core.context.model.explore.ModelManager.level=ALL
 #sorcer.core.context.model.opti.level=ALL
-sorcer.core.requestor.ServiceRequestor.level=ALL
+sorcer.core.requestor.ServiceConsumer.level=ALL
 
 # Other specialized loggers
 #sorcer.core.context.eval.level=OFF

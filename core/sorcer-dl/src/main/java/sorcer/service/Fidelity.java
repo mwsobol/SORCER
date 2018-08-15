@@ -238,8 +238,8 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 
     @Override
     public Object execute(Arg... args) throws ServiceException, RemoteException {
-        if (select instanceof Request) {
-            return ((Request)select).execute(args);
+        if (select instanceof Service) {
+            return ((Service)select).execute(args);
         } else {
             return select;
         }

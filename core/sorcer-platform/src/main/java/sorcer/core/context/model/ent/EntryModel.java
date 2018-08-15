@@ -156,7 +156,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				}
 				Object impl = ((Proc)val).getImpl();
 				if (impl instanceof Mogram) {
-					return exec((Mogram)impl, args);
+					return exec((Service)impl, args);
 				} else if (impl instanceof Invocation) {
 					if (isChanged) {
 						((ServiceInvoker) impl).setValid(false);
@@ -180,7 +180,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			} else if (val instanceof Evaluation) {
 				return ((Evaluation) val).evaluate(args);
 			}  else if (val instanceof Mogram) {
-				return exec((Mogram)val, args);
+				return exec((Service)val, args);
 			}  else  if (val instanceof ServiceFidelity) {
 				return new Subroutine(path, val).evaluate(args);
 			} else if (path == null && val == null

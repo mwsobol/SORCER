@@ -1,7 +1,6 @@
 package sorcer.requestor.adder;
 
-import sorcer.core.requestor.ServiceRequestor;
-import sorcer.mo.operator;
+import sorcer.core.requestor.ServiceConsumer;
 import sorcer.provider.adder.Adder;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -14,7 +13,7 @@ import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.ent;
 
-public class AdderRequestor extends ServiceRequestor {
+public class AdderConsumer extends ServiceConsumer {
 
     public Mogram getMogram(String... args) throws MogramException {
 

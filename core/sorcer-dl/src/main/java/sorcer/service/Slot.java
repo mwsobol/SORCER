@@ -8,7 +8,7 @@ import sorcer.service.modeling.val;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-public class Slot<K, O> implements Identifiable, Getter, Service, Data<O>, Arg, slot<O>, net.jini.core.entry.Entry, Serializable {
+public class Slot<K, O> implements Identifiable, Getter, Data<O>, Arg, slot<O>, net.jini.core.entry.Entry, Serializable {
 
     protected K key;
 

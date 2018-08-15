@@ -42,9 +42,9 @@ import static sorcer.eo.operator.prvName;
 /**
  * @author Mike Sobolewski
  */
-public class ServiceRequestor implements Requestor, SorcerConstants {
+public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 	/** Logger for logging information about this instance */
-	protected static final Logger logger = LoggerFactory.getLogger(ServiceRequestor.class.getName());
+	protected static final Logger logger = LoggerFactory.getLogger(ServiceConsumer.class.getName());
 
     protected String name;
 	protected Properties props;
@@ -54,16 +54,16 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 	protected String jobberName;
 	protected GroovyShell shell;
 	protected RemoteLoggerListener listener;
-	protected static ServiceRequestor requestor = null;
+	protected static ServiceConsumer requestor = null;
 	final static String REQUESTOR_PROPERTIES_FILENAME = "requestor.properties";
 
-	public ServiceRequestor() {
+	public ServiceConsumer() {
 		// do nothing
 	}
 
-	public ServiceRequestor(Class requestorType, String... args) {
+	public ServiceConsumer(Class requestorType, String... args) {
 		target = requestorType;
-		ServiceRequestor.args = args;
+		ServiceConsumer.args = args;
 	}
 
 	public static void main(String... args) throws Exception {
@@ -114,10 +114,10 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 		}
 		try {
 			if (target != null) {
-				requestor = (ServiceRequestor) target.newInstance();
+				requestor = (ServiceConsumer) target.newInstance();
 			} else {
 				requestorType = args[0];
-				requestor = (ServiceRequestor) Class.forName(requestorType)
+				requestor = (ServiceConsumer) Class.forName(requestorType)
 						.newInstance();
 			}
 		} catch (Exception e) {
@@ -171,7 +171,7 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 				throw new ExertionException("No mogram definde for this requestor!");
 
 			if (logger.isDebugEnabled())
-				logger.debug("ServiceRequestor java.rmi.server.codebase: "
+				logger.debug("ServiceConsumer java.rmi.server.codebase: "
 						+ System.getProperty("java.rmi.server.codebase"));
 
 			if (in != null) {
@@ -362,4 +362,15 @@ public class ServiceRequestor implements Requestor, SorcerConstants {
 	public String getName() {
         return name;
     }
+
+	@Override
+	public Context exec(List<Service> services, Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException {
+		Context inContext = context;
+		Context outContext = context;
+		for (Service service: services) {
+			inContext = outContext;
+			outContext = exec(service, inContext, args);
+		}
+		return outContext;
+	}
 }

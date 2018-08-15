@@ -42,7 +42,7 @@ import sorcer.core.provider.*;
 import sorcer.core.provider.exerter.Binder;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceModeler;
-import sorcer.core.requestor.ServiceRequestor;
+import sorcer.core.requestor.ServiceConsumer;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.*;
 import sorcer.netlet.ServiceScripter;
@@ -84,8 +84,8 @@ public class operator extends Operator {
 		((ServiceExertion) exertion).setExecTimeRequested(true);
 	}
 
-	public static ServiceRequestor requestor(Class requestorType, String... args) {
-		return  new ServiceRequestor(requestorType, args);
+	public static ServiceConsumer requestor(Class requestorType, String... args) {
+		return  new ServiceConsumer(requestorType, args);
 	}
 
 	public static Evaluation neg(Evaluation evaluation) {
@@ -1473,7 +1473,7 @@ public class operator extends Operator {
 		return new MultiFiMogram(fidelity.getName(), fidelity);
 	}
 
-	public static MultiFiMogram mogFi(Morpher  morpher, Mogram... mograms) {
+	public static MultiFiMogram mogFi(Morpher  morpher, Service... mograms) {
 		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(mograms));
 		morphFi.setMorpher(morpher);
 		return new MultiFiMogram(morphFi.getName(), morphFi);
@@ -2427,11 +2427,11 @@ public class operator extends Operator {
 	}
 
 
-	public static Object get(Service mogram, String path)
+	public static Object get(Service service, String path)
 			throws ContextException {
 		Object obj = null;
-		if (mogram instanceof Context) {
-			obj = ((ServiceContext) mogram).get(path);
+		if (service instanceof Context) {
+			obj = ((ServiceContext) service).get(path);
 			if (obj != null && obj instanceof Mappable) {
 				while (obj instanceof Mappable ||
 						(obj instanceof Reactive && ((Reactive) obj).isReactive())) {
@@ -2442,8 +2442,8 @@ public class operator extends Operator {
 					}
 				}
 			}
-		} else if (mogram instanceof Mogram) {
-			obj = (((Mogram) mogram).getContext()).asis(path);
+		} else if (service instanceof Mogram) {
+			obj = (((Mogram) service).getContext()).asis(path);
 		}
 		return obj;
 	}
@@ -2452,7 +2452,7 @@ public class operator extends Operator {
 			throws ExertionException {
 		Exertion c = (Exertion) exertion.getMogram(component);
 		try {
-			return get(c, path);
+			return get((ServiceExertion) c, path);
 		} catch (Exception e) {
 			throw new ExertionException(e);
 		}

@@ -59,13 +59,13 @@ public class operator {
 
     protected static int count = 0;
 
-    public static ServiceFidelity mdlFi(Domain... models) {
+    public static ServiceFidelity mdlFi(Service... models) {
         ServiceFidelity fi = new ServiceFidelity(models);
         fi.fiType = ServiceFidelity.Type.MODEL;
         return fi;
     }
 
-    public static ServiceFidelity mdlFi(String fiName, Domain... models) {
+    public static ServiceFidelity mdlFi(String fiName, Service... models) {
         ServiceFidelity fi = new ServiceFidelity(fiName, models);
         fi.fiType = ServiceFidelity.Type.MODEL;
         return fi;

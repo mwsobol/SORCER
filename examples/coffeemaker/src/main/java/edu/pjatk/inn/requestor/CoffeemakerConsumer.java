@@ -2,7 +2,7 @@ package edu.pjatk.inn.requestor;
 
 import edu.pjatk.inn.coffeemaker.CoffeeService;
 import edu.pjatk.inn.coffeemaker.Delivery;
-import sorcer.core.requestor.ServiceRequestor;
+import sorcer.core.requestor.ServiceConsumer;
 import sorcer.service.*;
 import sorcer.service.Domain;
 
@@ -15,7 +15,7 @@ import static sorcer.mo.operator.*;
 import static sorcer.po.operator.*;
 import static sorcer.so.operator.exert;
 
-public class CoffeemakerRequestor extends ServiceRequestor {
+public class CoffeemakerConsumer extends ServiceConsumer {
 
     public Mogram getMogram(String... args) throws MogramException {
 

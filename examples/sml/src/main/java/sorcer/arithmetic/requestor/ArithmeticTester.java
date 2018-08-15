@@ -180,7 +180,7 @@ public class ArithmeticTester extends SorcerRequestor {
 		Job f1 = job("f1", job("f2", f4, f5), f3, strategy(Provision.NO),
 				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
 				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
-		
+
 		Exertion out = exert(f1);
 		if (out != null) {
 			logger.info("job f1 context: " + upcontext(out));

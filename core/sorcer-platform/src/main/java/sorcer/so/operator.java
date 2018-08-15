@@ -154,7 +154,7 @@ public class operator extends Operator {
             Object out = null;
             synchronized (mogram) {
                 if (mogram instanceof Exertion) {
-                    out = exec(mogram, args);
+                    out = exec((Service)mogram, args);
                 } else {
                     out = ((ServiceContext) mogram).getValue(args);
                 }
@@ -336,7 +336,7 @@ public class operator extends Operator {
                               Arg... args) throws EvaluationException {
         try {
             exertion.getDataContext().setReturnPath(new Signature.ReturnPath(selector));
-            return exec(exertion, args);
+            return exec((Service)exertion, args);
         } catch (Exception e) {
             e.printStackTrace();
             throw new EvaluationException(e);
@@ -359,7 +359,7 @@ public class operator extends Operator {
 
     public static Object execItem(Request item, Arg... args) throws ServiceException {
         try {
-            return item.execute(args);
+            return ((Service)item).execute(args);
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }
