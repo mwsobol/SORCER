@@ -27,7 +27,7 @@ import java.util.List;
  *
  * Execute provided list of services as a service pipe.
  */
-public interface Consumer {
+public interface Consumer extends Service {
 
     Context consume(Context context, Arg[] args) throws ServiceException, RemoteException, TransactionException;
 
