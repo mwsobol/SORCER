@@ -17,13 +17,14 @@ import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Context;
 import sorcer.service.Job;
+import sorcer.service.Mogram;
 import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.mo.operator.putValue;
+import static sorcer.mo.operator.*;
 import static sorcer.so.operator.*;
 
 /**
@@ -89,14 +90,14 @@ public class ExertionMultiFidelities {
         logger.info("job context: " + upcontext(job));
         Context out = null;
         // Jobbers and  all tasks are local
-        out = upcontext(exert(job));
+        out = result(exert(job));
         logger.info("job context: " + out);
         assertTrue(value(out, "j1/t3/result/y").equals(400.0));
 
         //Local Jobbers with remote Multiplier nad Adder
         job = getMultiFiJob();
         job = exert(job, fi("object"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net"));
-        out = upcontext(job);
+        out = result(job);
         logger.info("job context: " + out);
         logger.info("job trace: " + trace(job));
         assertTrue(value(out, "j1/t3/result/y").equals(400.0));
@@ -104,7 +105,7 @@ public class ExertionMultiFidelities {
         // Local Jobbers, Adder, and Multiplier with remote Subtractor
         job = getMultiFiJob();
         job = exert(job, fi("object"), fi("j1/t3", "net"));
-        out = upcontext(job);
+        out = result(job);
         logger.info("job context: " + out);
         logger.info("job trace: " + trace(job));
         assertTrue(value(out, "j1/t3/result/y").equals(400.0));

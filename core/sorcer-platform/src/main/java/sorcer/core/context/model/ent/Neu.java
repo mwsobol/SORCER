@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.invoker.Activator;
 import sorcer.eo.operator;
 import sorcer.service.*;
-import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.func;
 
 
@@ -29,74 +28,74 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 
 /**
- * In service-based modeling, an artificial neuron entry (for short a ane) is a special kind of
+ * In service-based modeling, an artificial neuron entry (for short a neu) is a special kind of
  * function, used in a service model {@link EntryModel} to refer to one of the
  * pieces of data provided as input to other neurons.
  * 
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Ane extends Subroutine<Double> implements Invocation<Double>,
+public class Neu extends Subroutine<Double> implements Invocation<Double>,
 		Setter, Scopable, Comparable<Double>, func<Double> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static Logger logger = LoggerFactory.getLogger(Ane.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(Neu.class.getName());
 
 	protected double bias;
 
-	public Ane(String name) {
+	public Neu(String name) {
 		super(name);
         impl = new Activator(name);
 		type = Type.NEURON;
 	}
 
-       public Ane(String name, double value) {
+       public Neu(String name, double value) {
         this(name);
         out = value;
     }
 
-    public Ane(String name, operator.Args args) {
+    public Neu(String name, operator.Args args) {
         this(name);
 		((Activator)impl).setArgs(args.argSet());
     }
 
-    public Ane(String name, Context<Float> weights, operator.Args args) {
+    public Neu(String name, Context<Float> weights, operator.Args args) {
         this(name, args);
 		((Activator)impl).setWeights(weights);
     }
 
-    public Ane(String name, double value, Context<Subroutine> signals) {
+    public Neu(String name, double value, Context<Subroutine> signals) {
         this(name);
         impl = value;
 		((Activator)impl).setScope(signals);
     }
 
-	public Ane(String name, Context<Value> signals, Context<Float> weights, operator.Args args) {
+	public Neu(String name, Context<Value> signals, Context<Float> weights, operator.Args args) {
 		this(name, args);
 		((Activator)impl).setScope(signals);
 
 	}
 
-	public Ane(String name, Context<Value> signals, Context<Float> weights) {
+	public Neu(String name, Context<Value> signals, Context<Float> weights) {
 		this(name);
 		((Activator)impl).setScope(signals);
 
 	}
 
-	public Ane(String name, double value, Context<Value> signals, Context<Float> weights) {
+	public Neu(String name, double value, Context<Value> signals, Context<Float> weights) {
         this(name);
 		impl = value;
 		((Activator)impl).setScope(signals);
 
     }
 
-	public Ane(String name, Context<Float> weights, Arg... args) {
+	public Neu(String name, Context<Float> weights, Arg... args) {
 		this(name, new operator.Args(args));
 		((Activator)impl).setWeights(weights);
 	}
 
-	public Ane(String name, ServiceFidelity fidelities) {
+	public Neu(String name, ServiceFidelity fidelities) {
 		this(name);
 		this.multiFi= fidelities;
 	}
@@ -110,10 +109,10 @@ public class Ane extends Subroutine<Double> implements Invocation<Double>,
 			return;
 		for (Arg p : parameters) {
 			try {
-				if (p instanceof Ane) {
-					if (key.equals(((Ane) p).key)) {
-						if (((Ane) p).getScope() != null)
-							scope.append(((Ane) p).getScope());
+				if (p instanceof Neu) {
+					if (key.equals(((Neu) p).key)) {
+						if (((Neu) p).getScope() != null)
+							scope.append(((Neu) p).getScope());
 
 					}
 				} else if (p instanceof Fidelity && multiFi != null) {
@@ -274,7 +273,7 @@ public class Ane extends Subroutine<Double> implements Invocation<Double>,
 	public void addArgs(ArgSet set) throws EvaluationException {
 		Iterator<Arg> i = set.iterator();
 		while (i.hasNext()) {
-			Ane procEntry = (Ane)i.next();
+			Neu procEntry = (Neu)i.next();
 			try {
 				((Activator)impl).getScope().putValue(procEntry.getName(), procEntry.asis());
 			} catch (Exception e) {
@@ -292,8 +291,8 @@ public class Ane extends Subroutine<Double> implements Invocation<Double>,
 
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof Ane
-				&& ((Ane) object).key.equals(key))
+		if (object instanceof Neu
+				&& ((Neu) object).key.equals(key))
 			return true;
 		else
 			return false;

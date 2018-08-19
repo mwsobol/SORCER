@@ -38,7 +38,6 @@ import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
 import sorcer.service.Domain;
-import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.util.url.sos.SdbUtil;
@@ -296,13 +295,48 @@ public class operator {
         return out;
     }
 
-    public static Context result(Domain model) throws ContextException {
-        return ((ServiceContext)model).getMogramStrategy().getOutcome();
+//   public static Context result(Exertion exertion) throws ContextException {
+//        return exertion.getContext();
+//    }
+
+//    public static Object result(Exertion exertion, String path) throws ContextException {
+//        try {
+//            return exertion.getContext().getValue(path);
+//        } catch (RemoteException e) {
+//            throw new ContextException(e);
+//        }
+//    }
+
+    public static Context result(Mogram mogram) throws ContextException {
+        if (mogram instanceof Domain) {
+            return ((ServiceContext) mogram).getMogramStrategy().getOutcome();
+        } else if (mogram instanceof Exertion) {
+            return mogram.getContext();
+        }
+        return null;
     }
 
-    public static Object result(Domain model, String path) throws ContextException {
-        return ((ServiceContext)model).getMogramStrategy().getOutcome().asis(path);
+    public static Object result(Mogram mogram, String path) throws ContextException {
+        if (mogram instanceof Domain) {
+            return ((ServiceContext) mogram).getMogramStrategy().getOutcome().asis(path);
+        } else if (mogram instanceof Exertion) {
+            try {
+                return mogram.getContext().getValue(path);
+            } catch (RemoteException e) {
+                throw new ContextException(e);
+            }
+        }
+        return null;
     }
+
+
+//    public static Context result(Domain model) throws ContextException {
+//        return ((ServiceContext)model).getMogramStrategy().getOutcome();
+//    }
+//
+//    public static Object result(Domain model, String path) throws ContextException {
+//        return ((ServiceContext)model).getMogramStrategy().getOutcome().asis(path);
+//    }
 
     public static Object get(Domain model, String path) throws ContextException {
         return model.get(path);
@@ -508,7 +542,7 @@ public class operator {
                     hasEntry = true;
                     if (i instanceof Proc)
                         procType = true;
-                    else if (i instanceof Srv || i instanceof Ane) {
+                    else if (i instanceof Srv || i instanceof Neu) {
                         srvType = true;
                     }
                 } catch (Exception e) {

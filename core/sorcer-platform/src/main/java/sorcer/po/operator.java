@@ -52,24 +52,24 @@ public class operator extends Operator {
 
 	private static final Logger logger = LoggerFactory.getLogger(operator.class.getName());
 
-	public static Ane ane(String path, double signal) {
-		return new Ane(path, signal);
+	public static Neu neu(String path, double signal) {
+		return new Neu(path, signal);
 	}
 
-    public static Ane ane(String path, Args signals) {
-        return new Ane(path, signals);
+    public static Neu neu(String path, Args signals) {
+        return new Neu(path, signals);
     }
 
-    public static Ane ane(String path, Context<Float> weights, Args signals) {
-        return new Ane(path, weights, signals);
+    public static Neu neu(String path, Context<Float> weights, Args signals) {
+        return new Neu(path, weights, signals);
     }
 
-    public static Ane ane(String path, Context<Float> weights, double signal, Args signals) {
-        return new Ane(path, weights, signals);
+    public static Neu neu(String path, Context<Float> weights, double signal, Args signals) {
+        return new Neu(path, weights, signals);
     }
 
-    public static Ane ane(String path, ServiceFidelity fidelities) {
-		return new Ane(path, fidelities);
+    public static Neu neu(String path, ServiceFidelity fidelities) {
+		return new Neu(path, fidelities);
 	}
 
     public static Entry th(String path, double threshold) {
@@ -334,7 +334,7 @@ public class operator extends Operator {
 	}
 
     public static Object activate(Model model, String path, Arg... args) throws InvocationException {
-        Ane ane = (Ane) model.get(path);
+        Neu ane = (Neu) model.get(path);
         try {
             if (ane.getMultiFi() != null) {
                 List<Fidelity> fiList = Arg.selectFidelities(args);
@@ -723,7 +723,7 @@ public class operator extends Operator {
 				|| value instanceof Map || value.getClass().isArray()) {
 			return new Value(path, value);
 		} else if (value instanceof Context && args != null && args.length > 0) {
-			return new Ane(path, (Context)value, new Args(args));
+			return new Neu(path, (Context)value, new Args(args));
 		} else if (value instanceof Signature) {
 			Mogram mog = Arg.selectMogram(args);
 			Context cxt = null;

@@ -52,7 +52,7 @@ public class SmlOperators {
 		func f1 = proc("x5", 20.0);
 		func f2 = proc("v1 + f1", args("v1", "f1"));
 		func f3 = lmbd("s1", args("v1", "f1"));
-		func f4 = ane("x6", 1.0);
+		func f4 = neu("x6", 1.0);
 		func f5 = srv(sig("s1", Class.class));
 
 		// Data Contexts

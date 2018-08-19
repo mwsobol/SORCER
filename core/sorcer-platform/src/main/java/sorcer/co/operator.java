@@ -1114,7 +1114,7 @@ public class operator extends Operator {
 				out = context.getValue(path, args);
 			}
 			if (context instanceof Model && ((ModelStrategy)context.getMogramStrategy()).getOutcome() != null) {
-				((ModelStrategy)context.getMogramStrategy()).getOutcome().putValue(path, out);
+				context.getMogramStrategy().getOutcome().putValue(path, out);
 			}
 			return out;
 		} catch (MogramException | IOException e) {
