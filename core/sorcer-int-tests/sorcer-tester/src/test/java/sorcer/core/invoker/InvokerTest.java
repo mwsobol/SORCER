@@ -104,7 +104,7 @@ public class InvokerTest {
 		Context arg = context(val("x", 200.0), val("y", 300.0));
 		add(pm, methodInvoker("update", new ContextUpdater(in), arg));
 		logger.info("call eval:" + invoke(pm, "update"));
-		assertEquals(eval(pm, "update"), 400.0);
+		assertEquals(exec(pm, "update"), 400.0);
 	}
 
 	@Test
@@ -128,7 +128,7 @@ public class InvokerTest {
 		logger.info("invoke eval: " + invoke(pm, "lambda"));
 		assertEquals(invoke(pm, "lambda"), 60.0);
 		logger.info("get eval: " + value(pm, "lambda"));
-		assertEquals(value(pm, "lambda"), 60.0);
+		assertEquals(exec(pm, "lambda"), 60.0);
 	}
 
 	@Test
@@ -139,7 +139,7 @@ public class InvokerTest {
 									+ (double) value(cxt, "y")
 									+ 30)));
 		logger.info("invoke eval: " + eval(mo, "lambda"));
-		assertEquals(eval(mo, "lambda"), 60.0);
+		assertEquals(exec(mo, "lambda"), 60.0);
 	}
 
 	@Test
@@ -158,7 +158,7 @@ public class InvokerTest {
 				scope,
 				args("x", "y", "y1"))));
 		logger.info("invoke eval: " + eval(mo, "lambda"));
-		assertEquals(eval(mo, "lambda"), 100.0);
+		assertEquals(exec(mo, "lambda"), 100.0);
 	}
 
 	@Test
@@ -482,7 +482,7 @@ public class InvokerTest {
 
 		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
 		add(pm, iloop);
-		assertEquals(eval(pm, "iloop"), 48);
+		assertEquals(exec(pm, "iloop"), 48);
 
 	}
 
@@ -496,7 +496,7 @@ public class InvokerTest {
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + eval(pm, "z"));
 		}
-		assertTrue(value(pm, "z").equals(13));
+		assertTrue(exec(pm, "z").equals(13));
 	}
 
 	@Test
@@ -509,6 +509,6 @@ public class InvokerTest {
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + eval(pm, "z"));
 		}
-		assertEquals(eval(pm, "z"), 24);
+		assertEquals(exec(pm, "z"), 24);
 	}
 }

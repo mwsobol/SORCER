@@ -100,25 +100,25 @@ public class ConditionalTaskTest {
 		add(pm, opt1, opt2, opt3, alt);
 
 //		logger.info("opt1 eval: " + eval(opt1));
-		assertTrue(eval(opt1).equals(150.0));
+		assertTrue(exec(opt1).equals(150.0));
 //		logger.info("opt2 eval: " + eval(opt2));
-		assertTrue(eval(opt2).equals(500.0));
+		assertTrue(exec(opt2).equals(500.0));
 //		logger.info("opt3 eval: " + eval(opt3));
-		assertTrue(eval(opt3).equals(100.0));
+		assertTrue(exec(opt3).equals(100.0));
 //		logger.info("alt eval: " + eval(alt));
-		assertTrue(eval(alt).equals(150.0));
+		assertTrue(exec(alt).equals(150.0));
 
 		pm.putValue("x1", 10.0);
 		pm.putValue("y1", 20.0);
 //		logger.info("opt eval: " + eval(alt));
 		logger.info("pm context 1: " + pm);
-		assertTrue(eval(alt).equals(500.0));
+		assertTrue(exec(alt).equals(500.0));
 		
 		pm.putValue("x2", 40.0);
 		pm.putValue("y2", 50.0);
 		logger.info("pm context 2: " + pm);
 //		logger.info("opt valueX: " + eval(alt));
-		assertTrue(eval(alt).equals(100.0));
+		assertTrue(exec(alt).equals(100.0));
 	}
 
 	@Test

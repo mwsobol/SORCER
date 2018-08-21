@@ -260,7 +260,6 @@ public class ServiceMograms {
         assertTrue(get(out, "model/response").equals(450.0));
     }
 
-    @Ignore
     @Test
     public void remoteModeler() throws Exception {
         // get response from a service model with inner model

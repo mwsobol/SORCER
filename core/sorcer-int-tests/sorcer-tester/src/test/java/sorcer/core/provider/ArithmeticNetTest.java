@@ -123,7 +123,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		t5 = exert(t5);
 		//logger.info("t5 context: " + context(t5));
 		//logger.info("t5 eval: " + get(t5));
-		assertTrue(eval(t5).equals(100.0));
+		assertTrue(exec(t5).equals(100.0));
 	}
 
 	@Test
@@ -257,7 +257,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
 		logger.info("t5 eval: " + returnValue(t5));
-		assertTrue(eval(t5).equals(50.0));
+		assertTrue(exec(t5).equals(50.0));
 	}
 
 	@Test

@@ -42,7 +42,7 @@ public class TaskTest {
 		logger.info("get task: " + task);
 		logger.info("get context: " + context(task));
 		
-		Object val = eval(task, inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+		Object val = exec(task, inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 				strategy(sig("add", AdderImpl.class), Access.PUSH, Wait.YES));
 		
 		logger.info("get eval: " + val);
@@ -104,7 +104,7 @@ public class TaskTest {
 						result("result/y")));
 
 		//logger.info("t4: " + eval(t4));
-		assertTrue(eval(t4).equals(500.0));
+		assertTrue(exec(t4).equals(500.0));
 	}
 
 	@Test
