@@ -56,15 +56,15 @@ public class SmlOperators {
 		func f5 = srv(sig("s1", Class.class));
 
 		// Data Contexts
-		cxt c1 = context(v1, val("x4", 10.8), f1);
+		cxt c1 = context(v1, val("x4", 10.8), erEnt(f1), erEnt(f3));
 
 		// Mograms
+		mog m1 = model(v1, f1, f2, f3);
 		mog t1 = task(s1, c1);
 		mog t2 = task(s1, s2, c1);
-		mog m1 = model(v1, f1, f2, f3);
-		mog m2 = model(m1, s1, t1);
 		mog ex1 = block(t1, t2, m1);
 		mog ex2 = job(t1, job(t2, m1));
+		mog m2 = model(m1, s1, t1);
 
 		// Object outputs
 		Object o2 = value(v1);
@@ -77,7 +77,7 @@ public class SmlOperators {
 		Object o9 = value(context(), "path");
 		Object o10 = eval(model(), "path");
 
-		// returning entries as exec results
+		// entries as exec service results
 		ent e3 = erEnt(v1);
 		ent e4 = erEnt(f1);
 		ent e5 = erEnt(context(), "path");
