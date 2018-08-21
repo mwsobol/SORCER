@@ -59,7 +59,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	public final static String EXERTION_OPTI = "exertion" + CPS + "opti";
 
-	public final static String EXEC_STATE = "exertion" + CPS + "turn" + CPS
+	public final static String EXEC_STATE = "exertion" + CPS + "erEnt" + CPS
 			+ "state";
 
 	// exertion monitor state
@@ -85,11 +85,11 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 	public final static String EXERTION_FEEDBACK = "exertion" + CPS
 			+ "feedback";
 
-	public final static String GET_EXEC_TIME = "get" + CPS + "turn/time";
+	public final static String GET_EXEC_TIME = "get" + CPS + "erEnt/time";
 
 	public final static String EXERTION_REVIEW = "exertion" + CPS + "review";
 
-	public final static String EXEC_TIME = "turn" + CPS + "time";
+	public final static String EXEC_TIME = "erEnt" + CPS + "time";
 
 	public final static String PRIORITY = "priority";
 
@@ -150,7 +150,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	public final static String FALSE = "false";
 
-	public final static String TRACE_LIST = "exertion/turn/trace";
+	public final static String TRACE_LIST = "exertion/erEnt/trace";
 
 	public final static String EXERTION_TRACABLE = "exertion/tracable";
 

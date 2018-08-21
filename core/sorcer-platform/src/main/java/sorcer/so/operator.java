@@ -20,6 +20,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.Operator;
 import sorcer.co.tuple.SignatureEntry;
+import sorcer.core.context.ContextSelector;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.DataContext;
@@ -53,15 +54,32 @@ import static sorcer.service.Fi.e;
  */
 public class operator extends Operator {
 
-    public static Entry turn(Service service, Arg... args) throws ServiceException {
+    public static Entry erEnt(Service service, Arg... args) throws ServiceException {
         try {
-            return new Entry(((Identifiable)service).getName(), service.execute(args));
+            ContextSelector contextSelector = selectContextSelector(args);
+            Object result = service.execute(args);
+            if (result instanceof Context && contextSelector != null) {
+                    try {
+                        result = contextSelector.doSelect(result);
+                    } catch (ContextException e) {
+                        throw new ServiceException(e);
+                    }
+            }
+            return new Entry(((Identifiable)service).getName(), result);
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }
     }
 
-    public static Entry turn(Service service, String selector, Arg... args) throws ServiceException {
+    public static ContextSelector selectContextSelector(Arg[] args) {
+        for (Arg arg : args) {
+            if (arg instanceof ContextSelector)
+                return (ContextSelector)arg;
+        }
+        return null;
+    }
+
+    public static Entry erEnt(Service service, String selector, Arg... args) throws ServiceException {
         try {
             return new Entry(selector, service.execute(args));
         } catch (RemoteException e) {

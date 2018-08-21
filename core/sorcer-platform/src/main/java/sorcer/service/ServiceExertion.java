@@ -1027,14 +1027,13 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     public Object execute(Arg... args) throws MogramException, RemoteException {
         Context cxt = (Context) Arg.selectDomain(args);
         if (cxt != null) {
-              dataContext = (ServiceContext) cxt;
-            try {
-                return exec(this, args);
-            } catch (ServiceException e) {
-                throw new MogramException(e);
-            }
+            dataContext = (ServiceContext) cxt;
         }
-        return null;
+        try {
+            return exec(this, args);
+        } catch (ServiceException e) {
+            throw new MogramException(e);
+        }
     }
 
     public String describe() {

@@ -77,12 +77,12 @@ public class SmlOperators {
 		Object o9 = value(context(), "path");
 		Object o10 = eval(model(), "path");
 
-		// returning entries
-		ent e3 = turn(v1);
-		ent e4 = turn(f1);
-		ent e5 = turn(context(), "path");
-		ent e6 = turn(job());
-		ent e7 = turn(model());
+		// returning entries as exec results
+		ent e3 = erEnt(v1);
+		ent e4 = erEnt(f1);
+		ent e5 = erEnt(context(), "path");
+		ent e6 = erEnt(job());
+		ent e7 = erEnt(model());
 
 		// exerting mograms
 		mog m3 = exert(task());

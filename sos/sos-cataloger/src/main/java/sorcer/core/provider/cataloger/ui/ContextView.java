@@ -624,7 +624,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 			}
 
 			/*
-			 * turn this on for the cool output window! JFrame servicePanel=new
+			 * erEnt this on for the cool output window! JFrame servicePanel=new
 			 * JFrame("Service Output"); JTabbedPane tabbedPane = new
 			 * JTabbedPane();
 			 * 

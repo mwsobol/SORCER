@@ -6,14 +6,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.Index;
+import sorcer.arithmetic.provider.impl.AdderImpl;
+import sorcer.arithmetic.provider.impl.MultiplierImpl;
+import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.ListContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Value;
-import sorcer.service.Context;
-import sorcer.service.Response;
+import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.util.DataTable;
-import sorcer.util.ModelTable;
 import sorcer.util.Row;
 
 import java.net.URL;
@@ -23,7 +25,6 @@ import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
-import static sorcer.eo.operator.put;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.inputs;
 import static sorcer.mo.operator.returnPath;
@@ -337,7 +338,6 @@ public class DataModels {
         assertTrue(out.size() == 1);
     }
 
-
     @Test
     public void contextfromEntryList() throws Exception {
 
@@ -395,4 +395,54 @@ public class DataModels {
         //the forth element at the forth index
         assertTrue(value(data, "3", rowInd(3)).equals(1.0));
     }
+
+    public Job getArithmeticJob() throws Exception {
+        Task t3 = task(
+                "t3",
+                sig("subtract", SubtractorImpl.class),
+                context("subtract", in(val("arg/x1")), in(val("arg/x2")),
+                        out(val("result/y"))));
+
+        Task t4 = task(
+                "t4",
+                sig("multiply", MultiplierImpl.class),
+                context("multiply", in(ent("arg/x1", 10.0)), in(ent("arg/x2", 50.0)),
+                        out(ent("result/y"))));
+
+        Task t5 = task(
+                "t5",
+                sig("add", AdderImpl.class),
+                context("add", in(ent("arg/x1", 20.0)), in(ent("arg/x2", 80.0)),
+                        out(ent("result/y"))));
+
+        Job job = job(sig("exert", ServiceJobber.class),
+                "j1", t4, t5, t3,
+                pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+                pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+
+        return job;
+    }
+
+    @Test
+    public void contextBag() throws Exception {
+        Context cxt1 = context(inVal("x1", 20.0d), inVal("x2", 40.0d));
+
+        Context cxt2 = context(inVal("x3", 30.0d), inVal("x4", 50.0d));
+
+        Task t5 = task("t5", sig("add", AdderImpl.class),
+                cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
+
+        Job j1 = getArithmeticJob();
+
+        Context bag = context(cxt1, cxt2,
+                erEnt(t5, self(selector("result/eval"), true)),
+                erEnt(j1, selector("result/y")));
+
+        logger.info("context bag: " + bag);
+        assertEquals(value(bag, "j1"), 400.0);
+        assertEquals(value(bag, "t5"), 100.0);
+        assertEquals(value(bag, "x1"), 20.0);
+        assertEquals(value(bag, "x3"), 30.0);
+    }
+
 }

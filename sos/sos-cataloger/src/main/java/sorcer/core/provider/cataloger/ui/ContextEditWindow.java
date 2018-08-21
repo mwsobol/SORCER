@@ -44,7 +44,7 @@ import sorcer.core.context.node.ContextNode;
  * selected impl is a path or if it is a data node.
  * 
  * <li>For paths user can specify the pathname and direction. <li>For data nodes
- * the user can select the data type and turn the types eval
+ * the user can select the data type and erEnt the types eval
  * 
  * <b>Note if the provider is not complied with Groovy support the Groovy option
  * will not be available</b>
@@ -294,7 +294,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 						}
 					}
 				}
-				// turn of changing children on update, child coloring allows
+				// erEnt of changing children on update, child coloring allows
 				// all elements under a node
 				// to get the same direction color, code works but can lead to
 				// really annoying results

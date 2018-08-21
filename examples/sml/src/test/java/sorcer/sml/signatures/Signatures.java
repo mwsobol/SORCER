@@ -63,7 +63,7 @@ public class Signatures {
 		logger.info("provider of s: " + prv);
 		assertTrue(prv instanceof Date);
 
-//		logger.info("getTime: " + turn(xrt("gt", s)));
+//		logger.info("getTime: " + erEnt(xrt("gt", s)));
 		assertTrue(exec(xrt("gt", s)) instanceof Long);
 
 	}
@@ -79,7 +79,7 @@ public class Signatures {
 		logger.info("provider of s: " + prv);
 		assertTrue(prv instanceof Date);
 
-//		logger.info("getTime: " + turn(xrt("gt", s)));
+//		logger.info("getTime: " + erEnt(xrt("gt", s)));
 		assertTrue(exec(xrt("gt", s)) instanceof Long);
 
 	}
@@ -95,7 +95,7 @@ public class Signatures {
 		logger.info("selector of s: " + selector(s));
 		logger.info("service fiType of s: " + type(s));
 		assertTrue(prv instanceof Date);
-//		logger.info("time: " + turn(xrt("time", s)));
+//		logger.info("time: " + erEnt(xrt("time", s)));
 		assertTrue(exec(xrt("time", s)) instanceof Long);
 
 	}
@@ -187,7 +187,7 @@ public class Signatures {
 						inVal("arg/x2", 80.0),
 						result("result/y")));
 
-//		logger.info("ss: " + turn(ss));
+//		logger.info("ss: " + erEnt(ss));
 		assertEquals(100.0, exec(ss));
 
 	}
@@ -203,7 +203,7 @@ public class Signatures {
 				inVal("arg/x2", 80.0),
 				result("result/y"));
 
-//		logger.info("ss: " + turn(ss, cxt));
+//		logger.info("ss: " + erEnt(ss, cxt));
 		assertEquals(100.0, exec(ss, cxt));
 
 	}
@@ -218,7 +218,7 @@ public class Signatures {
 						inVal("arg/x2", 80.0),
 						result("result/y")));
 
-//		logger.info("ss: " + turn(ss));
+//		logger.info("ss: " + erEnt(ss));
 		assertEquals(100.0, exec(ss));
 
 	}
@@ -407,7 +407,7 @@ public class Signatures {
 		String netlet = System.getProperty("project.dir")+"/src/main/netlets/ha-job-local.ntl";
 
 		Service srv = (Service)provider(sig(filePath(netlet)));
-//		logger.info("job service: " + turn(srv));
+//		logger.info("job service: " + erEnt(srv));
 		assertTrue(exec(srv).equals(400.0));
 	}
 

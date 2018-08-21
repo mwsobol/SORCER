@@ -22,7 +22,7 @@ import sorcer.service.ContextException;
 /**
  * @author Mike Sobolewski
  */
-public interface ContextSelection extends Arg {
+public interface ContextSelection extends Selfable, Arg {
 	static final long serialVersionUID = -1L;
 
 	public Object doSelect(Object input) throws ContextException;

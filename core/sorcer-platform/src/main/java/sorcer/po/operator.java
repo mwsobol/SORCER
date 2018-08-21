@@ -711,6 +711,10 @@ public class operator extends Operator {
 		return cr;
 	}
 
+	public static Entry ent(Identifiable object) {
+		return new Entry(object.getName(), object);
+	}
+
     public static Entry ent(String path, Object value, Arg... args) {
 		Entry entry = null;
 		if (value instanceof List) {

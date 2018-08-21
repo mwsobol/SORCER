@@ -68,11 +68,11 @@ public class Contexts implements SorcerConstants {
 
 	final static String JOB_FEEDBACK = "job" + CPS + "feedback";
 
-	final static String GET_EXEC_TIME = "get" + CPS + "turn/time";
+	final static String GET_EXEC_TIME = "get" + CPS + "erEnt/time";
 
 	final static String TASK_REVIEW = "task" + CPS + "review";
 
-	final static String EXEC_TIME = "turn" + CPS + "time";
+	final static String EXEC_TIME = "erEnt" + CPS + "time";
 
 	final static String PRIORITY = "priority";
 
@@ -1227,7 +1227,7 @@ public class Contexts implements SorcerConstants {
 			}
 		}
 		// above we just checked the top-level context; next, check
-		// all the top-level LINKED contexts (which in turn will check
+		// all the top-level LINKED contexts (which in erEnt will check
 		// all their top-level linked contexts, etc.)
 		List<String> paths = cntxt.localLinkPaths();
 		ContextLink link;
@@ -1345,7 +1345,7 @@ public class Contexts implements SorcerConstants {
 			}
 		}
 		// above we just checked the top-level context; next, check
-		// all the top-level LINKED contexts (which in turn will check
+		// all the top-level LINKED contexts (which in erEnt will check
 		// all their top-level linked contexts, etc.)
 		List<String> paths = cntxt.localLinkPaths();
 		ContextLink link;
@@ -1413,7 +1413,7 @@ public class Contexts implements SorcerConstants {
 		}
 		// we just added all the attribute-eval pairs from
 		// the top-level context; check first level links,
-		// which in turn will check their links, etc., etc.
+		// which in erEnt will check their links, etc., etc.
 		List<String> paths= context.localLinkPaths();
 		ContextLink link;
 		for (String linkPath : paths) {

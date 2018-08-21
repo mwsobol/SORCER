@@ -19,6 +19,7 @@
 package sorcer.service;
 
 import sorcer.core.SorcerConstants;
+import sorcer.core.context.Selfable;
 import sorcer.core.provider.Provider;
 import sorcer.service.modeling.mog;
 import sorcer.service.modeling.rsp;
@@ -75,7 +76,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends Domain, Response, Mappable<T>, Serializable, Contexter<T>, Paradigmatic, mog, rsp {
+public interface Context<T> extends Domain, Selfable, Response, Mappable<T>, Serializable, Contexter<T>, Paradigmatic, mog, rsp {
 
 	/** parameter (proc) */
 	final static String PATH_PAR = "proc";

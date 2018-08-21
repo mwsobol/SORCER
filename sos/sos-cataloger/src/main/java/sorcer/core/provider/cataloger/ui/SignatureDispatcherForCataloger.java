@@ -247,7 +247,7 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 		}
 
 		return provs;
-		/* turn back on for offline mode */
+		/* erEnt back on for offline mode */
 		/*
 		 * String provList[]=new String[6];
 		 * 

@@ -49,6 +49,8 @@ public class ContextSelector implements ContextSelection {
 
 	private String selectedPath;
 
+	private boolean isSelf = true;
+
 	protected Object target;
 
 	private String selectedComponentName;
@@ -116,6 +118,7 @@ public class ContextSelector implements ContextSelection {
 	private Object select(Context in) throws ContextException {
 		Object val;
 		Context out = new ServiceContext("Selected Context");
+		out.setSelf(in.isSelf());
 		if (name != null) {
 			out.setSubject("filter" + SorcerConstants.CPS + name, new Date());
 		}
@@ -211,4 +214,13 @@ public class ContextSelector implements ContextSelection {
     public String getName() {
         return name;
     }
+
+    public boolean isSelf() {
+        return isSelf;
+    }
+
+    public void setSelf(boolean self) {
+        isSelf = self;
+    }
+
 }

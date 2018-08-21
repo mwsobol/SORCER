@@ -97,7 +97,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	Signature.Direction direction = Signature.Direction.INOUT;
 
 	protected boolean isSoft = false;
-
+	protected boolean isSelf = false;
 	/**
 	 * For persistence layers to differentiate with saved context already
 	 * associated to task or not.
@@ -873,7 +873,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		boolean result = isLocalAttribute(attributeName);
 		if (!result) {
 			// not an attribute of the top-level context; check all
-			// top-level linked contexts (which in turn will check
+			// top-level linked contexts (which in erEnt will check
 			// their top-level contexts, etc. until a match is found or
 			// all contexts are exhausted )
 			Enumeration e = null;
@@ -896,7 +896,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				attributeName);
 		if (!result) {
 			// not an attribute of the top-level context; check all
-			// top-level linked contexts (which in turn will check
+			// top-level linked contexts (which in erEnt will check
 			// their top-level contexts, etc. until a match is found or
 			// all contexts are exhausted)
 			List<Link> links = localLinks();
@@ -920,7 +920,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				attributeName);
 		if (!result) {
 			// not an attribute of the top-level context; check all
-			// top-level linked contexts (which in turn will check
+			// top-level linked contexts (which in erEnt will check
 			// their top-level contexts, etc. until a match is found or
 			// all contexts are exhausted)
 			List<Link> links = localLinks();
@@ -1152,7 +1152,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 		}
 		// above we just checked the top-level context; next, check
-		// all the top-level LINKED contexts (which in turn will check
+		// all the top-level LINKED contexts (which in erEnt will check
 		// all their top-level linked contexts, etc.)
 		List<String> paths = localLinkPaths();
 		List<String> keysInLinks;
@@ -3122,6 +3122,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public int size() {
 		return data.size();
+	}
+
+	public boolean isSelf() {
+		return isSelf;
+	}
+
+	public void setSelf(boolean self) {
+		isSelf = self;
 	}
 
 	public String getPrefix() {

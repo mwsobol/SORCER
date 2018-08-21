@@ -270,6 +270,7 @@ public class operator extends Operator {
 		}
 
 		ServiceContext cxt = null;
+        List<ServiceContext> cxts = new ArrayList<ServiceContext>();;
 		List<MapContext> connList = new ArrayList<MapContext>();
 		Strategy.Access accessType = null;
 		Strategy.Flow flowType = null;
@@ -371,7 +372,9 @@ public class operator extends Operator {
 				outPaths = (Out)o;
 			} else if (o instanceof In) {
 				inPaths = (In)o;
-			}
+			} else if (o instanceof Context) {
+                cxts.add((ServiceContext) o);
+            }
 		}
 
 		if (cxt == null) {
@@ -415,7 +418,12 @@ public class operator extends Operator {
 					cxt = new DataContext(name);
 				}
 			}
-		}
+		} else if (cxts.size() > 1){
+		    cxt = new ServiceContext("Bag Context");
+		    for (ServiceContext context : cxts) {
+		        cxt.append(context);
+            }
+        }
 
 		if (cxt instanceof PositionalContext) {
 			PositionalContext pcxt = (PositionalContext) cxt;
@@ -893,9 +901,16 @@ public class operator extends Operator {
 		return new ContextSelector(pathList);
 	}
 
+	public static Selfable self(Selfable selfable, boolean state) {
+	    if (selfable instanceof Selfable) {
+            selfable.setSelf(state);
+        }
+		return selfable;
+	}
+
 	public static Signature sig(String name, String operation, Class serviceType)
 			throws SignatureException {
-		ServiceSignature signature = (ServiceSignature) sig(operation, serviceType, new Object[]{});
+		ServiceSignature signature = sig(operation, serviceType, new Object[]{});
 		signature.setName(name);
 		return signature;
 	}

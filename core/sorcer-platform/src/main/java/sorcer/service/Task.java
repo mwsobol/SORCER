@@ -268,7 +268,7 @@ public class Task extends ServiceExertion {
 		}
 		String time = getControlContext().getExecTime();
 		if (time != null && time.length() > 0)
-			sb.append("\n\tturn time=").append(time);
+			sb.append("\n\terEnt time=").append(time);
 		sb.append("\n");
 		sb.append(controlContext).append("\n");
 //		sb.append(dataContext);
@@ -289,7 +289,7 @@ public class Task extends ServiceExertion {
 		sb.append("\n  status: ").append(getStatus());
 		String time = getControlContext().getExecTime();
 		if (time != null && time.length() > 0)
-			sb.append("\n  turn time: ").append(time);
+			sb.append("\n  erEnt time: ").append(time);
 		return sb.toString();
 	}
 
