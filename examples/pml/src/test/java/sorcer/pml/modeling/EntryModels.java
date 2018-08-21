@@ -66,7 +66,7 @@ public class EntryModels {
 		// a proc is a variable (entry) evaluated in its own scope (context)
 		Proc y = proc("y",
 				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
-		Object val = eval(y, proc("x1", 10.0), proc("x2", 50.0),
+		Object val = exec(y, proc("x1", 10.0), proc("x2", 50.0),
 				proc("x3", 20.0), proc("x4", 80.0));
 		// logger.info("y eval: " + val);
 		assertEquals(val, 400.0);
@@ -87,15 +87,15 @@ public class EntryModels {
 				proc("t5", invoker("x3 + x4", args("x3", "x4"))),
 				proc("j1", invoker("t4 - t5", args("t4", "t5"))));
 
-		assertTrue(eval(model, "t5").equals(100.0));
+		assertTrue(exec(model, "t5").equals(100.0));
 
-		assertEquals(eval(model, "j1"), null);
+		assertEquals(exec(model, "j1"), null);
 
 		eval(model, "j1", proc("x1", 10.0), proc("x2", 50.0)).equals(400.0);
 
-		assertTrue(eval(model, "j1", val("x1", 10.0), val("x2", 50.0)).equals(400.0));
+		assertTrue(exec(model, "j1", val("x1", 10.0), val("x2", 50.0)).equals(400.0));
 
-		assertTrue(eval(model, "j1").equals(400.0));
+		assertTrue(exec(model, "j1").equals(400.0));
 
 		// get model response
 		Row mr = (Row) query(model, //proc("x1", 10.0), proc("x2", 50.0),
@@ -122,7 +122,7 @@ public class EntryModels {
 		setValues(vm, val("x1", 10.0), val("x2", 50.0),
 			val("x4", 80.0));
 
-		assertTrue(eval(vm, "j1").equals(400.0));
+		assertTrue(exec(vm, "j1").equals(400.0));
 	}
 
     @Test
@@ -133,21 +133,21 @@ public class EntryModels {
 		add(pm, proc("y", 20.0));
 		add(pm, proc("add", invoker("x + y", args("x", "y"))));
 
-		assertTrue(eval(pm, "x").equals(10.0));
-		assertTrue(eval(pm, "y").equals(20.0));
-		logger.info("add eval: " + eval(pm, "add"));
-		assertTrue(eval(pm, "add").equals(30.0));
+		assertTrue(exec(pm, "x").equals(10.0));
+		assertTrue(exec(pm, "y").equals(20.0));
+		logger.info("add eval: " + exec(pm, "add"));
+		assertTrue(exec(pm, "add").equals(30.0));
 
         responseUp(pm, "add");
 		logger.info("pm context eval: " + eval(pm));
-		assertTrue(eval(pm).equals(30.0));
+		assertTrue(value(eval(pm), "add").equals(30.0));
 
 		setValue(pm, "x", 100.0);
 		setValue(pm, "y", 200.0);
-		logger.info("add eval: " + eval(pm, "add"));
-		assertTrue(eval(pm, "add").equals(300.0));
+		logger.info("add eval: " + exec(pm, "add"));
+		assertTrue(exec(pm, "add").equals(300.0));
 
-		assertTrue(eval(pm, val("x", 200.0), val("y", 300.0)).equals(500.0));
+		assertTrue(value(eval(pm, val("x", 200.0), val("y", 300.0)), "add").equals(500.0));
 
 	}
 
@@ -157,13 +157,13 @@ public class EntryModels {
 		EntryModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
 				proc("add", invoker("x + y", args("x", "y"))));
 
-		assertTrue(eval(pm, "x").equals(10.0));
-		assertTrue(eval(pm, "y").equals(20.0));
-		assertTrue(eval(pm, "add").equals(30.0));
+		assertTrue(exec(pm, "x").equals(10.0));
+		assertTrue(exec(pm, "y").equals(20.0));
+		assertTrue(exec(pm, "add").equals(30.0));
 
-		// now compute model for its target
+		// now evaluee model for its responses
         responseUp(pm, "add");
-		assertEquals(eval(pm), 30.0);
+		assertEquals(value(eval(pm), "add"), 30.0);
 	}
 
 
@@ -175,34 +175,34 @@ public class EntryModels {
 		Proc x = proc(pm, "x");
 		logger.info("proc x: " + x);
 		setValue(x, 20.0);
-		logger.info("val x: " + eval(x));
+		logger.info("val x: " + exec(x));
 		logger.info("val x: " + eval(pm, "x"));
 
 		put(pm, "y", 40.0);
 
-		assertTrue(eval(pm, "x").equals(20.0));
-		assertTrue(eval(pm, "y").equals(40.0));
-		assertTrue(eval(pm, "add").equals(60.0));
+		assertTrue(exec(pm, "x").equals(20.0));
+		assertTrue(exec(pm, "y").equals(40.0));
+		assertTrue(exec(pm, "add").equals(60.0));
 
         responseUp(pm, "add");
-		assertEquals(eval(pm), 60.0);
+		assertEquals(value(eval(pm), "add"), 60.0);
 
 		add(pm, proc("x", 10.0), proc("y", 20.0));
-		assertTrue(eval(pm, "x").equals(10.0));
-		assertTrue(eval(pm, "y").equals(20.0));
+		assertTrue(exec(pm, "x").equals(10.0));
+		assertTrue(exec(pm, "y").equals(20.0));
 
-		assertTrue(eval(pm, "add").equals(30.0));
+		assertTrue(exec(pm, "add").equals(30.0));
 
-		Object out = response(pm, "add");
+		Object out = exec(pm, "add");
 		assertTrue(out.equals(30.0));
-		assertTrue(eval(pm).equals(30.0));
+		assertTrue(value(eval(pm), "add").equals(30.0));
 
 		// with new arguments, closure
-		assertTrue(eval(pm, proc("x", 20.0), proc("y", 30.0)).equals(50.0));
+		assertTrue(value(eval(pm, proc("x", 20.0), proc("y", 30.0)), "add").equals(50.0));
 
 		add(pm, proc("z", invoker("(x * y) + add", args("x", "y", "add"))));
 		logger.info("z eval: " + eval(pm, "z"));
-		assertTrue(eval(pm, "z").equals(650.0));
+		assertTrue(exec(pm, "z").equals(650.0));
 
 	}
 
@@ -220,8 +220,8 @@ public class EntryModels {
 		put(pc, "x", 10.0);
 		put(pc, "x1", 20.0);
 
-		logger.info("y3 eval: " + eval(pc, "y3"));
-		assertEquals(eval(pc, "y3"), 1010.0);
+		logger.info("y3 eval: " + exec(pc, "y3"));
+		assertEquals(exec(pc, "y3"), 1010.0);
 	}
 
 
@@ -264,8 +264,8 @@ public class EntryModels {
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 
-		assertTrue(eval(dbp1).equals(25.0));
-		assertTrue(eval(dbp2).equals("myUrl1"));
+		assertTrue(exec(dbp1).equals(25.0));
+		assertTrue(exec(dbp2).equals("myUrl1"));
 
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
@@ -279,11 +279,11 @@ public class EntryModels {
 
 		assertTrue(asis(p1) instanceof URL);
 		assertEquals(content(url1), 30.0);
-		assertEquals(eval(p1), 30.0);
+		assertEquals(exec(p1), 30.0);
 
 		assertTrue(asis(p2) instanceof URL);
 		assertEquals(content(url2), sUrl);
-		assertEquals(eval(p2), sUrl);
+		assertEquals(exec(p2), sUrl);
 
 		// store args in the data store
 		p1 = proc("design/in", 30.0);
@@ -293,11 +293,11 @@ public class EntryModels {
 
 		assertTrue(p1.getOut() instanceof Double);
 		assertEquals(content(url1), 30.0);
-		assertEquals(eval(p1), 30.0);
+		assertEquals(exec(p1), 30.0);
 
 		assertTrue(p2.getOut() instanceof URL);
 		assertEquals(content(url2), sUrl);
-		assertEquals(eval(p2), sUrl);
+		assertEquals(exec(p2), sUrl);
 	}
 
 	@Test
@@ -380,7 +380,7 @@ public class EntryModels {
 
 		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
 		add(pm, iloop);
-		assertEquals(eval(pm, "iloop"), 48);
+		assertEquals(exec(pm, "iloop"), 48);
 
 	}
 
@@ -402,7 +402,7 @@ public class EntryModels {
 					x.setValue((Double) x.evaluate() + 1.0);
 					y.setValue((Double) y.evaluate() + 1.0);
 				}
-				return (Double) eval(x) + (Double) eval(y) + (Double)eval(pm, "z");
+				return (Double) exec(x) + (Double) exec(y) + (Double)exec(pm, "z");
 			}
 		};
 
@@ -428,7 +428,7 @@ public class EntryModels {
 					x.setValue(x.evaluate() + 1.0);
 					y.setValue(y.evaluate() + 1.0);
 				}
-				return eval(x) + eval(y) + (Double)value(pm, "z");
+				return exec(x) + exec(y) + (Double)value(pm, "z");
 			}
 		};
 
@@ -448,7 +448,7 @@ public class EntryModels {
 			logger.info("x: " + x.evaluate());
 			logger.info("y: " + y.evaluate());
 			logger.info("z: " + value(pm, "z"));
-			return eval(x) + eval(y) + (Double)value(pm, "z");
+			return exec(x) + exec(y) + (Double)value(pm, "z");
 		}
 
 	}

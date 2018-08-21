@@ -280,22 +280,22 @@ public class DataModels {
                 inVal("arg3/eval", 200.0));
 
         // sharing arg1/eval from mc in ac
-        assertTrue(eval(ac, "arg1/eval").equals(90.0));
-        assertTrue(eval(mc, "arg1/eval").equals(90.0));
+        assertTrue(exec(ac, "arg1/eval").equals(90.0));
+        assertTrue(exec(mc, "arg1/eval").equals(90.0));
 
         setValues(mc, val("arg1/eval", 200.0));
-        assertTrue(eval(ac, "arg1/eval").equals(200.0));
-        assertTrue(eval(mc, "arg1/eval").equals(200.0));
+        assertTrue(exec(ac, "arg1/eval").equals(200.0));
+        assertTrue(exec(mc, "arg1/eval").equals(200.0));
 
         // sharing arg3/eval from ac in mc
-        assertTrue(eval(ac, "arg3/eval").equals(100.0));
-        assertTrue(eval(mc, "arg3/eval").equals(200.0));
+        assertTrue(exec(ac, "arg3/eval").equals(100.0));
+        assertTrue(exec(mc, "arg3/eval").equals(200.0));
         URL a3vURL = storeVal(mc, "arg3/eval");
         add(ac, proc("arg3/eval", a3vURL));
 
         setValues(mc, val("arg1/eval", 300.0));
-        assertTrue(eval(ac, "arg1/eval").equals(300.0));
-        assertTrue(eval(mc, "arg1/eval").equals(300.0));
+        assertTrue(exec(ac, "arg1/eval").equals(300.0));
+        assertTrue(exec(mc, "arg1/eval").equals(300.0));
 
     }
 
@@ -311,7 +311,7 @@ public class DataModels {
     public void contextModelService() throws Exception {
         Context cxt = context(inVal("x1", 20.0d), inVal("x2", 40.0d),
                 returnPath("x2"));
-//        logger.info("service: " + turn(cxt));
+//        logger.info("service: " + exec(cxt));
         assertEquals(exec(cxt), 40.0);
     }
 

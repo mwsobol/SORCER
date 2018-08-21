@@ -12,6 +12,7 @@ import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.co.operator;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.service.*;
+import sorcer.service.modeling.mog;
 
 import java.rmi.RemoteException;
 
@@ -74,15 +75,15 @@ public class ConditionalTaskTest {
 		pm.putValue("y2", 40.0);
 
 
-		Task t3 = xrt("t3", sig("subtract", SubtractorImpl.class), 
+		mog t3 = xrt("t3", sig("subtract", SubtractorImpl.class),
 				cxt("subtract", operator.inVal("arg/x1", 200.0), operator.inVal("arg/x2", 50.0),
 						result("result/y")));
 
-		Task t4 = xrt("t4", sig("multiply", MultiplierImpl.class), 
+		mog t4 = xrt("t4", sig("multiply", MultiplierImpl.class),
 				cxt("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
 						result("result/y")));
 
-		Task t5 = xrt("t5", sig("add", AdderImpl.class), 
+		mog t5 = xrt("t5", sig("add", AdderImpl.class),
 				cxt("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
 						result("result/y")));
 		

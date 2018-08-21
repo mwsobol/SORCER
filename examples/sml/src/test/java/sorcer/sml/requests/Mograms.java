@@ -68,13 +68,13 @@ public class Mograms {
 
         // declare response paths
         responseUp(context, "result/y");
-        Context out = response(context);
+        Context out = eval(context);
         assertEquals(1, size(out));
         assertTrue(get(out, "result/y").equals(100.0));
 
         // more response paths
         responseUp(context, "x1");
-        out = response(context);
+        out = eval(context);
         assertEquals(2, size(out));
         assertTrue(get(out, "x1").equals(20.0));
 
@@ -95,7 +95,7 @@ public class Mograms {
         logger.info("out @ arg/x2: " + eval(out, "arg/x2"));
         logger.info("out @ result/y: " + eval(out, "result/y"));
 
-        assertEquals(100.0, eval(out, "result/y"));
+        assertEquals(100.0, exec(out, "result/y"));
 
     }
 

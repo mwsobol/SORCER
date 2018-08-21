@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.eo.operator.*;
 import static sorcer.so.operator.eval;
+import static sorcer.so.operator.exec;
 
 /**
  * @author Mike Sobolewski
@@ -101,7 +102,7 @@ public class CoffeeMakerTest {
 						context(types(Recipe.class), args(espresso),
 							result("recipe/added")));
 
-		logger.info("isAdded: " + eval(cmt));
+		logger.info("isAdded: " + exec(cmt));
 		assertEquals(coffeeMaker.getRecipeForName("espresso").getName(), "espresso");
 	}
 

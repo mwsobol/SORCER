@@ -44,21 +44,21 @@ public class OptTask extends ConditionalTask {
 		super(name);
 	}
 		
-	public OptTask(String name, Exertion exertion) {
+	public OptTask(String name, Mogram mogram) {
 		super(name);
 		this.condition = new Condition(true);
-		this.target = exertion;
+		this.target = mogram;
 	}
-	public OptTask(Condition condition, Exertion exertion) {
+	public OptTask(Condition condition, Mogram mogram) {
 		super();
 		this.condition = condition;
-		this.target = exertion;
+		this.target = mogram;
 	}
 	
-	public OptTask(String name, Condition condition, Exertion exertion) {
+	public OptTask(String name, Condition condition, Mogram mogram) {
 		super(name);
 		this.condition = condition;
-		this.target = exertion;
+		this.target = mogram;
 	}
 
 	public Task doTask(Transaction txn, Arg... args) throws ExertionException,

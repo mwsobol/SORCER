@@ -2103,7 +2103,7 @@ public class operator extends Operator {
 			return new ArrayList();
 	}
 
-	public static <M extends Mogram> M mog(Object... items) throws MogramException {
+	public static Mogram mog(Object... items) throws MogramException {
 		return mogram(items);
 	}
 
@@ -2150,7 +2150,7 @@ public class operator extends Operator {
 		}
 	}
 
-	public static <E extends Exertion> E xrt(String name, Object... items) throws ExertionException,
+	public static Exertion xrt(String name, Object... items) throws ExertionException,
 			ContextException, SignatureException {
 		return exertion(name, items);
 	}
@@ -3148,7 +3148,7 @@ public class operator extends Operator {
 		return new Condition(condition);
 	}
 
-	public static OptTask opt(String name, Exertion target) {
+	public static OptTask opt(String name, Mogram target) {
 		return new OptTask(name, target);
 	}
 
@@ -3159,16 +3159,16 @@ public class operator extends Operator {
 
 
 	public static OptTask opt(String name, Condition condition,
-                              Exertion target) {
+                              Mogram target) {
 		return new OptTask(name, condition, target);
 	}
 
-	public static AltTask alt(OptTask... exertions) {
-		return new AltTask(exertions);
+	public static AltTask alt(OptTask... mograms) {
+		return new AltTask(mograms);
 	}
 
-	public static AltTask alt(String name, OptTask... exertions) {
-		return new AltTask(name, exertions);
+	public static AltTask alt(String name, OptTask... mograms) {
+		return new AltTask(name, mograms);
 	}
 
 

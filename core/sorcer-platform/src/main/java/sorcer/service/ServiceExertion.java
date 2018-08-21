@@ -45,6 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static sorcer.so.operator.eval;
+import static sorcer.so.operator.exec;
 
 /**
  * @author Mike Sobolewski
@@ -1028,7 +1029,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         if (cxt != null) {
               dataContext = (ServiceContext) cxt;
             try {
-                return eval(this, args);
+                return exec(this, args);
             } catch (ServiceException e) {
                 throw new MogramException(e);
             }

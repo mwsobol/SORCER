@@ -50,17 +50,17 @@ public class ContextModels {
 				val("arg/x3", 3.0), val("arg/x4", 4.0), val("arg/x5", 5.0));
 
 		setValues(mdl, val("arg/x6", 6.0));
-		assertTrue(eval(mdl, "arg/x6").equals(6.0));
+		assertTrue(exec(mdl, "arg/x6").equals(6.0));
 
 		// proc is of the Evaluation type
 		// args in models are evaluated
 		setValues(mdl, val("arg/x6", val("overwrite", 20.0)));
-		assertTrue(eval(mdl, "arg/x6").equals(20.0));
+		assertTrue(exec(mdl, "arg/x6").equals(20.0));
 
 		// invoker is of the Invocation type
 		put(mdl, proc("arg/x7", invoker("x1 + x3", args("x1", "x3"))));
 
-		assertTrue(eval(mdl, "arg/x7").equals(4.0));
+		assertTrue(exec(mdl, "arg/x7").equals(4.0));
 		assertTrue(get(mdl, "arg/x7") instanceof Subroutine);
 		assertTrue(get(mdl, "arg/x7") instanceof Proc);
 		assertTrue(get(mdl, "arg/x7") instanceof Invocation);
@@ -76,17 +76,17 @@ public class ContextModels {
 
 		// declare the modeling responses
 		responseUp(mdl, "invoke");
-		// compute the model
-		assertTrue(eval(mdl).equals(4.0));
+		// evaluate the model
+		assertTrue(value(eval(mdl), "invoke").equals(4.0));
 
-		// compute the model with overwritten inputs
+		// evaluate the model with overwritten inputs
 		Arg inCxt = context(val("arg/x1", 2.0), val("arg/x2", 3.0));
-		Double result = (Double) eval(mdl, inCxt);
+		Double result = (Double) value(eval(mdl, inCxt), "invoke");
 		assertTrue(result.equals(5.0));
 
 		// compute the model with new inputs
 		add(mdl, proc("invoke", invoker("x6 * x7 + x1", args("x1", "x6", "x7"))));
-		result = (Double) eval(mdl, ent("arg/x6", 6.0), ent("arg/x7", 7.0));
+		result = (Double) value(eval(mdl, ent("arg/x6", 6.0), ent("arg/x7", 7.0)), "invoke");
 		assertTrue(result.equals(44.0));
 	}
 
@@ -107,7 +107,7 @@ public class ContextModels {
 		Copier cp = copier(mdl1, operator.ents("arg/x1", "arg/x2"), mdl2, operator.ents("y1", "y2"));
 		dependsOn(mdl2, cp);
 
-		Double result = (Double) eval(mdl2);
+		Double result = (Double) exec(mdl2);
 //		logger.info("result: " + result);
 		assertTrue(result.equals(22.0));
 	}
@@ -160,7 +160,7 @@ public class ContextModels {
 				inVal("x2", 80.0));
 
 		Entry e = ent("x2", 100.0);
-		assertEquals(100.0, value((Context)exec(e, cxt), "x2"));
+		assertEquals(100.0, exec(e, cxt));
 	}
 
 	@Test

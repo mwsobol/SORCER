@@ -68,11 +68,11 @@ public class SmlOperators {
 
 		// Object outputs
 		Object o2 = value(v1);
-		Object o3 = eval(f1);
-		Object o4 = eval(e1);
-		Object o5 = eval(t1);
-		Object o6 = eval(block());
-		Object o7 = eval(job());
+		Object o3 = exec(f1);
+		Object o4 = exec(e1);
+		Object o5 = exec(t1);
+		Object o6 = exec(block());
+		Object o7 = exec(job());
 		Object o8 = exec(m1);
 		Object o9 = value(context(), "path");
 		Object o10 = eval(model(), "path");
@@ -90,11 +90,12 @@ public class SmlOperators {
 		mog m5 = exert(model());
 		cxt c2 = context(job());
 		cxt c3 = context(exert(job()));
-		cxt c4 = response(model());
-		cxt c5 = response(ex2);
-		rsp r1 = response(model());
-		rsp r2 = row(c2);
-		cxt r3 = out(model());
+		cxt c4 = eval(model());
+		cxt c5 = eval(ex2);
+		rsp r1 = eval(model());
+		cxt r2 = result(model());
+		cxt r3 = result(job());
+		rsp r4 = row(c2);
 		clear(ex2);
 	}
 

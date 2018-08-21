@@ -14,6 +14,7 @@ import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.eo.operator;
 import sorcer.service.*;
+import sorcer.service.modeling.mog;
 import sorcer.util.Sorcer;
 
 import java.rmi.RemoteException;
@@ -171,7 +172,7 @@ public class ServiceExertionTest {
 	//@Ignore
 	@Test
 	public void exertXrtTest() throws Exception {
-		Exertion xrt = createXrt();
+		Mogram xrt = createXrt();
 		logger.info("job context " + ((Job)xrt).getJobContext());
 		
 		logger.info("xrt eval @  t3/arg/x1 = " + get(xrt, "t3/arg/x1"));
@@ -182,23 +183,23 @@ public class ServiceExertionTest {
 	}
 	
 	// two level job composition
-	private Exertion createXrt() throws Exception {
+	private Mogram createXrt() throws Exception {
 		// using the data context in jobs
-		Task t3 = xrt("t3", sig("subtract", SubtractorImpl.class), 
+		mog t3 = xrt("t3", sig("subtract", SubtractorImpl.class),
 				cxt("subtract", inVal("arg/x1"), inVal("arg/x2"),
 						outVal("result/y")));
 
-		Task t4 = xrt("t4", sig("multiply", MultiplierImpl.class), 
+		mog t4 = xrt("t4", sig("multiply", MultiplierImpl.class),
 				cxt("multiply", inVal("super/arg/x1"), inVal("arg/x2", 50.0),
 						outVal("result/y")));
 
-		Task t5 = xrt("t5", sig("add", AdderImpl.class), 
+		mog t5 = xrt("t5", sig("add", AdderImpl.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						outVal("result/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		//Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL, Access.PULL)), t3,
-		Job job = xrt("j1", sig("exert", ServiceJobber.class),
+		mog job = xrt("j1", sig("exert", ServiceJobber.class),
 					cxt(inVal("arg/x1", 10.0), outVal("job/result")),
 				xrt("j2", sig("exert", ServiceJobber.class), t4, t5),
 				t3,

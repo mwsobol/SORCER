@@ -307,11 +307,11 @@ public class operator {
 //        }
 //    }
 
-    public static Context result(Mogram mogram) throws ContextException {
+    public static ServiceContext result(Mogram mogram) throws ContextException {
         if (mogram instanceof Domain) {
-            return ((ServiceContext) mogram).getMogramStrategy().getOutcome();
+            return (ServiceContext)((ServiceContext) mogram).getMogramStrategy().getOutcome();
         } else if (mogram instanceof Exertion) {
-            return mogram.getContext();
+            return (ServiceContext)mogram.getContext();
         }
         return null;
     }

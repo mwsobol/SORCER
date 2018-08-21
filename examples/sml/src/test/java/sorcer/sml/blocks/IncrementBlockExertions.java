@@ -18,6 +18,7 @@ import static sorcer.eo.operator.*;
 import static sorcer.po.operator.*;
 import static sorcer.mo.operator.*;
 import static sorcer.so.operator.eval;
+import static sorcer.so.operator.exec;
 
 
 /**
@@ -45,7 +46,7 @@ public class IncrementBlockExertions implements SorcerConstants {
 						inVal("arg/x2", 80.0), result("task/result")));
 
 //		logger.info("result: " + eval(t));
-		assertEquals(eval(t), 162.00);
+		assertEquals(exec(t), 162.00);
 	}
 
 }

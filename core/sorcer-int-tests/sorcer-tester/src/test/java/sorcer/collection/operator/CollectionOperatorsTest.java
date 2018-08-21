@@ -57,7 +57,7 @@ public class CollectionOperatorsTest {
 		
 		// keys and values of args
 		String k = key(val("key", "Mike"));
-		Double v = eval(val("height", 174.0));
+		Double v = value(val("height", 174.0));
 		assertEquals(k, "key");
 		assertTrue(v.equals(174.0));
 		

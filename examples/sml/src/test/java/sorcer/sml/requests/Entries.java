@@ -45,24 +45,24 @@ public class Entries {
 	public void directionalEntries() throws Exception {
 
         Entry x0 = ent("arg/x0", 10.0);
-        assertEquals(10.0, eval(x0));
+        assertEquals(10.0, exec(x0));
         assertTrue(direction(x0) == null);
 
         Subroutine x1 = proc("arg/x1", 100.0);
-        assertEquals(100.0, eval(x1));
+        assertEquals(100.0, exec(x1));
         assertTrue(direction(x1) == null);
 
 		Value x2 = inVal("arg/x2", 20.0);
-		assertEquals(20.0, eval(x2));
+		assertEquals(20.0, exec(x2));
         assertTrue(direction(x2) == Direction.IN);
 
 		Entry x3 = outVal("arg/x3", 80.0);
-		assertEquals(80.0, eval(x3));
+		assertEquals(80.0, exec(x3));
         assertTrue(direction(x3) == Direction.OUT);
 
         // entry of entry
 		Entry x4 = inoutVal("arg/x4", x3);
-		assertEquals(eval(x3), eval(x4));
+		assertEquals(exec(x3), exec(x4));
         assertTrue(direction(x4) == Direction.INOUT);
 		assertEquals(name(impl(x4)), "arg/x3");
         assertTrue(direction(x4) == Direction.INOUT);
@@ -99,8 +99,8 @@ public class Entries {
     public void entFidelities() throws Exception {
         Entry mfiEnt = inVal("by", entFi(inVal("by-10", 10.0), inVal("by-20", 20.0)));
 
-        assertTrue(eval(mfiEnt, fi("by-20", "by")).equals(20.0));
-        assertTrue(eval(mfiEnt, fi("by-10", "by")).equals(10.0));
+        assertTrue(exec(mfiEnt, fi("by-20", "by")).equals(20.0));
+        assertTrue(exec(mfiEnt, fi("by-10", "by")).equals(10.0));
     }
 
 	@Test
@@ -110,7 +110,7 @@ public class Entries {
 					context(proc("x1", 10.0), proc("x2", 20.0)),
                     args("x1", "x2")));
 
-		assertEquals(120.0, eval(z1));
+		assertEquals(120.0, exec(z1));
 	}
 
 	@Test
@@ -118,7 +118,7 @@ public class Entries {
 
 		Subroutine y = proc("y", expr("x1 + x2", args("x1", "x2")));
 
-		assertTrue(eval(y, val("x1", 10.0), val("x2", 20.0)).equals(30.0));
+		assertTrue(exec(y, val("x1", 10.0), val("x2", 20.0)).equals(30.0));
 	}
 
 
@@ -134,7 +134,7 @@ public class Entries {
                 setValue(x, value(cxt, "x"));
             if (value(cxt, "y") != null)
                 setValue(y, value(cxt, "y"));
-            return eval(y) + eval(x) + eval(z);
+            return exec(y) + exec(x) + exec(z);
         }
 
         public Object execute(Arg... args) throws ServiceException, RemoteException {
@@ -160,12 +160,12 @@ public class Entries {
 
         // no scope for invocation
         Entry m1 = proc("m1", methodInvoker("invoke", obj));
-        assertEquals(eval(m1), 40.0);
+        assertEquals(exec(m1), 40.0);
 
         // method invocation with a scope
         Context scope = context(val("x", 200.0), val("y", 300.0));
         m1 = proc("m1", methodInvoker("invoke", obj, scope));
-        assertEquals(eval(m1), 400.0);
+        assertEquals(exec(m1), 400.0);
     }
 
 
@@ -176,12 +176,12 @@ public class Entries {
 
         // no scope for invocation
         Entry m1 = proc("m1", methodInvoker("invoke", obj));
-        assertEquals(eval(m1), 40.0);
+        assertEquals(exec(m1), 40.0);
 
         // method invocation with a scope
         Context scope = context(val("x", 200.0), val("y", 300.0));
         m1 = proc("m1", methodInvoker("invoke", obj, scope));
-        assertEquals(eval(m1), 400.0);
+        assertEquals(exec(m1), 400.0);
     }
 
     @Test
@@ -195,7 +195,7 @@ public class Entries {
 
         Subroutine cmd = proc("cmd", invoker(args));
 
-        CmdResult result = (CmdResult) eval(cmd);
+        CmdResult result = (CmdResult) exec(cmd);
         logger.info("result: " + result);
 
         logger.info("result out: " + result.getOut());
@@ -216,7 +216,7 @@ public class Entries {
                         inPaths("x1", "x2"))),
                     context(inVal("x1", 10.0), inVal("x2", 20.0)));
 
-        assertEquals(30.0, eval(y1));
+        assertEquals(30.0, exec(y1));
     }
 
     @Test
@@ -226,7 +226,7 @@ public class Entries {
                 context(inVal("x1", 10.0), inVal("x2", 20.0)));
 
 //        logger.info("out eval: {}", eval(y1, selector("result/eval")));
-        assertEquals(30.0,  eval(y1, selector("result/eval")));
+        assertEquals(30.0,  exec(y1, selector("result/eval")));
     }
 
     @Test
@@ -237,7 +237,7 @@ public class Entries {
                 selector("result/eval"));
 
 //        logger.info("out eval: {}", eval(y1));
-        assertEquals(30.0,  eval(y1));
+        assertEquals(30.0,  exec(y1));
     }
 
 	@Test
@@ -250,7 +250,7 @@ public class Entries {
 			context(val("x1", 10.0), val("x2", 20.0)));
 
 //        logger.info("out eval: {}", eval(y1));
-		assertEquals(30.0,  eval(y1));
+		assertEquals(30.0,  exec(y1));
 	}
 
     @Test
@@ -263,7 +263,7 @@ public class Entries {
                 model(proc("x1", 10.0), proc("x2", 20.0)));
 
 //        logger.info("out eval: {}", eval(y1));
-        assertEquals(30.0,  eval(y1));
+        assertEquals(30.0,  exec(y1));
     }
 
 	@Test
@@ -276,7 +276,7 @@ public class Entries {
 			model(proc("x1", 20.0), proc("x2", 10.0)));
 
 //        logger.info("out eval: {}", eval(y1));
-		assertEquals(200.0,  eval(y1));
+		assertEquals(200.0,  exec(y1));
 	}
 
 	@Test
@@ -288,7 +288,7 @@ public class Entries {
 			model(proc("x1", 10.0), proc("x2", 20.0)));
 
 //        logger.info("out eval: {}", eval(y1));
-		assertEquals(30.0,  eval(y1));
+		assertEquals(30.0,  exec(y1));
 	}
 
 	@Test
@@ -302,7 +302,7 @@ public class Entries {
                         -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
 
 //        logger.info("out eval: {}", eval(mdl, "y1"));
-		assertEquals(30.0,  eval(mdl, "y1"));
+		assertEquals(30.0,  exec(mdl, "y1"));
 	}
 
     @Test
@@ -315,7 +315,7 @@ public class Entries {
                         -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
 
 //        logger.info("out eval: {}", eval(y1));
-        assertEquals(30.0,  eval(y1));
+        assertEquals(30.0,  exec(y1));
     }
 
     @Test
@@ -329,7 +329,7 @@ public class Entries {
                             <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))))));
 
 //        logger.info("out eval: {}", eval(mdl, "y1"));
-        assertEquals(30.0,  eval(mdl, "y1"));
+        assertEquals(30.0,  exec(mdl, "y1"));
     }
 
 	@Test
@@ -344,7 +344,7 @@ public class Entries {
                     args("x1", "x2", "x3"))));
 
 //        logger.info("out eval: {}", eval(y1));
-		assertEquals(800.0,  eval(y1));
+		assertEquals(800.0,  exec(y1));
 	}
 
 	@Test
@@ -360,6 +360,6 @@ public class Entries {
                         args("x1", "x2", "x3")))));
 
 //        logger.info("out eval: {}", eval(mdl, "y1"));
-		assertEquals(800.0,  eval(mdl, "y1"));
+		assertEquals(800.0,  exec(mdl, "y1"));
 	}
 }

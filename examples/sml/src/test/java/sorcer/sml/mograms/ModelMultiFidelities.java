@@ -46,7 +46,7 @@ public class ModelMultiFidelities {
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mrpFi", "arg/x1", "arg/x2"));
 
-        Context out = response(mod, fi("mrpFi", "multiply"));
+        Context out = eval(mod, fi("mrpFi", "multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mrpFi").equals(900.0));
         assertTrue(get(mod, "result/y").equals(900.0));

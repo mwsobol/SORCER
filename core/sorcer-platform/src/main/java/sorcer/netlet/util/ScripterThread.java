@@ -35,6 +35,7 @@ import sorcer.service.*;
 import java.rmi.RemoteException;
 
 import static sorcer.so.operator.eval;
+import static sorcer.so.operator.exec;
 import static sorcer.util.StringUtils.tName;
 
 public class ScripterThread extends Thread {
@@ -102,7 +103,7 @@ public class ScripterThread extends Thread {
                     logger.info(">>>>>>>>>>> serviceShell eval result: " + result);
                 }
             } else if (target instanceof Subroutine){
-                result = new Subroutine(((Subroutine)target).getName(), eval((Entry<? extends Object>) target));
+                result = new Subroutine(((Subroutine)target).getName(), exec((Entry<? extends Object>) target));
                 logger.info(">>>>>>>>>>> eval entry: " + result);
             } else if (target != null) {
                 logger.info(">>>>>>>>>>> eval result: " + target);

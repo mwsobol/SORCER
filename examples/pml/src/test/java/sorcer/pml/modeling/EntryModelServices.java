@@ -43,7 +43,7 @@ public class EntryModelServices {
 		Task pmt = task(sig("invoke", pm),
 				context(result("invoke/result", outPaths("expr"))));
 
-		assertTrue(eval(pmt).equals(60.0));
+		assertTrue(exec(pmt).equals(60.0));
 
 		assertTrue(get(exert(pmt), "invoke/result").equals(60.0));
 
@@ -56,7 +56,7 @@ public class EntryModelServices {
 		Task pmt = task(sig("invoke", Invocation.class, prvName("EntryModel Service")),
 				context(result("invoke/result", outPaths("expr"))));
 
-		assertTrue(eval(pmt).equals(60.0));
+		assertTrue(exec(pmt).equals(60.0));
 	}
 	
 }

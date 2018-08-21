@@ -332,7 +332,7 @@ public class NetJobExertions implements SorcerConstants {
 
 		setValues(vm, val("x1", 10.0), val("x2", 50.0), val("x4", 80.0));
 				 
-		assertTrue(eval(vm, "j1").equals(400.0));
+		assertTrue(exec(vm, "j1").equals(400.0));
 	}
 
 }

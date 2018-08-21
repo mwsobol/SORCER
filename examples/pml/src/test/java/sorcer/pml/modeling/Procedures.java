@@ -37,8 +37,8 @@ public class Procedures {
 
 		// proc with its context scope
 		Proc add = proc("add", invoker("x + y", args("x", "y")), cxt);
-		logger.info("proc eval: " + eval(add));
-		assertTrue(eval(add).equals(50.0));
+		logger.info("proc eval: " + exec(add));
+		assertTrue(exec(add).equals(50.0));
 	}
 
 
@@ -52,8 +52,8 @@ public class Procedures {
 		add(mdl, add);
 
 		// evaluate entry of the context
-		logger.info("eval add : " + eval(mdl, "add"));
-		assertTrue(eval(mdl, "add").equals(50.0));
+		logger.info("eval add : " + exec(mdl, "add"));
+		assertTrue(exec(mdl, "add").equals(50.0));
 
 	}
 	
@@ -61,7 +61,7 @@ public class Procedures {
 	public void closingProcWihEntries() throws Exception {
 		Proc y = proc("y",
 				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
-		Object val = eval(y, val("x1", 10.0), val("x2", 50.0), val("x3", 20.0), val("x4", 80.0));
+		Object val = exec(y, val("x1", 10.0), val("x2", 50.0), val("x3", 20.0), val("x4", 80.0));
 		// logger.info("y eval: " + val);
 		assertEquals(val, 400.0);
 	}
@@ -73,9 +73,9 @@ public class Procedures {
 		Proc add = proc("add", invoker("x + y", args("x", "y")));
 
 		Context<Double> cxt = context(val("x", 10.0), val("y", 20.0));
-		logger.info("proc eval: " + eval(add, cxt));
+		logger.info("proc eval: " + exec(add, cxt));
 		// compute a proc
-		assertTrue(eval(add, cxt).equals(30.0));
+		assertTrue(exec(add, cxt).equals(30.0));
 
 	}
 
@@ -97,19 +97,19 @@ public class Procedures {
 		assertTrue(content(dbp1Url).equals(25.0));
 		assertEquals(content(dbp2Url), "http://sorcersoft.org/sobol");
 
-		assertTrue(eval(dbp1).equals(25.0));
-		assertEquals(eval(dbp2), "http://sorcersoft.org/sobol");
+		assertTrue(exec(dbp1).equals(25.0));
+		assertEquals(exec(dbp2), "http://sorcersoft.org/sobol");
 
 		// TODO update does not occur
 		// update persistent values
 		setValue(dbp1, 30.0);
 		setValue(dbp2, "http://sorcersoft.org");
 
-		logger.info("dbp1: " + eval(dbp1));
-		logger.info("dbp2: " + eval(dbp2));
+		logger.info("dbp1: " + exec(dbp1));
+		logger.info("dbp2: " + exec(dbp2));
 
-		assertTrue(eval(dbp1).equals(30.0));
-		assertTrue(eval(dbp2).equals("http://sorcersoft.org"));
+		assertTrue(exec(dbp1).equals(30.0));
+		assertTrue(exec(dbp2).equals("http://sorcersoft.org"));
 
 		assertEquals(asis(dbp1).getClass(), URL.class);
 		assertEquals(asis(dbp2).getClass(), URL.class);
@@ -129,10 +129,10 @@ public class Procedures {
 				val("y", 20.0), val("init/eval", 49.0));
 
 		setValue(dbp, 50.0);
-		assertTrue(eval(dbp).equals(50.0));
-		assertTrue(eval(multi, cxt, fi("shared/eval")).equals(50.0));
-		assertTrue(eval(multi, cxt, fi("init/eval")).equals(49.0));
-		assertTrue(eval(multi, cxt, fi("invoke")).equals(30.0));
+		assertTrue(exec(dbp).equals(50.0));
+		assertTrue(exec(multi, cxt, fi("shared/eval")).equals(50.0));
+		assertTrue(exec(multi, cxt, fi("init/eval")).equals(49.0));
+		assertTrue(exec(multi, cxt, fi("invoke")).equals(30.0));
 	}
 
 	@Test
@@ -146,15 +146,15 @@ public class Procedures {
 		add(mdl, proc(invoker("add2", "x + y", args("x", "y")),
 				context(val("x", 30.0), val("y", 40.0))));
 		
-		assertEquals(eval(mdl, "add1"), 30.0);
+		assertEquals(exec(mdl, "add1"), 30.0);
 		// change the scope of add1
 		setValue(mdl, "x", 20.0);
-		assertEquals(eval(mdl, "add1"), 40.0);
+		assertEquals(exec(mdl, "add1"), 40.0);
 
-		assertEquals(eval(mdl, "add2"), 70.0);
+		assertEquals(exec(mdl, "add2"), 70.0);
 		// x is changed but add2 eval is the same, has its own scope
 		setValue(mdl, "x", 20.0);
-		assertEquals(eval(mdl, "add2"), 70.0);
+		assertEquals(exec(mdl, "add2"), 70.0);
 		
 	}
 

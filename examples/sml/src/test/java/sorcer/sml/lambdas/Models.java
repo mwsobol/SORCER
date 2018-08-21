@@ -190,7 +190,7 @@ public class Models {
 		Double delta = 0.5;
 
 		EntryCollable entFunction = (Model mdl) -> {
-			double out = (double) eval(mdl, "multiply");
+			double out = (double) exec(mdl, "multiply");
 			out = out + 1000.0 + delta;
 			return ent("out", out);
 		};
@@ -276,7 +276,7 @@ public class Models {
 		Block lb = block(sig(ServiceConcatenator.class),
 				context(ent("sum", 0.0)),
 				loop(0, 100, task(lambda("sum", (Context<Double> cxt) -> {
-					Double out = value(cxt, "sum") + (Double) eval(ti);
+					Double out = value(cxt, "sum") + (Double) exec(ti);
 					putValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
 					return out; }))));
 
@@ -298,7 +298,7 @@ public class Models {
 				loop(0, 100, task(lambda("sum", (Context<Double> cxt) -> {
 					Double from = value(cxt, "from");
 					Double to = value(cxt, "to");
-					Double out = value(cxt, "sum") + (Double) eval(ti);
+					Double out = value(cxt, "sum") + (Double) exec(ti);
 					putValue(context(ti), "arg/x2", (Double)value(context(ti), "arg/x2") + 1.5);
 
 					// skip eval 333 but with increase by 100

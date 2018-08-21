@@ -19,10 +19,13 @@ package sorcer.so;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.Operator;
+import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.model.ent.DataContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
@@ -66,22 +69,28 @@ public class operator extends Operator {
         }
     }
 
-    public static <T> T eval(Evaluation<T> entry, Arg... args)
+    public static <T> T exec(Entry<T> entry, Arg... args)
             throws EvaluationException {
         try {
             synchronized (entry) {
                 if (entry instanceof Valuation) {
                     return (T) ((Entry) entry).valuate(args);
                 } else if (entry instanceof Entry && ((Entry) entry).getOut() instanceof ServiceContext) {
-                    return (T) ((ServiceContext) ((Entry) entry).getOut()).getValue(((Identifiable)entry).getName(), args);
+                    return (T) ((ServiceContext) ((Entry) entry).getOut()).getValue(entry.getName(), args);
                 } else if (entry instanceof Incrementor) {
                     return ((Incrementor<T>) entry).next();
                 } else if (entry instanceof Exertion) {
                     return (T) ((Exertion) entry).exert(args).getContext();
                 } else if (entry instanceof Functionality) {
-                    return (T) ((Functionality) entry).getValue(args);
-                } else {
+                    if (entry instanceof Srv && entry.getImpl() instanceof SignatureEntry) {
+                        return  (T) entry.execute(args);
+                    } else {
+                        return (T) ((Functionality) entry).getValue(args);
+                    }
+                } else if (entry instanceof Evaluation) {
                     return (T) ((Entry) entry).evaluate(args);
+                } else {
+                    return (T)  entry.execute(args);
                 }
             }
         } catch (Exception e) {
@@ -125,7 +134,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Object eval(Domain domain, String path, Arg... args) throws ContextException {
+    public static Object exec(Domain domain, String path, Arg... args) throws ContextException {
         if (domain instanceof Model) {
 //            return response(domain, path, args);
             try {
@@ -147,23 +156,6 @@ public class operator extends Operator {
             throw new ContextException(e);
         }
         return rc;
-    }
-
-    public static Object eval(Mogram mogram, Arg... args) throws ContextException {
-        try {
-            Object out = null;
-            synchronized (mogram) {
-                if (mogram instanceof Exertion) {
-                    out = exec((Service)mogram, args);
-                } else {
-                    out = ((ServiceContext) mogram).getValue(args);
-                }
-                ((ServiceMogram)mogram).setChanged(true);
-                return out;
-            }
-        } catch (RemoteException | ServiceException e) {
-            throw new ContextException(e);
-        }
     }
 
     public static Response query(Mogram mogram, Arg... args) throws ContextException {
@@ -250,6 +242,10 @@ public class operator extends Operator {
                 throw new ContextException(ex);
             }
         }
+    }
+
+    public static ServiceContext eval(Mogram mogram, Object... items) throws ContextException {
+        return response(mogram, items);
     }
 
     public static ServiceContext response(Mogram mogram, Object... items) throws ContextException {
@@ -359,24 +355,41 @@ public class operator extends Operator {
 
     public static Object execItem(Request item, Arg... args) throws ServiceException {
         try {
-            return ((Service)item).execute(args);
+            return item.execute(args);
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }
     }
 
-    public static Object exec(Service service, Arg... args) throws ServiceException, RemoteException {
+    public static Object execMogram(Mogram mogram, Arg... args) throws ContextException {
+        try {
+            Object out = null;
+            synchronized (mogram) {
+                if (mogram instanceof Exertion) {
+                    out = new ServiceShell().evaluate(mogram, args);
+                } else {
+                    out = ((ServiceContext) mogram).getValue(args);
+                }
+                ((ServiceMogram)mogram).setChanged(true);
+                return out;
+            }
+        } catch (RemoteException | ServiceException e) {
+            throw new ContextException(e);
+        }
+    }
+
+    public static Object exec(Service service, Arg... args) throws ServiceException {
         try {
             if (service instanceof Entry || service instanceof Signature ) {
-                    return service.execute(args);
-            } else if (service instanceof Context || service instanceof MultiFiMogram) {
-                if (service instanceof Model) {
-                    return ((Model)service).getResponse(args);
-                } else {
+                return service.execute(args);
+            } else if (service instanceof Mogram) {
+                if (service instanceof DataContext) {
+                    return ((Model) service).getResponse(args);
+                } else if (service instanceof MultiFiMogram) {
                     return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
+                } else {
+                    return execMogram((Mogram) service, args);
                 }
-            } else if (service instanceof Exertion) {
-                return new ServiceShell().evaluate((Mogram) service, args);
             } else if (service instanceof Evaluation) {
                 return ((Evaluation) service).evaluate(args);
             } else if (service instanceof Modeling) {

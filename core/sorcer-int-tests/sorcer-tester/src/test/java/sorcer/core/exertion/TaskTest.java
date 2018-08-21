@@ -71,38 +71,9 @@ public class TaskTest {
 		set(task, "result/y", Context.none);
 		print(task);
 		
-		double val = (Double) eval(task);
+		double val = (Double) exec(task);
 		//logger.info("get eval: " + val);
 		assertTrue("Wrong eval for 100.0", val == 100.0);
-		//logger.info("turn trace: " + trace(task));
-		//logger.info("trace  size: " + trace(task).size());
-		//assertTrue(trace(task).size() == 1);
-		logger.info("exceptions: " + exceptions(task));
-		//assertTrue(exceptions(task).size() == 0);
-
-//		val = (Double)get(task, "result/y");
-//		//logger.info("get eval: " + val);
-//		assertTrue("Wrong eval for 100.0", val == 100.0);
-//		
-//		task = exert(task);
-//		val = (Double)get(context(task), "result/y");
-//		//logger.info("get eval: " + val);
-//		assertTrue("Wrong eval for 100.0", val == 100.0);
-//		//assertTrue(trace(task).size() == 2);
-//		//           assertTrue(exceptions(task).size() == 0);
-//		
-//		put(task, entry("arg/x1", 1.0), entry("arg/x2", 5.0));
-//		val = (Double)eval(task);
-//		logger.info("compute: " + val);
-//		assertTrue("Wrong eval for 6.0", val == 6.0);
-//				
-//		val = (Double)eval(task, entry("arg/x1", 2.0), entry("arg/x2", 10.0));
-//		logger.info("compute: " + val);
-//		assertTrue("Wrong eval for 12.0", val == 12.0);
-//		
-//		logger.info("task context: " + context(task));
-//		logger.info("get eval: " + get(task));
-//		assertTrue("Wrong eval for 12.0", get(task).equals(12.0));
 	}
 
 	@Test

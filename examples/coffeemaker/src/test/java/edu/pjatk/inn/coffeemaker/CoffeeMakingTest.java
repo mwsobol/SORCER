@@ -91,7 +91,7 @@ public class CoffeeMakingTest {
 				context(types(Recipe.class), args(espresso),
 						result("recipe/added")));
 
-		assertEquals(eval(cmt), true);
+		assertEquals(exec(cmt), true);
 	}
 
 	@Test

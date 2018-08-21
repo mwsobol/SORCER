@@ -59,11 +59,11 @@ public class NetMograms {
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		// get the result eval
-		assertTrue(eval(t5).equals(100.0));
+		assertTrue(exec(t5).equals(100.0));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
-				eval(t5, outPaths("arg/x1", "result/y"))));
+				exec(t5, outPaths("arg/x1", "result/y"))));
 
 	}
 
@@ -73,9 +73,9 @@ public class NetMograms {
         Task sum = task("t6", sig("sum", Adder.class, prvName("Adder")),
                 cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-        assertTrue(eval(sum).equals(100.0));
-        assertTrue(eval(sum).equals(200.0));
-        assertTrue(eval(sum).equals(300.0));
+        assertTrue(exec(sum).equals(100.0));
+        assertTrue(exec(sum).equals(200.0));
+        assertTrue(exec(sum).equals(300.0));
     }
 
     @Test

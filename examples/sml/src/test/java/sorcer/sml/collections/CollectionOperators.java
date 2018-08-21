@@ -102,14 +102,14 @@ public class CollectionOperators {
 		assertEquals(value(v1), 30.0);
 
 		func p2 = proc("x", 20.0);
-		assertEquals(eval(p2), 20.0);
+		assertEquals(exec(p2), 20.0);
 
 		ent p1 = proc("x", 10.0);
-		assertEquals(eval(p1), 10.0);
+		assertEquals(exec(p1), 10.0);
 
 		Date td = new Date();
 		ent d1 = proc("x", td);
-		assertEquals(eval(d1), td);
+		assertEquals(exec(d1), td);
 
 	}
 
@@ -186,29 +186,29 @@ public class CollectionOperators {
 		// create a persistent entry
 		Entry<Double> de = dbVal("x3", 110.0);
 		assertFalse(impl(de) instanceof URL);
-		assertTrue(eval(de).equals(110.0));
+		assertTrue(exec(de).equals(110.0));
 		assertTrue(impl(de) instanceof URL);
 
 		// create an entry
 		Entry<Double> e = ent("x1", 10.0);
-		assertTrue(eval(e).equals(10.0));
+		assertTrue(exec(e).equals(10.0));
 		assertTrue(asis(e).equals(10.0));
 		assertFalse(asis(e) instanceof URL);
 
 		// store the valuate of entry
 		URL valUrl = storeVal(e);
-		assertTrue(eval(e).equals(10.0));
+		assertTrue(exec(e).equals(10.0));
 		assertTrue(impl(e) instanceof URL);
 
 		// create a persistent entry with URL
 		Entry urle = dbVal("x2", valUrl);
-		assertTrue(eval(urle).equals(10.0));
+		assertTrue(exec(urle).equals(10.0));
 		assertTrue(impl(urle) instanceof URL);
 
 		// assign a given URL
 		Entry<Object> dbe = dbVal("y1", 1.0);
 		setImpl(dbe, valUrl);
-		assertTrue(eval(dbe).equals(10.0));
+		assertTrue(exec(dbe).equals(10.0));
 		assertTrue(impl(dbe) instanceof URL);
 
 	}
@@ -219,12 +219,12 @@ public class CollectionOperators {
 		Entry add = ent("add", invoker("x + y", args("x", "y")));
 		Context<Double> cxt = context(ent("x", 10.0), ent("y", 20.0));
 //		logger.info("eval: " + eval(add, cxt));
-		assertTrue(eval(add, cxt).equals(30.0));
+		assertTrue(exec(add, cxt).equals(30.0));
 
 		cxt = context(ent("x", 20.0), ent("y", 30.0));
 		add = ent("add", invoker("x + y", args("x", "y")), cxt);
 //		logger.info("proc eval: " + eval(add));
-		assertTrue(eval(add).equals(50.0));
+		assertTrue(exec(add).equals(50.0));
 
 	}
 
@@ -233,13 +233,13 @@ public class CollectionOperators {
 
 		Proc add = proc("add", invoker("x + y", args("x", "y")));
 		Context<Double> cxt = context(val("x", 10.0), val("y", 20.0));
-		logger.info("eval: " + eval(add, cxt));
-		assertTrue(eval(add, cxt).equals(30.0));
+		logger.info("eval: " + exec(add, cxt));
+		assertTrue(exec(add, cxt).equals(30.0));
 
 		cxt = context(ent("x", 20.0), ent("y", 30.0));
 		add = proc("add", invoker("x + y", args("x", "y")), cxt);
-		logger.info("proc eval: " + eval(add));
-		assertTrue(eval(add).equals(50.0));
+		logger.info("proc eval: " + exec(add));
+		assertTrue(exec(add).equals(50.0));
 
 	}
 
@@ -251,15 +251,15 @@ public class CollectionOperators {
 		persistent(dbp2);
 
 		assertFalse(asis(dbp2) instanceof URL);
-		assertEquals(eval(dbp2), "http://sorcersoft.org/sobol");
+		assertEquals(exec(dbp2), "http://sorcersoft.org/sobol");
 		assertTrue(impl(dbp2) instanceof URL);
 
 		// store args, not their arguments) in the data store
 		URL p1Url = store(val("design/in", 30.0));
 		URL p2Url = store(val("url/sorcer", "http://sorcersoft.org"));
 
-		assertEquals(eval((Entry)content(p1Url)), 30.0);
-		assertEquals(eval((Entry)content(p2Url)), "http://sorcersoft.org");
+		assertEquals(exec((Entry)content(p1Url)), 30.0);
+		assertEquals(exec((Entry)content(p2Url)), "http://sorcersoft.org");
 
 	}
 
@@ -271,12 +271,12 @@ public class CollectionOperators {
 		// a path is a String - usually a sequence of attributes
 		assertEquals("arg/x1", path(e));
 
-		assertTrue(eval(e).equals(10.0));
+		assertTrue(exec(e).equals(10.0));
 		assertTrue(isPersistent(e));
-		assertTrue(eval(e).equals(10.0));
+		assertTrue(exec(e).equals(10.0));
 		assertTrue(asis(e) instanceof URL);
 		setValue(e, 50.0);
-		assertTrue(eval(e).equals(50.0));
+		assertTrue(exec(e).equals(50.0));
 		assertTrue(asis(e) instanceof URL);
 
 		// create service strategy entry
@@ -294,7 +294,7 @@ public class CollectionOperators {
 		assertTrue(access(se1).equals(access(st1)));
 
 		// store an object
-		store(eval(se1));
+		store(exec(se1));
 		Strategy st2 = (Strategy)content(se1Url);
 		assertTrue(flow(se1).equals(flow(st2)));
 		assertTrue(access(se1).equals(access(st2)));
@@ -374,9 +374,9 @@ public class CollectionOperators {
 		// eval of functional entries in DataContexts is not possible
 		// use models (active contexts) created with the model operator
 		assertTrue(asis(cxt, "arg/x7") instanceof Invocation);
-		logger.info("x7a: " + eval(cxt, "arg/x7"));
+		logger.info("x7a: " + value(cxt, "arg/x7"));
 		logger.info("x7b: " + value(cxt, "arg/x7"));
-		assertTrue(eval(cxt, "arg/x7").equals(4.0));
+		assertTrue(exec(cxt, "arg/x7").equals(4.0));
 		assertTrue(value(cxt, "arg/x7").equals(4.0));
 
 	}
@@ -388,10 +388,10 @@ public class CollectionOperators {
 		add(pm, ent("x", 10.0), ent("y", 20.0));
 		add(pm, invoker("add", "x + y", args("x", "y")));
 
-		assertEquals(eval(pm, "John/weight"), 180.0);
-		assertEquals(eval(pm, "add"), 30.0);
+		assertEquals(exec(pm, "John/weight"), 180.0);
+		assertEquals(exec(pm, "add"), 30.0);
 		setValue(pm, "x", 20.0);
-		assertEquals(eval(pm, "add"), 40.0);
+		assertEquals(exec(pm, "add"), 40.0);
 
 	}
 

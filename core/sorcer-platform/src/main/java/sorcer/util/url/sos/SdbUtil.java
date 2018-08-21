@@ -184,8 +184,7 @@ public class SdbUtil {
 				StorageManagement.object_url);
 	}
 
-	public static int clear(Store type) throws MogramException,
-			SignatureException, ContextException {
+	public static int clear(Store type) throws ServiceException, SignatureException {
 		String storageName = Sorcer.getActualName(Sorcer
 				.getDatabaseStorerName());
 		Task objectStoreTask = task(
@@ -193,11 +192,10 @@ public class SdbUtil {
 				sig("contextClear", DatabaseStorer.class, prvName(storageName)),
 				context("clearSessions", operator.inVal(StorageManagement.store_type, type),
 						result(StorageManagement.store_size)));
-		return (Integer) eval(objectStoreTask);
+		return (Integer) exec(objectStoreTask);
 	}
 
-	public static int size(Store type) throws MogramException,
-			SignatureException, ContextException {
+	public static int size(Store type) throws ServiceException, SignatureException {
 		String storageName = Sorcer.getActualName(Sorcer
 				.getDatabaseStorerName());
 		Task objectStoreTask = task(
@@ -205,11 +203,10 @@ public class SdbUtil {
 				sig("contextSize", DatabaseStorer.class, new ProviderName(storageName)),
 				context("size", operator.inVal(StorageManagement.store_type, type),
 						result(StorageManagement.store_size)));
-		return (Integer) eval(objectStoreTask);
+		return (Integer) exec(objectStoreTask);
 	}
 	
-	public static URL delete(Object object) throws MogramException,
-			SignatureException, ContextException {
+	public static URL delete(Object object) throws ServiceException, SignatureException {
 		if (object instanceof URL) {
 			return deleteURL((URL) object);
 		} else {
@@ -217,8 +214,7 @@ public class SdbUtil {
 		}
 	}
 
-	public static URL deleteObject(Object object) throws MogramException,
-			SignatureException, ContextException {
+	public static URL deleteObject(Object object) throws ServiceException, SignatureException {
 		String storageName = Sorcer.getActualName(Sorcer
 				.getDatabaseStorerName());
 		Task objectStoreTask = task(
@@ -226,10 +222,10 @@ public class SdbUtil {
 				sig("contextDelete", DatabaseStorer.class, prvName(storageName)),
 				context("delete", operator.inVal(StorageManagement.object_deleted, object),
 						result(StorageManagement.object_url)));
-		return (URL) eval(objectStoreTask);
+		return (URL) exec(objectStoreTask);
 	}
 
-	public static URL deleteURL(URL url) throws MogramException {
+	public static URL deleteURL(URL url) throws ServiceException {
 		String serviceTypeName = getServiceType(url);
 		String storageName = getProviderName(url);
 		Task objectStoreTask = null;
@@ -245,7 +241,7 @@ public class SdbUtil {
 			throw new MogramException("No such service fiType: "
 					+ serviceTypeName, e);
 		}
-		return (URL) eval(objectStoreTask);
+		return (URL) exec(objectStoreTask);
 	}
 
 	public static URL store(Object object) throws MogramException, SignatureException {
@@ -264,7 +260,7 @@ public class SdbUtil {
 		}
 	}
 
-	public static URL write(Object object) throws MogramException,
+	public static URL write(Object object) throws ServiceException,
 			SignatureException {
 		String storageName = Sorcer.getActualName(Sorcer.getSpacerName());
 		Task objectStoreTask = task(
@@ -273,36 +269,34 @@ public class SdbUtil {
 				context("stored", operator.inVal(StorageManagement.object_stored, object),
 						result("stored/object/url")));
 
-		return (URL) eval(objectStoreTask);
+		return (URL) exec(objectStoreTask);
 	}
 
-	static public Object retrieve(URL url) throws MogramException,
-			SignatureException, ContextException {
+	static public Object retrieve(URL url) throws ServiceException, SignatureException {
 		return retrieve(SdbUtil.getUuid(url), getStoreType(url));
 	}
 
 	static public Object retrieve(Uuid storeUuid, Store storeType)
-			throws MogramException, SignatureException, ContextException {
+			throws ServiceException, SignatureException {
 		Task objectRetrieveTask = task(
 				"retrieve",
 				sig("contextRetrieve", DatabaseStorer.class,
 						prvName(Sorcer.getActualDatabaseStorerName())),
 				SdbUtil.getRetrieveContext(storeUuid, storeType));
 		try {
-			return get((Context) eval(objectRetrieveTask));
+			return get((Context) exec(objectRetrieveTask));
 		} catch (RemoteException e) {
 			throw new ExertionException(e);
 		}
 	}
 
-	static public List<String> list(URL url) throws MogramException,
-			SignatureException, ContextException {
+	static public List<String> list(URL url) throws ServiceException, SignatureException {
 		return list(url, null);
 
 	}
 
 	static public List<String> list(URL url, Store storeType)
-			throws MogramException, SignatureException, ContextException {
+			throws ServiceException, SignatureException {
 		Store type = storeType;
 		String providerName = getProviderName(url);
 		if (providerName == null)
@@ -318,11 +312,10 @@ public class SdbUtil {
 				sig("contextList", DatabaseStorer.class, prvName(providerName)),
 				SdbUtil.getListContext(type));
 
-		return (List<String>) eval(listTask);
+		return (List<String>) exec(listTask);
 	}
 
-	static public List<String> list(Store storeType) throws MogramException,
-			SignatureException, ContextException {
+	static public List<String> list(Store storeType) throws ServiceException, SignatureException {
 		String storageName = Sorcer.getActualName(Sorcer
 				.getDatabaseStorerName());
 	
@@ -330,6 +323,6 @@ public class SdbUtil {
 				sig("contextList", DatabaseStorer.class, prvName(storageName)),
 				SdbUtil.getListContext(storeType));
 
-		return (List<String>) eval(listTask);
+		return (List<String>) exec(listTask);
 	}
 }

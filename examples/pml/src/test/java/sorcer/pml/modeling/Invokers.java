@@ -62,11 +62,11 @@ public class Invokers {
 			setValue(x, value(arg, "x"));
 			setValue(y, value(context, "y"));
 			// x set from 'arg'
-			assertTrue(eval(x).equals(200.0));
+			assertTrue(exec(x).equals(200.0));
 			// y set from construtor's context 'in'
-			assertTrue(eval(y).equals(30.0));
-			assertTrue(eval(z).equals(170.0));
-			return (double)eval(x) + (double)eval(y) + (double)value(pm, "z");
+			assertTrue(exec(y).equals(30.0));
+			assertTrue(exec(z).equals(170.0));
+			return (double)exec(x) + (double)exec(y) + (double)value(pm, "z");
 		}
 	};
 
@@ -86,7 +86,7 @@ public class Invokers {
 					(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
 					args("x", "y"))));
 //		logger.info("invoke eval: " + eval(mo, "lambda"));
-		assertEquals(eval(mo, "lambda"), 60.0);
+		assertEquals(exec(mo, "lambda"), 60.0);
 	}
 
 	@Test
@@ -114,7 +114,7 @@ public class Invokers {
 		logger.info("invoke eval: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
 		logger.info("get eval: " + eval(pm, "expr"));
-		assertTrue(eval(pm, "expr").equals(60.0));
+		assertTrue(exec(pm, "expr").equals(60.0));
 	}
 
 	@Test
@@ -198,7 +198,7 @@ public class Invokers {
 		Proc x1 = proc("x1", 1.0);
 
 		// logger.info("invoke eval:" + invoke(x1));
-		assertEquals(eval(x1), 1.0);
+		assertEquals(exec(x1), 1.0);
 	}
 
 	@Test
@@ -209,10 +209,10 @@ public class Invokers {
 		x2 = proc("x2", 2.0);
 		y = proc("y", invoker("x1 + x2", x1, x2));
 		
-		logger.info("y: " + eval(y));
-		assertTrue(eval(y).equals(3.0));
+		logger.info("y: " + exec(y));
+		assertTrue(exec(y).equals(3.0));
 
-		Object val = eval(y, context(val("x1", 10.0), val("x2", 20.0)));
+		Object val = exec(y, context(val("x1", 10.0), val("x2", 20.0)));
 		logger.info("y: " + val);
 		assertTrue(val.equals(30.0));
 	}

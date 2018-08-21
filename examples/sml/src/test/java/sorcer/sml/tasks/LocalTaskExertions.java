@@ -94,14 +94,14 @@ public class LocalTaskExertions {
 				cxt("average", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		// get the result of task evaluation
-		assertEquals(50.0, eval(t6));
+		assertEquals(50.0, exec(t6));
 
 		// get the returned result
 		assertEquals(50.0, returnValue(t6));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(operator.ent("result/y", 50.0), operator.ent("arg/x1", 20.0)).equals(
-				eval(t6, outPaths("result/y", "arg/x1"))));
+				exec(t6, outPaths("result/y", "arg/x1"))));
 
 	}
 
@@ -203,7 +203,7 @@ public class LocalTaskExertions {
 						result("result/y")));
 
 		//logger.info("t4: " + eval(t4));
-		assertTrue(eval(t4).equals(500.0));
+		assertTrue(exec(t4).equals(500.0));
 	}
 }
 	

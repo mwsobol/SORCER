@@ -892,8 +892,8 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				ServiceScripter se = new ServiceScripter(System.out, null, Sorcer.getWebsterUrl(), true);
 				se.readFile(new File(((NetletSignature)service).getServiceSource()));
 				return evaluate((Mogram)se.interpret());
-			} else if (service instanceof Exertion) {
-				return eval((Entry) service, args);
+			} else if (service instanceof Entry) {
+				return exec(service, args);
 			} else if (service instanceof EntryModel) {
 				((Model)service).getResponse(args);
 			} else if (service instanceof Context) {

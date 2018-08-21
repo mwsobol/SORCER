@@ -65,9 +65,9 @@ public class InvokerTest {
 		public Double update(Context arg) throws Exception {
 			setValue(x, value(arg, "x"));
 			setValue(y, value(context, "y"));
-			logger.info("update x: " + eval(x));
-			logger.info("update y: " + eval(y));
-			return (double)eval(x) + (double)eval(y) + (double)eval(pm, "z");
+			logger.info("update x: " + exec(x));
+			logger.info("update y: " + exec(y));
+			return (double)exec(x) + (double)exec(y) + (double)exec(pm, "z");
 		}
 	};
 
@@ -207,7 +207,7 @@ public class InvokerTest {
 
 		Proc x1 = proc("x1", 1.0);
 		// logger.info("invoke eval:" + invoke(x1));
-		assertEquals(eval(x1), 1.0);
+		assertEquals(exec(x1), 1.0);
 	}
 
 	@Test
@@ -218,7 +218,7 @@ public class InvokerTest {
 		x2 = proc("x2", 2.0);
 		y = proc("y", invoker("x1 + x2", args("x1", "x2")));
 
-		Object out = eval(y, proc("x1", 10.0), proc("x2", 20.0));
+		Object out = exec(y, proc("x1", 10.0), proc("x2", 20.0));
 //		logger.info("y: " + out);
 		assertTrue(out.equals(30.0));
 	}

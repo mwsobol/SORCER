@@ -143,11 +143,11 @@ public class LocalMograms {
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		// get the result eval
-		assertEquals(100.0, eval(t5));
+		assertEquals(100.0, exec(t5));
 
 		// get the output subcontext from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
-				eval(t5, result(outPaths("arg/x1", "result/y")))));
+				exec(t5, result(outPaths("arg/x1", "result/y")))));
 	}
 
 	@Test
@@ -159,7 +159,7 @@ public class LocalMograms {
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("calculated/provider", AdderImpl.class.getName()),
-				ent("out/val", 100.0)).equals(eval(t5)));
+				ent("out/val", 100.0)).equals(exec(t5)));
 	}
 
 	@Test
@@ -170,7 +170,7 @@ public class LocalMograms {
 						outPaths("out/val")));
 
 		// get the result eval
-		assertEquals(100.0, eval(t5));
+		assertEquals(100.0, exec(t5));
 	}
 
 	@Test

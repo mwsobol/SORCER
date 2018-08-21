@@ -789,23 +789,19 @@ public class operator extends Operator {
 		return SdbUtil.update(object);
 	}
 
-	public static List<String> list(URL url) throws MogramException,
-			SignatureException, ContextException {
+	public static List<String> list(URL url) throws ServiceException, SignatureException {
 		return SdbUtil.list(url);
 	}
 
-	public static List<String> list(DatabaseStorer.Store store) throws MogramException,
-			SignatureException, ContextException {
+	public static List<String> list(DatabaseStorer.Store store) throws ServiceException, SignatureException {
 		return SdbUtil.list(store);
 	}
 
-	public static URL delete(Object object) throws MogramException,
-			SignatureException, ContextException {
+	public static URL delete(Object object) throws ServiceException, SignatureException {
 		return SdbUtil.delete(object);
 	}
 
-	public static int clear(DatabaseStorer.Store type) throws MogramException,
-			SignatureException, ContextException {
+	public static int clear(DatabaseStorer.Store type) throws ServiceException, SignatureException {
 		return SdbUtil.clear(type);
 	}
 
@@ -829,7 +825,7 @@ public class operator extends Operator {
 		return map.size();
 	}
 
-	public static int size(DatabaseStorer.Store type) throws MogramException,
+	public static int size(DatabaseStorer.Store type) throws ServiceException,
 			SignatureException, ContextException {
 		return SdbUtil.size(type);
 	}

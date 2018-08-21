@@ -37,10 +37,10 @@ public class Entries {
 
         // the model execute a lambda expression with no model state altered
         Model mdl = model(ent("x1", 10.0), ent("x2", 20.0),
-                lambda("x3", (Model model) -> ent("x5", (double)eval(model, "x2") + 100.0)));
+                lambda("x3", (Model model) -> ent("x5", (double)exec(model, "x2") + 100.0)));
 
         logger.info("x3: " + eval(mdl, "x3"));
-        assertEquals(120.0, eval((ent)eval(mdl, "x3")));
+        assertEquals(120.0, exec((ent)exec(mdl, "x3")));
 
     }
 
@@ -50,14 +50,14 @@ public class Entries {
         // no free variables
         Subroutine y1 = lambda("y1", () -> 20.0 * pow(0.5, 6) + 10.0);
 
-        assertEquals(10.3125, eval(y1));
+        assertEquals(10.3125, exec(y1));
 
         // the model itself as a free variable of the lambda y2
         Model mo = model(ent("x1", 10.0), ent("x2", 20.0),
                 lambda("y2", (Context<Double> cxt) ->
                         value(cxt, "x1") + value(cxt, "x2")));
 
-        assertEquals(30.0, eval(mo, "y2"));
+        assertEquals(30.0, exec(mo, "y2"));
 
     }
 
@@ -73,7 +73,7 @@ public class Entries {
 
         // a lambda as a EntryCollable used to enhance the behavior of a model
         EntryCollable verifyExitValue = (Model mdl) -> {
-            CmdResult out = (CmdResult)eval(mdl, "cmd");
+            CmdResult out = (CmdResult)exec(mdl, "cmd");
             int code = out.getExitValue();
             ent("cmd/exitValue", code);
             if (code == -1) {
@@ -111,7 +111,7 @@ public class Entries {
                         + value(cxt, "y")
                         + 30, args("x", "y"))));
         logger.info("invoke eval: " + eval(mo, "lambda"));
-        assertEquals(eval(mo, "lambda"), 60.0);
+        assertEquals(exec(mo, "lambda"), 60.0);
     }
 
     @Test
@@ -124,8 +124,8 @@ public class Entries {
                     return exec(Arg.selectService(args, "x")); },
                         args("x", "y")));
 
-        logger.info("s1 eval: ", eval(mo, "s1"));
-        assertEquals(eval(mo, "s1"), 20.0);
+        logger.info("s1 eval: ", exec(mo, "s1"));
+        assertEquals(exec(mo, "s1"), 20.0);
     }
 
     @Test

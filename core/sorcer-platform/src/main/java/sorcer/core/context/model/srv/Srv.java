@@ -289,8 +289,9 @@ public class Srv extends Subroutine<Object> implements Serviceableness,
                 impl = mod;
                 return evaluate(args);
             }
+        } else {
+            return getValue(args);
         }
-        return null;
     }
     
     public ReturnPath getReturnPath() {

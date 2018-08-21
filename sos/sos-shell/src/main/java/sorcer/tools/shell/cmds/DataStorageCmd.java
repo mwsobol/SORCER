@@ -71,7 +71,7 @@ public class DataStorageCmd extends ShellCmd {
 	public DataStorageCmd() {
 	}
 
-	public void execute(String... args) throws RemoteException, MonitorException, MogramException {
+	public void execute(String... args) throws RemoteException, MonitorException, ServiceException {
 		out = NetworkShell.getShellOutputStream();
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
@@ -171,7 +171,7 @@ public class DataStorageCmd extends ShellCmd {
 		out.println(((ServiceExertion) xrt).describe());
 	}
 
-	private void printRecords(Store type) throws  MogramException {
+	private void printRecords(Store type) throws  ServiceException {
 		try {
 			if (dataStorers == null || dataStorers.length == 0) {
 				findStorers();

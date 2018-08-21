@@ -1,5 +1,6 @@
 package sorcer.sml.mograms;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -109,11 +110,11 @@ public class ServiceMograms {
 
         Model exerted = exert(model);
         logger.info("out context: " + exerted);
-        assertTrue(eval(exerted, "out").equals(110.0));
+        assertTrue(exec(exerted, "out").equals(110.0));
 
         exerted = exert(model);
         logger.info("out context: " + exerted);
-        assertTrue(eval(exerted, "out").equals(120.0));
+        assertTrue(exec(exerted, "out").equals(120.0));
     }
 
     @Test
@@ -259,6 +260,7 @@ public class ServiceMograms {
         assertTrue(get(out, "model/response").equals(450.0));
     }
 
+    @Ignore
     @Test
     public void remoteModeler() throws Exception {
         // get response from a service model with inner model

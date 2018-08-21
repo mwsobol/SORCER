@@ -69,14 +69,14 @@ public class SysCalls {
 		props.load(new StringReader(result.getOut()));
         setValue(pm, "y", new Double(props.getProperty("cylinder/volume")));
 
-        logger.info("x eval:" + value(pm, "x"));
-        logger.info("y eval:" + value(pm, "y"));
-        logger.info("multiply eval:" + value(pm, "add"));
+        logger.info("x exec:" + exec(pm, "x"));
+        logger.info("y exec:" + exec(pm, "y"));
+        logger.info("multiply exec:" + exec(pm, "add"));
         assertTrue(value(pm, "add").equals(47.69911184307752));
-		logger.info("x eval:" + value(pm, "x"));
-		logger.info("y eval:" + value(pm, "y"));
-		logger.info("multiply eval:" + value(pm, "add"));
-		assertTrue(value(pm, "add").equals(47.69911184307752));
+		logger.info("x exec:" + exec(pm, "x"));
+		logger.info("y exec:" + exec(pm, "y"));
+		logger.info("multiply exec:" + exec(pm, "add"));
+		assertTrue(exec(pm, "add").equals(47.69911184307752));
 	}
 
     @Test
@@ -114,10 +114,10 @@ public class SysCalls {
 
         logger.info("cylinder/radius:" + eval(result, "cylinder/radius"));
 		logger.info("cylinder/height:" + eval(result, "cylinder/height"));
-		logger.info("x eval:" + eval(pm, "x"));
-		logger.info("y eval:" + eval(pm, "y"));
-        logger.info("multiply eval:" + eval(pm, "add"));
-        assertTrue(eval(pm, "add").equals(47.69911184307752));
+		logger.info("x exec:" + exec(pm, "x"));
+		logger.info("y exec:" + exec(pm, "y"));
+        logger.info("multiply exec:" + exec(pm, "add"));
+        assertTrue(exec(pm, "add").equals(47.69911184307752));
     }
 
 	@Test
@@ -174,18 +174,18 @@ public class SysCalls {
 								inVal("cylinder"),
 								outVal("cylinder/volume"), outVal("cylinder/radius"), outVal("cylinder/height")))));
 
-		String volume = (String) eval(sm, "volume");
+		String volume = (String) exec(sm, "volume");
 		logger.info("volume: " + volume);
 		assertTrue(volume.equals("37.69911184307752"));
-		assertTrue(eval(sm, "cylinder/height").equals("3.0"));
-		assertTrue(eval(sm, "cylinder/radius").equals("2.0"));
-		assertTrue(eval(sm, "cylinder/volume").equals("37.69911184307752"));
+		assertTrue(exec(sm, "cylinder/height").equals("3.0"));
+		assertTrue(exec(sm, "cylinder/radius").equals("2.0"));
+		assertTrue(exec(sm, "cylinder/volume").equals("37.69911184307752"));
 
 		// type conversion for numbers
 		double v = Double.valueOf(volume).doubleValue();
 		assertTrue(v == 37.69911184307752);
 		volume = Double.toString(v);
-		assertTrue(eval(sm, "cylinder/volume").equals(volume));
+		assertTrue(exec(sm, "cylinder/volume").equals(volume));
 	}
 
 	@Test
@@ -216,17 +216,17 @@ public class SysCalls {
 								outVal("cylinder/radius", double.class),
 								outVal("cylinder/height", double.class)))));
 
-		Double volume = (Double) eval(sm, "volume");
+		Double volume = (Double) exec(sm, "volume");
 		logger.info("volume: " + volume);
 		assertTrue(volume.equals(37.69911184307752));
-		assertTrue(eval(sm, "cylinder/height").equals(3.0));
-		assertTrue(eval(sm, "cylinder/radius").equals(2.0));
-		assertTrue(eval(sm, "cylinder/volume").equals(37.69911184307752));
+		assertTrue(exec(sm, "cylinder/height").equals(3.0));
+		assertTrue(exec(sm, "cylinder/radius").equals(2.0));
+		assertTrue(exec(sm, "cylinder/volume").equals(37.69911184307752));
 
 		// use values fro system call in the model sm
 		setValue(sm, "y", volume);
 		logger.info("multiply eval:" + eval(sm, "add"));
-		assertTrue(eval(sm, "add").equals(47.69911184307752));
+		assertTrue(exec(sm, "add").equals(47.69911184307752));
 	}
 
 	@Test
