@@ -2871,7 +2871,11 @@ public class operator extends Operator {
 	}
 	
 	public static Args args(Object... args) {
-		return new Args(args);
+	    if (args == null) {
+	        return new Args();
+        } else {
+            return new Args(args);
+        }
 	}
 
 	public static class Args extends Path implements SupportComponent {

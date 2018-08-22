@@ -40,6 +40,7 @@ import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Functionality.Type;
 import sorcer.service.modeling.Valuation;
+import sorcer.service.modeling.ent;
 import sorcer.util.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
@@ -1032,7 +1033,11 @@ public class operator extends Operator {
 		return table.getValue(rowName, columnName);
 	}
 
-    public static <T> Entry<T> setValue(Entry<T> entry, T value) throws ContextException {
+    public static ent setValue(ent entry, Object value) throws ContextException {
+        return setValue((Entry)entry, value);
+    }
+
+    public static Entry setValue(Entry entry, Object value) throws ContextException {
         try {
             entry.setValue(value);
         } catch (RemoteException e) {
@@ -1045,7 +1050,7 @@ public class operator extends Operator {
             }
         }
         entry.setValid(true);
-		entry.setChanged(true);
+        entry.setChanged(true);
         return entry;
     }
 

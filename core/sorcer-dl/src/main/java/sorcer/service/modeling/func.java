@@ -1,5 +1,8 @@
 package sorcer.service.modeling;
 
-public interface func<V> extends Functionality<V>, ent<V> {
+import sorcer.service.Arg;
+import sorcer.service.Service;
+
+public interface func<V> extends Service, Functionality<V>, ent<V>, Arg {
 
 }
