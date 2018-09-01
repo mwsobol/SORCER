@@ -146,9 +146,9 @@ public class SmlOperators {
 		Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
 			ent("arg/y1", entFi(inVal("arg/y1/fi1", 10.0), inVal("arg/y1/fi2", 11.0))),
 			ent("arg/y2", entFi(inVal("arg/y2/fi1", 90.0), inVal("arg/y2/fi2", 91.0))),
-			ent("mFi1", mrpFi(morpher1, add, multiply)),
-			ent("mFi2", mrpFi(morpher2, average, divide, subtract)),
-			ent("mFi3", mrpFi(average, divide, multiply)),
+			ent("mFi1", mphFi(morpher1, add, multiply)),
+			ent("mFi2", mphFi(morpher2, average, divide, subtract)),
+			ent("mFi3", mphFi(average, divide, multiply)),
 			// metafidelities
 			fi2, fi3, fi4,
 			Strategy.FidelityManagement.YES,

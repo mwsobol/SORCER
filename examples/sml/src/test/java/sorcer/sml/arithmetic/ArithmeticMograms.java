@@ -14,7 +14,6 @@ import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.Morpher;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
-import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
@@ -377,9 +376,9 @@ public class ArithmeticMograms {
 
 		// multifidelity model with morphers
 		Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
-			ent("mFi1", mrpFi(mFi1Morpher, add, multiply)),
-			ent("mFi2", mrpFi(mFi2Morpher, average, divide, subtract)),
-			ent("mFi3", mrpFi(average, divide, multiply)),
+			ent("mFi1", mphFi(mFi1Morpher, add, multiply)),
+			ent("mFi2", mphFi(mFi2Morpher, average, divide, subtract)),
+			ent("mFi3", mphFi(average, divide, multiply)),
 			fi2, fi3, fi4,
 			response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 

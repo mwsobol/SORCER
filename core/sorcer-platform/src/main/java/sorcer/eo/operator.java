@@ -1444,25 +1444,25 @@ public class operator extends Operator {
 		return exertion.getMultiFi();
 	}
 
-	public static MorphFidelity mrpFi(Morpher morpher, Service... services) {
+	public static MorphFidelity mphFi(Morpher morpher, Service... services) {
 		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(services));
 		morphFi.setMorpher(morpher);
 		return morphFi;
 	}
 
-	public static MorphFidelity mrpFi(String name, Morpher morpher, Service... services) {
+	public static MorphFidelity mphFi(String name, Morpher morpher, Service... services) {
 		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
 		morphFi.setMorpher(morpher);
 		morphFi.setPath(name);
 		return morphFi;
 	}
 
-	public static MorphFidelity mrpFi(Service... services) {
+	public static MorphFidelity mphFi(Service... services) {
 		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(services));
 		return morphFi;
 	}
 
-	public static MorphFidelity mrpFi(String name, Service... services) {
+	public static MorphFidelity mphFi(String name, Service... services) {
 		MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(name, services));
 		return morphFi;
 	}
@@ -1743,7 +1743,7 @@ public class operator extends Operator {
 		return fi;
 	}
 
-	public static Fidelity<String> mrpFi(String name, String path) {
+	public static Fidelity<String> mphFi(String name, String path) {
 		Fidelity<String> fi = new Fidelity(name);
 		fi.setPath(path);
 		fi.fiType = Fi.Type.MORPH;

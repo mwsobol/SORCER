@@ -42,13 +42,13 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mrpFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                ent("mphFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                response("mrpFi", "arg/x1", "arg/x2"));
+                response("mphFi", "arg/x1", "arg/x2"));
 
-        Context out = eval(mod, fi("mrpFi", "multiply"));
+        Context out = eval(mod, fi("mphFi", "multiply"));
         logger.info("out: " + out);
-        assertTrue(get(out, "mrpFi").equals(900.0));
+        assertTrue(get(out, "mphFi").equals(900.0));
         assertTrue(get(mod, "result/y").equals(900.0));
     }
 
@@ -59,18 +59,18 @@ public class ModelMultiFidelities {
         Model mdl = model(
                 ent("arg/x1", entFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
                 ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
-                ent("mrpFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                ent("mphFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                response("mrpFi", "arg/x1", "arg/x2"));
+                response("mphFi", "arg/x1", "arg/x2"));
 
         logger.info("DEPS: " + printDeps(mdl));
 
-//        Context out = response(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("mrpFi", "multiply"));
-        Context out = response(mdl, fi("arg/x1", "arg/x1/fi2"), fis(fi("arg/x2", "arg/x2/fi2"), fi("mrpFi", "multiply")));
+//        Context out = response(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("mphFi", "multiply"));
+        Context out = response(mdl, fi("arg/x1", "arg/x1/fi2"), fis(fi("arg/x2", "arg/x2/fi2"), fi("mphFi", "multiply")));
         logger.info("out: " + out);
         assertTrue(get(out, "arg/x1").equals(11.0));
         assertTrue(get(out, "arg/x2").equals(91.0));
-        assertTrue(get(out, "mrpFi").equals(1001.0));
+        assertTrue(get(out, "mphFi").equals(1001.0));
         assertTrue(get(mdl, "result/y").equals(1001.0));
     }
 
@@ -102,13 +102,13 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mrpFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                ent("mphFi", sFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                response("mrpFi", "arg/x1", "arg/x2"));
+                response("mphFi", "arg/x1", "arg/x2"));
 
-        Context out = response(mod, fi("mrpFi", "add"));
+        Context out = response(mod, fi("mphFi", "add"));
         logger.info("out: " + out);
-        assertTrue(get(out, "mrpFi").equals(100.0));
+        assertTrue(get(out, "mphFi").equals(100.0));
         assertTrue(get(mod, "result/y").equals(100.0));
     }
 
@@ -120,17 +120,17 @@ public class ModelMultiFidelities {
             val("sig1", sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
             val("sig2", sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
 
-            ent("mrpFi", sFi(ref("sig1"), ref("sig2"))),
-            response("mrpFi", "arg/x1", "arg/x2"));
+            ent("mphFi", sFi(ref("sig1"), ref("sig2"))),
+            response("mphFi", "arg/x1", "arg/x2"));
 
-        Context out = response(mod, fi("mrpFi", "sig1"));
+        Context out = response(mod, fi("mphFi", "sig1"));
         logger.info("out: " + out);
-//        assertTrue(get(out, "mrpFi").equals(100.0));
+//        assertTrue(get(out, "mphFi").equals(100.0));
         assertTrue(get(mod, "result/y").equals(100.0));
 
-        out = response(mod, fi("mrpFi", "sig2"));
+        out = response(mod, fi("mphFi", "sig2"));
         logger.info("out2: " + out);
-//        assertTrue(get(out, "mrpFi").equals(900.0));
+//        assertTrue(get(out, "mphFi").equals(900.0));
         assertTrue(get(mod, "result/y").equals(900.0));
     }
 
@@ -141,16 +141,16 @@ public class ModelMultiFidelities {
         Model mod = srvModel(inVal("x1", 10.0), inVal("x2", 90.0),
                 ent("eval1", invoker("add", "x1 + x2", args("x1", "x2"))),
                 ent("eval2", invoker("multiply", "x1 * x2", args("x1", "x2"))),
-                ent("mrpFi", entFi(ref("eval1"), ref("eval2"))),
-                response("mrpFi", "x1", "x2"));
+                ent("mphFi", entFi(ref("eval1"), ref("eval2"))),
+                response("mphFi", "x1", "x2"));
 
-        Context out = response(mod, fi("mrpFi", "eval1"));
+        Context out = response(mod, fi("mphFi", "eval1"));
         logger.info("out: " + out);
-        assertTrue(get(out, "mrpFi").equals(100.0));
+        assertTrue(get(out, "mphFi").equals(100.0));
 
-        out = response(mod, fi("mrpFi", "eval2"));
+        out = response(mod, fi("mphFi", "eval2"));
         logger.info("out2: " + out);
-        assertTrue(get(out, "mrpFi").equals(900.0));
+        assertTrue(get(out, "mphFi").equals(900.0));
     }
 
     @Test
@@ -194,9 +194,9 @@ public class ModelMultiFidelities {
 
         // three entry multifidelity model
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
-                ent("mFi1", mrpFi(add, multiply)),
-                ent("mFi2", mrpFi(average, divide, subtract)),
-                ent("mFi3", mrpFi(average, divide, multiply)),
+                ent("mFi1", mphFi(add, multiply)),
+                ent("mFi2", mphFi(average, divide, subtract)),
+                ent("mFi3", mphFi(average, divide, multiply)),
                 manager,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
@@ -252,9 +252,9 @@ public class ModelMultiFidelities {
 
         // three entry multifidelity model
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
-                ent("mFi1", mrpFi(add, multiply)),
-                ent("mFi2", mrpFi(average, divide, subtract)),
-                ent("mFi3", mrpFi(average, divide, multiply)),
+                ent("mFi1", mphFi(add, multiply)),
+                ent("mFi2", mphFi(average, divide, subtract)),
+                ent("mFi3", mphFi(average, divide, multiply)),
                 manager, fi2, fi3,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
@@ -313,9 +313,9 @@ public class ModelMultiFidelities {
 
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 addEnt, multiplyEnt, divideEnt, averageEnt,
-                ent("mFi1", mrpFi(addEnt, multiplyEnt)),
-                ent("mFi2", mrpFi(averageEnt, divideEnt, subtractEnt)),
-                ent("mFi3", mrpFi(averageEnt, divideEnt, multiplyEnt)),
+                ent("mFi1", mphFi(addEnt, multiplyEnt)),
+                ent("mFi2", mphFi(averageEnt, divideEnt, subtractEnt)),
+                ent("mFi3", mphFi(averageEnt, divideEnt, multiplyEnt)),
                 manager,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
@@ -379,9 +379,9 @@ public class ModelMultiFidelities {
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
 				ent("arg/y1", entFi(inVal("arg/y1/fi1", 10.0), inVal("arg/y1/fi2", 11.0))),
 				ent("arg/y2", entFi(inVal("arg/y2/fi1", 90.0), inVal("arg/y2/fi2", 91.0))),
-                ent("mFi1", mrpFi(morpher1, add, multiply)),
-                ent("mFi2", mrpFi(morpher2, average, divide, subtract)),
-                ent("mFi3", mrpFi(average, divide, multiply)),
+                ent("mFi1", mphFi(morpher1, add, multiply)),
+                ent("mFi2", mphFi(morpher2, average, divide, subtract)),
+                ent("mFi3", mphFi(average, divide, multiply)),
                 fi2, fi3, fi4,
                 FidelityManagement.YES,
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
@@ -438,7 +438,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        MultiFiMogram mfs = mogFi(mrpFi(morpher, e1, e2, e3));
+        MultiFiMogram mfs = mogFi(mphFi(morpher, e1, e2, e3));
 
         Object out = exec(mfs);
         logger.info("out: " + out);
@@ -485,7 +485,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        MultiFiMogram mfs = mogFi(mrpFi("sigFi", morpher, ms, as), cxt);
+        MultiFiMogram mfs = mogFi(mphFi("sigFi", morpher, ms, as), cxt);
 
         Context out = (Context) exec(mfs);
         logger.info("out: " + out);
@@ -509,7 +509,7 @@ public class ModelMultiFidelities {
                         outVal("result/y")));
 
 
-        MultiFiMogram mfs = mogFi(mrpFi("taskFi", t5, t4));
+        MultiFiMogram mfs = mogFi(mphFi("taskFi", t5, t4));
         Mogram mog = exert(mfs);
         logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(100.0));
@@ -545,7 +545,7 @@ public class ModelMultiFidelities {
             }
         };
 
-        MultiFiMogram mfs = mogFi(mrpFi(morpher, t5, t4));
+        MultiFiMogram mfs = mogFi(mphFi(morpher, t5, t4));
         Mogram mog = exert(mfs);
         logger.info("out: " + context(mog));
         assertTrue(value(context(mog), "result/y").equals(100.0));
@@ -626,16 +626,16 @@ public class ModelMultiFidelities {
             }
         };
 
-        Metafidelity fi2 = fi("sysFi2", mrpFi("mFi2", "ph4"), fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        Metafidelity fi2 = fi("sysFi2", mphFi("mFi2", "ph4"), fi("mFi2", "divide"), fi("mFi3", "multiply"));
         Metafidelity fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
         Metafidelity fi4 = fi("sysFi4", fi("mFi3", "average"));
         Metafidelity fi5 = fi("sysFi5", fi("mFi4", "t4"));
 
         // four entry multifidelity model with four morphers
         Model mdl = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
-                ent("mFi1", mrpFi(morpher1, add, multiply)),
-                ent("mFi2", mrpFi(entFi(ent("ph2", morpher2), ent("ph4", morpher4)), average, divide, subtract)),
-                ent("mFi3", mrpFi(average, divide, multiply)),
+                ent("mFi1", mphFi(morpher1, add, multiply)),
+                ent("mFi2", mphFi(entFi(ent("ph2", morpher2), ent("ph4", morpher4)), average, divide, subtract)),
+                ent("mFi3", mphFi(average, divide, multiply)),
                 ent("mFi4", mogFi(morpher3, t5, t4)),
                 fi2, fi3, fi4, fi5,
                 FidelityManagement.YES,
