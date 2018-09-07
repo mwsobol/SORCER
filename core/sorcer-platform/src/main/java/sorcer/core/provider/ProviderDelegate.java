@@ -1125,18 +1125,38 @@ public class ProviderDelegate {
                 } else if (selector.equals("getValue") && bean instanceof Evaluation) {
                     m = bean.getClass().getMethod(selector, Arg[].class);
                     isContextual = false;
-                } else
-                    m = bean.getClass().getMethod(selector, argTypes);
+                 } else {
+                    for(Method method : bean.getClass().getMethods()) {
+                        Class[] parmTypes = method.getParameterTypes();
+                        if(parmTypes.length==0 && argTypes.length==0) {
+                            m = method;
+                            break;
+                        }
+                        if (method.getName().equals(selector) && parmTypes.length==argTypes.length) {
+                            for (int i = 0; i < parmTypes.length; i++) {
+                                if (argTypes[i].isAssignableFrom(parmTypes[i])) {
+                                    m = method;
+                                    break;
+                                }
+                            }
+                            if(m!=null)
+                                break;
+                        }
+                    }
+					if(m==null) {
+                        m = bean.getClass().getMethod(selector, argTypes);
+                    }
+				}
                 if(logger.isTraceEnabled())
                     logger.trace("Executing service bean method: {} by: {} isContextual: {}",
-                            m, config.getProviderName(), isContextual);
+                                 m, config.getProviderName(), isContextual);
                 task.getContext().setExertion(task);
                 ((ServiceContext) task.getContext()).getMogramStrategy().setCurrentSelector(selector);
                 String pf = task.getProcessSignature().getPrefix();
                 if (pf != null)
                     ((ServiceContext) task.getContext()).setCurrentPrefix(pf);
 
-                Context result = task.getContext();
+                Context result/* = task.getContext()*/;
                 if (isContextual)
                     result = execContextualBean(m, task, bean, args);
                 else
@@ -1167,10 +1187,8 @@ public class ProviderDelegate {
 		result = task.getContext();
 		String selector = task.getProcessSignature().getSelector();
 		Object[] pars = new Object[] { task.getContext() };
-		if (selector.equals("invoke")
-				&& (impl instanceof Exertion || impl instanceof ProcModel)) {
-			Object obj = m.invoke(impl, new Object[] { pars[0], args });
-
+		if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof ProcModel)) {
+			Object obj = m.invoke(impl, pars[0], args);
 			if (obj instanceof Job)
 				result = ((Job) obj).getJobContext();
 			else if (obj instanceof Task)
@@ -1185,7 +1203,7 @@ public class ProviderDelegate {
 				task.getTrace().addAll(((Exertion) obj).getTrace());
 			}
 		} else if (selector.equals("evaluate") ||  selector.equals("explore")) {
-			result = (Context) m.invoke(impl, new Object[] { pars[0], args });
+			result = (Context) m.invoke(impl, pars[0], args);
 		} else {
 			logger.debug("getProviderName: {} invoking: {}" + getProviderName(), m);
 			logger.debug("imp: {} args: {}" + impl, Arrays.toString(pars));
@@ -2797,21 +2815,21 @@ public class ProviderDelegate {
                 beanSignature = (ServiceSignature) signature;
                 logger.info("session bean signature: {} \nfor: {}", signature, getProviderName());
                 // non session bean to be exported, session beans are created by BeanSessionProvider
-                Object bean = sorcer.co.operator.instance(beanSignature);
-                initBean(bean);
-                allBeans.add(bean);
-                exports.put(bean, this);
+				Object bean = sorcer.co.operator.instance(beanSignature);
+				initBean(bean);
+				allBeans.add(bean);
+				exports.put(bean, this);
 				logger.warn("session bean: {} \nfor: {}", beanSignature, getProviderName());
 			} else {
-                // find it out if session service bean is available
-                sessionBean = config.getEntry(ServiceProvider.COMPONENT,
-                        SESSION_BEAN,
-                        Object.class,
-                        null);
-                if (sessionBean != null) {
-                    initBean(sessionBean);
-                    allBeans.add(sessionBean);
-                    exports.put(sessionBean, this);
+				// find it out if session service bean is available
+				sessionBean = config.getEntry(ServiceProvider.COMPONENT,
+											  SESSION_BEAN,
+											  Object.class,
+											  null);
+				if (sessionBean != null) {
+					initBean(sessionBean);
+					allBeans.add(sessionBean);
+					exports.put(sessionBean, this);
 					logger.warn("session bean: {} \nfor: {}", sessionBean, getProviderName());
 				} else {
                     otherServiceBeans(config, allBeans);
@@ -2860,7 +2878,7 @@ public class ProviderDelegate {
                 }
             }
         } catch (Exception ex) {
-            logger.warn("Error getting exporters", ex);
+            logger.error("Error getting exporters", ex);
             // ignore missing exporters and use default configurations for exporters
         }
     }

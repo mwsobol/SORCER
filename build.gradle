@@ -20,7 +20,7 @@ int ndx = ref.lastIndexOf("/")
 String branch = ref.substring(ndx+1).trim()
 String branchRef = branch.equals("master")?"":"-$branch"
 
-version = "7.2$branchRef"
+version = "7.4$branchRef"
 
 apply plugin: 'idea'
 idea {
@@ -187,7 +187,7 @@ task allTests(type: TestReport, dependsOn: "bootSorcerRio") {
     destinationDir = file("$buildDir/reports/allTests")
     project.subprojects { project ->
         tasks.withType(Test) {
-            //ignoreFailures true
+            ignoreFailures true
             reportOn it
         }
     }
