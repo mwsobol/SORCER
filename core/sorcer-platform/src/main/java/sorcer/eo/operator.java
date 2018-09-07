@@ -946,7 +946,7 @@ public class operator extends sorcer.operator {
         return ts;
     }
 
-	public static Signature matchTypes(Signature signature, Class... matchTypes)
+	public static Signature mtSig(Signature signature, Class... matchTypes)
 			throws SignatureException {
 		Class[] types = matchTypes;
 		if (signature.getServiceType() != null) {

@@ -14,7 +14,6 @@ import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 import sorcer.service.Strategy.Shell;
-import sorcer.service.modeling.Modeling;
 
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
@@ -317,7 +316,7 @@ public class Signatures {
 	public void referencingRemoteProviderWithMultiTypes() throws Exception {
 
 		// request the remote service
-		Service as = task("as", matchTypes(sig("add", Adder.class), MikeAdder.class),
+		Service as = task("as", mtSig(sig("add", Adder.class), MikeAdder.class),
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
