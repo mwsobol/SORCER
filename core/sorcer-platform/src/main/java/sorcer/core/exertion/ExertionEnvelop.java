@@ -20,11 +20,11 @@ package sorcer.core.exertion;
 import net.jini.core.entry.Entry;
 import net.jini.id.Uuid;
 import net.jini.lookup.entry.Name;
+import sorcer.co.operator.Tokens;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.Exec;
 import sorcer.service.Exertion;
-import sorcer.service.ServiceExertion;
 import sorcer.service.SignatureException;
 
 import javax.security.auth.Subject;
@@ -56,6 +56,8 @@ public class ExertionEnvelop implements Entry {
 	public byte[] encryptedExertion;
 
 	public Subject providerSubject;
+
+	public Tokens matchTokens;
 
 	public static ExertionEnvelop getTemplate() {
 		ExertionEnvelop ee = new ExertionEnvelop();
@@ -113,8 +115,9 @@ public class ExertionEnvelop implements Entry {
 		ee.serviceType = ss.getServiceType();
 		ee.providerName = ss.getProviderName().getName();
 		ee.exertionID = ex.getId();
-		ee.parentID = ((ServiceExertion) ex).getParentId();
+		ee.parentID =  ex.getParentId();
 		ee.isJob = new Boolean(ex.isJob());
+		ee.setMatchTokens((Tokens) ss.getOperation().getMatchTokens());
 
 		return ee;
 	}
@@ -141,6 +144,14 @@ public class ExertionEnvelop implements Entry {
 	public Entry[] getAttributes() {
 		Entry[] attrs = { new Name(serviceType.getName()), new Name(providerName) };
 		return attrs;
+	}
+
+	public Tokens getMatchTokens() {
+		return matchTokens;
+	}
+
+	public void setMatchTokens(Tokens matchTokens) {
+		this.matchTokens = matchTokens;
 	}
 
 	public long resultLeaseTime() {

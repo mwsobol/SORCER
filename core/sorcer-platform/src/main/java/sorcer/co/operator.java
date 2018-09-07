@@ -247,15 +247,15 @@ public class operator extends sorcer.operator {
 		return new HashSet<T>(list(elems));
 	}
 
-	public static <T> List<T> list(T... elems) {
+	public static <T> List<T> list(T... items) {
         List<T> list = new ArrayList<>();
-        Collections.addAll(list, elems);
+        Collections.addAll(list, items);
 		return list;
 	}
 
-	public static List<Object> row(Object... elems) {
+	public static List<Object> row(Object... items) {
         List<Object> list = new ArrayList<>();
-        Collections.addAll(list, elems);
+        Collections.addAll(list, items);
         return list;
 	}
 
@@ -273,17 +273,44 @@ public class operator extends sorcer.operator {
         return list;
 	}
 
-	public static List<String> header(String... elems) {
-		List<String> out = new Header<String>(elems.length);
-		for (String each : elems) {
+	public static List<String> header(String... items) {
+		List<String> out = new Header(items.length);
+		for (String each : items) {
 			out.add(each);
 		}
 		return out;
 	}
 
-	public static List<String> names(String... elems) {
+	public static Tokens<Object> os(Object... items) {
+		Tokens out = new Tokens(items.length);
+		for (Object each : items) {
+			out.add(each);
+		}
+		out.setType("OS");
+		return out;
+	}
+
+	public static Tokens<Object> app(Object... items) {
+		Tokens out = new Tokens(items.length);
+		for (Object each : items) {
+			out.add(each);
+		}
+		out.setType("APP");
+		return out;
+	}
+
+	public static Tokens<Object> match(Object... items) {
+		Tokens out = new Tokens(items.length);
+		for (Object each : items) {
+			out.add(each);
+		}
+		out.setType("LIST");
+		return out;
+	}
+
+	public static List<String> names(String... items) {
         List<String> list = new ArrayList<>();
-        Collections.addAll(list, elems);
+        Collections.addAll(list, items);
 		return list;
 	}
 
@@ -1261,6 +1288,33 @@ public class operator extends sorcer.operator {
 
 		public Header(int initialCapacity) {
 			super(initialCapacity);
+		}
+	}
+
+	public static class Tokens<T> extends ArrayList<T> implements Arg {
+		private static final long serialVersionUID = 1L;
+
+		private String type;
+
+		public Tokens() {
+			super();
+		}
+
+		public Tokens(int initialCapacity) {
+			super(initialCapacity);
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public String getName() {
+			return type;
 		}
 	}
 

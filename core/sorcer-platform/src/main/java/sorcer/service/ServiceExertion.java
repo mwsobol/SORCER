@@ -37,6 +37,7 @@ import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
+import sorcer.co.operator.Tokens;
 
 import javax.security.auth.Subject;
 import java.rmi.RemoteException;
@@ -583,8 +584,8 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                     // check for control strategy
                 } else if (arg instanceof ControlContext) {
                     updateControlContect((ControlContext)arg);
-                } else if (arg instanceof Signature.Operation) {
-                    Signature.Operation op = (Signature.Operation)arg;
+                } else if (arg instanceof ServiceSignature.Operation) {
+                    ServiceSignature.Operation op = (ServiceSignature.Operation)arg;
                     if (name.equals(op.path)) {
                         ((ServiceSignature)selectedFidelity.getSelect()).setSelector(op.selector);
                     }

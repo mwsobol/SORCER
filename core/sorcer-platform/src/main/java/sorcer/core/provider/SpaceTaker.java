@@ -40,6 +40,7 @@ import sorcer.service.space.SpaceAccessor;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -101,13 +102,15 @@ public class SpaceTaker implements Runnable {
 		public String spaceGroup;
 		public boolean workerTransactional;
 		public boolean noQueue;
+		public Object osName = System.getProperty("os.name");
+		public List<String> appNames;
 
 		public SpaceTakerData() {
 		}
 
 		public SpaceTakerData(ExertionEnvelop entry, LokiMemberUtil member,
 				Provider provider, String spaceName, String spaceGroup,
-				boolean workerIsTransactional, boolean noQueue) {
+				boolean workerIsTransactional, boolean noQueue, String osName, List<String> appNames) {
 			this.provider = provider;
 			this.entry = entry;
 			this.myMemberUtil = member;
@@ -115,6 +118,8 @@ public class SpaceTaker implements Runnable {
 			this.spaceGroup = spaceGroup;
 			this.workerTransactional = workerIsTransactional;
 			this.noQueue = noQueue;
+			this.osName = osName;
+			this.appNames = appNames;
 		}
 
 		public String toString() {

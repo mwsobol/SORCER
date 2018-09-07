@@ -58,7 +58,8 @@ public class NetTaskExertions {
 	@Test
 	public void exertOpTask() throws Exception  {
 
-		Task t5 = task(sig(Adder.class), op("add", Strategy.Access.PULL),
+		Task t5 = task(sig(Adder.class), op("add",
+			match(os("Mac OS X"), app("Astros", "Nastran")), Strategy.Access.PULL),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		Exertion out = exert(t5);

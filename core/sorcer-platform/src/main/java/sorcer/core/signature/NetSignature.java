@@ -67,6 +67,7 @@ public class NetSignature extends ObjectSignature {
 	protected List<Entry> attributes;
 
     protected String version;
+
     private static Logger logger = LoggerFactory.getLogger(ObjectSignature.class);
 
 	public NetSignature() {

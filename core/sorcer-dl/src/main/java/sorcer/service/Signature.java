@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -487,7 +488,6 @@ public interface Signature extends Request, Comparable, Dependency, Identifiable
         }
     }
 
-
     public static class Operation implements Serializable, Arg {
         static final long serialVersionUID = 1L;
 
@@ -507,12 +507,22 @@ public interface Signature extends Request, Comparable, Dependency, Identifiable
 
 		public Strategy.Shell isShellRemote = Strategy.Shell.LOCAL;
 
+		private List matchTokens;
+
 		public boolean isProvisionable = false;
 
 		@Override
         public String getName() {
             return selector;
         }
+
+		public List getMatchTokens() {
+			return matchTokens;
+		}
+
+		public void setMatchTokens(List matchTokens) {
+			this.matchTokens = matchTokens;
+		}
     }
 
 	public static class ServiceMultitype implements Serializable, Arg {
