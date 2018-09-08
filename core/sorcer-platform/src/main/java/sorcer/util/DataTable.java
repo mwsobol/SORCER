@@ -62,7 +62,7 @@ public class DataTable implements ModelTable, Response, rsp {
 	protected Uuid id;
 
 	protected String name = "Data Table";
-	/*  Enumeration type for length units */
+	/*  Enumeration multitype for length units */
 
 	private String fiColumnName = "fis";
 
@@ -84,7 +84,7 @@ public class DataTable implements ModelTable, Response, rsp {
 		FEET, INCH, METER
 	}
 
-	/* Enumeration type for dataTable cell */
+	/* Enumeration multitype for dataTable cell */
 	public enum Cell {
 		STRING, FLOAT, DOUBLE, INTEGER, LONG, SERIALIZED, MARSHALED
 	}
@@ -823,7 +823,7 @@ public class DataTable implements ModelTable, Response, rsp {
 		if (columnIdentifiers != null)qTable.setColumnIdentifiers(columnIdentifiers);
 		if (rowIdentifiers != null) qTable.setRowIdentifiers(rowIdentifiers);
 		//		logger.info("col1Idx = "+col1Idx+" for colName = "+colName1);
-		//		logger.info("type of colIdx = "+getRow(0).get(col1Idx).getClass().getName());
+		//		logger.info("multitype of colIdx = "+getRow(0).get(col1Idx).getClass().getName());
 		for (int i=0; i<getRowCount(); i++) {
 			List<?>cRow = getRow(i);
 			//			logger.info("cRow Value = "+cRow.get(col1Idx)+" inValue = >"+col1Value+"< is Mathch "+cRow.get(col1Idx).equals(col1Value) );

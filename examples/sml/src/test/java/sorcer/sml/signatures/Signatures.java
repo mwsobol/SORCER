@@ -313,10 +313,24 @@ public class Signatures {
 	}
 
 	@Test
-	public void referencingRemoteProviderWithMultiTypes() throws Exception {
+	public void referencingRemoteProviderWithMultitypes() throws Exception {
 
 		// request the remote service
-		Service as = task("as", matchTypes(sig("add", Adder.class), MikeAdder.class),
+		Service as = task("as", sig(sig("add", Adder.class), MikeAdder.class),
+				context("add",
+						inVal("arg/x1", 20.0),
+						inVal("arg/x2", 80.0),
+						result("result/y")));
+
+		assertEquals(100.0, exec(as));
+
+	}
+
+	@Test
+	public void referencingRemoteProviderWithMultitypes2() throws Exception {
+
+		// request the remote service
+		Service as = task("as", sig("add", Adder.class, MikeAdder.class),
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
@@ -340,18 +354,31 @@ public class Signatures {
 		assertEquals(100.0, value(context(out), "result/y"));
 	}
 
+    public void signatureWithMultipletypes() throws Exception  {
+        String group = property("user.name");
+
+        Task t5 = task("t5", sig("add", Adder.class, Service.class, Provider.class,
+                // comma separated list of hosts, when empty localhost is a default locator
+                srvName("Adder", locators(), group)),
+                cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+
+        Exertion out = exert(t5);
+        assertEquals(100.0, value(context(out), "result/y"));
+    }
+
 	@Test
-	public void signatureWithProviderName() throws Exception  {
+	public void signatureWithMultitypeSrvName() throws Exception  {
 		String group = property("user.name");
 
-		Task t5 = task("t5", sig(type("sorcer.arithmetic.provider.Adder"), op("add"),
-				types(Service.class, Provider.class),
-				// comma separated list of hosts, when empty localhost is a default locator
+		Task t5 = task("t5", sig(mt("sorcer.arithmetic.provider.Adder", Service.class, Provider.class),
+                op("add"),
+				//locators() - default locator or list of hosts
 				srvName("Adder", locators(), group)),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		Exertion out = exert(t5);
-//		assertEquals(100.0, value(context(out), "result/y"));
+//		logger.info("out: " + context(out));
+		assertEquals(100.0, value(context(out), "result/y"));
 	}
 
 	@Test

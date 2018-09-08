@@ -210,7 +210,7 @@ public class ServiceAccessor implements DynamicAccessor {
 	}
 
 	/**
-	 * Returns a service matching serviceType, service attributes (args), and
+	 * Returns a service matching multitype, service attributes (args), and
 	 * passes a provided filter.
 	 *
 	 * @param attributes   attributes of the requested provider

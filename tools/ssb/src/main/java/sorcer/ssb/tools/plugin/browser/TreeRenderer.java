@@ -234,9 +234,9 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
 		 * if(ii!=null){ return ii; } Entry [] atts=node.getLookupAttributes();
 		 * for(int i=0;i<atts.length;i++){
 		 * 
-		 * if(atts[i] instanceof ServiceMultitype){
+		 * if(atts[i] instanceof Multitype){
 		 * 
-		 * ServiceMultitype st=(ServiceMultitype)atts[i];
+		 * Multitype st=(Multitype)atts[i];
 		 * 
 		 * try{ java.awt.Image
 		 * icon=st.getIcon(java.beans.BeanInfo.ICON_COLOR_16x16);

@@ -30,13 +30,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import sorcer.core.analytics.AnalyticsRecorder;
-import sorcer.core.provider.Exerter;
 import sorcer.core.provider.Modeler;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.SessionBeanProvider;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
-import sorcer.service.modeling.Exploration;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -317,7 +315,7 @@ public class SorcerILFactory extends BasicILFactory {
                 Object service;
                 if (args.length > 0 && isSorcerType(args[0])) {
                     if (logger.isTraceEnabled()) {
-                        logger.trace("Process Sorcer type for {}", args[0].getClass().getName());
+                        logger.trace("Process Sorcer service type for {}", args[0].getClass().getName());
                     }
                     service = serviceBeanMap.get(((Exertion) args[0]).getProcessSignature().getServiceType());
                     if (service != null && !(impl instanceof SessionBeanProvider)) {

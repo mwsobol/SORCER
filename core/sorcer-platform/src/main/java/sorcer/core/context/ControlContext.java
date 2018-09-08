@@ -44,7 +44,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 	public final static String CONTROL_CONTEXT = "control/strategy";
 
 	/**
-	 * A flow type indicates if this exertion can be executed sequentially, in
+	 * A flow multitype indicates if this exertion can be executed sequentially, in
 	 * parallel, or concurrently with other component mograms within this
 	 * exertion. The concurrent execution requires all mapped inputs in the
 	 * exertion context to be assigned before this exertion can be executed.
@@ -66,7 +66,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 	public final static String EXERTION_MONITORABLE = "exertion" + CPS
 			+ "monitorable";
 
-	// exertion access type
+	// exertion access multitype
 	public final static String EXERTION_ACCESS = "exertion" + CPS + "access";
 
 	// final static String JOB_NO_WAIT = "job/no wait";

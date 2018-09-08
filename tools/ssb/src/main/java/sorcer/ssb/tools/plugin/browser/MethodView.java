@@ -68,7 +68,7 @@ class MethodView extends JPanel implements ActionListener {
 
 		Object[][] data = new Object[nRows][3];
 
-		data[0][0] = "Return type";
+		data[0][0] = "Return multitype";
 		data[0][1] = retType.getName();
 		data[1][0] = "Method key";
 		data[1][1] = name;

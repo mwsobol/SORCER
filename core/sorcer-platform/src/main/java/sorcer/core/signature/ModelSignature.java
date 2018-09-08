@@ -38,7 +38,7 @@ public class ModelSignature extends ServiceSignature implements sig {
 
 	public ModelSignature(String selector, Class serviceType, String providerName, Arg... parameters) {
 		super(selector, selector);
-		this.serviceType.providerType = serviceType;
+		this.multitype.providerType = serviceType;
 		if (providerName == null || providerName.length() == 0)
 			this.providerName = new ProviderName(ANY);
 		else

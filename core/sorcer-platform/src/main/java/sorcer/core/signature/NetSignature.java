@@ -78,39 +78,39 @@ public class NetSignature extends ObjectSignature implements sig {
 		this.name = signature.name;
 		this.operation = signature.operation;
 		this.providerName =  signature.providerName;
-		this.serviceType = signature.serviceType;
+		this.multitype = signature.multitype;
 		this.deployment = signature.deployment;
 		this.returnPath = signature.returnPath;
 	}
 
-	public NetSignature(Class<?> serviceType) {
+	public NetSignature(Class serviceType) {
 		this("none", serviceType, ANY);
 	}
 	
-	public NetSignature(String selector, Class<?> serviceType) {
+	public NetSignature(String selector, Class serviceType) {
 		this(selector, serviceType, ANY);
 	}
 
 
-	public NetSignature(String selector, Class<?> serviceType, ProviderName providerName) {
+	public NetSignature(String selector, Class serviceType, ProviderName providerName) {
 		this(selector, serviceType);
 		this.providerName =  providerName;
 		execType = Type.PROC;
 	}
 
 
-	public NetSignature(String selector, Class<?> serviceType,
+	public NetSignature(String selector, Class serviceType,
 			String providerName) {
 		this(selector, serviceType, providerName, (Type) null);
 	}
 
-	public NetSignature(String selector, Class<?> serviceType,
+	public NetSignature(String selector, Class serviceType,
 			Type methodType) throws SignatureException {
 		this(selector, serviceType);
 		this.execType = methodType;
 	}
 
-	public NetSignature(String selector, Class<?> serviceType,
+	public NetSignature(String selector, Class serviceType,
 			List<Entry> attributes, Type methodType)
 			throws SignatureException {
 		this(selector, serviceType);
@@ -118,16 +118,16 @@ public class NetSignature extends ObjectSignature implements sig {
 		this.attributes = attributes;
 	}
 
-	public NetSignature(String selector, Class<?> serviceType,
+	public NetSignature(String selector, Class serviceType,
 						String providerName, Type methodType) {
 
 		this(selector, serviceType, providerName, methodType, null);
 	}
 
-	public NetSignature(String selector, Class<?> serviceType,
+	public NetSignature(String selector, Class serviceType,
 						String providerName, Type methodType, Version version) {
 		this.version = version!=null ? version.getName() : null;
-		this.serviceType.providerType = serviceType;
+		this.multitype.providerType = serviceType;
         if (serviceType != null && version == null)
             this.version = MavenUtil.findVersion(serviceType);
 		if (providerName == null || providerName.length() == 0)
@@ -148,7 +148,7 @@ public class NetSignature extends ObjectSignature implements sig {
     public NetSignature(String selector, String strServiceType) {
         try {
             Class serviceType = Class.forName(strServiceType);
-            this.serviceType.providerType = serviceType;
+            this.multitype.providerType = serviceType;
             if (serviceType!=null) this.version = MavenUtil.findVersion(serviceType);
             setSelector(selector);
         } catch (ClassNotFoundException e) {
@@ -162,7 +162,7 @@ public class NetSignature extends ObjectSignature implements sig {
         if (version!=null) this.version = version;
     }
 
-    public NetSignature(String selector, Class<?> serviceType, String version,
+    public NetSignature(String selector, Class serviceType, String version,
                         String providerName) {
         this(selector, serviceType, version, providerName, null);
     }
@@ -220,7 +220,7 @@ public class NetSignature extends ObjectSignature implements sig {
 
 	public String action() {
 		String pn = (providerName == null) ? ANY : providerName.getName();
-		return serviceType + ", " + operation.selector + ", " + pn;
+		return multitype + ", " + operation.selector + ", " + pn;
 	}
 
 	public ProviderName getProviderName() {
@@ -298,7 +298,7 @@ public class NetSignature extends ObjectSignature implements sig {
 						.invokeMethod(operation.selector, ex);
 			} else {
 				ExertionException eme = new ExertionException(
-						"Not supported method: " + serviceType + "#" + operation.selector
+						"Not supported method: " + multitype + "#" + operation.selector
 								+ " by: "
 								+  provider.getProviderName());
 				((ServiceProvider) provider).notifyException(ex, "unsupported method",
@@ -324,7 +324,7 @@ public class NetSignature extends ObjectSignature implements sig {
 				return resultContext;
 			} else {
 				ExertionException eme = new ExertionException(
-						"Not supported method: " + serviceType + "#" + operation.selector
+						"Not supported method: " + multitype + "#" + operation.selector
 								+ " by: "
 								+ ((Provider) provider).getProviderName());
 				((ServiceProvider) provider).notifyException(context.getMogram(),
@@ -384,7 +384,7 @@ public class NetSignature extends ObjectSignature implements sig {
 	public String toString() {
 
 		return this.getClass().getSimpleName() + ":" + providerName + ":"
-				+ serviceType + "." + operation.selector
+				+ multitype + "." + operation.selector
 				+ (prefix != null ? "#" + prefix : "")
 				+ (returnPath != null ? "; result: " + returnPath : "")
 				+ ("; provisionable: " + operation.isProvisionable)
@@ -402,7 +402,7 @@ public class NetSignature extends ObjectSignature implements sig {
 		Mogram result = null;
 		try {
 			if (mog != null && cxt == null) {
-				if (serviceType.providerType == RemoteServiceShell.class) {
+				if (multitype.providerType == RemoteServiceShell.class) {
 					Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
 					result = prv.exert(mog, null, new Arg[] {});
 				} else {

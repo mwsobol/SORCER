@@ -58,7 +58,7 @@ public class SorcerUtil implements SorcerConstants {
 
 	/**
 	 * Returns a string representation of recursive arrays of any component
-	 * type. in the form [e1,...,ek]
+	 * multitype. in the form [e1,...,ek]
 	 */
 	public static String arrayToString(Object array) {
 		if (array == null)
@@ -579,7 +579,7 @@ public class SorcerUtil implements SorcerConstants {
 
 	/**
 	 * Returns a CSV string representation of recursive arrays of any component
-	 * type.
+	 * multitype.
 	 * 
 	 * @param array
 	 *            - an arry of object

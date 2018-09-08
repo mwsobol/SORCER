@@ -110,7 +110,7 @@ public class ProviderProvisionManager {
 
 
     private void failExertionInSpace(SignatureElement sigEl, Exception exc) throws ExertionException {
-        logger.info("Setting Failed state for service type: " + sigEl.getServiceType() + " exertion ID: " +
+        logger.info("Setting Failed state for service multitype: " + sigEl.getServiceType() + " exertion ID: " +
                 "" + sigEl.getExertion().getId());
         ExertionEnvelop ee = null;
         try {

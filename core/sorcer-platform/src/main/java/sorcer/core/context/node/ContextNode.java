@@ -93,7 +93,7 @@ public class ContextNode implements Serializable {
 	}
 
 	// Method to set the datatype of the node's data
-	// The type should be one of the types in java.sql.Types.
+	// The multitype should be one of the types in java.sql.Types.
 	public void setDataType(int dataType) {
 		this.dataType = dataType;
 	}
@@ -551,12 +551,12 @@ public class ContextNode implements Serializable {
 
 					StringTokenizer pair = new StringTokenizer((argPair
 							.nextToken()).trim(), " ");
-					// compute each pair into type eval and instantiate the
+					// compute each pair into multitype eval and instantiate the
 					// object
 					String type = (pair.nextToken()).trim();
 					String argV = (pair.nextToken()).trim();
-					// System.out.println("\n**************** Arg type, Arg
-					// Value "+type+" , "+argV);
+					// System.out.println("\n**************** Arg multitype, Arg
+					// Value "+multitype+" , "+argV);
 					// create an instance of the class for this argument
 					try {
 						Class argVcl = Class.forName(type);
@@ -575,8 +575,8 @@ public class ContextNode implements Serializable {
 							// "+obj.getClass());
 							// System.out.println("\n**************** argVcl "+
 							// argVcl.getClass());
-							// System.out.println("\n**************** type class
-							// "+ Class.forName(type));
+							// System.out.println("\n**************** multitype class
+							// "+ Class.forName(multitype));
 							if (obj.getClass() == argVcl.getClass()
 									|| obj.getClass() == Class.forName(type)) {
 								// System.out.println("objclass eq argVclass
@@ -586,10 +586,10 @@ public class ContextNode implements Serializable {
 							} else {
 								// try to construct an object of the appropriate
 								// fiType based on the argV class fiType
-								// System.out.println("\n**************** type
-								// is "+type);
+								// System.out.println("\n**************** multitype
+								// is "+multitype);
 								// System.out.println("\nClass******** is "+
-								// Class.forName(type));
+								// Class.forName(multitype));
 								// convert the obj to a string assuming that the
 								// constructor of the object takes one
 								objA[0] = objA[0].toString();
@@ -663,7 +663,7 @@ public class ContextNode implements Serializable {
 			int field = (Integer) itemDataVect.elementAt(3);
 			String delimiter = (String) itemDataVect.elementAt(4);
 			obj = this.getFileItemValue(line, field, delimiter);
-			// convert to proper type
+			// convert to proper multitype
 			if (((String) itemDataVect.elementAt(1)).equals("Double"))
 				obj = new Double((String) obj);
 			if (((String) itemDataVect.elementAt(1)).equals("Integer"))
@@ -683,7 +683,7 @@ public class ContextNode implements Serializable {
 
 			obj = this.getFileItemValue(line, field, delimiter, field2,
 					delimiter2);
-			// convert to proper type
+			// convert to proper multitype
 			if (((String) itemDataVect.elementAt(1)).equals("Double"))
 				obj = new Double((String) obj);
 			if (((String) itemDataVect.elementAt(1)).equals("Integer"))
@@ -700,7 +700,7 @@ public class ContextNode implements Serializable {
 			// System.out.println("Delimiter: "+delimiter);
 
 			obj = this.getFileItemValue(keyword, field, delimiter);
-			// convert to proper type
+			// convert to proper multitype
 			if (((String) itemDataVect.elementAt(1)).equals("Double"))
 				obj = new Double((String) obj);
 			if (((String) itemDataVect.elementAt(1)).equals("Integer"))
@@ -720,7 +720,7 @@ public class ContextNode implements Serializable {
 
 			obj = this.getFileItemValue(keyword, field, delimiter, subField,
 					subDelimiter);
-			// convert to proper type
+			// convert to proper multitype
 			if (((String) itemDataVect.elementAt(1)).equals("Double"))
 				obj = new Double((String) obj);
 			if (((String) itemDataVect.elementAt(1)).equals("Integer"))
@@ -743,7 +743,7 @@ public class ContextNode implements Serializable {
 			// System.out.println("Delimiter: "+delimiter);
 
 			obj = this.getFileItemValue(keyword, lineAfter, field, delimiter);
-			// convert to proper type
+			// convert to proper multitype
 			if (((String) itemDataVect.elementAt(1)).equals("Double"))
 				obj = new Double((String) obj);
 			if (((String) itemDataVect.elementAt(1)).equals("Integer"))
@@ -789,13 +789,13 @@ public class ContextNode implements Serializable {
 					StringTokenizer pair = new StringTokenizer((argPair
 							.nextToken()).trim(), " ");
 
-					// compute each pair into type eval and instantiate the
+					// compute each pair into multitype eval and instantiate the
 					// object
 					String type = (pair.nextToken()).trim();
 					String argV = (pair.nextToken()).trim();
 					// create an instance of the class for this argument
 					try {
-						// Class cl = Class.forName(type);
+						// Class cl = Class.forName(multitype);
 						// get the right constrcutor assuming there is a
 						// constructor with a single string
 						// Class[] paramTypes = {argV.getClass()};
@@ -872,7 +872,7 @@ public class ContextNode implements Serializable {
 
 	private Object getFileItemValue(String keyword) {
 		// TODO Auto-generated method stub
-		// For this type of filter which replaces a string with a eval the
+		// For this multitype of filter which replaces a string with a eval the
 		// GetValue() method
 		// has no meaning, there is no way to find the original location in the
 		// file.

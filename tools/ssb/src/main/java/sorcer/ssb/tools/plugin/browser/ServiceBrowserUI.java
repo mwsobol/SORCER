@@ -2262,7 +2262,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 		DefaultMutableTreeNode lusNode = getLUSNode(lusSid);
 		final Object[] eventData = new Object[] {  lusNode == null ? "null" : lusNode.toString(),
 				new java.util.Date(), "",// key
-				"",// event type
+				"",// event multitype
 				sid };
 		if ((trans & ServiceRegistrar.TRANSITION_NOMATCH_MATCH) > 0) {
 			_logger.info(lusSid + " ServiceRegistrar.TRANSITION_NOMATCH_MATCH "

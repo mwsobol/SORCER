@@ -28,7 +28,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
     // its arguments is persisted
     protected boolean isPersistent = false;
 
-    // if reactive then its values are evaluated if active (either Evaluation or Invocation type)
+    // if reactive then its values are evaluated if active (either Evaluation or Invocation multitype)
     protected boolean isReactive = false;
 
     protected ContextSelection contextSelector;

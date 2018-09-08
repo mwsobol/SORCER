@@ -50,7 +50,7 @@ import static sorcer.eo.operator.*;
  * phenomenon, or service, that accounts for its properties and is used to study its characteristics.
  * Properties of a service model are represented by path of Context with values that depend
  * on other properties and can be evaluated as specified by ths model. Evaluations of the service 
- * model args of the Srv type results in exerting a dynamic federation of services as specified by
+ * model args of the Srv multitype results in exerting a dynamic federation of services as specified by
  * these args. A rendezvous service provider orchestrating a choreography of the model
  * is a local or remote one specified by a service signature of the model.
  *   

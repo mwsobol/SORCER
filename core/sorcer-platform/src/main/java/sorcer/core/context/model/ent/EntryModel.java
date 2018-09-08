@@ -526,9 +526,9 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	}
 
 	/**
-	 * set context type as variable
+	 * set context multitype as variable
 	 * In ServiceContexr#init()
-	 * DATA_NODE_TYPE + APS + VAR + APS + type + APS
+	 * DATA_NODE_TYPE + APS + VAR + APS + multitype + APS
 	 */
 	public static Context markVar(Context cntxt, String path, Functionality var)
 			throws ContextException {

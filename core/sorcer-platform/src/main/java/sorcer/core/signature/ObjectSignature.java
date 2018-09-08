@@ -56,15 +56,15 @@ public class ObjectSignature extends ServiceSignature implements sig {
 	private static Logger logger = LoggerFactory.getLogger(ObjectSignature.class);
 
 	public ObjectSignature() {
-		this.serviceType.providerType = Object.class;
+		this.multitype.providerType = Object.class;
 	}
 
 	public ObjectSignature(ServiceSignature signature) throws SignatureException {
         this.name = signature.name;
         this.operation = signature.operation;
         this.providerName =  signature.providerName;
-        this.serviceType = signature.serviceType;
-        this.serviceType.providerType = signature.serviceType.providerType;
+        this.multitype = signature.multitype;
+        this.multitype.providerType = signature.multitype.providerType;
         this.returnPath = signature.returnPath;
 	}
 
@@ -82,7 +82,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 
 	public ObjectSignature(Class<?> clazz, String initSelector) throws InstantiationException,
 			IllegalAccessException {
-		this.serviceType.providerType = clazz;
+		this.multitype.providerType = clazz;
 		setInitSelector(initSelector);
 	}
 
@@ -91,7 +91,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 			IllegalAccessException {
 		this();
 		if (object instanceof Class) {
-			this.serviceType.providerType = (Class<?>) object;
+			this.multitype.providerType = (Class<?>) object;
 		} else if (object instanceof Signature) {
 			targetSignature = (Signature)object;
 		} else {
@@ -107,7 +107,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 	}
 
 	public ObjectSignature(String selector, Class<?> providerClass) {
-		this.serviceType.providerType = providerClass;
+		this.multitype.providerType = providerClass;
 		setSelector(selector);
 	}
 
@@ -146,7 +146,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 	 * @return the providerClass
 	 */
 	public Class getProviderType() {
-		return serviceType.providerType;
+		return multitype.providerType;
 	}
 
 	/**
@@ -155,7 +155,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 	 * </p>
 	 */
 	public void setProviderType(Class<?> providerType) {
-		this.serviceType.providerType = providerType;
+		this.multitype.providerType = providerType;
 	}
 
 	/**
@@ -178,8 +178,8 @@ public class ObjectSignature extends ServiceSignature implements sig {
 
 	public MethodInvoker<?> createEvaluator() throws InstantiationException,
 			IllegalAccessException {
-		if (target == null && serviceType != null) {
-			evaluator = new MethodInvoker(serviceType.providerType.newInstance(), operation.selector);
+		if (target == null && multitype != null) {
+			evaluator = new MethodInvoker(multitype.providerType.newInstance(), operation.selector);
 		} else
 			evaluator = new MethodInvoker(target, operation.selector);
 		this.evaluator.setParameters(args);
@@ -214,16 +214,16 @@ public class ObjectSignature extends ServiceSignature implements sig {
 		Object obj = null;
 		try {
 			if (args == null) {
-				if (Modifier.isAbstract(serviceType.providerType.getModifiers()) ||
-						serviceType.providerType.getConstructors().length == 0) {
-					Method sm = serviceType.providerType.getMethod(initSelector, (Class[])null);
-					obj = sm.invoke(serviceType, (Object[])null);
+				if (Modifier.isAbstract(multitype.providerType.getModifiers()) ||
+						multitype.providerType.getConstructors().length == 0) {
+					Method sm = multitype.providerType.getMethod(initSelector, (Class[])null);
+					obj = sm.invoke(multitype, (Object[])null);
 				} else {
-					constructor = serviceType.providerType.getConstructor();
+					constructor = multitype.providerType.getConstructor();
 					obj = constructor.newInstance();
 				}
 			} else {
-				constructor = serviceType.providerType.getConstructor(argTypes);
+				constructor = multitype.providerType.getConstructor(argTypes);
 				obj = constructor.newInstance(args);
 			}
 		} catch (Exception e) {
@@ -269,7 +269,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 		try {
 			if(operation.selector!=null) {
 				try {
-					Method selectorMethod = serviceType.providerType.getDeclaredMethod(operation.selector, argTypes);
+					Method selectorMethod = multitype.providerType.getDeclaredMethod(operation.selector, argTypes);
 					if(Modifier.isStatic(selectorMethod.getModifiers())) {
 						return  selectorMethod.invoke(null, args);
 					}
@@ -278,20 +278,20 @@ public class ObjectSignature extends ServiceSignature implements sig {
 				}
 			}
 			if ((initSelector == null || initSelector.equals("new")) && args == null) {
-				obj = serviceType.providerType.newInstance();
+				obj = multitype.providerType.newInstance();
 				return obj;
 			}
 
 			if (argTypes != null) {
 				if (initSelector != null)
-					m = serviceType.providerType.getMethod(initSelector, argTypes);
+					m = multitype.providerType.getMethod(initSelector, argTypes);
 				else if (operation.selector != null)
-					m = serviceType.providerType.getMethod(operation.selector, argTypes);
+					m = multitype.providerType.getMethod(operation.selector, argTypes);
 			} else  {
 				if (initSelector != null)
-					m = serviceType.providerType.getMethod(initSelector);
+					m = multitype.providerType.getMethod(initSelector);
 				else
-					m = serviceType.providerType.getMethod(operation.selector);
+					m = multitype.providerType.getMethod(operation.selector);
 			}
 			if (args != null) {
 				obj = m.invoke(obj, args);
@@ -304,7 +304,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 			logger.error("initInstance failed", e);
 			try {
 				// check if that is SORCER service bean signature
-				m = serviceType.providerType.getMethod(operation.selector, Context.class);
+				m = multitype.providerType.getMethod(operation.selector, Context.class);
 				if (m.getReturnType() == Context.class)
 					return obj;
 				else
@@ -399,7 +399,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 		Context out = null;
 		try {
 			if (mog != null) {
-				if (serviceType.providerType == ServiceShell.class) {
+				if (multitype.providerType == ServiceShell.class) {
 					ServiceShell shell = new ServiceShell(mog);
 					out = context(shell.exert(args));
 				} else if (mog instanceof Context) {
@@ -426,7 +426,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 
 	public String toString() {
 		return this.getClass() + ";" + execType + ";"
-				+ (serviceType.providerType == null ? "" : serviceType.providerType + ";") + operation.selector
+				+ (multitype.providerType == null ? "" : multitype.providerType + ";") + operation.selector
 				+ (prefix !=null ? "#" + prefix : "")
 				+ (returnPath != null ? ";"  + "result " + returnPath : "");
 	}

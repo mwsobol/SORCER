@@ -28,7 +28,7 @@ import sorcer.service.SignatureException;
 /**
  * A class which supports a simple Jini multicast lookup. It doesn't register
  * with any ServiceRegistrars it simply interrogates each one that's discovered
- * for a ServiceItem associated with the passed type/signature of a provider.
+ * for a ServiceItem associated with the passed multitype/signature of a provider.
  */
 public class ProviderLookup extends ServiceAccessor {
 
@@ -52,10 +52,10 @@ public class ProviderLookup extends ServiceAccessor {
     }
 
 	/**
-	 * Returns a service provider with the specified service type.
+	 * Returns a service provider with the specified service multitype.
 	 * 
 	 * @param serviceType
-	 *            a provider service type (interface)
+	 *            a provider service multitype (interface)
 	 * @return a service provider
 	 */
 	public Object getService(Class serviceType) {
@@ -64,12 +64,12 @@ public class ProviderLookup extends ServiceAccessor {
 
 	/**
 	 * Returns a SORCER service provider with the specified key and service
-	 * type.
+	 * multitype.
 	 * 
 	 * @param providerName
 	 *            the key of service provider
 	 * @param serviceType
-	 *            a provider service type (interface)
+	 *            a provider service multitype (interface)
 	 * @return a SORCER service provider
 	 */
 	public Service getProvider(String providerName, String serviceType) {
@@ -77,7 +77,7 @@ public class ProviderLookup extends ServiceAccessor {
 	}
 
 	/**
-	 * Returns a service provider with the specified key and service type.
+	 * Returns a service provider with the specified key and service multitype.
 	 *
 	 * @param providerName
 	 *            The key of the provider to search for
@@ -98,11 +98,11 @@ public class ProviderLookup extends ServiceAccessor {
 	}
 
 	/**
-	 * Returns a SORCER service provider with the specified service type, using
+	 * Returns a SORCER service provider with the specified service multitype, using
 	 * a Cataloger if availabe, otherwise using Jini lookup services.
 	 * 
 	 * @param serviceType
-	 *            a provider service type (interface)
+	 *            a provider service multitype (interface)
 	 * @return a SORCER service provider
 	 */
 	public Service getProvider(String serviceType) {

@@ -83,7 +83,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	/** signature operation */
 	protected Operation operation = new Operation();
 
-	protected ServiceMultitype serviceType = new ServiceMultitype();
+	protected Multitype multitype = new Multitype();
 
 	// associated exertion only if needed
 	protected Exertion exertion;
@@ -144,11 +144,11 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 		this.operation.selector = selector;
 	}
 
-    public ServiceSignature(String selector, ServiceMultitype serviceType, ProviderName providerName) {
+    public ServiceSignature(String selector, Multitype multitype, ProviderName providerName) {
 		signatureId = UuidFactory.generate();
 		this.name = selector;
         this.operation.selector = selector;
-        this.serviceType = serviceType;
+        this.multitype = multitype;
         this.providerName =  providerName;
         execType = Type.PROC;
     }
@@ -161,16 +161,12 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 		return exertion;
 	}
 
-	public Class getServiceType() throws SignatureException {
-		return serviceType.getProviderType();
-	}
-
 	public Class[] getMatchTypes() {
-		return serviceType.matchTypes;
+		return multitype.matchTypes;
 	}
 
 	public void setMatchTypes(Class[] matchTypes) {
-		this.serviceType.matchTypes = matchTypes;
+		this.multitype.matchTypes = matchTypes;
 	}
 
 	/**
@@ -204,12 +200,20 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 		rank.remove(kind);
 	}
 
-	public void setServiceType(Class<?> serviceType) {
-		this.serviceType.providerType = serviceType;
+	public void setMultitype(Multitype multitype) {
+		this.multitype = multitype;
 	}
 
-	public void setServiceType(ServiceMultitype serviceType) {
-		this.serviceType = serviceType;
+    public Multitype getMultitype() {
+        return multitype;
+    }
+
+	public Class getServiceType() throws SignatureException {
+		return this.multitype.getProviderType();
+	}
+
+	public void setServiceType(Class serviceType) {
+		this.multitype.providerType = serviceType;
 	}
 
 	public String getSelector() {
@@ -230,7 +234,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	}
 
 	public void setProviderType(Class<?> providerType) {
-		this.serviceType.providerType = providerType;
+		this.multitype.providerType = providerType;
 	}
 
 	public void setOwnerId(String oid) {
@@ -280,7 +284,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	public Signature copySignature(Signature m) {
 		ServiceSignature method = (ServiceSignature) m;
 		providerName = method.providerName;
-		serviceType = method.serviceType;
+		multitype = method.multitype;
 		portalURL = method.portalURL;
 		codebase = method.codebase;
 		agentCodebase = method.agentCodebase;
@@ -378,14 +382,14 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	}
 
 	public boolean isSelectable() {
-		if (operation.selector == null && serviceType == null) {
+		if (operation.selector == null && multitype == null) {
 			return false;
 		}
 		Method[] methods = null;
-		if (serviceType.providerType.isInterface())
-			methods = serviceType.providerType.getMethods();
+		if (multitype.providerType.isInterface())
+			methods = multitype.providerType.getMethods();
 		else
-			methods = serviceType.providerType.getMethods();
+			methods = multitype.providerType.getMethods();
 
 		for (Method m : methods) {
 			if (m.getName().equals(operation.selector)) {
@@ -420,7 +424,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 
 	public String toString() {
 		return this.getClass() + ":" + providerName + ";" + execType + ";"
-				+ ";" + serviceType + ";"
+				+ ";" + multitype + ";"
 				+ (prefix != null ? "#" + operation.selector : "")
 				+ ";" + returnPath;
 	}
@@ -440,14 +444,14 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 		else if (!(signature.getClass() == this.getClass()))
 			return false;
 		ServiceSignature sig = (ServiceSignature) signature;
-		return ("" + sig.serviceType).equals("" + serviceType)
+		return ("" + sig.multitype).equals("" + multitype)
 				&& ("" + sig.operation.selector).equals("" + operation.selector)
 				&& ("" + sig.providerName).equals("" + providerName);
 	}
 
 	@Override
 	public int hashCode() {
-		return 31 * ("" + serviceType).hashCode() + ("" + operation.selector).hashCode()
+		return 31 * ("" + multitype).hashCode() + ("" + operation.selector).hashCode()
 				+ ("" + providerName).hashCode();
 	}
 
@@ -505,7 +509,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	}
 
 	public boolean isService() {
-		return serviceType.providerType.isInterface();
+		return multitype.providerType.isInterface();
 	}
 
 	public String getPrefix() {
@@ -596,8 +600,8 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	public int compareTo(Object signature) {
 		if (!(signature instanceof ServiceSignature))
 			return -1;
-		int typeComp = (""+serviceType)
-				.compareTo(""+((ServiceSignature) signature).serviceType);
+		int typeComp = (""+ multitype)
+				.compareTo(""+((ServiceSignature) signature).multitype);
 		if (typeComp == 0) {
 			typeComp = (operation.selector)
 					.compareTo(""+((ServiceSignature) signature).operation.selector);
@@ -661,8 +665,8 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	}
 
 	public boolean isModelerSignature() {
-		if(serviceType.providerType != null)
-			return (Modeler.class.isAssignableFrom(serviceType.providerType));
+		if(multitype.providerType != null)
+			return (Modeler.class.isAssignableFrom(multitype.providerType));
 		else
 			return false;
 	}

@@ -37,7 +37,7 @@ public @interface ConfigEntry {
     String component() default DEFAULT_COMPONENT;
 
     /**
-     * if true, configuration entry is required and exception is thrown if it's missing or wrong type. Warning is issued otherwise.
+     * if true, configuration entry is required and exception is thrown if it's missing or wrong multitype. Warning is issued otherwise.
      */
     boolean required() default false;
 

@@ -350,7 +350,7 @@ public class ControlFlowManager {
      * {@link LoopTask}.
      *
      * @param exertion
-     *            Conditional type Exertion
+     *            Conditional multitype Exertion
      * @return Exertion
      * @throws SignatureException
      * @throws ExertionException
@@ -450,7 +450,7 @@ public class ControlFlowManager {
 
         for (int i = 0; i < delegate.publishedServiceTypes.length; i++) {
             if (delegate.publishedServiceTypes[i].equals(exertion
-                    .getProcessSignature().getServiceType()))
+                    .getProcessSignature().getMultitype()))
                 return true;
         }
 

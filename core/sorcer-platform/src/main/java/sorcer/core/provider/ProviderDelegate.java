@@ -73,8 +73,6 @@ import sorcer.service.*;
 import sorcer.service.jobber.JobberAccessor;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Exploration;
-import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Modeling;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.service.txmgr.TransactionManagerAccessor;
 import sorcer.util.*;
@@ -169,12 +167,12 @@ public class ProviderDelegate {
 
 	protected Class[] publishedServiceTypes;
 
-	/** provider service type entry used to be included in the provider's proxy. */
+	/** provider service multitype entry used to be included in the provider's proxy. */
 	protected SorcerServiceInfo serviceInfo;
 
 	protected boolean idPersistent = false;
 
-	/** if true then we match all args with interface type only. */
+	/** if true then we match all args with interface multitype only. */
 	protected boolean matchInterfaceOnly = true;
 
 	/** if true then its provider can be monitored for its exerting behavior. */
@@ -804,8 +802,8 @@ public class ProviderDelegate {
 
 	public Task doTask(Task task, Transaction transaction, Arg... args)
 			throws MogramException, SignatureException, RemoteException {
-		// prepare a default net batch task (has all sigs of PROC type)
-		// and make the last signature as master PROC type only.
+		// prepare a default net batch task (has all sigs of PROC multitype)
+		// and make the last signature as master PROC multitype only.
 		task.correctBatchSignatures();
 		task.getControlContext().appendTrace(
 				provider.getProviderName() + " to exert: "
@@ -947,7 +945,7 @@ public class ProviderDelegate {
 		if (serviceComponents == null || serviceComponents.size() == 0)
 			return false;
 		Class serviceType = task.getProcessSignature().getServiceType();
-		logger.debug("match serviceType: {}", serviceType);
+		logger.debug("match multitype: {}", serviceType);
         // check declared interfaces
         if(serviceComponents.containsKey(serviceType))
             return true;
@@ -1002,7 +1000,7 @@ public class ProviderDelegate {
 //			}
 //			Method m = null;
 //			try {
-//				// select the proper method for the bean type
+//				// select the proper method for the bean multitype
 //				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof EntryModel)) {
 //					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
 //					isContextual = true;
@@ -1067,7 +1065,7 @@ public class ProviderDelegate {
             }
             Method m = null;
             try {
-                // select the proper method for the bean type
+                // select the proper method for the bean multitype
                 if (selector.equals("exert") && (bean instanceof Domain
                         ||  bean instanceof Exertion)) {
                     m = bean.getClass().getMethod(selector, Mogram.class, Transaction.class, Arg[].class);
@@ -1216,7 +1214,7 @@ public class ProviderDelegate {
 
 		if (visited.contains(serviceID)) {
 			visited.remove(serviceID);
-			throw new ExertionException("Not able to get relevant type: "+ prvType + ", key: " + prvName);
+			throw new ExertionException("Not able to get relevant multitype: "+ prvType + ", key: " + prvName);
 		}
 		visited.add(serviceID);
 		if (serviceComponents != null) {
@@ -1240,7 +1238,7 @@ public class ProviderDelegate {
 		if (recipient == null) {
 			visited.remove(serviceID);
 			ExertionException re = new ExertionException(
-					"Not able to get provider type: " + prvType + ", key: "
+					"Not able to get provider multitype: " + prvType + ", key: "
 							+ prvName);
 			notifyException(task, "", re);
 			throw re;
@@ -1248,7 +1246,7 @@ public class ProviderDelegate {
 				.startsWith(requestor.getClass().getName())) {
 			visited.remove(serviceID);
 			ExertionException re = new ExertionException(
-					"Invalid task for provider type: " + prvType + ", key: "
+					"Invalid task for provider multitype: " + prvType + ", key: "
 							+ prvName + " " + task.toString());
 			notifyException(task, "", re);
 			throw re;
@@ -1261,7 +1259,7 @@ public class ProviderDelegate {
 				} else {
 					visited.remove(serviceID);
 					throw new ExertionException(
-							"Not able to get relevant type: " + prvType
+							"Not able to get relevant multitype: " + prvType
 							+ ", key: " + prvName);
 				}
 			} catch (TransactionException te) {
@@ -1451,7 +1449,7 @@ public class ProviderDelegate {
 	}
 
 	/**
-	 * Returns a service type of the provider served by this delegate as
+	 * Returns a service multitype of the provider served by this delegate as
 	 * registered with lookup services.
 	 * 
 	 * @return a SorcerServiceType
@@ -3015,7 +3013,7 @@ public class ProviderDelegate {
 	 * @param partnerName
 	 *            key of the partner service
 	 * @param partnerType
-	 *            service type (interface) of the partner service
+	 *            service multitype (interface) of the partner service
 	 * @throws ExportException
 	 */
 	private Remote getPartner(String partnerName, Class partnerType)

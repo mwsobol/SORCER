@@ -62,7 +62,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 	BrowserModel model;
 	/**
 	 * Listeners for provider/interface/method lists, respectively. They are
-	 * Singleton-type listeners.
+	 * Singleton-multitype listeners.
 	 */
 	ListSelectionListener providerListener, interfaceListener, methodListener;
 
@@ -100,7 +100,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 
 	/**
 	 * Creates a ListSelectionListener to update based on provider list changes
-	 * Singleton-type creation and return
+	 * Singleton-multitype creation and return
 	 * 
 	 * @return The Listener for providerList
 	 */
@@ -125,7 +125,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 
 	/**
 	 * Creates a ListSelectionListener to update based on interface list changes
-	 * Singleton-type creation and return
+	 * Singleton-multitype creation and return
 	 * 
 	 * @return The Listener for interfaceList
 	 */
@@ -150,7 +150,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 
 	/**
 	 * Creates a ListSelectionListener to update based on method list changes
-	 * Singleton-type creation and return
+	 * Singleton-multitype creation and return
 	 * 
 	 * @return The Listener for methodList
 	 */

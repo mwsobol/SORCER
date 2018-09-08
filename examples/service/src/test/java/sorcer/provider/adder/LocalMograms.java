@@ -84,7 +84,7 @@ public class LocalMograms {
 	public void exertSessionBeanTask() throws Exception  {
 
 		// a service bean AdderImpl exerted by the SessionBeanProvider container
-		Task t5 = task("t5", sig("add", AdderImpl.class, SessionBeanProvider.class),
+		Task t5 = task("t5", trgSig("add", AdderImpl.class, SessionBeanProvider.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		Uuid cid = id(context(t5));

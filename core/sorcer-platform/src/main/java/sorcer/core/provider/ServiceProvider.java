@@ -85,7 +85,7 @@ import java.util.jar.JarFile;
 import static sorcer.util.StringUtils.tName;
 
 /**
- * The ServiceProvider class is a type of {@link Provider} with dependency
+ * The ServiceProvider class is a multitype of {@link Provider} with dependency
  * injection defined by a Jini 2 configuration, proxy management, and own
  * service discovery management for registering its proxies. This class can
  * be inherited by custom service providers or used as a container for service
@@ -551,7 +551,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 	}
 
-	// Inherit java doc from super type
+	// Inherit java doc from super multitype
 	public void setLookupLocators(LookupLocator[] locators) {
 		// for (int i = locators.length; --i >= 0; ) {
 		// locators[i] = (LookupLocator)
@@ -1431,7 +1431,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/**
 	 * This method calls on an ExertionProcessor which executes the exertion
-	 * accordingly to its compositional type.
+	 * accordingly to its compositional multitype.
 	 *
 	 * @param exertion
 	 *            Exertion
@@ -1472,7 +1472,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         List<Class> publishedIfaces = Arrays.asList(this.delegate.getPublishedServiceTypes());
         if (!(exertion instanceof Task) && (!publishedIfaces.contains(Spacer.class))
             && (!publishedIfaces.contains(Jobber.class)) && (!publishedIfaces.contains(Concatenator.class)))
-            throw new ExertionException(new IllegalArgumentException("Unknown exertion type " + exertion));
+            throw new ExertionException(new IllegalArgumentException("Unknown exertion multitype " + exertion));
         try {
             if (exertion.isMonitorable())
                 return new MonitoringControlFlowManager(exertion, delegate);

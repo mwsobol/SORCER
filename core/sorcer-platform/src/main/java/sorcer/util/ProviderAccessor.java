@@ -102,11 +102,11 @@ public class ProviderAccessor extends ServiceAccessor {
     }
 
     /**
-     * Returns a SORCER service provider with the specified service type, using
+     * Returns a SORCER service provider with the specified service multitype, using
      * a Cataloger if available, otherwise using Jini lookup services.
      *
      * @param serviceType
-     *            a provider service type (interface)
+     *            a provider service multitype (interface)
      * @return a SORCER provider service
      */
     public Provider getProvider(Class serviceType) throws SignatureException {
@@ -130,13 +130,13 @@ public class ProviderAccessor extends ServiceAccessor {
 
 	/**
 	 * Returns a SORCER service provider with the specified key and service
-	 * type, using a Cataloger if available, otherwise using Jini lookup
+	 * multitype, using a Cataloger if available, otherwise using Jini lookup
 	 * services.
 	 *
 	 * @param providerName
 	 *            the key of service provider
 	 * @param serviceType
-	 *            a provider service type (interface)
+	 *            a provider service multitype (interface)
 	 * @return a SORCER provider service
 	 */
     @SuppressWarnings("unchecked")
@@ -151,7 +151,7 @@ public class ProviderAccessor extends ServiceAccessor {
         }
 
 		try {
-			//servicer = (Service)ProviderLookup.selectService(providerName, serviceType);
+			//servicer = (Service)ProviderLookup.selectService(providerName, multitype);
 			cataloger = getLocalCataloger();
 			if (cataloger != null) {
                 long t0 = System.currentTimeMillis();
@@ -159,7 +159,7 @@ public class ProviderAccessor extends ServiceAccessor {
 				int tryNo = 0;
 				while (tryNo < ServiceAccessor.LUS_REPEAT) {
 					servicer = cataloger.lookup(providerName, serviceType);
-					//servicer = (Service)cataloger.lookupItem(providerName, serviceType).service;
+					//servicer = (Service)cataloger.lookupItem(providerName, multitype).service;
 					if (servicer != null)
 						break;
 
@@ -280,7 +280,7 @@ public class ProviderAccessor extends ServiceAccessor {
 	 * @param providerName
 	 *            - a key of requested service
 	 * @param primaryInterface
-	 *            - service type of requested provider
+	 *            - service multitype of requested provider
 	 * @return a requested service or null if a Cataloger is not available
 	 */
 	protected Provider lookup(String providerName, Class<Provider> primaryInterface) {

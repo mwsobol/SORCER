@@ -192,7 +192,7 @@ public class Configurer {
             return (T) value;
         Class<? extends TypeConverter> converterType = configEntry.converter();
         if (converterType == TypeConverter.class)
-            throw new IllegalArgumentException("converter is required if type is provided");
+            throw new IllegalArgumentException("converter is required if multitype is provided");
 
         if (targetType.isInstance(value))
             return (T) value;

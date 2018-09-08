@@ -44,7 +44,7 @@ import sorcer.core.context.node.ContextNode;
  * selected impl is a path or if it is a data node.
  * 
  * <li>For paths user can specify the pathname and direction. <li>For data nodes
- * the user can select the data type and erEnt the types eval
+ * the user can select the data multitype and erEnt the types eval
  * 
  * <b>Note if the provider is not complied with Groovy support the Groovy option
  * will not be available</b>
@@ -106,7 +106,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 				.getLastPathComponent();
 
 		Object nodeContext = currentNode.getUserObject();
-		// check that the node of the tree is our special type
+		// check that the node of the tree is our special multitype
 		if (nodeContext instanceof ContextNodeType) {
 			theNodeType = (ContextNodeType) nodeContext;
 			JPanel panel = new JPanel();
@@ -191,7 +191,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 				// dataLabelPanel.add(Box.createHorizontalGlue());
 				listPane.add(dataLabelPanel);
 				// listPane.add(direction);
-			} else // a data node output the type
+			} else // a data node output the multitype
 			{
 
 				JPanel dataLabelPanel = new JPanel();
@@ -215,14 +215,14 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 			this.setVisible(true);
 			this.setTitle("Edit Node");
 		} else
-			// node is not our type so lets ignore this request
+			// node is not our multitype so lets ignore this request
 			this.dispose();
 
 	}
 
 	/**
 	 * ActionPerformed is called when the save button is pressed. This method
-	 * takes the data and the selected type or direction (depending on if its a
+	 * takes the data and the selected multitype or direction (depending on if its a
 	 * path or node) and saves it back in the @link ContextNodeType.
 	 * 
 	 * @param actionEvent
@@ -237,7 +237,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 			String dType = dataType.getSelectedItem().toString();
 			Object value = new String(editField.getText());// default to String
 			// datatype
-			try // try to create the data type the user requested, add new
+			try // try to create the data multitype the user requested, add new
 			// datatypes here
 			{
 
@@ -328,7 +328,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 			// its of
 			// our
 			// special
-			// type
+			// multitype
 			{
 				((ContextNodeType) child.getUserObject())
 						.setDirection(direction);
@@ -343,7 +343,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 	 * This class acts as a ActionListener for the DataType field on the form.
 	 * This class's purpose is to update the instruction label based on the
 	 * currently selected impl in the DataType field. This allows the user to
-	 * instructions that are specific to current data type. The class also
+	 * instructions that are specific to current data multitype. The class also
 	 * updates the current size of the window so that the instructions fit
 	 * properly. The edit field is modified to allowing for a more accurate
 	 * representation of the data. All instructions are written in HTML.
@@ -369,12 +369,12 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 
 		/**
 		 * This is the constructor for the DataTypeListener, which updates the
-		 * editWindow based on the currently selected data type.
+		 * editWindow based on the currently selected data multitype.
 		 * 
 		 * @param instructions
 		 *            JLabel to update with the current instructions
 		 * @param editField
-		 *            JTextArea to modify for the current data type
+		 *            JTextArea to modify for the current data multitype
 		 * @param mainPanel
 		 *            JFrame for the edit window to modify the size
 		 */
@@ -387,7 +387,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 
 		/**
 		 * The actionPerformed event takes the current select and updates the
-		 * interface to reflect the data type. For example Groovy expressions
+		 * interface to reflect the data multitype. For example Groovy expressions
 		 * have a larger edit window and more detailed instructions than an
 		 * integer field. This is also how new instructions can be added to the
 		 * interface, if an instruction is not specified the default one will be

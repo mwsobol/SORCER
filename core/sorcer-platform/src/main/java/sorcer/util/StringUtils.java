@@ -43,7 +43,7 @@ public class StringUtils {
 
 	/**
 	 * Returns a string representation of recursive arrays of any component
-	 * type. in the form [e1,...,ek]
+	 * multitype. in the form [e1,...,ek]
 	 */
 	public static String arrayToString(Object array, int maxElements) {
 		if (array == null)
@@ -253,7 +253,7 @@ public class StringUtils {
 
     /**
 	 * Returns a CSV string representation of recursive arrays of any component
-	 * type.
+	 * multitype.
 	 *
 	 * @param array
 	 *            - an arry of object

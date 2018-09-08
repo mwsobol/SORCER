@@ -30,7 +30,7 @@ public interface DynamicAccessor {
     /**
      * Find all matching services using the provided template and filter
      *
-     * @param template The template to use, containing attributes and type(s)
+     * @param template The template to use, containing attributes and multitype(s)
      * @param filter Optional filter
      *
      * @return An array of matching ServiceItems.
@@ -41,7 +41,7 @@ public interface DynamicAccessor {
      * Returns a service matching serviceName and serviceInfo
      *
      * @param serviceName key
-     * @param serviceType type
+     * @param serviceType multitype
      *
      * @return The first discovered service or null
      */

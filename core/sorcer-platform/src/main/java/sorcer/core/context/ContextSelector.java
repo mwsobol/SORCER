@@ -101,7 +101,7 @@ public class ContextSelector implements ContextSelection {
 		if (input != null && in instanceof Context) {
 			target = in;
 		} else
-			throw new ContextException("ContextSelector requires input of Context type.");
+			throw new ContextException("ContextSelector requires input of Context multitype.");
 
 		try {
 			if (selectedComponentName != null) {

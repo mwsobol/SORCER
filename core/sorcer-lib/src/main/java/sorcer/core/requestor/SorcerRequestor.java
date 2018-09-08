@@ -73,7 +73,7 @@ abstract public class SorcerRequestor implements SorcerConstants {
 		// Initialize system properties: configs/sorcer.env
 		Sorcer.getEnvProperties();
         Accessor.create(EmptyConfiguration.INSTANCE);
-		// Determine runner type from argument array 
+		// Determine runner multitype from argument array
 		String runnerType = null;
 		if (args.length == 0) {
 			System.err.println("Usage: Java sorcer.core.consumer.ServiceRunner <runnerType>");

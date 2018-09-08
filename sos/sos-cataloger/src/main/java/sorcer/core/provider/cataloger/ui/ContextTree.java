@@ -176,7 +176,7 @@ public class ContextTree extends JPanel {
 	/**
 	 * This function recursively goes thru the tree adding items to the context
 	 * using the tree path as the path for the context and the datanode as the
-	 * data. The function also marks the node for the type of data it is
+	 * data. The function also marks the node for the multitype of data it is
 	 * (input/output).
 	 * 
 	 * @param theContext
@@ -210,7 +210,7 @@ public class ContextTree extends JPanel {
 				{
 					ContextNodeType cnt = (ContextNodeType) child;
 
-					// output the path with the correct type
+					// output the path with the correct multitype
 					if (cnt.getDirection().equals(ContextNodeType.INPUTTYPE))
 						theContext.putInValue(currentPath, "");
 					if (cnt.getDirection().equals(ContextNodeType.OUTPUTTYPE))
@@ -241,12 +241,12 @@ public class ContextTree extends JPanel {
 					// its
 					// our
 					// special
-					// type
+					// multitype
 					{
 						// System.out.println("child user object is a context node "
 						// +i);
 						ContextNodeType cnt = (ContextNodeType) ((DefaultMutableTreeNode) child)
-								.getUserObject(); // get the special type
+								.getUserObject(); // get the special multitype
 
 						if (cnt.isDataNode()) // if its a datanode we need to
 						// output it, as data nodes can
@@ -413,14 +413,14 @@ public class ContextTree extends JPanel {
 		}
 
 		if (parent.getUserObject() instanceof ContextNodeType) // check if the
-		// current type
+		// current multitype
 		// is our
-		// special type
+		// special multitype
 		{
 			ContextNodeType parentObject = (ContextNodeType) parent
 					.getUserObject(); // get the parent
 
-			if (parentObject.isDataNode()) // can't add to datanode object type
+			if (parentObject.isDataNode()) // can't add to datanode object multitype
 				return null;
 
 			if (child instanceof ContextNodeType) {
@@ -555,7 +555,7 @@ public class ContextTree extends JPanel {
 
 			Object userObject = ((DefaultMutableTreeNode) value)
 					.getUserObject(); // get the inner object
-			if (userObject instanceof ContextNodeType) // validate its our type
+			if (userObject instanceof ContextNodeType) // validate its our multitype
 			{
 
 				Component c; // get the original component by calling super

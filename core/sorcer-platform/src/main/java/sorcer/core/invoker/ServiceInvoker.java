@@ -102,7 +102,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	// set of dependent variables for this evaluator
 	protected ArgSet args = new ArgSet();
 
-	/** Logger for logging information about instances of this type */
+	/** Logger for logging information about instances of this multitype */
 	static final Logger logger = LoggerFactory.getLogger(ServiceInvoker.class
 			.getName());
 

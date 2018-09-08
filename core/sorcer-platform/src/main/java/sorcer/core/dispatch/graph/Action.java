@@ -18,9 +18,9 @@ package sorcer.core.dispatch.graph;
 import sorcer.service.Service;
 
 /**
- * Performs some action against objects of type T.
+ * Performs some action against objects of multitype T.
  *
- * @param <T> The type of object which this action accepts. 
+ * @param <T> The multitype of object which this action accepts.
  */
 public interface Action<T> {
     /**

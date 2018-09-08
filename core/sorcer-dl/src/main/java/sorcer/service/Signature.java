@@ -101,9 +101,32 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	 *
 	 * @return name of service interface
 	 */
-	public Class<?> getServiceType() throws SignatureException;
+	public Class getServiceType() throws SignatureException;
 
-	/**
+    /**
+     * Assigns a service type of this signature.
+     *
+     * @param serviceType
+     *            service serviceType
+     */
+    public void setServiceType(Class serviceType);
+
+    /**
+     * Returns a service multitype of this signature.
+     *
+     * @return service multitype
+     */
+    public Multitype getMultitype() throws SignatureException;
+
+    /**
+     * Assigns a service multi of this signature.
+     *
+     * @param multitype
+     *            service multitype
+     */
+    public void setMultitype(Multitype multitype);
+
+    /**
 	 * Returns an array of service types of this signature
 	 * to be matched by its service proxy.
 	 *
@@ -138,19 +161,10 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	 */
 	public SignatureReturnPath getReturnPath();
 
-	/**
-	 * Assigns a service fiType name of this signature.
+    /**
+	 * Returns a signature Type of this signature.
 	 *
-	 * @return name of service interface
-	 * @param serviceType
-	 *            name of service interface
-	 */
-	public void setServiceType(Class<?> serviceType);
-
-	/**
-	 * Returns a signature fiType of this signature.
-	 *
-	 * @return a fiType of this signature
+	 * @return a Type of this signature
 	 */
 	public Type getType();
 
@@ -507,23 +521,26 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
         }
     }
 
-	public static class ServiceMultitype implements Serializable, Arg {
+	public static class Multitype implements Serializable, Arg {
 		static final long serialVersionUID = 1L;
+
 		public String typeName;
+
 		// default prvType
 		public Class providerType;
+
         // service types implemented by the service provider
         public Class[] matchTypes;
 
-		public ServiceMultitype() {
+		public Multitype() {
 			// do nothing
 		}
 
-		public ServiceMultitype(String className) {
+		public Multitype(String className) {
 			typeName = className;
 		}
 
-		public ServiceMultitype(Class classType) {
+		public Multitype(Class classType) {
 			providerType = classType;
 		}
 

@@ -76,7 +76,7 @@ public class PublishEvent extends RemoteEvent {
         if (entry != null)
             name = entry.toString();
 
-        return "ContextEvent=>modelingContext|source|eventID|seqNum:type-cause=" + name
+        return "ContextEvent=>modelingContext|source|eventID|seqNum:multitype-cause=" + name
                 + source + "|" + eventID + "|" + seqNum + "|" + cause;
     }
 

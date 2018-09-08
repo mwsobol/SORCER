@@ -73,10 +73,10 @@ import java.util.Hashtable;
  * format of data contained in context data nodes. Data types can be either
  * loaded from a file (default key <code>data.formats</code>) or database. A
  * JVM system property <code>sorcer.formats.file</code> can be used to indicate
- * the location and key of a data type file. Data types are defined in service
+ * the location and key of a data multitype file. Data types are defined in service
  * contexts by a particular composite attribute
  * <code>dnt|application|modifiers</code>, see examples in
- * <code>iGrid/data.formats</code>. Data type associations (for example
+ * <code>iGrid/data.formats</code>. Data multitype associations (for example
  * <code>dnt|etds|object|Hashtable.output</code>) can be used to lookup data
  * nodes in service contexts {@code Contexts.getMarkedPaths}.
  */
@@ -91,13 +91,13 @@ public class Sorcer extends SorcerEnv implements SorcerConstants {
 	 * Loads data node (eval) types from the SORCER data store or file. Data
 	 * 
 	 * node types specify application types of data nodes in service contexts.
-	 * It is analogous to MIME types in SORCER. Each type has a format
+	 * It is analogous to MIME types in SORCER. Each multitype has a format
 	 * 'cnt/application/format/modifiers' or in the association format
 	 * 'cnt|application|format|modifiers' when used with
 	 * {@code Context.getMarkedPaths}.
 	 * 
 	 * @param filename
-	 *            key of file containing service context node type definitions.
+	 *            key of file containing service context node multitype definitions.
 	 */
 	private static void loadDataNodeTypes(String filename) {
 		try {
@@ -122,7 +122,7 @@ public class Sorcer extends SorcerEnv implements SorcerConstants {
 	/**
 	 * Load context node (eval) types from default 'node.types'. SORCER node
 	 * types specify application types of data nodes in SORCER service contexts.
-	 * It is an analog of MIME types in SORCER. Each type has a format
+	 * It is an analog of MIME types in SORCER. Each multitype has a format
 	 * 'cnt/application/format/modifiers'.
 	 */
 	public static void loadContextNodeTypes(Hashtable<?, ?> map) {

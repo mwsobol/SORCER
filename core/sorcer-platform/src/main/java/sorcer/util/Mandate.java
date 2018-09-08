@@ -32,7 +32,7 @@ public class Mandate implements Serializable {
 	private SorcerPrincipal principal;
 
 	// constructor - takes an int that represents
-	// the type of action that was requested from
+	// the multitype of action that was requested from
 	// the client
 	public Mandate(int comm) {
 		commandID = comm;
@@ -43,7 +43,7 @@ public class Mandate implements Serializable {
 		this.principal = principal;
 	}
 
-	// determine which type of action was requested
+	// determine which multitype of action was requested
 	public int getCommandID() {
 		return commandID;
 	}

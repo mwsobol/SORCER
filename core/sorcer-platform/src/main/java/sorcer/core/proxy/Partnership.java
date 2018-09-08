@@ -36,7 +36,7 @@ public interface Partnership {
 	 * accordingly.
 	 * <p>
 	 * This function may be called multiple times for each inner proxy. In this
-	 * case, the implementor should check the instance type of inner.
+	 * case, the implementor should check the instance multitype of inner.
 	 * 
 	 * @param inner
 	 *            an inner proxy object

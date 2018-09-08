@@ -52,12 +52,12 @@ public class ContextModels {
 		setValues(mdl, val("arg/x6", 6.0));
 		assertTrue(exec(mdl, "arg/x6").equals(6.0));
 
-		// proc is of the Evaluation type
+		// proc is of the Evaluation multitype
 		// args in models are evaluated
 		setValues(mdl, val("arg/x6", val("overwrite", 20.0)));
 		assertTrue(exec(mdl, "arg/x6").equals(20.0));
 
-		// invoker is of the Invocation type
+		// invoker is of the Invocation multitype
 		put(mdl, proc("arg/x7", invoker("x1 + x3", args("x1", "x3"))));
 
 		assertTrue(exec(mdl, "arg/x7").equals(4.0));

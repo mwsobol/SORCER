@@ -24,7 +24,7 @@ import java.util.jar.Manifest;
  * This class aids in accessing remote resources referred by URLs.
  * The URLs are resolved into {@link edu.emory.mathcs.util.classloader.ResourceHandle resource handles} which can
  * be used to access the resources directly and uniformly, regardless of the
- * URL type. The resource loader
+ * URL multitype. The resource loader
  * is particularly useful when dealing with resources fetched from JAR files.
  * It maintains the cache of opened JAR files (so that so that
  * subsequent requests for resources coming from the same base Jar file can be
@@ -604,8 +604,8 @@ public class ResourceLoader {
         JarInfo jinfo;
         synchronized (url2jarInfo) {
             // fix: no longer use url.equals, since it distinguishes between
-            // "" and null in the host part of file URLs. The ""-type urls are
-            // correct but "null"-type ones come from file.toURI().toURL()
+            // "" and null in the host part of file URLs. The ""-multitype urls are
+            // correct but "null"-multitype ones come from file.toURI().toURL()
             // on 1.4.1. (It is fixed in 1.4.2)
             jinfo = (JarInfo)url2jarInfo.get(url.toExternalForm());
             if (jinfo == null) {

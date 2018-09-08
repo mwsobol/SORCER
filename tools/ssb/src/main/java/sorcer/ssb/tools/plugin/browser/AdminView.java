@@ -578,8 +578,8 @@ public class AdminView {
 				else
 					include = !isServiceUI;
 				/*
-				 * if(atts[j] instanceof ServiceMultitype) { ServiceMultitype st =
-				 * (ServiceMultitype)atts[j]; java.awt.Image image = st.getIcon(1);
+				 * if(atts[j] instanceof Multitype) { Multitype st =
+				 * (Multitype)atts[j]; java.awt.Image image = st.getIcon(1);
 				 * if(image != null){ // _serviceIcon = new ImageIcon(image);
 				 * //System.out.println("Setting service icon"); } }
 				 */

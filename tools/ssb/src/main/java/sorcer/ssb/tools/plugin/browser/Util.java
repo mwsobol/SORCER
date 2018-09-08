@@ -22,7 +22,7 @@ import java.lang.reflect.Array;
 public class Util {
 	/**
 	 * Returns a string representation of recursive arrays of any component
-	 * type. in the form [e1,...,ek]
+	 * multitype. in the form [e1,...,ek]
 	 */
 	public static String arrayToString(Object array) {
 		if (array == null)

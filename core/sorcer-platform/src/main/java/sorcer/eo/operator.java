@@ -315,7 +315,7 @@ public class operator extends Operator {
 		ReturnPath returnPath = null;
 		ExecPath execPath = null;
 		Args cxtArgs = null;
-		ParTypes parTypes = null;
+		ParameterTypes parTypes = null;
 		PathResponse response = null;
 		QueueStrategy modelStrategy = null;
 		Signature sig = null;
@@ -328,8 +328,8 @@ public class operator extends Operator {
 				subject = (Complement) o;
 			} else if (o instanceof Args) {
 				cxtArgs = (Args) o;
-			} else if (o instanceof ParTypes)  {
-				parTypes = (ParTypes) o;
+			} else if (o instanceof ParameterTypes)  {
+				parTypes = (ParameterTypes) o;
 			} else if (o instanceof PathResponse) {
 				response = (PathResponse) o;
 			} else if (o instanceof ReturnPath) {
@@ -932,7 +932,7 @@ public class operator extends Operator {
 		return sig(operation, serviceType, new Object[]{});
 	}
 
-    public static Signature sig(String operation, Class serviceType, Class target)
+    public static Signature trgSig(String operation, Class serviceType, Class target)
             throws SignatureException {
         Signature ts = sig(operation, serviceType, new Object[]{});
         try {
@@ -948,10 +948,10 @@ public class operator extends Operator {
         return ts;
     }
 
-	public static Signature matchTypes(Signature signature, Class... matchTypes)
+    public static Signature sig(Signature signature, Class... matchTypes)
 			throws SignatureException {
 		Class[] types = matchTypes;
-		if (signature.getServiceType() != null) {
+		if (signature.getMultitype() != null) {
 			types = Arrays.copyOf(matchTypes, matchTypes.length+1);
 			types[matchTypes.length] = signature.getServiceType();
 		}
@@ -1014,13 +1014,13 @@ public class operator extends Operator {
 		return s;
 	}
 
-	public static Signature sig(ServiceMultitype serviceType, Object... items) throws SignatureException {
+	public static Signature sig(Multitype multitype, Object... items) throws SignatureException {
 		if (items == null || items.length == 0) {
-            if (serviceType.providerType != null) {
-                return defaultSig(serviceType.providerType);
-            } else if (serviceType.typeName != null) {
+            if (multitype.providerType != null) {
+                return defaultSig(multitype.providerType);
+            } else if (multitype.typeName != null) {
                 ObjectSignature os = new ObjectSignature();
-                os.setServiceType(serviceType);
+                os.setMultitype(multitype);
                 os.getServiceType();
                 return os;
             }
@@ -1028,7 +1028,7 @@ public class operator extends Operator {
 		String operation = null;
 		Args args = null;
 		Strategy.Provision provision = Provision.NO;
-        ParTypes parTypes = null;
+        ParameterTypes parTypes = null;
 		for (Object item : items) {
 			if (item instanceof String) {
 				operation = (String) item;
@@ -1036,8 +1036,8 @@ public class operator extends Operator {
 				operation = ((Operation)item).selector;
 			} else if (item instanceof Args) {
                 args = (Args)item;
-            } else if (item instanceof ParTypes) {
-                parTypes = (ParTypes)item;
+            } else if (item instanceof ParameterTypes) {
+                parTypes = (ParameterTypes)item;
             } else if (item instanceof Provision) {
 				provision = (Provision)item;
 			}
@@ -1045,29 +1045,29 @@ public class operator extends Operator {
 		ServiceSignature signature = null;
         if (args != null && parTypes != null) {
             ObjectSignature os = new ObjectSignature();
-            os.setServiceType(serviceType);
+            os.setMultitype(multitype);
             os.getServiceType();
             os.setArgs(args.args);
             os.setParameterTypes(parTypes.parameterTypes);
             os.setProvisionable(provision);
 			return os;
         } else if (operation == null) {
-			signature = (ServiceSignature) sig("?", serviceType.providerType, items);
+			signature = sig("?", multitype.providerType, items);
 			signature.setProvisionable(provision);
 			return signature;
 		} else {
 			Object[] dest = new Object[items.length+2];
 			System.arraycopy(items,  0, dest,  2, items.length);
 			dest[0] = operation;
-            dest[1] = serviceType;
-			signature = (ServiceSignature) sig(operation, serviceType.providerType, dest);
+            dest[1] = multitype;
+			signature = sig(operation, multitype.providerType, dest);
 			signature.setProvisionable(provision);
 			return signature;
 		}
 	}
 
 	public static Signature sig(Class classType, Object... items) throws SignatureException {
-		ServiceMultitype serviceType = new ServiceMultitype(classType);
+		Multitype serviceType = new Multitype(classType);
 		return sig(serviceType, items);
 	}
 
@@ -1081,11 +1081,16 @@ public class operator extends Operator {
 		return signature;
 	}
 
+	public static ServiceSignature op(String operation, Class serviceType, Object... items) throws SignatureException {
+		return sig(operation, serviceType, items);
+	}
+
 	public static ServiceSignature sig(String operation, Class serviceType, Object... items) throws SignatureException {
 		ProviderName providerName = null;
 		Provision p = null;
 		List<MapContext> connList = new ArrayList<MapContext>();
-		ServiceMultitype srvType = null;
+		Multitype srvType = null;
+		List<Class> sigTypes = new ArrayList<>();
 		Args args = null;
 		Provider provider = null;
 		if (items != null) {
@@ -1098,30 +1103,32 @@ public class operator extends Operator {
 					p = (Provision) o;
 				} else if (o instanceof MapContext) {
 					connList.add(((MapContext) o));
-				} else if (o instanceof ServiceMultitype) {
-					srvType = (ServiceMultitype) o;
+				} else if (o instanceof Multitype) {
+					srvType = (Multitype) o;
 					// check if class can be loaded
-//                    serviceType = srvType.providerType;
+//                    multitype = srvType.providerType;
 //                    try {
-//                        if (serviceType == null) {
-//                            serviceType = srvType.getProviderType();
+//                        if (multitype == null) {
+//                            multitype = srvType.getProviderType();
 //                        }
 //                    } catch (SignatureException se) {
 //                        logger.warn("failed to load fiType for: {}", srvType.typeName);
-//                        serviceType = Object.class;
+//                        multitype = Object.class;
 //                    }
 				} else if (o instanceof Provider) {
                     provider = (Provider) o;
                 } else if (o instanceof Args) {
 					args = (Args) o;
-				}
+				} else if (o instanceof Class) {
+                    sigTypes.add((Class) o);
+                }
 			}
 		}
 		if (providerName == null)
 			providerName = new ProviderName();
 		Signature sig = null;
-//		if (Modeler.class.isAssignableFrom(serviceType)) {
-//			sig = new ModelSignature(operation, serviceType, providerName, args);
+//		if (Modeler.class.isAssignableFrom(multitype)) {
+//			sig = new ModelSignature(operation, multitype, providerName, args);
 //		} else
 		if (srvType != null && srvType.providerType == null) {
 			sig = new ServiceSignature(operation, srvType, providerName);
@@ -1175,8 +1182,8 @@ public class operator extends Operator {
 					((ServiceSignature) sig).setShellRemote((Strategy.Shell) o);
 				} else if (o instanceof ReturnPath) {
 					sig.setReturnPath((ReturnPath) o);
-				} else if (o instanceof ParTypes) {
-					((ServiceSignature)sig).setMatchTypes(((ParTypes) o).parameterTypes);
+				} else if (o instanceof ParameterTypes) {
+					((ServiceSignature)sig).setMatchTypes(((ParameterTypes) o).parameterTypes);
 				} else if (o instanceof In ) {
 					if (sig.getReturnPath() == null) {
 						sig.setReturnPath(new ReturnPath((In) o));
@@ -1206,6 +1213,10 @@ public class operator extends Operator {
 			}
 		}
 
+        if (sigTypes.size() > 0) {
+            Class[] typeArray = new Class[sigTypes.size()];
+            sig.getMultitype().matchTypes = sigTypes.toArray(typeArray);
+        }
 		return (ServiceSignature) sig;
 	}
 
@@ -1252,14 +1263,30 @@ public class operator extends Operator {
 		return sop;
 	}
 
-	public static ServiceMultitype type(Class providerType) {
-		ServiceMultitype st = new ServiceMultitype(providerType);
-		return st;
-	}
+    public static Multitype mt(Class... types) {
+        return multitype(types);
+    }
 
-	public static ServiceMultitype type(String typeName) {
-		ServiceMultitype st = new ServiceMultitype(typeName);
-		return st;
+    public static Multitype multitype(Class... types) {
+        Multitype mType = new Multitype(types[0]);
+        if (types.length > 1) {
+            Class[] matchTypes = new Class[types.length - 1];
+            System.arraycopy(types, 1, matchTypes, 0, types.length - 1);
+            mType.matchTypes = matchTypes;
+        }
+        return mType;
+    }
+
+    public static Multitype mt(String typeName, Class... types) {
+        return multitype(typeName, types);
+    }
+
+	public static Multitype multitype(String typeName, Class... types) {
+        Multitype mType = new Multitype(typeName);
+        if (types != null && types.length > 0) {
+            mType.matchTypes = types;
+        }
+		return mType;
 	}
 
 	public static String property(String property) {
@@ -2834,19 +2861,19 @@ public class operator extends Operator {
 		}
 	}
 
-	public static ParTypes types(Class... parameterTypes) {
-		return new ParTypes(parameterTypes);
+	public static ParameterTypes types(Class... parameterTypes) {
+		return new ParameterTypes(parameterTypes);
 	}
 
-	public static class ParTypes extends Path {
+	public static class ParameterTypes extends Path {
 		private static final long serialVersionUID = 1L;
 		public Class[] parameterTypes;
 
-		public ParTypes(Class... parameterTypes) {
+		public ParameterTypes(Class... parameterTypes) {
 			this.parameterTypes = parameterTypes;
 		}
 
-		public ParTypes(Class basicType, Class... parameterTypes) {
+		public ParameterTypes(Class basicType, Class... parameterTypes) {
 			Class[] types = new Class[parameterTypes.length+1];
 			types[0] = basicType;
 			for (int i = 0; i < parameterTypes.length; i++) {
@@ -2855,7 +2882,7 @@ public class operator extends Operator {
 			this.parameterTypes = types;
 		}
 
-		public ParTypes(String path, Class... parameterTypes) {
+		public ParameterTypes(String path, Class... parameterTypes) {
 			this.parameterTypes = parameterTypes;
 			this.path = path;
 		}
@@ -3095,7 +3122,7 @@ public class operator extends Operator {
 		Object target = null;
 		Object provider = null;
 		Signature targetSignatue = null;
-		Class<?> providerType = signature.getServiceType();
+		Class providerType = signature.getServiceType();
 		if (signature.getClass() == ObjectSignature.class) {
 			target = ((ObjectSignature) signature).getTarget();
 			targetSignatue = ((ObjectSignature) signature).getTargetSignature();

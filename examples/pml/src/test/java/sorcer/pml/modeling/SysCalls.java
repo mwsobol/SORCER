@@ -181,7 +181,7 @@ public class SysCalls {
 		assertTrue(exec(sm, "cylinder/radius").equals("2.0"));
 		assertTrue(exec(sm, "cylinder/volume").equals("37.69911184307752"));
 
-		// type conversion for numbers
+		// multitype conversion for numbers
 		double v = Double.valueOf(volume).doubleValue();
 		assertTrue(v == 37.69911184307752);
 		volume = Double.toString(v);

@@ -248,7 +248,7 @@ public final class OperationalStringFactory {
                 logger.warn("No configuration found for ServiceDeployment: {}", serviceDeployment);
             }
         } else {
-            logger.warn("Unknown type of Deployment: {}", netSignature.getDeployment().getClass().getName());
+            logger.warn("Unknown multitype of Deployment: {}", netSignature.getDeployment().getClass().getName());
         }
     }
 

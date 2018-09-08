@@ -12,10 +12,10 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.provider.*;
 import sorcer.service.Accessor;
 import sorcer.service.DynamicAccessor;
+import sorcer.service.Service;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static sorcer.eo.operator.matchTypes;
 import static sorcer.eo.operator.provider;
 import static sorcer.eo.operator.sig;
 
@@ -65,10 +65,10 @@ public class ServiceAccessors implements SorcerConstants {
 	}
 
 	@Test
-	public void dynamicAccessorMultiSig() throws Exception {
+	public void dynamicAccessorMultitypeSig() throws Exception {
 		long startTime = System.currentTimeMillis();
 		Provider provider = (Provider) dynamicAccessoror.getService(
-				matchTypes(sig(SorcerJobber.class), SorcerJobber.class));
+				sig(sig(SorcerJobber.class), Service.class, Provider.class));
 //		logger.info("Accessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertTrue(provider instanceof Jobber);

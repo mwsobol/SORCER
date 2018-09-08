@@ -241,7 +241,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 	/**
 	 * Returns a Jini ServiceItem containing SORCER service provider based on
-	 * two args provided. The first entry is a provider's service type, the
+	 * two args provided. The first entry is a provider's service multitype, the
 	 * second provider's key. Expected that more args will be needed to
 	 * identify a provider in the future. See also lookup for a given ServiceID.
 	 * 
@@ -254,7 +254,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	}
 
 	/**
-	 * Returns a SORCER service provider identified by its primary service type.
+	 * Returns a SORCER service provider identified by its primary service multitype.
 	 * 
 	 * @param serviceTypes interface of a SORCER provider
 	 * @return a SORCER service provider
@@ -268,7 +268,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 	/**
 	 * * Returns a SORCER service provider identified by its primary service
-	 * type and the provider's key/
+	 * multitype and the provider's key/
 	 * 
 	 * @param providerName
 	 *            - a provider key, a friendly provider's ID.
@@ -798,7 +798,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 					} else
 						serviceName = service.getClass().getName();
 				}
-				// list only interfaces of the Service type in package key
+				// list only interfaces of the Service multitype in package key
 				if (service instanceof Service) {
 					if (map.get(serviceName) == null) {
 						map.put(serviceName, SorcerUtil.arrayToString(clazz)
@@ -837,7 +837,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 					} else
 						serviceName = service.getClass().getName();
 				}
-				// list only interfaces of the Service type in package key
+				// list only interfaces of the Service multitype in package key
 				if (service instanceof Service) {
 					String annotation = RMIClassLoader.getClassAnnotation(service.getClass());
 					if(annotation!=null && annotation.length()>0) {
@@ -1064,12 +1064,12 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		}
 
 		/**
-		 * Returns a list of selectors of <code>serviceType</code> along with
+		 * Returns a list of selectors of <code>multitype</code> along with
 		 * hash tables per each interface. The hash dataTable key is an interface
 		 * key and the eval is a list of all interface selectors.
 		 * 
 		 * @param serviceType
-		 * @return list of selectors of serviceType and its superinterface hash
+		 * @return list of selectors of multitype and its superinterface hash
 		 *         tables
 		 */
 		private List<String> getInterfaceList(Class serviceType) {
