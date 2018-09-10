@@ -1,8 +1,7 @@
-package sorcer.pml.modeling;
+package sorcer.cml.modeling;
 
 import groovy.lang.Closure;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -10,17 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.pml.provider.impl.Volume;
+import sorcer.cml.provider.impl.Volume;
 import sorcer.service.*;
-import sorcer.service.modeling.Model;
-import sorcer.service.modeling.ent;
-import sorcer.service.modeling.func;
-import sorcer.service.modeling.val;
 import sorcer.util.Row;
 import sorcer.util.Sorcer;
 
@@ -41,33 +33,33 @@ import static sorcer.so.operator.*;
  * @author Mike Sobolewski
  */
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/pml")
+@ProjectContext("examples/cml")
 public class EntryModels {
 
 	private final static Logger logger = LoggerFactory.getLogger(EntryModels.class.getName());
 
-	private EntryModel pm;
-	private Proc<Double> x;
-	private Proc<Double> y;
+	private EntryModel em;
+	private Call<Double> x;
+	private Call<Double> y;
 
 
 	@Before
-	public void initProcModel() throws Exception {
+	public void initEntModel() throws Exception {
 
-		pm = new EntryModel();
-		x = proc("x", 10.0);
-		y = proc("y", 20.0);
+		em = new EntryModel();
+		x = call("x", 10.0);
+		y = call("y", 20.0);
 
 	}
 
 	@Test
-	public void closingProcScope() throws Exception {
+	public void closingEntScope() throws Exception {
 
-		// a proc is a variable (entry) evaluated in its own scope (context)
-		Proc y = proc("y",
+		// a call is a variable (entry) evaluated in its own scope (context)
+		Call y = call("y",
 				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
-		Object val = exec(y, proc("x1", 10.0), proc("x2", 50.0),
-				proc("x3", 20.0), proc("x4", 80.0));
+		Object val = exec(y, call("x1", 10.0), call("x2", 50.0),
+				call("x3", 20.0), call("x4", 80.0));
 		// logger.info("y eval: " + val);
 		assertEquals(val, 400.0);
 
@@ -75,49 +67,49 @@ public class EntryModels {
 
 
 	@Test
-	public void createProcModel() throws Exception {
+	public void createEntModel() throws Exception {
 
-		EntryModel model = procModel(
+		EntryModel model = entModel(
 				"Hello Arithmetic Domain #1",
 				// inputs
 				val("x1"), val("x2"), val("x3", 20.0),
 				val("x4", 80.0),
 				// outputs
-				proc("t4", invoker("x1 * x2", args("x1", "x2"))),
-				proc("t5", invoker("x3 + x4", args("x3", "x4"))),
-				proc("j1", invoker("t4 - t5", args("t4", "t5"))));
+				call("t4", invoker("x1 * x2", args("x1", "x2"))),
+				call("t5", invoker("x3 + x4", args("x3", "x4"))),
+				call("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		assertTrue(exec(model, "t5").equals(100.0));
 
 		assertEquals(exec(model, "j1"), null);
 
-		eval(model, "j1", proc("x1", 10.0), proc("x2", 50.0)).equals(400.0);
+		eval(model, "j1", call("x1", 10.0), call("x2", 50.0)).equals(400.0);
 
 		assertTrue(exec(model, "j1", val("x1", 10.0), val("x2", 50.0)).equals(400.0));
 
 		assertTrue(exec(model, "j1").equals(400.0));
 
 		// get model response
-		Row mr = (Row) query(model, //proc("x1", 10.0), proc("x2", 50.0),
+		Row mr = (Row) query(model, //call("x1", 10.0), call("x2", 50.0),
 				result("y", outPaths("t4", "t5", "j1")));
 		assertTrue(names(mr).equals(list("t4", "t5", "j1")));
 		assertTrue(values(mr).equals(list(500.0, 100.0, 400.0)));
 	}
 
 	@Test
-	public void createProcModelWithTask() throws Exception {
+	public void createEntModelWithTask() throws Exception {
 
-		EntryModel vm = procModel(
+		EntryModel vm = entModel(
 			"Hello Arithmetic #2",
 			// inputs
 			val("x1"), val("x2"), val("x3", 20.0), val("x4"),
 			// outputs
-			proc("t4", invoker("x1 * x2", args("x1", "x2"))),
-			proc("t5",
+			call("t4", invoker("x1 * x2", args("x1", "x2"))),
+			call("t5",
 				task(sig("add", AdderImpl.class),
 					cxt("add", inVal("x3"), inVal("x4"),
 						result("result/y")))),
-			proc("j1", invoker("t4 - t5", args("t4", "t5"))));
+			call("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		setValues(vm, val("x1", 10.0), val("x2", 50.0),
 			val("x4", 80.0));
@@ -126,12 +118,12 @@ public class EntryModels {
 	}
 
     @Test
-	public void procInvoker() throws Exception {
+	public void callInvoker() throws Exception {
 
-		EntryModel pm = new EntryModel("proc-model");
-		add(pm, proc("x", 10.0));
-		add(pm, proc("y", 20.0));
-		add(pm, proc("add", invoker("x + y", args("x", "y"))));
+		EntryModel pm = new EntryModel("call-model");
+		add(pm, call("x", 10.0));
+		add(pm, call("y", 20.0));
+		add(pm, call("add", invoker("x + y", args("x", "y"))));
 
 		assertTrue(exec(pm, "x").equals(10.0));
 		assertTrue(exec(pm, "y").equals(20.0));
@@ -139,7 +131,7 @@ public class EntryModels {
 		assertTrue(exec(pm, "add").equals(30.0));
 
         responseUp(pm, "add");
-		logger.info("pm context eval: " + eval(pm));
+		logger.info("em context eval: " + eval(pm));
 		assertTrue(value(eval(pm), "add").equals(30.0));
 
 		setValue(pm, "x", 100.0);
@@ -153,9 +145,9 @@ public class EntryModels {
 
 
 	@Test
-	public void procModelTest() throws Exception {
-		EntryModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
-				proc("add", invoker("x + y", args("x", "y"))));
+	public void callModelTest() throws Exception {
+		EntryModel pm = entModel(call("x", 10.0), call("y", 20.0),
+				call("add", invoker("x + y", args("x", "y"))));
 
 		assertTrue(exec(pm, "x").equals(10.0));
 		assertTrue(exec(pm, "y").equals(20.0));
@@ -168,12 +160,12 @@ public class EntryModels {
 
 
 	@Test
-	public void expendingProcModelTest() throws Exception {
-		EntryModel pm = procModel(proc("x", 10.0), proc("y", 20.0),
-				proc("add", invoker("x + y", args("x", "y"))));
+	public void expendingCallModelTest() throws Exception {
+		EntryModel pm = entModel(call("x", 10.0), call("y", 20.0),
+				call("add", invoker("x + y", args("x", "y"))));
 
-		Proc x = proc(pm, "x");
-		logger.info("proc x: " + x);
+		Call x = call(pm, "x");
+		logger.info("call x: " + x);
 		setValue(x, 20.0);
 		logger.info("val x: " + exec(x));
 		logger.info("val x: " + eval(pm, "x"));
@@ -187,7 +179,7 @@ public class EntryModels {
         responseUp(pm, "add");
 		assertEquals(value(eval(pm), "add"), 60.0);
 
-		add(pm, proc("x", 10.0), proc("y", 20.0));
+		add(pm, call("x", 10.0), call("y", 20.0));
 		assertTrue(exec(pm, "x").equals(10.0));
 		assertTrue(exec(pm, "y").equals(20.0));
 
@@ -198,9 +190,9 @@ public class EntryModels {
 		assertTrue(value(eval(pm), "add").equals(30.0));
 
 		// with new arguments, closure
-		assertTrue(value(eval(pm, proc("x", 20.0), proc("y", 30.0)), "add").equals(50.0));
+		assertTrue(value(eval(pm, call("x", 20.0), call("y", 30.0)), "add").equals(50.0));
 
-		add(pm, proc("z", invoker("(x * y) + add", args("x", "y", "add"))));
+		add(pm, call("z", invoker("(x * y) + add", args("x", "y", "add"))));
 		logger.info("z eval: " + eval(pm, "z"));
 		assertTrue(exec(pm, "z").equals(650.0));
 
@@ -208,14 +200,14 @@ public class EntryModels {
 
 
 	@Test
-	public void parInvokers() throws Exception {
+	public void callInvokers() throws Exception {
 
 		// all var parameters (x1, y1, y2) are not initialized
-		Proc y3 = proc("y3", invoker("x + y2", args("x", "y2")));
-		Proc y2 = proc("y2", invoker("x * y1", args("x", "y1")));
-		Proc y1 = proc("y1", invoker("x1 * 5", args("x1")));
+		Call y3 = call("y3", invoker("x + y2", args("x", "y2")));
+		Call y2 = call("y2", invoker("x * y1", args("x", "y1")));
+		Call y1 = call("y1", invoker("x1 * 5", args("x1")));
 
-		EntryModel pc = procModel(y1, y2, y3);
+		EntryModel pc = entModel(y1, y2, y3);
 		// any dependent values or args can be updated or added any time
 		put(pc, "x", 10.0);
 		put(pc, "x1", 20.0);
@@ -235,9 +227,9 @@ public class EntryModels {
         assertEquals(value(cxt, "arg/x1"), 10.0);
         assertEquals(value(cxt, "arg/x2"), 50.0);
 
-        assertTrue(asis(cxt, "arg/x0") instanceof Proc);
-        assertTrue(asis(cxt, "arg/x1") instanceof Proc);
-        assertTrue(asis(cxt, "arg/x2") instanceof Proc);
+        assertTrue(asis(cxt, "arg/x0") instanceof Call);
+        assertTrue(asis(cxt, "arg/x1") instanceof Call);
+        assertTrue(asis(cxt, "arg/x2") instanceof Call);
 
         put(cxt, "arg/x0", 11.0);
         put(cxt, "arg/x1", 110.0);
@@ -247,19 +239,19 @@ public class EntryModels {
         assertEquals(value(cxt, "arg/x1"), 110.0);
         assertEquals(value(cxt, "arg/x2"), 150.0);
 
-        assertTrue(asis(cxt, "arg/x0") instanceof Proc);
-        assertTrue(asis(cxt, "arg/x1") instanceof Proc);
-        assertTrue(asis(cxt, "arg/x2") instanceof Proc);
+        assertTrue(asis(cxt, "arg/x0") instanceof Call);
+        assertTrue(asis(cxt, "arg/x1") instanceof Call);
+        assertTrue(asis(cxt, "arg/x2") instanceof Call);
     }
 
 
 	@Test
-	public void argVsProcPersistence() throws Exception {
+	public void argVsEntPersistence() throws Exception {
 
 		// persistable just indicates that argument is persistent,
-		// for example when eval(proc) is invoked
-		Proc dbp1 = persistent(proc("design/in", 25.0));
-		Proc dbp2 = dbEnt("url", "myUrl1");
+		// for example when eval(call) is invoked
+		Call dbp1 = persistent(call("design/in", 25.0));
+		Call dbp2 = dbEnt("url", "myUrl1");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
@@ -270,10 +262,10 @@ public class EntryModels {
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 
-		// store proc args in the data store
+		// store call args in the data store
 		URL sUrl = new URL("http://sorcersoft.org");
-		Proc p1 = proc("design/in", 30.0);
-		Proc p2 = proc("url", sUrl);
+		Call p1 = call("design/in", 30.0);
+		Call p2 = call("url", sUrl);
 		URL url1 = storeVal(p1);
 		URL url2 = storeVal(p2);
 
@@ -286,8 +278,8 @@ public class EntryModels {
 		assertEquals(exec(p2), sUrl);
 
 		// store args in the data store
-		p1 = proc("design/in", 30.0);
-		p2 = proc("url", sUrl);
+		p1 = call("design/in", 30.0);
+		p2 = call("url", sUrl);
 		store(p1);
 		store(p2);
 
@@ -301,9 +293,9 @@ public class EntryModels {
 	}
 
 	@Test
-	public void procModelConditions() throws Exception {
+	public void entModelConditions() throws Exception {
 
-		final EntryModel pm = new EntryModel("proc-model");
+		final EntryModel pm = new EntryModel("call-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
 
@@ -325,7 +317,7 @@ public class EntryModels {
 	@Test
 	public void closingConditions() throws Exception {
 
-		EntryModel pm = new EntryModel("proc-model");
+		EntryModel pm = new EntryModel("call-model");
 		pm.putValue(Condition._closure_, new ServiceInvoker(pm));
 		// free variables, no args for the invoker
 		((ServiceInvoker) pm.get(Condition._closure_))
@@ -372,10 +364,10 @@ public class EntryModels {
 	@Test
 	public void invokerLoopTest() throws Exception {
 
-		EntryModel pm = procModel("proc-model");
-		add(pm, proc("x", 1));
-		add(pm, proc("y", invoker("x + 1", args("x"))));
-		add(pm, proc("z", inc(invoker(pm, "y"), 2)));
+		EntryModel pm = entModel("call-model");
+		add(pm, call("x", 1));
+		add(pm, call("y", invoker("x + 1", args("x"))));
+		add(pm, call("z", inc(invoker(pm, "y"), 2)));
 		Invocation z2 = invoker(pm, "z");
 
 		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
@@ -388,10 +380,10 @@ public class EntryModels {
 	@Test
 	public void callableAttachment() throws Exception {
 
-		final EntryModel pm = procModel();
-		final Proc<Double> x = proc("x", 10.0);
-		final Proc<Double> y = proc("y", 20.0);
-		Proc z = proc("z", invoker("x + y", x, y));
+		final EntryModel pm = entModel();
+		final Call<Double> x = call("x", 10.0);
+		final Call<Double> y = call("y", 20.0);
+		Call z = call("z", invoker("x + y", x, y));
 		add(pm, x, y, z);
 
 		// update vars x and y that loop condition (var z) depends on
@@ -415,11 +407,11 @@ public class EntryModels {
 	@Test
 	public void callableAttachmentWithArgs() throws Exception {
 
-		final EntryModel pm = procModel();
-		final Proc<Double> x = proc("x", 10.0);
-		final Proc<Double> y = proc("y", 20.0);
-		Proc z = proc("z", invoker("x + y", x, y));
-		add(pm, x, y, z, proc("limit", 60.0));
+		final EntryModel pm = entModel();
+		final Call<Double> x = call("x", 10.0);
+		final Call<Double> y = call("y", 20.0);
+		Call z = call("z", invoker("x + y", x, y));
+		add(pm, x, y, z, call("limit", 60.0));
 
 		// anonymous local class implementing Callable interface
 		Callable update = new Callable() {
@@ -433,7 +425,7 @@ public class EntryModels {
 		};
 
 		add(pm, callableInvoker("call", update));
-		assertEquals(invoke(pm, "call", context(proc("limit", 100.0))), 420.0);
+		assertEquals(invoke(pm, "call", context(call("limit", 100.0))), 420.0);
 	}
 
 
@@ -441,14 +433,14 @@ public class EntryModels {
 	public class Config implements Callable {
 
 		public Double call() throws Exception {
-			while (x.evaluate() < (Double)value(pm, "limit")) {
+			while (x.evaluate() < (Double)value(em, "limit")) {
 				x.setValue(x.evaluate() + 1.0);
 				y.setValue(y.evaluate() + 1.0);
 			}
 			logger.info("x: " + x.evaluate());
 			logger.info("y: " + y.evaluate());
-			logger.info("z: " + value(pm, "z"));
-			return exec(x) + exec(y) + (Double)value(pm, "z");
+			logger.info("z: " + value(em, "z"));
+			return exec(x) + exec(y) + (Double)value(em, "z");
 		}
 
 	}
@@ -457,12 +449,12 @@ public class EntryModels {
 	@Test
 	public void attachMethodInvokerWithContext() throws Exception {
 
-		Proc z = proc("z", invoker("x + y", x, y));
-		add(pm, x, y, z, proc("limit", 60.0));
+		Call z = call("z", invoker("x + y", x, y));
+		add(em, x, y, z, call("limit", 60.0));
 
-		add(pm, methodInvoker("call", new Config()));
-//		logger.info("call eval:" + invoke(pm, "call"));
-		assertEquals(invoke(pm, "call", context(proc("limit", 100.0))), 420.0);
+		add(em, methodInvoker("call", new Config()));
+//		logger.info("call eval:" + invoke(em, "call"));
+		assertEquals(invoke(em, "call", context(call("limit", 100.0))), 420.0);
 
 	}
 
@@ -473,27 +465,27 @@ public class EntryModels {
 		String sorcerVersion = System.getProperty("sorcer.version");
 
 		// set the sphere/radius in the model
-		put(pm, "sphere/radius", 20.0);
-		// attach the agent to the proc-model and invoke
-        add(pm, agent("getSphereVolume",
+		put(em, "sphere/radius", 20.0);
+		// attach the agent to the call-model and invoke
+        add(em, agent("getSphereVolume",
                 Volume.class.getName(), new URL(Sorcer
                         .getWebsterUrl() + "/pml-" + sorcerVersion+".jar")));
 
-		Object result = value((Context)value(pm,"getSphereVolume"), "sphere/volume");
+		Object result = value((Context)value(em,"getSphereVolume"), "sphere/volume");
 		logger.info("result: " +result);
 
 		assertTrue(result.equals(33510.32163829113));
 
 		// invoke the agent directly
-//		invoke(pm,
+//		invoke(em,
 //				"getSphereVolume",
 //                agent("getSphereVolume",
-//                        "sorcer.pml.provider.impl.Volume",
+//                        "Volume",
 //                        new URL(Sorcer.getWebsterUrl()
 //                                + "/sorcer-tester-" + sorcerVersion+".jar")));
 //
-////		logger.info("val: " + eval(pm, "sphere/volume"));
-//		assertTrue(value(pm, "sphere/volume").equals(33510.32163829113));
+////		logger.info("val: " + eval(em, "sphere/volume"));
+//		assertTrue(value(em, "sphere/volume").equals(33510.32163829113));
 
 	}
 

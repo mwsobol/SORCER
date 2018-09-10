@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package examples.pml
+package examples.cml
 
 import com.sun.jini.start.ServiceDescriptor
 import org.rioproject.config.Component
@@ -43,7 +43,7 @@ class StartAll {
 
         descriptors << new SorcerServiceDescriptor(codebase,
                                                    policy,
-                                                   "${buildLibPath}/pml-${sorcerVersion}-model.jar",
+                                                   "${buildLibPath}/cml-${sorcerVersion}-model.jar",
                                                    "sorcer.core.provider.ServiceTasker",
                                                    configArg as String[])
         return descriptors as ServiceDescriptor[]

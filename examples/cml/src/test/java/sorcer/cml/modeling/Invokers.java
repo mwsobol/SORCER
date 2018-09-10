@@ -1,4 +1,4 @@
-package sorcer.pml.modeling;
+package sorcer.cml.modeling;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +11,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.Call;
 import sorcer.core.invoker.AltInvoker;
 import sorcer.core.invoker.Updater;
 import sorcer.core.invoker.OptInvoker;
@@ -41,14 +41,14 @@ import static sorcer.so.operator.*;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/pml")
+@ProjectContext("examples/cml")
 public class Invokers {
 	private final static Logger logger = LoggerFactory.getLogger(Invokers.class);
 
-	private EntryModel pm;
-	private Proc x;
-	private Proc y;
-	private Proc z;
+	private EntryModel em;
+	private Call x;
+	private Call y;
+	private Call z;
 
 	/// member subclass of Updater with Context parameter used below with
 	// contextMethodAttachmentWithArgs()
@@ -66,23 +66,23 @@ public class Invokers {
 			// y set from construtor's context 'in'
 			assertTrue(exec(y).equals(30.0));
 			assertTrue(exec(z).equals(170.0));
-			return (double)exec(x) + (double)exec(y) + (double)value(pm, "z");
+			return (double)exec(x) + (double)exec(y) + (double)value(em, "z");
 		}
 	};
 
 	@Before
 	public void initProcModel() throws Exception {
-		pm = new EntryModel();
-		x = proc("x", 10.0);
-		y = proc("y", 20.0);
-		z = proc("z", invoker("x - y", args("x", "y")));
+		em = new EntryModel();
+		x = call("x", 10.0);
+		y = call("y", 20.0);
+		z = call("z", invoker("x - y", args("x", "y")));
 	}
 
 	@Test
 	public void lambdaInvoker() throws Exception {
 
 		Model mo = model(val("x", 10.0), val("y", 20.0),
-				proc(invoker("lambda",
+				call(invoker("lambda",
 					(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
 					args("x", "y"))));
 //		logger.info("invoke eval: " + eval(mo, "lambda"));
@@ -93,23 +93,23 @@ public class Invokers {
 	public void objectMethodInvoker() throws Exception {
 		setValue(x, 10.0);
 		setValue(y, 20.0);
-		add(pm, x, y, z);
+		add(em, x, y, z);
 
-//		logger.info("x:" + eval(pm, "x"));
-//		logger.info("y:" + eval(pm, "y"));
-//		logger.info("y:" + eval(pm, "z"));
+//		logger.info("x:" + eval(em, "x"));
+//		logger.info("y:" + eval(em, "y"));
+//		logger.info("y:" + eval(em, "z"));
 
 		Context in = context(val("x", 20.0), val("y", 30.0));
 		Context arg = context(val("x", 200.0), val("y", 300.0));
-		add(pm, methodInvoker("update", new ContextUpdater(in), arg));
-		logger.info("call eval:" + invoke(pm, "update"));
-		assertEquals(invoke(pm, "update"), 400.0);
+		add(em, methodInvoker("update", new ContextUpdater(in), arg));
+		logger.info("call eval:" + invoke(em, "update"));
+		assertEquals(invoke(em, "update"), 400.0);
 	}
 
 	@Test
 	public void groovyInvoker() throws Exception {
-		EntryModel pm = procModel("proc-model");
-		add(pm, proc("x", 10.0), proc("y", 20.0));
+		EntryModel pm = entModel("call-model");
+		add(pm, call("x", 10.0), call("y", 20.0));
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
 		logger.info("invoke eval: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
@@ -123,16 +123,16 @@ public class Invokers {
 		add(nm, neu("x1", 10.0), neu("x2", 20.0));
 		add(nm, neu("x3", weights(val("x1", 2.0), val("x2", 10.0)), signals("x1", "x2")));
 
-//        logger.info("activate x1: " + activate(pm, "x1"));
+//        logger.info("activate x1: " + activate(em, "x1"));
         assertEquals(activate(nm, "x1"), 10.0);
 
-//        logger.info("activate x3: " + activate(pm, "x3"));
+//        logger.info("activate x3: " + activate(em, "x3"));
         assertEquals(activate(nm, "x3"), 220.0);
 
-//        logger.info("activate x3: " + activate(pm, "x3", th("x3", 200.0)));
+//        logger.info("activate x3: " + activate(em, "x3", th("x3", 200.0)));
         assertEquals(activate(nm, "x3", th("x3", 200.0)), 1.0);
 
-//        logger.info("activate x3: " + activate(pm, "x3", th("x3", 0.0), bias("x3", 50.0)));
+//        logger.info("activate x3: " + activate(em, "x3", th("x3", 0.0), bias("x3", 50.0)));
         assertEquals(activate(nm, "x3", th("x3", 0.0), bias("x3", 50.0)), 270.0);
 	}
 
@@ -148,10 +148,10 @@ public class Invokers {
 //      logger.info("activate1 x4: " + activate(nm, "x4", fi("x4", "n1")));
 		assertEquals(activate(nm, "x4", fi("x4", "n1")), 215.0);
 
-//		logger.info("activate2 x4: " + activate(pm, "x4", th("x4", 200.0), fi("x4", "n1")));
+//		logger.info("activate2 x4: " + activate(em, "x4", th("x4", 200.0), fi("x4", "n1")));
 		assertEquals(activate(nm, "x4", th("n1", 200.0), fi("x4", "n1")), 1.0);
 
-//      logger.info("activate3 x4: " + activate(pm, "x4", th("x4", 0.0), fi("x4", "n2")));
+//      logger.info("activate3 x4: " + activate(em, "x4", th("x4", 0.0), fi("x4", "n2")));
         assertEquals(activate(nm, "x4", th("n2", 0.0), fi("x4", "n2")), 260.0);
 	}
 
@@ -195,7 +195,7 @@ public class Invokers {
 	@Test
 	public void invokerProc() throws Exception {
 
-		Proc x1 = proc("x1", 1.0);
+		Call x1 = call("x1", 1.0);
 
 		// logger.info("invoke eval:" + invoke(x1));
 		assertEquals(exec(x1), 1.0);
@@ -203,11 +203,11 @@ public class Invokers {
 
 	@Test
 	public void substituteInvokeArgs() throws Exception {
-		Proc x1, x2, y;
+		Call x1, x2, y;
 
-		x1 = proc("x1", 1.0);
-		x2 = proc("x2", 2.0);
-		y = proc("y", invoker("x1 + x2", x1, x2));
+		x1 = call("x1", 1.0);
+		x2 = call("x2", 2.0);
+		y = call("y", invoker("x1 + x2", x1, x2));
 		
 		logger.info("y: " + exec(y));
 		assertTrue(exec(y).equals(3.0));
@@ -219,14 +219,14 @@ public class Invokers {
 
 	@Test
 	public void modelConditions() throws Exception {
-		final EntryModel pm = new EntryModel("proc-model");
+		final EntryModel pm = new EntryModel("call-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
 		pm.putValue("condition", invoker("x > y", args("x", "y")));
 
 		assertEquals(pm.getValue("x"), 10.0);
 		assertEquals(pm.getValue("y"), 20.0);
-		// logger.info("condition eval: " + pm.execute("condition"));
+		// logger.info("condition eval: " + em.execute("condition"));
 		assertEquals(pm.getValue("condition"), false);
 
 		pm.putValue("x", 300.0);
@@ -259,7 +259,7 @@ public class Invokers {
 
 	@Test
 	public void optInvoker() throws Exception {
-		EntryModel pm = new EntryModel("proc-model");
+		EntryModel pm = new EntryModel("call-model");
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
 				"{ x, y -> x > y }", "x", "y"), 
@@ -283,7 +283,7 @@ public class Invokers {
 
 	@Test
 	public void cretaeOptInvoker() throws Exception {
-		EntryModel pm = procModel("proc-model");
+		EntryModel pm = entModel("call-model");
 		add(pm,
 				val("x", 10.0),
 				val("y", 20.0),
@@ -300,7 +300,7 @@ public class Invokers {
 
 	@Test
 	public void altInvoker() throws Exception {
-		EntryModel pm = new EntryModel("proc-model");
+		EntryModel pm = new EntryModel("call-model");
 		pm.putValue("x", 30.0);
 		pm.putValue("y", 20.0);
 		pm.putValue("x2", 50.0);
@@ -360,7 +360,7 @@ public class Invokers {
 
 	@Test
 	public void smlAltInvoker() throws Exception {
-		EntryModel pm = procModel("proc-model");
+		EntryModel pm = entModel("call-model");
 		add(pm, val("x", 10.0), val("y", 20.0), val("x2", 50.0),
 				val("y2", 40.0), val("x3", 50.0), val("y3", 60.0));
 
@@ -399,10 +399,10 @@ public class Invokers {
 
 	@Test
 	public void invokerLoop() throws Exception {
-		EntryModel pm = procModel("proc-model");
+		EntryModel pm = entModel("call-model");
 		add(pm, val("x", 1));
-		add(pm, proc("y", invoker("x + 1", args("x"))));
-		add(pm, proc("z", inc(invoker(pm, "y"), 2)));
+		add(pm, call("y", invoker("x + 1", args("x"))));
+		add(pm, call("z", inc(invoker(pm, "y"), 2)));
 		Invocation z2 = invoker(pm, "z");
 
 		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
@@ -412,10 +412,10 @@ public class Invokers {
 
 	@Test
 	public void incrementorStepBy1() throws Exception {
-		EntryModel pm = procModel("proc-model");
+		EntryModel pm = entModel("call-model");
 		add(pm, val("x", 1));
-		add(pm, proc("y", invoker("x + 1", args("x"))));
-		add(pm, proc("z", inc(invoker(pm, "y"))));
+		add(pm, call("y", invoker("x + 1", args("x"))));
+		add(pm, call("z", inc(invoker(pm, "y"))));
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + value(pm, "z"));
 		}
@@ -424,10 +424,10 @@ public class Invokers {
 
 	@Test
 	public void incrementorStepBy2() throws Exception {
-		EntryModel pm = procModel("proc-model");
-		add(pm, proc("x", 1));
-		add(pm, proc("y", invoker("x + 1", args("x"))));
-		add(pm, proc("z", inc(invoker(pm, "y"), 2)));
+		EntryModel pm = entModel("call-model");
+		add(pm, call("x", 1));
+		add(pm, call("y", invoker("x + 1", args("x"))));
+		add(pm, call("z", inc(invoker(pm, "y"), 2)));
 
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + value(pm, "z"));
@@ -437,15 +437,15 @@ public class Invokers {
 
 	@Test
 	public void incrementorDouble() throws Exception {
-		EntryModel pm = procModel("proc-model");
-		add(pm, proc("x", 1.0));
-		add(pm, proc("y", invoker("x + 1.2", args("x"))));
-		add(pm, proc("z", inc(invoker(pm, "y"), 2.1)));
+		EntryModel pm = entModel("call-model");
+		add(pm, call("x", 1.0));
+		add(pm, call("y", invoker("x + 1.2", args("x"))));
+		add(pm, call("z", inc(invoker(pm, "y"), 2.1)));
 
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + next(pm, "z"));
 		}
-		// logger.info("" + eval(pm,"y++2.1"));
+		// logger.info("" + eval(em,"y++2.1"));
 		assertEquals(value(pm, "z"), 25.300000000000004);
 	}
 }

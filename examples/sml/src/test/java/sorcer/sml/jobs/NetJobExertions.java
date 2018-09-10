@@ -1,6 +1,5 @@
 package sorcer.sml.jobs;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -17,7 +16,6 @@ import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
-import sorcer.service.Strategy.Provision;
 import sorcer.service.Strategy.Shell;
 
 import static org.junit.Assert.assertEquals;
@@ -317,18 +315,18 @@ public class NetJobExertions implements SorcerConstants {
 	@Test
 	public void createModelWithTask() throws Exception {
 
-		EntryModel vm = procModel(
+		EntryModel vm = entModel(
 				"Hello Arithmetic #2",
 				// inputs
-				val("x1"), val("x2"), proc("x3", 20.0), val("x4"),
+				val("x1"), val("x2"), call("x3", 20.0), val("x4"),
 				// outputs
-				proc("t4", invoker("x1 * x2", args("x1", "x2"))),
-				proc("t5",
+				call("t4", invoker("x1 * x2", args("x1", "x2"))),
+				call("t5",
 					task("t5",
 						sig("add", Adder.class),
 						cxt("add", inVal("x3"), inVal("x4"),
 						result("result/y")))),
-				proc("j1", invoker("t4 - t5", args("t4", "t5"))));
+				call("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		setValues(vm, val("x1", 10.0), val("x2", 50.0), val("x4", 80.0));
 				 

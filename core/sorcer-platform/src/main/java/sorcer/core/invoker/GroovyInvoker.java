@@ -19,8 +19,7 @@ package sorcer.core.invoker;
 
 import groovy.lang.GroovyShell;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.Call;
 import sorcer.service.*;
 
 import java.io.*;
@@ -88,7 +87,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		this(name, expression, new ArgSet(parameters));
 	}
 
-	public GroovyInvoker(File scriptFile, Proc... parameters)
+	public GroovyInvoker(File scriptFile, Call... parameters)
 			throws EvaluationException {
 		this();
 		this.scriptFile = scriptFile;

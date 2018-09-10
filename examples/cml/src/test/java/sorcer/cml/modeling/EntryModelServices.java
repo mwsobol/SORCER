@@ -1,4 +1,4 @@
-package sorcer.pml.modeling;
+package sorcer.cml.modeling;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.pml.model.EntryModeler;
+import sorcer.cml.model.EntryModeler;
 import sorcer.service.Invocation;
 import sorcer.service.Task;
 import sorcer.service.modeling.Model;
@@ -22,25 +22,25 @@ import static sorcer.so.operator.*;
  * @author Mike Sobolewski
  */
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/pml")
+@ProjectContext("examples/cml")
 public class EntryModelServices {
 	private final static Logger logger = LoggerFactory.getLogger(EntryModelServices.class
 			.getName());
 	
 	@Test
-	public void procModelerTest() throws Exception {
+	public void callModelerTest() throws Exception {
 
-		EntryModel pm = EntryModeler.getEntryModel();
-		logger.info("result: " + invoke(pm, "expr"));
-		assertTrue(invoke(pm, "expr").equals(60.0));
+		EntryModel em = EntryModeler.getEntryModel();
+		logger.info("result: " + invoke(em, "expr"));
+		assertTrue(invoke(em, "expr").equals(60.0));
 
 	}
 
 	@Test
-	public void procObjectModelServiceTest() throws Exception {
+	public void callObjectModelServiceTest() throws Exception {
 
-		Model pm = EntryModeler.getEntryModel();
-		Task pmt = task(sig("invoke", pm),
+		Model em = EntryModeler.getEntryModel();
+		Task pmt = task(sig("invoke", em),
 				context(result("invoke/result", outPaths("expr"))));
 
 		assertTrue(exec(pmt).equals(60.0));
@@ -50,13 +50,13 @@ public class EntryModelServices {
 	}
 
 	@Test
-	public void procNetModelServiceTest() throws Exception {
+	public void callNetModelServiceTest() throws Exception {
 
 		// the provider in ex6/bin parmodel-prv-run.xml
-		Task pmt = task(sig("invoke", Invocation.class, prvName("EntryModel Service")),
+		Task emt = task(sig("invoke", Invocation.class, prvName("EntryModel Service")),
 				context(result("invoke/result", outPaths("expr"))));
 
-		assertTrue(exec(pmt).equals(60.0));
+		assertTrue(exec(emt).equals(60.0));
 	}
 	
 }

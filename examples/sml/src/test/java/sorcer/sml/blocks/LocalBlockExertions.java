@@ -1,6 +1,5 @@
 package sorcer.sml.blocks;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -112,7 +111,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 	@Test
 	public void altServceTest() throws Exception {
 
-//		Context scope = context(proc("y1", 100), proc("y2", 200));
+//		Context scope = context(call("y1", 100), call("y2", 200));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
@@ -206,7 +205,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 //		TODO the state after execution changes to reuse the block for another execution?
 // 		problem with clearScope() that is commented due to conflict with
 // 		return eval path when being as input path
-//		result = exert(block, proc("block/t5/arg/x1", 200.0), proc("block/t5/arg/x2", 800.0));
+//		result = exert(block, call("block/t5/arg/x1", 200.0), call("block/t5/arg/x2", 800.0));
 //		logger.info("block context: " + context(result));
 //		logger.info("result: " + eval(context(result), "block/result"));
 //		assertEquals(eval(context(result), "block/result"), 750.00);
@@ -265,7 +264,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 				context(val("x1", 10.0), val("x2", 20.0), val("z", 100.0)),
 				loop(condition((Context<Double> cxt) -> value(cxt, "x1") + value(cxt, "x2")
 								< value(cxt, "z")),
-						task(proc("x1", invoker("x1 + 3", args("x1"))))));
+						task(call("x1", invoker("x1 + 3", args("x1"))))));
 
 		block = exert(block);
 		logger.info("block context: " + context(block));
@@ -286,7 +285,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		Block block = block("block", sig("exert", ServiceConcatenator.class),
                 context(inVal("x1", 4.0), inVal("x2", 5.0)),
-				task(proc("y", invoker("x1 * x2", args("x1", "x2")))),
+				task(call("y", invoker("x1 * x2", args("x1", "x2")))),
 				alt(opt(condition((Context<Double> cxt) -> value(cxt, "y") > 50.0), t4),
 						opt(condition((Context<Double> cxt) -> value(cxt, "y") <= 50.0), t5)));
 

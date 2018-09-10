@@ -27,7 +27,6 @@ import sorcer.core.Tag;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.ent.*;
-import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.signature.NetletSignature;
@@ -765,8 +764,8 @@ public class operator extends Operator {
 
 	public static void dbURL(Object object, URL dbUrl)
 			throws MalformedURLException {
-		if (object instanceof Proc)
-			((Proc) object).setDbURL(dbUrl);
+		if (object instanceof Call)
+			((Call) object).setDbURL(dbUrl);
 		else if (object instanceof ServiceContext)
 			((ServiceContext) object).setDbUrl("" + dbUrl);
 		else
@@ -774,8 +773,8 @@ public class operator extends Operator {
 	}
 
 	public static URL dbURL(Object object) throws MalformedURLException {
-		if (object instanceof Proc)
-			return ((Proc) object).getDbURL();
+		if (object instanceof Call)
+			return ((Call) object).getDbURL();
 		else if (object instanceof ServiceContext)
 			return new URL(((ServiceContext) object).getDbUrl());
 		return null;
@@ -837,13 +836,13 @@ public class operator extends Operator {
 	}
 
 	public static <T> Entry<T> dbVal(String path) {
-		Entry<T> e = new Proc<T>(path);
+		Entry<T> e = new Call<T>(path);
 		e.setPersistent(true);
 		return e;
 	}
 
 	public static <T> Entry<T> dbVal(String path, T value) throws EvaluationException {
-		Proc<T> e = new Proc<T>(path, value);
+		Call<T> e = new Call<T>(path, value);
 		e.setPersistent(true);
 		if (SdbUtil.isSosURL(value)) {
 			e.setImpl(value);
@@ -1043,10 +1042,10 @@ public class operator extends Operator {
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
-        if (entry instanceof Proc) {
-            Proc procEntry = (Proc)entry;
-            if (procEntry.getScope() != null) {
-                procEntry.getScope().putValue(procEntry.getName(), value);
+        if (entry instanceof Call) {
+            Call callEntry = (Call)entry;
+            if (callEntry.getScope() != null) {
+                callEntry.getScope().putValue(callEntry.getName(), value);
             }
         }
         entry.setValid(true);
@@ -1095,8 +1094,8 @@ public class operator extends Operator {
 					out = (T) obj;
 				} else if (obj instanceof Valuation) {
 					out = (T)  ((Valuation)obj).valuate(args);
-				} else if (obj instanceof Proc) {
-					out = (T) ((Proc) obj).evaluate(args);
+				} else if (obj instanceof Call) {
+					out = (T) ((Call) obj).evaluate(args);
                 } else if (SdbUtil.isSosURL(obj)) {
 					out = (T) ((URL) obj).getContent();
 				} else if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {

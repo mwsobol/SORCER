@@ -44,7 +44,7 @@ public class SrvModels {
     public void lambdaInvoker() throws Exception {
 
         Model mo = model(ent("x", 10.0), ent("y", 20.0),
-                proc(invoker("lambda", cxt -> (double) value(cxt, "x")
+                call(invoker("lambda", cxt -> (double) value(cxt, "x")
                         + (double) value(cxt, "y")
                         + 30, args("x", "y"))));
         logger.info("invoke eval: " + eval(mo, "lambda"));
@@ -57,7 +57,7 @@ public class SrvModels {
         Context scope = context(val("x1", 20.0), val("y1", 40.0));
 
         Model mdl = model(ent("x", 10.0), ent("y", 20.0),
-            proc(invoker("lambda", (cxt) -> {
+            call(invoker("lambda", (cxt) -> {
                     return (double) value(cxt, "x")
                         + (double) value(cxt, "y")
                         + (double) value(cxt, "y1")
@@ -174,7 +174,7 @@ public class SrvModels {
         System.out.println("responses: " + response(model));
 
         assertTrue(response(model).equals(context(ent("add", 4.0), ent("multiply", 20.0))));
-//                context(proc("add", 4.0), proc("multiply", 20.0), proc("result/eval", 3.0))));
+//                context(call("add", 4.0), call("multiply", 20.0), call("result/eval", 3.0))));
 
     }
 
@@ -340,7 +340,7 @@ public class SrvModels {
                 ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
                         inPaths("multiply/out", "add/out")))));
 
-//                proc("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
+//                call("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
 
         responseUp(model, "add", "multiply", "subtract");
         // specify how model connects to exertion

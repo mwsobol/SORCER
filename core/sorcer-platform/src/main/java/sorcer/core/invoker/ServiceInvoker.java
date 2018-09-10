@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.Call;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Data;
@@ -115,7 +115,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			this.name = defaultName + count++;
 		else
 			this.name = name;
-		invokeContext = new EntryModel("model/proc");
+		invokeContext = new EntryModel("model/call");
 	}
 
 	public ServiceInvoker(ValueCallable lambda) throws InvocationException {
@@ -142,7 +142,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		this.name = name;
 		invokeContext = context;
 //		if (context == null)
-//			invokeContext = new EntryModel("model/proc");
+//			invokeContext = new EntryModel("model/call");
 //		else {
 //			if (context instanceof ServiceContext) {
 //				invokeContext = context;
@@ -163,10 +163,10 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		invokeContext = context;
 	}
 	
-	public ServiceInvoker(EntryModel context, Evaluator evaluator, Proc... procEntries) {
+	public ServiceInvoker(EntryModel context, Evaluator evaluator, Call... callEntries) {
 		this(context);
 		this.evaluator = evaluator;
-		this.args = new ArgSet(procEntries);
+		this.args = new ArgSet(callEntries);
 	}
 	
 	public ServiceInvoker(EntryModel context, Evaluator evaluator, ArgSet args) {
@@ -181,10 +181,10 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		this.args = args;
 	}
 	
-	public ServiceInvoker(Evaluator evaluator, Proc... procEntries) {
+	public ServiceInvoker(Evaluator evaluator, Call... callEntries) {
 		this(((Identifiable)evaluator).getName());
 		this.evaluator = evaluator;
-		this.args = new ArgSet(procEntries);
+		this.args = new ArgSet(callEntries);
 	}
 
 	/**
@@ -255,8 +255,8 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	}
 	
 	/**
-	 * Adds a new proc to the invoker. This must be done before calling
-	 * {@link #invoke} so the invoker is aware that the new proc may be added to
+	 * Adds a new call to the invoker. This must be done before calling
+	 * {@link #invoke} so the invoker is aware that the new call may be added to
 	 * the model.
 	 * 
 	 * @param par
@@ -267,12 +267,12 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	 * @throws RemoteException
 	 */
 	public ServiceInvoker addPar(Object par) throws EvaluationException {
-		if (par instanceof Proc) {
-			((ServiceContext)invokeContext).put(((Proc) par).getName(), par);
-			if (((Proc) par).asis() instanceof ServiceInvoker) {
+		if (par instanceof Call) {
+			((ServiceContext)invokeContext).put(((Call) par).getName(), par);
+			if (((Call) par).asis() instanceof ServiceInvoker) {
 				try {
-					((ServiceInvoker) ((Proc) par).evaluate()).addObserver(this);
-					args.add((Proc) par);
+					((ServiceInvoker) ((Call) par).evaluate()).addObserver(this);
+					args.add((Call) par);
 					value = null;
 					setChanged();
 					notifyObservers(this);
@@ -283,7 +283,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			}
 		} else if (par instanceof Identifiable) {
 			try {
-				Proc p = new Proc(((Identifiable) par).getName(), par, invokeContext);
+				Call p = new Call(((Identifiable) par).getName(), par, invokeContext);
 				invokeContext.putValue(p.getName(), p);
 			} catch (ContextException e) {
 				throw new EvaluationException(e);
@@ -298,16 +298,16 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		}
 	}
 	
-	synchronized public void addPars(List<Proc> procEntryList)
+	synchronized public void addPars(List<Call> callEntryList)
 			throws EvaluationException, RemoteException {
-		for (Proc p : procEntryList) {
+		for (Call p : callEntryList) {
 			addPar(p);
 		}
 	}
 	
-	synchronized public void addPars(Proc... procEntries) throws EvaluationException,
+	synchronized public void addPars(Call... callEntries) throws EvaluationException,
 			RemoteException {
-		for (Proc p : procEntries) {
+		for (Call p : callEntries) {
 			addPar(p);
 		}
 	}
@@ -353,7 +353,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			if (entries != null && entries.length > 0) {
 				isValid = false;
 				if (invokeContext == null) {
-					invokeContext = new EntryModel("model/proc");
+					invokeContext = new EntryModel("model/call");
 				}
 				((ServiceContext)invokeContext).substitute(entries);
 			}
@@ -393,8 +393,8 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	private void init(ArgSet set){
 		if (set != null) {
 			for (Arg p : set) {
-				if (p instanceof Proc && ((Proc) p).getScope() == null)
-					((Proc) p).setScope(invokeContext);
+				if (p instanceof Call && ((Call) p).getScope() == null)
+					((Call) p).setScope(invokeContext);
 			}
 		}
 	}
@@ -470,7 +470,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	public void clearPars() throws EvaluationException {
 		for (Arg p : args) {
 			try {
-				((Proc) p).setValue(null);
+				((Call) p).setValue(null);
 			} catch (Exception e) {
 				throw new EvaluationException(e);
 			}
@@ -511,7 +511,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.proc.EntrySet)
+	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.call.EntrySet)
 	 */
 	@Override
 	public void addArgs(ArgSet set) throws EvaluationException {

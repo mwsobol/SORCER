@@ -21,8 +21,6 @@ import net.jini.core.transaction.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Proc;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.util.SorcerUtil;
 import sorcer.eo.operator.Args;

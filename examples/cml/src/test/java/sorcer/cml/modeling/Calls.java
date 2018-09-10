@@ -1,13 +1,12 @@
-package sorcer.pml.modeling;
+package sorcer.cml.modeling;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.Call;
 import sorcer.service.Context;
 import sorcer.service.modeling.*;
 
@@ -26,18 +25,18 @@ import static sorcer.so.operator.*;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/pml")
-public class Procedures {
-	private final static Logger logger = LoggerFactory.getLogger(Procedures.class.getName());
+@ProjectContext("examples/cml")
+public class Calls {
+	private final static Logger logger = LoggerFactory.getLogger(Calls.class.getName());
 
 	@Test
 	public void procScope() throws Exception {
-		// a proc is a variable (entry) evaluated with its own scope (context)
-		Context<Double> cxt = context(proc("x", 20.0), proc("y", 30.0));
+		// a call is a variable (entry) evaluated with its own scope (context)
+		Context<Double> cxt = context(call("x", 20.0), call("y", 30.0));
 
-		// proc with its context scope
-		Proc add = proc("add", invoker("x + y", args("x", "y")), cxt);
-		logger.info("proc eval: " + exec(add));
+		// call with its context scope
+		Call add = call("add", invoker("x + y", args("x", "y")), cxt);
+		logger.info("call eval: " + exec(add));
 		assertTrue(exec(add).equals(50.0));
 	}
 
@@ -45,10 +44,10 @@ public class Procedures {
 	@Test
 	public void modelScope() throws Exception {
 
-		Model mdl = model(proc("x", 20.0), proc("y", 30.0));
-		Proc add = proc("add", invoker("x + y", args("x", "y")), mdl);
+		Model mdl = model(call("x", 20.0), call("y", 30.0));
+		Call add = call("add", invoker("x + y", args("x", "y")), mdl);
 
-		// adding a proc to the model updates proc's scope
+		// adding a call to the model updates call's scope
 		add(mdl, add);
 
 		// evaluate entry of the context
@@ -59,7 +58,7 @@ public class Procedures {
 	
 	@Test
 	public void closingProcWihEntries() throws Exception {
-		Proc y = proc("y",
+		Call y = call("y",
 				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = exec(y, val("x1", 10.0), val("x2", 50.0), val("x3", 20.0), val("x4", 80.0));
 		// logger.info("y eval: " + val);
@@ -70,11 +69,11 @@ public class Procedures {
 	public void closingProcWitScope() throws Exception {
 
 		// invokers use contextual scope of args
-		Proc add = proc("add", invoker("x + y", args("x", "y")));
+		Call add = call("add", invoker("x + y", args("x", "y")));
 
 		Context<Double> cxt = context(val("x", 10.0), val("y", 20.0));
-		logger.info("proc eval: " + exec(add, cxt));
-		// compute a proc
+		logger.info("call eval: " + exec(add, cxt));
+		// compute a call
 		assertTrue(exec(add, cxt).equals(30.0));
 
 	}
@@ -82,8 +81,8 @@ public class Procedures {
 	@Test
 	public void dbProcOperator() throws Exception {
 		
-		Proc<Double> dbp1 = persistent(proc("design/in", 25.0));
-		Proc<String> dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
+		Call<Double> dbp1 = persistent(call("design/in", 25.0));
+		Call<String> dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
 
 		// dbp1 is declared to be persisted
 		assertTrue(dbp1.getOut().equals(25.0));
@@ -118,12 +117,12 @@ public class Procedures {
 	@Test
 	public void substitutingValuesWithEntFidelities() throws Exception {
 		
-		Proc<Double> dbp = dbEnt("shared/eval", 25.0);
+		Call<Double> dbp = dbEnt("shared/eval", 25.0);
 		
-		Proc multi = proc("multi",
+		Call multi = call("multi",
 				entFi(val("init/eval"),
 					dbp,
-					proc("invoke", invoker("x + y", args("x", "y")))));
+					call("invoke", invoker("x + y", args("x", "y")))));
 
 		Context cxt = context(val("x", 10.0),
 				val("y", 20.0), val("init/eval", 49.0));
@@ -138,12 +137,12 @@ public class Procedures {
 	@Test
 	public void procModelOperator() throws Exception {
 		
-		Model mdl = procModel("proc-model", val("v1", 1.0), val("v2", 2.0));
+		Model mdl = entModel("call-model", val("v1", 1.0), val("v2", 2.0));
 		add(mdl, val("x", 10.0), val("y", 20.0));
-		// add an active proc, no scope
-		add(mdl, proc(invoker("add1", "x + y", args("x", "y"))));
-		// add a proc with own scope
-		add(mdl, proc(invoker("add2", "x + y", args("x", "y")),
+		// add an active call, no scope
+		add(mdl, call(invoker("add1", "x + y", args("x", "y"))));
+		// add a call with own scope
+		add(mdl, call(invoker("add2", "x + y", args("x", "y")),
 				context(val("x", 30.0), val("y", 40.0))));
 		
 		assertEquals(exec(mdl, "add1"), 30.0);

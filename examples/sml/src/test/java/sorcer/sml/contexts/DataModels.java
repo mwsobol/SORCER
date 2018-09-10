@@ -10,9 +10,9 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.ListContext;
-import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Value;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.util.DataTable;
@@ -30,7 +30,7 @@ import static sorcer.mo.operator.inputs;
 import static sorcer.mo.operator.returnPath;
 import static sorcer.po.operator.ent;
 import static sorcer.po.operator.inoutVal;
-import static sorcer.po.operator.proc;
+import static sorcer.po.operator.call;
 import static sorcer.so.operator.*;
 
 /**
@@ -124,7 +124,7 @@ public class DataModels {
         add(cxt, ent("arg/x6", 1.6));
         add(cxt, outVal("out/y1", 1.7));
         add(cxt, outVal("out/y2", 1.8));
-        add(cxt, inoutVal("proc/z", 1.9));
+        add(cxt, inoutVal("out/z", 1.9));
 
         assertTrue(cxt instanceof Context);
 
@@ -140,9 +140,9 @@ public class DataModels {
         assertEquals(select(cxt, 2, 4, 5), list(1.2, 1.4, 1.5));
 
         // get input and output contexts
-        List<String> allInputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5", "proc/z");
+        List<String> allInputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5", "out/z");
         List<String> inputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5");
-        List<String> outputs = list("out/y1", "out/y2", "proc/z");
+        List<String> outputs = list("out/y1", "out/y2", "out/z");
 
         assertTrue(allInputs.equals(paths(allInputs(cxt))));
         assertTrue(inputs.equals(paths(inputs(cxt))));
@@ -158,7 +158,7 @@ public class DataModels {
         assertEquals(outContextValues(cxt), list(1.7, 1.8, 1.9));
 
         // return all paths of outEntries
-        assertEquals(outContextPaths(cxt), list("out/y1", "out/y2", "proc/z"));
+        assertEquals(outContextPaths(cxt), list("out/y1", "out/y2", "out/z"));
 
     }
 
@@ -266,7 +266,7 @@ public class DataModels {
 
         // two contexts ac and mc sharing arg1/eval
         // and arg3/eval values over the network
-        Model ac = procModel("add",
+        Model ac = entModel("add",
                 inVal("arg1/eval", 90.0),
                 inVal("arg2/eval", 110.0),
                 inVal("arg3/eval", 100.0));
@@ -275,7 +275,7 @@ public class DataModels {
         URL a1vURL = storeVal(ac, "arg1/eval");
 
         // make arg1/eval in mc the same as in ac
-        Model mc = procModel("multiply",
+        Model mc = entModel("multiply",
                 dbInVal("arg1/eval", a1vURL),
                 inVal("arg2/eval", 70.0),
                 inVal("arg3/eval", 200.0));
@@ -292,7 +292,7 @@ public class DataModels {
         assertTrue(exec(ac, "arg3/eval").equals(100.0));
         assertTrue(exec(mc, "arg3/eval").equals(200.0));
         URL a3vURL = storeVal(mc, "arg3/eval");
-        add(ac, proc("arg3/eval", a3vURL));
+        add(ac, operator.call("arg3/eval", a3vURL));
 
         setValues(mc, val("arg1/eval", 300.0));
         assertTrue(exec(ac, "arg1/eval").equals(300.0));
@@ -338,6 +338,7 @@ public class DataModels {
         assertTrue(out.size() == 1);
     }
 
+
     @Test
     public void contextfromEntryList() throws Exception {
 
@@ -345,6 +346,7 @@ public class DataModels {
         assertTrue(value(cxt, "x1").equals(20.0));
         assertTrue(value(cxt, "x2").equals(40.0));
     }
+
 
     @Test
     public void ResponseRowToContexToRow() throws Exception {

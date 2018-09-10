@@ -1,4 +1,4 @@
-package sorcer.sml.tasks;
+package sorcer.sml.requests;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,8 +24,8 @@ import static sorcer.so.operator.*;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class LocalTaskExertions {
-	private final static Logger logger = LoggerFactory.getLogger(LocalTaskExertions.class);
+public class LocalTasks {
+	private final static Logger logger = LoggerFactory.getLogger(LocalTasks.class);
 
 
 	@Test

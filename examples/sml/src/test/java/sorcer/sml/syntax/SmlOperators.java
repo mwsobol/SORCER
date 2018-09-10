@@ -49,8 +49,8 @@ public class SmlOperators {
 		ent v2 = val("x3", 10.7);
 		ent e1 = ent("x4", 10.8);
 		ent e2 = srv(s1);
-		func f1 = proc("x5", 20.0);
-		func f2 = proc("v1 + f1", args("v1", "f1"));
+		func f1 = call("x5", 20.0);
+		func f2 = call("v1 + f1", args("v1", "f1"));
 		func f3 = lmbd("s1", args("v1", "f1"));
 		func f4 = neu("x6", 1.0);
 		func f5 = srv(sig("s1", Class.class));

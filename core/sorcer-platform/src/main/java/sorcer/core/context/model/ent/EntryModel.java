@@ -29,7 +29,6 @@ import sorcer.service.Signature.ReturnPath;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
-import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -79,7 +78,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		super();
 		key = PROC_MODEL;
 		out = new Date();
-		setSubject("proc/model", new Date());
+		setSubject("call/model", new Date());
 		isRevaluable = true;
 	}
 
@@ -96,7 +95,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
     public EntryModel(Context context) throws RemoteException, ContextException {
         super(context);
         key = PROC_MODEL;
-        setSubject("proc/model", new Date());
+        setSubject("call/model", new Date());
 		isRevaluable = true;
 	}
 
@@ -134,13 +133,13 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 					val = ((UuidObject) val).getObject();
 				}
 				return val;
-			} else if (val instanceof Proc) {
-				if (((Proc) val).isCached()) {
-					return ((Proc) val).getOut();
-				} else if (((Proc) val).isPersistent) {
-					return ((Proc) val).evaluate();
-				} else if ((((Proc) val).asis() instanceof Subroutine)) {
-					bindEntry((Subroutine) ((Proc) val).asis());
+			} else if (val instanceof Call) {
+				if (((Call) val).isCached()) {
+					return ((Call) val).getOut();
+				} else if (((Call) val).isPersistent) {
+					return ((Call) val).evaluate();
+				} else if ((((Call) val).asis() instanceof Subroutine)) {
+					bindEntry((Subroutine) ((Call) val).asis());
 				}
 			}
 
@@ -149,12 +148,12 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			} else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
 				((Scopable) ((Entry)val).asis()).setScope(this);
 			}
-			if (val != null && val instanceof Proc) {
+			if (val != null && val instanceof Call) {
 				Context inCxt = (Context) Arg.selectDomain(args);
 				if (inCxt != null) {
 					isChanged = true;
 				}
-				Object impl = ((Proc)val).getImpl();
+				Object impl = ((Call)val).getImpl();
 				if (impl instanceof Mogram) {
 					return exec((Service)impl, args);
 				} else if (impl instanceof Invocation) {
@@ -175,7 +174,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				} else if (impl instanceof Evaluation) {
 					return ((Evaluation) impl).evaluate(args);
 				} else {
-					return ((Proc)val).getValue(args);
+					return ((Call)val).getValue(args);
 				}
 			} else if (val instanceof Evaluation) {
 				return ((Evaluation) val).evaluate(args);
@@ -235,8 +234,8 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	public Object putValue(String path, Object value) throws ContextException {
 		isChanged = true;
 		Object obj = get(path);
-		if (obj instanceof Proc) {
-			((Proc) obj).setValue(value);
+		if (obj instanceof Call) {
+			((Call) obj).setValue(value);
 			return value;
 		} else {
 			if (value instanceof Scopable) {
@@ -251,12 +250,12 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		return super.put(path, value);
 	}
 
-	public Proc getProc(String name) throws ContextException {
+	public Call getProc(String name) throws ContextException {
 		Object obj = get(name);
-		if (obj instanceof Proc)
-			return (Proc) obj;
+		if (obj instanceof Call)
+			return (Call) obj;
 		else
-			return new Proc(name, asis(name), this);
+			return new Call(name, asis(name), this);
 	}
 
 	public Subroutine bindEntry(Subroutine ent) throws ContextException, RemoteException {
@@ -278,13 +277,13 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	}
 
 	public EntryModel append(Arg... objects) throws ContextException {
-		Proc p = null;
+		Call p = null;
 		boolean changed = false;
 		for (Arg obj : objects) {
 			if (obj instanceof Fi) {
 				continue;
-			} else if (obj instanceof Proc) {
-				p = (Proc) obj;
+			} else if (obj instanceof Call) {
+				p = (Call) obj;
 			} else if (obj instanceof Entry) {
 				putValue((String) ((Entry) obj).key(),
 						((Entry) obj).getOut());
@@ -310,12 +309,12 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 
 	@Override
 	public Domain add(Identifiable... objects) throws ContextException, RemoteException {
-		Proc p = null;
+		Call p = null;
 		boolean changed = false;
 		for (Identifiable obj : objects) {
 			String pn = obj.getName();
-			if (obj instanceof Proc) {
-				p = (Proc) obj;
+			if (obj instanceof Call) {
+				p = (Call) obj;
 			} else if (obj instanceof Functionality || obj instanceof Setup) {
 				putValue(pn, obj);
 			} else if (obj instanceof Entry) {
@@ -382,7 +381,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				if (((ServiceContext) context).getExecPath() != null) {
 					Object o = get(((ServiceContext) context).getExecPath()
 							.path());
-					if (o instanceof Proc) {
+					if (o instanceof Call) {
 						if (o instanceof Agent) {
 							if (((Agent) o).getScope() == null)
 								((Agent) o).setScope(this);
@@ -390,7 +389,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 								((Agent) o).getScope().append(this);
 							result = ((Agent) o).evaluate(entries);
 						} else {
-							Object i = ((Proc) get(((ServiceContext) context)
+							Object i = ((Call) get(((ServiceContext) context)
 									.getExecPath().path())).asis();
 							if (i instanceof ServiceInvoker) {
 								result = ((ServiceInvoker) i).compute(entries);
@@ -464,10 +463,10 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		throw new ContextException("No such variability in context: " + name);
 	}
 
-	private Proc putVar(String path, Functionality value) throws ContextException {
+	private Call putVar(String path, Functionality value) throws ContextException {
 		putValue(path, value);
 		markVar(this, path, value);
-		return new Proc(path, value, this);
+		return new Call(path, value, this);
 	}
 
 	private void realizeDependencies(Arg... entries) throws RemoteException,

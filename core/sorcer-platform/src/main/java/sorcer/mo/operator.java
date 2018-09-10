@@ -139,10 +139,10 @@ public class operator {
             throw new ContextException(e);
         }
 
-        if (entry instanceof Proc) {
-            Proc proc = (Proc) entry;
-            if (proc.getScope() != null)
-                proc.getScope().putValue(proc.getName(), value);
+        if (entry instanceof Call) {
+            Call call = (Call) entry;
+            if (call.getScope() != null)
+                call.getScope().putValue(call.getName(), value);
         }
         ((ServiceMogram)model).setChanged(true);
         return model;
@@ -188,13 +188,7 @@ public class operator {
         return model;
     }
 
-    public static EntryModel procModel(String name, Signature builder) throws SignatureException {
-        EntryModel model = (EntryModel) instance(builder);
-        model.setBuilder(builder);
-        return model;
-    }
-
-    public static EntryModel parModel(String name, Signature builder) throws SignatureException {
+    public static EntryModel entModel(String name, Signature builder) throws SignatureException {
         EntryModel model = (EntryModel) instance(builder);
         model.setBuilder(builder);
         return model;
@@ -206,20 +200,19 @@ public class operator {
         return model;
     }
 
-    public static EntryModel procModel(String name, Identifiable... objects)
+    public static EntryModel entModel(String name, Identifiable... objects)
             throws ContextException, RemoteException {
         EntryModel entModel = new EntryModel(objects);
         entModel.setName(name);
         return entModel;
-
     }
 
-    public static EntryModel procModel(Identifiable... objects)
+    public static EntryModel entModel(Identifiable... objects)
             throws ContextException, RemoteException {
         return new EntryModel(objects);
     }
 
-    public static EntryModel procModel(Object... entries)
+    public static EntryModel entModel(Object... entries)
             throws ContextException {
         if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
             ((Context)entries[0]).setModeling(true);
@@ -540,7 +533,7 @@ public class operator {
             } else if (i instanceof Entry) {
                 try {
                     hasEntry = true;
-                    if (i instanceof Proc)
+                    if (i instanceof Call)
                         procType = true;
                     else if (i instanceof Srv || i instanceof Neu) {
                         srvType = true;
@@ -561,14 +554,14 @@ public class operator {
                 mo = srvModel(items);
             } else if (procType) {
                 if (isFidelity) {
-                    mo = srvModel(procModel(items));
+                    mo = srvModel(entModel(items));
                 } else {
-                    mo = procModel(items);
+                    mo = entModel(items);
                 }
             }
             // default model
             if (mo == null) {
-                mo = procModel(items);
+                mo = entModel(items);
             }
             mo.setName(name);
             if (mo instanceof SrvModel && autoDeps) {
@@ -672,9 +665,9 @@ public class operator {
                 }
             }
 
-            if (i instanceof Proc && ((Proc)i).getImpl() instanceof Invocation) {
-                ((Proc)i).setScope(context);
-                ((ServiceInvoker)((Proc)i).getImpl()).setScope(context);
+            if (i instanceof Call && ((Call)i).getImpl() instanceof Invocation) {
+                ((Call)i).setScope(context);
+                ((ServiceInvoker)((Call)i).getImpl()).setScope(context);
             }
         }
         context.isChanged();
@@ -686,7 +679,7 @@ public class operator {
         return srvModel(name, objects);
     }
 
-    public static EntryModel procModel(String name, Object... objects)
+    public static EntryModel entModel(String name, Object... objects)
             throws RemoteException, ContextException {
         EntryModel pm = new EntryModel(name);
         for (Object o : objects) {
@@ -699,8 +692,8 @@ public class operator {
     public static Object get(EntryModel pm, String parname, Arg... parametrs)
             throws ContextException, RemoteException {
         Object obj = pm.asis(parname);
-        if (obj instanceof Proc)
-            obj = ((Proc)obj).evaluate(parametrs);
+        if (obj instanceof Call)
+            obj = ((Call)obj).evaluate(parametrs);
         return obj;
     }
 

@@ -1,4 +1,4 @@
-package sorcer.sml.tasks;
+package sorcer.sml.requests;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,8 +32,8 @@ import static sorcer.so.operator.*;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class NetTaskExertions {
-	private final static Logger logger = LoggerFactory.getLogger(NetTaskExertions.class);
+public class NetTasks {
+	private final static Logger logger = LoggerFactory.getLogger(NetTasks.class);
 
 	@Test
 	public void exertTask() throws Exception  {

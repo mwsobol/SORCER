@@ -27,7 +27,7 @@ import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.ent.*;
-import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.Call;
 import sorcer.core.context.node.ContextNode;
 import sorcer.core.context.node.ContextNodeException;
 import sorcer.core.exertion.NetTask;
@@ -1370,8 +1370,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Map.Entry<String, T> entry;
 		while (i.hasNext()) {
 			entry = i.next();
-			if (entry.getValue() instanceof Proc) {
-				pl.add((Proc)entry.getValue());
+			if (entry.getValue() instanceof Call) {
+				pl.add((Call)entry.getValue());
 			}
 		}
 		return pl;
@@ -1972,8 +1972,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 			// sb.append(val.toString() + " ");
 			// }
 			try {
-				if (val instanceof Proc)
-					val = "proc: " + ((Proc)val).getName();
+				if (val instanceof Call)
+					val = "call: " + ((Call)val).getName();
 				else
 //					val = execute(path);
 					val = asis(path);
@@ -2859,8 +2859,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
-	public Proc getProc(String path) throws ContextException, RemoteException {
-		return new Proc(path, this);
+	public Call getProc(String path) throws ContextException, RemoteException {
+		return new Call(path, this);
 	}
 
 	public T getValue(Arg... args) throws EvaluationException, RemoteException {
@@ -3176,9 +3176,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	@Override
 	public Object putDbValue(String path, Object value) throws ContextException, RemoteException {
-		Proc procEntry = new Proc(path, value == null ? Context.none : value);
-		procEntry.setPersistent(true);
-		return putValue(path, procEntry);
+		Call callEntry = new Call(path, value == null ? Context.none : value);
+		callEntry.setPersistent(true);
+		return putValue(path, callEntry);
 	}
 
 	/* (non-Javadoc)
@@ -3187,10 +3187,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public Object putDbValue(String path, Object value, URL datastoreUrl)
 			throws ContextException, RemoteException {
-		Proc procEntry = new Proc(path, value == null ? Context.none : value);
-		procEntry.setPersistent(true);
-		procEntry.setDbURL(datastoreUrl);
-		return putValue(path, procEntry);
+		Call callEntry = new Call(path, value == null ? Context.none : value);
+		callEntry.setPersistent(true);
+		callEntry.setDbURL(datastoreUrl);
+		return putValue(path, callEntry);
 	}
 
 	public List<EntryList> getEntryLists() {
@@ -3227,11 +3227,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Context#addPar(sorcer.core.context.model.proc.Proc)
+	 * @see sorcer.service.Context#addPar(sorcer.core.context.model.call.Proc)
 	 */
 	@Override
 	public Arg addProc(Arg arg) throws ContextException {
-		Proc p = (Proc)arg;
+		Call p = (Call)arg;
 		put(p.getName(), (T)p);
 		if (p.getScope() == null || p.getScope().size() == 0)
 			p.setScope(this);
@@ -3247,7 +3247,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return p;
 	}
 
-	public Proc appendProc(Proc p) throws ContextException {
+	public Call appendProc(Call p) throws ContextException {
 		put(p.getName(), (T)p);
 		if (p.getScope() == null)
 			p.setScope(new EntryModel(p.getName()).append(this));
@@ -3262,8 +3262,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * @see sorcer.service.Context#addPar(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Proc addProc(String path, Object value) throws ContextException {
-		return new Proc(path, value, this);
+	public Call addProc(String path, Object value) throws ContextException {
+		return new Call(path, value, this);
 	}
 
 

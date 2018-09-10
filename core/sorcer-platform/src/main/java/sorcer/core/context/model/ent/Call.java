@@ -40,7 +40,7 @@ import static sorcer.so.operator.eval;
 import static sorcer.so.operator.exec;
 
 /**
- * In service-based modeling, a parameter (for short a proc) is a special kind of
+ * In service-based modeling, a parameter (for short a call) is a special kind of
  * variable, used in a service context {@link EntryModel} to refer to one of the
  * pieces of data provided as input to the invokers (subroutines of the
  * context). These pieces of data are called arguments.
@@ -48,30 +48,30 @@ import static sorcer.so.operator.exec;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Proc<T> extends Subroutine<T> implements Mappable<T>,
+public class Call<T> extends Subroutine<T> implements Mappable<T>,
 		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, func<T> {
 
 	private static final long serialVersionUID = 7495489980319169695L;
 	 
-	private static Logger logger = LoggerFactory.getLogger(Proc.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(Call.class.getName());
 	
 	private Principal principal;
 
-	// data store URL for this proc
+	// data store URL for this call
 	private URL dbURL;
 
-	public Proc(String name) {
+	public Call(String name) {
 		super(name);
 		this.name = name;
 		type = Functionality.Type.PROC;
 	}
 	
-	public Proc(Identifiable identifiable) {
+	public Call(Identifiable identifiable) {
 		this(identifiable.getName());
 		impl = (T)identifiable;
 	}
 
-	public Proc(String path, Object entity) {
+	public Call(String path, Object entity) {
 		super(path);
 		name = path;
 		if (entity instanceof  Number || entity instanceof  String || entity instanceof  Date
@@ -98,7 +98,7 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 		}
 	}
 
-	public Proc(String path, Object entity, Object scope)
+	public Call(String path, Object entity, Object scope)
 			throws ContextException {
 		this(path);
         if (entity instanceof  Number || entity instanceof  String || entity instanceof  Date
@@ -119,7 +119,7 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 		this.impl = entity;
 	}
 	
-	public Proc(Mappable map, String name, String path) {
+	public Call(Mappable map, String name, String path) {
 		this(name);
 		impl =  path;
 	}
@@ -197,8 +197,8 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 			} else {
 				val = out;
 			}
-			if (val instanceof Proc && ((Proc)val).asis() == null && out == null) {
-				logger.warn("undefined proc: " + val);
+			if (val instanceof Call && ((Call)val).asis() == null && out == null) {
+				logger.warn("undefined call: " + val);
 				return null;
 			}
 			// direct scope
@@ -320,8 +320,8 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 	public int compareTo(T o) {
 		if (o == null)
 			throw new NullPointerException();
-		if (o instanceof Proc<?>)
-			return name.compareTo(((Proc<?>) o).getName());
+		if (o instanceof Call<?>)
+			return name.compareTo(((Call<?>) o).getName());
 		else
 			return -1;
 	}
@@ -341,7 +341,7 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
             ps = "" + out;
         }
 
-        return "proc [key: " + name + ", eval: " + ps + ", path: " + key + "]";
+        return "call [key: " + name + ", eval: " + ps + ", path: " + key + "]";
     }
 
 	/* (non-Javadoc)
@@ -521,9 +521,9 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 	public void addArgs(ArgSet set) throws EvaluationException {
 		Iterator<Arg> i = set.iterator();
 		while (i.hasNext()) {
-			Proc procEntry = (Proc)i.next();
+			Call callEntry = (Call)i.next();
 			try {
-				putValue(procEntry.getName(), procEntry.asis());
+				putValue(callEntry.getName(), callEntry.asis());
 			} catch (Exception e) {
 				throw new EvaluationException(e);
 			} 
@@ -539,8 +539,8 @@ public class Proc<T> extends Subroutine<T> implements Mappable<T>,
 	
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof Proc
-				&& ((Proc) object).name.equals(name))
+		if (object instanceof Call
+				&& ((Call) object).name.equals(name))
 			return true;
 		else
 			return false;

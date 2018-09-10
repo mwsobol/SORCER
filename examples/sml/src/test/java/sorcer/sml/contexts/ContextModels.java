@@ -11,7 +11,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.Call;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.po.operator;
 import sorcer.service.Arg;
@@ -30,7 +30,7 @@ import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
 import static sorcer.po.operator.ent;
 import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.proc;
+import static sorcer.po.operator.call;
 import static sorcer.so.operator.*;
 
 /**
@@ -44,35 +44,35 @@ public class ContextModels {
 	@Test
 	public void entryModel() throws Exception {
 
-		// use procModel to create an EntryModel the same way as a regular context
-		// or convert any context to procModel(<context>)
-		EntryModel mdl = procModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
+		// use entModel to create an EntryModel the same way as a regular context
+		// or convert any context to entModel(<context>)
+		EntryModel mdl = entModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
 				val("arg/x3", 3.0), val("arg/x4", 4.0), val("arg/x5", 5.0));
 
 		setValues(mdl, val("arg/x6", 6.0));
 		assertTrue(exec(mdl, "arg/x6").equals(6.0));
 
-		// proc is of the Evaluation multitype
+		// call is of the Evaluation multitype
 		// args in models are evaluated
 		setValues(mdl, val("arg/x6", val("overwrite", 20.0)));
 		assertTrue(exec(mdl, "arg/x6").equals(20.0));
 
 		// invoker is of the Invocation multitype
-		put(mdl, proc("arg/x7", invoker("x1 + x3", args("x1", "x3"))));
+		put(mdl, operator.call("arg/x7", invoker("x1 + x3", args("x1", "x3"))));
 
 		assertTrue(exec(mdl, "arg/x7").equals(4.0));
 		assertTrue(get(mdl, "arg/x7") instanceof Subroutine);
-		assertTrue(get(mdl, "arg/x7") instanceof Proc);
+		assertTrue(get(mdl, "arg/x7") instanceof Call);
 		assertTrue(get(mdl, "arg/x7") instanceof Invocation);
 	}
 
 	@Test
 	public void modelingInputsResponses() throws Exception {
 
-		Model mdl = procModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
+		Model mdl = entModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
 				val("arg/x3", 3.0), val("arg/x4", 4.0), val("arg/x5", 5.0));
 
-		add(mdl, proc("invoke", invoker("x1 + x3", args("x1", "x3"))));
+		add(mdl, operator.call("invoke", invoker("x1 + x3", args("x1", "x3"))));
 
 		// declare the modeling responses
 		responseUp(mdl, "invoke");
@@ -85,7 +85,7 @@ public class ContextModels {
 		assertTrue(result.equals(5.0));
 
 		// compute the model with new inputs
-		add(mdl, proc("invoke", invoker("x6 * x7 + x1", args("x1", "x6", "x7"))));
+		add(mdl, operator.call("invoke", invoker("x6 * x7 + x1", args("x1", "x6", "x7"))));
 		result = (Double) value(eval(mdl, ent("arg/x6", 6.0), ent("arg/x7", 7.0)), "invoke");
 		assertTrue(result.equals(44.0));
 	}
@@ -93,13 +93,13 @@ public class ContextModels {
 	@Test
 	public void modelDependencies() throws Exception {
 
-		Model mdl1 = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+		Model mdl1 = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 		add(mdl1, ent("y1", invoker("x1 + x3", operator.ents("x1", "x3"))));
 		add(mdl1, ent("y2", invoker("x4 * x5", operator.ents("x1", "x3"))));
 
 		// mdl2 depends on values y1 and y2 calculated in cxt1
-		Model mdl2 = procModel(ent("arg/y3", 8.0), ent("arg/y4", 9.0), ent("arg/y5", 10.0));
+		Model mdl2 = entModel(ent("arg/y3", 8.0), ent("arg/y4", 9.0), ent("arg/y5", 10.0));
 		add(mdl2, ent("invoke", invoker("y1 + y2 + y4 + y5", operator.ents("y1", "y2", "y4", "y5"))));
 		responseUp(mdl2, "invoke");
 
@@ -115,7 +115,7 @@ public class ContextModels {
 	@Test
 	public void evaluateMultiEntryResponseModel() throws Exception {
 		
-		Model mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+		Model mdl = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
 		add(mdl, ent("add", invoker("x1 + x3", operator.ents("x1", "x3"))));
@@ -135,7 +135,7 @@ public class ContextModels {
 	@Test
 	public void exertEntModel() throws Exception {
 
-		Model mdl = procModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
+		Model mdl = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
 		add(mdl, ent("add", invoker("x1 + x3", operator.ents("x1", "x3"))));

@@ -1,6 +1,5 @@
-package sorcer.pml.modeling;
+package sorcer.cml.modeling;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -13,7 +12,7 @@ import sorcer.core.context.model.ent.SysCall;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.SysCaller;
 import sorcer.core.provider.caller.SysCallerProvider;
-import sorcer.pml.provider.impl.Volume;
+import sorcer.cml.provider.impl.Volume;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.util.Sorcer;
@@ -34,7 +33,7 @@ import static sorcer.so.operator.*;
  * @author Mike Sobolewski
  */
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/pml")
+@ProjectContext("examples/cml")
 public class SysCalls {
 	private final static Logger logger = LoggerFactory.getLogger(SysCalls.class);
 
@@ -46,7 +45,7 @@ public class SysCalls {
 		String logbackVersion = System.getProperty("logback.version");
 		String buildDir = System.getProperty("project.build.dir");
 
-        String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
+        String cp = buildDir + "/libs/cml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
         		+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
@@ -57,10 +56,10 @@ public class SysCalls {
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 
-		EntryModel pm = procModel(proc(cmd),
+		EntryModel pm = entModel(call(cmd),
 				val("x", 10.0), val("y"),
-				proc("multiply", invoker("x * y", args("x", "y"))),
-				proc("add", invoker("x + y", args("x", "y"))));
+				call("multiply", invoker("x * y", args("x", "y"))),
+				call("add", invoker("x + y", args("x", "y"))));
 
 		CmdResult result = (CmdResult) invoke(pm, "volume");
 		// get from the result the volume of cylinder and assign to y parameter
@@ -87,7 +86,7 @@ public class SysCalls {
         String logbackVersion = System.getProperty("logback.version");
         String buildDir = System.getProperty("project.build.dir");
 
-        String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
+        String cp = buildDir + "/libs/cml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
                 + Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
                 + Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
                 + Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
@@ -95,9 +94,9 @@ public class SysCalls {
                 + Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
                 + Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-        Model pm = procModel(val("x", 10.0), args("y"),
-                proc("multiply", invoker("x * y", args("x", "y"))),
-                proc("add", invoker("x + y", args("x", "y"))));
+        Model pm = entModel(val("x", 10.0), args("y"),
+                call("multiply", invoker("x * y", args("x", "y"))),
+                call("add", invoker("x + y", args("x", "y"))));
 
         SysCall caller = sysCall("volume", cxt(val("cmd", "java -cp  " + cp + Volume.class.getName()),
                 inVal("cylinder"), outVal("cylinder/volume"), outVal("cylinder/radius"),
@@ -128,7 +127,7 @@ public class SysCalls {
 		String logbackVersion = property("logback.version");
 		String buildDir = property("project.build.dir");
 
-		String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
+		String cp = buildDir + "/libs/cml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
@@ -156,7 +155,7 @@ public class SysCalls {
 		String logbackVersion = System.getProperty("logback.version");
 		String buildDir = System.getProperty("project.build.dir");
 
-		String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
+		String cp = buildDir + "/libs/cml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
@@ -165,8 +164,8 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
 		Model sm = srvModel(val("x", 10.0), val("y"),
-				proc("multiply", invoker("x * y", args("x", "y"))),
-				proc("add", invoker("x + y", args("x", "y"))),
+				call("multiply", invoker("x * y", args("x", "y"))),
+				call("add", invoker("x + y", args("x", "y"))),
 				result("cylinder/volume"),
 				srv("volume", sig("exec", SysCaller.class,
 //				srv("volume", sig("exec", SysCallerProvider.class,
@@ -196,7 +195,7 @@ public class SysCalls {
 		String logbackVersion = System.getProperty("logback.version");
 		String buildDir = System.getProperty("project.build.dir");
 
-		String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
+		String cp = buildDir + "/libs/cml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
@@ -204,9 +203,9 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-		Model sm = srvModel(proc("x", 10.0), val("y"),
-				proc("multiply", invoker("x * y", args("x", "y"))),
-				proc("add", invoker("x + y", args("x", "y"))),
+		Model sm = srvModel(call("x", 10.0), val("y"),
+				call("multiply", invoker("x * y", args("x", "y"))),
+				call("add", invoker("x + y", args("x", "y"))),
 				result("cylinder/volume"),
 				srv("volume", sig("exec", SysCallerProvider.class,
 //				srv("volume", sig("exec", SysCaller.class,

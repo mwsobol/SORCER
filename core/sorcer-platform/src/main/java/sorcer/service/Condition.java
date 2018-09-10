@@ -21,7 +21,7 @@ import groovy.lang.Closure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Proc;
+import sorcer.core.context.model.ent.Call;
 import sorcer.core.exertion.AltTask;
 import sorcer.core.exertion.LoopTask;
 import sorcer.core.exertion.OptTask;
@@ -154,7 +154,7 @@ import java.util.Map;
 			} else if (closureExpression != null && conditionalContext != null) {
 				ArgSet ps = new ArgSet();
 				for (String name : pars) {
-					ps.add(new Proc(name));
+					ps.add(new Call(name));
 				}
 				ServiceInvoker invoker = new GroovyInvoker(closureExpression, ps.toArray());
 				invoker.setScope(conditionalContext);
@@ -307,10 +307,10 @@ import java.util.Map;
 			if (entry.getValue() instanceof ServiceInvoker) {
 				clenupContextScripts(((ServiceInvoker) entry.getValue())
 						.getScope());
-			} else if (entry.getValue() instanceof Proc) {
-				Context cxt =  ((Proc) entry.getValue()).getScope();
+			} else if (entry.getValue() instanceof Call) {
+				Context cxt =  ((Call) entry.getValue()).getScope();
 				if (cxt != null) cxt.remove(Condition._closure_);
-				cxt = ((Proc)entry.getValue()).getScope();
+				cxt = ((Call)entry.getValue()).getScope();
 				if (cxt != null) cxt.remove(Condition._closure_);
 			} else if (entry.getValue() instanceof ServiceContext) {
 				ServiceContext cxt = (ServiceContext)entry.getValue();

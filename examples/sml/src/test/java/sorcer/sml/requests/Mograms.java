@@ -1,6 +1,5 @@
 package sorcer.sml.requests;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -40,7 +38,7 @@ public class Mograms {
     public void evaluateModel() throws Exception  {
 
         Model context = model(val("x1", 20.0), val("x2", 80.0),
-                proc("result/y", invoker("x1 + x2", args("x1", "x2"))));
+                call("result/y", invoker("x1 + x2", args("x1", "x2"))));
 
         // declare response paths
         responseUp(context, "result/y");

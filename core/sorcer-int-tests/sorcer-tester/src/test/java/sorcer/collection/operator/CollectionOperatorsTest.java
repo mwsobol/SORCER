@@ -128,20 +128,20 @@ public class CollectionOperatorsTest {
 //	@SuppressWarnings("rawtypes")
 //	@Test
 //	public void entriesTest() throws ContextException {
-//		Tuple2 e2 = proc("x1", 10.0);
+//		Tuple2 e2 = call("x1", 10.0);
 //		//logger.info("tuple e2: " + e2);
 //		assertEquals("x1", e2.key());
 //		assertEquals(10.0, e2.eval());
 //		
-//		Tuple3 e3a = proc("x1", 10.0, efFi("evaluator", "filter"));
+//		Tuple3 e3a = call("x1", 10.0, efFi("evaluator", "filter"));
 //		//logger.info("tuple e3a: " + e3a);
 //		assertEquals(efFi("evaluator", "filter").getEvaluatorName(), ((VarFidelityInfo)e3a.fidelity()).getEvaluatorName());
 //		
-//		FidelityEntry e3b = proc("x1", efFi("evaluator", "filter"));
+//		FidelityEntry e3b = call("x1", efFi("evaluator", "filter"));
 //		//logger.info("tuple e3b: " + e3b);
 //		assertEquals(efFi("evaluator", "filter").getFilterName(), ((VarFidelityInfo)e3b.fidelity()).getFilterName());
 //		
-//		StrategyEntry se = proc("j1/j2", strategy(Access.PULL, Flow.PAR));
+//		StrategyEntry se = call("j1/j2", strategy(Access.PULL, Flow.PAR));
 //		//logger.info("tuple se: " + se);
 //		assertEquals(se.strategy().getFlowType(), Flow.PAR);
 //		assertEquals(se.strategy().getAccessType(), Access.PULL);

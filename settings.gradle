@@ -54,7 +54,7 @@ include 'sorcer-int-tests:deploy-tests'
 project(":sorcer-int-tests:deploy-tests").projectDir = file("core/sorcer-int-tests/deploy-tests")
 
 include 'examples:sml'
-include 'examples:pml'
+include 'examples:cml'
 include 'examples:worker'
 include 'examples:service'
 include 'examples:exchange'

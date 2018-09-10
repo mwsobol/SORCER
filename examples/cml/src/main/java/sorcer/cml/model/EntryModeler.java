@@ -1,4 +1,4 @@
-package sorcer.pml.model;
+package sorcer.cml.model;
 
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.service.ContextException;
@@ -20,10 +20,10 @@ public class EntryModeler {
 
 	public static EntryModel getEntryModel() throws EvaluationException,
 			RemoteException, ContextException {
-		EntryModel pm = procModel("proc-model");
-		add(pm, val("x", 10.0), val("y", 20.0));
-		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
-		return pm;
+		EntryModel em = entModel("ent-model");
+		add(em, val("x", 10.0), val("y", 20.0));
+		add(em, invoker("expr", "x + y + 30", args("x", "y")));
+		return em;
 	}
 
 }
