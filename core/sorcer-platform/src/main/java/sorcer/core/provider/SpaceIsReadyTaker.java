@@ -22,7 +22,7 @@ import sorcer.service.space.SpaceAccessor;
 
 import java.util.concurrent.ExecutorService;
 
-public class SpaceIsReadyTaker extends SpaceTaker {
+public class  SpaceIsReadyTaker extends SpaceTaker {
 	
 
 	public SpaceIsReadyTaker() {

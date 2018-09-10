@@ -57,8 +57,6 @@ public class ExertionEnvelop implements Entry {
 
 	public Subject providerSubject;
 
-	public Tokens matchTokens;
-
 	public static ExertionEnvelop getTemplate() {
 		ExertionEnvelop ee = new ExertionEnvelop();
 		ee.state = new Integer(Exec.INITIAL);
@@ -117,7 +115,6 @@ public class ExertionEnvelop implements Entry {
 		ee.exertionID = ex.getId();
 		ee.parentID =  ex.getParentId();
 		ee.isJob = new Boolean(ex.isJob());
-		ee.setMatchTokens((Tokens) ss.getOperation().getMatchTokens());
 
 		return ee;
 	}
@@ -144,14 +141,6 @@ public class ExertionEnvelop implements Entry {
 	public Entry[] getAttributes() {
 		Entry[] attrs = { new Name(serviceType.getName()), new Name(providerName) };
 		return attrs;
-	}
-
-	public Tokens getMatchTokens() {
-		return matchTokens;
-	}
-
-	public void setMatchTokens(Tokens matchTokens) {
-		this.matchTokens = matchTokens;
 	}
 
 	public long resultLeaseTime() {

@@ -1726,7 +1726,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		out.println("  description: " + serviceInfo.shortDescription);
 		out.println("  published services: "
 				+ Arrays.toString(serviceInfo.publishedServices));
-		out.println("  Space enabled: " + serviceInfo.puller);
+		out.println("  Space enabled: " + serviceInfo.spaceName);
+		out.println("  OS selectable: " + serviceInfo.osName);
 		out.println("  EMX enabled: " + serviceInfo.monitorable);
 		out.println("  location: " + serviceInfo.location);
 		out.println("  repository: " + serviceInfo.serviceHome);

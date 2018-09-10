@@ -54,7 +54,6 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.proxy.Outer;
 import sorcer.core.proxy.Partner;
 import sorcer.core.proxy.Partnership;
-import sorcer.core.signature.ServiceSignature;
 import sorcer.scratch.ScratchManager;
 import sorcer.scratch.ScratchManagerSupport;
 import sorcer.service.*;
@@ -266,13 +265,13 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         delegate.getProviderConfig().init(true, providerProperties);
         ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
         delegate.configure(config);
-        providerAdmin = new ProviderAdmin(this);
+		providerAdmin = new ProviderAdmin(this);
         providerAdmin.register();
         // decide if thread management is needed for ExertionDispatcher
         setupThreadManager();
         init(args, lifeCycle);
-        logger.info("<init> (String[], LifeCycle); name = {}", this.getName());
-    }
+		logger.info("<init> (String[], LifeCycle); name = {}", this.getName());
+	}
 
     // this is only used to instantiate provider impl objects and use their
     // methods
@@ -1085,6 +1084,19 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
 	public boolean isReady(Exertion exertion) {
 		return true;
+	}
+
+	/**
+	 * Returns a custom name of its operating system name.
+	 *
+	 * @return String of a custom operating system name.
+	 */
+	public String getProviderOsName() {
+		if (bean != null && bean instanceof ProviderSupport) {
+			return ((ProviderSupport)bean).getProviderOsName();
+		} else {
+			return null;
+		}
 	}
 
 	private String[] providerCurrentContextList(String interfaceName) {
@@ -2146,8 +2158,17 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		throw new UnsupportedOperationException("Cannot list files for URL " + dirURL);
 	}
 
+	// Detect availabe applications required by this provider for tasks to be executed
+	public List<String> getAvailableApps() {
+		if (bean != null && bean instanceof ProviderSupport) {
+			return ((ProviderSupport)bean).getAvailableApps();
+		} else {
+			return null;
+		}
+	}
+
 	public Object getBean() {
-		return bean;
+		return getAvailableApps();
 	}
 
 	public void setBean(Object bean) {

@@ -1,7 +1,7 @@
 /*
  * Copyright 2018 the original author or authors.
  * Copyright 2018 SorcerSoft.org.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,14 +16,20 @@
  */
 package sorcer.core.provider;
 
+import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import sorcer.co.operator;
 import sorcer.core.exertion.ExertionEnvelop;
+import sorcer.core.signature.ServiceSignature;
+import sorcer.river.TX;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.co.operator.Tokens;
 
+import java.rmi.RemoteException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import static sorcer.co.operator.list;
 
@@ -32,6 +38,8 @@ import static sorcer.co.operator.list;
  * matching OS of the platform the SpaceOSTaker is running.
  */
 public class SelectableTaker extends SpaceTaker {
+
+	ExertionEnvelop ee;
 
 	public SelectableTaker() {
 	}
@@ -45,109 +53,126 @@ public class SelectableTaker extends SpaceTaker {
 	}
 
 	public void run() {
-		logger.debug("................... run ... ifReady transactional = "
-                + isTransactional + ", lease = " + transactionLeaseTimeout + ", timeOut: " + spaceTimeout);
+		String threadId = doThreadMonitorTaker(null);
+		Transaction.Created txnCreated = null;
+
 		while (keepGoing) {
+			Object envelopNoCast;
 			try {
 				space = SpaceAccessor.getSpace(data.spaceName);
 				if (space == null) {
-					Thread.sleep(spaceTimeout / 6);
+					Thread.sleep(spaceTimeout / 2);
 					continue;
 				}
-			} catch (Exception ex) {
-				continue;
-			}
 
-			list("a", "b");
+				// select the space entry that matching provider's OS and application constraints
+				ee = selectSpaceEntry(data);
+				if (ee == null) {
+					Thread.sleep(spaceTimeout / 2);
+					continue;
+				}
 
-			try {
-				ExertionEnvelop ee = (ExertionEnvelop) space.read(data.entry, null, SPACE_TIMEOUT);
-				if (ee != null) {
-					operator.Tokens matchTokens =  ee.getMatchTokens();
-					if (matchTokens != null) {
-						if (matchTokens.getType().equals("LIST")) {
-							boolean isOK = true;
-							for (Object obj : matchTokens) {
-								if (obj instanceof Tokens) {
-									if (((Tokens) obj).getType().equals("OS")) {
-										if (!matchTokens.contains(data.osName)) {
-											logger.debug("########### Provider does NOT match OS name ...");
-											isOK = false;
-										}
-									}
-									if (((Tokens) obj).getType().equals("APP")) {
-										if (!matchTokens.containsAll(data.appNames)) {
-											logger.debug("########### Provider does NOT match App names ...");
-											isOK = false;
-										}
-									}
-								}
-							}
-							if (!isOK) {
-								Thread.sleep(SPACE_TIMEOUT / 2);
+				if (data.noQueue) {
+					if (((ThreadPoolExecutor) pool).getActiveCount() != ((ThreadPoolExecutor) pool).getCorePoolSize()) {
+						Transaction tx = null;
+						if (isTransactional) {
+							txnCreated = TX.createTransaction(transactionLeaseTimeout);
+							if (txnCreated == null) {
+								logger.warn("SpaceTaker did not get TRANSACTION thread: {}", threadId);
+								Thread.sleep(spaceTimeout / 6);
 								continue;
 							}
-						} else if (matchTokens.getType().equals("OS")) {
-							if (!matchTokens.contains(data.osName)) {
-								logger.debug("########### Provider does NOT match OS name ...");
-
-							}
-						} else if (matchTokens.getType().equals("APP")) {
-							if (!matchTokens.containsAll(data.appNames)) {
-								logger.debug("########### Provider does NOT match App names ...");
-								Thread.sleep(SPACE_TIMEOUT / 2);
-								continue;
-							}
+							tx = txnCreated.transaction;
 						}
-						Thread.sleep(SPACE_TIMEOUT / 2);
+						envelopNoCast = space.take(data.entry, tx, spaceTimeout);
+						ee = (ExertionEnvelop) envelopNoCast;
+					} else {
+                        /* Sleep for whats basically a clock tick to avoid thrashing */
+						Thread.sleep(50);
 						continue;
 					}
 				} else {
-					continue;
+					if (isTransactional) {
+						txnCreated = TX.createTransaction(transactionLeaseTimeout);
+						if (txnCreated == null) {
+							doLog("\t***warning: space taker did not get TRANSACTION.",
+								threadId, null);
+							Thread.sleep(spaceTimeout / 6);
+							continue;
+						}
+						ee = (ExertionEnvelop) space.take(data.entry,
+							txnCreated.transaction, spaceTimeout);
+					} else {
+						ee = (ExertionEnvelop) space.take(data.entry, null,
+							spaceTimeout);
+					}
 				}
 
-				Transaction.Created txnCreated = null;
-				// logger.info("worker space template envelop = "
-				// + data.entry.describe() + "\n service provider = "
-				// + provider);
-				if (isTransactional) {
-					txnCreated = createTransaction();
-					if (txnCreated == null)
-						logger.error("########### SpaceOSTaker DID NOT get transaction ...");
-				}
-
-				ee = (ExertionEnvelop) space
-					.take(data.entry, txnCreated.transaction, SPACE_TIMEOUT);
-				// if (ee != null) {
-				// logger.info("...................got entry...................\n"
-				// + ee.describe());
-				// }
-				// after 'take' timeout first cleanup and sleep for a while
-				// before 'taking' mograms again
+				// after 'take' timeout abort transaction and sleep for a while
+				// before 'taking' the next exertion
 				if (ee == null) {
 					if (txnCreated != null) {
-						txnCreated.transaction.abort();
-						Thread.sleep(SPACE_TIMEOUT / 2);
+						TX.abortTransaction(txnCreated);
+						try {
+							Thread.sleep(spaceTimeout / 2);
+						} catch (InterruptedException ie) {
+							keepGoing = false;
+							break;
+						}
 					}
+
+					txnCreated = null;
 					continue;
 				}
-				// check is the exertion execution is abandoned (poisoned) by
-				// the requestor
-				if (isAbandoned(ee.exertion) == true) {
-					if (txnCreated != null) {
-						txnCreated.transaction.commit();
-					}
-				}
-				if (((ServiceProvider) data.provider).isSpaceSecurityEnabled()) {
-					// if (ee.exertionID.equals(LOKI_ONLY)) {
-					initDataMember(ee, txnCreated.transaction);
-				}
-				
 				pool.execute(new SpaceWorker(ee, txnCreated, data.provider, remoteLogging));
 			} catch (Exception ex) {
-				continue;
+				logger.warn("Problem with SelectableTaker", ex);
 			}
 		}
+
+		// remove thread monitor
+		doThreadMonitorTaker(threadId);
+	}
+
+	private ExertionEnvelop selectSpaceEntry(SpaceTakerData data) throws TransactionException, UnusableEntryException, RemoteException, InterruptedException {
+		ExertionEnvelop envelop = (ExertionEnvelop) space.read(data.entry, null, SPACE_TIMEOUT);
+		if (envelop != null) {
+			List matchTokens = ((ServiceSignature) envelop.exertion.getProcessSignature()).getOperation().getMatchTokens();
+			logger.debug("########### SelectableTaker matchTokens: " + matchTokens);
+			if (matchTokens != null && matchTokens instanceof Tokens) {
+				if (((Tokens) matchTokens).getType().equals("LIST")) {
+					boolean osIsOK = false;
+					boolean appIsOK = false;
+					for (Object list : matchTokens) {
+						if (list instanceof Tokens) {
+							if (((Tokens) list).getType().equals("OS")) {
+								if (((Tokens) list).contains(data.osName)) {
+									logger.debug("########### Signature OS Names {} match provider OS: {}", list, data.osName);
+									osIsOK = true;
+								}
+							} else if (((Tokens) list).getType().equals("APP")) {
+								if (data.appNames.containsAll((Tokens) list)) {
+									logger.debug("########### Signature appNames {} match provider apps: {}", list, data.appNames);
+									appIsOK = true;
+								}
+							}
+						}
+					}
+					if (!(osIsOK && appIsOK)) {
+						return null;
+					}
+				} else if (((Tokens) matchTokens).getType().equals("OS")) {
+					if (!matchTokens.contains(data.osName)) {
+						return null;
+					}
+				} else if (((Tokens) matchTokens).getType().equals("APP")) {
+					if (!data.appNames.containsAll(matchTokens)) {
+						return null;
+					}
+				}
+			}
+		}
+		return envelop;
 	}
 
 }

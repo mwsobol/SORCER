@@ -1023,15 +1023,16 @@ public class operator extends sorcer.operator {
                 return os;
             }
         }
-		String operation = null;
+		Operation operation = null;
+		String selector = null;
 		Args args = null;
 		Strategy.Provision provision = Provision.NO;
         ParTypes parTypes = null;
 		for (Object item : items) {
 			if (item instanceof String) {
-				operation = (String) item;
+				selector = (String) item;
 			} else if (item instanceof Operation) {
-				operation = ((Operation)item).selector;
+				operation = (Operation)item;
 			} else if (item instanceof Args) {
                 args = (Args)item;
             } else if (item instanceof ParTypes) {
@@ -1042,26 +1043,29 @@ public class operator extends sorcer.operator {
 		}
 		ServiceSignature signature = null;
         if (args != null && parTypes != null) {
-            ObjectSignature os = new ObjectSignature();
-            os.setServiceType(serviceType);
-            os.getServiceType();
-            os.setArgs(args.args);
-            os.setParameterTypes(parTypes.parameterTypes);
-            os.setProvisionable(provision);
-			return os;
-        } else if (operation == null) {
+			signature = new ObjectSignature();
+			signature.setServiceType(serviceType);
+			signature.getServiceType();
+			signature = new ObjectSignature();
+			signature.setProvisionable(provision);
+			((ObjectSignature)signature).setArgs(args.args);
+			((ObjectSignature)signature).setParameterTypes(parTypes.parameterTypes);
+        } else if (operation != null) {
+			signature = (ServiceSignature) sig(operation.getName(), serviceType.providerType);
+			signature.setServiceType(serviceType);
+			signature.setOperation(operation);
+		} else if (operation == null && selector == null) {
 			signature = (ServiceSignature) sig("?", serviceType.providerType, items);
 			signature.setProvisionable(provision);
-			return signature;
 		} else {
 			Object[] dest = new Object[items.length+2];
 			System.arraycopy(items,  0, dest,  2, items.length);
 			dest[0] = operation;
             dest[1] = serviceType;
-			signature = (ServiceSignature) sig(operation, serviceType.providerType, dest);
+			signature = (ServiceSignature) sig(selector, serviceType.providerType, dest);
 			signature.setProvisionable(provision);
-			return signature;
 		}
+		return signature;
 	}
 
 	public static Signature sig(Class classType, Object... items) throws SignatureException {
@@ -1231,6 +1235,8 @@ public class operator extends sorcer.operator {
 				sop.isShellRemote = (Strategy.Shell) arg;
 			} else if (arg instanceof Strategy.Provision) {
 				sop.isProvisionable = Strategy.isProvisionable((Strategy.Provision) arg);
+			} else if (arg instanceof Tokens) {
+				sop.setMatchTokens((Tokens)arg);
 			}
 		}
 		return sop;

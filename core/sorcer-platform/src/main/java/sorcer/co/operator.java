@@ -281,7 +281,7 @@ public class operator extends sorcer.operator {
 		return out;
 	}
 
-	public static Tokens<Object> os(Object... items) {
+	public static Tokens os(Object... items) {
 		Tokens out = new Tokens(items.length);
 		for (Object each : items) {
 			out.add(each);
@@ -290,7 +290,7 @@ public class operator extends sorcer.operator {
 		return out;
 	}
 
-	public static Tokens<Object> app(Object... items) {
+	public static Tokens app(Object... items) {
 		Tokens out = new Tokens(items.length);
 		for (Object each : items) {
 			out.add(each);
@@ -299,7 +299,7 @@ public class operator extends sorcer.operator {
 		return out;
 	}
 
-	public static Tokens<Object> match(Object... items) {
+	public static Tokens match(Object... items) {
 		Tokens out = new Tokens(items.length);
 		for (Object each : items) {
 			out.add(each);
@@ -1291,7 +1291,7 @@ public class operator extends sorcer.operator {
 		}
 	}
 
-	public static class Tokens<T> extends ArrayList<T> implements Arg {
+	public static class Tokens extends ArrayList<Object> implements Arg {
 		private static final long serialVersionUID = 1L;
 
 		private String type;

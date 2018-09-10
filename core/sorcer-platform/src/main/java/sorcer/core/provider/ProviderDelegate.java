@@ -192,7 +192,7 @@ public class ProviderDelegate {
 
 	protected boolean spaceReadiness = false;
 
-	protected boolean osSelectable = false;
+	protected boolean takersSelectable = false;
 
 	protected boolean spaceSecurityEnabled = false;
 
@@ -457,8 +457,9 @@ public class ProviderDelegate {
 			}
 		}
         if(!shuttingDown) {
-            if (workerTransactional)
-                tManager = TransactionManagerAccessor.getTransactionManager();
+            if (workerTransactional) {
+				tManager = TransactionManagerAccessor.getTransactionManager();
+			}
 
             try {
                 startSpaceTakers();
@@ -557,11 +558,41 @@ public class ProviderDelegate {
         }
 
 		try {
-			osSelectable = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT, SPACE_OS_SELECTABLE, boolean.class,
-				false);
+			osName = ((ServiceProvider)provider).getProviderOsName();
+			if (osName == null) {
+				osName = (String) jconfig.getEntry(ServiceProvider.COMPONENT,
+					OS_NAME, String.class, null);
+			}
 		} catch (Exception e) {
-			logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SPACE_OS_SELECTABLE, e);
+			logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, OS_NAME, e);
+			osName = System.getProperty("os.name");
 		}
+
+		try {
+			appNames = ((ServiceProvider)provider).getAvailableApps();
+			if (appNames == null) {
+				String[] apps = (String[]) jconfig.getEntry(ServiceProvider.COMPONENT,
+					APP_NAMES, String[].class, null);
+				if (apps != null) {
+					appNames = Arrays.asList(apps);
+				}
+			}
+		} catch (Exception e) {
+			logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, APP_NAMES, e);
+			appNames = null;
+		}
+
+		if (osName != null || appNames != null) {
+			takersSelectable = true;
+		} else {
+			try {
+				takersSelectable = (Boolean) jconfig.getEntry(ServiceProvider.COMPONENT, SPACE_TAKERS_SELECTABLE, boolean.class,
+					false);
+			} catch (Exception e) {
+				logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SPACE_TAKERS_SELECTABLE, e);
+			}
+		}
+		logger.info("*** takers selectable for {} provider: {} os: {} apps: {}", takersSelectable,  getProviderName(), osName, appNames);
 
 
 		try {
@@ -657,7 +688,7 @@ public class ProviderDelegate {
 
         logger.info("PROXIES >>>>>\nprovider: {}\nsmart: {}\nouter: {}\ninner: {}\nadmin: {}",
                     providerProxy, smartProxy, outerProxy, innerProxy, adminProxy);
-    }
+	}
 
     private Collection<Class<?>> getAllInterfaces(Class<?> c) {
         Set<Class<?>> set = new HashSet<>();
@@ -735,7 +766,7 @@ public class ProviderDelegate {
         namedWorkerFactory.setNameFormat(tName("SpcTkr-" + getProviderName() + "-%2$d"));
         namedWorkerFactory.setDaemon(true);
 
-        for (int i = 0; i < publishedServiceTypes.length; i++) {
+		for (int i = 0; i < publishedServiceTypes.length; i++) {
             // spaceWorkerPool = Executors.newFixedThreadPool(workerCount);
             spaceWorkerPool = new ThreadPoolExecutor(workerCount,
                                                      maximumPoolSize > workerCount ? maximumPoolSize
@@ -747,7 +778,8 @@ public class ProviderDelegate {
             // to avoid matching to any provider name
             // that is Java null matching everything
             envelop = ExertionEnvelop.getTemplate(publishedServiceTypes[i], getProviderName());
-            if (spaceReadiness) {
+
+			if (spaceReadiness) {
                 worker = new SpaceIsReadyTaker(new SpaceTaker.SpaceTakerData(envelop,
                         memberInfo,
                         provider,
@@ -759,9 +791,10 @@ public class ProviderDelegate {
                         null),
                         spaceWorkerPool);
                 spaceTakers.add(worker);
-				logger.info("raedy worker created for: {} apps: {}", osName, appNames);
-			} if (osSelectable) {
-                worker = new SelectableTaker(new SpaceTaker.SpaceTakerData(envelop,
+				logger.warn("raedy taker created for: {} apps: {}", osName, appNames);
+			} else if (takersSelectable) {
+
+				worker = new SelectableTaker(new SpaceTaker.SpaceTakerData(envelop,
                         memberInfo,
                         provider,
                         spaceName,
@@ -772,7 +805,7 @@ public class ProviderDelegate {
                         appNames),
                         spaceWorkerPool);
                 spaceTakers.add(worker);
-				logger.info("selectable worker created for: {} apps: {}", osName, appNames);
+				logger.warn("space taker created for: {} apps: {}", osName, appNames);
 			} else {
                 worker = new SpaceTaker(new SpaceTaker.SpaceTakerData(envelop,
                         memberInfo,
@@ -786,7 +819,7 @@ public class ProviderDelegate {
                         spaceWorkerPool,
                         remoteLogging);
                 spaceTakers.add(worker);
-				logger.info("space worker created for: {} apps: {}", osName, appNames);
+				logger.warn("space taker created for: {} apps: {}", osName, appNames);
 			}
             ConfigurableThreadFactory ifaceWorkerFactory = new ConfigurableThreadFactory();
             ifaceWorkerFactory.setThreadGroup(interfaceGroup);
@@ -795,10 +828,8 @@ public class ProviderDelegate {
 
             Thread sith = ifaceWorkerFactory.newThread(worker);
 			sith.start();			
-			logger.info("*** {} named space worker {} started for: {}",
+			logger.info("*** {} named space taker {} started for: {}",
 					getProviderName(), i, publishedServiceTypes[i]);
-			// System.out.println("space template: " +
-			// envelop.describe());
 
 			if (matchInterfaceOnly) {
 				// spaceWorkerPool = Executors.newFixedThreadPool(workerCount);
@@ -818,8 +849,8 @@ public class ProviderDelegate {
                                     null, null),
                             spaceWorkerPool);
                     spaceTakers.add(worker);
-				} if (osSelectable) {
-                    worker = new SelectableTaker(
+				} else if (takersSelectable) {
+					worker = new SelectableTaker(
                             new SpaceTaker.SpaceTakerData(envelop, memberInfo,
                                     provider, spaceName, spaceGroup,
                                     workerTransactional, queueSize == 0,
@@ -834,17 +865,13 @@ public class ProviderDelegate {
                             spaceWorkerPool,
                             remoteLogging);
                             spaceTakers.add(worker);
-                }
+				}
 				Thread snth = namedWorkerFactory.newThread(worker);
 				snth.start();
 				logger.info("*** {} unnamed space worker {} started for: ",
 						getProviderName(), i, publishedServiceTypes[i]);
-				// System.out.println("space template: " +
-				// envelop.describe());
 			}
 		}
-//		 interfaceGroup.list();
-//		 namedGroup.list();
 	}
 
 	public Task doTask(Task task, Transaction transaction, Arg... args)
@@ -1653,8 +1680,13 @@ public class ProviderDelegate {
 			serviceType.location = config.getProperty(P_LOCATION);
 			serviceType.groups = SorcerUtil.arrayToCSV(groupsToDiscover);
 			serviceType.spaceGroup = spaceGroup;
-			serviceType.spaceName = spaceName;
-			serviceType.puller = spaceEnabled;
+			if (spaceEnabled) {
+				serviceType.spaceName = spaceName;
+			}
+			if (takersSelectable) {
+				serviceType.osName = osName;
+				serviceType.apps = appNames;
+			}
 			serviceType.monitorable = monitorable;
 			serviceType.matchInterfaceOnly = matchInterfaceOnly;
 			serviceType.startDate = new Date().toString();
@@ -1679,9 +1711,8 @@ public class ProviderDelegate {
 			logger.warn("Some problem in accessing attributes");
 			logger.warn(SorcerUtil.stackTraceToString(ex));
 		}
-		String hostName = null, hostAddress = null;
-		hostName = Sorcer.getHostName();
-		hostAddress = Sorcer.getHostAddress();
+		String hostName = Sorcer.getHostName();
+		String hostAddress = Sorcer.getHostAddress();
 
 		if (hostName != null) {
 			serviceType.hostName = hostName;
@@ -3352,7 +3383,11 @@ public class ProviderDelegate {
 
 	public static final String SPACE_READINESS = "spaceReadiness";
 
-	public static final String SPACE_OS_SELECTABLE = "osSelectable";
+	public static final String SPACE_TAKERS_SELECTABLE = "takersSelectable";
+
+	public static final String APP_NAMES = "appNames";
+
+	public final static String OS_NAME = "osName";
 
 	public static final String MUTUAL_EXCLUSION = "mutualExclusion";
 

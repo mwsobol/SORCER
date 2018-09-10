@@ -104,10 +104,15 @@ public class SorcerServiceInfo extends ServiceType {
 	public String spaceName;
 
 	/**
-	 * Indicates if the service provider uses Exertion Space.
+	 * Indicates if the service provider can match required OS.
 	 */
-	public Boolean puller;
-	
+	public String osName;
+
+	/**
+	 * Indicates if the service provider can match required applications to be available.
+	 */
+	public java.util.List<String> apps;
+
 	/**
 	 * The location of this service, for example, "GE AE", "GE CRD".
 	 */
