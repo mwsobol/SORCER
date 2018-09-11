@@ -793,7 +793,6 @@ public class ProviderDelegate {
                 spaceTakers.add(worker);
 				logger.warn("raedy taker created for: {} apps: {}", osName, appNames);
 			} else if (takersSelectable) {
-
 				worker = new SelectableTaker(new SpaceTaker.SpaceTakerData(envelop,
                         memberInfo,
                         provider,
