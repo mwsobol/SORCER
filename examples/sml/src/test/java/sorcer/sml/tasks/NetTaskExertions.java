@@ -56,7 +56,7 @@ public class NetTaskExertions {
 	}
 
 	@Test
-	public void exertOpTask() throws Exception  {
+	public void exertOpMatchTask() throws Exception  {
 
 		Task t5 = task(sig(Adder.class, op("add",
 			match(os("Mac OS XX", "Win"), app("Astros")), Strategy.Access.PULL)),
