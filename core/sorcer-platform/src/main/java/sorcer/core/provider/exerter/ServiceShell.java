@@ -565,8 +565,15 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 	 */
 	public Signature correctProcessSignature() throws SignatureException {
 		ServiceExertion exertion = (ServiceExertion)mogram;
-		if (!exertion.isJob())
-			return exertion.getProcessSignature();
+		if (!exertion.isJob()) {
+			ServiceSignature sig = (ServiceSignature) exertion.getProcessSignature();
+			if (sig.getOperation().accessType == Strategy.Access.PUSH) {
+				return sig;
+			} else if (sig.getOperation().accessType == Strategy.Access.PULL) {
+				exertion.setAccess(Strategy.Access.PULL);
+				return sig;
+			}
+		}
 		Signature sig = exertion.getProcessSignature();
 		if (sig != null) {
 			Access access = exertion.getControlContext().getAccessType();

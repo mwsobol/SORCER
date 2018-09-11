@@ -14,6 +14,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.RemoteServiceShell;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
@@ -57,10 +58,11 @@ public class NetTasks {
 	}
 
 	@Test
-	public void exertOpTask() throws Exception  {
+	public void exertOpMatchTask() throws Exception  {
 
-		Task t5 = task(sig(Adder.class), op("add", Strategy.Access.PULL),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
+		Task t5 = task(sig(Adder.class, op("add",
+			match(os("Mac OS X", "Win"), app("Astros")), Strategy.Access.PULL)),
+			cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		Exertion out = exert(t5);
 		Context cxt = context(out);
@@ -74,9 +76,9 @@ public class NetTasks {
 
 		// get the subcontext output from the context
 		assertTrue(context(operator.ent("result/eval", 100.0), operator.ent("arg/x1", 20.0)).equals(
-				value(cxt, outPaths("result/eval", "arg/x1"))));
-
+			value(cxt, outPaths("result/eval", "arg/x1"))));
 	}
+
 
 	@Test
 	public void exertTaskSrvName() throws Exception  {

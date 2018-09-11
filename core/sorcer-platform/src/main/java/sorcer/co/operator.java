@@ -358,6 +358,34 @@ public class operator extends Operator {
 		return out;
 	}
 
+	public static Tokens os(Object... items) {
+		Tokens out = new Tokens(items.length);
+		for (Object each : items) {
+			out.add(each);
+		}
+		out.setType("OS");
+		return out;
+	}
+
+	public static Tokens app(Object... items) {
+		Tokens out = new Tokens(items.length);
+		for (Object each : items) {
+			out.add(each);
+		}
+		out.setType("APP");
+		return out;
+	}
+
+	public static Tokens match(Object... items) {
+		Tokens out = new Tokens(items.length);
+		for (Object each : items) {
+			out.add(each);
+		}
+		out.setType("LIST");
+		return out;
+	}
+
+
 	public static List<String> names(String... elems) {
         List<String> list = new Header<>();
         Collections.addAll(list, elems);

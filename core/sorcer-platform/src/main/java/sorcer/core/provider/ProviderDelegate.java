@@ -591,7 +591,7 @@ public class ProviderDelegate {
 				logger.warn("Problem getting {}.{}", ServiceProvider.COMPONENT, SPACE_TAKERS_SELECTABLE, e);
 			}
 		}
-		logger.info("*** takers selectable for {} provider: {} os: {} apps: {}", takersSelectable,  getProviderName(), osName, appNames);
+		logger.info("*** takers selectable {} provider: {} os: {} apps: {}", takersSelectable,  getProviderName(), osName, appNames);
 
 
 		try {
@@ -788,9 +788,8 @@ public class ProviderDelegate {
 					null),
 					spaceWorkerPool);
 				spaceTakers.add(worker);
-				logger.warn("raedy taker created for: {} apps: {}", osName, appNames);
+				logger.debug("*** {} ready taker created for: {} apps: {}", getProviderName(), osName, appNames);
 			} else if (takersSelectable) {
-
 				worker = new SelectableTaker(new SpaceTaker.SpaceTakerData(envelop,
 					memberInfo,
 					provider,
@@ -802,7 +801,7 @@ public class ProviderDelegate {
 					appNames),
 					spaceWorkerPool);
 				spaceTakers.add(worker);
-				logger.warn("space taker created for: {} apps: {}", osName, appNames);
+				logger.debug("*** {} space taker created for: {} apps: {}", getProviderName(), osName, appNames);
 			} else {
 				worker = new SpaceTaker(new SpaceTaker.SpaceTakerData(envelop,
 					memberInfo,
@@ -816,7 +815,7 @@ public class ProviderDelegate {
 					spaceWorkerPool,
 					remoteLogging);
 				spaceTakers.add(worker);
-				logger.warn("space taker created for: {} apps: {}", osName, appNames);
+				logger.debug("*** {} space taker created for: {} apps: {}", getProviderName(), osName, appNames);
 			}
 			ConfigurableThreadFactory ifaceWorkerFactory = new ConfigurableThreadFactory();
 			ifaceWorkerFactory.setThreadGroup(interfaceGroup);
@@ -825,7 +824,7 @@ public class ProviderDelegate {
 
 			Thread sith = ifaceWorkerFactory.newThread(worker);
 			sith.start();
-			logger.info("*** {} named space worker {} started for: {}",
+			logger.debug("*** {} named space worker {} started for: {}",
 				getProviderName(), i, publishedServiceTypes[i]);
 
 			if (matchInterfaceOnly) {
@@ -854,6 +853,7 @@ public class ProviderDelegate {
 							osName, appNames),
 						spaceWorkerPool);
 					spaceTakers.add(worker);
+					logger.debug("*** {} space taker created for: {} apps: {}", getProviderName(), osName, appNames);
 				} else {
 					worker = new SpaceTaker(new SpaceTaker.SpaceTakerData(
 						envelop, memberInfo, provider, spaceName,
@@ -865,7 +865,7 @@ public class ProviderDelegate {
 				}
 				Thread snth = namedWorkerFactory.newThread(worker);
 				snth.start();
-				logger.info("*** {} unnamed space worker {} started for: ",
+				logger.debug("*** {} unnamed space worker {} started for: ",
 					getProviderName(), i, publishedServiceTypes[i]);
 			}
 		}
@@ -1672,8 +1672,13 @@ public class ProviderDelegate {
 			serviceType.location = config.getProperty(P_LOCATION);
 			serviceType.groups = SorcerUtil.arrayToCSV(groupsToDiscover);
 			serviceType.spaceGroup = spaceGroup;
-			serviceType.spaceName = spaceName;
-			serviceType.puller = spaceEnabled;
+			if (spaceEnabled) {
+				serviceType.spaceName = spaceName;
+			}
+			if (takersSelectable) {
+				serviceType.osName = osName;
+				serviceType.apps = appNames;
+			}
 			serviceType.monitorable = monitorable;
 			serviceType.matchInterfaceOnly = matchInterfaceOnly;
 			serviceType.startDate = new Date().toString();

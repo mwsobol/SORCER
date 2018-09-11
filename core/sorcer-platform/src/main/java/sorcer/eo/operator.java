@@ -1025,15 +1025,16 @@ public class operator extends Operator {
                 return os;
             }
         }
-		String operation = null;
+		Operation operation = null;
+		String selector = null;
 		Args args = null;
 		Strategy.Provision provision = Provision.NO;
         ParameterTypes parTypes = null;
 		for (Object item : items) {
 			if (item instanceof String) {
-				operation = (String) item;
+				selector = (String) item;
 			} else if (item instanceof Operation) {
-				operation = ((Operation)item).selector;
+				operation = (Operation)item;
 			} else if (item instanceof Args) {
                 args = (Args)item;
             } else if (item instanceof ParameterTypes) {
@@ -1051,19 +1052,22 @@ public class operator extends Operator {
             os.setParameterTypes(parTypes.parameterTypes);
             os.setProvisionable(provision);
 			return os;
-        } else if (operation == null) {
+        } else if (operation != null) {
+			signature = (ServiceSignature) sig(operation.getName());
+			signature.setMultitype(multitype);
+			signature.setOperation(operation);
+		} else if (operation == null && selector == null) {
 			signature = sig("?", multitype.providerType, items);
 			signature.setProvisionable(provision);
-			return signature;
 		} else {
 			Object[] dest = new Object[items.length+2];
 			System.arraycopy(items,  0, dest,  2, items.length);
 			dest[0] = operation;
-            dest[1] = multitype;
-			signature = sig(operation, multitype.providerType, dest);
+			dest[1] = multitype;
+			signature = sig(selector, multitype.providerType, dest);
 			signature.setProvisionable(provision);
-			return signature;
 		}
+		return signature;
 	}
 
 	public static Signature sig(Class classType, Object... items) throws SignatureException {
@@ -1244,6 +1248,8 @@ public class operator extends Operator {
 				sop.isShellRemote = (Strategy.Shell) arg;
 			} else if (arg instanceof Strategy.Provision) {
 				sop.isProvisionable = Strategy.isProvisionable((Strategy.Provision) arg);
+			}  else if (arg instanceof Tokens) {
+				sop.setMatchTokens((Tokens)arg);
 			}
 		}
 		return sop;
