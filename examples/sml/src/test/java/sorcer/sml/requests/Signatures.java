@@ -344,7 +344,7 @@ public class Signatures {
 	public void signatureWithProviderName() throws Exception  {
 		String group = property("user.name");
 
-		Task t5 = task("t5", sig(type("sorcer.arithmetic.provider.Adder"), op("add", os("Mac OS X")),
+		Task t5 = task("t5", sig(type("sorcer.arithmetic.provider.Adder"), op("add"),
 				types(Service.class, Provider.class),
 				// comma separated list of hosts, when empty localhost is a default locator
 				srvName("Adder", locators(), group)),

@@ -3,9 +3,7 @@ package edu.pjatk.inn.coffeemaker;
 import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
 import edu.pjatk.inn.coffeemaker.impl.DeliveryImpl;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +66,7 @@ public class CoffeeServiceTest {
 	}
 
 	@After
-	public void cleanUp() throws Exception {
+	public void cleanUp() throws SignatureException, MogramException {
 		Exertion cmt =
 				task(sig("deleteRecipes", CoffeeMaking.class),
 						context(types(), args()));
@@ -88,24 +86,22 @@ public class CoffeeServiceTest {
 	}
 
 	@Test
-	public void addRecepie() throws Exception {
+	public void addRecipes() throws Exception {
+
 		Exertion cmt = task(sig("addRecipe", CoffeeService.class), espresso);
 		Context out = context(exert(cmt));
 		logger.info("job context: " + out);
 		assertEquals(value(out, "recipe/added"), true);
-	}
 
-	@Test
-	public void addRecipes() throws Exception {
 		Exertion cmj = job("recipes",
 				task("mocha", sig("addRecipe", CoffeeService.class), mocha),
 				task("macchiato", sig("addRecipe", CoffeeService.class), macchiato),
 				task("americano", sig("addRecipe", CoffeeService.class), americano));
 
-		Context out = upcontext(exert(cmj));
+		out = upcontext(exert(cmj));
 		logger.info("job context: " + out);
-		assertEquals(value(out, "recipes/americano/recipe/added"), true);
-		assertEquals(value(out, "recipes/americano/recipe/added"), true);
+		assertEquals(value(out, "recipes/mocha/recipe/added"), true);
+		assertEquals(value(out, "recipes/macchiato/recipe/added"), true);
 		assertEquals(value(out, "recipes/americano/recipe/added"), true);
 	}
 

@@ -1,12 +1,14 @@
 package edu.pjatk.inn.coffeemaker.impl;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author Sarah E. Smith & Mike Sobolewski
  *
  * Inventory for the coffee maker
  */
-public class Inventory {
+public class Inventory implements Serializable {
     
     private static int coffee;
     private static int milk;

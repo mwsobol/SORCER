@@ -1051,7 +1051,7 @@ public class operator extends sorcer.operator {
 			((ObjectSignature)signature).setArgs(args.args);
 			((ObjectSignature)signature).setParameterTypes(parTypes.parameterTypes);
         } else if (operation != null) {
-			signature = (ServiceSignature) sig(operation.getName(), serviceType.providerType);
+			signature = (ServiceSignature) sig(operation.getName());
 			signature.setServiceType(serviceType);
 			signature.setOperation(operation);
 		} else if (operation == null && selector == null) {
