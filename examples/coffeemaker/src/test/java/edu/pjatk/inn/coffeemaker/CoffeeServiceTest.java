@@ -67,7 +67,6 @@ public class CoffeeServiceTest {
 		americano  = context(ent("key", "americano"), ent("price", 40),
 				ent("amtCoffee", 4), ent("amtMilk", 0),
 				ent("amtSugar", 1), ent("amtChocolate", 0));
-
 	}
 
 	@After
@@ -91,21 +90,19 @@ public class CoffeeServiceTest {
 	}
 
 	@Test
-	public void addRecepie() throws Exception {
+	public void addRecipes() throws Exception {
+
 		Exertion cmt = task(sig("addRecipe", CoffeeService.class), espresso);
 		Context out = context(exert(cmt));
 		logger.info("job context: " + out);
 		assertEquals(value(out, "recipe/added"), true);
-	}
 
-	@Test
-	public void addRecipes() throws Exception {
 		Exertion cmj = job("recipes",
 				task("mocha", sig("addRecipe", CoffeeService.class), mocha),
 				task("macchiato", sig("addRecipe", CoffeeService.class), macchiato),
 				task("americano", sig("addRecipe", CoffeeService.class), americano));
 
-		Context out = upcontext(exert(cmj));
+		out = upcontext(exert(cmj));
 		logger.info("job context: " + out);
 		assertEquals(value(out, "recipes/americano/recipe/added"), true);
 		assertEquals(value(out, "recipes/americano/recipe/added"), true);
