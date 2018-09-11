@@ -1540,6 +1540,33 @@ public class operator extends Operator {
 		}
 	}
 
+	public static class Tokens extends ArrayList<Object> implements Arg {
+		private static final long serialVersionUID = 1L;
+
+		private String type;
+
+		public Tokens() {
+			super();
+		}
+
+		public Tokens(int initialCapacity) {
+			super(initialCapacity);
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public String getName() {
+			return type;
+		}
+	}
+
 	/**
 	 * Returns an instance by class method initialization with a service
 	 * context.

@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * A service <code>Signature</code> is an indirect behavioral feature of
@@ -507,6 +508,8 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 		public Strategy.Monitor toMonitor = Strategy.Monitor.NO;
 
+		private List matchTokens;
+
 		public Strategy.Wait toWait = Strategy.Wait.YES;
 
 		public Strategy.FidelityManagement toManageFi = Strategy.FidelityManagement.NO;
@@ -519,7 +522,16 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
         public String getName() {
             return selector;
         }
-    }
+
+
+		public List getMatchTokens() {
+			return matchTokens;
+		}
+
+		public void setMatchTokens(List matchTokens) {
+			this.matchTokens = matchTokens;
+		}
+	}
 
 	public static class Multitype implements Serializable, Arg {
 		static final long serialVersionUID = 1L;

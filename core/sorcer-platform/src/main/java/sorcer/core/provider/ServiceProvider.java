@@ -1088,6 +1088,14 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return true;
 	}
 
+	public String getProviderOsName() {
+		if (bean != null && bean instanceof ProviderSupport) {
+			return ((ProviderSupport)bean).getProviderOsName();
+		} else {
+			return null;
+		}
+	}
+
 	private String[] providerCurrentContextList(String interfaceName) {
 		boolean contextLoaded = false;
 		try {
@@ -2139,6 +2147,15 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 
 		throw new UnsupportedOperationException("Cannot list files for URL " + dirURL);
+	}
+
+	// Detect availabe applications required by this provider for tasks to be executed
+	public List<String> getAvailableApps() {
+		if (bean != null && bean instanceof ProviderSupport) {
+			return ((ProviderSupport)bean).getAvailableApps();
+		} else {
+			return null;
+		}
 	}
 
 	public Object getBean() {
