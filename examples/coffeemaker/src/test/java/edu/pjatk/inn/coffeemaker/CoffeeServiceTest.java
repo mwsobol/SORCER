@@ -88,21 +88,21 @@ public class CoffeeServiceTest {
 	@Test
 	public void addRecipes() throws Exception {
 
-		Exertion cmt = task(sig("addRecipe", CoffeeService.class), espresso);
-		Context out = context(exert(cmt));
-		logger.info("job context: " + out);
-		assertEquals(value(out, "recipe/added"), true);
-
 		Exertion cmj = job("recipes",
 				task("mocha", sig("addRecipe", CoffeeService.class), mocha),
 				task("macchiato", sig("addRecipe", CoffeeService.class), macchiato),
 				task("americano", sig("addRecipe", CoffeeService.class), americano));
 
-		out = upcontext(exert(cmj));
+		Context out = upcontext(exert(cmj));
 		logger.info("job context: " + out);
 		assertEquals(value(out, "recipes/mocha/recipe/added"), true);
 		assertEquals(value(out, "recipes/macchiato/recipe/added"), true);
 		assertEquals(value(out, "recipes/americano/recipe/added"), true);
+
+		Exertion cmt = task(sig("addRecipe", CoffeeService.class), espresso);
+		out = context(exert(cmt));
+		logger.info("job context: " + out);
+		assertEquals(value(out, "recipe/added"), true);
 	}
 
 	@Test
