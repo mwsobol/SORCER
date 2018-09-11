@@ -59,17 +59,18 @@ public class SelectableTaker extends SpaceTaker {
 		while (keepGoing) {
 			Object envelopNoCast;
 			try {
-				space = SpaceAccessor.getSpace(data.spaceName);
-				if (space == null) {
-					Thread.sleep(spaceTimeout / 2);
-					continue;
-				}
-
-				// select the space entry that matching provider's OS and application constraints
-				ee = selectSpaceEntry(data);
-				if (ee == null) {
-					Thread.sleep(spaceTimeout / 2);
-					continue;
+				// read a satisfactory task to be executed
+				while (ee == null) {
+					space = SpaceAccessor.getSpace(data.spaceName);
+					if (space == null) {
+						Thread.sleep(spaceTimeout / 2);
+						continue;
+					}
+					// select the space entry that matching provider's OS and application constraints
+					ee = selectSpaceEntry(data);
+					if (ee == null) {
+						Thread.sleep(spaceTimeout);
+					}
 				}
 
 				if (data.noQueue) {
@@ -95,8 +96,8 @@ public class SelectableTaker extends SpaceTaker {
 					if (isTransactional) {
 						txnCreated = TX.createTransaction(transactionLeaseTimeout);
 						if (txnCreated == null) {
-							doLog("\t***warning: space taker did not get TRANSACTION.",
-								threadId, null);
+//							doLog("\t***warning: space taker did not get TRANSACTION.",
+//								threadId, null);
 							Thread.sleep(spaceTimeout / 6);
 							continue;
 						}
@@ -120,7 +121,6 @@ public class SelectableTaker extends SpaceTaker {
 							break;
 						}
 					}
-
 					txnCreated = null;
 					continue;
 				}
@@ -128,17 +128,19 @@ public class SelectableTaker extends SpaceTaker {
 			} catch (Exception ex) {
 				logger.warn("Problem with SelectableTaker", ex);
 			}
+			ee = null;
 		}
-
 		// remove thread monitor
 		doThreadMonitorTaker(threadId);
 	}
 
-	private ExertionEnvelop selectSpaceEntry(SpaceTakerData data) throws TransactionException, UnusableEntryException, RemoteException, InterruptedException {
+	private ExertionEnvelop selectSpaceEntry(SpaceTakerData data) throws
+		TransactionException, UnusableEntryException, RemoteException, InterruptedException {
 		ExertionEnvelop envelop = (ExertionEnvelop) space.read(data.entry, null, SPACE_TIMEOUT);
+		logger.debug("########### {} selectable taker read envelop: {}", data.provider.getProviderName(), envelop);
 		if (envelop != null) {
 			List matchTokens = ((ServiceSignature) envelop.exertion.getProcessSignature()).getOperation().getMatchTokens();
-			logger.debug("########### SelectableTaker matchTokens: " + matchTokens);
+			logger.debug("########### {} selectable taker read matchTokens: {}", data.provider.getProviderName(), matchTokens);
 			if (matchTokens != null && matchTokens instanceof Tokens) {
 				if (((Tokens) matchTokens).getType().equals("LIST")) {
 					boolean osIsOK = false;
@@ -147,27 +149,29 @@ public class SelectableTaker extends SpaceTaker {
 						if (list instanceof Tokens) {
 							if (((Tokens) list).getType().equals("OS")) {
 								if (((Tokens) list).contains(data.osName)) {
-									logger.debug("########### Signature OS Names {} match provider OS: {}", list, data.osName);
+									logger.debug("########### {} Signature OS Names {} match provider OS: {}",
+										data.provider.getProviderName(), list, data.osName);
 									osIsOK = true;
 								}
 							} else if (((Tokens) list).getType().equals("APP")) {
 								if (data.appNames.containsAll((Tokens) list)) {
-									logger.debug("########### Signature appNames {} match provider apps: {}", list, data.appNames);
+									logger.debug("########### {} Signature appNames {} match provider apps: {}",
+										data.provider.getProviderName(), list, data.appNames);
 									appIsOK = true;
 								}
 							}
 						}
 					}
 					if (!(osIsOK && appIsOK)) {
-						return null;
+						envelop = null;
 					}
 				} else if (((Tokens) matchTokens).getType().equals("OS")) {
 					if (!matchTokens.contains(data.osName)) {
-						return null;
+						envelop = null;
 					}
 				} else if (((Tokens) matchTokens).getType().equals("APP")) {
 					if (!data.appNames.containsAll(matchTokens)) {
-						return null;
+						envelop = null;
 					}
 				}
 			}
