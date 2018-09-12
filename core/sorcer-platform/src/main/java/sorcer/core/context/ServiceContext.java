@@ -3227,7 +3227,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Context#addPar(sorcer.core.context.model.call.Proc)
+	 * @see sorcer.service.Context#addCall(sorcer.core.context.model.call.Proc)
 	 */
 	@Override
 	public Arg addProc(Arg arg) throws ContextException {
@@ -3259,7 +3259,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Context#addPar(java.lang.String, java.lang.Object)
+	 * @see sorcer.service.Context#addCall(java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public Call addProc(String path, Object value) throws ContextException {

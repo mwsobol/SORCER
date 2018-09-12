@@ -126,6 +126,11 @@ public class operator extends Operator {
 		return p;
 	}
 
+	public static ServiceInvoker func(ServiceInvoker invoker) {
+		invoker.setFunctional(true);
+		return invoker;
+	}
+
 	public static Srv srv(ServiceFidelity fidelity) {
 		Srv service = new Srv(fidelity.getName(), fidelity);
 		return service;

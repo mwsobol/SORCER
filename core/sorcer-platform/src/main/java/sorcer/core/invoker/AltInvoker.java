@@ -49,7 +49,7 @@ public class AltInvoker<V> extends ServiceInvoker<V> implements ConditionalInvoc
 	}
 	
 	@Override
-	public V evaluate(Arg... entries) throws EvaluationException {
+	public V evaluate(Arg... args) throws EvaluationException {
 		
 		for (OptInvoker opt : optInvokers) {
 			try {
@@ -68,7 +68,7 @@ public class AltInvoker<V> extends ServiceInvoker<V> implements ConditionalInvoc
 					}
 				}
 				if (opt.isTrue()) {
-					return (V) opt.evaluate(entries);
+					return (V) opt.evaluate(args);
 				}
 			} catch (Exception e) {
 				throw new EvaluationException(e);

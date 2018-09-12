@@ -1,6 +1,7 @@
 package sorcer.service;
 
 import sorcer.core.Tag;
+import sorcer.service.modeling.fi;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 6/27/16.
  */
-public class Metafidelity extends Fidelity<Fi> implements MetaFi, Dependency, Arg, net.jini.core.entry.Entry {
+public class Metafidelity extends Fidelity<Fi> implements MetaFi, Dependency, Arg, net.jini.core.entry.Entry, fi<Fi> {
 
     static final long serialVersionUID = 1L;
 

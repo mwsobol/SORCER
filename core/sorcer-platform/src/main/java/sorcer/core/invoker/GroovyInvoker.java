@@ -95,13 +95,13 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	}
 
 	@Override
-	public T evaluate(Arg... entries) throws InvocationException,
+	public T evaluate(Arg... args) throws InvocationException,
 			RemoteException {
 		Object result = null;
 		shell = new GroovyShell(Thread.currentThread().getContextClassLoader());
 		try {
-			if (entries != null) {
-				Domain inCxt = Arg.selectDomain(entries);
+			if (args != null) {
+				Domain inCxt = Arg.selectDomain(args);
 				if (inCxt != null) {
 					if (invokeContext == null) {
 						invokeContext = (Context) inCxt;

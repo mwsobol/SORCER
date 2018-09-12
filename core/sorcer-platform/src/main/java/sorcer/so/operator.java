@@ -33,10 +33,7 @@ import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.Exerter;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
-import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Model;
-import sorcer.service.modeling.Modeling;
-import sorcer.service.modeling.Valuation;
+import sorcer.service.modeling.*;
 import sorcer.util.DataTable;
 import sorcer.util.Row;
 
@@ -116,30 +113,7 @@ public class operator extends Operator {
         }
     }
 
-
-
-//    public static <T> T eval(Evaluation<T> entry, Arg... args)
-//            throws EvaluationException {
-//        try {
-//            synchronized (entry) {
-//                if (entry instanceof Valuation) {
-//                    return (T) ((Entry) entry).get(args);
-//                } else if (((Entry) entry).asis() instanceof ServiceContext) {
-//                    return (T) ((ServiceContext) ((Entry) entry).asis()).getValue(((Identifiable) entry).getName());
-//                } else if (entry instanceof Incrementor) {
-//                    return ((Incrementor<T>) entry).next();
-//                } else if (entry instanceof Evaluation) {
-//                    return (T) ((Entry) entry).evaluate(args);
-//                } else {
-//                    return (T) ((Entry)entry).get(args);
-//                }
-//            }
-//        }catch (Exception e) {
-//            throw new EvaluationException(e);
-//        }
-//    }
-
-    public static <T> T eval(ServiceInvoker<T> invoker, Arg... args)
+    public static <T> T eval(evr<T> invoker, Arg... args)
             throws EvaluationException {
         try {
             if (invoker instanceof Incrementor){
@@ -154,7 +128,6 @@ public class operator extends Operator {
 
     public static Object exec(Domain domain, String path, Arg... args) throws ContextException {
         if (domain instanceof Model) {
-//            return response(domain, path, args);
             try {
                 return domain.getValue(path, args);
             } catch (RemoteException e) {

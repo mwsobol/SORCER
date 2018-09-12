@@ -10,8 +10,10 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.context.model.ent.Value;
+import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.evr;
 import sorcer.service.modeling.func;
 import sorcer.util.GenericUtil;
 
@@ -239,7 +241,7 @@ public class Entries {
     }
 
 	@Test
-	public void getConditionalProcValueContextScope() throws Exception {
+	public void getConditionalCallValueContextScope() throws Exception {
 
 		func y1 = call("y1", alt(opt(condition((Context<Double> cxt)
                         -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
@@ -252,7 +254,7 @@ public class Entries {
 	}
 
     @Test
-    public void getConditionalProcValueModelScopel() throws Exception {
+    public void getConditionalCallValueModelScopel() throws Exception {
 
         func y1 = call("y1", alt(opt(condition((Context<Double> cxt)
                         -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
@@ -265,7 +267,7 @@ public class Entries {
     }
 
 	@Test
-	public void getConditionalProc2Value() throws Exception {
+	public void getConditionalCall2Value() throws Exception {
 
 		func y1 = call("y1", alt(opt(condition((Context<Double> cxt)
                         -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
@@ -278,7 +280,7 @@ public class Entries {
 	}
 
 	@Test
-	public void getConditionalProc3Value() throws Exception {
+	public void getConditionalCall3Value() throws Exception {
 
 		func y1 = call("y1", alt(opt(condition((Context<Double> cxt)
                         -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 * x2", args("x1", "x2"))),
@@ -290,7 +292,7 @@ public class Entries {
 	}
 
 	@Test
-	public void getConditionalValueProcModel() throws Exception {
+	public void getConditionalValueEntModel() throws Exception {
 
 		Model mdl = model(
 			val("x1", 10.0), val("x2", 20.0),
@@ -329,6 +331,24 @@ public class Entries {
 //        logger.info("out eval: {}", eval(mdl, "y1"));
         assertEquals(30.0,  exec(mdl, "y1"));
     }
+
+	@Test
+	public void getConditionalFunctionalModel() throws Exception {
+
+		Model mdl = model(
+			val("x1", 10.0), val("x2", 20.0),
+			srv("y1", alt(opt(condition((Context<Double> cxt)
+					-> v(cxt, "x1") > v(cxt, "x2")), func(expr("x1 * x2", args("x1", "x2")))),
+				opt(condition((Context<Double> cxt) -> v(cxt, "x1")
+					<= v(cxt, "x2")), func(expr("x1 + x2", args("x1", "x2")))))));
+
+//        logger.info("out: {}", exec(mdl, "y1"));
+        evr ev1 = (evr) exec(mdl, "y1");
+//		logger.info("out: {}", eval(ev1, mdl));
+
+		assertEquals(30.0,  eval(ev1, mdl));
+		assertEquals(30.0,  exec(ev1, mdl));
+	}
 
 	@Test
 	public void getConditionalLoopSrvValue() throws Exception {

@@ -16,6 +16,9 @@ import sorcer.core.plexus.MultiFiMogram;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.fi;
+import sorcer.service.modeling.mog;
+import sorcer.service.modeling.sig;
 
 import java.rmi.RemoteException;
 
@@ -555,24 +558,24 @@ public class ModelMultiFidelities {
         assertTrue(value(context(mog), "result/y").equals(500.0));
     }
 
-    public Model getMorphingModel() throws Exception {
+    public mog getMorphingModel() throws Exception {
 
-        Signature add = sig("add", AdderImpl.class,
+        sig add = sig("add", AdderImpl.class,
                 result("y1", inPaths("arg/x1", "arg/x2")));
-        Signature subtract = sig("subtract", SubtractorImpl.class,
+        sig subtract = sig("subtract", SubtractorImpl.class,
                 result("y2", inPaths("arg/x1", "arg/x2")));
-        Signature average = sig("average", AveragerImpl.class,
+        sig average = sig("average", AveragerImpl.class,
                 result("y3", inPaths("arg/x1", "arg/x2")));
-        Signature multiply = sig("multiply", MultiplierImpl.class,
+        sig multiply = sig("multiply", MultiplierImpl.class,
                 result("y4", inPaths("arg/x1", "arg/x2")));
-        Signature divide = sig("divide", DividerImpl.class,
+        sig divide = sig("divide", DividerImpl.class,
                 result("y5", inPaths("arg/x1", "arg/x2")));
 
-        Task t4 = task("t4",
+        mog t4 = task("t4",
                 sig("multiply", MultiplierImpl.class,
                         result("result/y", inPaths("arg/x1", "arg/x2"))));
 
-        Task t5 = task("t5",
+        mog t5 = task("t5",
                 sig("add", AdderImpl.class,
                         result("result/y", inPaths("arg/x1", "arg/x2"))));
 
@@ -626,13 +629,13 @@ public class ModelMultiFidelities {
             }
         };
 
-        Metafidelity fi2 = fi("sysFi2", mphFi("mFi2", "ph4"), fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        Metafidelity fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-        Metafidelity fi4 = fi("sysFi4", fi("mFi3", "average"));
-        Metafidelity fi5 = fi("sysFi5", fi("mFi4", "t4"));
+        fi fi2 = fi("sysFi2", mphFi("mFi2", "ph4"), fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        fi fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        fi fi4 = fi("sysFi4", fi("mFi3", "average"));
+        fi fi5 = fi("sysFi5", fi("mFi4", "t4"));
 
         // four entry multifidelity model with four morphers
-        Model mdl = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
+        mog mdl = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 ent("mFi1", mphFi(morpher1, add, multiply)),
                 ent("mFi2", mphFi(entFi(ent("ph2", morpher2), ent("ph4", morpher4)), average, divide, subtract)),
                 ent("mFi3", mphFi(average, divide, multiply)),
@@ -646,7 +649,7 @@ public class ModelMultiFidelities {
 
     @Test
     public void morphingFidelities() throws Exception {
-        Model mdl = getMorphingModel();
+        mog mdl = getMorphingModel();
         traced(mdl, true);
         Context out = response(mdl);
 
@@ -682,7 +685,7 @@ public class ModelMultiFidelities {
 
     @Test
     public void morphingFidelitiesLoop() throws Exception {
-        Model mdl = getMorphingModel();
+        mog mdl = getMorphingModel();
 
         Block mdlBlock = block(
                 loop(

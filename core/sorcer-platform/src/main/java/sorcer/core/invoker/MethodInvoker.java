@@ -185,7 +185,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 	}
 
 	@Override
-	public T evaluate(Arg... entries) throws RemoteException, InvocationException {
+	public T evaluate(Arg... args) throws RemoteException, InvocationException {
 		Object[] parameters = new Object[0];
 		try {
 			parameters = getParameters();
@@ -252,10 +252,10 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 						Object[] parameters2 = new Object[3];
 						parameters2[0] = parameters[0];
 						parameters2[1] = null; // Transaction
-						if (entries != null && entries.length > 0) {
-							parameters2[2] = entries;
-						} else if (args.size() > 0) {
-							parameters2[2] = args.toArray();
+						if (args != null && args.length > 0) {
+							parameters2[2] = args;
+						} else if (this.args.size() > 0) {
+							parameters2[2] = this.args.toArray();
 						} else {
 							parameters2[2] = new Arg[0];
 						}

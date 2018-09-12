@@ -1,5 +1,6 @@
 package sorcer.sml.signatures;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -370,7 +371,7 @@ public class Signatures {
 	public void signatureWithMultitypeSrvName() throws Exception  {
 		String group = property("user.name");
 
-		Task t5 = task("t5", sig(mt("sorcer.arithmetic.provider.Adder", Service.class, Provider.class),
+		Task t5 = task("t5", sig(mt("sorcer.arithmetic.provider.Adder"),
                 op("add"),
 				//locators() - default locator or list of hosts
 				srvName("Adder", locators(), group)),

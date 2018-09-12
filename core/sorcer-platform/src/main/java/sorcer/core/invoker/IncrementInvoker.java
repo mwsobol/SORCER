@@ -71,10 +71,10 @@ public abstract class IncrementInvoker<T> extends ServiceInvoker<T> implements I
 	}
 
 	@Override
-	public T evaluate(Arg... entries) throws EvaluationException {
+	public T evaluate(Arg... args) throws EvaluationException {
 		try {
 			if (value == null && target != null)
-				value = target.invoke(null, entries);
+				value = target.invoke(null, args);
 			else if (path != null && target == null && invokeContext != null) {
 					T val = (T) invokeContext.getValue(path);
 					if (val != null) value = val;

@@ -1303,10 +1303,10 @@ public class operator extends Operator {
 		 return entry;
 	}
 
-	public static Object impl(Model context, String path)
-			throws ContextException {
-		return impl((ServiceContext) context,  path);
-	}
+//	public static Object impl(Model context, String path)
+//			throws ContextException {
+//		return impl((ServiceContext) context,  path);
+//	}
 
 	public static Object rimpl(Context context, String path)
 			throws ContextException {
@@ -1318,7 +1318,7 @@ public class operator extends Operator {
 		}
 	}
 
-	public static Object impl(Context context, String path)
+	public static Object impl(Mogram context, String path)
 			throws ContextException {
 		Object obj = context.get(path);
 		if (obj instanceof MultiFiSlot) {

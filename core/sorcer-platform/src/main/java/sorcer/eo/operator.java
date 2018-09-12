@@ -1053,7 +1053,7 @@ public class operator extends Operator {
             os.setProvisionable(provision);
 			return os;
         } else if (operation != null) {
-			signature = (ServiceSignature) sig(operation.getName());
+			signature = (ServiceSignature) sig(operation.getName(), multitype.getProviderType());
 			signature.setMultitype(multitype);
 			signature.setOperation(operation);
 		} else if (operation == null && selector == null) {
@@ -3394,7 +3394,7 @@ public class operator extends Operator {
 					if (((EvaluationTask)e).getEvaluation() instanceof Call) {
 						Call p = (Call)((EvaluationTask)e).getEvaluation();
 						((EntryModel)pm.getScope()).addProc(p);
-//						pm.addPar(p);
+//						pm.addCall(p);
 
 					}
 				} else if (e instanceof Exertion) {

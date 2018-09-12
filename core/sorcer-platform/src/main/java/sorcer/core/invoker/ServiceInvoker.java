@@ -28,6 +28,7 @@ import sorcer.core.context.model.ent.Call;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Data;
+import sorcer.service.modeling.evr;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -67,7 +68,7 @@ import java.util.List;
  * of the context.
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ServiceInvoker<T> extends Observable implements Invocation<T>, Identifiable, Scopable, Evaluator<T>, Reactive<T>, Observer, Serializable {
+public class ServiceInvoker<T> extends Observable implements Invocation<T>, Identifiable, Scopable, Evaluator<T>, Reactive<T>, Observer, evr<T>, Serializable {
 
 	private static final long serialVersionUID = -2007501128660915681L;
 	
@@ -87,6 +88,8 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 
 	// invocation delegate to
 	Evaluator evaluator;
+
+	protected boolean isFunctional = false;
 
 	private boolean isCurrent = false;
 
@@ -259,20 +262,20 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	 * {@link #invoke} so the invoker is aware that the new call may be added to
 	 * the model.
 	 * 
-	 * @param par
+	 * @param call
 	 *            the variable to be added
 	 *
 	 * @throws RemoteException
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */
-	public ServiceInvoker addPar(Object par) throws EvaluationException {
-		if (par instanceof Call) {
-			((ServiceContext)invokeContext).put(((Call) par).getName(), par);
-			if (((Call) par).asis() instanceof ServiceInvoker) {
+	public ServiceInvoker addCall(Object call) throws EvaluationException {
+		if (call instanceof Call) {
+			((ServiceContext)invokeContext).put(((Call) call).getName(), call);
+			if (((Call) call).asis() instanceof ServiceInvoker) {
 				try {
-					((ServiceInvoker) ((Call) par).evaluate()).addObserver(this);
-					args.add((Call) par);
+					((ServiceInvoker) ((Call) call).evaluate()).addObserver(this);
+					args.add((Call) call);
 					value = null;
 					setChanged();
 					notifyObservers(this);
@@ -281,9 +284,9 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 					throw new EvaluationException(e);
 				}
 			}
-		} else if (par instanceof Identifiable) {
+		} else if (call instanceof Identifiable) {
 			try {
-				Call p = new Call(((Identifiable) par).getName(), par, invokeContext);
+				Call p = new Call(((Identifiable) call).getName(), call, invokeContext);
 				invokeContext.putValue(p.getName(), p);
 			} catch (ContextException e) {
 				throw new EvaluationException(e);
@@ -294,41 +297,41 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 
 	synchronized public void addPars(ArgSet parSet) throws EvaluationException {
 		for (Arg p : parSet) {
-			addPar(p);
+			addCall(p);
 		}
 	}
 	
 	synchronized public void addPars(List<Call> callEntryList)
 			throws EvaluationException, RemoteException {
 		for (Call p : callEntryList) {
-			addPar(p);
+			addCall(p);
 		}
 	}
 	
 	synchronized public void addPars(Call... callEntries) throws EvaluationException,
 			RemoteException {
 		for (Call p : callEntries) {
-			addPar(p);
+			addCall(p);
 		}
 	}
 
-	synchronized public void addPars(ArgList args) throws EvaluationException,
+	synchronized public void addPars(ArgList argList) throws EvaluationException,
 			RemoteException {
 		if (args != null)
-			for (Arg p : args) {
-				addPar(p);
+			for (Arg p : argList) {
+				addCall(p);
 			}
 	}
 
-	synchronized public void addPars(ArgList... parLists)
+	synchronized public void addPars(ArgList... argList)
 			throws EvaluationException, RemoteException {
-		for (ArgList pl : parLists) {
+		for (ArgList pl : argList) {
 			addPars(pl);
 		}
 	}
 
 	@Override
-	public T invoke(Context context, Arg... entries)
+	public T invoke(Context context, Arg... args)
 		throws RemoteException, EvaluationException {
 		try {
 			if (context != null) {
@@ -341,31 +344,28 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		} catch (ContextException e) {
 			throw new InvocationException(e);
 		}
-//		if (evaluator != null)
-//			return (T) invokeEvaluator();
-//		else
-			return evaluate(entries);
+		return evaluate(args);
 	}
 
 	@Override
-	public T evaluate(Arg... entries) throws EvaluationException, RemoteException {
+	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
 		try {
-			if (entries != null && entries.length > 0) {
+			if (args != null && args.length > 0) {
 				isValid = false;
 				if (invokeContext == null) {
 					invokeContext = new EntryModel("model/call");
 				}
-				((ServiceContext)invokeContext).substitute(entries);
+				((ServiceContext)invokeContext).substitute(args);
 			}
 			if (invokeContext.isChanged()) {
 				isValid = false;
-				if (args != null)
-					args.clearArgs();
+				if (this.args != null)
+					this.args.clearArgs();
 			}
 			if (isValid)
 				return value;
 			else {
-				value = (T) invoke(entries);
+				value = (T) invoke(args);
 				isValid = true;
 			}
 		} catch (Exception e) {
@@ -374,15 +374,23 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		return value;
 	}
 	
-	private Object invoke(Arg... entries)
+	private Object invoke(Arg... args)
 			throws InvocationException {
 		try {
 			init(this.args);
 			if (lambda != null) {
-				return lambda.call(invokeContext);
+				if (isFunctional) {
+					return lambda;
+				} else {
+					return lambda.call(invokeContext);
+				}
 			} else if (evaluator != null) {
 				evaluator.addArgs(this.args);
-				return evaluator.evaluate(entries);
+				if (isFunctional) {
+					return evaluator;
+				} else {
+					return evaluator.evaluate(args);
+				}
 			}
 		} catch (Exception e) {
 			throw new InvocationException(e);
@@ -415,9 +423,9 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	 * @see sorcer.service.Evaluation#substitute(sorcer.co.tuple.Parameter[])
 	 */
 	@Override
-	public void substitute(Arg... entries)
+	public void substitute(Arg... args)
 			throws SetterException {
-		for (Arg e : entries) {
+		for (Arg e : args) {
 			if (e instanceof Entry) {
 				try {
 					invokeContext.putValue(e.getName(), ((Entry) e).get());
@@ -583,6 +591,14 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			return evaluate(args);
 		}
 		return null;
+	}
+
+	public boolean isFunctional() {
+		return isFunctional;
+	}
+
+	public void setFunctional(boolean functional) {
+		isFunctional = functional;
 	}
 
 	@Override

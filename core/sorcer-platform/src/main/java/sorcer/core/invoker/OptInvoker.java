@@ -69,15 +69,19 @@ public class OptInvoker<T> extends ServiceInvoker<T> implements ConditionalInvoc
 	}
 
 	@Override
-	public T evaluate(Arg... entries) throws EvaluationException, RemoteException {
+	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
 		try {
 			if (value != null) {
 				return value;
 			}
 			checkInvokeContext();
-			if (condition == null || condition.isTrue())
-				return target.evaluate(entries);
-			else {
+			if (condition == null || condition.isTrue()) {
+				if (target.isFunctional) {
+					return (T) target;
+				} else {
+					return target.evaluate(args);
+				}
+			} else {
 				return null;
 			}
 		} catch (ContextException e) {

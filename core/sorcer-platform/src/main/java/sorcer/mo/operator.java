@@ -408,8 +408,8 @@ public class operator {
             return (ServiceContext) mogram.getMogramStrategy().getOutcome();
     }
 
-    public static void traced(Model model, boolean isTraced) throws ContextException {
-        ((FidelityManager)model.getFidelityManager()).setTraced(isTraced);
+    public static void traced(Mogram mogram, boolean isTraced) throws ContextException {
+        ((FidelityManager)mogram.getFidelityManager()).setTraced(isTraced);
     }
 
     public static Context inConn(List<Entry> entries) throws ContextException {

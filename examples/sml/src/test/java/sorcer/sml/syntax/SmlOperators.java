@@ -55,6 +55,9 @@ public class SmlOperators {
 		func f4 = neu("x6", 1.0);
 		func f5 = srv(sig("s1", Class.class));
 
+		// Evaluators
+		evr ev1 = expr("exprssionToExecute");
+
 		// Data Contexts
 		cxt c1 = context(v1, val("x4", 10.8), erEnt(f1), erEnt(f3));
 
@@ -76,6 +79,8 @@ public class SmlOperators {
 		Object o8 = exec(m1);
 		Object o9 = value(context(), "path");
 		Object o10 = eval(model(), "path");
+		Object o11 = eval(ev1);
+		Object o12 = exec(ev1);
 
 		// entries for results of exec
 		ent e3 = erEnt(v1);
