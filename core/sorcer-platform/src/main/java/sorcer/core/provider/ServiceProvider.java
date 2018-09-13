@@ -97,14 +97,14 @@ import static sorcer.util.StringUtils.tName;
  *  <code>buildMyBean</code> of the class <code>MyServiceBean</code>.
  * <p>
  * In the simplest case, the provider exports and registers its own (outer) proxy with
- * the primary methods {@code Service.erEnt(Arg[])} and service federation request
+ * the primary methods {@code Service.execEnt(Arg[])} and service federation request
  * {@code Exerter.exert(Mogram, Transaction, Arg[])}. The functionality of an
  * outer proxy can be extended by its inner server functionality with its Remote
  * inner proxy. In this case, the outer proxies have to implement {@link sorcer.core.proxy.Outer}
  * interface and each outer proxy is registered with the inner proxy allocated
  * with {@link Outer#getInner} invoked on the outer proxy. Obviously an outer
  * proxy can implement own interfaces with the help of its embedded inner proxy
- * that in erEnt can consist of multiple own inner proxies as needed. This class
+ * that in execEnt can consist of multiple own inner proxies as needed. This class
  * implements the {@link sorcer.core.proxy.Outer} interface, so can extend its functionality by
  * inner proxying.
  * <p>
@@ -856,7 +856,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			for (int i = 0; i < locs.length; i++) {
 				locs[i] = new LookupLocator(lookupLocators[i]);
 			}
-			// Make sure to erEnt off multicast discovery if requested
+			// Make sure to execEnt off multicast discovery if requested
 			String[] groups;
 			if (Sorcer.isMulticastEnabled()) {
 				if (lookupGroups != null && lookupGroups.length > 0)
@@ -1300,7 +1300,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				   + "\ntotal service op calls = " + numCalls + " "
 				   + "\nnumber of service op calls running = "	+ numThreads + " "
 				   + "\nservice op call ids running = " + threadIds + " "
-		           + "\naverage erEnt time [s]       = " + avgExecTime;
+		           + "\naverage execEnt time [s]       = " + avgExecTime;
         return msg;
 	}
 

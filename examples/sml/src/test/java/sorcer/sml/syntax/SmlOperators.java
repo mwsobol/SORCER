@@ -13,6 +13,9 @@ import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
 
+import java.util.Collection;
+import java.util.List;
+
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.inVal;
@@ -39,69 +42,73 @@ public class SmlOperators {
 	public void smlBasicSyntax() throws Exception {
 
 		// Signatures
-		sig s1 = sig("s1", Class.class);
-		sig s2 = sig("s2", Class.class);
-		Object o1 = exec(s1);
-
-		// Entries
-		slot v0 = slot(s1, 10.6);
-		val v1 = val("x2", 10.6);
-		ent v2 = val("x3", 10.7);
-		ent e1 = ent("x4", 10.8);
-		ent e2 = srv(s1);
-		func f1 = call("x5", 20.0);
-		func f2 = call("v1 + f1", args("v1", "f1"));
-		func f3 = lmbd("s1", args("v1", "f1"));
-		func f4 = neu("x6", 1.0);
-		func f5 = srv(sig("s1", Class.class));
+		sig op1 = sig("op1", Object.class);
+		sig op2 = sig("op2", Collection.class, List.class);
 
 		// Evaluators
 		evr ev1 = expr("exprssionToExecute");
 
+		// Entries
+		val v1 = val("x2", 10.6);
+		ent e1 = call("x3", ev1);
+		func s1 = srv(op1);
+		func f1 = lmbd("s1", args("v1", "f1"));
+		func f2 = neu("x6", 1.0);
+		func f3 = srv(sig("s1", Class.class));
+
 		// Data Contexts
-		cxt c1 = context(v1, val("x4", 10.8), erEnt(f1), erEnt(f3));
+		cxt c1 = context(v1, val("x4", 10.8), execEnt(f1), execEnt(f3));
 
 		// Mograms
 		mog m1 = model(v1, f1, f2, f3);
-		mog t1 = task(s1, c1);
-		mog t2 = task(s1, s2, c1);
+		mog t1 = task(op1, c1);
+		mog t2 = task(op1, op2, c1);
 		mog ex1 = block(t1, t2, m1);
 		mog ex2 = job(t1, job(t2, m1));
-		mog m2 = model(m1, s1, t1);
+		mog m2 = model(m1, op1, t1);
 
 		// Object outputs
-		Object o2 = value(v1);
-		Object o3 = exec(f1);
-		Object o4 = exec(e1);
-		Object o5 = exec(t1);
-		Object o6 = exec(block());
-		Object o7 = exec(job());
-		Object o8 = exec(m1);
-		Object o9 = value(context(), "path");
-		Object o10 = eval(model(), "path");
-		Object o11 = eval(ev1);
-		Object o12 = exec(ev1);
+		Object o1 = exec(op1);
+		Object o2 = exec(f1);
+		Object o3 = exec(e1);
+		Object o4 = exec(t1);
+		Object o5 = exec(block());
+		Object o6 = exec(job());
+		Object o7 = exec(m1);
+		Object o8 = exec(ev1);
+
+		Object o9 = value(v1);
+		Object o10 = value(context(), "path");
+		Object o11 = eval(model(), "path");
 
 		// entries for results of exec
-		ent e3 = erEnt(v1);
-		ent e4 = erEnt(f1);
-		ent e5 = erEnt(job());
-		ent e6 = erEnt(model());
-		ent e7 = val("path", o2);
-		ent e8 = erEnt(context(), "path");
+		ent e2 = execEnt(v1);
+		ent e3 = execEnt(f1);
+		ent e4 = execEnt(job());
+		ent e5 = execEnt(model());;
+		ent e6 = execEnt(model(), "path");
 
 		// exerting mograms
 		mog m3 = exert(task());
 		mog m4 = exert(job());
 		mog m5 = exert(model());
+
+		// data context of mograms
 		cxt c2 = context(job());
 		cxt c3 = context(exert(job()));
+
+		// evaluate mograms
 		cxt c4 = eval(model());
 		cxt c5 = eval(ex2);
-		rsp r1 = eval(model());
 		cxt r2 = result(model());
 		cxt r3 = result(job());
+
+		// evalate specific models
+		// Context, Table, row is rsp (Response)
+		rsp r1 = eval(model());
 		rsp r4 = row(c2);
+
+		// clear mograms
 		clear(ex2);
 	}
 

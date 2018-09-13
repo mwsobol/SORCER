@@ -437,8 +437,8 @@ public class DataModels {
         Job j1 = getArithmeticJob();
 
         Context bag = context(cxt1, cxt2,
-                erEnt(t5, self(selector("result/eval"), true)),
-                erEnt(j1, selector("result/y")));
+                execEnt(t5, self(selector("result/eval"), true)),
+                execEnt(j1, selector("result/y")));
 
         logger.info("context bag: " + bag);
         assertEquals(value(bag, "j1"), 400.0);

@@ -51,7 +51,7 @@ import static sorcer.service.Fi.e;
  */
 public class operator extends Operator {
 
-    public static Entry erEnt(Service service, Arg... args) throws ServiceException {
+    public static Entry execEnt(Service service, Arg... args) throws ServiceException {
         try {
             ContextSelector contextSelector = selectContextSelector(args);
             Object result = service.execute(args);
@@ -76,7 +76,7 @@ public class operator extends Operator {
         return null;
     }
 
-    public static Entry erEnt(Service service, String selector, Arg... args) throws ServiceException {
+    public static Entry execEnt(Service service, String selector, Arg... args) throws ServiceException {
         try {
             return new Entry(selector, service.execute(args));
         } catch (RemoteException e) {

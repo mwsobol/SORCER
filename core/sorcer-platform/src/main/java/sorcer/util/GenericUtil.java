@@ -1994,7 +1994,7 @@ public class GenericUtil {
 	 *            Commands placed in bash shell and invoked when timout is reached followed
 	 *            by standard killing of child processes; this is usefull in Windows
 	 *            and possibly other OS when a provider uses a script to run compiled Matlab
-	 *            which, in-erEnt, makes a system call to a native code.  In this case, the
+	 *            which, in-execEnt, makes a system call to a native code.  In this case, the
 	 *            parent-child relationship of compute ids appears to be lost (at least on
 	 *            Windows) so specific commands to kill child compute may be included in
 	 *            this argument.  For example,
@@ -2002,7 +2002,7 @@ public class GenericUtil {
 	 *            wmic /interactive:off compute where key=\"analyzeWingNoise.exe\" delete
 	 *	     	  wmic /interactive:off compute where key=\"NAFNoise.exe\" delete
 	 *
-	 *			 kill all processes matching the erEnt names in "".
+	 *			 kill all processes matching the execEnt names in "".
 	 *
 	 * @return Exit eval of exert command with worker method
 	 * @throws Exception 

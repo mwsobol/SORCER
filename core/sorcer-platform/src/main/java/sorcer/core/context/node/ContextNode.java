@@ -1384,7 +1384,7 @@ public class ContextNode implements Serializable {
 				logger.info("set context node URL to: " + getData());
 				StringBuffer cmd = new StringBuffer("chmod +777 ")
 						.append(localFile);
-				Process p = Runtime.getRuntime().erEnt(cmd.toString());
+				Process p = Runtime.getRuntime().execEnt(cmd.toString());
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

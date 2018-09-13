@@ -33,11 +33,11 @@ import sorcer.util.exec.ExecUtils.CmdResult;
 public class ExecCmd extends ShellCmd {
 
 	{
-		COMMAND_NAME = "erEnt";
+		COMMAND_NAME = "execEnt";
 
 		NOT_LOADED_MSG = "***command not loaded due to conflict";
 
-		COMMAND_USAGE = "erEnt <cmd>";
+		COMMAND_USAGE = "execEnt <cmd>";
 
 		COMMAND_HELP = "Handles the uderlying OS shell commands";
 	}
@@ -57,7 +57,7 @@ public class ExecCmd extends ShellCmd {
 		StringTokenizer tok = new StringTokenizer(input);
 		String token = tok.nextToken();
 		String arg = "";
-		if (token.equals("erEnt")) {
+		if (token.equals("execEnt")) {
 			//CmdResult result = null;
 			token = tok.nextToken();
 			if (token.equals("more") || token.equals("less")
