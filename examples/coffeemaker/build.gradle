@@ -139,7 +139,7 @@ test {
     dependsOn([install, bootme])
     finalizedBy(stopme)
 }
-//test.enabled = false
+test.enabled = false
 
 
 
