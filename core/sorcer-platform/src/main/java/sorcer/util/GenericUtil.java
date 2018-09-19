@@ -538,7 +538,8 @@ public class GenericUtil {
 					file.delete();
 				} else {
 					deleteFilesAndSubDirs(file);
-				}
+                    file.delete();
+                }
 			}
 		}
 	}
