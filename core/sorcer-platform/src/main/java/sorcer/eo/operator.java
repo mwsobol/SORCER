@@ -1046,7 +1046,6 @@ public class operator extends sorcer.operator {
 			signature = new ObjectSignature();
 			signature.setServiceType(serviceType);
 			signature.getServiceType();
-			signature = new ObjectSignature();
 			signature.setProvisionable(provision);
 			((ObjectSignature)signature).setArgs(args.args);
 			((ObjectSignature)signature).setParameterTypes(parTypes.parameterTypes);
