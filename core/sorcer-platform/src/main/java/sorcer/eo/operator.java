@@ -23,7 +23,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.co.operator.DataEntry;
+import sorcer.co.operator.*;
 import sorcer.co.tuple.*;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
@@ -65,10 +65,8 @@ import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.*;
 
-import static sorcer.co.operator.path;
 import static sorcer.co.operator.*;
-import static sorcer.mo.operator.*;
-import static sorcer.po.operator.ent;
+import static sorcer.mo.operator.srvModel;
 import static sorcer.po.operator.srv;
 
 /**
@@ -1041,12 +1039,11 @@ public class operator extends sorcer.operator {
 				provision = (Provision)item;
 			}
 		}
-		ServiceSignature signature = null;
+		ServiceSignature signature;
         if (args != null && parTypes != null) {
 			signature = new ObjectSignature();
 			signature.setServiceType(serviceType);
 			signature.getServiceType();
-			signature = new ObjectSignature();
 			signature.setProvisionable(provision);
 			((ObjectSignature)signature).setArgs(args.args);
 			((ObjectSignature)signature).setParameterTypes(parTypes.parameterTypes);
