@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import sorcer.core.SorcerConstants;
+import sorcer.core.analytics.Analytics;
 import sorcer.core.analytics.MethodAnalytics;
 import sorcer.core.analytics.SystemAnalytics;
 import sorcer.core.context.ControlContext;
@@ -1280,6 +1281,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	@Override public SystemAnalytics getSystemAnalytics() {
 		return delegate.getAnalyticsRecorder().getSystemAnalytics();
+	}
+
+	@Override public Analytics getAnalytics() {
+		return new Analytics(delegate.getAnalyticsRecorder().getMethodAnalytics(),
+							 delegate.getAnalyticsRecorder().getSystemAnalytics());
 	}
 
 	protected synchronized void doTimeKeeping(double callTimeSec) {

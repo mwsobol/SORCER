@@ -25,6 +25,9 @@ public class SystemAnalytics implements Serializable {
     private double systemMemoryUsed;
     private double processMemoryTotal;
     private double processMemoryUsed;
+    private String operatingSystem;
+    private String hostName;
+    private String hostAddress;
 
     public String getProcessCPUUtilization() {
         return processCPUUtilization;
@@ -80,14 +83,45 @@ public class SystemAnalytics implements Serializable {
         return this;
     }
 
+    public String getOperatingSystem() {
+        return operatingSystem;
+    }
+
+    public SystemAnalytics setOperatingSystem(String operatingSystem) {
+        this.operatingSystem = operatingSystem;
+        return this;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public SystemAnalytics setHostName(String hostName) {
+        this.hostName = hostName;
+        return this;
+    }
+
+    public String getHostAddress() {
+        return hostAddress;
+    }
+
+    public SystemAnalytics setHostAddress(String hostAddress) {
+        this.hostAddress = hostAddress;
+        return this;
+    }
+
     @Override public String toString() {
-        return "SystemAnalytics :" +
-               "processCPUUtilization='" + processCPUUtilization + '\'' +
-               ", systemCPUPercent='" + systemCPUPercent + '\'' +
-               ", systemMemoryTotal='" + systemMemoryTotal + '\'' +
-               ", systemMemoryUsed='" + systemMemoryUsed + '\'' +
-               ", processMemoryTotal='" + processMemoryTotal + '\'' +
-               ", processMemoryUsed='" + processMemoryUsed;
+        return "SystemAnalytics{" +
+               "systemCPUPercent='" + systemCPUPercent + '\'' +
+               ", processCPUUtilization='" + processCPUUtilization + '\'' +
+               ", systemMemoryTotal=" + systemMemoryTotal +
+               ", systemMemoryUsed=" + systemMemoryUsed +
+               ", processMemoryTotal=" + processMemoryTotal +
+               ", processMemoryUsed=" + processMemoryUsed +
+               ", operatingSystem='" + operatingSystem + '\'' +
+               ", hostName='" + hostName + '\'' +
+               ", hostAddress='" + hostAddress + '\'' +
+               '}';
     }
 }
 

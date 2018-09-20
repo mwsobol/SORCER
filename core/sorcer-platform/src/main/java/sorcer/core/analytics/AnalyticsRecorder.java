@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.monitoring.Monitor;
 import sorcer.core.monitoring.MonitorAgent;
+import sorcer.util.OperatingSystemType;
 
 import java.text.NumberFormat;
 import java.util.HashMap;
@@ -39,11 +40,13 @@ public class AnalyticsRecorder {
     private final Map<String, MethodInvocationRecord> activityMap = new ConcurrentHashMap<>();
     private ServiceID serviceID;
     private String hostName;
+    private String hostAddress;
     private final MonitorAgent monitorAgent;
     private NumberFormat percentFormatter = NumberFormat.getPercentInstance();
 
-    public AnalyticsRecorder(String hostName, ServiceID serviceID, String name, String principal) {
+    public AnalyticsRecorder(String hostName, String hostAddress, ServiceID serviceID, String name, String principal) {
         this.hostName = hostName;
+        this.hostAddress = hostAddress;
         this.serviceID = serviceID;
         percentFormatter.setMaximumFractionDigits(3);
         monitorAgent = new MonitorAgent();
@@ -115,7 +118,10 @@ public class AnalyticsRecorder {
                    .setSystemMemoryTotal(systemMemoryTotal)
                    .setSystemMemoryUsed(systemMemoryUsed)
                    .setProcessMemoryTotal(processMemoryTotal)
-                   .setProcessMemoryUsed(processMemoryUsed);
+                   .setProcessMemoryUsed(processMemoryUsed)
+                   .setHostName(hostName)
+                   .setHostAddress(hostAddress)
+                   .setOperatingSystem(OperatingSystemType.get());
     }
 
     private MethodInvocationRecord getMethodInvocationRecord(String m) {

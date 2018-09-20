@@ -24,6 +24,8 @@ import java.util.Map;
  * @author Dennis Reedy
  */
 public interface AnalyticsProducer {
+    Analytics getAnalytics() throws IOException;
+
     Map<String, MethodAnalytics> getMethodAnalytics() throws IOException;
     MethodAnalytics getMethodAnalytics(String name) throws IOException;
     SystemAnalytics getSystemAnalytics() throws IOException;

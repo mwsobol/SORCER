@@ -2830,10 +2830,11 @@ public class ProviderDelegate {
             if (exporterFactory == null)
                 exporterFactory = ExporterFactories.EXPORTER;
 
-            analyticsRecorder = new AnalyticsRecorder(getHostName(),
-                    getServiceID(),
-                    getProviderName(),
-                    System.getProperty("user.name"));
+			analyticsRecorder = new AnalyticsRecorder(getHostName(),
+													  SorcerEnv.getHostAddress(),
+													  getServiceID(),
+													  getProviderName(),
+													  System.getProperty("user.name"));
 
             // find it out if service bean signature are available
             Signature signature = (Signature) config.getEntry(ServiceProvider.COMPONENT,
