@@ -164,7 +164,7 @@ import static sorcer.util.StringUtils.tName;
  */
 public class ServiceProvider implements Identifiable, Provider, ServiceIDListener,
 		ReferentUuid, ProxyAccessor, ServerProxyTrust, RemoteMethodControl, ServiceActivityProvider,
-		LifeCycle, Partner, Partnership, SorcerConstants, AdministratableProvider, ScratchManager {
+		LifeCycle, Partner, Partnership, SorcerConstants, AdministratableProvider {
 	// RemoteMethodControl is needed to enable Proxy Constraints
 
 	/** Logger and configuration component key for service provider. */
