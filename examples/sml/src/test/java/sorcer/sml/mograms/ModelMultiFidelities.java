@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.arithmetic.provider.*;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
@@ -15,10 +16,7 @@ import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;
-import sorcer.service.modeling.Model;
-import sorcer.service.modeling.fi;
-import sorcer.service.modeling.mog;
-import sorcer.service.modeling.sig;
+import sorcer.service.modeling.*;
 
 import java.rmi.RemoteException;
 
@@ -526,13 +524,13 @@ public class ModelMultiFidelities {
     @Test
     public void morphMultiFiRequest() throws Exception {
 
-        Task t4 = task(
+        mog t4 = task(
                 "t4",
                 sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
                         outVal("result/y")));
 
-        Task t5 = task(
+        mog t5 = task(
                 "t5",
                 sig("add", AdderImpl.class),
                 context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
@@ -560,15 +558,15 @@ public class ModelMultiFidelities {
 
     public mog getMorphingModel() throws Exception {
 
-        sig add = sig("add", AdderImpl.class,
+        sig add = sig("add", Adder.class,
                 result("y1", inPaths("arg/x1", "arg/x2")));
-        sig subtract = sig("subtract", SubtractorImpl.class,
+        sig subtract = sig("subtract", Subtractor.class,
                 result("y2", inPaths("arg/x1", "arg/x2")));
-        sig average = sig("average", AveragerImpl.class,
+        sig average = sig("average", Averager.class,
                 result("y3", inPaths("arg/x1", "arg/x2")));
-        sig multiply = sig("multiply", MultiplierImpl.class,
+        sig multiply = sig("multiply", Multiplier.class,
                 result("y4", inPaths("arg/x1", "arg/x2")));
-        sig divide = sig("divide", DividerImpl.class,
+        sig divide = sig("divide", Divider.class,
                 result("y5", inPaths("arg/x1", "arg/x2")));
 
         mog t4 = task("t4",
@@ -651,36 +649,36 @@ public class ModelMultiFidelities {
     public void morphingFidelities() throws Exception {
         mog mdl = getMorphingModel();
         traced(mdl, true);
-        Context out = response(mdl);
+        cxt out = response(mdl);
 
         logger.info("out: " + out);
         logger.info("trace: " + fiTrace(mdl));
         logger.info("trace: " + fiTrace((Mogram) impl(mdl, "mFi4")));
-        assertTrue(get(out, "mFi1").equals(100.0));
-        assertTrue(get(out, "mFi2").equals(9.0));
-        assertTrue(get(out, "mFi3").equals(900.0));
-        assertTrue(get(out, "mFi4").equals(110.0));
+        assertTrue(value(out, "mFi1").equals(100.0));
+        assertTrue(value(out, "mFi2").equals(9.0));
+        assertTrue(value(out, "mFi3").equals(900.0));
+        assertTrue(value(out, "mFi4").equals(110.0));
 
         // closing the fidelity for mFi1
         out = response(mdl , fi("mFi1", "multiply"));
         logger.info("out: " + out);
         logger.info("trace: " + fiTrace(mdl));
         logger.info("trace: " + fiTrace((Mogram) impl(mdl, "mFi4")));
-        assertTrue(get(out, "mFi1").equals(900.0));
-        assertTrue(get(out, "mFi2").equals(50.0));
-        assertTrue(get(out, "mFi3").equals(9.0));
-        assertTrue(get(out, "mFi4").equals(920.0));
+        assertTrue(value(out, "mFi1").equals(900.0));
+        assertTrue(value(out, "mFi2").equals(50.0));
+        assertTrue(value(out, "mFi3").equals(9.0));
+        assertTrue(value(out, "mFi4").equals(920.0));
 
         // check if fi("mFi1", "multiply") was executed
         out = response(mdl);
         logger.info("out: " + out);
         logger.info("trace: " + fiTrace(mdl));
         logger.info("trace: " + fiTrace((Mogram) impl(mdl, "mFi4")));
-        assertTrue(get(out, "mFi1").equals(900.0));
-        assertTrue(get(out, "mFi2").equals(50.0));
-        assertTrue(get(out, "mFi3").equals(9.0));
+        assertTrue(value(out, "mFi1").equals(900.0));
+        assertTrue(value(out, "mFi2").equals(50.0));
+        assertTrue(value(out, "mFi3").equals(9.0));
         logger.info("out mFi4: " + get(out, "mFi4"));
-        assertTrue(get(out, "mFi4").equals(920.0));
+        assertTrue(value(out, "mFi4").equals(920.0));
     }
 
     @Test

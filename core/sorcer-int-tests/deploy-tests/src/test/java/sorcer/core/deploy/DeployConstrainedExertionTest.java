@@ -51,7 +51,7 @@ import static sorcer.core.deploy.DeploySetup.verifySorcerRunning;
  * If the operating system is provided as "Mac" or "OSX" (case ignored), the result is transformed to "Mac OS X"
  * If "Win or "win" is provided, it is translated to "Windows".
  *
- * When entering IP addresses, erEnt either the IP Address or the fully qualified host key
+ * When entering IP addresses, execEnt either the IP Address or the fully qualified host key
  *
  * If providing machine architecture, the provided eval must be the same as what
  * System.getProperty("os.arch") returns for the required machine architecture

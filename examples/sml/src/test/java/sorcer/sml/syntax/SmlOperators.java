@@ -13,6 +13,9 @@ import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
 
+import java.util.Collection;
+import java.util.List;
+
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
 import static sorcer.co.operator.inVal;
@@ -39,69 +42,78 @@ public class SmlOperators {
 	public void smlBasicSyntax() throws Exception {
 
 		// Signatures
-		sig s1 = sig("s1", Class.class);
-		sig s2 = sig("s2", Class.class);
-		Object o1 = exec(s1);
-
-		// Entries
-		slot v0 = slot(s1, 10.6);
-		val v1 = val("x2", 10.6);
-		ent v2 = val("x3", 10.7);
-		ent e1 = ent("x4", 10.8);
-		ent e2 = srv(s1);
-		func f1 = call("x5", 20.0);
-		func f2 = call("v1 + f1", args("v1", "f1"));
-		func f3 = lmbd("s1", args("v1", "f1"));
-		func f4 = neu("x6", 1.0);
-		func f5 = srv(sig("s1", Class.class));
+		sig op1 = sig("op1", Object.class);
+		sig op2 = sig("op2", Collection.class, List.class);
 
 		// Evaluators
 		evr ev1 = expr("exprssionToExecute");
 
+		// Entries
+		val v1 = val("x2", 10.6);
+		func cu1 = call("x3", ev1);
+		func s1 = srv(op1);
+		func f1 = lmbd("s1", args("v1", "f1"));
+		func f2 = neu("x6", 1.0);
+
+		// ent - generic operator for all entries
+		ent e1 = ent(sig("s1", Class.class));
+		ent e2 = ent("x3", ev1);
+
 		// Data Contexts
-		cxt c1 = context(v1, val("x4", 10.8), erEnt(f1), erEnt(f3));
+		cxt c1 = context(v1, val("x4", 10.8), execEnt(cu1), execEnt(f2));
 
 		// Mograms
-		mog m1 = model(v1, f1, f2, f3);
-		mog t1 = task(s1, c1);
-		mog t2 = task(s1, s2, c1);
+		mog m1 = model(v1, cu1, f1, f2);
+		mog t1 = task(op1, c1);
+		mog t2 = task(op1, op2, c1);
 		mog ex1 = block(t1, t2, m1);
 		mog ex2 = job(t1, job(t2, m1));
-		mog m2 = model(m1, s1, t1);
+		mog m2 = model(m1, op1, t1, ex2);
 
 		// Object outputs
-		Object o2 = value(v1);
-		Object o3 = exec(f1);
-		Object o4 = exec(e1);
-		Object o5 = exec(t1);
-		Object o6 = exec(block());
-		Object o7 = exec(job());
-		Object o8 = exec(m1);
-		Object o9 = value(context(), "path");
-		Object o10 = eval(model(), "path");
-		Object o11 = eval(ev1);
-		Object o12 = exec(ev1);
+		Object o1 = exec(op1);
+		Object o2 = exec(f1);
+		Object o3 = exec(e1);
+		Object o4 = exec(t1);
+		Object o5 = exec(block());
+		Object o6 = exec(job());
+		Object o7 = exec(m1);
+		Object o8 = exec(ev1);
 
-		// entries for results of exec
-		ent e3 = erEnt(v1);
-		ent e4 = erEnt(f1);
-		ent e5 = erEnt(job());
-		ent e6 = erEnt(model());
-		ent e7 = val("path", o2);
-		ent e8 = erEnt(context(), "path");
+		// Object specific outputs
+		Object o9 = value(v1);
+		Object o10 = value(context(), "path");
+		Object o11 = eval(model(), "path");
 
-		// exerting mograms
+		// Entries for results of exec
+		ent e3 = execEnt(v1);
+		ent e4 = execEnt(f1);
+		ent e5 = execEnt(job());
+		ent e6 = execEnt(model());;
+		ent e7 = execEnt(model(), "path");
+
+		// Exerting mograms
 		mog m3 = exert(task());
 		mog m4 = exert(job());
 		mog m5 = exert(model());
+
+		// Data context of mograms
 		cxt c2 = context(job());
 		cxt c3 = context(exert(job()));
+
+		// Evaluate mograms
 		cxt c4 = eval(model());
 		cxt c5 = eval(ex2);
+		// Mogram results
+		cxt out1 = result(model());
+		cxt out2 = result(job());
+
+		// Evalate specific models
+		// Context, Table, row is rsp (Response)
 		rsp r1 = eval(model());
-		cxt r2 = result(model());
-		cxt r3 = result(job());
-		rsp r4 = row(c2);
+		rsp r2 = row(c2);
+
+		// clear service
 		clear(ex2);
 	}
 
@@ -132,23 +144,23 @@ public class SmlOperators {
 			}
 		};
 
-		Metafidelity fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-		Metafidelity fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-		Metafidelity fi4 = fi("sysFi4", fi("mFi3", "average"));
+		fi fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+		fi fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+		fi fi4 = fi("sysFi4", fi("mFi3", "average"));
 
-		Signature add = sig("add", AdderImpl.class,
+		sig add = sig("add", AdderImpl.class,
 			result("result/y1", inPaths("arg/x1", "arg/x2")));
-		Signature subtract = sig("subtract", SubtractorImpl.class,
+		sig subtract = sig("subtract", SubtractorImpl.class,
 			result("result/y2", inPaths("arg/x1", "arg/x2")));
-		Signature average = sig("average", AveragerImpl.class,
+		sig average = sig("average", AveragerImpl.class,
 			result("result/y2", inPaths("arg/x1", "arg/x2")));
-		Signature multiply = sig("multiply", MultiplierImpl.class,
+		sig multiply = sig("multiply", MultiplierImpl.class,
 			result("result/y1", inPaths("arg/x1", "arg/x2")));
-		Signature divide = sig("divide", DividerImpl.class,
+		sig divide = sig("divide", DividerImpl.class,
 			result("result/y2", inPaths("arg/x1", "arg/x2")));
 
 		// five entry multifidelity model with morphers
-		Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
+		mog mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
 			ent("arg/y1", entFi(inVal("arg/y1/fi1", 10.0), inVal("arg/y1/fi2", 11.0))),
 			ent("arg/y2", entFi(inVal("arg/y2/fi1", 90.0), inVal("arg/y2/fi2", 91.0))),
 			ent("mFi1", mphFi(morpher1, add, multiply)),
@@ -159,18 +171,18 @@ public class SmlOperators {
 			Strategy.FidelityManagement.YES,
 			response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
-		Context out = response(mod);
+		cxt out = response(mod);
 		logger.info("out: " + out);
-		assertTrue(get(out, "mFi1").equals(100.0));
-		assertTrue(get(out, "mFi2").equals(9.0));
-		assertTrue(get(out, "mFi3").equals(50.0));
+		assertTrue(value(out, "mFi1").equals(100.0));
+		assertTrue(value(out, "mFi2").equals(9.0));
+		assertTrue(value(out, "mFi3").equals(50.0));
 
 		// closing the fidelity for mFi1
 		out = response(mod , fi("mFi1", "multiply"));
 		logger.info("out: " + out);
-		assertTrue(get(out, "mFi1").equals(900.0));
-		assertTrue(get(out, "mFi2").equals(50.0));
-		assertTrue(get(out, "mFi3").equals(9.0));
+		assertTrue(value(out, "mFi1").equals(900.0));
+		assertTrue(value(out, "mFi2").equals(50.0));
+		assertTrue(value(out, "mFi3").equals(9.0));
 	}
 
 
