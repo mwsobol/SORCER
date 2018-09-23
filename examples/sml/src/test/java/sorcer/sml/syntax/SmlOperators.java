@@ -83,7 +83,7 @@ public class SmlOperators {
 		// Object specific outputs
 		Object o9 = value(v1);
 		Object o10 = value(context(), "path");
-		Object o11 = eval(model(), "path");
+		Object o11 = resp(model(), "path");
 
 		// Entries for results of exec
 		ent e3 = execEnt(v1);
