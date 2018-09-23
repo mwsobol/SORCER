@@ -32,11 +32,11 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.pipe;
-import static sorcer.po.operator.alt;
-import static sorcer.po.operator.*;
-import static sorcer.po.operator.get;
-import static sorcer.po.operator.loop;
-import static sorcer.po.operator.opt;
+import static sorcer.ent.operator.alt;
+import static sorcer.ent.operator.*;
+import static sorcer.ent.operator.get;
+import static sorcer.ent.operator.loop;
+import static sorcer.ent.operator.opt;
 import static sorcer.mo.operator.*;
 import static sorcer.so.operator.*;
 

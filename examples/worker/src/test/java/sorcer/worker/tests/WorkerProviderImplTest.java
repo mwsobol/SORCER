@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.po.operator;
+import sorcer.ent.operator;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.worker.provider.InvalidWork;

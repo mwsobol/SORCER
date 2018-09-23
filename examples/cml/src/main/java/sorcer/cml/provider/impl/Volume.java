@@ -6,7 +6,7 @@ package sorcer.cml.provider.impl;
 
 import sorcer.cml.provider.Cylinder;
 import sorcer.cml.provider.Sphere;
-import sorcer.po.operator;
+import sorcer.ent.operator;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 
@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.System.out;
-import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.*;
 

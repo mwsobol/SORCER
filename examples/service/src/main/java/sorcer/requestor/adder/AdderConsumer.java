@@ -11,7 +11,7 @@ import static sorcer.co.operator.*;
 import static sorcer.so.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.ent;
+import static sorcer.ent.operator.ent;
 
 public class AdderConsumer extends ServiceConsumer {
 

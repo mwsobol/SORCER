@@ -36,7 +36,7 @@ import java.util.*;
 
 import static sorcer.co.operator.dep;
 import static sorcer.co.operator.dependsOn;
-import static sorcer.po.operator.ent;
+import static sorcer.ent.operator.ent;
 import static sorcer.co.operator.paths;
 
 /**

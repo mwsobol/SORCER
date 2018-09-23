@@ -51,7 +51,7 @@ import java.util.*;
 
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.po.operator.*;
+import static sorcer.ent.operator.*;
 
 
 /**
@@ -197,7 +197,7 @@ public class operator {
         Object entry = model.get(entName);
         try {
             if (entry == null) {
-                model.add(sorcer.po.operator.ent(entName, value));
+                model.add(sorcer.ent.operator.ent(entName, value));
             } else if (entry instanceof Entry) {
                 ((Entry) entry).setValue(value);
             } else if (entry instanceof Setter) {

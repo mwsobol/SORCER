@@ -13,7 +13,7 @@ import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.Subtractor;
 import sorcer.core.exertion.TaskTest;
 import sorcer.core.provider.Concatenator;
-import sorcer.po.operator;
+import sorcer.ent.operator;
 import sorcer.service.*;
 import sorcer.util.GenericUtil;
 import sorcer.util.Sorcer;

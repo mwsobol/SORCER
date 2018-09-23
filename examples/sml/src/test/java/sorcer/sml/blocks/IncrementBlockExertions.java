@@ -15,7 +15,7 @@ import sorcer.service.Task;
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.inVal;
 import static sorcer.eo.operator.*;
-import static sorcer.po.operator.*;
+import static sorcer.ent.operator.*;
 import static sorcer.mo.operator.*;
 import static sorcer.so.operator.eval;
 import static sorcer.so.operator.exec;

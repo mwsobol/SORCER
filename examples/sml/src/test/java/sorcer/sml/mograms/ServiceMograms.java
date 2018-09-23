@@ -1,6 +1,5 @@
 package sorcer.sml.mograms;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -9,7 +8,6 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.*;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.provider.Modeler;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceModeler;
@@ -29,7 +27,7 @@ import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.result;
-import static sorcer.po.operator.*;
+import static sorcer.ent.operator.*;
 import static sorcer.so.operator.*;
 
 /**

@@ -12,7 +12,7 @@ import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.ListContext;
 import sorcer.core.context.model.ent.Value;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.po.operator;
+import sorcer.ent.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.util.DataTable;
@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.*;
+import static sorcer.ent.operator.*;
 import static sorcer.so.operator.*;
 
 /**

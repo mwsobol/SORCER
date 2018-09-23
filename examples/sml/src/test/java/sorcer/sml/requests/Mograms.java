@@ -21,9 +21,9 @@ import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.inputs;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.aka;
-import static sorcer.po.operator.ent;
-import static sorcer.po.operator.*;
+import static sorcer.ent.operator.aka;
+import static sorcer.ent.operator.ent;
+import static sorcer.ent.operator.*;
 import static sorcer.so.operator.*;
 
 /**

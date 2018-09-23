@@ -19,8 +19,8 @@ import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.*;
+import static sorcer.ent.operator.invoker;
+import static sorcer.ent.operator.*;
 import static sorcer.so.operator.*;
 import static sorcer.util.exec.ExecUtils.CmdResult;
 

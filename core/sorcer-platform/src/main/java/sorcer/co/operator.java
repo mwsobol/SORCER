@@ -55,8 +55,8 @@ import java.util.*;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.srv;
+import static sorcer.ent.operator.invoker;
+import static sorcer.ent.operator.srv;
 
 /**
  * Created by Mike Sobolewski
@@ -1091,7 +1091,6 @@ public class operator extends Operator {
             entry.setEntry(e.getName(), e.get());
         }
         return entry;
-
     }
 
     public static Object get(DataTable table, int row, int column) {

@@ -25,8 +25,8 @@ import static sorcer.eo.operator.context;
 import static sorcer.eo.operator.job;
 import static sorcer.so.operator.*;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.*;
-import static sorcer.po.operator.srv;
+import static sorcer.ent.operator.*;
+import static sorcer.ent.operator.srv;
 import static sorcer.so.operator.exert;
 
 /**

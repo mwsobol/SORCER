@@ -12,7 +12,7 @@ import static sorcer.co.operator.*;
 import static sorcer.co.operator.paths;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.*;
+import static sorcer.ent.operator.*;
 import static sorcer.so.operator.exert;
 
 public class CoffeemakerConsumer extends ServiceConsumer {

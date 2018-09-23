@@ -25,13 +25,13 @@ import java.io.Serializable;
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.*;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.ent;
+import static sorcer.ent.operator.ent;
 import static sorcer.co.operator.inVal;
 import static sorcer.eo.operator.alt;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.loop;
 import static sorcer.eo.operator.opt;
-import static sorcer.po.operator.*;
+import static sorcer.ent.operator.*;
 import static sorcer.so.operator.*;
 
 /**

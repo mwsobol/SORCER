@@ -7,7 +7,7 @@ import sorcer.service.EvaluationException;
 import java.rmi.RemoteException;
 
 import static sorcer.eo.operator.args;
-import static sorcer.po.operator.*;
+import static sorcer.ent.operator.*;
 import static sorcer.mo.operator.*;
 
 /**

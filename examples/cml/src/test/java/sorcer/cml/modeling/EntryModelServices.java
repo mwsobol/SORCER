@@ -15,7 +15,7 @@ import sorcer.service.modeling.Model;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.outPaths;
 import static sorcer.eo.operator.*;
-import static sorcer.po.operator.invoke;
+import static sorcer.ent.operator.invoke;
 import static sorcer.so.operator.*;
 
 /**

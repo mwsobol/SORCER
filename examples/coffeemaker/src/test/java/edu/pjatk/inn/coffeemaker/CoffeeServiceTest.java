@@ -11,9 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.po.operator;
 import sorcer.service.*;
 import sorcer.service.Domain;
 
@@ -26,9 +24,9 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.result;
-import static sorcer.po.operator.ent;
-import static sorcer.po.operator.ents;
-import static sorcer.po.operator.invoker;
+import static sorcer.ent.operator.ent;
+import static sorcer.ent.operator.ents;
+import static sorcer.ent.operator.invoker;
 import static sorcer.so.operator.*;
 
 /**

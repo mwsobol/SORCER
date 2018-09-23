@@ -10,7 +10,6 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.rendezvous.ServiceJobber;
-import sorcer.po.operator;
 import sorcer.service.*;
 
 import org.slf4j.Logger;
@@ -20,7 +19,7 @@ import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.value;
-import static sorcer.po.operator.ent;
+import static sorcer.ent.operator.ent;
 import static sorcer.so.operator.*;
 
 /**

@@ -166,7 +166,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		StringBuilder sb = new StringBuilder();
 		sb.append("import static sorcer.eo.operator.*;\n")
 				.append("import static sorcer.co.operator.*;\n")
-				.append("import static sorcer.po.operator.*;\n")
+				.append("import static operator.*;\n")
 				.append("//import static sorcer.vo.operator.*;\n")
 				.append("//import static sorcer.tools.shell.NetworkShell.nshUrl;\n")
 				.append("//common SORCER classes\n")

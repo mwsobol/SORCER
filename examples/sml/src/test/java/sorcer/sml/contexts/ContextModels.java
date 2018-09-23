@@ -13,7 +13,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.ent.Call;
 import sorcer.core.context.model.ent.Subroutine;
-import sorcer.po.operator;
+import sorcer.ent.operator;
 import sorcer.service.Arg;
 import sorcer.service.Context;
 import sorcer.service.Domain;
@@ -28,9 +28,9 @@ import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.ent;
-import static sorcer.po.operator.invoker;
-import static sorcer.po.operator.call;
+import static sorcer.ent.operator.ent;
+import static sorcer.ent.operator.invoker;
+import static sorcer.ent.operator.call;
 import static sorcer.so.operator.*;
 
 /**

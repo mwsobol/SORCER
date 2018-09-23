@@ -9,7 +9,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.po.operator;
+import sorcer.ent.operator;
 import sorcer.service.*;
 
 import static org.junit.Assert.assertEquals;

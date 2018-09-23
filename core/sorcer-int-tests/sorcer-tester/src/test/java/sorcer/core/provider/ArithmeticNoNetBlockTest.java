@@ -14,7 +14,6 @@ import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
-import sorcer.po.operator;
 import sorcer.service.Block;
 import sorcer.service.Task;
 
@@ -22,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.value;
-import static sorcer.po.operator.ent;
+import static sorcer.ent.operator.ent;
 import static sorcer.so.operator.*;
 
 /**

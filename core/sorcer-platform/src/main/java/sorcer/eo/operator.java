@@ -67,7 +67,7 @@ import java.util.Collections;
 import static sorcer.co.operator.path;
 import static sorcer.co.operator.*;
 import static sorcer.mo.operator.*;
-import static sorcer.po.operator.srv;
+import static sorcer.ent.operator.srv;
 
 /**
  * Operators defined for the Service Modeling Language (SML).
