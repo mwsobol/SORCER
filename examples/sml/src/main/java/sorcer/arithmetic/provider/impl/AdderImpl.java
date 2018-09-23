@@ -17,7 +17,8 @@ import sorcer.util.Sorcer;
 import java.net.URL;
 import java.rmi.RemoteException;
 
-import static sorcer.co.operator.value;
+import static sorcer.co.operator.get;
+import static sorcer.mo.operator.value;
 
 @SuppressWarnings("rawtypes")
 public class AdderImpl implements Adder {

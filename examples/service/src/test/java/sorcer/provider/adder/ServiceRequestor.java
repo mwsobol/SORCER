@@ -14,6 +14,7 @@ import sorcer.service.Context;
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.mo.operator.value;
 import static sorcer.so.operator.exec;
 
 /**

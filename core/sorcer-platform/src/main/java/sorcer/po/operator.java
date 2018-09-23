@@ -259,8 +259,8 @@ public class operator extends Operator {
 		return parContext;
 	}
 
-//	public static Proc put(EntryModel entModel, String name, Object value) throws ContextException, RemoteException {
-//		entModel.putValue(name, value);
+//	public static Proc put(EntryModel entModel, String name, Object get) throws ContextException, RemoteException {
+//		entModel.putValue(name, get);
 //		entModel.setContextChanged(true);
 //		return call(entModel, name);
 //	}

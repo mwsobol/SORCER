@@ -485,7 +485,7 @@ public class EntryModels {
 //                                + "/sorcer-tester-" + sorcerVersion+".jar")));
 //
 ////		logger.info("val: " + eval(em, "sphere/volume"));
-//		assertTrue(value(em, "sphere/volume").equals(33510.32163829113));
+//		assertTrue(get(em, "sphere/volume").equals(33510.32163829113));
 
 	}
 

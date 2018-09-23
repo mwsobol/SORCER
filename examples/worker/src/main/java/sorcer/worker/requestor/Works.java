@@ -10,8 +10,9 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import static sorcer.co.operator.value;
+import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
+import static sorcer.mo.operator.value;
 
 /**
  * @author Mike Sobolewski
@@ -29,7 +30,7 @@ public class Works implements Serializable {
 		 work0 = new Work() {
 			private static final long serialVersionUID = 1L;
 
-			public Context<Integer> exec(Context cxt) throws InvalidWork, ContextException {
+			public Context<Integer> exec(Context cxt) throws InvalidWork, ContextException, RemoteException {
 				int arg1 = (Integer)value(cxt, "req/arg/1");
 				int arg2 = (Integer)value(cxt, "req/arg/2");
 				int result =  arg1 * arg2;

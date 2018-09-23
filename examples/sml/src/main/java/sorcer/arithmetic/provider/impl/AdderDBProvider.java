@@ -17,7 +17,8 @@ import sorcer.util.Sorcer;
 import java.net.URL;
 import java.rmi.RemoteException;
 
-import static sorcer.co.operator.value;
+import static sorcer.co.operator.get;
+import static sorcer.mo.operator.value;
 
 public class AdderDBProvider extends DatabaseProvider implements RemoteAdder {
 	private Arithmometer arithmometer = new Arithmometer();
@@ -49,7 +50,7 @@ public class AdderDBProvider extends DatabaseProvider implements RemoteAdder {
 	@Override
 	public Context add2(Context context) throws RemoteException, ContextException, MonitorException {
 		Context out = arithmometer.add(context);
-		out.putValue("result/eval", (double)sorcer.co.operator.value(out, "result/eval") + 100.0);
+		out.putValue("result/eval", (double)value(out, "result/eval") + 100.0);
 		return out;
 	}
 

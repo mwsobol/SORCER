@@ -1056,7 +1056,7 @@ public class operator extends Operator {
 		return table.getRowMap(rowName);
 	}
 
-	public static Object value(DataTable table, String rowName, String columnName) {
+	public static Object get(DataTable table, String rowName, String columnName) {
 		return table.getValue(rowName, columnName);
 	}
 
@@ -1091,93 +1091,30 @@ public class operator extends Operator {
             entry.setEntry(e.getName(), e.get());
         }
         return entry;
+
     }
 
-    public static Object value(DataTable table, int row, int column) {
+    public static Object get(DataTable table, int row, int column) {
 		return table.getValueAt(row, column);
 	}
 
-	public static <T> T v(Context<T> context, String path,
-							  Arg... args) throws ContextException {
-		return value(context, path, args);
+    public static Object get(Response response, String path, Arg... args) throws ContextException {
+		try {
+			return response.getValue(path, args);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
 	}
 
-    public static Object value(Response response, String path, Arg... args) throws ContextException, RemoteException {
-	    return response.getValue(path, args);
-    }
-
-    public static Object value(Row response, int index)  {
+    public static Object get(Row response, int index)  {
         return response.get(index);
     }
 
-
-    public static <T> T value(Context<T> context, String path,
-							  Arg... args) throws ContextException {
-		try {
-			T out = null;
-			Object obj = context.get(path);
-			if (obj != null) {
-				if (obj instanceof Number || obj instanceof Number
-						|| obj.getClass().isArray() || obj instanceof Collection) {
-					out = (T) obj;
-				} else if (obj instanceof Valuation) {
-					out = (T)  ((Valuation)obj).valuate(args);
-				} else if (obj instanceof Call) {
-					out = (T) ((Call) obj).evaluate(args);
-                } else if (SdbUtil.isSosURL(obj)) {
-					out = (T) ((URL) obj).getContent();
-				} else if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
-					out = (T) ((ServiceContext) context).getEvalValue(path);
-				}
-//				else if (obj instanceof Srv && ((Srv) obj).asis() instanceof EntryCollable) {
-//					Entry entry = ((EntryCollable) ((Srv) obj).asis()).call((Model) context);
-//					out = (T) entry.asis();
-//				}
-				else {
-					// linked contexts and other special case of ServiceContext
-					out = context.getValue(path, args);
-				}
-			} else {
-				// linked contexts and other special case of ServiceContext
-				out = context.getValue(path, args);
-			}
-			if (context instanceof Model && ((ModelStrategy)context.getMogramStrategy()).getOutcome() != null) {
-				context.getMogramStrategy().getOutcome().putValue(path, out);
-			}
-			return out;
-		} catch (MogramException | IOException e) {
-			throw new ContextException(e);
-		}
-	}
-
-	public static <T> T value(Valuation<T> valuation) throws ContextException {
+	public static <T> T get(Valuation<T> valuation) throws ContextException {
 		return valuation.valuate();
 	}
 
-	public static <T> T value(Context<T> context, Arg... args)
-			throws ContextException {
-		try {
-			synchronized (context) {
-				return (T) ((ServiceContext)context).getValue(args);
-			}
-		} catch (Exception e) {
-			throw new ContextException(e);
-		}
-	}
-
-	public static Object value(Context context, String domain, String path) throws ContextException {
-		if (((ServiceContext)context).getType().equals(Functionality.Type.MADO)) {
-			return ((ServiceContext)context.getDomain(domain)).getEvalValue(path);
-		} else {
-			try {
-				return context.getDomain(domain).getValue(path);
-			} catch (RemoteException e) {
-				throw new ContextException(e);
-			}
-		}
-	}
-
-	public static Object value(Arg[] args, String path) throws EvaluationException, RemoteException {
+	public static Object get(Arg[] args, String path) throws EvaluationException, RemoteException {
 		for (Arg arg : args) {
 			if (arg instanceof sorcer.service.Callable && arg.getName().equals(path))
 				return ((sorcer.service.Callable)arg).call(args);

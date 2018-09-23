@@ -21,6 +21,7 @@ import sorcer.service.Task;
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.mo.operator.value;
 import static sorcer.po.operator.ent;
 import static sorcer.so.operator.*;
 
@@ -93,7 +94,7 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 //		logger.info("block: " + context(block));
 		out = exert(block, ent("block/t5/arg/x1", 200.0), ent("block/t5/arg/x2", 800.0));
 //		logger.info("block context: " + context(out));
-//		logger.info("result: " + value(context(out), "block/result"));
+//		logger.info("result: " + get(context(out), "block/result"));
 		assertEquals(value(context(block), "block/result"), 750.00);
 	}
 	

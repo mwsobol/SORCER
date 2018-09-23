@@ -27,24 +27,19 @@ import sorcer.core.context.model.ent.DataContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.core.context.model.srv.Srv;
-import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.Exerter;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
-import sorcer.util.DataTable;
-import sorcer.util.Row;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static sorcer.co.operator.value;
-import static sorcer.service.Fi.dVar;
-import static sorcer.service.Fi.e;
+import static sorcer.co.operator.get;
 
 /**
  * Created by Mike Sobolewski on 9/10/20.
@@ -134,11 +129,11 @@ public class operator extends Operator {
                 throw new ContextException(e);
             }
         } else {
-            return sorcer.co.operator.value((Context) domain, path, args);
+            return sorcer.mo.operator.value((Context) domain, path, args);
         }
     }
 
-    public static Context response(Model model, Context context)
+    public static Context eval(Model model, Context context)
             throws ContextException {
         Context rc = null;
         try {
@@ -223,7 +218,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Object resp(Domain model, String path, String domain) throws ContextException {
+    public static Object exec(Domain model, String path, String domain) throws ContextException {
         return response(model,path, domain);
     }
 

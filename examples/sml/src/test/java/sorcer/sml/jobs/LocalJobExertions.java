@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
+import static sorcer.mo.operator.value;
 import static sorcer.po.operator.ent;
 import static sorcer.so.operator.*;
 

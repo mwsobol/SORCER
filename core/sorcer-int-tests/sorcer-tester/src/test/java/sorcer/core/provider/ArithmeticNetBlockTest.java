@@ -10,7 +10,6 @@ import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Averager;
 import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.Subtractor;
-import sorcer.co.operator;
 import sorcer.core.SorcerConstants;
 import sorcer.service.Block;
 import sorcer.service.Task;
@@ -20,8 +19,9 @@ import sorcer.util.ProviderLookup;
 import static org.junit.Assert.assertEquals;
 import static sorcer.co.operator.inVal;
 import static sorcer.co.operator.val;
-import static sorcer.co.operator.value;
+import static sorcer.co.operator.get;
 import static sorcer.eo.operator.*;
+import static sorcer.mo.operator.value;
 import static sorcer.so.operator.*;
 
 /**
@@ -118,7 +118,7 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 		
 		block = exert(block);
 		logger.info("block context 1: " + context(block));
-//		logger.info("result: " + value(context(block), "out"));
+//		logger.info("result: " + get(context(block), "out"));
 		assertEquals(value(context(block), "out"), 500.0);
 		
 		block = exert(block, val("block/t4/arg/x1", 200.0), val("block/t4/arg/x2", 800.0));

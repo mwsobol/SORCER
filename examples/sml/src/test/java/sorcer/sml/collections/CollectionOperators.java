@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
+import sorcer.co.operator;
 import sorcer.co.tuple.*;
 import sorcer.core.Tag;
 import sorcer.core.context.model.ent.Entry;
@@ -99,7 +100,7 @@ public class CollectionOperators {
 	public void valuesAndSubroutines() throws Exception {
 
 		val v1 = val("x", 30.0);
-		assertEquals(value(v1), 30.0);
+		assertEquals(operator.get(v1), 30.0);
 
 		func p2 = call("x", 20.0);
 		assertEquals(exec(p2), 20.0);
@@ -175,8 +176,8 @@ public class CollectionOperators {
 		assertEquals(columnNames(t), list("x1", "x2", "x3", "x4", "x5"));
 		assertEquals(rowMap(t, "f2"), map(x("x1", 2.1), x("x2", 2.2),
 				x("x3", 2.3), x("x4", 2.4), x("x5",2.5)));
-		assertEquals(value(t, "f2", "x2"), 2.2);
-		assertEquals(value(t, 1, 1), 2.2);
+		assertEquals(operator.get(t, "f2", "x2"), 2.2);
+		assertEquals(operator.get(t, 1, 1), 2.2);
 
 	}
 

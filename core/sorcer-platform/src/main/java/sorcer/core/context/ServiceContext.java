@@ -56,6 +56,7 @@ import java.util.regex.Pattern;
 import static sorcer.eo.operator.sig;
 import static sorcer.eo.operator.task;
 import static sorcer.mo.operator.setValues;
+import static sorcer.mo.operator.value;
 
 /**
  * Implements the base-level service context interface {@link Context}.
@@ -3043,7 +3044,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 //            return response(domain, path, args);
 				return this.getValue(path, args);
 		} else {
-			return sorcer.co.operator.value((Context) this, path, args);
+			return value(this, path, args);
 		}
 	}
 

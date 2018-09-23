@@ -693,7 +693,7 @@ public class ModelMultiFidelities {
 //        logger.info("DEPS: " + printDeps(mdl));
         mdlBlock = exert(mdlBlock, fi("mFi1", "multiply"));
 //        logger.info("block context: " + context(mdlBlock));
-//        logger.info("result: " + value(context(mdlBlock), "mFi4"));
+//        logger.info("result: " + get(context(mdlBlock), "mFi4"));
 
         assertTrue(value(context(mdlBlock), "mFi4").equals(920.0));
     }

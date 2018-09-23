@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
+import sorcer.co.operator;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
@@ -81,7 +82,7 @@ public class SmlOperators {
 		Object o8 = exec(ev1);
 
 		// Object specific outputs
-		Object o9 = value(v1);
+		Object o9 = operator.get(v1);
 		Object o10 = value(context(), "path");
 		Object o11 = resp(model(), "path");
 

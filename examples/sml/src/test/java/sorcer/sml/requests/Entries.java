@@ -10,7 +10,6 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.context.model.ent.Value;
-import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.evr;
@@ -21,8 +20,8 @@ import java.rmi.RemoteException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.value;
 import static sorcer.co.operator.*;
+import static sorcer.mo.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.args;
 import static sorcer.mo.operator.*;

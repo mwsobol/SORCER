@@ -99,7 +99,7 @@ public class operator extends Operator {
 
 	public static Object revalue(Context context, String path,
 								 Arg... entries) throws ContextException {
-		Object obj = sorcer.co.operator.value(context, path, entries);
+		Object obj = sorcer.mo.operator.value(context, path, entries);
 		if (obj instanceof Evaluation) {
             try {
                 obj = ((Evaluation) obj).evaluate(entries);
@@ -116,8 +116,8 @@ public class operator extends Operator {
 		if (object instanceof Entry) {
 			obj = ((Entry) object).get(entries);
 		} else if (object instanceof Context) {
-			obj = sorcer.co.operator.value((Context) object, path, entries);
-			obj = sorcer.co.operator.value((Context) obj, entries);
+			obj = sorcer.mo.operator.value((Context) object, path, entries);
+			obj = sorcer.mo.operator.value((Context) obj, entries);
 		} else {
 			obj = object;
 		}
@@ -131,7 +131,7 @@ public class operator extends Operator {
 		if (object instanceof Entry) {
 			obj =  ((Entry) object).get(entries);
 		} else if (object instanceof Context) {
-            obj = sorcer.co.operator.value((Context) object, entries);
+            obj = sorcer.mo.operator.value((Context) object, entries);
 		}
         } catch (ContextException e) {
             throw new EvaluationException(e);

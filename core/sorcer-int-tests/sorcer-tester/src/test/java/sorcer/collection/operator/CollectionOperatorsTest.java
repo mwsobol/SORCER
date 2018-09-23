@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ListContext;
-import sorcer.eo.operator;
 import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
 import sorcer.util.DataTable;
@@ -57,7 +56,7 @@ public class CollectionOperatorsTest {
 		
 		// keys and values of args
 		String k = key(val("key", "Mike"));
-		Double v = value(val("height", 174.0));
+		Double v = sorcer.co.operator.get(val("height", 174.0));
 		assertEquals(k, "key");
 		assertTrue(v.equals(174.0));
 		

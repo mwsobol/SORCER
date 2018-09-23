@@ -38,10 +38,13 @@ import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
 import sorcer.service.Domain;
+import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
+import sorcer.service.modeling.Valuation;
 import sorcer.util.url.sos.SdbUtil;
 
+import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -99,6 +102,73 @@ public class operator {
 
         }
         return model;
+    }
+
+    public static <T> T value(Context<T> context, Arg... args)
+            throws ContextException {
+        try {
+            synchronized (context) {
+                return (T) ((ServiceContext)context).getValue(args);
+            }
+        } catch (Exception e) {
+            throw new ContextException(e);
+        }
+    }
+
+    public static Object value(Context context, String path, String domain) throws ContextException {
+        if (((ServiceContext)context).getType().equals(Functionality.Type.MADO)) {
+            return ((ServiceContext)context.getDomain(domain)).getEvalValue(path);
+        } else {
+            try {
+                return context.getDomain(domain).getValue(path);
+            } catch (RemoteException e) {
+                throw new ContextException(e);
+            }
+        }
+    }
+
+    public static <T> T v(Context<T> context, String path,
+                          Arg... args) throws ContextException {
+        return value(context, path, args);
+    }
+
+    public static <T> T value(Context<T> context, String path,
+                              Arg... args) throws ContextException {
+        try {
+            T out = null;
+            Object obj = context.get(path);
+            if (obj != null) {
+                if (obj instanceof Number || obj instanceof Number
+                        || obj.getClass().isArray() || obj instanceof Collection) {
+                    out = (T) obj;
+                } else if (obj instanceof Valuation) {
+                    out = (T)  ((Valuation)obj).valuate(args);
+                } else if (obj instanceof Call) {
+                    out = (T) ((Call) obj).evaluate(args);
+                } else if (SdbUtil.isSosURL(obj)) {
+                    out = (T) ((URL) obj).getContent();
+                } else if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
+                    out = (T) ((ServiceContext) context).getEvalValue(path);
+                }
+//				else if (obj instanceof Srv && ((Srv) obj).asis() instanceof EntryCollable) {
+//					Entry entry = ((EntryCollable) ((Srv) obj).asis()).call((Model) context);
+//					out = (T) entry.asis();
+//				}
+                else {
+                    // linked contexts and other special case of ServiceContext
+                    out = context.getValue(path, args);
+                }
+            } else {
+                // linked contexts and other special case of ServiceContext
+                out = context.getValue(path, args);
+            }
+            if (context instanceof Model && ((ModelStrategy)context.getMogramStrategy()).getOutcome() != null) {
+                context.getMogramStrategy().getOutcome().putValue(path, out);
+            }
+            return out;
+        } catch (MogramException | IOException e) {
+            throw new ContextException(e);
+        }
     }
 
     public static Domain setValues(Domain model, Entry... entries) throws ContextException {

@@ -24,13 +24,8 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
 import static sorcer.mo.operator.*;
-import static sorcer.mo.operator.inputs;
-import static sorcer.mo.operator.returnPath;
-import static sorcer.po.operator.ent;
-import static sorcer.po.operator.inoutVal;
-import static sorcer.po.operator.call;
+import static sorcer.po.operator.*;
 import static sorcer.so.operator.*;
 
 /**
@@ -352,16 +347,16 @@ public class DataModels {
     public void ResponseRowToContexToRow() throws Exception {
 
         Response row = row(inVal("x1", 20.0d), inVal("x2", 40.0d));
-        assertTrue(value(row, "x1").equals(20.0));
-        assertTrue(value(row, "x2").equals(40.0));
+        assertTrue(get(row, "x1").equals(20.0));
+        assertTrue(get(row, "x2").equals(40.0));
 
         Context cxt = context(row);
         assertTrue(value(cxt, "x1").equals(20.0));
         assertTrue(value(cxt, "x2").equals(40.0));
 
         row = row(cxt);
-        assertTrue(value(row, "x1").equals(20.0));
-        assertTrue(value(row, "x2").equals(40.0));
+        assertTrue(get(row, "x1").equals(20.0));
+        assertTrue(get(row, "x2").equals(40.0));
     }
 
 
@@ -384,18 +379,18 @@ public class DataModels {
         Row row3 = row(data, 3);
 //        logger.info("row3: " + row3);
         assertTrue(row3.getRow(0).equals(list(2.0, 2.0, 4.0, 1.0, 8.0)));
-//        logger.info("row3/2: " + value(row3, 2));
-        assertTrue(value(row3, 2).equals(4.0));
+//        logger.info("row3/2: " + get(row3, 2));
+        assertTrue(sorcer.co.operator.get(row3, 2).equals(4.0));
 
-//        logger.info("area/2: " + value(data, "area", ind(3)));
+//        logger.info("area/2: " + get(data, "area", ind(3)));
         // default syntax for columnInd
-        assertTrue(value(data, "area", ind(3)).equals(4.0));
+        assertTrue(get(data, "area", ind(3)).equals(4.0));
 
-        assertTrue(value(data, "area", columnInd(3)).equals(4.0));
+        assertTrue(get(data, "area", columnInd(3)).equals(4.0));
 
-//        logger.info("3/3 row: " + value(data, "3", rowInd(3)));
+//        logger.info("3/3 row: " + get(data, "3", rowInd(3)));
         //the forth element at the forth index
-        assertTrue(value(data, "3", rowInd(3)).equals(1.0));
+        assertTrue(get(data, "3", rowInd(3)).equals(1.0));
     }
 
     public Job getArithmeticJob() throws Exception {
