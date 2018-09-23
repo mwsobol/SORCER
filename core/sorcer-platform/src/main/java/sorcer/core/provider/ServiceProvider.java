@@ -160,10 +160,9 @@ import static sorcer.util.StringUtils.tName;
  * @see sorcer.core.SorcerConstants
  *
  * @author Mike Sobolewski
- */
-public class ServiceProvider implements Identifiable, Provider, ServiceIDListener,
+ */public class ServiceProvider implements Identifiable, Provider, ServiceIDListener,
 		ReferentUuid, ProxyAccessor, ServerProxyTrust, RemoteMethodControl, ServiceActivityProvider,
-		LifeCycle, Partner, Partnership, SorcerConstants, AdministratableProvider, ScratchManager {
+		LifeCycle, Partner, Partnership, SorcerConstants, AdministratableProvider {
 	// RemoteMethodControl is needed to enable Proxy Constraints
 
 	/** Logger and configuration component name for service provider. */
@@ -1285,8 +1284,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	@Override public Analytics getAnalytics() {
 		return new Analytics(delegate.getAnalyticsRecorder().getMethodAnalytics(),
-							 delegate.getAnalyticsRecorder().getSystemAnalytics());
-	}
+                             delegate.getAnalyticsRecorder().getSystemAnalytics(),
+                             delegate.getAnalyticsRecorder().getStarted(),
+                             ScratchManagerSupport.getDataUrl(),
+                             scratchManager.getScratchGbFree());
+    }
 
 	protected synchronized void doTimeKeeping(double callTimeSec) {
 		totalCallTime += callTimeSec;
@@ -1671,7 +1673,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		delegate.getProviderConfig().loadConfiguration(filename);
 	}
 
-	public File getScratchDir() {
+	/*public File getScratchDir() {
 		return scratchManager.getScratchDir();
 	}
 
@@ -1689,7 +1691,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	public URL getScratchURL(File scratchFile) {
 		return scratchManager.getScratchURL(scratchFile);
-	}
+	}*/
 
 	public String getProperty(String key) {
 		return delegate.getProviderConfig().getProperty(key);

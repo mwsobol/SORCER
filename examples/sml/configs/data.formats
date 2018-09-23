@@ -57,7 +57,7 @@ engineering.resp.ppout=dnt|resp|test|ppout
 engineering.resp.trefftzcdi=dnt|resp|object|trefftzPlane
 
 # provider
-engineering.provider.scratchdir=dnt|provider|object|scratchDir
+engineering.provider.scratchdir=dnt|provider|object|scratchUrl
 engineering.provider.scratchurl=dnt|provider|object|scratchUrl
 
 

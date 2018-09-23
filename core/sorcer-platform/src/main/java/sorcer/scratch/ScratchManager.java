@@ -59,4 +59,16 @@ public interface ScratchManager {
      * @return a URL that can be used to access the file remotely.
      */
     URL getScratchURL(File scratchFile);
+
+    /**
+     * Get the amount of free disk space in the scratch directory
+     *
+     * @return The amount of free disk space (in GB) in the scratch directory
+     */
+    String getScratchGbFree();
+
+    /**
+     * Delete the directories that the ScratchManager has created.
+     */
+    void clean();
 }

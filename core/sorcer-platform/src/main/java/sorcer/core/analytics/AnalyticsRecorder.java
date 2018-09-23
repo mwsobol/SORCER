@@ -42,9 +42,11 @@ public class AnalyticsRecorder {
     private String hostName;
     private String hostAddress;
     private final MonitorAgent monitorAgent;
+    private final long started;
     private NumberFormat percentFormatter = NumberFormat.getPercentInstance();
 
     public AnalyticsRecorder(String hostName, String hostAddress, ServiceID serviceID, String name, String principal) {
+        this.started = System.currentTimeMillis();
         this.hostName = hostName;
         this.hostAddress = hostAddress;
         this.serviceID = serviceID;
@@ -67,6 +69,10 @@ public class AnalyticsRecorder {
             return record.create(serviceID, hostName);
         }
         return null;
+    }
+
+    public long getStarted() {
+        return started;
     }
 
     public int inprocess(String m) {
@@ -121,7 +127,8 @@ public class AnalyticsRecorder {
                    .setProcessMemoryUsed(processMemoryUsed)
                    .setHostName(hostName)
                    .setHostAddress(hostAddress)
-                   .setOperatingSystem(OperatingSystemType.get());
+                   .setOperatingSystem(OperatingSystemType.get())
+                   .setAvailableProcessors(Runtime.getRuntime().availableProcessors());
     }
 
     private MethodInvocationRecord getMethodInvocationRecord(String m) {

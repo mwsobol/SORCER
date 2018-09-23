@@ -46,4 +46,4 @@ bin/webster/websterConfig.groovy
 core/sorcer-int-tests/sorcer-tester/tmp/
 docs/grammar/.DS_Store
 docs/grammar/output/
-sorcer-int-tests/
+#sorcer-int-tests/

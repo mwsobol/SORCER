@@ -26,10 +26,18 @@ public class Analytics implements Serializable {
     static final long serialVersionUID = 1L;
     private final Map<String, MethodAnalytics> methodAnalyticsMap = new HashMap<>();
     private final SystemAnalytics systemAnalytics;
+    private final long started;
+    private final String scratchUrl;
+    private final String scratchFree;
 
-    public Analytics(Map<String, MethodAnalytics> methodAnalyticsMap, SystemAnalytics systemAnalytics) {
+    public Analytics(Map<String, MethodAnalytics> methodAnalyticsMap,
+                     SystemAnalytics systemAnalytics,
+                     long started, String scratchUrl, String scratchFree) {
         this.methodAnalyticsMap.putAll(methodAnalyticsMap);
         this.systemAnalytics = systemAnalytics;
+        this.started = started;
+        this.scratchUrl = scratchUrl;
+        this.scratchFree = scratchFree;
     }
 
     public Map<String, MethodAnalytics> getMethodAnalytics() {
@@ -44,4 +52,15 @@ public class Analytics implements Serializable {
         return systemAnalytics;
     }
 
+    public long getStarted() {
+        return started;
+    }
+
+    public String getScratchUrl() {
+        return scratchUrl;
+    }
+
+    public String getScratchFree() {
+        return scratchFree;
+    }
 }

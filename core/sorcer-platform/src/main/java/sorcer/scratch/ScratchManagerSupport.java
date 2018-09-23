@@ -29,9 +29,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static sorcer.core.SorcerConstants.*;
@@ -42,12 +40,13 @@ import static sorcer.core.SorcerConstants.*;
  * @author Dennis Reedy
  */
 public class ScratchManagerSupport implements ScratchManager, Serializable {
-    static final long serialVersionUID = 1l;
+    static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(ScratchManagerSupport.class);
     private final AtomicReference<DataService> dataServiceRef = new AtomicReference<>();
     private Properties properties;
     private final File root;
-    static final String DEFAULT_SCRATCH_DIR = "default-scratch";
+    private final String index;
+    private static final String DEFAULT_SCRATCH_DIR = "default-scratch";
 
     public ScratchManagerSupport() {
         this(DataService.getDataDir());
@@ -64,6 +63,7 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
                 logger.info("Created {}", root.getPath());
             }
         }
+        index = getNext(root);
     }
 
     public void setProperties(Properties properties) {
@@ -75,28 +75,30 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
     }
 
     @Override public File getScratchDir(String suffix) {
+        String scratchDirSuffix;
         if(suffix==null || suffix.length()==0) {
-            String scratchDirName = getProperty(SCRATCH_DIR);
-            if(scratchDirName==null)
-                scratchDirName = getProperty(P_SCRATCH_DIR)==null?
+            scratchDirSuffix = getProperty(SCRATCH_DIR);
+            if(scratchDirSuffix==null)
+                scratchDirSuffix = getProperty(P_SCRATCH_DIR)==null?
                         getProperty(R_SCRATCH_DIR):SorcerEnv.getProperty(P_SCRATCH_DIR);
-            if(scratchDirName==null) {
-                //scratchDirName = String.format("%s-%s", DEFAULT_SCRATCH_DIR, getNext(dataDir));
-                scratchDirName = DEFAULT_SCRATCH_DIR;
-                logger.warn("scratch directory name cannot be derived from any of the " +
-                                "following properties: {}, {}, {}, will default to {}",
-                        SCRATCH_DIR, P_SCRATCH_DIR, R_SCRATCH_DIR, scratchDirName);
+            if(scratchDirSuffix==null) {
+                scratchDirSuffix = DEFAULT_SCRATCH_DIR;
+                logger.debug("scratch directory name cannot be derived from any of the " +
+                             "following properties: {}, {}, {}, will default to {}",
+                             SCRATCH_DIR, P_SCRATCH_DIR, R_SCRATCH_DIR, scratchDirSuffix);
             }
-            suffix = scratchDirName;
+        } else {
+            scratchDirSuffix = suffix;
         }
+        String scratchDirBase = String.format("%s-%s", index, scratchDirSuffix);
 
-        logger.info("scratch dir suffix = {}", suffix);
+        logger.debug("scratch dir suffix = {}", scratchDirBase);
         String uid = getUniqueId();
-        logger.info("scratch uid = {}", uid);
-        String dirName = String.format("%s%s", suffix, uid);
+        logger.debug("scratch uid = {}", uid);
+        String dirName = String.format("%s-%s", scratchDirBase, uid);
         File scratchDir = new File(root, dirName);
         if(scratchDir.mkdirs() && logger.isInfoEnabled()) {
-            logger.info("Created "+scratchDir.getPath());
+            logger.debug("Created "+scratchDir.getPath());
         }
         return scratchDir;
     }
@@ -141,7 +143,7 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
         return dataServiceRef.get();
     }
 
-       @Override public URL getScratchURL(File scratchFile) {
+    @Override public URL getScratchURL(File scratchFile) {
         synchronized (dataServiceRef) {
             if(dataServiceRef.get()==null) {
                 dataServiceRef.set(DataService.getPlatformDataService());
@@ -156,7 +158,7 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
         return dataURL;
     }
 
-    String getUniqueId() {
+    private String getUniqueId() {
         SimpleDateFormat sdf;
         // Avoid '.' and ':' in directory names if running on Windows
         if(System.getProperty("os.name").startsWith("Windows"))
@@ -170,21 +172,13 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
         return sdf.format(time) + "-" + uid;
     }
 
-    String getNext(String dataDir) {
-        File dir = new File(dataDir);
-        int last = 0;
+    private String getNext(File dir) {
+        int next = 0;
         for(String f : dir.list()) {
-            if(f.startsWith(DEFAULT_SCRATCH_DIR)) {
-                String s = f.substring(f.lastIndexOf("-")+1);
-                try {
-                    int i = Integer.parseInt(s);
-                    last = i>last?i:last;
-                } catch(NumberFormatException e) {
-                    //ignore
-                }
+            if(f.startsWith(next+"-")) {
+                next++;
             }
         }
-        int next = last+1;
         return Integer.toString(next);
     }
 
@@ -226,6 +220,53 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
             }
         }
         return destDirUrl;
+    }
+
+    @Override public String getScratchGbFree() {
+        String gbFree;
+        try {
+            double free = Files.getFileStore(root.toPath()).getUsableSpace() / Math.pow(1024.0, 3.0);
+            gbFree = String.format( "%.2f", free);
+        } catch (IOException e) {
+            gbFree = "NaN";
+            logger.error("Failed getting free scratch dir disk space", e);
+        }
+
+        return gbFree;
+    }
+
+    @Override public void clean() {
+        File[] files = root.listFiles();
+        if(files!=null) {
+            for (File file : files) {
+                if (file.getName().startsWith(index + "-"))
+                    deleteDirectory(file);
+            }
+        }
+    }
+
+    private void deleteDirectory(File path) {
+        if(path.exists()) {
+            File[] files = path.listFiles();
+            if(files!=null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteDirectory(file);
+                    } else {
+                        if(file.delete()) {
+                            logger.debug("Deleted {}", file.getPath());
+                        }
+                    }
+                }
+                if(path.delete())
+                    logger.debug("Deleted {}", path.getPath());
+            }
+        }
+        //return ( path.delete() );
+    }
+
+    String getDefaultScratchPrefix() {
+        return String.format("%s-%s", index, DEFAULT_SCRATCH_DIR);
     }
 
     public static String getDataUrl() {

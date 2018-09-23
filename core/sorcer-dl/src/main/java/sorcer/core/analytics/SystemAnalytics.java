@@ -28,6 +28,7 @@ public class SystemAnalytics implements Serializable {
     private String operatingSystem;
     private String hostName;
     private String hostAddress;
+    private int availableProcessors;
 
     public String getProcessCPUUtilization() {
         return processCPUUtilization;
@@ -107,6 +108,15 @@ public class SystemAnalytics implements Serializable {
 
     public SystemAnalytics setHostAddress(String hostAddress) {
         this.hostAddress = hostAddress;
+        return this;
+    }
+
+    public int getAvailableProcessors() {
+        return availableProcessors;
+    }
+
+    public SystemAnalytics setAvailableProcessors(int availableProcessors) {
+        this.availableProcessors = availableProcessors;
         return this;
     }
 
