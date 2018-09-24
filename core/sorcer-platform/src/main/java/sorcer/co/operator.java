@@ -1113,6 +1113,14 @@ public class operator extends Operator {
 		return valuation.valuate();
 	}
 
+	public static <T> T value(Valuation<T> valuation) throws ContextException {
+		return valuation.valuate();
+	}
+
+	public static <T> T v(Valuation<T> valuation) throws ContextException {
+		return valuation.valuate();
+	}
+
 	public static Object get(Arg[] args, String path) throws EvaluationException, RemoteException {
 		for (Arg arg : args) {
 			if (arg instanceof sorcer.service.Callable && arg.getName().equals(path))
