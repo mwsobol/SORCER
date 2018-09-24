@@ -147,7 +147,7 @@ public class ScripterThread extends Thread {
             "sorcer.service.Deployment",
             "sorcer.eo.operator",
             "sorcer.co.operator",
-            "operator",
+            "sorcer.ent.operator",
             "sorcer.mo.operator",
             "sorcer.util.exec.ExecUtils",
             "sorcer.util.StringUtils"
@@ -177,7 +177,7 @@ public class ScripterThread extends Thread {
             "sorcer.service.Strategy",
             "sorcer.service.Deployment",
             "sorcer.co.operator",
-            "operator",
+            "sorcer.ent.operator",
             "sorcer.mo.operator",
             "sorcer.util.exec.ExecUtils",
             "sorcer.util.StringUtils",
