@@ -402,7 +402,7 @@ public class operator extends Operator {
 			throws ContextException {
 		ArgSet ps = new ArgSet();
 		for (String name : parnames) {
-			ps.add(pm.getProc(name));
+			ps.add(pm.getCall(name));
 		}
 		return ps.toArray();
 	}

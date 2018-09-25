@@ -3393,7 +3393,7 @@ public class operator extends Operator {
 					e.setScope(pm.getScope());
 					if (((EvaluationTask)e).getEvaluation() instanceof Call) {
 						Call p = (Call)((EvaluationTask)e).getEvaluation();
-						((EntryModel)pm.getScope()).addProc(p);
+						((EntryModel)pm.getScope()).addCall(p);
 //						pm.addCall(p);
 
 					}

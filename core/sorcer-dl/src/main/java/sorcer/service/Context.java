@@ -331,11 +331,11 @@ public interface Context<T> extends Domain, Selfable, Response, Mappable<T>, Ser
 
 	public Object addValue(Identifiable value) throws ContextException;
 
-	public Arg addProc(Arg value) throws ContextException;
+	public Arg addCall(Arg value) throws ContextException;
 
-	public Arg addProc(String path, Object value) throws ContextException;
+	public Arg addCall(String path, Object value) throws ContextException;
 
-	public Arg getProc(String path) throws ContextException, RemoteException;
+	public Arg getCall(String path) throws ContextException, RemoteException;
 
 	public Object putValue(String path, Object value, String association)
 			throws ContextException;

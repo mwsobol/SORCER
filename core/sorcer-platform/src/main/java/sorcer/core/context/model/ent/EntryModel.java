@@ -250,7 +250,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		return super.put(path, value);
 	}
 
-	public Call getProc(String name) throws ContextException {
+	public Call getCall(String name) throws ContextException {
 		Object obj = get(name);
 		if (obj instanceof Call)
 			return (Call) obj;
@@ -295,7 +295,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 //			}
 
 			if (p != null) {
-				appendProc(p);
+				appendCall(p);
 				changed = true;
 			}
 		}
@@ -327,7 +327,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			}
 
 			if (p != null) {
-				addProc(p);
+				addCall(p);
 				changed = true;
 			}
 		}

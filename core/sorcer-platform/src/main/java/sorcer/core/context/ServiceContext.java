@@ -2860,7 +2860,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
-	public Call getProc(String path) throws ContextException, RemoteException {
+	public Call getCall(String path) throws ContextException, RemoteException {
 		return new Call(path, this);
 	}
 
@@ -3228,10 +3228,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Context#addCall(sorcer.core.context.model.call.Proc)
+	 * @see sorcer.service.Context#addCall(sorcer.core.context.model.call.Call)
 	 */
 	@Override
-	public Arg addProc(Arg arg) throws ContextException {
+	public Arg addCall(Arg arg) throws ContextException {
 		Call p = (Call)arg;
 		put(p.getName(), (T)p);
 		if (p.getScope() == null || p.getScope().size() == 0)
@@ -3248,7 +3248,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return p;
 	}
 
-	public Call appendProc(Call p) throws ContextException {
+	public Call appendCall(Call p) throws ContextException {
 		put(p.getName(), (T)p);
 		if (p.getScope() == null)
 			p.setScope(new EntryModel(p.getName()).append(this));
@@ -3263,7 +3263,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * @see sorcer.service.Context#addCall(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Call addProc(String path, Object value) throws ContextException {
+	public Call addCall(String path, Object value) throws ContextException {
 		return new Call(path, value, this);
 	}
 
