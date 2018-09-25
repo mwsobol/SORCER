@@ -3205,7 +3205,7 @@ public class operator extends Operator {
 	}
 
 	public static OptTask opt(Condition condition,
-                              Exertion target) {
+                              Mogram target) {
 		return new OptTask(condition, target);
 	}
 
@@ -3234,7 +3234,7 @@ public class operator extends Operator {
 		return new LoopTask(null, from, to, condition, target);
 	}
 
-	public static LoopTask loop(int from, int to, Exertion target) {
+	public static LoopTask loop(int from, int to, Mogram target) {
 		return new LoopTask(null, from, to, null, target);
 	}
 

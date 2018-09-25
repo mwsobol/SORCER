@@ -104,6 +104,10 @@ public class operator {
         return model;
     }
 
+    public static FreeMogram mog(String name, Arg... args) {
+        return new FreeMogram(name);
+    }
+
     public static <T> T value(Context<T> context, Arg... args)
             throws ContextException {
         try {

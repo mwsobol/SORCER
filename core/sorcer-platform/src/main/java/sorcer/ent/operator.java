@@ -690,8 +690,8 @@ public class operator extends Operator {
         return srv(fidelity);
     }
 
-	public static Entry ent(String path) {
-		return new Entry(path, null);
+	public static FreeEntry ent(String path) {
+		return new FreeEntry(path);
 	}
 
 	public static Entry ent(Path path, Object value, Arg... args) {
