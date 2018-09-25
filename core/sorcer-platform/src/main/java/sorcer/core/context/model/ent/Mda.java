@@ -24,7 +24,7 @@ import sorcer.service.modeling.Model;
 /**
  * Created by Mike Sobolewski on 6/3/17.
  */
-
+@FunctionalInterface
 public interface Mda {
 
     public void analyze(Model model, Context context) throws ContextException;
