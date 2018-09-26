@@ -30,26 +30,24 @@ public class MdaEntry extends Entry<Mda> implements Mda {
 
     private static final long serialVersionUID = 1L;
 
-    private String name;
-
     private Domain model;
 
     private Signature signature;
 
-    public MdaEntry(String name, Mda mda) throws EvaluationException {
-        this.name = name;
+    public MdaEntry(String name, Mda mda)  {
+        this.key = name;
         this.impl = mda;
         this.type = Functionality.Type.MDA;
     }
 
-    public MdaEntry(String name, Signature signature) throws EvaluationException {
-        this.name = name;
+    public MdaEntry(String name, Signature signature) {
+        this.key = name;
         this.signature = signature;
         this.type = Functionality.Type.MDA;
     }
 
-    public MdaEntry(String name, Mda mda, Context context) throws EvaluationException {
-        this.name = name;
+    public MdaEntry(String name, Mda mda, Context context) {
+        this.key = name;
         scope = context;
         this.impl = mda;
         this.type = Functionality.Type.MDA;
@@ -69,13 +67,13 @@ public class MdaEntry extends Entry<Mda> implements Mda {
             if (impl != null && impl instanceof Mda) {
                 ((Mda)impl).analyze(model, context);
             } else if (signature != null) {
-                impl = (Mda) ((ObjectSignature)signature).initInstance();
+                impl = ((ObjectSignature)signature).initInstance();
                 ((Mda)impl).analyze(model, context);
             } else if (impl == null) {
                 throw new InvocationException("No MDA analysis available!");
             }
         } catch (ContextException | SignatureException e) {
-            e.printStackTrace();
+            throw new EvaluationException();
         }
     }
 }

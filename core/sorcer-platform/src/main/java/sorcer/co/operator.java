@@ -434,14 +434,14 @@ public class operator extends Operator {
 		return new Path(path, info, Path.Type.MAP);
 	}
 
-	public static <T> Value<T> init(String path, String domain, T value) {
+	public static <T> Value<T> predVal(String path, String domain, T value) {
 		Value ent = new Value<T>(path, value);
 		ent.annotation(domain);
 		ent.setType(Type.DOMAIN_PRED);
 		return ent;
 	}
 
-	public static <T> Value<T> init(String domainPath, T value) {
+	public static <T> Value<T> predVal(String domainPath, T value) {
 	    String pn = domainPath;
 	    String domain = null;
         if (domainPath.indexOf("$") > 0) {
@@ -451,7 +451,7 @@ public class operator extends Operator {
         }
         Value ent = null;
         if (domain != null) {
-            ent = init(pn, domain, value);
+            ent = predVal(pn, domain, value);
         } else {
             ent = new Value<T>(pn, value);
             ent.setType(Type.PRED);

@@ -356,7 +356,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			}
 //			 exert modeling local tasks
 			if (exertion instanceof ModelTask && exertion.getSelectedFidelity().getSelects().size() == 1) {
-				return ((Task) exertion).doTask(transaction);
+				return ((Task) exertion).doTask(transaction, args);
 			}
 
 			// handle delegated tasks with fidelities

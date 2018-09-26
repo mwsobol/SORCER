@@ -112,7 +112,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	static Logger logger = LoggerFactory.getLogger(ServiceContext.class);
 
 	/**
-	 * Default constructor for the ServiceContext class. The constructor calls the method init, 
+	 * Default constructor for the ServiceContext class. The constructor calls the method init,
 	 * defines the the service context key sets the root key to a blank string creates a new
 	 * hash tables for path identifications, delPath, and linked paths. The constructor creates the 
 	 * context identification number via the UUID factory generate method.
@@ -2621,7 +2621,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 								"The fiType of initial and new eval does not mach: "
 										+ initValue.getClass() + ":"
 										+ val.getClass());
-//					logger.info("init val = " + initValue + " swapping from "
+//					logger.info("predVal val = " + initValue + " swapping from "
 //							+ val + " to " + newVal + " at key = " + key);
 					put(key, newVal);
 				}
@@ -3305,7 +3305,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Context getContext() throws ContextException {
+	public Context getContext() {
 		return this;
 	}
 
