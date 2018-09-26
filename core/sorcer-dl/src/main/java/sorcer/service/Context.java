@@ -56,8 +56,7 @@ import java.util.*;
  * critical when a namespace in the context may change or when data nodes
  * contain remote references, for example a URL. It is usually assumed that
  * provider-enforced data associations are more stable than user-oriented paths.
- * Each direct service invocation {@link Server#service} requires data in the
- * ServiceContext format.
+ * Each direct service invocation requires data in the ServiceContext format.
  * <p>
  * Service contexts are defined by this common interface with efficient
  * service-oriented APIs. However, there are some similarities with XML
@@ -614,8 +613,8 @@ public interface Context<T> extends Domain, Selfable, Response, Mappable<T>, Ser
 	 * context. Meta-definitions in linked contexts are not examined, and in
 	 * general can be different. To examine metapaths in linked contexts, call
 	 * getLocalMetapath operating on the <code>ServiceContext</code> that is
-	 * linked (which can be obtained, for example, from the getContext method of
-	 * {@link ContextLink} objects. Returns <code>null</code> if not defined.
+	 * linked (which can be obtained, for example, from the getContext method
+	 * of objects. Returns <code>null</code> if not defined.
 	 *
 	 * Metapaths are set using {@link #getLocalMetapath}
 	 *
@@ -624,7 +623,6 @@ public interface Context<T> extends Domain, Selfable, Response, Mappable<T>, Ser
 	 *
 	 * @return the metapath or <code>null</code> if not defined
 	 * @throws ContextException
-	 * @see ContextLink
 	 * @see #setAttribute
 	 * @see #getAttributes
 	 */
@@ -640,7 +638,6 @@ public interface Context<T> extends Domain, Selfable, Response, Mappable<T>, Ser
 	 *
 	 * @return <code>List</code>
 	 * @throws ContextException
-	 * @see ContextLink
 	 */
 	public List<String> getPaths() throws ContextException;
 
@@ -666,44 +663,40 @@ public interface Context<T> extends Domain, Selfable, Response, Mappable<T>, Ser
 
 	/**
 	 * Returns an {@link Enumeration} of the locations of the first-level
-	 * {@link ContextLink} objects in this context. The enumeration does not
+	 * objects in this context. The enumeration does not
 	 * include ContextLink objects that reside in linked contexts.
 	 *
 	 * @return <code>Enumeration</code>
 	 * @throws ContextException
-	 * @see ContextLink
 	 */
 	public List<String> localLinkPaths() throws ContextException;
 
 	/**
 	 * Returns an {@link Enumeration} of the locations of the
-	 * {@link ContextLink} objects in this context. The enumeration includes
+	 * objects in this context. The enumeration includes
 	 * ContextLink objects that reside in linked contexts.
 	 *
 	 * @return <code>Enumeration</code>
 	 * @throws ContextException
-	 * @see ContextLink
 	 */
 	public Enumeration<?> linkPaths() throws ContextException;
 
 	/**
-	 * Returns an {@link Enumeration} of all the {@link ContextLink} objects in
+	 * Returns an {@link Enumeration} of all the objects in
 	 * this context including any ContextLinks that reside in linked contexts.
 	 *
 	 * @return <code>Enumeration</code>
 	 * @throws ContextException
-	 * @see ContextLink
 	 */
 	public Enumeration<?> links() throws ContextException;
 
 	/**
-	 * Returns an {@link Enumeration} of the top-level {@link ContextLink}
-	 * objects in this context. Does not include ContextLinks that reside in
-	 * linked contexts.
+	 * Returns an {@link Enumeration} of the top-level objects
+	 * in this context. Does not include ContextLinks that reside
+	 * in linked contexts.
 	 *
 	 * @return <code>Enumeration</code>
 	 * @throws ContextException
-	 * @see ContextLink
 	 */
 	public List<Link> localLinks() throws ContextException;
 
@@ -721,7 +714,7 @@ public interface Context<T> extends Domain, Selfable, Response, Mappable<T>, Ser
 			throws ContextException;
 
 	/**
-	 * Returns the {@link ContextLink} object that resides at path in the
+	 * Returns the object that resides at path in the
 	 * context. This method is necessary since ContextLink objects are otherwise
 	 * transparent. For example, execute(path) returns a execute in the linked
 	 * context, not the LinkedContext object.
@@ -731,7 +724,6 @@ public interface Context<T> extends Domain, Selfable, Response, Mappable<T>, Ser
 	 * @return <code>ContextLink</code> if a ContextLink object resides at path;
 	 *         <code>null</code> otherwise.
 	 * @throws ContextException
-	 * @see ContextLink
 	 */
 	public Link getLink(String path) throws ContextException;
 
@@ -793,7 +785,7 @@ public interface Context<T> extends Domain, Selfable, Response, Mappable<T>, Ser
 
 	/**
 	 * Removes a context node from the context. If the designated path points to
-	 * a {@link ContextLink} object, a {@link ContextException} will be thrown.
+	 * a object, a {@link ContextException} will be thrown.
 	 * Use {@link #removeLink} to remove link contexts.
 	 *
 	 * @see #removeLink
@@ -904,7 +896,7 @@ public interface Context<T> extends Domain, Selfable, Response, Mappable<T>, Ser
 
 	public int size();
 
-	Context getDomain(String name) throws ContextException;
+	Mogram getDomain(String name) throws ContextException;
 
 	SignatureReturnPath getReturnPath();
 

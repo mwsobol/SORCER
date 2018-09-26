@@ -121,6 +121,19 @@ public class operator extends Operator {
         }
     }
 
+    public static Object exec(Mogram domain, String path, Arg... args) throws ContextException {
+        if (domain instanceof Model) {
+            try {
+                return ((Model)domain).getValue(path, args);
+            } catch (RemoteException e) {
+                throw new ContextException(e);
+            }
+        } else {
+            // includes exertions
+            return sorcer.mo.operator.value(domain.getContext(), path, args);
+        }
+    }
+
     public static Object exec(Domain domain, String path, Arg... args) throws ContextException {
         if (domain instanceof Model) {
             try {
@@ -157,22 +170,6 @@ public class operator extends Operator {
             throw new ContextException(e);
         }
     }
-
-//    public static Object eval(Model model, Arg... args)
-//            throws ContextException {
-//        try {
-//            synchronized (model) {
-//                if (model instanceof EntryModel) {
-//                    return ((EntryModel) model).getValue(args);
-//                } else {
-//                    return ((ServiceContext) model).getValue(args);
-//                }
-//            }
-//        } catch (Exception e) {
-//            throw new ContextException(e);
-//        }
-//    }
-
 
     public static Fidelity<Path> response(String... paths) {
         Fidelity resp = new Fidelity("RESPONSE");
@@ -227,7 +224,7 @@ public class operator extends Operator {
             return ((ServiceContext)((ServiceContext)model).getDomain(domain)).getEvalValue(path);
         } else {
             try {
-                return ((ServiceContext)model).getDomain(domain).getValue(path);
+                return ((Context)((ServiceContext)model).getDomain(domain)).getValue(path);
             } catch (RemoteException ex) {
                 throw new ContextException(ex);
             }

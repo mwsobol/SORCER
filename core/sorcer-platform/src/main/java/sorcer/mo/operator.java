@@ -124,7 +124,7 @@ public class operator {
             return ((ServiceContext)context.getDomain(domain)).getEvalValue(path);
         } else {
             try {
-                return context.getDomain(domain).getValue(path);
+                return ((Context)context.getDomain(domain)).getValue(path);
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }
