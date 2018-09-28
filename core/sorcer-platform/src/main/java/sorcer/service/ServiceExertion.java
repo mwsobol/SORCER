@@ -478,6 +478,10 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return dataContext;
     }
 
+    public void setContextScope(Context scope) {
+         dataContext.setScope(scope);
+    }
+
     public ControlContext getControlContext() {
         return controlContext;
     }

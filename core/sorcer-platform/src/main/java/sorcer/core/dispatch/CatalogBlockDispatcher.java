@@ -55,7 +55,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 			boolean isSpawned, Provider provider,
             ProvisionManager provisionManager) throws ContextException, RemoteException {
 		super(block, sharedContext, isSpawned, provider, provisionManager);
-        block.getDataContext().append(block.getScope());
+//        block.getDataContext().append(block.getScope());
     }
 
 

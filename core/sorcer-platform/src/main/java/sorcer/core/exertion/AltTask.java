@@ -70,7 +70,16 @@ public class AltTask extends ConditionalTask {
 						Condition.clenupContextScripts(cxt);
 							opt.getTarget().getDataContext().updateEntries(cxt);
 					}
-					Exertion out = opt.getTarget().exert(txn, args);
+					// pass te scope to the option task
+//					opt.setContextScope(cxt);
+					opt.setContextScope(dataContext);
+					Mogram mog = opt.getTarget();
+					if (mog instanceof Exertion) {
+                        ((ServiceExertion)mog).setContextScope(cxt);
+                    } else {
+                        mog.setScope(cxt);
+                    }
+					Exertion out = mog.exert(txn, args);
 					opt.setTarget(out);
 					dataContext = (ServiceContext) out.getContext();
 					controlContext.append(out.getControlContext());

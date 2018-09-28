@@ -67,6 +67,8 @@ public class OptTask extends ConditionalTask {
 
 			if (condition.isTrue()) {
 				isActive = true;
+				// pass the scope to taget
+				target.getContext().setScope(dataContext.getScope());
 				target = target.exert(txn, args);
 //				if (target.getScope() != null) {
 //					((Context) target.getScope()).append(dataContext);
