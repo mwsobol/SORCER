@@ -135,6 +135,12 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
         this.scope = scope;
     }
 
+    public void initScope(Context scope) {
+        this.scope = scope;
+        if (impl instanceof Exertion) {
+            ((Exertion) impl).setContext(scope);
+        }
+    }
     public boolean isValid() {
         return isValid;
     }

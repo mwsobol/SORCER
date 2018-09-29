@@ -410,11 +410,8 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         }
     }
 
-    public ServiceExertion setContext(Context context) {
+    public void setContext(Context context) {
         this.dataContext = (ServiceContext) context;
-//        if (context != null)
-//            context.setExertion(this);
-        return this;
     }
 
     public ServiceExertion setControlContext(ControlContext context) {

@@ -3612,7 +3612,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public void clean() {
 		exertion = null;
 		if (scope != null) {
-			((ServiceContext) scope).clean();
+			scope.setExertion(null);
 		}
 	}
 }

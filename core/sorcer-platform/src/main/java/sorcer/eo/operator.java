@@ -445,13 +445,15 @@ public class operator extends Operator {
 			for (Entry p : funcEntryList) {
 				cxt.putValue(p.getName(), p);
 				if (p.getImpl()  instanceof Evaluator) {
-					// preserve invokeContexr of the invoker
+					// preserve invokeContext of the invoker
 					if (((Evaluator)p.getImpl()).getScope() != null
 						&& ((Evaluator) p.getImpl()).getScope().size() > 0) {
 						((Evaluator) p.getImpl()).getScope().setScope(cxt);
 					} else {
 						((Evaluator) p.getImpl()).setScope(cxt);
 					}
+				} else if (p.getImpl()  instanceof Entry) {
+					((Entry) p.getImpl()).initScope(context(entryList));
 				}
 			}
 		}

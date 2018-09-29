@@ -105,8 +105,10 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>,
 	 * @throws ContextException 
 	 */
 	public Context getContext() throws ContextException;
-	
-	/**
+
+    public void setContext(Context data);
+
+    /**
 	 * Returns a component exertion at a given path.
 	 */
 	public Mogram getComponentMogram(String path);
