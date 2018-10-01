@@ -739,8 +739,8 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 
 		if (rPath != null && xrt.isCompound()) {
 			// if Path.outPaths.length > 1 return subcontext
-			if (rPath.outPaths != null && rPath.outPaths.length == 1) {
-				Object val = acxt.getValue(rPath.outPaths[0].path);
+			if (rPath.outPaths != null && rPath.outPaths.size() == 1) {
+				Object val = acxt.getValue(rPath.outPaths.get(0).path);
 				dcxt.putValue(rPath.path, val);
 				return val;
 			} else {
@@ -752,7 +752,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 								.getValue(rPath.path);
 					else if (result == null) {
 						Context out = new ServiceContext();
-						logger.debug("\nselected paths: " + Arrays.toString(rPath.outPaths)
+						logger.debug("\nselected paths: " + rPath.outPaths
 								+ "\nfrom context: " + acxt);
 						for (Path p : rPath.outPaths) {
 							out.putValue(p.path, acxt.getValue(p.path));
@@ -767,13 +767,13 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			}
 		} else if (rPath != null) {
 			if (rPath.outPaths != null) {
-				if (rPath.outPaths.length == 1) {
-					Object val = acxt.getValue(rPath.outPaths[0].path);
+				if (rPath.outPaths.size() == 1) {
+					Object val = acxt.getValue(rPath.outPaths.get(0).path);
 					if (rPath.path != null) {
 						acxt.putValue(rPath.path, val);
 					}
 					return val;
-				} else if (rPath.outPaths.length > 1) {
+				} else if (rPath.outPaths.size() > 1) {
 					if (rPath.path != null) {
 						Object result = acxt.getValue(rPath.path);
 						if (result instanceof Context) {
@@ -781,8 +781,8 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 						}
 					} else {
 						Context cxtOut = ((ServiceContext) acxt).getSubcontext(rPath.outPaths);
-						if (rPath.outPaths.length == 1) {
-							return cxtOut.get(rPath.outPaths[0].getName());
+						if (rPath.outPaths.size() == 1) {
+							return cxtOut.get(rPath.outPaths.get(0).getName());
 						} else {
 							return cxtOut;
 						}

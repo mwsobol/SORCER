@@ -631,6 +631,8 @@ public interface Context<T> extends Domain, Selfable, Response, Mappable<T>, Ser
 
 	public Context getDirectionalSubcontext(Path... paths) throws ContextException;
 
+	public Context getDirectionalSubcontext(Signature.Out paths) throws ContextException;
+
 	public boolean isValid(Signature method) throws ContextException;
 
 	/**

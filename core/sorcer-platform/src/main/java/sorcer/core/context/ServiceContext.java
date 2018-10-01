@@ -348,7 +348,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 			try {
 				if (rp.path != null && rp.path.equals(Signature.SELF)) {
 					return (T) this;
-				} else if (rp.outPaths != null && rp.outPaths.length > 0) {
+				} else if (rp.outPaths != null && rp.outPaths.size() > 0) {
+                    String name = rp.outPaths.getName();
+				    if (name != null && name.equals(rp.outPaths.get(0).getName())) {
+				        return getValue(rp.path);
+                    }
 					val = (T) getSubcontext(rp.outPaths);
 				} else {
 					if (rp.type != null) {
@@ -1511,7 +1515,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			rp.path = sig.getName();
 		}
 		Path[] ips = rp.getInSigPaths();
-		Path[] ops = rp.getOutSigPaths();
+		Signature.Out ops = rp.getOutSigPaths();
 		Context incxt = null;
 		if (rp.getDataContext() != null) {
 			incxt = rp.getDataContext();
@@ -1542,7 +1546,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			throw new MogramException(e);
 		}
 		resultContext = outcxt;
-		if (ops != null && ops.length > 0) {
+		if (ops != null && ops.size() > 0) {
 			Context returnContext = outcxt.getDirectionalSubcontext(ops);
 			// make sure the result is returned correctly
 			resultContext.putValue(returnPath, returnContext);
@@ -1556,6 +1560,22 @@ public class ServiceContext<T> extends ServiceMogram implements
 			this.setChanged(true);
 		}
 		return resultContext;
+	}
+
+	public ServiceContext getSubcontext(Signature.Out paths) throws ContextException {
+		ServiceContext subcntxt = getDirectionalSubcontext(paths);
+		for (Path path : paths) {
+			try {
+				subcntxt.put(path.path, get(path.path));
+			} catch(Exception e) {
+
+			}
+		}
+        String cxtName = paths.getName();
+		if  (cxtName != null) {
+            subcntxt.setName(cxtName);
+        }
+		return subcntxt;
 	}
 
 	public ServiceContext getSubcontext(Path[] paths) throws ContextException {
@@ -1576,6 +1596,25 @@ public class ServiceContext<T> extends ServiceMogram implements
 		subcntxt.setName(getName() + " subcontext");
 		subcntxt.setDomainId(getDomainId());
 		subcntxt.setSubdomainId(getSubdomainId());
+		return subcntxt;
+	}
+
+	public ServiceContext getDirectionalSubcontext(Signature.Out paths) throws ContextException {
+		// bare-bones subcontext
+		ServiceContext subcntxt = getSubcontext();
+		List<String> inpaths = getInPaths();
+		List<String> outpaths = getOutPaths();
+		if  (paths != null && paths.size() > 0) {
+			for (Path path : paths) {
+				if (inpaths.contains(path.path))
+					subcntxt.putInValue(path.path, get(path.path));
+				else if (outpaths.contains(path.path))
+					subcntxt.putOutValue(path.path, get(path.path));
+				else
+					subcntxt.putValue(path.path, get(path.path));
+			}
+		}
+		subcntxt.setName(paths.name);
 		return subcntxt;
 	}
 
@@ -3379,7 +3418,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				try {
 					if (((Context) result).getValue(rp.path) != null) {
 						dataContext.setReturnValue(((Context) result).getValue(rp.path));
-					} else if (rp.outPaths != null && rp.outPaths.length > 0) {
+					} else if (rp.outPaths != null && rp.outPaths.size() > 0) {
 						Context out = dataContext.getDirectionalSubcontext(rp.outPaths);
 						dataContext.setReturnValue(out);
 					}
@@ -3404,7 +3443,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return (T) exert(exertion, null, (Arg[])null);
 	}
 
-	public Context updateInOutPaths(Path[] inpaths, Path[] outpaths) throws ContextException, RemoteException {
+	public Context updateInOutPaths(Path[] inpaths, Signature.Out outpaths) throws ContextException, RemoteException {
 		if (containsPath(Condition._closure_)) {
 			remove(Condition._closure_);
 		}

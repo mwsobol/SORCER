@@ -27,5 +27,5 @@ public interface SignatureReturnPath {
 
     String[] getInPaths();
 
-    String[] getOutPaths();
+    Signature.Out getOutPaths();
 }

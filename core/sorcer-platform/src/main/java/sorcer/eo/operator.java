@@ -515,7 +515,7 @@ public class operator extends Operator {
 			if (cxt.getReturnPath() == null) {
 				cxt.setReturnPath(new ReturnPath(outPaths));
 			} else {
-				cxt.getReturnPath().outPaths = (outPaths).toPathArray();
+				cxt.getReturnPath().outPaths = outPaths;
 			}
 		}
 		if (inPaths instanceof In) {
@@ -1200,7 +1200,7 @@ public class operator extends Operator {
 					if (sig.getReturnPath() == null) {
 						sig.setReturnPath(new ReturnPath((Out) o));
 					} else {
-						((ReturnPath)sig.getReturnPath()).outPaths = ((Out) o).toPathArray();
+						((ReturnPath)sig.getReturnPath()).outPaths = (Out) o;
 					}
 				} else if (o instanceof ServiceDeployment) {
 					((ServiceSignature) sig).setDeployment((ServiceDeployment) o);

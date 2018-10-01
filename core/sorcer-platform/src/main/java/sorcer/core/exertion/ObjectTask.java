@@ -164,10 +164,10 @@ public class ObjectTask extends Task {
 				if (rp != null) {
 					if (rp.path!= null && ((Context) result).getValue(rp.path) != null) {
 						dataContext.setReturnValue(((Context) result).getValue(rp.path));
-					} else if (rp.outPaths != null && rp.outPaths.length > 0) {
+					} else if (rp.outPaths != null && rp.outPaths.size() > 0) {
 						Context out = dataContext.getDirectionalSubcontext(rp.outPaths);
-						if (rp.outPaths.length == 1) {
-							dataContext.setReturnValue(out.get(rp.outPaths[0].getName()));
+						if (rp.outPaths.size() == 1) {
+							dataContext.setReturnValue(out.get(rp.outPaths.get(0).getName()));
 						} else {
 							dataContext.setReturnValue(out);
 						}

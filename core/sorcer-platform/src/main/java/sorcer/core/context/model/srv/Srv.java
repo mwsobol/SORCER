@@ -248,7 +248,7 @@ public class Srv extends Subroutine<Object> implements Serviceableness,
 
     public Object execSignature(Signature sig, Context scope) throws MogramException {
         ReturnPath rp = (ReturnPath) sig.getReturnPath();
-        Path[] ops = null;
+        Signature.Out ops = null;
         if (rp != null) {
             ops = ((ReturnPath) sig.getReturnPath()).outPaths;
         }
@@ -259,7 +259,7 @@ public class Srv extends Subroutine<Object> implements Serviceableness,
         Context outcxt = null;
         try {
             outcxt = task(sig, incxt).exert().getContext();
-            if (ops != null && ops.length > 0) {
+            if (ops != null && ops.size() > 0) {
                 return outcxt.getDirectionalSubcontext(ops);
             } else if (sig.getReturnPath() != null) {
                 return outcxt.getReturnValue();

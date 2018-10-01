@@ -139,7 +139,7 @@ public class operator extends Operator {
 	}
 
 	public static ServiceSignature.Out outPaths(Object... elems) {
-        List<Path> pl = new ArrayList(elems.length);
+        Signature.Out pl = new Signature.Out(elems.length);
         for (Object o : elems) {
             if (o instanceof String) {
                 pl.add(new Path((String)o));
@@ -147,8 +147,20 @@ public class operator extends Operator {
                 pl.add(((Path)o));
             }
         }
-        Path[]  pa = new Path[pl.size()];
-        return new ServiceSignature.Out(pl.toArray(pa));
+        if (elems.length == 1) {
+            if (elems[0] instanceof Path) {
+                pl.setName(((Path) elems[0]).path);
+            } else {
+                pl.setName((String) elems[0]);
+            }
+        }
+        return pl;
+	}
+
+	public static ServiceSignature.Out outPaths(Name name, Object... elems) {
+		ServiceSignature.Out out = outPaths(elems);
+		out.setName(name.getName());
+		return out;
 	}
 
 	public static ServiceSignature.In inPaths(Object... elems) {

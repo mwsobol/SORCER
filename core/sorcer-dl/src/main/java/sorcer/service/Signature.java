@@ -306,23 +306,43 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 
 	public static class Out extends Paths {
-		private static final long serialVersionUID = 1L;
+
+	    private static final long serialVersionUID = 1L;
 
 		public Out() {
 			super();
 		}
 
-		public Out(Path[] paths) {
+
+        public Out(int capacity) {
+		    super(capacity);
+        }
+
+		public Out(Name contextName, Path[] paths) {
+		    this.name = contextName.getName();
 			for (Path path : paths) {
 				add(path) ;
 			}
 		}
+
+        public Out(Path[] paths) {
+            for (Path path : paths) {
+                add(path) ;
+            }
+        }
 
 		public Out(String[] names) {
 			for (String name : names) {
 				add(new Path(name)) ;
 			}
 		}
+
+        public Out(Name contextName, String[] names) {
+            this.name = contextName.getName();
+            for (String name : names) {
+                add(new Path(name)) ;
+            }
+        }
 	}
 
 	public static class In extends Paths {
@@ -404,8 +424,14 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
     public static class Paths extends ArrayList<Path> implements Arg {
         private static final long serialVersionUID = 1L;
 
+        public String name;
+
         public Paths() {
             super();
+        }
+
+        public Paths(int capacity) {
+            super(capacity);
         }
 
         public Paths(Path[] paths) {
@@ -441,9 +467,13 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 			return false;
 		}
 
+        public void setName(String name) {
+            this.name = name;
+        }
+
         @Override
         public String getName() {
-            return toString();
+            return name;
         }
     }
 
@@ -596,7 +626,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		static final long serialVersionUID = 6158097800741638834L;
 		public String path;
 		public Direction direction;
-		public Path[] outPaths;
+		public Out outPaths;
         public Path[] inPaths;
         public Class<T> type;
 		private Context dataContext;
@@ -611,7 +641,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 			this.path = path;
 			if (argPaths != null && argPaths.size() > 0) {
 				Path[] ps = new Path[argPaths.size()];
-				this.outPaths = argPaths.toArray(ps);
+				this.outPaths = argPaths;
 				direction = Direction.OUT;
 			}
 		}
@@ -650,7 +680,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 			this.path = path;
 			if (outPaths != null && outPaths.size() > 0) {
 				Path[] ps = new Path[outPaths.size()];
-				this.outPaths = outPaths.toArray(ps);
+				this.outPaths = outPaths;
 			}
 			if (inPaths != null && inPaths.size() > 0) {
 				Path[] ps = new Path[inPaths.size()];
@@ -672,14 +702,14 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		public ReturnPath(String path, Path... argPaths) {
 			this.path = path;
 			if (argPaths != null && argPaths.length > 0) {
-				this.outPaths = argPaths;
+				this.outPaths = new Out(argPaths);
 				direction = Direction.OUT;
 			}
 		}
 
 		public ReturnPath(String path, Direction direction, Path... argPaths) {
 			this.path = path;
-			this.outPaths = argPaths;
+			this.outPaths = new Out(argPaths);
 			this.direction = direction;
 		}
 
@@ -687,7 +717,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 						  Class<T> returnType, Path... argPaths) {
 			this.path = path;
 			this.direction = direction;
-			this.outPaths = argPaths;
+			this.outPaths = new Out(argPaths);
 			type = returnType;
 		}
 
@@ -698,9 +728,9 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		public String toString() {
 			StringBuffer sb = new StringBuffer(path != null ? path : "no path");
 			if (outPaths != null)
-				sb.append("\noutPaths: " + Arrays.toString(outPaths));
+				sb.append("\noutPaths: " + outPaths);
 			if (inPaths != null)
-				sb.append("\ninPaths: " + Arrays.toString(inPaths));
+				sb.append("\ninPaths: " + inPaths);
 			return sb.toString();
 		}
 
@@ -711,7 +741,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 			ReturnPath that = (ReturnPath) o;
 
-			if (!Arrays.equals(outPaths, that.outPaths)) return false;
+			if (!outPaths.equals(that.outPaths)) return false;
 			if (direction != that.direction) return false;
 			if (!path.equals(that.path)) return false;
 			if (type != null ? !type.equals(that.type) : that.type != null) return false;
@@ -731,8 +761,8 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		public int hashCode() {
 			int result = path.hashCode();
 			result = 31 * result + (direction != null ? direction.hashCode() : 0);
-			result = 31 * result + (outPaths != null ? Arrays.hashCode(outPaths) : 0);
-			result = 31 * result + (inPaths != null ? Arrays.hashCode(outPaths) : 0);
+			result = 31 * result + (outPaths != null ? outPaths.hashCode() : 0);
+			result = 31 * result + (inPaths != null ? outPaths.hashCode() : 0);
 			result = 31 * result + (type != null ? type.hashCode() : 0);
 			return result;
 		}
@@ -750,7 +780,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		}
 
 
-		public Path[] getOutSigPaths() {
+		public Out getOutSigPaths() {
 			return outPaths;
 		}
 
@@ -773,9 +803,9 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		}
 
 		@Override
-		public String[] getOutPaths() {
+		public Out getOutPaths() {
 			if (outPaths != null)
-				return getPaths(outPaths);
+				return outPaths;
 			else
 				return null;
 		}

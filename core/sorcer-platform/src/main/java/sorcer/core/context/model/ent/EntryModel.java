@@ -364,14 +364,14 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				ReturnPath rp = ((ServiceContext)context).getReturnPath();
 				this.append(context);
 				// check for multiple response of this model
-				if (rp != null && rp.outPaths.length > 0) {
+				if (rp != null && rp.outPaths.size() > 0) {
 					Object val = null;
-					if (rp.outPaths.length == 1)
-						val = getValue(rp.outPaths[0].path);
+					if (rp.outPaths.size() == 1)
+						val = getValue(rp.outPaths.get(0).path);
 					else {
-						List vals = new ArrayList(rp.outPaths.length);
-						for (int j = 0; j < rp.outPaths.length; j++)   {
-							vals.add(getValue(rp.outPaths[j].path));
+						List vals = new ArrayList(rp.outPaths.size());
+						for (int j = 0; j < rp.outPaths.size(); j++)   {
+							vals.add(getValue(rp.outPaths.get(j).path));
 						}
 						val = new Row(Path.getPathList(rp.outPaths), vals);
 					}
@@ -415,13 +415,13 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	private Object getReturnValue(ReturnPath rp) throws ContextException {
 		Object val = null;
 		// check for multiple response of this model
-		if (rp != null && rp.outPaths.length > 0) {
-			if (rp.outPaths.length == 1)
-				val = getValue(rp.outPaths[0].path);
+		if (rp != null && rp.outPaths.size() > 0) {
+			if (rp.outPaths.size() == 1)
+				val = getValue(rp.outPaths.get(0).path);
 			else {
-				List vals = new ArrayList(rp.outPaths.length);
-				for (int j = 0; j < rp.outPaths.length; j++) {
-					vals.add(getValue(rp.outPaths[j].path));
+				List vals = new ArrayList(rp.outPaths.size());
+				for (int j = 0; j < rp.outPaths.size(); j++) {
+					vals.add(getValue(rp.outPaths.get(j).path));
 				}
 				val = new Row(Path.getPathList(rp.outPaths), vals);
 			}

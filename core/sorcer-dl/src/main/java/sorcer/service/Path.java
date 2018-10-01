@@ -110,6 +110,14 @@ public class Path implements Arg, Service {
 		return sl;
 	}
 
+	public static List<String> getPathList(Signature.Out paths) {
+		List<String> sl = new ArrayList(paths.size());
+		for (int i = 0; i < paths.size(); i++)
+			sl.add(paths.get(i).path);
+
+		return sl;
+	}
+
 	public static List<Path> getPathList(String[] paths) {
 		List<Path> sl = new ArrayList(paths.length);
 		for (int i = 0; i < paths.length; i++)

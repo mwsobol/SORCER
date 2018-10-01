@@ -867,7 +867,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
                 else if (rp.path != null) {
                     cxt.setReturnValue(cxt.getValue(rp.path));
                     Context out = null;
-                    if (rp.outPaths != null && rp.outPaths.length > 0) {
+                    if (rp.outPaths != null && rp.outPaths.size() > 0) {
                         out = ((ServiceContext)cxt).getDirectionalSubcontext(rp.outPaths);
                         cxt.setReturnValue(out);
                         return out;
