@@ -209,7 +209,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         SignatureReturnPath rp = exertion.getDataContext().getReturnPath();
 		if (rp != null) {
             Signature.Out outPaths = rp.getOutPaths();
-            if (outPaths != null) {
+            if (outPaths != null && outPaths.size() > 0) {
                 for (Path path : outPaths) {
                     Object obj = exertion.getDataContext().get(path.getName());
                     if (obj != null)

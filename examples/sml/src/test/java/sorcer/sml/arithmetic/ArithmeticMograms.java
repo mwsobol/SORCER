@@ -256,7 +256,8 @@ public class ArithmeticMograms {
         Block block = block("block", t4, t5,
                 alt(opt(condition((Context<Double> cxt) ->
 						value(cxt, "arg/t4") > value(cxt, "arg/t5")), t3),
-                        opt(condition((Context<Double> cxt) -> value(cxt, "arg/t4") <= value(cxt, "arg/t5")), t6)));
+                        opt(condition((Context<Double> cxt)
+								-> value(cxt, "arg/t4") <= value(cxt, "arg/t5")), t6)));
 
 
         Block result = exert(block);

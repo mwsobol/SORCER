@@ -3344,7 +3344,7 @@ public class operator extends Operator {
 				((ServiceContext)context).setInitContext((Context)ObjectCloner.clone(context));
 			}
 
-			for (Mogram m :mograms) {
+			for (Mogram m : mograms) {
 				block.addMogram(m);
 			}
 			for (Evaluator e :evaluators) {
