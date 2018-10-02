@@ -157,6 +157,14 @@ public class operator extends Operator {
         return pl;
 	}
 
+    public static Name cxtName(String name) {
+        return contextName(name);
+    }
+
+    public static Name contextName(String name) {
+	    return new Name(name);
+    }
+
 	public static ServiceSignature.Out outPaths(Name name, Object... elems) {
 		ServiceSignature.Out out = outPaths(elems);
 		out.setName(name.getName());

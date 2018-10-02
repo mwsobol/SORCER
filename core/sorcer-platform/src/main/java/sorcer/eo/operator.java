@@ -2240,7 +2240,7 @@ public class operator extends Operator {
 		String name = "job-" + count++;
 		Signature signature = null;
 		ControlContext controlStrategy = null;
-		Context<?> data = null;
+		Context data = null;
 		ReturnPath rp = null;
 		List<Exertion> exertions = new ArrayList();
 		List<Pipe> pipes = new ArrayList();
@@ -2250,6 +2250,9 @@ public class operator extends Operator {
 		MorphFidelity mFi = null;
 		List<Fidelity> metaFis = new ArrayList();
 		List<MapContext> connList = new ArrayList();
+		Out outPaths = null;
+		In inPaths = null;
+
 
 		for (int i = 0; i < elems.length; i++) {
 			if (elems[i] instanceof String) {
@@ -2280,6 +2283,10 @@ public class operator extends Operator {
 				}
 			} else if (elems[i] instanceof Strategy.FidelityManagement) {
 				fm = (Strategy.FidelityManagement) elems[i];
+			} else if (elems[i] instanceof Out) {
+				outPaths = (Out) elems[i];
+			} else if (elems[i] instanceof In) {
+				inPaths = (In) elems[i];
 			}
 		}
 		Job job = null;
@@ -2287,13 +2294,21 @@ public class operator extends Operator {
 			job = new NetJob(name, signature);
 		} else if (signature instanceof ObjectSignature) {
 			job = new ObjectJob(name, signature);
-
 		} else {
 			if (fis != null && fis.size() > 0) {
 				job = new Job(name);
 			} else{
 				job = new NetJob(name);
 			}
+		}
+		if ((inPaths != null || outPaths != null) && signature.getReturnPath() == null) {
+			signature.setReturnPath(new ReturnPath(name));
+		}
+		if (inPaths != null) {
+			((ReturnPath)signature.getReturnPath()).setInputPaths(inPaths);
+		}
+		if (outPaths != null) {
+			((ReturnPath)signature.getReturnPath()).outPaths = outPaths;
 		}
 
 		ServiceFidelity srvFi = null;

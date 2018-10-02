@@ -1607,11 +1607,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if  (paths != null && paths.size() > 0) {
 			for (Path path : paths) {
 				if (inpaths.contains(path.path))
-					subcntxt.putInValue(path.path, get(path.path));
+					subcntxt.putInValue(path.path, getValue(path.path));
 				else if (outpaths.contains(path.path))
-					subcntxt.putOutValue(path.path, get(path.path));
+					subcntxt.putOutValue(path.path, getValue(path.path));
 				else
-					subcntxt.putValue(path.path, get(path.path));
+					subcntxt.putValue(path.path, getValue(path.path));
 			}
 		}
 		subcntxt.setName(paths.name);
