@@ -135,6 +135,14 @@ public class operator extends Operator {
     }
 
     public static Object exec(Domain domain, String path, Arg... args) throws ContextException {
+        if (path.indexOf("$") > 0) {
+            String pn = null;
+            String dn = null;
+            int ind = path.indexOf("$");
+            pn = path.substring(0, ind);
+            dn = path.substring(ind + 1);
+            return response(domain, pn, dn);
+        }
         if (domain instanceof Model) {
             try {
                 return domain.getValue(path, args);
@@ -202,13 +210,11 @@ public class operator extends Operator {
                 int ind = path$domain.indexOf("$");
                 path = path$domain.substring(0, ind);
                 domain = path$domain.substring(ind + 1);
-            }
-            if (domain != null) {
                 return response(model, path, domain);
             } else if (((ServiceContext)model).getType().equals(Functionality.Type.MADO)) {
-                return ((ServiceContext)model).getEvalValue(path);
+                return ((ServiceContext)model).getEvalValue(path$domain);
             } else {
-                return ((ServiceContext) model).getResponseAt(path);
+                return ((ServiceContext) model).getResponseAt(path$domain);
             }
         } catch (RemoteException e) {
             throw new ContextException(e);
@@ -216,17 +222,6 @@ public class operator extends Operator {
     }
 
     public static Object exec(Domain model, String path, String domain) throws ContextException {
-        return response(model,path, domain);
-    }
-
-    public static Object exec(Domain model, String path$domain) throws ContextException {
-        String path = null;
-        String domain = null;
-        if (path$domain.indexOf("$") > 0) {
-            int ind = path$domain.indexOf("$");
-            path = path$domain.substring(0, ind);
-            domain = path$domain.substring(ind + 1);
-        }
         return response(model, path, domain);
     }
 

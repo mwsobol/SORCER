@@ -158,11 +158,11 @@ public class SrvModels {
 
         Model m = model(sig("add", AdderImpl.class),
                 inVal("arg/x1", 1.0), inVal("arg/x2", 2.0),
-                ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
+                inVal("arg/x3", 3.0), inVal("arg/x4", 4.0), inVal("arg/x5", 5.0));
 
-        add(m, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
+        add(m, ent("add", invoker("x1 + x3", args("x1", "x3"))));
 
-        add(m, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
+        add(m, ent("multiply", invoker("x4 * x5", args("x4", "x5"))));
 
         // two response paths declared
         responseUp(m, "add", "multiply");

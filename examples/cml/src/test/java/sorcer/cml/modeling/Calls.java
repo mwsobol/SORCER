@@ -154,7 +154,6 @@ public class Calls {
 		// x is changed but add2 eval is the same, has its own scope
 		setValue(mdl, "x", 20.0);
 		assertEquals(exec(mdl, "add2"), 70.0);
-		
 	}
 
 	@Test
