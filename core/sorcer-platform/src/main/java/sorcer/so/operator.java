@@ -194,14 +194,14 @@ public class operator extends Operator {
         }
     }
 
-    public static Object response(Domain model, String domainPath) throws ContextException {
+    public static Object response(Domain model, String path$domain) throws ContextException {
         try {
-            String path = domainPath;
+            String path = null;
             String domain = null;
-            if (domainPath.indexOf("$") > 0) {
-                int ind = domainPath.indexOf("$");
-                path = domainPath.substring(0, ind);
-                domain = domainPath.substring(ind + 1);
+            if (path$domain.indexOf("$") > 0) {
+                int ind = path$domain.indexOf("$");
+                path = path$domain.substring(0, ind);
+                domain = path$domain.substring(ind + 1);
             }
             if (domain != null) {
                 return response(model, path, domain);
@@ -217,6 +217,17 @@ public class operator extends Operator {
 
     public static Object exec(Domain model, String path, String domain) throws ContextException {
         return response(model,path, domain);
+    }
+
+    public static Object exec(Domain model, String path$domain) throws ContextException {
+        String path = null;
+        String domain = null;
+        if (path$domain.indexOf("$") > 0) {
+            int ind = path$domain.indexOf("$");
+            path = path$domain.substring(0, ind);
+            domain = path$domain.substring(ind + 1);
+        }
+        return response(model, path, domain);
     }
 
     public static Object response(Domain model, String path, String domain) throws ContextException {
