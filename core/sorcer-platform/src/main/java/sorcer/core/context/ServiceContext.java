@@ -2152,7 +2152,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			sb = new StringBuilder("<html>\n");
 		} else {
 			cr = "\n";
-			sb = new StringBuilder(key != null ? "Context key: " + key
+			sb = new StringBuilder(key != null ? "Context: " + key
 					+ "\n" : "");
 			// sb = new StringBuilder();
 		}
@@ -2905,12 +2905,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public T getValue(Arg... args) throws EvaluationException, RemoteException {
 		try {
-			if (args[0] instanceof Signature.ReturnPath) {
-				return (T) getReturnValue(args);
-			} else if (args[0] instanceof Signature.Out) {
-				return (T) getSubcontext(((Signature.Out)args[0]).toPathArray());
+			if (args.length > 0) {
+				if (args[0] instanceof Signature.ReturnPath) {
+					return (T) getReturnValue(args);
+				} else if (args[0] instanceof Signature.Out) {
+					return (T) getSubcontext(((Signature.Out) args[0]).toPathArray());
+				}
 			}
-            return null;
+            return (T) this;
 		} catch (ContextException e) {
 			throw new EvaluationException(e);
 		}

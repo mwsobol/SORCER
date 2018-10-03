@@ -99,10 +99,21 @@ public class ObjectTask extends Task {
 		try {
 			ReturnPath rt = (ReturnPath) getProcessSignature().getReturnPath();
 			dataContext.updateContextWith(os.getInConnector());
+			boolean setScope = false;
+			if (scope != null && dataContext.getScope() == null) {
+				// use task scope for substitution only
+				dataContext.setScope(scope);
+                setScope = true;
+			}
 			if (rt != null && rt.inPaths != null)
 				dataContext.updateInOutPaths(rt.inPaths, rt.outPaths);
 			else
 				dataContext.updateContext();
+
+			// remove scope set above after substitution
+            if (setScope) {
+                dataContext.setScope(null);
+            }
 
 			if (dataContext.getArgs() != null)
 				os.setArgs(dataContext.getArgs());
