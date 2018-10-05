@@ -2922,7 +2922,7 @@ public class operator extends Operator {
 
     public static Args args(Object... args) {
         Paths paths = null;
-        List<Object> objs = null;
+        List<Object> objs = new ArrayList();
         for(Object o : args) {
             if  (o instanceof Paths) {
                 paths = (Paths) o;
