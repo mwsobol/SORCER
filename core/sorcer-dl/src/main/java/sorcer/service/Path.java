@@ -37,6 +37,8 @@ public class Path implements Arg, Service {
 
 	public Object info = null;
 
+	public String domain = null;
+
 	protected Type type = Type.PATH;
 
 	protected  Signature.Direction direction = Signature.Direction.INOUT;
@@ -45,11 +47,17 @@ public class Path implements Arg, Service {
 	}
 
 	public Path(String path) {
-		this.path = path;
+		String pn = path;
+		if (path.indexOf("$") > 0) {
+			int ind = path.indexOf("$");
+			pn = path.substring(0, ind);
+			domain = path.substring(ind + 1);
+		}
+		this.path = pn;
 	}
 
 	public Path(String path, Object info, Type type) {
-		this.path = path;
+		this(path);
 		this.info = info;
 		this.type = type;
 	}
@@ -61,10 +69,6 @@ public class Path implements Arg, Service {
 
 	public Path(String path, Object info) {
 		this(path, info, Type.PATH);
-	}
-
-	public String path() {
-		return this.path;
 	}
 
 	public Object info() {

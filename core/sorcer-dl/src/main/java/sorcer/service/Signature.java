@@ -448,7 +448,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
         public String[] toStringArray() {
             String[] paths = new String[size()];
             for (int i = 0; i < size(); i++)
-                paths[i] = get(i).path();
+                paths[i] = get(i).path;
 
             return paths;
         }
@@ -777,7 +777,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		public static String[] getPaths(Path[] paths) {
 			String[] ps = new String[paths.length];
 			for (int i = 0; i < paths.length; i++) {
-				ps[i] = paths[i].path();
+				ps[i] = paths[i].path;
 			}
 			return ps;
 		}

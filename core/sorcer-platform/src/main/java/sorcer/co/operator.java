@@ -443,7 +443,7 @@ public class operator extends Operator {
 	}
 
 	public static Path path(String path, Object info) {
-		return new Path(path, info);
+	    return new Path(path, info);
 	}
 
     public static Path path(String path, Signature.Direction dir) {

@@ -47,7 +47,7 @@ public class NetletSignature extends ServiceSignature implements sig {
     }
 
     public String getServiceSource() {
-        return serviceSource.path();
+        return serviceSource.path;
     }
 
     public void setServiceSource(Path serviceSource) {
