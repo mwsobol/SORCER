@@ -76,7 +76,9 @@ class JobUtil {
             "f4",
             sig("multiply",
                 Multiplier.class,
-                deploy(configuration(getConfigDir()+"/multiplier-prv.config"),
+                deploy(
+                    //configuration(getConfigDir()+"/multiplier-prv.config"),
+                    configuration("classpath:deploy/configs/multiplier-prv.config"),
                        idle(1),
                        fixed())),
             context("multiply", operator.inVal("arg/x1", 10.0d),
@@ -167,7 +169,12 @@ class JobUtil {
     }
 
     static String getConfigDir() {
-        //return String.format("%s/src/test/resources/deploy/configs", System.getProperty("user.dir"));
+        return System.getProperty("deploy.configs");
+    }
+
+    static String getConfigDir(boolean asResource) {
+        if(asResource)
+            return "classpath:deploy.configs/";
         return System.getProperty("deploy.configs");
     }
 }

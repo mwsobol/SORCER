@@ -54,7 +54,7 @@ public class FileResolverHandler {
             try {
                 file = resolverFutureTask.call();
                 return file;
-            } catch (InterruptedException | ClassNotFoundException | IOException e) {
+            } catch (InterruptedException e) {
                 throw new ResolverException("Failed to get artifact location", e);
             }
         } else {
@@ -81,7 +81,7 @@ public class FileResolverHandler {
             counter.countDown();
         }
 
-        public File call() throws InterruptedException, IOException, ClassNotFoundException {
+        public File call() throws InterruptedException {
             counter.await();
             return file;
         }

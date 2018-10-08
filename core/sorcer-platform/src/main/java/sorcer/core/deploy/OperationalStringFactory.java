@@ -32,6 +32,7 @@ import sorcer.service.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -142,7 +143,7 @@ public final class OperationalStringFactory {
 
     private static OpString checkIsOpstring(File configFile, ServiceDeployment deployment) throws ConfigurationException {
         OpString opString = null;
-        if(configFile.exists()) {
+        if(configFile!=null && configFile.exists()) {
             Configuration configuration = Configuration.getInstance(configFile.getPath());
             boolean isOpString = configuration.getEntry("org.rioproject.opstring",
                                                         "isOpString",
@@ -165,9 +166,19 @@ public final class OperationalStringFactory {
     }
 
     private static File getConfigFile(String config) throws ResolverException {
-        File configFile;
+        File configFile = null;
         if (Artifact.isArtifact(config)) {
             configFile = resolverHandler.getFile(config);
+            if(configFile==null)
+                throw new ResolverException("failed to resolve "+config);
+        } else if(config.startsWith("classpath:")) {
+            String resource = config.substring("classpath:".length());
+            URL resourceURL = Thread.currentThread().getContextClassLoader().getResource(resource);
+            if(resourceURL!=null) {
+                configFile = new File(resourceURL.getFile());
+            } else {
+                logger.warn("Failed loading {} as a resource", config);
+            }
         } else {
             configFile = new File(config);
         }

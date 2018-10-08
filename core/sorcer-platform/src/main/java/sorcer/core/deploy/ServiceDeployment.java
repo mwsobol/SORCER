@@ -80,7 +80,7 @@ public class ServiceDeployment implements Serializable, Deployment {
     }
 
     public void setConfig(final String config) {
-        if(config.startsWith("http")) {
+        if(config.startsWith("http") || config.startsWith("classpath:")) {
             this.config = config;
         } else if(Artifact.isArtifact(config)) {
             Artifact temp = new Artifact(config);
