@@ -1137,6 +1137,10 @@ public class operator extends Operator {
 		return valuation.valuate();
 	}
 
+	public static Object evalValue(Mogram mogram, String path) throws MogramException {
+		return mogram.getEvaluatedValue(path);
+	}
+
 	public static <T> T v(Valuation<T> valuation) throws ContextException {
 		return valuation.valuate();
 	}

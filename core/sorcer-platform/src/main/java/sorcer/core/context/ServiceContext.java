@@ -119,7 +119,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	public ServiceContext() {
 		this(defaultName + count++);
-	}
+        isEvaluated = true;
+    }
 
 	/**
 	 * Constructor for Service Context class. It calls on the default constructor
@@ -137,6 +138,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		mogramId = UuidFactory.generate();
 		mogramStrategy = new ModelStrategy(this);
 		creationDate = new Date();
+		isEvaluated = true;
 	}
 
 	public ServiceContext(String name, Signature builder) {
@@ -2918,7 +2920,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
-	public Object getEvalValue(String path) throws ContextException {
+	@Override
+	public Object getEvaluatedValue(String path) throws ContextException {
 		// reimplement in subclasses
 		return getValue(path);
 	}

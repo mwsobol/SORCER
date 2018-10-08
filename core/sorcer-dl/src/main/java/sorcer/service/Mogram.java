@@ -230,14 +230,26 @@ public interface Mogram extends Identifiable, Exerter, Request, Scopable, Substi
 	 */
 	public void setDomainName(String name);
 
-	/**
-	 */
+    /**
+     * Return a subdomain name
+     */
 	public String getSubdomainName();
 
+
     /**
-     * @param name
-     *            The subdomainName to set.
+     * Returns a ebalated value at teh path
      */
+    public Object getEvaluatedValue(String path) throws ContextException;
+
+    /**
+     * Returns the state of this mogram evaluation
+     */
+    public boolean isEvaluated();
+
+        /**
+         * @param name
+         *            The subdomainName to set.
+         */
     public void setSubdomainName(String name);
 
     /**

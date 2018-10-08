@@ -212,7 +212,7 @@ public class operator extends Operator {
                 domain = path$domain.substring(ind + 1);
                 return response(model, path, domain);
             } else if (((ServiceContext)model).getType().equals(Functionality.Type.MADO)) {
-                return ((ServiceContext)model).getEvalValue(path$domain);
+                return model.getEvaluatedValue(path$domain);
             } else {
                 return ((ServiceContext) model).getResponseAt(path$domain);
             }
@@ -227,7 +227,7 @@ public class operator extends Operator {
 
     public static Object response(Domain model, String path, String domain) throws ContextException {
         if (((ServiceContext)model).getType().equals(Functionality.Type.MADO)) {
-            return ((ServiceContext)((ServiceContext)model).getDomain(domain)).getEvalValue(path);
+            return ((ServiceContext)model).getDomain(domain).getEvaluatedValue(path);
         } else {
             try {
                 return ((Context)((ServiceContext)model).getDomain(domain)).getValue(path);
@@ -246,7 +246,7 @@ public class operator extends Operator {
             return exertionResponse((Exertion) mogram, items);
         } else if (mogram instanceof Domain) {
             if (((ServiceContext)mogram).getType().equals(Functionality.Type.MADO)) {
-                return (ServiceContext) ((ServiceContext)((ServiceContext)mogram).getDomain((String) items[0])).getEvalValue((String) items[1]);
+                return (ServiceContext) ((ServiceContext)((ServiceContext)mogram).getDomain((String) items[0])).getEvaluatedValue((String) items[1]);
             } else {
                 return modelResponse((Domain) mogram, items);
             }

@@ -23,6 +23,7 @@ import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.modeling.Data;
 import sorcer.service.modeling.Functionality;
+import sorcer.service.modeling.Model;
 import sorcer.util.GenericUtil;
 import sorcer.util.Pool;
 import sorcer.util.Pools;
@@ -149,6 +150,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     protected String configFilename;
 
     protected transient Provider provider;
+
+    protected boolean isEvaluated = false;
 
     protected ServiceMogram() {
         this(defaultName + count++);
@@ -996,6 +999,31 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public void setServiceFidelitySelector(String serviceFidelitySelector) {
         this.serviceFidelitySelector = serviceFidelitySelector;
+    }
+
+    @Override
+    public Object getEvaluatedValue(String path) throws ContextException {
+        // reimplement in subclasses
+        if (isEvaluated) {
+            if (this instanceof Context) {
+                try {
+                    if (this instanceof Model) {
+                        return ((Context)((Model) this).getResult()).getValue(path);
+                    } else {
+                        return ((Context) this).getValue(path);
+                    }
+                } catch (RemoteException e) {
+                    throw new ContextException(e);
+                }
+            } else if (this instanceof Exertion) {
+                ((Exertion) this).getValue(path);
+            }
+        }
+        throw new ContextException(getName() + "mogram not evaluated yet");
+    }
+
+    public boolean isEvaluated() {
+        return isEvaluated;
     }
 
     public Mogram clear() throws MogramException {

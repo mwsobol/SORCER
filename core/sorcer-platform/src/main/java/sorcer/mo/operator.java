@@ -121,7 +121,7 @@ public class operator {
 
     public static Object value(Context context, String path, String domain) throws ContextException {
         if (((ServiceContext)context).getType().equals(Functionality.Type.MADO)) {
-            return ((ServiceContext)context.getDomain(domain)).getEvalValue(path);
+            return ((ServiceContext)context.getDomain(domain)).getEvaluatedValue(path);
         } else {
             try {
                 return ((Context)context.getDomain(domain)).getValue(path);
@@ -152,7 +152,7 @@ public class operator {
                 } else if (SdbUtil.isSosURL(obj)) {
                     out = (T) ((URL) obj).getContent();
                 } else if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
-                    out = (T) ((ServiceContext) context).getEvalValue(path);
+                    out = (T) ((ServiceContext) context).getEvaluatedValue(path);
                 }
 //				else if (obj instanceof Srv && ((Srv) obj).asis() instanceof EntryCollable) {
 //					Entry entry = ((EntryCollable) ((Srv) obj).asis()).call((Model) context);
