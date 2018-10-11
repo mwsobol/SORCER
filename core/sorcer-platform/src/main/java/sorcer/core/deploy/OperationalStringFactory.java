@@ -28,12 +28,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.service.*;
+import sorcer.service.Exertion;
+import sorcer.service.ServiceExertion;
+import sorcer.service.Signature;
+import sorcer.service.SignatureException;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -103,8 +105,7 @@ public final class OperationalStringFactory {
     private static List<OperationalString> collect(Iterable<Signature> netSignatures,
                                                    List<Signature> selfies,
                                                    List<Signature> federated,
-                                                   List<OperationalString> uniqueOperationalStrings) throws URISyntaxException,
-                                                                                                            ResolverException,
+                                                   List<OperationalString> uniqueOperationalStrings) throws ResolverException,
                                                                                                             ConfigurationException,
                                                                                                             IOException {
         for(Signature netSignature : netSignatures) {
@@ -122,11 +123,11 @@ public final class OperationalStringFactory {
         for(Signature self : selfies) {
             String config = ((ServiceSignature)self).getDeployment().getConfig();
 
-            File configFile = getConfigFile(config);
-            OpString opString = checkIsOpstring(configFile, (ServiceDeployment) self.getDeployment());
+            //File configFile = getConfigFile(config);
+            String configFilePath = getConfigFile(config);
+            OpString opString = checkIsOpstring(configFilePath, (ServiceDeployment) self.getDeployment());
             if(opString==null) {
-                ServiceElement service = ServiceElementFactory.create((ServiceSignature) self,
-                                                                      configFile.exists()?configFile:null);
+                ServiceElement service = ServiceElementFactory.create((ServiceSignature) self, configFilePath);
                 opString = new OpString(createDeploymentID(service), null);
                 service.setOperationalStringName(opString.getName());
                 opString.addService(service);
@@ -141,10 +142,10 @@ public final class OperationalStringFactory {
         return operationalStrings;
     }
 
-    private static OpString checkIsOpstring(File configFile, ServiceDeployment deployment) throws ConfigurationException {
+    private static OpString checkIsOpstring(String configFilePath, ServiceDeployment deployment) throws ConfigurationException {
         OpString opString = null;
-        if(configFile!=null && configFile.exists()) {
-            Configuration configuration = Configuration.getInstance(configFile.getPath());
+        if(configFilePath!=null) {
+            Configuration configuration = Configuration.getInstance(configFilePath);
             boolean isOpString = configuration.getEntry("org.rioproject.opstring",
                                                         "isOpString",
                                                         Boolean.class,
@@ -153,7 +154,14 @@ public final class OperationalStringFactory {
             if (isOpString) {
                 OpStringLoader loader = new OpStringLoader();
                 try {
-                    OperationalString[] opStrings = loader.parseOperationalString(configFile);
+                    URL url;
+                    File f = new File(configFilePath);
+                    if(f.exists())
+                        url = f.toURI().toURL();
+                    else
+                        url = new URL(configFilePath);
+                    //OperationalString[] opStrings = loader.parseOperationalString(new File(configFilePath));
+                    OperationalString[] opStrings = loader.parseOperationalString(url);
                     opString = (OpString) opStrings[0];
                     for(ServiceElement service : opString.getServices())
                         ServiceElementFactory.adjustDeployment(service, deployment);
@@ -165,28 +173,38 @@ public final class OperationalStringFactory {
         return opString;
     }
 
-    private static File getConfigFile(String config) throws ResolverException {
-        File configFile = null;
+    private static String getConfigFile(String config) throws ResolverException {
+        logger.info("Get config file for: {}", config);
+        //File configFile = null;
+        String configFilePath = null;
         if (Artifact.isArtifact(config)) {
-            configFile = resolverHandler.getFile(config);
+            File configFile = resolverHandler.getFile(config);
             if(configFile==null)
                 throw new ResolverException("failed to resolve "+config);
+            configFilePath = configFile.getPath();
         } else if(config.startsWith("classpath:")) {
             String resource = config.substring("classpath:".length());
             URL resourceURL = Thread.currentThread().getContextClassLoader().getResource(resource);
             if(resourceURL!=null) {
-                configFile = new File(resourceURL.getFile());
+                //File configFile = new File(resourceURL.getFile());
+                //if(configFile.exists())
+                    configFilePath = resourceURL.toExternalForm();
+                //else
+                //    configFilePath = String.format("jar:%s", resourceURL.toExternalForm());
             } else {
                 logger.warn("Failed loading {} as a resource", config);
             }
         } else {
-            configFile = new File(config);
+            File configFile = new File(config);
+            configFilePath = configFile.getPath();
         }
-        return configFile;
+        if(configFilePath!=null)
+            logger.info("Config file for {} : {}", config, configFilePath);
+
+        return configFilePath;
     }
 
     private static OpString collectFederated(List<Signature> federated) throws SignatureException,
-                                                                               URISyntaxException,
                                                                                ResolverException,
                                                                                ConfigurationException,
                                                                                IOException {
@@ -194,10 +212,11 @@ public final class OperationalStringFactory {
         int idle = 0;
         for(Signature signature : federated) {
             String config = ((ServiceSignature)signature).getDeployment().getConfig();
-            File configFile = getConfigFile(config);
-            OpString opString = checkIsOpstring(configFile, (ServiceDeployment) signature.getDeployment());
+            //File configFile = getConfigFile(config);
+            String configFilePath = getConfigFile(config);
+            OpString opString = checkIsOpstring(configFilePath, (ServiceDeployment) signature.getDeployment());
             if(opString==null) {
-                services.add(ServiceElementFactory.create((ServiceSignature) signature, configFile));
+                services.add(ServiceElementFactory.create((ServiceSignature) signature, configFilePath));
             } else {
                 Collections.addAll(services, opString.getServices());
             }
@@ -258,7 +277,7 @@ public final class OperationalStringFactory {
                 logger.warn("No configuration found for ServiceDeployment: {}", serviceDeployment);
             }
         } else {
-            logger.warn("Unknown type of Deployment: {}", netSignature.getDeployment().getClass().getName());
+            logger.warn("No deployment for: {}", netSignature);
         }
     }
 

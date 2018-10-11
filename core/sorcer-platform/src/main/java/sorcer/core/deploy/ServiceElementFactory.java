@@ -25,7 +25,6 @@ import org.rioproject.opstring.ClassBundle;
 import org.rioproject.opstring.ServiceBeanConfig;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.resolver.Artifact;
-import org.rioproject.resolver.ResolverException;
 import org.rioproject.sla.ServiceLevelAgreements;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
 import org.rioproject.system.capability.platform.OperatingSystem;
@@ -39,7 +38,6 @@ import sorcer.util.Sorcer;
 import sorcer.util.SorcerEnv;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -67,10 +65,22 @@ public final class ServiceElementFactory  {
      * @throws ConfigurationException if there are problem reading the configuration
      */
     public static ServiceElement create(final ServiceSignature signature, File configFile) throws IOException,
-                                                                                            ConfigurationException,
-                                                                                            ResolverException,
-                                                                                            URISyntaxException {
+                                                                                                  ConfigurationException {
         return create(signature.getDeployment(), configFile);
+    }
+
+    /**
+     * Create a {@link ServiceElement}.
+     *
+     * @param signature The {@link ServiceSignature}, must not be {@code null}.
+     *
+     * @return A {@code ServiceElement}
+     *
+     * @throws ConfigurationException if there are problem reading the configuration
+     */
+    public static ServiceElement create(final ServiceSignature signature, String configFilePath) throws IOException,
+                                                                                                        ConfigurationException {
+        return create(signature.getDeployment(), configFilePath);
     }
 
     /**
@@ -83,23 +93,22 @@ public final class ServiceElementFactory  {
      * @throws ConfigurationException if there are problem reading the configuration
      */
     public static ServiceElement create(final ServiceDeployment deployment, File configFile) throws IOException,
-                                                                                         ConfigurationException,
-                                                                                         ResolverException,
-                                                                                         URISyntaxException {
+                                                                                                    ConfigurationException {
         if(configFile==null) {
             return create(deployment, deployment.getConfig());
         }
         ServiceElement service = serviceElementsCreated.get(configFile);
         if (service == null) {
-            service = create(deployment, configFile.getAbsolutePath());
+            logger.info("Create service using: {}", configFile.getPath());
+            service = create(deployment, configFile.getPath());
             serviceElementsCreated.put(configFile, service);
         }
         return service;
 
     }
 
-    private static ServiceElement create(ServiceDeployment deployment,
-                                         String configurationFilePath) throws ConfigurationException, IOException {
+    public static ServiceElement create(ServiceDeployment deployment,
+                                        String configurationFilePath) throws ConfigurationException, IOException {
         logger.debug("Loading {}", configurationFilePath);
         Configuration configuration = Configuration.getInstance(configurationFilePath);
         String component = "sorcer.core.provider.ServiceProvider";
