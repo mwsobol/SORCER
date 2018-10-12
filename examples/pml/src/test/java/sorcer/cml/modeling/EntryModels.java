@@ -39,16 +39,16 @@ public class EntryModels {
 	private final static Logger logger = LoggerFactory.getLogger(EntryModels.class.getName());
 
 	private EntryModel em;
-	private Call<Double> x;
-	private Call<Double> y;
+	private Pro<Double> x;
+	private Pro<Double> y;
 
 
 	@Before
 	public void initEntModel() throws Exception {
 
 		em = new EntryModel();
-		x = call("x", 10.0);
-		y = call("y", 20.0);
+		x = pro("x", 10.0);
+		y = pro("y", 20.0);
 
 	}
 
@@ -56,10 +56,10 @@ public class EntryModels {
 	public void closingEntScope() throws Exception {
 
 		// a call is a variable (entry) evaluated in its own scope (context)
-		Call y = call("y",
+		Pro y = pro("y",
 				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
-		Object val = exec(y, call("x1", 10.0), call("x2", 50.0),
-				call("x3", 20.0), call("x4", 80.0));
+		Object val = exec(y, pro("x1", 10.0), pro("x2", 50.0),
+                pro("x3", 20.0), pro("x4", 80.0));
 		// logger.info("y eval: " + val);
 		assertEquals(val, 400.0);
 
@@ -75,22 +75,22 @@ public class EntryModels {
 				val("x1"), val("x2"), val("x3", 20.0),
 				val("x4", 80.0),
 				// outputs
-				call("t4", invoker("x1 * x2", args("x1", "x2"))),
-				call("t5", invoker("x3 + x4", args("x3", "x4"))),
-				call("j1", invoker("t4 - t5", args("t4", "t5"))));
+				pro("t4", invoker("x1 * x2", args("x1", "x2"))),
+				pro("t5", invoker("x3 + x4", args("x3", "x4"))),
+				pro("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		assertTrue(exec(model, "t5").equals(100.0));
 
 		assertEquals(exec(model, "j1"), null);
 
-		eval(model, "j1", call("x1", 10.0), call("x2", 50.0)).equals(400.0);
+		eval(model, "j1", pro("x1", 10.0), pro("x2", 50.0)).equals(400.0);
 
 		assertTrue(exec(model, "j1", val("x1", 10.0), val("x2", 50.0)).equals(400.0));
 
 		assertTrue(exec(model, "j1").equals(400.0));
 
 		// get model response
-		Row mr = (Row) query(model, //call("x1", 10.0), call("x2", 50.0),
+		Row mr = (Row) query(model, //pro("x1", 10.0), pro("x2", 50.0),
 				result("y", outPaths("t4", "t5", "j1")));
 		assertTrue(names(mr).equals(list("t4", "t5", "j1")));
 		assertTrue(values(mr).equals(list(500.0, 100.0, 400.0)));
@@ -104,12 +104,12 @@ public class EntryModels {
 			// inputs
 			val("x1"), val("x2"), val("x3", 20.0), val("x4"),
 			// outputs
-			call("t4", invoker("x1 * x2", args("x1", "x2"))),
-			call("t5",
+			pro("t4", invoker("x1 * x2", args("x1", "x2"))),
+			pro("t5",
 				task(sig("add", AdderImpl.class),
 					cxt("add", inVal("x3"), inVal("x4"),
 						result("result/y")))),
-			call("j1", invoker("t4 - t5", args("t4", "t5"))));
+			pro("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		setValues(vm, val("x1", 10.0), val("x2", 50.0),
 			val("x4", 80.0));
@@ -121,9 +121,9 @@ public class EntryModels {
 	public void callInvoker() throws Exception {
 
 		EntryModel pm = new EntryModel("call-model");
-		add(pm, call("x", 10.0));
-		add(pm, call("y", 20.0));
-		add(pm, call("add", invoker("x + y", args("x", "y"))));
+		add(pm, pro("x", 10.0));
+		add(pm, pro("y", 20.0));
+		add(pm, pro("add", invoker("x + y", args("x", "y"))));
 
 		assertTrue(exec(pm, "x").equals(10.0));
 		assertTrue(exec(pm, "y").equals(20.0));
@@ -146,8 +146,8 @@ public class EntryModels {
 
 	@Test
 	public void callModelTest() throws Exception {
-		EntryModel pm = entModel(call("x", 10.0), call("y", 20.0),
-				call("add", invoker("x + y", args("x", "y"))));
+		EntryModel pm = entModel(pro("x", 10.0), pro("y", 20.0),
+				pro("add", invoker("x + y", args("x", "y"))));
 
 		assertTrue(exec(pm, "x").equals(10.0));
 		assertTrue(exec(pm, "y").equals(20.0));
@@ -161,10 +161,10 @@ public class EntryModels {
 
 	@Test
 	public void expendingCallModelTest() throws Exception {
-		EntryModel pm = entModel(call("x", 10.0), call("y", 20.0),
-				call("add", invoker("x + y", args("x", "y"))));
+		EntryModel pm = entModel(pro("x", 10.0), pro("y", 20.0),
+				pro("add", invoker("x + y", args("x", "y"))));
 
-		Call x = call(pm, "x");
+		Pro x = pro(pm, "x");
 		logger.info("call x: " + x);
 		setValue(x, 20.0);
 		logger.info("val x: " + exec(x));
@@ -179,7 +179,7 @@ public class EntryModels {
         responseUp(pm, "add");
 		assertEquals(value(eval(pm), "add"), 60.0);
 
-		add(pm, call("x", 10.0), call("y", 20.0));
+		add(pm, pro("x", 10.0), pro("y", 20.0));
 		assertTrue(exec(pm, "x").equals(10.0));
 		assertTrue(exec(pm, "y").equals(20.0));
 
@@ -190,9 +190,9 @@ public class EntryModels {
 		assertTrue(value(eval(pm), "add").equals(30.0));
 
 		// with new arguments, closure
-		assertTrue(value(eval(pm, call("x", 20.0), call("y", 30.0)), "add").equals(50.0));
+		assertTrue(value(eval(pm, pro("x", 20.0), pro("y", 30.0)), "add").equals(50.0));
 
-		add(pm, call("z", invoker("(x * y) + add", args("x", "y", "add"))));
+		add(pm, pro("z", invoker("(x * y) + add", args("x", "y", "add"))));
 		logger.info("z eval: " + eval(pm, "z"));
 		assertTrue(exec(pm, "z").equals(650.0));
 
@@ -203,9 +203,9 @@ public class EntryModels {
 	public void callInvokers() throws Exception {
 
 		// all var parameters (x1, y1, y2) are not initialized
-		Call y3 = call("y3", invoker("x + y2", args("x", "y2")));
-		Call y2 = call("y2", invoker("x * y1", args("x", "y1")));
-		Call y1 = call("y1", invoker("x1 * 5", args("x1")));
+		Pro y3 = pro("y3", invoker("x + y2", args("x", "y2")));
+		Pro y2 = pro("y2", invoker("x * y1", args("x", "y1")));
+		Pro y1 = pro("y1", invoker("x1 * 5", args("x1")));
 
 		EntryModel pc = entModel(y1, y2, y3);
 		// any dependent values or args can be updated or added any time
@@ -227,9 +227,9 @@ public class EntryModels {
         assertEquals(value(cxt, "arg/x1"), 10.0);
         assertEquals(value(cxt, "arg/x2"), 50.0);
 
-        assertTrue(asis(cxt, "arg/x0") instanceof Call);
-        assertTrue(asis(cxt, "arg/x1") instanceof Call);
-        assertTrue(asis(cxt, "arg/x2") instanceof Call);
+        assertTrue(asis(cxt, "arg/x0") instanceof Pro);
+        assertTrue(asis(cxt, "arg/x1") instanceof Pro);
+        assertTrue(asis(cxt, "arg/x2") instanceof Pro);
 
         put(cxt, "arg/x0", 11.0);
         put(cxt, "arg/x1", 110.0);
@@ -239,9 +239,9 @@ public class EntryModels {
         assertEquals(value(cxt, "arg/x1"), 110.0);
         assertEquals(value(cxt, "arg/x2"), 150.0);
 
-        assertTrue(asis(cxt, "arg/x0") instanceof Call);
-        assertTrue(asis(cxt, "arg/x1") instanceof Call);
-        assertTrue(asis(cxt, "arg/x2") instanceof Call);
+        assertTrue(asis(cxt, "arg/x0") instanceof Pro);
+        assertTrue(asis(cxt, "arg/x1") instanceof Pro);
+        assertTrue(asis(cxt, "arg/x2") instanceof Pro);
     }
 
 
@@ -250,8 +250,8 @@ public class EntryModels {
 
 		// persistable just indicates that argument is persistent,
 		// for example when eval(call) is invoked
-		Call dbp1 = persistent(call("design/in", 25.0));
-		Call dbp2 = dbEnt("url", "myUrl1");
+		Pro dbp1 = persistent(pro("design/in", 25.0));
+		Pro dbp2 = dbEnt("url", "myUrl1");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
@@ -264,8 +264,8 @@ public class EntryModels {
 
 		// store call args in the data store
 		URL sUrl = new URL("http://sorcersoft.org");
-		Call p1 = call("design/in", 30.0);
-		Call p2 = call("url", sUrl);
+		Pro p1 = pro("design/in", 30.0);
+		Pro p2 = pro("url", sUrl);
 		URL url1 = storeVal(p1);
 		URL url2 = storeVal(p2);
 
@@ -278,8 +278,8 @@ public class EntryModels {
 		assertEquals(exec(p2), sUrl);
 
 		// store args in the data store
-		p1 = call("design/in", 30.0);
-		p2 = call("url", sUrl);
+		p1 = pro("design/in", 30.0);
+		p2 = pro("url", sUrl);
 		store(p1);
 		store(p2);
 
@@ -365,9 +365,9 @@ public class EntryModels {
 	public void invokerLoopTest() throws Exception {
 
 		EntryModel pm = entModel("call-model");
-		add(pm, call("x", 1));
-		add(pm, call("y", invoker("x + 1", args("x"))));
-		add(pm, call("z", inc(invoker(pm, "y"), 2)));
+		add(pm, pro("x", 1));
+		add(pm, pro("y", invoker("x + 1", args("x"))));
+		add(pm, pro("z", inc(invoker(pm, "y"), 2)));
 		Invocation z2 = invoker(pm, "z");
 
 		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
@@ -381,9 +381,9 @@ public class EntryModels {
 	public void callableAttachment() throws Exception {
 
 		final EntryModel pm = entModel();
-		final Call<Double> x = call("x", 10.0);
-		final Call<Double> y = call("y", 20.0);
-		Call z = call("z", invoker("x + y", x, y));
+		final Pro<Double> x = pro("x", 10.0);
+		final Pro<Double> y = pro("y", 20.0);
+		Pro z = pro("z", invoker("x + y", x, y));
 		add(pm, x, y, z);
 
 		// update vars x and y that loop condition (var z) depends on
@@ -408,10 +408,10 @@ public class EntryModels {
 	public void callableAttachmentWithArgs() throws Exception {
 
 		final EntryModel pm = entModel();
-		final Call<Double> x = call("x", 10.0);
-		final Call<Double> y = call("y", 20.0);
-		Call z = call("z", invoker("x + y", x, y));
-		add(pm, x, y, z, call("limit", 60.0));
+		final Pro<Double> x = pro("x", 10.0);
+		final Pro<Double> y = pro("y", 20.0);
+		Pro z = pro("z", invoker("x + y", x, y));
+		add(pm, x, y, z, pro("limit", 60.0));
 
 		// anonymous local class implementing Callable interface
 		Callable update = new Callable() {
@@ -425,7 +425,7 @@ public class EntryModels {
 		};
 
 		add(pm, callableInvoker("call", update));
-		assertEquals(invoke(pm, "call", context(call("limit", 100.0))), 420.0);
+		assertEquals(invoke(pm, "call", context(pro("limit", 100.0))), 420.0);
 	}
 
 
@@ -449,12 +449,12 @@ public class EntryModels {
 	@Test
 	public void attachMethodInvokerWithContext() throws Exception {
 
-		Call z = call("z", invoker("x + y", x, y));
-		add(em, x, y, z, call("limit", 60.0));
+		Pro z = pro("z", invoker("x + y", x, y));
+		add(em, x, y, z, pro("limit", 60.0));
 
 		add(em, methodInvoker("call", new Config()));
 //		logger.info("call eval:" + invoke(em, "call"));
-		assertEquals(invoke(em, "call", context(call("limit", 100.0))), 420.0);
+		assertEquals(invoke(em, "call", context(pro("limit", 100.0))), 420.0);
 
 	}
 

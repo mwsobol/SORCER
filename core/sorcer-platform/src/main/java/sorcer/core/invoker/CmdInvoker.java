@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
-import sorcer.core.context.model.ent.Call;
+import sorcer.core.context.model.ent.Pro;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;
@@ -70,7 +70,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 		this.cmdarray = (String[]) list.toArray();
 	}
 	
-	public CmdInvoker(String name, String cmd, Call... callEntries) {
+	public CmdInvoker(String name, String cmd, Pro... callEntries) {
 		super(name);
 		this.cmd = cmd;
 		this.args = new ArgSet(callEntries);
@@ -82,7 +82,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	}
 
 	public CmdInvoker(String shcmd, File scriptFile, boolean background,
-			File logFile, Call... callEntries) throws EvaluationException {
+			File logFile, Pro... callEntries) throws EvaluationException {
 		cmd = shcmd;
 		this.scriptFile = scriptFile;
 		this.logFile = logFile;
@@ -110,7 +110,7 @@ public class CmdInvoker extends ServiceInvoker implements CmdInvoking {
 	 * @throws EvaluationException
 	 */
 	public CmdInvoker(String argarray[], File script, boolean background,
-			InputStream stdin, File logFile, Call... callEntries) throws EvaluationException {
+			InputStream stdin, File logFile, Pro... callEntries) throws EvaluationException {
 		cmdarray = new String[argarray.length + 1];
 		this.scriptFile = script;
 		this.args = new ArgSet(callEntries);

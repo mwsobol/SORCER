@@ -35,7 +35,7 @@ import sorcer.service.EvaluationException;
  * @author Mike Sobolewski
  *
  */
-public class Agent<T> extends Call<T> implements Serializable {
+public class Agent<T> extends Pro<T> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -145,11 +145,11 @@ public class Agent<T> extends Call<T> implements Serializable {
 		return (T) invoker;
 	}
 	
-	private Call[] getPars(Arg... entries) {
-		Call[] pa = new Call[entries.length];
+	private Pro[] getPars(Arg... entries) {
+		Pro[] pa = new Pro[entries.length];
 		if (entries != null && entries.length > 0) {
 			for (int i = 0; i < entries.length; i++)
-				pa[i] = (Call) entries[i];
+				pa[i] = (Pro) entries[i];
 		}
 		return pa;
 	}

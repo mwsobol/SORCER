@@ -812,8 +812,8 @@ public class operator extends Operator {
 
 	public static void dbURL(Object object, URL dbUrl)
 			throws MalformedURLException {
-		if (object instanceof Call)
-			((Call) object).setDbURL(dbUrl);
+		if (object instanceof Pro)
+			((Pro) object).setDbURL(dbUrl);
 		else if (object instanceof ServiceContext)
 			((ServiceContext) object).setDbUrl("" + dbUrl);
 		else
@@ -821,8 +821,8 @@ public class operator extends Operator {
 	}
 
 	public static URL dbURL(Object object) throws MalformedURLException {
-		if (object instanceof Call)
-			return ((Call) object).getDbURL();
+		if (object instanceof Pro)
+			return ((Pro) object).getDbURL();
 		else if (object instanceof ServiceContext)
 			return new URL(((ServiceContext) object).getDbUrl());
 		return null;
@@ -884,13 +884,13 @@ public class operator extends Operator {
 	}
 
 	public static <T> Entry<T> dbVal(String path) {
-		Entry<T> e = new Call<T>(path);
+		Entry<T> e = new Pro<T>(path);
 		e.setPersistent(true);
 		return e;
 	}
 
 	public static <T> Entry<T> dbVal(String path, T value) throws EvaluationException {
-		Call<T> e = new Call<T>(path, value);
+		Pro<T> e = new Pro<T>(path, value);
 		e.setPersistent(true);
 		if (SdbUtil.isSosURL(value)) {
 			e.setImpl(value);
@@ -1090,8 +1090,8 @@ public class operator extends Operator {
         } catch (RemoteException e) {
             throw new ContextException(e);
         }
-        if (entry instanceof Call) {
-            Call callEntry = (Call)entry;
+        if (entry instanceof Pro) {
+            Pro callEntry = (Pro)entry;
             if (callEntry.getScope() != null) {
                 callEntry.getScope().putValue(callEntry.getName(), value);
             }

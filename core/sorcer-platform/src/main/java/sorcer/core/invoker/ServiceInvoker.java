@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.context.model.ent.Call;
+import sorcer.core.context.model.ent.Pro;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Data;
@@ -166,7 +166,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		invokeContext = context;
 	}
 	
-	public ServiceInvoker(EntryModel context, Evaluator evaluator, Call... callEntries) {
+	public ServiceInvoker(EntryModel context, Evaluator evaluator, Pro... callEntries) {
 		this(context);
 		this.evaluator = evaluator;
 		this.args = new ArgSet(callEntries);
@@ -184,7 +184,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		this.args = args;
 	}
 	
-	public ServiceInvoker(Evaluator evaluator, Call... callEntries) {
+	public ServiceInvoker(Evaluator evaluator, Pro... callEntries) {
 		this(((Identifiable)evaluator).getName());
 		this.evaluator = evaluator;
 		this.args = new ArgSet(callEntries);
@@ -270,12 +270,12 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	 * @throws RemoteException
 	 */
 	public ServiceInvoker addCall(Object call) throws EvaluationException {
-		if (call instanceof Call) {
-			((ServiceContext)invokeContext).put(((Call) call).getName(), call);
-			if (((Call) call).asis() instanceof ServiceInvoker) {
+		if (call instanceof Pro) {
+			((ServiceContext)invokeContext).put(((Pro) call).getName(), call);
+			if (((Pro) call).asis() instanceof ServiceInvoker) {
 				try {
-					((ServiceInvoker) ((Call) call).evaluate()).addObserver(this);
-					args.add((Call) call);
+					((ServiceInvoker) ((Pro) call).evaluate()).addObserver(this);
+					args.add((Pro) call);
 					value = null;
 					setChanged();
 					notifyObservers(this);
@@ -286,7 +286,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			}
 		} else if (call instanceof Identifiable) {
 			try {
-				Call p = new Call(((Identifiable) call).getName(), call, invokeContext);
+				Pro p = new Pro(((Identifiable) call).getName(), call, invokeContext);
 				invokeContext.putValue(p.getName(), p);
 			} catch (ContextException e) {
 				throw new EvaluationException(e);
@@ -301,16 +301,16 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		}
 	}
 	
-	synchronized public void addPars(List<Call> callEntryList)
+	synchronized public void addPars(List<Pro> callEntryList)
 			throws EvaluationException, RemoteException {
-		for (Call p : callEntryList) {
+		for (Pro p : callEntryList) {
 			addCall(p);
 		}
 	}
 	
-	synchronized public void addPars(Call... callEntries) throws EvaluationException,
+	synchronized public void addPars(Pro... callEntries) throws EvaluationException,
 			RemoteException {
-		for (Call p : callEntries) {
+		for (Pro p : callEntries) {
 			addCall(p);
 		}
 	}
@@ -401,8 +401,8 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	private void init(ArgSet set){
 		if (set != null) {
 			for (Arg p : set) {
-				if (p instanceof Call && ((Call) p).getScope() == null)
-					((Call) p).setScope(invokeContext);
+				if (p instanceof Pro && ((Pro) p).getScope() == null)
+					((Pro) p).setScope(invokeContext);
 			}
 		}
 	}
@@ -478,7 +478,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	public void clearPars() throws EvaluationException {
 		for (Arg p : args) {
 			try {
-				((Call) p).setValue(null);
+				((Pro) p).setValue(null);
 			} catch (Exception e) {
 				throw new EvaluationException(e);
 			}

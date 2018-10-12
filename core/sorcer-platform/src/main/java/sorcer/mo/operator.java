@@ -147,8 +147,8 @@ public class operator {
                     out = (T) obj;
                 } else if (obj instanceof Valuation) {
                     out = (T)  ((Valuation)obj).valuate(args);
-                } else if (obj instanceof Call) {
-                    out = (T) ((Call) obj).evaluate(args);
+                } else if (obj instanceof Pro) {
+                    out = (T) ((Pro) obj).evaluate(args);
                 } else if (SdbUtil.isSosURL(obj)) {
                     out = (T) ((URL) obj).getContent();
                 } else if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
@@ -213,8 +213,8 @@ public class operator {
             throw new ContextException(e);
         }
 
-        if (entry instanceof Call) {
-            Call call = (Call) entry;
+        if (entry instanceof Pro) {
+            Pro call = (Pro) entry;
             if (call.getScope() != null)
                 call.getScope().putValue(call.getName(), value);
         }
@@ -607,7 +607,7 @@ public class operator {
             } else if (i instanceof Entry) {
                 try {
                     hasEntry = true;
-                    if (i instanceof Call)
+                    if (i instanceof Pro)
                         procType = true;
                     else if (i instanceof Srv || i instanceof Neu) {
                         srvType = true;
@@ -739,9 +739,9 @@ public class operator {
                 }
             }
 
-            if (i instanceof Call && ((Call)i).getImpl() instanceof Invocation) {
-                ((Call)i).setScope(context);
-                ((ServiceInvoker)((Call)i).getImpl()).setScope(context);
+            if (i instanceof Pro && ((Pro)i).getImpl() instanceof Invocation) {
+                ((Pro)i).setScope(context);
+                ((ServiceInvoker)((Pro)i).getImpl()).setScope(context);
             }
         }
         context.isChanged();
@@ -766,8 +766,8 @@ public class operator {
     public static Object get(EntryModel pm, String parname, Arg... parametrs)
             throws ContextException, RemoteException {
         Object obj = pm.asis(parname);
-        if (obj instanceof Call)
-            obj = ((Call)obj).evaluate(parametrs);
+        if (obj instanceof Pro)
+            obj = ((Pro)obj).evaluate(parametrs);
         return obj;
     }
 

@@ -10,7 +10,7 @@ import sorcer.co.operator;
 import sorcer.co.tuple.*;
 import sorcer.core.Tag;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Call;
+import sorcer.core.context.model.ent.Pro;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -102,14 +102,14 @@ public class CollectionOperators {
 		val v1 = val("x", 30.0);
 		assertEquals(operator.get(v1), 30.0);
 
-		func p2 = call("x", 20.0);
+		func p2 = pro("x", 20.0);
 		assertEquals(exec(p2), 20.0);
 
-		ent p1 = call("x", 10.0);
+		ent p1 = pro("x", 10.0);
 		assertEquals(exec(p1), 10.0);
 
 		Date td = new Date();
-		ent d1 = call("x", td);
+		ent d1 = pro("x", td);
 		assertEquals(exec(d1), td);
 
 	}
@@ -232,13 +232,13 @@ public class CollectionOperators {
 	@Test
 	public void procValEntOperator() throws Exception {
 
-		Call add = call("add", invoker("x + y", args("x", "y")));
+		Pro add = pro("add", invoker("x + y", args("x", "y")));
 		Context<Double> cxt = context(val("x", 10.0), val("y", 20.0));
 		logger.info("eval: " + exec(add, cxt));
 		assertTrue(exec(add, cxt).equals(30.0));
 
 		cxt = context(ent("x", 20.0), ent("y", 30.0));
-		add = call("add", invoker("x + y", args("x", "y")), cxt);
+		add = pro("add", invoker("x + y", args("x", "y")), cxt);
 		logger.info("call eval: " + exec(add));
 		assertTrue(exec(add).equals(50.0));
 
@@ -248,7 +248,7 @@ public class CollectionOperators {
 	public void persistentOperator() throws Exception {
 
 		// persist values of args
-        Subroutine dbp2 = call("url/sobol", "http://sorcersoft.org/sobol");
+        Subroutine dbp2 = pro("url/sobol", "http://sorcersoft.org/sobol");
 		persistent(dbp2);
 
 		assertFalse(asis(dbp2) instanceof URL);
@@ -385,7 +385,7 @@ public class CollectionOperators {
 	@Test
 	public void procModeling() throws Exception {
 
-		Model pm = model("call-model", call("John/weight", 180.0));
+		Model pm = model("call-model", pro("John/weight", 180.0));
 		add(pm, ent("x", 10.0), ent("y", 20.0));
 		add(pm, invoker("add", "x + y", args("x", "y")));
 

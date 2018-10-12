@@ -11,7 +11,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.context.model.ent.Call;
+import sorcer.core.context.model.ent.Pro;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.ent.operator;
 import sorcer.service.Arg;
@@ -22,15 +22,12 @@ import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static sorcer.co.operator.asis;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.put;
 import static sorcer.eo.operator.result;
 import static sorcer.mo.operator.*;
-import static sorcer.ent.operator.ent;
-import static sorcer.ent.operator.invoker;
-import static sorcer.ent.operator.call;
+import static sorcer.ent.operator.*;
 import static sorcer.so.operator.*;
 
 /**
@@ -58,11 +55,11 @@ public class ContextModels {
 		assertTrue(exec(mdl, "arg/x6").equals(20.0));
 
 		// invoker is of the Invocation multitype
-		put(mdl, operator.call("arg/x7", invoker("x1 + x3", args("x1", "x3"))));
+		put(mdl, pro("arg/x7", invoker("x1 + x3", args("x1", "x3"))));
 
 		assertTrue(exec(mdl, "arg/x7").equals(4.0));
 		assertTrue(get(mdl, "arg/x7") instanceof Subroutine);
-		assertTrue(get(mdl, "arg/x7") instanceof Call);
+		assertTrue(get(mdl, "arg/x7") instanceof Pro);
 		assertTrue(get(mdl, "arg/x7") instanceof Invocation);
 	}
 
@@ -72,7 +69,7 @@ public class ContextModels {
 		Model mdl = entModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
 				val("arg/x3", 3.0), val("arg/x4", 4.0), val("arg/x5", 5.0));
 
-		add(mdl, operator.call("invoke", invoker("x1 + x3", args("x1", "x3"))));
+		add(mdl, pro("invoke", invoker("x1 + x3", args("x1", "x3"))));
 
 		// declare the modeling responses
 		responseUp(mdl, "invoke");
@@ -85,7 +82,7 @@ public class ContextModels {
 		assertTrue(result.equals(5.0));
 
 		// compute the model with new inputs
-		add(mdl, operator.call("invoke", invoker("x6 * x7 + x1", args("x1", "x6", "x7"))));
+		add(mdl, pro("invoke", invoker("x6 * x7 + x1", args("x1", "x6", "x7"))));
 		result = (Double) value(eval(mdl, ent("arg/x6", 6.0), ent("arg/x7", 7.0)), "invoke");
 		assertTrue(result.equals(44.0));
 	}

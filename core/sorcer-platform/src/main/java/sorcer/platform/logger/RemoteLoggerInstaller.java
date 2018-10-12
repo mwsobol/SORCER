@@ -118,7 +118,7 @@ public class RemoteLoggerInstaller implements DestroyAdmin {
         try {
             JoranConfigurator configurator = new JoranConfigurator();
             configurator.setContext(context);
-            // Don't Call context.reset() to keep the previous configuration
+            // Don't Pro context.reset() to keep the previous configuration
             configurator.doConfigure(new File(Sorcer.getHomeDir(),"configs/apps-logback.xml"));
         } catch (JoranException je) {
             // StatusPrinter will handle this

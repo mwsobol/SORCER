@@ -287,7 +287,7 @@ public class DataModels {
         assertTrue(exec(ac, "arg3/eval").equals(100.0));
         assertTrue(exec(mc, "arg3/eval").equals(200.0));
         URL a3vURL = storeVal(mc, "arg3/eval");
-        add(ac, operator.call("arg3/eval", a3vURL));
+        add(ac, operator.pro("arg3/eval", a3vURL));
 
         setValues(mc, val("arg1/eval", 300.0));
         assertTrue(exec(ac, "arg1/eval").equals(300.0));

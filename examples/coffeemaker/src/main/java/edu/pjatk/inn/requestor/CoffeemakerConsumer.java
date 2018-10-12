@@ -86,7 +86,7 @@ public class CoffeemakerConsumer extends ServiceConsumer {
                         result("delivery$", inPaths("location", "room")))));
 //				call("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
 
-        add(mdl, call("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
+        add(mdl, pro("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
         dependsOn(mdl, dep("change$", paths("makeCoffee")), dep("change$", paths("deliver")));
         responseUp(mdl, "makeCoffee", "deliver", "change$", "paid$");
 

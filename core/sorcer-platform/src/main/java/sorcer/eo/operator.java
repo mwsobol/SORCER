@@ -674,8 +674,8 @@ public class operator extends Operator {
                     }
                 }
             } else if (ent instanceof Entry) {
-                if (ent instanceof Call && ((Call)ent).getImpl() instanceof Invocation) {
-                    ((ServiceInvoker)((Call)ent).getImpl()).setScope(pcxt);
+                if (ent instanceof Pro && ((Pro)ent).getImpl() instanceof Invocation) {
+                    ((ServiceInvoker)((Pro)ent).getImpl()).setScope(pcxt);
                 }
                 if (ent.isPersistent()) {
                     setProc(pcxt, entryList.get(i), i);
@@ -750,8 +750,8 @@ public class operator extends Operator {
         throws ContextException {
         try {
             Object val = context.get(path);
-            if (val instanceof Call && ((Call)val).isPersistent())
-                val = ((Call)val).asis();
+            if (val instanceof Pro && ((Pro)val).isPersistent())
+                val = ((Pro)val).asis();
             if (SdbUtil.isSosURL(val)) {
                 SdbUtil.update((URL) val, value);
             } else {
@@ -820,7 +820,7 @@ public class operator extends Operator {
 
     protected static void setProc(PositionalContext pcxt, Entry entry, int i)
         throws ContextException {
-        Call p = new Call(entry.getName(), entry.getImpl());
+        Pro p = new Pro(entry.getName(), entry.getImpl());
         p.setPersistent(true);
         if (entry instanceof InputValue)
             pcxt.putInValueAt(entry.getName(), p, i + 1);
@@ -834,7 +834,7 @@ public class operator extends Operator {
 
     protected static void setProc(Context cxt, Entry entry)
         throws ContextException {
-        Call p = new Call(entry.getName(), entry.getImpl());
+        Pro p = new Pro(entry.getName(), entry.getImpl());
         p.setPersistent(true);
         if (entry instanceof InputValue)
             cxt.putInValue(entry.getName(), p);
@@ -1394,7 +1394,7 @@ public class operator extends Operator {
                                           ReturnPath returnPath) throws SignatureException {
         EvaluationSignature sig = null;
         if (evaluator instanceof Scopable) {
-            sig = new EvaluationSignature(new Call((Identifiable) evaluator));
+            sig = new EvaluationSignature(new Pro((Identifiable) evaluator));
         } else {
             sig = new EvaluationSignature(evaluator);
         }
@@ -2921,20 +2921,36 @@ public class operator extends Operator {
     }
 
     public static Args args(Object... args) {
+        if (args == null) {
+            return new Args();
+        }
         Paths paths = null;
         List<Object> objs = new ArrayList();
-        for(Object o : args) {
-            if  (o instanceof Paths) {
+        Paths ps = new Paths();
+        for (Object o : args) {
+            if (o instanceof Paths) {
                 paths = (Paths) o;
-            } else {
+            }
+            // a path in args is used as dependent entry
+            // and also as a  path in context
+            // as all args are appended to context defined by a Paths
+            if (o instanceof Path) {
+                ps.add((Path) o);
+                objs.add(((Path) o).path);
+            } else{
                 objs.add(o);
             }
         }
-        if (args == null) {
-            return new Args();
-        } else {
-            return new Args(objs, paths);
+
+        if (ps.size() > 0) {
+            if (paths == null) {
+                paths = ps;
+            } else {
+                paths.addAll(ps);
+            }
         }
+
+        return new Args(objs, paths);
     }
 
     public static class Args extends Path implements SupportComponent {
@@ -3013,7 +3029,7 @@ public class operator extends Operator {
         String outComponentPath;
         String inComponentPath;
 
-        Call callEntry;
+        Pro callEntry;
 
         Pipe(Exertion out, String outPath, Mappable in, String inPath) {
             this.out = out;
@@ -3022,7 +3038,7 @@ public class operator extends Operator {
             this.inPath = inPath;
             if ((in instanceof Exertion) && (out instanceof Exertion)) {
                 try {
-                    callEntry = new Call(outPath, inPath, in);
+                    callEntry = new Pro(outPath, inPath, in);
                 } catch (ContextException e) {
                     e.printStackTrace();
                 }
@@ -3040,7 +3056,7 @@ public class operator extends Operator {
 
             if ((in instanceof Exertion) && (out instanceof Exertion)) {
                 try {
-                    callEntry = new Call(outPath, inPath, in);
+                    callEntry = new Pro(outPath, inPath, in);
                 } catch (ContextException e) {
                     e.printStackTrace();
                 }
@@ -3053,7 +3069,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Call persistent(Pipe pipe) {
+    public static Pro persistent(Pipe pipe) {
         pipe.callEntry.setPersistent(true);
         return pipe.callEntry;
     }
@@ -3282,7 +3298,7 @@ public class operator extends Operator {
     public static Exertion xrt(Mappable mappable, String path)
         throws ContextException {
         Object obj = ((ServiceContext) mappable).asis(path);
-        while (obj instanceof Mappable || obj instanceof Call) {
+        while (obj instanceof Mappable || obj instanceof Pro) {
             try {
                 obj = ((Evaluation) obj).asis();
             } catch (RemoteException e) {
@@ -3417,8 +3433,8 @@ public class operator extends Operator {
                     if (((LoopTask)e).getCondition() != null)
                         ((LoopTask)e).getCondition().setConditionalContext(pm);
                     Mogram target = ((LoopTask)e).getTarget();
-                    if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Call) {
-                        Call p = (Call)((EvaluationTask)target).getEvaluation();
+                    if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Pro) {
+                        Pro p = (Pro)((EvaluationTask)target).getEvaluation();
                         p.setScope(pm);
                         if (target instanceof Exertion && ((Exertion)target).getContext().getReturnPath() == null)
                             ((ServiceContext)((Exertion)target).getContext()).setReturnPath(p.getName());
@@ -3427,8 +3443,8 @@ public class operator extends Operator {
 //					pm.append(((VarSignature)e.getProcessSignature()).getVariability());
                 } else if (e instanceof EvaluationTask) {
                     e.setScope(pm.getScope());
-                    if (((EvaluationTask)e).getEvaluation() instanceof Call) {
-                        Call p = (Call)((EvaluationTask)e).getEvaluation();
+                    if (((EvaluationTask)e).getEvaluation() instanceof Pro) {
+                        Pro p = (Pro)((EvaluationTask)e).getEvaluation();
                         ((EntryModel)pm.getScope()).addCall(p);
 //						pm.addCall(p);
 

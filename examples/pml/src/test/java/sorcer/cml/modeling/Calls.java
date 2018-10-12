@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.context.model.ent.Call;
+import sorcer.core.context.model.ent.Pro;
 import sorcer.service.Context;
 import sorcer.service.modeling.*;
 
@@ -32,10 +32,10 @@ public class Calls {
 	@Test
 	public void procScope() throws Exception {
 		// a call is a variable (entry) evaluated with its own scope (context)
-		Context<Double> cxt = context(call("x", 20.0), call("y", 30.0));
+		Context<Double> cxt = context(val("x", 20.0), val("y", 30.0));
 
 		// call with its context scope
-		Call add = call("add", invoker("x + y", args("x", "y")), cxt);
+		Pro add = pro("add", invoker("x + y", args("x", "y")), cxt);
 		logger.info("call eval: " + exec(add));
 		assertTrue(exec(add).equals(50.0));
 	}
@@ -44,8 +44,8 @@ public class Calls {
 	@Test
 	public void modelScope() throws Exception {
 
-		Model mdl = model(call("x", 20.0), call("y", 30.0));
-		Call add = call("add", invoker("x + y", args("x", "y")), mdl);
+		Model mdl = model(pro("x", 20.0), pro("y", 30.0));
+		Pro add = pro("add", invoker("x + y", args("x", "y")), mdl);
 
 		// adding a call to the model updates call's scope
 		add(mdl, add);
@@ -58,7 +58,7 @@ public class Calls {
 	
 	@Test
 	public void closingProcWihEntries() throws Exception {
-		Call y = call("y",
+		Pro y = pro("y",
 				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = exec(y, val("x1", 10.0), val("x2", 50.0), val("x3", 20.0), val("x4", 80.0));
 		// logger.info("y eval: " + val);
@@ -69,7 +69,7 @@ public class Calls {
 	public void closingProcWitScope() throws Exception {
 
 		// invokers use contextual scope of args
-		Call add = call("add", invoker("x + y", args("x", "y")));
+		Pro add = pro("add", invoker("x + y", args("x", "y")));
 
 		Context<Double> cxt = context(val("x", 10.0), val("y", 20.0));
 		logger.info("call eval: " + exec(add, cxt));
@@ -81,8 +81,8 @@ public class Calls {
 	@Test
 	public void dbProcOperator() throws Exception {
 		
-		Call<Double> dbp1 = persistent(call("design/in", 25.0));
-		Call<String> dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
+		Pro<Double> dbp1 = persistent(pro("design/in", 25.0));
+		Pro<String> dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
 
 		// dbp1 is declared to be persisted
 		assertTrue(dbp1.getOut().equals(25.0));
@@ -117,12 +117,12 @@ public class Calls {
 	@Test
 	public void substitutingValuesWithEntFidelities() throws Exception {
 		
-		Call<Double> dbp = dbEnt("shared/eval", 25.0);
+		Pro<Double> dbp = dbEnt("shared/eval", 25.0);
 		
-		Call multi = call("multi",
+		Pro multi = pro("multi",
 				entFi(val("init/eval"),
 					dbp,
-					call("invoke", invoker("x + y", args("x", "y")))));
+						pro("invoke", invoker("x + y", args("x", "y")))));
 
 		Context cxt = context(val("x", 10.0),
 				val("y", 20.0), val("init/eval", 49.0));
@@ -139,10 +139,10 @@ public class Calls {
 		
 		Model mdl = entModel("call-model", val("v1", 1.0), val("v2", 2.0));
 		add(mdl, val("x", 10.0), val("y", 20.0));
-		// add an active call, no scope
+		// add an active pro, no scope
 		add(mdl, call(invoker("add1", "x + y", args("x", "y"))));
-		// add a call with own scope
-		add(mdl, call(invoker("add2", "x + y", args("x", "y")),
+		// add a pro with own scope
+		add(mdl, pro(invoker("add2", "x + y", args("x", "y")),
 				context(val("x", 30.0), val("y", 40.0))));
 		
 		assertEquals(exec(mdl, "add1"), 30.0);

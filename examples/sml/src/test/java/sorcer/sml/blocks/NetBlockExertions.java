@@ -198,7 +198,7 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 //		logger.info("result: " + eval(context(block), "out"));
 		assertEquals(value(context(block), "out"), 500.0);
 
-		block = exert(block, call("block/t4/arg/x1", 200.0), call("block/t4/arg/x2", 800.0));
+		block = exert(block, pro("block/t4/arg/x1", 200.0), pro("block/t4/arg/x2", 800.0));
 		logger.info("block context 2: " + context(block));
 //		logger.info("result: " + eval(context(block), "out"));
 		assertEquals(value(context(block), "out"), 100.0);
@@ -218,7 +218,7 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 				 
 		Block block = block("block", sig(Concatenator.class),
 				context(ent("x1", 4.0), ent("x2", 5.0)),
-				task(call("y", invoker("x1 * x2", args("x1", "x2")))),
+				task(pro("y", invoker("x1 * x2", args("x1", "x2")))),
 				alt(opt(condition(cxt -> (Double)value(cxt, "y") > 50.0), t4),
 						opt(condition(cxt -> (Double)value(cxt, "y") <= 50 ), t5)));
 				
@@ -227,7 +227,7 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 100.00);
 
-		block = exert(block, call("block/x1", 10.0), call("block/x2", 6.0));
+		block = exert(block, pro("block/x1", 10.0), pro("block/x2", 6.0));
 		logger.info("block context: " + context(block));
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(block), "block/result"), 500.00);
@@ -241,7 +241,7 @@ public class NetBlockExertions implements SorcerConstants, Serializable {
 				context(val("x1", 10.0), val("x2", 20.0), val("z", 100.0)),
 				loop(condition(cxt -> (double)value(cxt, "x1") + (double)value(cxt, "x2")
 								< (double)value(cxt, "z")),
-						task(call("x1", invoker("x1 + 3", args("x1"))))));
+						task(pro("x1", invoker("x1 + 3", args("x1"))))));
 		
 		block = exert(block);
 		logger.info("block context: " + context(block));

@@ -31,7 +31,7 @@ import java.util.Properties;
 /**
  * Created by Mike Sobolewski on 4/14/16.
  */
-public class SysCall extends Call<Context> implements Serializable {
+public class SysCall extends Pro<Context> implements Serializable {
 
     private CmdInvoker invoker;
     private ServiceContext dataContext;

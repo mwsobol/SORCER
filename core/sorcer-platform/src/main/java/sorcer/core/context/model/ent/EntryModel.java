@@ -133,13 +133,13 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 					val = ((UuidObject) val).getObject();
 				}
 				return val;
-			} else if (val instanceof Call) {
-				if (((Call) val).isCached()) {
-					return ((Call) val).getOut();
-				} else if (((Call) val).isPersistent) {
-					return ((Call) val).evaluate();
-				} else if ((((Call) val).asis() instanceof Subroutine)) {
-					bindEntry((Subroutine) ((Call) val).asis());
+			} else if (val instanceof Pro) {
+				if (((Pro) val).isCached()) {
+					return ((Pro) val).getOut();
+				} else if (((Pro) val).isPersistent) {
+					return ((Pro) val).evaluate();
+				} else if ((((Pro) val).asis() instanceof Subroutine)) {
+					bindEntry((Subroutine) ((Pro) val).asis());
 				}
 			}
 
@@ -148,12 +148,12 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			} else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
 				((Scopable) ((Entry)val).asis()).setScope(this);
 			}
-			if (val != null && val instanceof Call) {
+			if (val != null && val instanceof Pro) {
 				Context inCxt = (Context) Arg.selectDomain(args);
 				if (inCxt != null) {
 					isChanged = true;
 				}
-				Object impl = ((Call)val).getImpl();
+				Object impl = ((Pro)val).getImpl();
 				if (impl instanceof Mogram) {
 					return exec((Service)impl, args);
 				} else if (impl instanceof Invocation) {
@@ -174,7 +174,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				} else if (impl instanceof Evaluation) {
 					return ((Evaluation) impl).evaluate(args);
 				} else {
-					return ((Call)val).getValue(args);
+					return ((Pro)val).getValue(args);
 				}
 			} else if (val instanceof Evaluation) {
 				return ((Evaluation) val).evaluate(args);
@@ -234,8 +234,8 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	public Object putValue(String path, Object value) throws ContextException {
 		isChanged = true;
 		Object obj = get(path);
-		if (obj instanceof Call) {
-			((Call) obj).setValue(value);
+		if (obj instanceof Pro) {
+			((Pro) obj).setValue(value);
 			return value;
 		} else {
 			if (value instanceof Scopable) {
@@ -250,12 +250,12 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		return super.put(path, value);
 	}
 
-	public Call getCall(String name) throws ContextException {
+	public Pro getCall(String name) throws ContextException {
 		Object obj = get(name);
-		if (obj instanceof Call)
-			return (Call) obj;
+		if (obj instanceof Pro)
+			return (Pro) obj;
 		else
-			return new Call(name, asis(name), this);
+			return new Pro(name, asis(name), this);
 	}
 
 	public Subroutine bindEntry(Subroutine ent) throws ContextException, RemoteException {
@@ -277,13 +277,13 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 	}
 
 	public EntryModel append(Arg... objects) throws ContextException {
-		Call p = null;
+		Pro p = null;
 		boolean changed = false;
 		for (Arg obj : objects) {
 			if (obj instanceof Fi) {
 				continue;
-			} else if (obj instanceof Call) {
-				p = (Call) obj;
+			} else if (obj instanceof Pro) {
+				p = (Pro) obj;
 			} else if (obj instanceof Entry) {
 				putValue((String) ((Entry) obj).key(),
 						((Entry) obj).getOut());
@@ -309,12 +309,12 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 
 	@Override
 	public Domain add(Identifiable... objects) throws ContextException, RemoteException {
-		Call p = null;
+		Pro p = null;
 		boolean changed = false;
 		for (Identifiable obj : objects) {
 			String pn = obj.getName();
-			if (obj instanceof Call) {
-				p = (Call) obj;
+			if (obj instanceof Pro) {
+				p = (Pro) obj;
 			} else if (obj instanceof Functionality || obj instanceof Setup) {
 				putValue(pn, obj);
 			} else if (obj instanceof Entry) {
@@ -381,7 +381,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 				if (((ServiceContext) context).getExecPath() != null) {
 					Object o = get(((ServiceContext) context).getExecPath()
 							.path());
-					if (o instanceof Call) {
+					if (o instanceof Pro) {
 						if (o instanceof Agent) {
 							if (((Agent) o).getScope() == null)
 								((Agent) o).setScope(this);
@@ -389,7 +389,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 								((Agent) o).getScope().append(this);
 							result = ((Agent) o).evaluate(entries);
 						} else {
-							Object i = ((Call) get(((ServiceContext) context)
+							Object i = ((Pro) get(((ServiceContext) context)
 									.getExecPath().path())).asis();
 							if (i instanceof ServiceInvoker) {
 								result = ((ServiceInvoker) i).compute(entries);
@@ -463,10 +463,10 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		throw new ContextException("No such variability in context: " + name);
 	}
 
-	private Call putVar(String path, Functionality value) throws ContextException {
+	private Pro putVar(String path, Functionality value) throws ContextException {
 		putValue(path, value);
 		markVar(this, path, value);
-		return new Call(path, value, this);
+		return new Pro(path, value, this);
 	}
 
 	private void realizeDependencies(Arg... entries) throws RemoteException,

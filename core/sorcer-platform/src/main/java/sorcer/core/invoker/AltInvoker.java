@@ -17,13 +17,11 @@
  */
 package sorcer.core.invoker;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import sorcer.service.Arg;
-import sorcer.service.Condition;
-import sorcer.service.ConditionalInvocation;
-import sorcer.service.EvaluationException;
+import sorcer.service.*;
 
 /**
  * The alternative Invoker that executes sequentially a collection optional
@@ -38,9 +36,13 @@ public class AltInvoker<V> extends ServiceInvoker<V> implements ConditionalInvoc
 	protected List<OptInvoker> optInvokers;
 	
 	
-	public AltInvoker(String name, OptInvoker... optInvokers) {
+	public AltInvoker(String name, Evaluator... optInvokers) {
 		super(name);
-		this.optInvokers = Arrays.asList(optInvokers);
+		List<OptInvoker> options = new ArrayList<>();
+		for (Evaluator ev : optInvokers) {
+			options.add((OptInvoker)ev);
+		}
+		this.optInvokers = options;
 	}
 
 	public AltInvoker(String name, List<OptInvoker> optInvokers) {

@@ -52,6 +52,11 @@ public class Path implements Arg, Service {
 			int ind = path.indexOf("$");
 			pn = path.substring(0, ind);
 			domain = path.substring(ind + 1);
+			// allow $ at the end
+			if (domain.isEmpty()) {
+				pn = path;
+				domain = null;
+			}
 		}
 		this.path = pn;
 	}

@@ -51,7 +51,7 @@ public class SmlOperators {
 
 		// Entries
 		val v1 = val("x2", 10.6);
-		func cu1 = call("x3", ev1);
+		func p1 = pro("x3", ev1);
 		func s1 = srv(op1);
 		func f1 = lmbd("s1", args("v1", "f1"));
 		func f2 = neu("x6", 1.0);
@@ -61,10 +61,10 @@ public class SmlOperators {
 		ent e2 = ent("x3", ev1);
 
 		// Data Contexts
-		cxt c1 = context(v1, val("x4", 10.8), execEnt(cu1), execEnt(f2));
+		cxt c1 = context(v1, val("x4", 10.8), execEnt(p1), execEnt(f2));
 
 		// Mograms
-		mog m1 = model(v1, cu1, f1, f2);
+		mog m1 = model(v1, p1, f1, f2);
 		mog t1 = task(op1, c1);
 		mog t2 = task(op1, op2, c1);
 		mog ex1 = block(t1, t2, m1);
@@ -81,11 +81,11 @@ public class SmlOperators {
 		Object o7 = exec(m1);
 		Object o8 = exec(ev1);
 
-		// Object specific outputs
-		Object o9 = get(v1);
-		Object o10 = value(context(), "path");
-		Object o11 = exec(model(), "path");
-		Object o12 = exec(model(), "path", "domain");
+		// Object specific outputsObject o9 = get(v1);
+		//		Object o10 = value(context(), "path");
+		//		Object o11 = exec(model(), "path");
+		//		Object o12 = exec(model(), "path", "domain");
+
 
 		// Entries for results of exec
 		ent e3 = execEnt(v1);

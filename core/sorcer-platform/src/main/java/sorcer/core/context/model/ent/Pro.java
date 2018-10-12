@@ -48,30 +48,30 @@ import static sorcer.so.operator.exec;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Call<T> extends Subroutine<T> implements Mappable<T>,
+public class Pro<T> extends Subroutine<T> implements Mappable<T>,
 		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, func<T> {
 
 	private static final long serialVersionUID = 7495489980319169695L;
 	 
-	private static Logger logger = LoggerFactory.getLogger(Call.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(Pro.class.getName());
 	
 	private Principal principal;
 
 	// data store URL for this call
 	private URL dbURL;
 
-	public Call(String name) {
+	public Pro(String name) {
 		super(name);
 		this.name = name;
 		type = Functionality.Type.PROC;
 	}
 	
-	public Call(Identifiable identifiable) {
+	public Pro(Identifiable identifiable) {
 		this(identifiable.getName());
 		impl = (T)identifiable;
 	}
 
-	public Call(String path, Object entity) {
+	public Pro(String path, Object entity) {
 		super(path);
 		name = path;
 		if (entity instanceof  Number || entity instanceof  String || entity instanceof  Date
@@ -98,7 +98,7 @@ public class Call<T> extends Subroutine<T> implements Mappable<T>,
 		}
 	}
 
-	public Call(String path, Object entity, Object scope)
+	public Pro(String path, Object entity, Object scope)
 			throws ContextException {
 		this(path);
         if (entity instanceof  Number || entity instanceof  String || entity instanceof  Date
@@ -119,7 +119,7 @@ public class Call<T> extends Subroutine<T> implements Mappable<T>,
 		this.impl = entity;
 	}
 	
-	public Call(Mappable map, String name, String path) {
+	public Pro(Mappable map, String name, String path) {
 		this(name);
 		impl =  path;
 	}
@@ -197,7 +197,7 @@ public class Call<T> extends Subroutine<T> implements Mappable<T>,
 			} else {
 				val = out;
 			}
-			if (val instanceof Call && ((Call)val).asis() == null && out == null) {
+			if (val instanceof Pro && ((Pro)val).asis() == null && out == null) {
 				logger.warn("undefined call: " + val);
 				return null;
 			}
@@ -320,8 +320,8 @@ public class Call<T> extends Subroutine<T> implements Mappable<T>,
 	public int compareTo(T o) {
 		if (o == null)
 			throw new NullPointerException();
-		if (o instanceof Call<?>)
-			return name.compareTo(((Call<?>) o).getName());
+		if (o instanceof Pro<?>)
+			return name.compareTo(((Pro<?>) o).getName());
 		else
 			return -1;
 	}
@@ -521,7 +521,7 @@ public class Call<T> extends Subroutine<T> implements Mappable<T>,
 	public void addArgs(ArgSet set) throws EvaluationException {
 		Iterator<Arg> i = set.iterator();
 		while (i.hasNext()) {
-			Call callEntry = (Call)i.next();
+			Pro callEntry = (Pro)i.next();
 			try {
 				putValue(callEntry.getName(), callEntry.asis());
 			} catch (Exception e) {
@@ -539,8 +539,8 @@ public class Call<T> extends Subroutine<T> implements Mappable<T>,
 	
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof Call
-				&& ((Call) object).name.equals(name))
+		if (object instanceof Pro
+				&& ((Pro) object).name.equals(name))
 			return true;
 		else
 			return false;

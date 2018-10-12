@@ -13,7 +13,7 @@ import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.arithmetic.tester.volume.Volume;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.context.model.ent.Call;
+import sorcer.core.context.model.ent.Pro;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -50,9 +50,9 @@ public class InvokerTest {
 	private final static Logger logger = LoggerFactory.getLogger(InvokerTest.class);
 
 	private EntryModel pm;
-	private Call x;
-	private Call y;
-	private Call z;
+	private Pro x;
+	private Pro y;
+	private Pro z;
 
 	/// member subclass of Updater with Context parameter used below with
 	// contextMethodAttachmentWithArgs()
@@ -74,9 +74,9 @@ public class InvokerTest {
 	@Before
 	public void initProcModel() throws Exception {
 		pm = new EntryModel();
-		x = call("x", 10.0);
-		y = call("y", 20.0);
-		z = call("z", invoker("x - y", x, y));
+		x = pro("x", 10.0);
+		y = pro("y", 20.0);
+		z = pro("z", invoker("x - y", x, y));
 	}
 
 	@Test
@@ -111,7 +111,7 @@ public class InvokerTest {
 	public void groovyInvokerTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
 		EntryModel pm = entModel("call-model");
-		add(pm, call("x", 10.0), call("y", 20.0));
+		add(pm, pro("x", 10.0), pro("y", 20.0));
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
 		logger.info("invoke eval: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
@@ -123,7 +123,7 @@ public class InvokerTest {
 	public void lambdaInvokerTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
 		EntryModel pm = entModel("model");
-		add(pm, call("x", 10.0), call("y", 20.0));
+		add(pm, pro("x", 10.0), pro("y", 20.0));
 		add(pm, invoker("lambda", cxt -> (double)value(cxt, "x") + (double)value(cxt, "y") + 30));
 		logger.info("invoke eval: " + invoke(pm, "lambda"));
 		assertEquals(invoke(pm, "lambda"), 60.0);
@@ -134,7 +134,7 @@ public class InvokerTest {
 	@Test
 	public void lambdaInvokerTest2() throws Exception {
 
-		Model mo = model(call("x", 10.0), call("y", 20.0),
+		Model mo = model(pro("x", 10.0), pro("y", 20.0),
 				call(invoker("lambda", cxt -> (double) value(cxt, "x")
 									+ (double) value(cxt, "y")
 									+ 30)));
@@ -146,9 +146,9 @@ public class InvokerTest {
 	public void lambdaInvokerTest3() throws Exception {
 
 
-		Context scope = context(call("x1", 20.0), call("y1", 40.0));
+		Context scope = context(pro("x1", 20.0), pro("y1", 40.0));
 
-		Model mo = model(call("x", 10.0), call("y", 20.0),
+		Model mo = model(pro("x", 10.0), pro("y", 20.0),
 			call(invoker("lambda", (cxt) -> {
 						return (double) value(cxt, "x")
 								+ (double) value(cxt, "y")
@@ -205,7 +205,7 @@ public class InvokerTest {
 	public void invokeProcTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
 
-		Call x1 = call("x1", 1.0);
+		Pro x1 = pro("x1", 1.0);
 		// logger.info("invoke eval:" + invoke(x1));
 		assertEquals(exec(x1), 1.0);
 	}
@@ -213,12 +213,12 @@ public class InvokerTest {
 	@Test
 	public void invokeProcArgTest() throws RemoteException, ContextException,
 			SignatureException, ExertionException {
-		Call x1, x2, y;
-		x1 = call("x1", 1.0);
-		x2 = call("x2", 2.0);
-		y = call("y", invoker("x1 + x2", args("x1", "x2")));
+		Pro x1, x2, y;
+		x1 = pro("x1", 1.0);
+		x2 = pro("x2", 2.0);
+		y = pro("y", invoker("x1 + x2", args("x1", "x2")));
 
-		Object out = exec(y, call("x1", 10.0), call("x2", 20.0));
+		Object out = exec(y, pro("x1", 10.0), pro("x2", 20.0));
 //		logger.info("y: " + out);
 		assertTrue(out.equals(30.0));
 	}
@@ -475,9 +475,9 @@ public class InvokerTest {
 	public void invokerLoopTest() throws Exception {
 
 		EntryModel pm = entModel("call-model");
-		add(pm, call("x", 1));
-		add(pm, call("y", invoker("x + 1", args("x"))));
-		add(pm, call("z", inc(invoker(pm, "y"), 2)));
+		add(pm, pro("x", 1));
+		add(pm, pro("y", invoker("x + 1", args("x"))));
+		add(pm, pro("z", inc(invoker(pm, "y"), 2)));
 		Invocation z2 = invoker(pm, "z");
 
 		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
@@ -489,9 +489,9 @@ public class InvokerTest {
 	@Test
 	public void incrementorBy1Test() throws Exception {
 		EntryModel pm = entModel("call-model");
-		add(pm, call("x", 1));
-		add(pm, call("y", invoker("x + 1", args("x"))));
-		add(pm, call("z", inc(invoker(pm, "y"))));
+		add(pm, pro("x", 1));
+		add(pm, pro("y", invoker("x + 1", args("x"))));
+		add(pm, pro("z", inc(invoker(pm, "y"))));
 
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + eval(pm, "z"));
@@ -502,9 +502,9 @@ public class InvokerTest {
 	@Test
 	public void incrementorBy2Test() throws Exception {
 		EntryModel pm = entModel("call-model");
-		add(pm, call("x", 1));
-		add(pm, call("y", invoker("x + 1", args("x"))));
-		add(pm, call("z", inc(invoker(pm, "y"), 2)));
+		add(pm, pro("x", 1));
+		add(pm, pro("y", invoker("x + 1", args("x"))));
+		add(pm, pro("z", inc(invoker(pm, "y"), 2)));
 
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + eval(pm, "z"));

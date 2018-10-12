@@ -58,8 +58,8 @@ public class SysCalls {
 
 		EntryModel pm = entModel(call(cmd),
 				val("x", 10.0), val("y"),
-				call("multiply", invoker("x * y", args("x", "y"))),
-				call("add", invoker("x + y", args("x", "y"))));
+				pro("multiply", invoker("x * y", args("x", "y"))),
+				pro("add", invoker("x + y", args("x", "y"))));
 
 		CmdResult result = (CmdResult) invoke(pm, "volume");
 		// get from the result the volume of cylinder and assign to y parameter
@@ -95,8 +95,8 @@ public class SysCalls {
                 + Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
         Model pm = entModel(val("x", 10.0), args("y"),
-                call("multiply", invoker("x * y", args("x", "y"))),
-                call("add", invoker("x + y", args("x", "y"))));
+				pro("multiply", invoker("x * y", args("x", "y"))),
+				pro("add", invoker("x + y", args("x", "y"))));
 
         SysCall caller = sysCall("volume", cxt(val("cmd", "java -cp  " + cp + Volume.class.getName()),
                 inVal("cylinder"), outVal("cylinder/volume"), outVal("cylinder/radius"),
@@ -164,8 +164,8 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
 		Model sm = srvModel(val("x", 10.0), val("y"),
-				call("multiply", invoker("x * y", args("x", "y"))),
-				call("add", invoker("x + y", args("x", "y"))),
+				pro("multiply", invoker("x * y", args("x", "y"))),
+				pro("add", invoker("x + y", args("x", "y"))),
 				result("cylinder/volume"),
 				srv("volume", sig("exec", SysCaller.class,
 //				srv("volume", sig("exec", SysCallerProvider.class,
@@ -203,9 +203,9 @@ public class SysCalls {
 				+ Sorcer.getHome() + "/lib/river/jsk-platform-" + riverVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/river/jsk-lib-" + riverVersion + ".jar ";
 
-		Model sm = srvModel(call("x", 10.0), val("y"),
-				call("multiply", invoker("x * y", args("x", "y"))),
-				call("add", invoker("x + y", args("x", "y"))),
+		Model sm = srvModel(val("x", 10.0), val("y"),
+				ent("multiply", invoker("x * y", args("x", "y"))),
+				ent("add", invoker("x + y", args("x", "y"))),
 				result("cylinder/volume"),
 				srv("volume", sig("exec", SysCallerProvider.class,
 //				srv("volume", sig("exec", SysCaller.class,

@@ -1,6 +1,5 @@
 package sorcer.sml.signatures;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -24,10 +23,11 @@ import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
-import static sorcer.mo.operator.inConn;
-import static sorcer.mo.operator.outConn;
+import static sorcer.eo.operator.result;
+import static sorcer.mo.operator.*;
 import static sorcer.mo.operator.value;
-import static sorcer.so.operator.*;
+import static sorcer.so.operator.exec;
+import static sorcer.so.operator.exert;
 
 /**
  * @author Mike Sobolewski

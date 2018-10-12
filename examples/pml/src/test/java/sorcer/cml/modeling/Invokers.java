@@ -11,7 +11,6 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.core.context.model.ent.Call;
 import sorcer.core.invoker.AltInvoker;
 import sorcer.core.invoker.Updater;
 import sorcer.core.invoker.OptInvoker;
@@ -19,6 +18,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
+import sorcer.service.modeling.ent;
 
 import java.rmi.RemoteException;
 
@@ -46,9 +46,9 @@ public class Invokers {
 	private final static Logger logger = LoggerFactory.getLogger(Invokers.class);
 
 	private EntryModel em;
-	private Call x;
-	private Call y;
-	private Call z;
+	private ent x;
+	private ent y;
+	private ent z;
 
 	/// member subclass of Updater with Context parameter used below with
 	// contextMethodAttachmentWithArgs()
@@ -64,25 +64,26 @@ public class Invokers {
 			// x set from 'arg'
 			assertTrue(exec(x).equals(200.0));
 			// y set from construtor's context 'in'
-			assertTrue(exec(y).equals(30.0));
+			assertTrue(exec(y).equals(30.0)); //-10?
 			assertTrue(exec(z).equals(170.0));
-			return (double)exec(x) + (double)exec(y) + (double)value(em, "z");
+			return (double)exec(x) + (double)exec(y) + (double)exec(em, "z");
 		}
 	};
 
 	@Before
-	public void initProcModel() throws Exception {
+	public void initEntModel() throws Exception {
 		em = new EntryModel();
-		x = call("x", 10.0);
-		y = call("y", 20.0);
-		z = call("z", invoker("x - y", args("x", "y")));
+		//force for x and y procedural entries
+		x = pro("x", 10.0);
+		y = pro("y", 20.0);
+		z = ent("z", invoker("x - y", args("x", "y")));
 	}
 
 	@Test
 	public void lambdaInvoker() throws Exception {
 
 		Model mo = model(val("x", 10.0), val("y", 20.0),
-				call(invoker("lambda",
+				ent(invoker("lambda",
 					(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
 					args("x", "y"))));
 //		logger.info("invoke eval: " + eval(mo, "lambda"));
@@ -102,14 +103,14 @@ public class Invokers {
 		Context in = context(val("x", 20.0), val("y", 30.0));
 		Context arg = context(val("x", 200.0), val("y", 300.0));
 		add(em, methodInvoker("update", new ContextUpdater(in), arg));
-		logger.info("call eval:" + invoke(em, "update"));
-		assertEquals(invoke(em, "update"), 400.0);
+		logger.info("exec:" + exec(em, "update"));
+		assertEquals(exec(em, "update"), 400.0);
 	}
 
 	@Test
 	public void groovyInvoker() throws Exception {
-		EntryModel pm = entModel("call-model");
-		add(pm, call("x", 10.0), call("y", 20.0));
+		EntryModel pm = entModel("ent-model");
+		add(pm, val("x", 10.0), val("y", 20.0));
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
 		logger.info("invoke eval: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
@@ -195,7 +196,7 @@ public class Invokers {
 	@Test
 	public void invokerProc() throws Exception {
 
-		Call x1 = call("x1", 1.0);
+		ent x1 = ent("x1", 1.0);
 
 		// logger.info("invoke eval:" + invoke(x1));
 		assertEquals(exec(x1), 1.0);
@@ -203,11 +204,11 @@ public class Invokers {
 
 	@Test
 	public void substituteInvokeArgs() throws Exception {
-		Call x1, x2, y;
+		ent x1, x2, y;
 
-		x1 = call("x1", 1.0);
-		x2 = call("x2", 2.0);
-		y = call("y", invoker("x1 + x2", x1, x2));
+		x1 = ent("x1", 1.0);
+		x2 = ent("x2", 2.0);
+		y = ent("y", invoker("x1 + x2", x1, x2));
 		
 		logger.info("y: " + exec(y));
 		assertTrue(exec(y).equals(3.0));
@@ -219,7 +220,7 @@ public class Invokers {
 
 	@Test
 	public void modelConditions() throws Exception {
-		final EntryModel pm = new EntryModel("call-model");
+		final EntryModel pm = new EntryModel("ent-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
 		pm.putValue("condition", invoker("x > y", args("x", "y")));
@@ -259,7 +260,7 @@ public class Invokers {
 
 	@Test
 	public void optInvoker() throws Exception {
-		EntryModel pm = new EntryModel("call-model");
+		EntryModel pm = new EntryModel("ent-model");
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
 				"{ x, y -> x > y }", "x", "y"), 
@@ -283,7 +284,7 @@ public class Invokers {
 
 	@Test
 	public void cretaeOptInvoker() throws Exception {
-		EntryModel pm = entModel("call-model");
+		EntryModel pm = entModel("ent-model");
 		add(pm,
 				val("x", 10.0),
 				val("y", 20.0),
@@ -300,7 +301,7 @@ public class Invokers {
 
 	@Test
 	public void altInvoker() throws Exception {
-		EntryModel pm = new EntryModel("call-model");
+		EntryModel pm = new EntryModel("ent-model");
 		pm.putValue("x", 30.0);
 		pm.putValue("y", 20.0);
 		pm.putValue("x2", 50.0);
@@ -308,40 +309,40 @@ public class Invokers {
 		pm.putValue("x3", 70.0);
 		pm.putValue("y3", 60.0);
 
-		OptInvoker opt1 = new OptInvoker("opt1", condition(pm,
+		Evaluator opt1 = opt("opt1", condition(pm,
 				"{ x, y -> x > y }", "x", "y"), invoker("x + y + 10",
 					args("x", "y")));
 
-		OptInvoker opt2 = new OptInvoker("opt2", condition(pm,
+		Evaluator opt2 = opt("opt2", condition(pm,
 				"{ x2, y2 -> x2 > y2 }", "x2", "y2"), invoker(
 				"x + y + 20", args("x", "y")));
 
-		OptInvoker opt3 = new OptInvoker("op3", condition(pm,
+		Evaluator opt3 = opt("op3", condition(pm,
 				"{ x3, y3 -> x3 > y3 }", "x3", "y3"), invoker(
 				"x + y + 30", args("x", "y")));
 
 		// no condition means condition(true)
-		OptInvoker opt4 = new OptInvoker("opt4", invoker("x + y + 40",
+		Evaluator opt4 = opt("opt4", invoker("x + y + 40",
 				args("x", "y")));
 
-		AltInvoker alt = new AltInvoker("alt", opt1, opt2, opt3, opt4);
+		AltInvoker alt = alt("alt", opt1, opt2, opt3, opt4);
 		add(pm, opt1, opt2, opt3, opt4, alt);
 
-		logger.info("opt1 eval: " + eval(opt1));
-		assertEquals(eval(opt1), 60.0);
-		logger.info("opt2 eval: " + eval(opt2));
-		assertEquals(eval(opt2), 70.0);
-		logger.info("opt3 eval: " + eval(opt3));
-		assertEquals(eval(opt3), 80.0);
-		logger.info("opt4 eval: " + eval(opt4));
-		assertEquals(eval(opt4), 90.0);
-		logger.info("alt eval: " + eval(alt));
-		assertEquals(eval(alt), 60.0);
+		logger.info("opt1 exec: " + exec(opt1));
+		assertEquals(exec(opt1), 60.0);
+		logger.info("opt2 exec: " + exec(opt2));
+		assertEquals(exec(opt2), 70.0);
+		logger.info("opt3 exec: " + exec(opt3));
+		assertEquals(exec(opt3), 80.0);
+		logger.info("opt4 exec: " + exec(opt4));
+		assertEquals(exec(opt4), 90.0);
+		logger.info("alt exec: " + exec(alt));
+		assertEquals(exec(alt), 60.0);
 
 		pm.putValue("x", 300.0);
 		pm.putValue("y", 200.0);
-		logger.info("opt eval: " + eval(alt));
-		assertEquals(eval(alt), 510.0);
+		logger.info("opt exec: " + exec(alt));
+		assertEquals(exec(alt), 510.0);
 
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
@@ -349,18 +350,18 @@ public class Invokers {
 		pm.putValue("y2", 50.0);
 		pm.putValue("x3", 50.0);
 		pm.putValue("y3", 60.0);
-		logger.info("opt eval: " + alt.compute());
-		assertEquals(eval(alt), 70.0);
+		logger.info("opt exec: " + alt.compute());
+		assertEquals(exec(alt), 70.0);
 
 		pm.putValue("x2", 50.0);
 		pm.putValue("y2", 40.0);
-		logger.info("opt eval: " + alt.compute());
-		assertEquals(eval(alt), 50.0);
+		logger.info("opt exec: " + alt.compute());
+		assertEquals(exec(alt), 50.0);
 	}
 
 	@Test
 	public void smlAltInvoker() throws Exception {
-		EntryModel pm = entModel("call-model");
+		EntryModel pm = entModel("ent-model");
 		add(pm, val("x", 10.0), val("y", 20.0), val("x2", 50.0),
 				val("y2", 40.0), val("x3", 50.0), val("y3", 60.0));
 
@@ -376,76 +377,76 @@ public class Invokers {
 
 		add(pm, alt, get(alt, 0), get(alt, 1), get(alt, 2), get(alt, 3));
 
-		logger.info("opt1 eval : " + value(pm, "opt1"));
+		logger.info("opt1 exec : " + exec(pm, "opt1"));
 		assertEquals(value(pm, "opt1"), null);
-		logger.info("opt2 eval: " + value(pm, "opt2"));
+		logger.info("opt2 exec: " + exec(pm, "opt2"));
         assertTrue(value(pm, "opt2").equals(50.0));
-		logger.info("opt3 eval: " + value(pm, "opt3"));
+		logger.info("opt3 exec: " + exec(pm, "opt3"));
 		assertEquals(value(pm, "opt3"), null);
-		logger.info("opt4 eval: " + value(pm, "opt4"));
+		logger.info("opt4 exec: " + exec(pm, "opt4"));
         assertTrue(value(pm, "opt4").equals(70.0));
-		logger.info("alt eval: " + eval(alt));
-		assertEquals(eval(alt), 50.0);
+		logger.info("alt exec: " + exec(alt));
+		assertEquals(exec(alt), 50.0);
 
 		setValues(pm, val("x", 300.0), val("y", 200.0));
 		logger.info("alt eval: " + eval(alt));
-		assertEquals(eval(alt), 510.0);
+		assertEquals(exec(alt), 510.0);
 
 		setValues(pm, val("x", 10.0), val("y", 20.0), val("x2", 40.0),
 				val("y2", 50.0), val("x3", 50.0), val("y3", 60.0));
 		logger.info("alt eval: " + eval(alt));
-		assertEquals(eval(alt), 70.0);
+		assertEquals(exec(alt), 70.0);
 	}
 
 	@Test
 	public void invokerLoop() throws Exception {
-		EntryModel pm = entModel("call-model");
+		EntryModel pm = entModel("ent-model");
 		add(pm, val("x", 1));
-		add(pm, call("y", invoker("x + 1", args("x"))));
-		add(pm, call("z", inc(invoker(pm, "y"), 2)));
+		add(pm, ent("y", invoker("x + 1", args("x"))));
+		add(pm, ent("z", inc(invoker(pm, "y"), 2)));
 		Invocation z2 = invoker(pm, "z");
 
 		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
 		add(pm, iloop);
-		assertEquals(value(pm, "iloop"), 48);
+		assertEquals(exec(pm, "iloop"), 48);
 	}
 
 	@Test
 	public void incrementorStepBy1() throws Exception {
-		EntryModel pm = entModel("call-model");
+		EntryModel pm = entModel("ent-model");
 		add(pm, val("x", 1));
-		add(pm, call("y", invoker("x + 1", args("x"))));
-		add(pm, call("z", inc(invoker(pm, "y"))));
+		add(pm, ent("y", invoker("x + 1", args("x"))));
+		add(pm, ent("z", inc(invoker(pm, "y"))));
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + value(pm, "z"));
 		}
-        assertTrue(value(pm, "z").equals(13));
+        assertTrue(exec(pm, "z").equals(13));
 	}
 
 	@Test
 	public void incrementorStepBy2() throws Exception {
-		EntryModel pm = entModel("call-model");
-		add(pm, call("x", 1));
-		add(pm, call("y", invoker("x + 1", args("x"))));
-		add(pm, call("z", inc(invoker(pm, "y"), 2)));
+		EntryModel pm = entModel("ent-model");
+		add(pm, val("x", 1));
+		add(pm, ent("y", invoker("x + 1", args("x"))));
+		add(pm, ent("z", inc(invoker(pm, "y"), 2)));
 
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + value(pm, "z"));
 		}
-		assertEquals(value(pm, "z"), 24);
+		assertEquals(exec(pm, "z"), 24);
 	}
 
 	@Test
 	public void incrementorDouble() throws Exception {
-		EntryModel pm = entModel("call-model");
-		add(pm, call("x", 1.0));
-		add(pm, call("y", invoker("x + 1.2", args("x"))));
-		add(pm, call("z", inc(invoker(pm, "y"), 2.1)));
+		EntryModel pm = entModel("ent-model");
+		add(pm, ent("x", 1.0));
+		add(pm, ent("y", invoker("x + 1.2", args("x"))));
+		add(pm, ent("z", inc(invoker(pm, "y"), 2.1)));
 
 		for (int i = 0; i < 10; i++) {
 			logger.info("" + next(pm, "z"));
 		}
-		// logger.info("" + eval(em,"y++2.1"));
-		assertEquals(value(pm, "z"), 25.300000000000004);
+		// logger.info("" + exec(em,"y++2.1"));
+		assertEquals(exec(pm, "z"), 25.300000000000004);
 	}
 }

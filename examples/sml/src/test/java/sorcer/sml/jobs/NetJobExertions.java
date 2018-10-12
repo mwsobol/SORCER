@@ -318,15 +318,15 @@ public class NetJobExertions implements SorcerConstants {
 		EntryModel vm = entModel(
 				"Hello Arithmetic #2",
 				// inputs
-				val("x1"), val("x2"), call("x3", 20.0), val("x4"),
+				val("x1"), val("x2"), val("x3", 20.0), val("x4"),
 				// outputs
-				call("t4", invoker("x1 * x2", args("x1", "x2"))),
-				call("t5",
+				pro("t4", invoker("x1 * x2", args("x1", "x2"))),
+				pro("t5",
 					task("t5",
 						sig("add", Adder.class),
 						cxt("add", inVal("x3"), inVal("x4"),
 						result("result/y")))),
-				call("j1", invoker("t4 - t5", args("t4", "t5"))));
+				pro("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		setValues(vm, val("x1", 10.0), val("x2", 50.0), val("x4", 80.0));
 				 
