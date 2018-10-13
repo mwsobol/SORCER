@@ -1,4 +1,4 @@
-package sorcer.cml.modeling;
+package sorcer.pml.modeling;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +12,7 @@ import sorcer.core.context.model.ent.SysCall;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.SysCaller;
 import sorcer.core.provider.caller.SysCallerProvider;
-import sorcer.cml.provider.impl.Volume;
+import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.util.Sorcer;
@@ -33,7 +33,7 @@ import static sorcer.so.operator.*;
  * @author Mike Sobolewski
  */
 @RunWith(SorcerTestRunner.class)
-@ProjectContext("examples/cml")
+@ProjectContext("examples/pml")
 public class SysCalls {
 	private final static Logger logger = LoggerFactory.getLogger(SysCalls.class);
 
@@ -45,7 +45,7 @@ public class SysCalls {
 		String logbackVersion = System.getProperty("logback.version");
 		String buildDir = System.getProperty("project.build.dir");
 
-        String cp = buildDir + "/libs/cml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
+        String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
         		+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
@@ -86,7 +86,7 @@ public class SysCalls {
         String logbackVersion = System.getProperty("logback.version");
         String buildDir = System.getProperty("project.build.dir");
 
-        String cp = buildDir + "/libs/cml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
+        String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
                 + Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
                 + Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
                 + Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
@@ -127,7 +127,7 @@ public class SysCalls {
 		String logbackVersion = property("logback.version");
 		String buildDir = property("project.build.dir");
 
-		String cp = buildDir + "/libs/cml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
+		String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
@@ -155,7 +155,7 @@ public class SysCalls {
 		String logbackVersion = System.getProperty("logback.version");
 		String buildDir = System.getProperty("project.build.dir");
 
-		String cp = buildDir + "/libs/cml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
+		String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator
@@ -195,7 +195,7 @@ public class SysCalls {
 		String logbackVersion = System.getProperty("logback.version");
 		String buildDir = System.getProperty("project.build.dir");
 
-		String cp = buildDir + "/libs/cml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
+		String cp = buildDir + "/libs/pml-" + sorcerVersion + "-bean.jar" + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/sorcer/lib/sorcer-platform-" + sorcerVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/slf4j-api-" + slf4jVersion + ".jar"  + File.pathSeparator
 				+ Sorcer.getHome() + "/lib/logging/logback-core-" + logbackVersion + ".jar"  + File.pathSeparator

@@ -1,4 +1,4 @@
-package sorcer.cml.provider;
+package sorcer.pml.provider;
 
 import sorcer.service.Context;
 import sorcer.service.ContextException;

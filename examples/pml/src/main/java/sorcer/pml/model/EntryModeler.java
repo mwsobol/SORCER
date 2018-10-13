@@ -1,4 +1,4 @@
-package sorcer.cml.model;
+package sorcer.pml.model;
 
 import sorcer.core.context.model.ent.EntryModel;
 import sorcer.service.ContextException;

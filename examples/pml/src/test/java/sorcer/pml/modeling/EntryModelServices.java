@@ -1,4 +1,4 @@
-package sorcer.cml.modeling;
+package sorcer.pml.modeling;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.ent.EntryModel;
-import sorcer.cml.model.EntryModeler;
+import sorcer.pml.model.EntryModeler;
 import sorcer.service.Invocation;
 import sorcer.service.Task;
 import sorcer.service.modeling.Model;

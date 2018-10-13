@@ -1,4 +1,4 @@
-package sorcer.cml.modeling;
+package sorcer.pml.modeling;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +30,7 @@ public class Calls {
 	private final static Logger logger = LoggerFactory.getLogger(Calls.class.getName());
 
 	@Test
-	public void procScope() throws Exception {
+	public void proScope() throws Exception {
 		// a call is a variable (entry) evaluated with its own scope (context)
 		Context<Double> cxt = context(val("x", 20.0), val("y", 30.0));
 

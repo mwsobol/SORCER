@@ -151,8 +151,6 @@ public class operator {
                     out = (T) ((Pro) obj).evaluate(args);
                 } else if (SdbUtil.isSosURL(obj)) {
                     out = (T) ((URL) obj).getContent();
-                } else if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
-                    out = (T) ((ServiceContext) context).getEvaluatedValue(path);
                 }
 //				else if (obj instanceof Srv && ((Srv) obj).asis() instanceof EntryCollable) {
 //					Entry entry = ((EntryCollable) ((Srv) obj).asis()).call((Model) context);
@@ -166,7 +164,9 @@ public class operator {
                 // linked contexts and other special case of ServiceContext
                 out = context.getValue(path, args);
             }
-            if (context instanceof Model && ((ModelStrategy)context.getMogramStrategy()).getOutcome() != null) {
+            if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
+                out = (T) context.getEvaluatedValue(path);
+            } else if (context instanceof Model && context.getMogramStrategy().getOutcome() != null) {
                 context.getMogramStrategy().getOutcome().putValue(path, out);
             }
             return out;

@@ -1,12 +1,12 @@
-package sorcer.cml.provider.impl;
+package sorcer.pml.provider.impl;
 
 /**
  * @author Mike Sobolewski
  */
 
-import sorcer.cml.provider.Cylinder;
-import sorcer.cml.provider.Sphere;
 import sorcer.ent.operator;
+import sorcer.pml.provider.Cylinder;
+import sorcer.pml.provider.Sphere;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 

@@ -1,4 +1,4 @@
-package sorcer.cml.modeling;
+package sorcer.pml.modeling;
 
 import groovy.lang.Closure;
 import org.junit.Before;
@@ -11,7 +11,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
-import sorcer.cml.provider.impl.Volume;
+import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
 import sorcer.util.Row;
 import sorcer.util.Sorcer;

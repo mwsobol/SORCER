@@ -1,4 +1,4 @@
-package sorcer.cml.modeling;
+package sorcer.pml.modeling;
 
 import org.junit.Before;
 import org.junit.Test;
