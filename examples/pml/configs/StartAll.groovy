@@ -43,7 +43,7 @@ class StartAll {
 
         descriptors << new SorcerServiceDescriptor(codebase,
                                                    policy,
-                                                   "${buildLibPath}/cml-${sorcerVersion}-model.jar",
+                                                   "${buildLibPath}/pml-${sorcerVersion}-model.jar",
                                                    "sorcer.core.provider.ServiceTasker",
                                                    configArg as String[])
         return descriptors as ServiceDescriptor[]

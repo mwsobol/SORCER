@@ -8,7 +8,7 @@ jar {
 	classifier = "bean"
 	dependsOn classes
 	from sourceSets.main.output
-	exclude('sorcer/cml/model/**')
+	exclude('sorcer/pml/model/**')
 }
 
 task beanDlJar(type: Jar) {
@@ -18,7 +18,7 @@ task beanDlJar(type: Jar) {
 	classifier = "dl"
 	dependsOn classes
 	from sourceSets.main.output
-	include('sorcer/cml/provider/*')
+	include('sorcer/pml/provider/*')
 }
 
 task modelJar(type: Jar) {
@@ -28,7 +28,7 @@ task modelJar(type: Jar) {
     classifier = "model"
 	dependsOn classes
 	from sourceSets.main.output
-	include('sorcer/cml/model/*')
+	include('sorcer/pml/model/*')
 }
 
 artifacts {
@@ -50,7 +50,7 @@ dependencies {
 }
 
 def repoPath() {
-	return "org/sorcer/cml/${version}"
+	return "org/sorcer/pml/${version}"
 }
 
 bootme {
@@ -63,7 +63,7 @@ bootme {
 test {
 
 	systemProperty "java.rmi.server.codebase",
-				   "${websterUrl}/${repoPath()}/cml-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
+				   "${websterUrl}/${repoPath()}/pml-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
 	testLogging {
 		events "passed", "skipped", "failed"/*, "standardOut", "standardError"*/
