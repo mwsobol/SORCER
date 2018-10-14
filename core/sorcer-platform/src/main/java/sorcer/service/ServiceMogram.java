@@ -926,6 +926,10 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
        return mdaFi;
     }
 
+    public Fidelity<MdaEntry> getMdaFi() {
+        return mdaFi;
+    }
+
     @Override
     public String getProjectionFi(String projectionName) throws ContextException, RemoteException {
         return ((FidelityManager)fiManager).getProjectionFi(projectionName);

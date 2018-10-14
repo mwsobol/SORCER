@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static sorcer.co.operator.get;
+import static sorcer.mo.operator.value;
 
 /**
  * Created by Mike Sobolewski on 9/10/20.
@@ -130,7 +131,7 @@ public class operator extends Operator {
             }
         } else {
             // includes exertions
-            return sorcer.mo.operator.value(domain.getContext(), path, args);
+            return value(domain.getContext(), path, args);
         }
     }
 
@@ -150,7 +151,7 @@ public class operator extends Operator {
                 throw new ContextException(e);
             }
         } else {
-            return sorcer.mo.operator.value((Context) domain, path, args);
+            return value((Context) domain, path, args);
         }
     }
 
@@ -202,6 +203,14 @@ public class operator extends Operator {
         }
     }
 
+    public static Object exec(Domain model, String path$domain) throws ContextException {
+        if (model instanceof DataContext) {
+            return value((Context)model, path$domain);
+        } else {
+            return response(model, path$domain);
+        }
+    }
+
     public static Object response(Domain model, String path$domain) throws ContextException {
         try {
             String path = null;
@@ -211,8 +220,6 @@ public class operator extends Operator {
                 path = path$domain.substring(0, ind);
                 domain = path$domain.substring(ind + 1);
                 return response(model, path, domain);
-            } else if (((ServiceContext)model).getType().equals(Functionality.Type.MADO)) {
-                return model.getEvaluatedValue(path$domain);
             } else {
                 return ((ServiceContext) model).getResponseAt(path$domain);
             }
@@ -226,7 +233,7 @@ public class operator extends Operator {
     }
 
     public static Object response(Domain model, String path, String domain) throws ContextException {
-        if (((ServiceContext)model).getType().equals(Functionality.Type.MADO)) {
+        if (model.isEvaluated() && ((ServiceMogram)model).getMdaFi() == null) {
             return ((ServiceContext)model).getDomain(domain).getEvaluatedValue(path);
         } else {
             try {
@@ -244,14 +251,15 @@ public class operator extends Operator {
     public static ServiceContext response(Mogram mogram, Object... items) throws ContextException {
         if (mogram instanceof Exertion) {
             return exertionResponse((Exertion) mogram, items);
-        } else if (mogram instanceof Domain) {
-            if (((ServiceContext)mogram).getType().equals(Functionality.Type.MADO)) {
-                return (ServiceContext) ((ServiceContext)((ServiceContext)mogram).getDomain((String) items[0])).getEvaluatedValue((String) items[1]);
+        } else if (mogram instanceof Domain &&  ((ServiceMogram)mogram).getType().equals(Functionality.Type.MADO)) {
+            if (mogram.isEvaluated()) {
+                return (ServiceContext) ((ServiceContext) mogram).getDomain((String) items[0]).getEvaluatedValue((String) items[1]);
             } else {
-                return modelResponse((Domain) mogram, items);
+                return (ServiceContext) ((ServiceContext) ((ServiceContext) mogram).getDomain((String) items[0])).getValue((String) items[1]);
             }
+        } else {
+            return modelResponse((Domain) mogram, items);
         }
-        return null;
     }
 
     public static ServiceContext modelResponse(Domain model, Object... items) throws ContextException {
