@@ -1153,94 +1153,116 @@ public class operator extends Operator {
 		return null;
 	}
 
-	public static <T extends Object> ListContext<T> listContext(T... elems)
+	public static <T extends Object> ListContext<T> listContext(T... items)
 			throws ContextException {
 		ListContext<T> lc = new ListContext<T>();
-		for (int i = 0; i < elems.length; i++) {
-			lc.add(elems[i]);
+		if (items != null) {
+			for (int i = 0; i < items.length; i++) {
+				lc.add(items[i]);
+			}
 		}
 		return lc;
 	}
 
     public static Map<Object, Object> dictionary(Tuple2... entries) {
         Map<Object, Object> map = new HashMap<Object, Object>();
-        for (Tuple2 entry : entries) {
-            map.put(entry.getName(), entry.value());
-        }
+		if (entries != null) {
+			for (Tuple2 entry : entries) {
+				map.put(entry.getName(), entry.value());
+			}
+		}
         return map;
     }
 
 	public static Map<Object, Object> dictionary(Entry... entries) {
 		Map<Object, Object> map = new HashMap<Object, Object>();
-		for (Entry entry : entries) {
-			map.put(entry.getName(), entry.getImpl());
+		if (entries != null) {
+			for (Entry entry : entries) {
+				map.put(entry.getName(), entry.getImpl());
+			}
 		}
 		return map;
 	}
 
 	public static <T extends Identifiable> Pool<String, T> pool(Fi.Type type, T... entries) {
 		Pool<String, T> map = new Pool<>();
-		map.setFiType(type);
-		for (T entry : entries) {
-			map.put(entry.getName(), entry);
+		if (entries != null) {
+			map.setFiType(type);
+			for (T entry : entries) {
+				map.put(entry.getName(), entry);
+			}
 		}
 		return map;
 	}
 
 	public static <T extends Identifiable> Pool<String, T> pool(T... entries) {
 		Pool<String, T> map = new Pool<>();
-		for (T entry : entries) {
-			map.put(entry.getName(), entry);
+		if (entries != null) {
+			for (T entry : entries) {
+				map.put(entry.getName(), entry);
+			}
 		}
 		return map;
 	}
 
 	public static <K, V> Pool<K, V> entPool(Fi.Type type, Tuple2<K, V>... entries) {
 		Pool<K, V> map = new Pool<>();
-		map.setFiType(type);
-		for (Tuple2<K, V> entry : entries) {
-			map.put(entry._1, entry._2);
+		if (entries != null) {
+			map.setFiType(type);
+			for (Tuple2<K, V> entry : entries) {
+				map.put(entry._1, entry._2);
+			}
 		}
 		return map;
 	}
 
 	public static <K, V> Pool<K, V> entPool(Fi.Type type, Slot<K, V>... entries) {
 		Pool<K, V> map = new Pool<>();
-		map.setFiType(type);
-		for (Slot<K, V> entry : entries) {
-			map.put(entry.getKey(), entry.getOut());
+		if (entries != null) {
+			map.setFiType(type);
+			for (Slot<K, V> entry : entries) {
+				map.put(entry.getKey(), entry.getOut());
+			}
 		}
 		return map;
 	}
 
 	public static <K, V> Pool<K, V> entPool(Tuple2<K, V>... entries) {
 		Pool<K, V> map = new Pool<>();
-		for (Tuple2<K, V> entry : entries) {
-			map.put(entry._1, entry._2);
+		if (entries != null) {
+			for (Tuple2<K, V> entry : entries) {
+				map.put(entry._1, entry._2);
+			}
 		}
 		return map;
 	}
 
 	public static <K, V> Pool<K, V> entPool(Slot<K, V>... entries) {
 		Pool<K, V> map = new Pool<>();
-		for (Slot<K, V> entry : entries) {
-			map.put(entry.getKey(), entry.getOut());
+		if (entries != null) {
+			for (Slot<K, V> entry : entries) {
+				map.put(entry.getKey(), entry.getOut());
+			}
 		}
 		return map;
 	}
 
 	public static <K, V> Map<K, V> map(Tuple2<K, V>... entries) {
 		Map<K, V> map = new HashMap<K, V>();
-		for (Tuple2<K, V> entry : entries) {
-			map.put(entry.key(), entry.value());
+		if (entries != null) {
+			for (Tuple2<K, V> entry : entries) {
+				map.put(entry.key(), entry.value());
+			}
 		}
 		return map;
 	}
 
 	public static <K, V> Map<K, V> map(MultiFiSlot<K, V>... entries) throws ContextException {
 		Map<K, V> map = new HashMap<K, V>();
-		for (MultiFiSlot<K, V> entry : entries) {
-			map.put(entry.getKey(), entry.getData());
+		if (entries != null) {
+			for (MultiFiSlot<K, V> entry : entries) {
+				map.put(entry.getKey(), entry.getData());
+			}
 		}
 		return map;
 	}

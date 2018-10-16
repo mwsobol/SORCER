@@ -2930,15 +2930,16 @@ public class operator extends Operator {
         for (Object o : args) {
             if (o instanceof Paths) {
                 paths = (Paths) o;
-            }
-            // a path in args is used as dependent entry
-            // and also as a  path in context
-            // as all args are appended to context defined by a Paths
-            if (o instanceof Path) {
-                ps.add((Path) o);
-                objs.add(((Path) o).path);
-            } else{
-                objs.add(o);
+            } else {
+                // a path in args is used as dependent entry
+                // and also as a  path in context
+                // as all args are appended to context defined by a Paths
+                if (o instanceof Path) {
+                    ps.add((Path) o);
+                    objs.add(((Path) o).path);
+                } else {
+                    objs.add(o);
+                }
             }
         }
 
@@ -2992,6 +2993,7 @@ public class operator extends Operator {
             for (int i = 0; i < args.length; i++) {
                 as.add(new Subroutine(args[i].toString()));
             }
+            as.paths = this.paths;
             return as;
         }
 

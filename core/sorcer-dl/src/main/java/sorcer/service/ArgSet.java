@@ -27,7 +27,11 @@ import java.util.*;
 public class ArgSet extends LinkedHashSet<Arg> {
 	
 	private static final long serialVersionUID = -4662755904016297879L;
-	
+
+	// paths of a model as inputs in a service context used
+	// in exertions evaluators associated with a signature
+	public Signature.Paths paths;
+
 	public ArgSet() {
 		super();
 	}
