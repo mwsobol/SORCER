@@ -1030,6 +1030,10 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return isEvaluated;
     }
 
+    public void setEvaluated(boolean evaluated) {
+        isEvaluated = evaluated;
+    }
+
     public Mogram clear() throws MogramException {
         mogramStrategy.getOutcome().clear();
         isValid = false;
