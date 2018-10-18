@@ -438,12 +438,19 @@ public class operator extends Operator {
 		return attributes.get(0);
 	}
 
+    public static Path from(String path) {
+        return new Path(path);
+    }
+
 	public static Path path(String path) {
 		return new Path(path);
 	}
 
 	public static Path path(String path, Object info) {
-	    return new Path(path, info);
+	    if (info instanceof Path) {
+            return new Path(path, info, Path.Type.MAP);
+        }
+        return new Path(path, info);
 	}
 
     public static Path path(String path, Signature.Direction dir) {

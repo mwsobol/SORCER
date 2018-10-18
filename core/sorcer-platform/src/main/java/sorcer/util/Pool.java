@@ -18,9 +18,12 @@
 package sorcer.util;
 
 import sorcer.service.Fi;
+import sorcer.service.Fidelity;
+import sorcer.service.Service;
 
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -50,6 +53,17 @@ public class Pool<K,V> extends ConcurrentHashMap<K,V> {
 		super(11, 0.75f);
 	}
 
+	public boolean isVarFiPool() {
+		return fiType.equals(Fi.Type.VAR_FI);
+	}
+
+	public boolean isGradientFiPool() {
+		return fiType.equals(Fi.Type.GRADIENT);
+	}
+
+	public boolean isDerivativePool() {
+		return fiType.equals(Fi.Type.DERIVATIVE);
+	}
 
 	public Fi.Type getFiType() {
 		return fiType;

@@ -336,7 +336,7 @@ public interface Context<T> extends Domain, Selfable, Response, Mappable<T>, Ser
 
 	public Arg getCall(String path) throws ContextException, RemoteException;
 
-	public Object putValue(String path, Object value, String association)
+	public Object putValue(String path, Object value, Object association)
 			throws ContextException;
 
 	public Object putLink(String path, Context cntxt, String offset)

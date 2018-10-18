@@ -595,17 +595,21 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return obj;
 	}
 
-	public Object putValue(String path, Object value, String association)
+	public Object putValue(String path, Object value, Object association)
 			throws ContextException {
 		// for the special case where the attribute-eval pair or
 		// (meta)association can be represented as a single string
 		T obj = putValue(path, value);
-		mark(path, association);
 
-		if ((value instanceof ContextNode)
-				&& association.startsWith(CONTEXT_PARAMETER))
-			((ContextNode) value).setDA(SorcerUtil
-					.secondToken(association, APS));
+		if (association != null) {
+		    String assoc = association.toString();
+            mark(path, assoc);
+
+            if ((value instanceof ContextNode)
+                && assoc.startsWith(CONTEXT_PARAMETER))
+                ((ContextNode) value).setDA(SorcerUtil
+                    .secondToken(assoc, APS));
+        }
 		return obj;
 	}
 
@@ -2924,6 +2928,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public Object getEvaluatedValue(String path) throws ContextException {
 		// reimplement in subclasses
 		return getValue(path);
+	}
+
+	public Object getScopedValue(String path, Arg... args) throws ContextException {
+		return getValue(path, args);
 	}
 
 	public T getValue(String path, Arg... args)
