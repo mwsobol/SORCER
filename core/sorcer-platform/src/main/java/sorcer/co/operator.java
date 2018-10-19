@@ -1442,7 +1442,7 @@ public class operator extends Operator {
 	}
 
     public static Map<String, List<ExecDependency>> disDeps(Domain model) {
-        return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
+        return ((ServiceContext)model).getMogramStrategy().getDependentDomains();
     }
 
     public static Map<String, List<ExecDependency>> deps(Domain model) {
