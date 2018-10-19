@@ -139,7 +139,7 @@ public class ArithmeticMograms {
 						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
-		logger.info("dependencies: " + dependencies(m));
+		logger.info("dependencies: " + deps(m));
 		Context out = response(m);
 		logger.info("response: " + out);
 
@@ -162,7 +162,7 @@ public class ArithmeticMograms {
 						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
-		logger.info("dependencies: " + dependencies(m));
+		logger.info("dependencies: " + deps(m));
 //        logger.info("response: " + response(m));
 		Context out = response(m);
 
@@ -184,7 +184,7 @@ public class ArithmeticMograms {
 						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
-		logger.info("dependencies: " + dependencies(m));
+		logger.info("dependencies: " + deps(m));
 //        logger.info("response: " + response(m));
 		Context out = response(m);
 

@@ -871,6 +871,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
             Pool[] pools = (Pool[]) config.getEntry(Pools.COMPONENT, Pools.FI_POOL, Pool[].class);
             Pool<Fidelity, Service> pool = new Pool<>();
+            pool.setFiType(Fi.Type.VAR_FI);
             for (int i = 0; i < pools.length; i++) {
                 pool.putAll((Map<? extends Fidelity, ? extends ServiceFidelity>) pools[i]);
             }

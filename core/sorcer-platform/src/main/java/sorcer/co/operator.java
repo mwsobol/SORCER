@@ -1441,13 +1441,17 @@ public class operator extends Operator {
 			entModel.getData().remove(path);
 	}
 
-    public static Map<String, List<ExecDependency>> dependencies(Domain model) {
+    public static Map<String, List<ExecDependency>> disDeps(Domain model) {
+        return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
+    }
+
+    public static Map<String, List<ExecDependency>> deps(Domain model) {
          return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
 
     // TODO after testing merge domainDependency and funcDependency into one method
     public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
-        if (((ServiceContext)dependee).getType().equals(Functionality.Type.MADO)) {
+        if (dependee instanceof Model && ((ServiceContext)dependee).getType().equals(Functionality.Type.MADO)) {
             return domainDependency(dependee, dependers);
         } else {
             return funcDependency(dependee, dependers);

@@ -44,7 +44,7 @@ public class SrvModelAutoDepsTest {
                         inPaths("model/response", "multiply/x1")))),
                 response("divide"));
 
-        logger.info("Map of dependents: " + dependencies(m));
+        logger.info("Map of dependents: " + deps(m));
         logger.info("Dependencies: " + printDeps(m));
         Context out = response(m);
         logger.info("response: " + out);
@@ -70,7 +70,7 @@ public class SrvModelAutoDepsTest {
                         inPaths("addfinal/x1", "divider/out")))),
                 response("addfinal"));
 
-        logger.info("Map of dependents: " + dependencies(m));
+        logger.info("Map of dependents: " + deps(m));
         logger.info("Dependencies: " + printDeps(m));
         Context out = response(m);
         logger.info("response: " + out);
