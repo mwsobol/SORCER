@@ -49,7 +49,11 @@ public class ModelStrategy implements MogramStrategy, Serializable {
     // mapping from paths of this context to input paths of requestors
     protected Context outConnector;
 
+    // functional exec model dependencies
     protected Map<String, List<ExecDependency>> dependentPaths;
+
+    // doamin exec transmodel dependencies
+    protected Map<String, List<ExecDependency>> dependentDomains;
 
     protected ServiceFidelity  selectedFidelity;
 
@@ -145,6 +149,17 @@ public class ModelStrategy implements MogramStrategy, Serializable {
             dependentPaths = new HashMap<String, List<ExecDependency>>();
         }
         return dependentPaths;
+    }
+
+    public Map<String, List<ExecDependency>> getDependentDomains() {
+        if (dependentDomains == null) {
+            dependentDomains = new HashMap<String, List<ExecDependency>>();
+        }
+        return dependentDomains;
+    }
+
+    public void setDependentDomains(Map<String, List<ExecDependency>> dependentDomains) {
+        this.dependentDomains = dependentDomains;
     }
 
     public Context getInConnector(Arg... arg) {

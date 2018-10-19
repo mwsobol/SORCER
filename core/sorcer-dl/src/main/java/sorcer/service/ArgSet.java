@@ -30,7 +30,7 @@ public class ArgSet extends LinkedHashSet<Arg> {
 
 	// paths of a model as inputs in a service context used
 	// in exertions evaluators associated with a signature
-	public Signature.Paths paths;
+	public Paths paths;
 
 	public ArgSet() {
 		super();

@@ -421,61 +421,61 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
         }
     }
 
-    public static class Paths extends ArrayList<Path> implements Arg {
-        private static final long serialVersionUID = 1L;
-
-        public String name;
-
-        public Paths() {
-            super();
-        }
-
-        public Paths(int capacity) {
-            super(capacity);
-        }
-
-        public Paths(Path[] paths) {
-            for (Path path : paths) {
-                add(path) ;
-            }
-        }
-        public Paths(String[] names) {
-            for (String name : names) {
-                add(new Path(name)) ;
-            }
-        }
-
-        public String[] toStringArray() {
-            String[] paths = new String[size()];
-            for (int i = 0; i < size(); i++)
-                paths[i] = get(i).path;
-
-            return paths;
-        }
-
-        public Path[] toPathArray() {
-            Path[] paths = new Path[size()];
-            return this.toArray(paths);
-        }
-
-		public boolean containsPath(String path) {
-			for (Path p : this) {
-				if (p.getName().equals(path)) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-    }
+//    public static class Paths extends ArrayList<Path> implements Arg {
+//        private static final long serialVersionUID = 1L;
+//
+//        public String name;
+//
+//        public Paths() {
+//            super();
+//        }
+//
+//        public Paths(int capacity) {
+//            super(capacity);
+//        }
+//
+//        public Paths(Path[] paths) {
+//            for (Path path : paths) {
+//                add(path) ;
+//            }
+//        }
+//        public Paths(String[] names) {
+//            for (String name : names) {
+//                add(new Path(name)) ;
+//            }
+//        }
+//
+//        public String[] toStringArray() {
+//            String[] paths = new String[size()];
+//            for (int i = 0; i < size(); i++)
+//                paths[i] = get(i).path;
+//
+//            return paths;
+//        }
+//
+//        public Path[] toPathArray() {
+//            Path[] paths = new Path[size()];
+//            return this.toArray(paths);
+//        }
+//
+//		public boolean containsPath(String path) {
+//			for (Path p : this) {
+//				if (p.getName().equals(path)) {
+//					return true;
+//				}
+//			}
+//			return false;
+//		}
+//
+//        public void setName(String name) {
+//            this.name = name;
+//        }
+//
+//        @Override
+//        public String getName() {
+//            return name;
+//        }
+//    }
 
 	public static class Append extends Paths {
 		private static final long serialVersionUID = 1L;

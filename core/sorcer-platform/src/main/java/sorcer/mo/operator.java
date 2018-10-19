@@ -121,7 +121,7 @@ public class operator {
 
     public static Object value(Context context, String path, String domain) throws ContextException {
         if (((ServiceContext)context).getType().equals(Functionality.Type.MADO)) {
-            return ((ServiceContext)context.getDomain(domain)).getEvaluatedValue(path);
+            return context.getDomain(domain).getEvaluatedValue(path);
         } else {
             try {
                 return ((Context)context.getDomain(domain)).getValue(path);
@@ -464,7 +464,7 @@ public class operator {
     public static void init(Domain model, Arg... args) throws ContextException {
         // initialize a model
         Map<String, List<ExecDependency>> depMap = ((ModelStrategy)model.getMogramStrategy()).getDependentPaths();
-        Signature.Paths paths = Arg.selectPaths(args);
+        Paths paths = Arg.selectPaths(args);
         if (paths != null) {
             model.getDependers().add(new ExecDependency(paths));
         }

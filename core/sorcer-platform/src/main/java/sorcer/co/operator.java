@@ -630,27 +630,75 @@ public class operator extends Operator {
         return de;
 	}
 
+	public static class ExecDeps implements Arg {
+		private static final long serialVersionUID = 1L;
+
+		public String name;
+
+		public ExecDependency[] deps;
+
+		public ExecDeps(ExecDependency[] deps) {
+			this.deps = deps;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		public Functionality.Type getType() {
+		    if (deps.length > 0) {
+                return deps[0].getType();
+            }
+            return Functionality.Type.NONE;
+        }
+	}
+
+	public static Paths mado(String... disciplines) {
+		Paths paths = new Paths(disciplines);
+		paths.type = Type.MADO;
+		return paths;
+	}
+
+	public static ExecDeps deps(ExecDependency... deps) {
+		return new ExecDeps(deps);
+	}
+
+	public static ExecDeps deps(String name, ExecDependency... deps) {
+		ExecDeps out = new ExecDeps(deps);
+		out.name = name;
+		return out;
+	}
+
 	public static ExecDependency dep(String path, Conditional condition, List<Path> paths) {
         ExecDependency de = new ExecDependency(path, condition, paths);
         de.setType(Type.CONDITION);
         return de;
 	}
 
+    public static ExecDependency disDep(String path, List<Path> paths) {
+        ExecDependency de =  new ExecDependency(path, paths);
+        de.setType(Type.DOMAIN);
+        return de;
+    }
+
 	public static ExecDependency dep(String path, List<Path> paths) {
-		return new ExecDependency(path, paths);
+        ExecDependency de =  new ExecDependency(path, paths);
+        de.setType(Type.FUNCTION);
+        return de;
 	}
 
 
 	public static ExecDependency dep(String path, Fidelity fi, List<Path> paths) {
 		ExecDependency de = new ExecDependency(path, paths);
 		de.annotation(fi);
-		de.setType(Functionality.Type.FIDELITY);
+		de.setType(Type.FIDELITY);
 		return de;
 	}
 
 	public static Value<Object> val(String path) {
 		Value ent = new Value(path, null);
-		ent.setType(Functionality.Type.VAL);
+		ent.setType(Type.VAL);
 		return ent;
 	}
 
@@ -1369,8 +1417,8 @@ public class operator extends Operator {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
-	public static Signature.Paths paths(Object... paths) {
-        Signature.Paths list = new Signature.Paths();
+	public static Paths paths(Object... paths) {
+        Paths list = new Paths();
 		for (Object o : paths) {
 			if (o instanceof String) {
 				list.add(new Path((String) o));
@@ -1387,17 +1435,90 @@ public class operator extends Operator {
 		return context.getPaths();
 	}
 
-	public static void remove(ServiceContext parModel, String... paths)
+	public static void remove(ServiceContext entModel, String... paths)
 			throws RemoteException, ContextException {
 		for (String path : paths)
-			parModel.getData().remove(path);
+			entModel.getData().remove(path);
 	}
 
     public static Map<String, List<ExecDependency>> dependencies(Domain model) {
          return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
 
-	public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
+    // TODO after testing merge domainDependency and funcDependency into one method
+    public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
+        if (((ServiceContext)dependee).getType().equals(Functionality.Type.MADO)) {
+            return domainDependency(dependee, dependers);
+        } else {
+            return funcDependency(dependee, dependers);
+        }
+    }
+
+    public static Dependency domainDependency(Dependency dependee,  Evaluation... dependers) throws ContextException {
+        String path = null;
+        List<Dependency> dl = new ArrayList<>();
+        // find dependency lists
+        for (int i = 0; i < dependers.length; i++) {
+            if (dependers[i] instanceof ExecDependency && ((ExecDependency) dependers[i]).getDependees() != null) {
+                ExecDependency mde = (ExecDependency) dependers[i];
+                ExecDependency de = null;
+                for (Path p : mde.getDependees()) {
+                    if (mde.getType() == Type.FIDELITY) {
+                        de = dep(p.getName(), (Fidelity) mde.annotation(), (List<Path>)mde.getImpl());
+                    } else if (mde.getType() == Type.CONDITION) {
+                        de = dep(p.getName(), (Conditional) mde.annotation(), (List<Path>)mde.getImpl());
+                    } else {
+                        de = dep(p.getName(), (List<Path>)mde.getImpl());
+                    }
+                    dl.add(de);
+                }
+                dependers[i] = null;
+            }
+        }
+
+        for (Evaluation d : dependers) {
+            if (d != null) {
+                path = ((Identifiable)d).getName();
+                if (path != null && path.equals("self")) {
+                    ((Entry) d).setName(((Domain) dependee).getName());
+                }
+
+                if (d instanceof ExecDependency && ((ExecDependency) d).getType().equals(Type.CONDITION)) {
+                    ((ExecDependency) d).getCondition().setConditionalContext((Context) dependee);
+                }
+                if (!dependee.getDependers().contains(d)) {
+                    dependee.getDependers().add(d);
+                }
+            }
+        }
+
+        if (dependers.length > 0 && dependers[0] instanceof ExecDependency) {
+            Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentDomains();
+            for (Evaluation e : dependers) {
+                if (e != null) {
+                    path = ((Identifiable)e).getName();
+                    if (dm.get(path) != null) {
+                        if (!dm.get(path).contains(e)) {
+                            ((List) dm.get(path)).add(e);
+                        }
+                    } else {
+                        List<ExecDependency> del = new ArrayList();
+                        del.add((ExecDependency) e);
+                        dm.put(path, del);
+                    }
+                }
+            }
+        }
+        // second pass for dependency lists
+        if (dl.size() > 0) {
+            Evaluation[] deps = new Evaluation[dl.size()];
+            dependsOn(dependee, dl.toArray(deps));
+        }
+
+        return dependee;
+    }
+
+	public static Dependency funcDependency(Dependency dependee,  Evaluation... dependers) throws ContextException {
 		String path = null;
 		List<Dependency> dl = new ArrayList<>();
 		// find dependency lists
@@ -1455,7 +1576,7 @@ public class operator extends Operator {
 		// second pass for dependency lists
 		if (dl.size() > 0) {
 			Evaluation[] deps = new Evaluation[dl.size()];
-			dependsOn(dependee, dl.toArray(deps));
+            dependsOn(dependee, dl.toArray(deps));
 		}
 
 		return dependee;

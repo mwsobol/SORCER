@@ -83,7 +83,7 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
                     cxt.putValue(BEAN_SESSION, id);
                     logger.info("using session: {}", id);
                 }
-                Signature.Paths paths;
+                Paths paths;
                 Signature.SessionPaths sessionPaths = cxt.getReturnPath().sessionPaths;
                 if (sessionPaths != null) {
                     paths = sessionPaths.getPaths(Signature.Append.class);
@@ -187,7 +187,7 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
         return taskContext;
     }
 
-    public Context read(Context session, Context taskContext, Signature.Paths paths) throws ContextException {
+    public Context read(Context session, Context taskContext, Paths paths) throws ContextException {
         Iterator it = ((ServiceContext) session).entryIterator();
         while (it.hasNext()) {
             Map.Entry e = (Map.Entry) it.next();

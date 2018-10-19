@@ -20,6 +20,7 @@ package sorcer.co.tuple;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.service.Conditional;
 import sorcer.service.Path;
+import sorcer.service.Paths;
 import sorcer.service.Signature;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class ExecDependency extends Subroutine<List<Path>> {
 
     private Conditional condition;
 
-    private Signature.Paths dependees;
+    private Paths dependees;
 
     @SuppressWarnings("unchecked")
     public ExecDependency(String path, List<Path> paths) {
@@ -59,7 +60,7 @@ public class ExecDependency extends Subroutine<List<Path>> {
         return dependees;
     }
 
-    public void setDependees(Signature.Paths dependees) {
+    public void setDependees(Paths dependees) {
         this.dependees = dependees;
     }
 

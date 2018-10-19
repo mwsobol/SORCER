@@ -98,10 +98,10 @@ public interface Arg extends Serializable {
 		return -1;
 	}
 
-	public static Signature.Paths selectPaths(Arg[] args) {
+	public static Paths selectPaths(Arg[] args) {
 		for (Arg arg : args) {
-			if (arg instanceof Signature.Paths)
-				return (Signature.Paths)arg;
+			if (arg instanceof Paths)
+				return (Paths)arg;
 		}
 		return null;
 	}
