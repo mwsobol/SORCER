@@ -18,6 +18,7 @@
 package sorcer.service;
 
 import sorcer.service.modeling.Reference;
+import sorcer.service.modeling.SupportComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
  * @author Mike Sobolewski
  *
  */
-public class ServiceFidelity extends Fidelity<Service> {
+public class ServiceFidelity extends Fidelity<Service> implements SupportComponent {
 
 	private static final long serialVersionUID = -875629011139790420L;
 

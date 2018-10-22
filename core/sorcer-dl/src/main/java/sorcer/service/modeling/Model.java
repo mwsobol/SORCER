@@ -38,7 +38,7 @@ public interface Model extends Domain, Mappable<Object>, mog {
     public Object getResult() throws ContextException, RemoteException;
 
     /**
-     * Sets a buider of this model to be used for replication when needed.
+     * Sets a buider of this model to be used for replication it when needed.
      *
      * @param signature
      */
