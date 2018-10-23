@@ -16,10 +16,7 @@
  */
 package sorcer.service.modeling;
 
-import javafx.concurrent.Task;
 import sorcer.service.*;
-
-import java.rmi.RemoteException;
 
 public interface Discipline extends Service {
 
@@ -31,12 +28,26 @@ public interface Discipline extends Service {
     public Mogram getMogram() throws MogramException;
 
     /**
-     * Returns a task to rule this discipline
+     * Returns a mogram multifidelity
+     *
+     * @throws MogramException
+     */
+    public ServiceFidelity getMogramMultiFi() throws MogramException;
+
+    /**
+     * Returns an exertion to rule this discipline
      *
      * @return a task of this discipline
      * @throws ExertionException
      */
-    public Task getTask() throws ExertionException;
+    public Exertion getExertion() throws ExertionException;
+
+    /**
+     * Returns an exertion multifidelity
+     *
+     * @throws MogramException
+     */
+    public ServiceFidelity getExertionMultiFi() throws MogramException;
 
     /**
      * Returns a discipline current input context.
@@ -44,7 +55,7 @@ public interface Discipline extends Service {
      * @return a current input context
      * @throws ContextException
      */
-    public Object getInputContext() throws ContextException;
+    public Context getInput() throws ContextException, ExertionException;
 
 
     /**
@@ -53,7 +64,7 @@ public interface Discipline extends Service {
      * @return a current output context
      * @throws ContextException
      */
-    public Object getOutputContext() throws ContextException;
+    public Context getOutput() throws ContextException;
 
 
     /**

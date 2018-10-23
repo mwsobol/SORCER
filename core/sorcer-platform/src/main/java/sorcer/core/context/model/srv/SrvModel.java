@@ -520,8 +520,7 @@ public class SrvModel extends EntryModel implements Invocation<Object> {
     }
 
     @Override
-    public Context exert(Transaction txn, Arg... entries) throws TransactionException,
-            ExertionException, RemoteException {
+    public Context exert(Transaction txn, Arg... entries) throws ExertionException, RemoteException {
         Signature signature = null;
         ServiceFidelity sFi = (ServiceFidelity)multiFi.getSelect();
         try {

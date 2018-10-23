@@ -543,7 +543,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
             } else {
                 out = mogram.exert();
             }
-		} catch (RemoteException | SignatureException |TransactionException | ExertionException e) {
+		} catch (RemoteException | SignatureException | ExertionException e) {
 			openOutPanel(SorcerUtil.stackTraceToString(e));
 			logger.warn("Error while processing mogram", e);
 			return;

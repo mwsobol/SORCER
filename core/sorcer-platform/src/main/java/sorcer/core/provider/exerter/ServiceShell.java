@@ -182,7 +182,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 
 
 	public <T extends Mogram> T  exert(Transaction txn, String providerName, Arg... entries)
-			throws TransactionException, MogramException, RemoteException {
+			throws MogramException, RemoteException {
 		try {
 			if (mogram instanceof Exertion) {
 				ServiceExertion exertion = (ServiceExertion)mogram;
@@ -327,7 +327,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 	}
 
 	public Mogram exerting(Transaction txn, String providerName, Arg... entries)
-			throws TransactionException, MogramException, RemoteException {
+			throws MogramException, RemoteException {
 		ServiceExertion exertion = (ServiceExertion) mogram;
 		initExertion(exertion, txn, entries);
 		Exertion xrt;
@@ -478,7 +478,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 	}
 
 	private Exertion callProvider(ServiceExertion exertion, Signature signature, Arg... entries)
-			throws TransactionException, MogramException, RemoteException {
+			throws MogramException, RemoteException {
 		if (provider == null) {
 			logger.warn("* Provider not available for: {}", signature);
 			exertion.setStatus(Exec.FAILED);
@@ -962,8 +962,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 	}
 
 
-	public <T extends Mogram> T exert(Arg... args) throws TransactionException,
-			MogramException, RemoteException {
+	public <T extends Mogram> T exert(Arg... args) throws MogramException, RemoteException {
 		return exert((Transaction) null, (String) null, args);
 	}
 

@@ -44,6 +44,6 @@ public interface Exerter {
 	 * @throws RemoteException
 	 */
 	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... entries)
-			throws TransactionException, MogramException, RemoteException;
+			throws MogramException, RemoteException;
 
 }

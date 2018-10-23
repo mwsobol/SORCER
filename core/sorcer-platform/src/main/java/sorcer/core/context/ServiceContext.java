@@ -3362,8 +3362,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException,
-			ExertionException, RemoteException {
+	public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws ExertionException, RemoteException {
 		Signature signature = null;
 		try {
 			if (subjectValue instanceof Class) {
@@ -3380,16 +3379,14 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public <T extends Mogram> T exert(Arg... entries) throws TransactionException,
-			ExertionException, RemoteException {
+	public <T extends Mogram> T exert(Arg... entries) throws ExertionException, RemoteException {
 		return exert(null, entries);
 	}
 
 	/* (non-Javadoc)
      * @see sorcer.service.Service#exert(sorcer.service.Exertion, net.jini.core.transaction.Transaction)
      */
-    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws TransactionException,
-            MogramException, RemoteException {
+    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
         try {
             if (mogram instanceof NetTask) {
                 Task task = (NetTask)mogram;

@@ -7,6 +7,8 @@
  */
 package sorcer.service;
 
+import net.jini.core.transaction.TransactionException;
+
 import java.rmi.RemoteException;
 
 /**

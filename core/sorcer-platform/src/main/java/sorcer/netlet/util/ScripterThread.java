@@ -108,7 +108,7 @@ public class ScripterThread extends Thread {
             } else if (target != null) {
                 logger.info(">>>>>>>>>>> eval result: " + target);
             }
-        } catch (CompilationFailedException | TransactionException | RemoteException | MogramException e) {
+        } catch (CompilationFailedException | RemoteException | MogramException e) {
             e.printStackTrace();
         }
     }

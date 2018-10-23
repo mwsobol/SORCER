@@ -48,12 +48,12 @@ public class FreeMogram extends ServiceMogram {
     }
 
     @Override
-    public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException, MogramException, RemoteException {
+    public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws MogramException, RemoteException {
         return null;
     }
 
     @Override
-    public <T extends Mogram> T exert(Arg... entries) throws TransactionException, MogramException, RemoteException {
+    public <T extends Mogram> T exert(Arg... entries) throws MogramException, RemoteException {
         return null;
     }
 
@@ -113,7 +113,7 @@ public class FreeMogram extends ServiceMogram {
     }
 
     @Override
-    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... entries) throws TransactionException, MogramException, RemoteException {
+    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... entries) throws MogramException, RemoteException {
         return null;
     }
 

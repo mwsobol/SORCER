@@ -50,11 +50,9 @@ public interface Mogram extends Identifiable, Exerter, Request, Scopable, Substi
      * @throws ExertionException
      *             if processing this exertion causes an error
      */
-    public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws TransactionException,
-            MogramException, RemoteException;
+    public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws MogramException, RemoteException;
 
-    public <T extends Mogram> T exert(Arg... entries) throws TransactionException, MogramException,
-            RemoteException;;
+    public <T extends Mogram> T exert(Arg... entries) throws  MogramException, RemoteException;;
 
     /**
      * Returns an ID of this mogram.

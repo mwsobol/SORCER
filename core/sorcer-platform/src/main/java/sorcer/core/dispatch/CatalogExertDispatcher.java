@@ -269,8 +269,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     }
 
 	private Block execBlock(Block block, Arg... args)
-			throws DispatcherException, InterruptedException,
-			MogramException, RemoteException {
+			throws MogramException {
 
 		try {
 			ServiceTemplate st = new ServiceTemplate(null, new Class[]{Concatenator.class}, null);
@@ -309,18 +308,8 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                     ? provider.getProviderName() + " " : "")
                     + "executed block: " +  block.getName() + " dispatcher: " + getClass().getName());
 			return out;
-		} catch (RemoteException re) {
-			re.printStackTrace();
-			throw re;
-		} catch (ExertionException ee) {
-			ee.printStackTrace();
-			throw ee;
-		} catch (DispatcherException de) {
-			de.printStackTrace();
-			throw de;
-		} catch (TransactionException te) {
-			te.printStackTrace();
-			throw new ExertionException("transaction failure", te);
+		} catch (RemoteException | ExertionException | DispatcherException ex) {
+			throw new MogramException(ex);
 		}
 	}
 }

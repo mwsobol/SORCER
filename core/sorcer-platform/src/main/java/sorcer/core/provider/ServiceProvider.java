@@ -1514,8 +1514,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	@Override
-	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws TransactionException,
-			ExertionException, RemoteException {
+	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws ExertionException, RemoteException {
 		if (mogram instanceof Task) {
 			ServiceContext cxt;
 			try {

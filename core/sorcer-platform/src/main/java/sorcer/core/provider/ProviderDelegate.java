@@ -1321,22 +1321,18 @@ public class ProviderDelegate {
 					+ prvName + " " + task.toString());
 			notifyException(task, "", re);
 			throw re;
-		} else
-			try {
-				Task result = (Task) ((Exerter)recipient).exert(task, null);
-				if (result != null) {
-					visited.remove(serviceID);
-					return result;
-				} else {
-					visited.remove(serviceID);
-					throw new ExertionException(
-						"Not able to get relevant multitype: " + prvType
-							+ ", key: " + prvName);
-				}
-			} catch (TransactionException te) {
+		} else {
+			Task result = (Task) ((Exerter)recipient).exert(task, null);
+			if (result != null) {
 				visited.remove(serviceID);
-				throw new ExertionException("transaction failure", te);
+				return result;
+			} else {
+				visited.remove(serviceID);
+				throw new ExertionException(
+					"Not able to get relevant multitype: " + prvType
+						+ ", key: " + prvName);
 			}
+		}
 	}
 
 	public ServiceExertion dropTask(Exertion entryTask)
@@ -1359,16 +1355,8 @@ public class ProviderDelegate {
 		}
 
 		Job outJob;
-		try {
-			outJob = (Job) ((Exerter)jobber).exert(job, null);
-		} catch (TransactionException te) {
-			throw new ExertionException("transaction failure", te);
-		}
+		outJob = (Job) ((Exerter)jobber).exert(job, null);
 		return outJob;
-	}
-
-	public Job dropJob(Job job) throws RemoteException, ExertionException {
-		return null;
 	}
 
 	public void hangup() throws RemoteException {

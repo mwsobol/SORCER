@@ -116,7 +116,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * net.jini.core.transaction.Transaction)
      */
     public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args)
-            throws TransactionException, MogramException, RemoteException {
+            throws MogramException, RemoteException {
         try {
             if (mogram instanceof Exertion) {
                 ServiceExertion exertion = (ServiceExertion) mogram;
@@ -268,7 +268,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      * sorcer.servie.Arg[])
      */
     public Exertion exert(Transaction txn, Arg... entries)
-            throws TransactionException, MogramException, RemoteException {
+            throws MogramException, RemoteException {
         try {
             substitute(entries);
         } catch (SetterException e) {
@@ -291,8 +291,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
      *
      * @see sorcer.service.Exertion#exert(sorcer.core.context.Path.Entry[])
      */
-    public <T extends Mogram> T  exert(Arg... entries) throws TransactionException,
-            MogramException, RemoteException {
+    public <T extends Mogram> T  exert(Arg... entries) throws MogramException, RemoteException {
         try {
             substitute(entries);
         } catch (SetterException e) {

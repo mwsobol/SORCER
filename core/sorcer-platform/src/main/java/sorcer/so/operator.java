@@ -175,7 +175,7 @@ public class operator extends Operator {
                     return (Response) ((EntryModel) mogram).getValue(args);
                 }
             }
-        } catch (RemoteException | TransactionException |ServiceException e) {
+        } catch (RemoteException | ServiceException e) {
             throw new ContextException(e);
         }
     }
@@ -198,7 +198,7 @@ public class operator extends Operator {
     public static Object response(Exertion exertion, String path) throws ContextException {
         try {
             return ((ServiceContext)exertion.exert().getContext()).getResponseAt(path);
-        } catch (RemoteException | TransactionException | MogramException e) {
+        } catch (RemoteException | MogramException e) {
             throw new ContextException(e);
         }
     }
@@ -324,7 +324,7 @@ public class operator extends Operator {
                 ((FidelityManager) exertion.getFidelityManager()).reconfigure(Arg.selectFidelities(args));
             }
             return (ServiceContext) exertion.exert(args).getContext();
-        } catch (RemoteException | TransactionException | MogramException e) {
+        } catch (RemoteException | MogramException e) {
             throw new ContextException(e);
         }
     }
