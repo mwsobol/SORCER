@@ -72,6 +72,12 @@ import sorcer.service.modeling.mog;
 public interface Exertion extends Mogram, Dependency, Invocation<Object>,
 		Paradigmatic, Mappable, Serializable, mog {
 
+
+	/**
+	 * Assigns a provider for this exertion.
+	 */
+	public void setProvider(Service service);
+
 	/**
 	 * Returns a deployment ID for this exertion.
 	 * 

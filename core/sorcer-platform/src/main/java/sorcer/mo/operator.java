@@ -38,6 +38,7 @@ import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
 import sorcer.service.Domain;
+import sorcer.service.modeling.Discipline;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Model;
 import sorcer.service.Signature.ReturnPath;
@@ -362,18 +363,6 @@ public class operator {
         return out;
     }
 
-//   public static Context result(Exertion exertion) throws ContextException {
-//        return exertion.getContext();
-//    }
-
-//    public static Object result(Exertion exertion, String path) throws ContextException {
-//        try {
-//            return exertion.getContext().getValue(path);
-//        } catch (RemoteException e) {
-//            throw new ContextException(e);
-//        }
-//    }
-
     public static ServiceContext result(Mogram mogram) throws ContextException {
         if (mogram instanceof Domain) {
             return (ServiceContext)((ServiceContext) mogram).getMogramStrategy().getOutcome();
@@ -381,6 +370,10 @@ public class operator {
             return (ServiceContext)mogram.getContext();
         }
         return null;
+    }
+
+    public static Context result(Discipline discipline) throws ServiceException {
+        return discipline.getOutput();
     }
 
     public static Object result(Mogram mogram, String path) throws ContextException {
@@ -395,15 +388,6 @@ public class operator {
         }
         return null;
     }
-
-
-//    public static Context result(Domain model) throws ContextException {
-//        return ((ServiceContext)model).getMogramStrategy().getOutcome();
-//    }
-//
-//    public static Object result(Domain model, String path) throws ContextException {
-//        return ((ServiceContext)model).getMogramStrategy().getOutcome().asis(path);
-//    }
 
     public static Object get(Domain model, String path) throws ContextException {
         return model.get(path);
@@ -864,5 +848,16 @@ public class operator {
     public static boolean provision(Signature... signatures) throws  DispatcherException {
         ProvisionManager provisionManager = new ProvisionManager(Arrays.asList(signatures));
         return provisionManager.deployServices();
+    }
+
+    public static Discipline dis(Exertion consumer, Service provider) {
+        return new ServiceDiscipline(consumer, provider);
+    }
+    public static Discipline dis(Exertion[] consumers, Service[] providers) {
+        return new ServiceDiscipline(consumers, providers);
+    }
+
+    public static Discipline dis(List<Exertion> consumers, List<Service> providers) {
+        return new ServiceDiscipline(consumers, providers);
     }
 }

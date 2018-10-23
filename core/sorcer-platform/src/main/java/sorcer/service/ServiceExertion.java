@@ -90,6 +90,13 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return (Exertion) sorcer.co.operator.instance(builder);
     }
 
+    /*
+     * Assigns a provider for this exertion.
+     */
+    public void setProvider(Service service) {
+        // to be implemented in subclasses
+    }
+
     protected void init() {
         super.init();
         dataContext = new PositionalContext(key);

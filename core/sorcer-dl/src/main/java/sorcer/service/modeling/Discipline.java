@@ -21,18 +21,18 @@ import sorcer.service.*;
 public interface Discipline extends Service {
 
     /**
-     * Returns a mogram specifying this discipline
+     * Returns a service specifying actualization of this discipline
      *
-     * @throws MogramException
+     * @throws ServiceException
      */
-    public Mogram getMogram() throws MogramException;
+    public Service getProvider() throws ServiceException;
 
     /**
      * Returns a mogram multifidelity
      *
-     * @throws MogramException
+     * @throws ServiceException
      */
-    public ServiceFidelity getMogramMultiFi() throws MogramException;
+    public ServiceFidelity getProviderMultiFi() throws ServiceException;
 
     /**
      * Returns an exertion to rule this discipline
@@ -40,14 +40,14 @@ public interface Discipline extends Service {
      * @return a task of this discipline
      * @throws ExertionException
      */
-    public Exertion getExertion() throws ExertionException;
+    public Exertion getConsumer() throws ExertionException;
 
     /**
      * Returns an exertion multifidelity
      *
      * @throws MogramException
      */
-    public ServiceFidelity getExertionMultiFi() throws MogramException;
+    public ServiceFidelity getConsumerMultiFi() throws MogramException;
 
     /**
      * Returns a discipline current input context.
@@ -64,7 +64,7 @@ public interface Discipline extends Service {
      * @return a current output context
      * @throws ContextException
      */
-    public Context getOutput() throws ContextException;
+    public Context getOutput(Arg... args) throws ServiceException;
 
 
     /**
