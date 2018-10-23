@@ -38,11 +38,8 @@ import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
 import sorcer.service.Domain;
-import sorcer.service.modeling.Discipline;
-import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Model;
+import sorcer.service.modeling.*;
 import sorcer.service.Signature.ReturnPath;
-import sorcer.service.modeling.Valuation;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.io.IOException;
@@ -143,7 +140,8 @@ public class operator {
             T out = null;
             Object obj = context.get(path);
             if (obj != null) {
-                if (obj instanceof Number || obj instanceof Number
+                out = (T) obj;
+                if (obj instanceof Number || obj instanceof Number || obj instanceof Boolean
                         || obj.getClass().isArray() || obj instanceof Collection) {
                     out = (T) obj;
                 } else if (obj instanceof Valuation) {
@@ -152,23 +150,23 @@ public class operator {
                     out = (T) ((Pro) obj).evaluate(args);
                 } else if (SdbUtil.isSosURL(obj)) {
                     out = (T) ((URL) obj).getContent();
-                }
-//				else if (obj instanceof Srv && ((Srv) obj).asis() instanceof EntryCollable) {
-//					Entry entry = ((EntryCollable) ((Srv) obj).asis()).call((Model) context);
-//					out = (T) entry.asis();
-//				}
-                else {
-                    // linked contexts and other special case of ServiceContext
-                    out = context.getValue(path, args);
+                } else if (obj instanceof Entry) {
+                    out = (T) context.getValue(path, args);
                 }
             } else {
-                // linked contexts and other special case of ServiceContext
-                out = context.getValue(path, args);
-            }
-            if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
-                out = (T) context.getEvaluatedValue(path);
-            } else if (context instanceof Model && context.getMogramStrategy().getOutcome() != null) {
-                context.getMogramStrategy().getOutcome().putValue(path, out);
+                if (((ServiceContext) context).getType().equals(Functionality.Type.MADO)) {
+                    out = (T) context.getEvaluatedValue(path);
+                } else if (context instanceof Model && context.getMogramStrategy().getOutcome() != null) {
+                    context.getMogramStrategy().getOutcome().putValue(path, out);
+                } else {
+                    if (obj instanceof Getter) {
+                    out = (T) ((Getter) obj).get(args);
+                    }
+                    // linked contexts and other special case of ServiceContext
+                    if (out == null) {
+                        out = context.getValue(path, args);
+                    }
+                }
             }
             return out;
         } catch (MogramException | IOException e) {

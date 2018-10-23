@@ -291,12 +291,12 @@ public class Invokers {
 				opt("opt", condition(pm, "{ x, y -> x > y }", "x", "y"),
 						invoker("x + y", args("x", "y"))));
 
-		logger.info("opt eval: " + value(pm, "opt"));
-		assertEquals(value(pm, "opt"), null);
+		logger.info("opt eval: " + exec(pm, "opt"));
+		assertEquals(exec(pm, "opt"), null);
 
 		setValues(pm, val("x", 300.0), val("y", 200.0));
 		logger.info("opt eval: " + value(pm, "opt"));
-        assertTrue(value(pm, "opt").equals(500.0));
+        assertTrue(exec(pm, "opt").equals(500.0));
 	}
 
 	@Test
@@ -378,23 +378,23 @@ public class Invokers {
 		add(pm, alt, get(alt, 0), get(alt, 1), get(alt, 2), get(alt, 3));
 
 		logger.info("opt1 exec : " + exec(pm, "opt1"));
-		assertEquals(value(pm, "opt1"), null);
+		assertEquals(exec(pm, "opt1"), null);
 		logger.info("opt2 exec: " + exec(pm, "opt2"));
-        assertTrue(value(pm, "opt2").equals(50.0));
+        assertTrue(exec(pm, "opt2").equals(50.0));
 		logger.info("opt3 exec: " + exec(pm, "opt3"));
-		assertEquals(value(pm, "opt3"), null);
+		assertEquals(exec(pm, "opt3"), null);
 		logger.info("opt4 exec: " + exec(pm, "opt4"));
-        assertTrue(value(pm, "opt4").equals(70.0));
+        assertTrue(exec(pm, "opt4").equals(70.0));
 		logger.info("alt exec: " + exec(alt));
 		assertEquals(exec(alt), 50.0);
 
 		setValues(pm, val("x", 300.0), val("y", 200.0));
-		logger.info("alt eval: " + eval(alt));
+
 		assertEquals(exec(alt), 510.0);
 
 		setValues(pm, val("x", 10.0), val("y", 20.0), val("x2", 40.0),
 				val("y2", 50.0), val("x3", 50.0), val("y3", 60.0));
-		logger.info("alt eval: " + eval(alt));
+
 		assertEquals(exec(alt), 70.0);
 	}
 
