@@ -108,20 +108,18 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void groovyInvokerTest() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
+	public void groovyInvokerTest() throws RemoteException, ContextException {
 		EntryModel pm = entModel("call-model");
 		add(pm, pro("x", 10.0), pro("y", 20.0));
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
 		logger.info("invoke eval: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
-		logger.info("get eval: " + value(pm, "expr"));
-		assertEquals(value(pm, "expr"), 60.0);
+		logger.info("get eval: " + exec(pm, "expr"));
+		assertEquals(exec(pm, "expr"), 60.0);
 	}
 
 	@Test
-	public void lambdaInvokerTest() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
+	public void lambdaInvokerTest() throws RemoteException, ContextException {
 		EntryModel pm = entModel("model");
 		add(pm, pro("x", 10.0), pro("y", 20.0));
 		add(pm, invoker("lambda", cxt -> (double)value(cxt, "x") + (double)value(cxt, "y") + 30));
@@ -362,12 +360,12 @@ public class InvokerTest {
 				opt("opt", condition(pm, "{ x, y -> x > y }", "x", "y"),
 						invoker("x + y", args("x", "y"))));
 
-		logger.info("opt eval: " + value(pm, "opt"));
-		assertEquals(value(pm, "opt"), null);
+		logger.info("opt exec: " + exec(pm, "opt"));
+		assertEquals(exec(pm, "opt"), null);
 
 		setValues(pm, val("x", 300.0), val("y", 200.0));
-		logger.info("opt eval: " + eval(pm, "opt"));
-		assertEquals(value(pm, "opt"), 500.0);
+		logger.info("opt eval: " + exec(pm, "opt"));
+		assertEquals(exec(pm, "opt"), 500.0);
 	}
 
 	@Test
@@ -450,15 +448,15 @@ public class InvokerTest {
 
 		add(pm, alt, get(alt, 0), get(alt, 1), get(alt, 2), get(alt, 3));
 
-		logger.info("opt1 eval : " + value(pm, "opt1"));
-		assertEquals(value(pm, "opt1"), null);
-		logger.info("opt2 eval: " + value(pm, "opt2"));
-		assertEquals(value(pm, "opt2"), 50.0);
-		logger.info("opt3 eval: " + value(pm, "opt3"));
-		assertEquals(value(pm, "opt3"), null);
-		logger.info("opt4 eval: " + value(pm, "opt4"));
-		assertEquals(value(pm, "opt4"), 70.0);
-		logger.info("alt eval: " + eval(alt));
+		logger.info("opt1 exec : " + exec(pm, "opt1"));
+		assertEquals(exec(pm, "opt1"), null);
+		logger.info("opt2 exec: " + exec(pm, "opt2"));
+		assertEquals(exec(pm, "opt2"), 50.0);
+		logger.info("opt3 exec: " + exec(pm, "opt3"));
+		assertEquals(exec(pm, "opt3"), null);
+		logger.info("opt4 exec: " + exec(pm, "opt4"));
+		assertEquals(exec(pm, "opt4"), 70.0);
+		logger.info("alt exec: " + eval(alt));
 		assertEquals(eval(alt), 50.0);
 
 		setValues(pm, val("x", 300.0), val("y", 200.0));
