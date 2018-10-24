@@ -9,9 +9,9 @@ import java.util.List;
 
 public class ServiceDiscipline implements Discipline, Getter<Service> {
 
-    protected ServiceFidelity providerMultiFi;
+    protected ServiceFidelity serverMultiFi;
 
-    protected ServiceFidelity consumerMultiFi;
+    protected ServiceFidelity clientMultiFi;
 
     protected Context input;
 
@@ -21,10 +21,10 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected Context outConnector;
 
-    // the executed consumer
+    // the executed client
     protected Service out;
 
-    // the service context of the executed consumer
+    // the service context of the executed client
     protected Mogram result;
 
     protected Signature builder;
@@ -34,49 +34,49 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     public ServiceDiscipline(Exertion... consumers) {
-        consumerMultiFi = new ServiceFidelity(consumers);
+        clientMultiFi = new ServiceFidelity(consumers);
     }
 
-    public ServiceDiscipline(Exertion consumer, Service provider) {
-        consumerMultiFi = new ServiceFidelity(new Exertion[] { consumer });
-        providerMultiFi = new ServiceFidelity(new Service[] { provider });
+    public ServiceDiscipline(Exertion client, Service server) {
+        clientMultiFi = new ServiceFidelity(new Exertion[] { client });
+        serverMultiFi = new ServiceFidelity(new Service[] { server });
     }
 
-    public ServiceDiscipline(Exertion[] consumers, Service[] providers) {
-        consumerMultiFi = new ServiceFidelity(consumers);
-        providerMultiFi = new ServiceFidelity(providers);
+    public ServiceDiscipline(Exertion[] clients, Service[] servers) {
+        clientMultiFi = new ServiceFidelity(clients);
+        serverMultiFi = new ServiceFidelity(servers);
     }
 
-    public ServiceDiscipline(List<Exertion> consumers, List<Service> providers) {
-        Exertion[] cArray = new Exertion[consumers.size()];
-        Service[] pArray = new Exertion[providers.size()];
-        consumerMultiFi = new ServiceFidelity(consumers.toArray(cArray));
-        providerMultiFi = new ServiceFidelity(providers.toArray(pArray));
-    }
-
-    @Override
-    public Service getProvider() throws MogramException {
-        return providerMultiFi.getSelect();
+    public ServiceDiscipline(List<Exertion> clients, List<Service> servers) {
+        Exertion[] cArray = new Exertion[clients.size()];
+        Service[] pArray = new Exertion[servers.size()];
+        clientMultiFi = new ServiceFidelity(clients.toArray(cArray));
+        serverMultiFi = new ServiceFidelity(servers.toArray(pArray));
     }
 
     @Override
-    public ServiceFidelity getProviderMultiFi() throws MogramException {
-        return providerMultiFi;
+    public Service getServer() throws MogramException {
+        return serverMultiFi.getSelect();
     }
 
     @Override
-    public Exertion getConsumer() throws ExertionException {
-        return (Exertion) consumerMultiFi.getSelect();
+    public ServiceFidelity getServerMultiFi() throws MogramException {
+        return serverMultiFi;
     }
 
     @Override
-    public ServiceFidelity getConsumerMultiFi() throws MogramException {
-        return consumerMultiFi;
+    public Exertion getClient() throws ExertionException {
+        return (Exertion) clientMultiFi.getSelect();
+    }
+
+    @Override
+    public ServiceFidelity getClientMultiFi() throws MogramException {
+        return clientMultiFi;
     }
 
     @Override
     public Context getInput() throws ContextException, ExertionException {
-        return getConsumer().getContext();
+        return getClient().getContext();
     }
 
     @Override
@@ -117,7 +117,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     @Override
     public Object execute(Arg... args) throws ServiceException {
         try {
-            Exertion xrt = getConsumer();
+            Exertion xrt = getClient();
             if (input != null) {
                 if (inConnector != null) {
                     xrt.setContext(((ServiceContext) input).updateContextWith(inConnector));
@@ -125,8 +125,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                     xrt.setContext(input);
                 }
             }
-            getConsumer().setProvider(getProvider());
-            return result = getConsumer().exert();
+            getClient().setProvider(getServer());
+            return result = getClient().exert();
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }
@@ -135,5 +135,10 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     @Override
     public Service get(Arg... args) throws ContextException {
         return out;
+    }
+
+    @Override
+    public Fi getMultiFi() {
+        return clientMultiFi;
     }
 }

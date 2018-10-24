@@ -18,36 +18,36 @@ package sorcer.service.modeling;
 
 import sorcer.service.*;
 
-public interface Discipline extends Service {
+public interface Discipline extends Request {
 
     /**
      * Returns a service specifying actualization of this discipline
      *
      * @throws ServiceException
      */
-    public Service getProvider() throws ServiceException;
+    public Service getServer() throws ServiceException;
 
     /**
-     * Returns a mogram multifidelity
+     * Returns a server multifidelity
      *
      * @throws ServiceException
      */
-    public ServiceFidelity getProviderMultiFi() throws ServiceException;
+    public ServiceFidelity getServerMultiFi() throws ServiceException;
 
     /**
-     * Returns an exertion to rule this discipline
+     * Returns an client to rule this discipline
      *
-     * @return a task of this discipline
+     * @return a client of this discipline
      * @throws ExertionException
      */
-    public Exertion getConsumer() throws ExertionException;
+    public Exertion getClient() throws ExertionException;
 
     /**
      * Returns an exertion multifidelity
      *
      * @throws MogramException
      */
-    public ServiceFidelity getConsumerMultiFi() throws MogramException;
+    public ServiceFidelity getClientMultiFi() throws MogramException;
 
     /**
      * Returns a discipline current input context.

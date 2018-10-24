@@ -2742,7 +2742,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see sorcer.service.Context#getProvider()
+	 * @see sorcer.service.Context#getServer()
 	 */
 	@Override
 	public Provider getProvider() throws SignatureException {
@@ -2939,7 +2939,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	    substitute(args);
         // first managed dependencies
         String currentPath = path;
-        if (((ModelStrategy) mogramStrategy).dependers != null
+        if (mogramStrategy != null && ((ModelStrategy) mogramStrategy).dependers != null
                 && ((ModelStrategy) mogramStrategy).dependers.size() > 0) {
             for (Evaluation eval : ((ModelStrategy) mogramStrategy).dependers) {
                 try {
