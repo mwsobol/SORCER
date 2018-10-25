@@ -51,22 +51,19 @@ class MethodInvocationRecord {
     }
 
     void failed(int id) {
+        numActiveOperations.decrementAndGet();
         handleCallTime(id);
         failed.incrementAndGet();
     }
 
     void complete(int id) {
+        numActiveOperations.decrementAndGet();
         handleCallTime(id);
         completed.incrementAndGet();
     }
 
-    void complete(long startTime) {
-        handleCallTime(startTime);
-        completed.incrementAndGet();
-    }
-
     MethodAnalytics create(ServiceID serviceID, String hostName) {
-        String activeOps = "";
+        /*String activeOps = "";
         synchronized (stopWatch) {
             if (stopWatch.size() > 0) {
                 StringBuilder b = new StringBuilder();
@@ -77,9 +74,8 @@ class MethodInvocationRecord {
                 }
                 activeOps = b.toString();
             }
-        }
-        return new MethodAnalytics(activeOps,
-                                   averageExecTime,
+        }*/
+        return new MethodAnalytics(averageExecTime,
                                    completed.get(),
                                    failed.get(),
                                    hostName,
@@ -95,15 +91,14 @@ class MethodInvocationRecord {
         totalCallTime.addAndGet(callTime);
         int totalCalls = totalOperationCalls.incrementAndGet();
         averageExecTime = totalCallTime.get() / totalCalls;
-        numActiveOperations.decrementAndGet();
     }
 
     private void handleCallTime(int id)  {
         if(stopWatch.containsKey(id)) {
             handleCallTime(stopWatch.remove(id));
         } else {
-            logger.error("{} id not found: {}", id, methodName);
-            totalOperationCalls.incrementAndGet();
+            logger.warn("{} id not found: {}", id, methodName);
+            //totalOperationCalls.incrementAndGet();
         }
     }
 

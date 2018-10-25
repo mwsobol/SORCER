@@ -48,7 +48,7 @@ public class ServiceElementFactoryTest {
         deployment.setServiceType("foo.Interface");
         deployment.setName("The Great and wonderful Oz");
         deployment.setMultiplicity(10);
-        ServiceElement serviceElement = ServiceElementFactory.create(deployment, null);
+        ServiceElement serviceElement = ServiceElementFactory.create(deployment, (File)null);
         Assert.assertEquals(10, serviceElement.getPlanned());
         Assert.assertEquals(SorcerEnv.getActualName("The Great and wonderful Oz"),
                             serviceElement.getName());
@@ -125,7 +125,7 @@ public class ServiceElementFactoryTest {
         deployment.setIps("10.0.1.9", "canebay.local");
         deployment.setExcludeIps("10.0.1.7", "stingray.foo.local.net");
         deployment.setConfig("-");
-        ServiceElement serviceElement = ServiceElementFactory.create(deployment, null);
+        ServiceElement serviceElement = ServiceElementFactory.create(deployment, (File)null);
         SystemRequirements systemRequirements = serviceElement.getServiceLevelAgreements().getSystemRequirements();
         Assert.assertEquals(4, systemRequirements.getSystemComponents().length);
 

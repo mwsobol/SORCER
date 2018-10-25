@@ -29,6 +29,7 @@ public class Analytics implements Serializable {
     private final long started;
     private final String scratchUrl;
     private final String scratchFree;
+    private final long created;
 
     public Analytics(Map<String, MethodAnalytics> methodAnalyticsMap,
                      SystemAnalytics systemAnalytics,
@@ -38,6 +39,7 @@ public class Analytics implements Serializable {
         this.started = started;
         this.scratchUrl = scratchUrl;
         this.scratchFree = scratchFree;
+        this.created = System.currentTimeMillis();
     }
 
     public Map<String, MethodAnalytics> getMethodAnalytics() {
@@ -62,5 +64,9 @@ public class Analytics implements Serializable {
 
     public String getScratchFree() {
         return scratchFree;
+    }
+
+    public long getCreated() {
+        return created;
     }
 }

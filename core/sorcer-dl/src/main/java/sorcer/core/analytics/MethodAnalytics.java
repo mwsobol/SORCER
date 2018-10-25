@@ -31,12 +31,10 @@ public class MethodAnalytics implements Serializable {
     private long totalCallTime;
     private ServiceID serviceID;
     private String hostName;
-    private String activeOperations;
     private String methodName;
     private double averageExecTime;
 
-    public MethodAnalytics(String activeOperations,
-                           double averageExecTime,
+    public MethodAnalytics(double averageExecTime,
                            int completed,
                            int failed,
                            String hostName,
@@ -45,7 +43,6 @@ public class MethodAnalytics implements Serializable {
                            ServiceID serviceID,
                            long totalCallTime,
                            int totalOperationCalls) {
-        this.activeOperations = activeOperations;
         this.averageExecTime = averageExecTime;
         this.completed = completed;
         this.failed = failed;
@@ -67,10 +64,6 @@ public class MethodAnalytics implements Serializable {
 
     public int getTotalOperationCalls() {
         return totalOperationCalls;
-    }
-
-    public String getActiveOperations() {
-        return activeOperations;
     }
 
     public ServiceID getServiceID() {
@@ -99,13 +92,12 @@ public class MethodAnalytics implements Serializable {
 
     @Override public String toString() {
         return String.format("%s, completed: %s, numActiveOps: %s, averageExecTime: %s, " +
-                             "totalOperationCalls: %s, activeOperations: %s, totalCallTime: %s",
+                             "totalOperationCalls: %s, totalCallTime: %s",
                              methodName,
                              getCompleted(),
                              getNumActiveOperations(),
                              getAverageExecTime(),
                              getTotalOperationCalls(),
-                             getActiveOperations(),
                              getTotalCallTime());
     }
 }

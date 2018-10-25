@@ -2830,7 +2830,8 @@ public class ProviderDelegate {
             if (exporterFactory == null)
                 exporterFactory = ExporterFactories.EXPORTER;
 
-			analyticsRecorder = new AnalyticsRecorder(getHostName(),
+			InetAddress inet = java.net.InetAddress.getLocalHost();
+			analyticsRecorder = new AnalyticsRecorder(inet.getHostName(),
 													  SorcerEnv.getHostAddress(),
 													  getServiceID(),
 													  getProviderName(),
@@ -3265,7 +3266,7 @@ public class ProviderDelegate {
 	public String getHostName() {
 		if (hostName == null) {
 			try {
-				hostName = SorcerEnv.getLocalHost().getHostAddress();
+				hostName = SorcerEnv.getLocalHost().getHostName();
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}
