@@ -213,7 +213,7 @@ public class NetTasks {
 		logger.info("sFi: " + fi(task));
 		logger.info("sFis: " + size(srvFis(task)));
 
-//		task = exert(task, fi("object"));
+//		task = exert(task, metaFi("object"));
 //		logger.info("exerted: " + task);
 //		assertTrue((Double)get(task) == 100.0);
 
@@ -312,7 +312,7 @@ public class NetTasks {
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("result/y")));
 
-		logger.info("task fi: " + fi(task));
+		logger.info("task metaFi: " + fi(task));
 		assertTrue(fis(task).size() == 2);
 		logger.info("selected Fi: " + fiName(task));
 		assertTrue(fiName(task).equals("object"));

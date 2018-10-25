@@ -26,33 +26,33 @@ public class FidelityTest {
 
 	private static Logger logger = LoggerFactory.getLogger(FidelityTest.class);
 
-    @Test
-    public void projectionOfToString() {
+	@Test
+	public void projectionOfToString() {
 
-        Projection fl1 = po(fi("x1", "atX"));
-        logger.info("as String: " + fl1);
-        assertEquals(fl1.toString(), "fis(fi(\"x1\", \"atX\"))");
+		Projection fl1 = po(fi("x1", "atX"));
+		logger.info("as String: " + fl1);
+		assertEquals(fl1.toString(), "fis(fi(\"x1\", \"atX\"))");
 
-        Projection fl2 = po(fi("x1", "atX"), fi("y2", "atY"));
-        logger.info("as String: " + fl2);
-        assertEquals(fl2.toString(), "fis(fi(\"x1\", \"atX\"), fi(\"y2\", \"atY\"))");
+		Projection fl2 = po(fi("x1", "atX"), fi("y2", "atY"));
+		logger.info("as String: " + fl2);
+		assertEquals(fl2.toString(), "fis(fi(\"x1\", \"atX\"), fi(\"y2\", \"atY\"))");
 
-    }
+	}
 
-    @Test
-    public void fisToString() {
+	@Test
+	public void fisToString() {
 
-        FidelityList fl1 = fis(fi("x1", "atX"));
-        logger.info("as String fl1: " + fl1);
-        assertEquals(fl1.toString(), "fis(fi(\"x1\", \"atX\"))");
+		FidelityList fl1 = fis(fi("x1", "atX"));
+		logger.info("as String fl1: " + fl1);
+		assertEquals(fl1.toString(), "fis(fi(\"x1\", \"atX\"))");
 
-        FidelityList fl2 = fis(fi("x1", "atX"), fi("y2", "atY"));
-        logger.info("as String fl2: " + fl2);
+		FidelityList fl2 = fis(fi("x1", "atX"), fi("y2", "atY"));
+		logger.info("as String fl2: " + fl2);
 		logger.info("as String fl3: " + "fis(fi(\"x1\", \"atX\"), fi(\"y2\", \"atY\"))");
 
 		assertEquals(fl2.toString(), "fis(fi(\"x1\", \"atX\"), fi(\"y2\", \"atY\"))");
 
-    }
+	}
 
 	@Test
 	public void fiMap() {
@@ -69,59 +69,59 @@ public class FidelityTest {
 	@Test
 	public void fidelityTable() {
 		DataTable dataTable = dataTable(header("span"),
-				list(110.0),
-				list(120.0),
-				list(130.0),
-				list(140.0),
-				list(150.0),
-				list(160.0));
+			list(110.0),
+			list(120.0),
+			list(130.0),
+			list(140.0),
+			list(150.0),
+			list(160.0));
 
 		ModelTable fiTable = appendFidelities(dataTable,
-				fiEnt(1, fis(fi("atX", "x1"))),
-				fiEnt(3, fis(fi("atX", "x1"), fi("atY", "y2"))));
+			fiEnt(1, fis(fi("atX", "x1"))),
+			fiEnt(3, fis(fi("atX", "x1"), fi("atY", "y2"))));
 
 		logger.info("fi dataTable: " + fiTable);
-        FiMap fiMap = new FiMap(dataTable);
-        fiMap.populateFidelities(dataTable.getRowCount()-1);
-        logger.info("fi map populated: " + fiMap);
-        assertEquals(fiMap.get(0), null);
-        assertEquals(fiMap.get(1), fis(fi("atX", "x1")));
-        assertEquals(fiMap.get(2), fis(fi("atX", "x1")));
-        assertEquals(fiMap.get(4), fis(fi("atX", "x1"), fi("atY", "y2")));
-        assertEquals(fiMap.get(5), fis(fi("atX", "x1"), fi("atY", "y2")));
-    }
+		FiMap fiMap = new FiMap(dataTable);
+		fiMap.populateFidelities(dataTable.getRowCount()-1);
+		logger.info("fi map populated: " + fiMap);
+		assertEquals(fiMap.get(0), null);
+		assertEquals(fiMap.get(1), fis(fi("atX", "x1")));
+		assertEquals(fiMap.get(2), fis(fi("atX", "x1")));
+		assertEquals(fiMap.get(4), fis(fi("atX", "x1"), fi("atY", "y2")));
+		assertEquals(fiMap.get(5), fis(fi("atX", "x1"), fi("atY", "y2")));
+	}
 
-    @Test
-    public void populateFidelityTable() {
-        DataTable dataTable = dataTable(header("span"),
-				list(110.0),
-				list(120.0),
-				list(130.0),
-				list(140.0),
-				list(150.0),
-				list(160.0));
+	@Test
+	public void populateFidelityTable() {
+		DataTable dataTable = dataTable(header("span"),
+			list(110.0),
+			list(120.0),
+			list(130.0),
+			list(140.0),
+			list(150.0),
+			list(160.0));
 
-        ModelTable fiTable = populateFidelities(dataTable,
-                fiEnt(1, fis(fi("atX", "x1"))),
-                fiEnt(3, fis(fi("atX", "x1"), fi("atY", "y2"))));
+		ModelTable fiTable = populateFidelities(dataTable,
+			fiEnt(1, fis(fi("atX", "x1"))),
+			fiEnt(3, fis(fi("atX", "x1"), fi("atY", "y2"))));
 
-        logger.info("fi dataTable: " + fiTable);
-        FiMap fiMap = new FiMap(dataTable);
-        logger.info("fi map: " + fiMap);
-        assertEquals(fiMap.get(0), null);
-        assertEquals(fiMap.get(1), fis(fi("atX", "x1")));
-        assertEquals(fiMap.get(2), fis(fi("atX", "x1")));
-        assertEquals(fiMap.get(4), fis(fi("atX", "x1"), fi("atY", "y2")));
-        assertEquals(fiMap.get(5), fis(fi("atX", "x1"), fi("atY", "y2")));
-    }
+		logger.info("fi dataTable: " + fiTable);
+		FiMap fiMap = new FiMap(dataTable);
+		logger.info("fi map: " + fiMap);
+		assertEquals(fiMap.get(0), null);
+		assertEquals(fiMap.get(1), fis(fi("atX", "x1")));
+		assertEquals(fiMap.get(2), fis(fi("atX", "x1")));
+		assertEquals(fiMap.get(4), fis(fi("atX", "x1"), fi("atY", "y2")));
+		assertEquals(fiMap.get(5), fis(fi("atX", "x1"), fi("atY", "y2")));
+	}
 
-    @Test
+	@Test
 	public void selectFiMap() {
 		DataTable dataTable = dataTable(header("span", "fis"),
-				list(110.0,  fiList(fi("tip/displacement", "astros"))),
-				list(120.0),
-				list(130.0,  fiList(fi("tip/displacement", "nastran"))),
-				list(140.0));
+			list(110.0,  fiList(fi("tip/displacement", "astros"))),
+			list(120.0),
+			list(130.0,  fiList(fi("tip/displacement", "nastran"))),
+			list(140.0));
 
 
 		FiMap fiMap = new FiMap(dataTable);
@@ -151,19 +151,19 @@ public class FidelityTest {
 
 		Projection fl = (Projection) eval(expr(fis));
 		logger.info("fi map populated: " + fl);
-   		assertTrue(fl.equals(po(fi("astros", "tip/displacement"))));
+		assertTrue(fl.equals(po(fi("astros", "tip/displacement"))));
 	}
 
 	@Test
 	public void projectionTests() throws Exception {
-		Metafidelity sFi1 = fi("job1", fi("net", "j1/j2"),
-				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"));
+		Metafidelity sFi1 = metaFi("job1", fi("net", "j1/j2"),
+			fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"));
 
-		Metafidelity sFi2 = fi("job2", fi("net", "j1/j2"),
-				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"), sFi1);
+		Metafidelity sFi2 = metaFi("job2", fi("net", "j1/j2"),
+			fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"), sFi1);
 
-		Metafidelity sFi3 = fi("job3", fi("net", "j1/j2"),
-				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"), sFi1, sFi2);
+		Metafidelity sFi3 = metaFi("job3", fi("net", "j1/j2"),
+			fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5"), sFi1, sFi2);
 
 		Projection p1 = po(sFi1);
 		logger.info("projection: " + p1);

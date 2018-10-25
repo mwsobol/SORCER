@@ -360,9 +360,9 @@ public class ArithmeticMograms {
 			}
 		};
 
-		Metafidelity fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-		Metafidelity fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-		Metafidelity fi4 = fi("sysFi4", fi("mFi3", "average"));
+		Metafidelity fi2 = metaFi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+		Metafidelity fi3 = metaFi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+		Metafidelity fi4 = metaFi("sysFi4", fi("mFi3", "average"));
 
 		Signature add = sig("add", AdderImpl.class,
 			result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -390,7 +390,7 @@ public class ArithmeticMograms {
 		assertTrue(get(out, "mFi3").equals(50.0));
 
 //        // first closing the fidelity for mFi1
-//        out = response(mod , fi("mFi1", "multiply"));
+//        out = response(mod , metaFi("mFi1", "multiply"));
 //        logger.info("out: " + out);
 //        assertTrue(get(out, "mFi1").equals(900.0));
 //        assertTrue(get(out, "mFi2").equals(50.0));

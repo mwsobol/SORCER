@@ -24,6 +24,8 @@ import java.util.Map;
 
 public class Transdiscipline extends ServiceDiscipline implements Multidiscipline {
 
+    protected String name;
+
     protected Map<String, Discipline> disciplines;
 
     // naming in a dependency tree
@@ -32,5 +34,20 @@ public class Transdiscipline extends ServiceDiscipline implements Multidisciplin
     @Override
     public Discipline getDiscipline(String name) {
         return disciplines.get(name);
+    }
+
+    @Override
+    public Object getId() {
+        return name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 }

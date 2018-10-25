@@ -66,7 +66,7 @@ public class ModelMultiFidelities {
 
         logger.info("DEPS: " + printDeps(mdl));
 
-//        Context out = response(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("mphFi", "multiply"));
+//        Context out = response(mdl, metaFi("arg/x1", "arg/x1/fi2"), metaFi("arg/x2", "arg/x2/fi2"), metaFi("mphFi", "multiply"));
         Context out = response(mdl, fi("arg/x1", "arg/x1/fi2"), fis(fi("arg/x2", "arg/x2/fi2"), fi("mphFi", "multiply")));
         logger.info("out: " + out);
         assertTrue(get(out, "arg/x1").equals(11.0));
@@ -161,8 +161,8 @@ public class ModelMultiFidelities {
             @Override
             public void initialize() {
                 // define model metafidelities Fidelity<Fidelity>
-                add(fi("sysFi2", fi("mFi2", "divide"), fi("mFi3", "multiply")));
-                add(fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide")));
+                add(metaFi("sysFi2", fi("mFi2", "divide"), fi("mFi3", "multiply")));
+                add(metaFi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide")));
             }
 
             @Override
@@ -237,8 +237,8 @@ public class ModelMultiFidelities {
             }
         };
 
-        Metafidelity fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        Metafidelity fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        Metafidelity fi2 = metaFi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        Metafidelity fi3 = metaFi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -280,8 +280,8 @@ public class ModelMultiFidelities {
             @Override
             public void initialize() {
                 // define model metafidelities Fidelity<Fidelity>
-                add(fi("sysFi2", fi("mFi2", "divide"), fi("mFi3", "multiply")));
-                add(fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide")));
+                add(metaFi("sysFi2", fi("mFi2", "divide"), fi("mFi3", "multiply")));
+                add(metaFi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide")));
             }
 
             @Override
@@ -361,9 +361,9 @@ public class ModelMultiFidelities {
             }
         };
 
-        Metafidelity fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        Metafidelity fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-        Metafidelity fi4 = fi("sysFi4", fi("mFi3", "average"));
+        Metafidelity fi2 = metaFi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        Metafidelity fi3 = metaFi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        Metafidelity fi4 = metaFi("sysFi4", fi("mFi3", "average"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -627,8 +627,8 @@ public class ModelMultiFidelities {
             }
         };
 
-        fi fi2 = fi("sysFi2", mphFi("mFi2", "ph4"), fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        fi fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+        fi fi2 = metaFi("sysFi2", mphFi("mFi2", "ph4"), fi("mFi2", "divide"), fi("mFi3", "multiply"));
+        fi fi3 = metaFi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
         fi fi4 = fi("sysFi4", fi("mFi3", "average"));
         fi fi5 = fi("sysFi5", fi("mFi4", "t4"));
 
@@ -669,7 +669,7 @@ public class ModelMultiFidelities {
         assertTrue(value(out, "mFi3").equals(9.0));
         assertTrue(value(out, "mFi4").equals(920.0));
 
-        // check if fi("mFi1", "multiply") was executed
+        // check if metaFi("mFi1", "multiply") was executed
         out = response(mdl);
         logger.info("out: " + out);
         logger.info("trace: " + fiTrace(mdl));

@@ -22,7 +22,6 @@ import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.*;
 import sorcer.service.cataloger.CatalogerAccessor;
@@ -137,7 +136,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("result/y")));
 
-		logger.info("task fi: " + fi(task));
+		logger.info("task metaFi: " + fi(task));
 		assertTrue(fis(task).size() == 2);
 		logger.info("selected Fi: " + fiName(task));
 		assertTrue(fiName(task).equals("object"));
@@ -178,10 +177,10 @@ public class ArithmeticNetTest implements SorcerConstants {
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-				fi("job1", fi("object", "j1/j2/t4"), fi("net", "j1/j2/t5")),
-				fi("job2",  fi("net", "j1/j2"),
+				metaFi("job1", fi("object", "j1/j2/t4"), fi("net", "j1/j2/t5")),
+				metaFi("job2",  fi("net", "j1/j2"),
 						fi("net", "j1/t3"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")),
-				fi("job3",  fi("net", "j1"), fi("net", "j1/j2"),
+				metaFi("job3",  fi("net", "j1"), fi("net", "j1/j2"),
 						fi("net", "j1/t3"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")));
 
 		return (Job)tracable(job);
@@ -192,13 +191,13 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 		Job job = getMultiFiJob();
 
-		logger.info("j1 fi: " + fi(job));
+		logger.info("j1 metaFi: " + fi(job));
 		logger.info("j1 fis: " + fis(job));
-		logger.info("j2 fi: " + fi(exertion(job, "j1/j2")));
+		logger.info("j2 metaFi: " + fi(exertion(job, "j1/j2")));
 		logger.info("j2 fis: " + fis(exertion(job, "j1/tj2")));
-		logger.info("t3 fi: " + fi(exertion(job, "j1/t3")));
-		logger.info("t4 fi: " + fi(exertion(job, "j1/j2/t4")));
-		logger.info("t5 fi: " + fi(exertion(job, "j1/j2/t5")));
+		logger.info("t3 metaFi: " + fi(exertion(job, "j1/t3")));
+		logger.info("t4 metaFi: " + fi(exertion(job, "j1/j2/t4")));
+		logger.info("t5 metaFi: " + fi(exertion(job, "j1/j2/t5")));
 		logger.info("job context: " + upcontext(job));
 
 		// Jobbers and  all tasks are local

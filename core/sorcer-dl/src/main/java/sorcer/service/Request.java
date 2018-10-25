@@ -29,7 +29,9 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Request extends Service {
+public interface Request extends Service, Identifiable {
 
     public Fi getMultiFi();
+
+    public void setName(String name);
 }

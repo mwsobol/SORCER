@@ -183,7 +183,7 @@ public class LocalTasks {
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("result/y")));
 
-//		logger.info("task fi: " + fi(task));
+//		logger.info("task metaFi: " + metaFi(task));
 		assertTrue(fis(task).size() == 2);
 //		logger.info("selected Fi: " + fiName(task));
 		assertTrue(fiName(task).equals("net"));

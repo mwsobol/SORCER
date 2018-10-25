@@ -848,14 +848,32 @@ public class operator {
         return provisionManager.deployServices();
     }
 
-    public static Discipline dis(Exertion consumer, Service provider) {
-        return new ServiceDiscipline(consumer, provider);
-    }
-    public static Discipline dis(Exertion[] consumers, Service[] providers) {
-        return new ServiceDiscipline(consumers, providers);
+    public static Exertion[] clients(Exertion... consumers) {
+        return consumers;
     }
 
-    public static Discipline dis(List<Exertion> consumers, List<Service> providers) {
-        return new ServiceDiscipline(consumers, providers);
+    public static Service[] servers(Service... servers) {
+        return servers;
+    }
+
+    public static Discipline dis(Exertion consumer, Service server) {
+        return new ServiceDiscipline(consumer, server);
+    }
+    public static Discipline dis(Exertion[] clients, Service[] servers) {
+        return new ServiceDiscipline(clients, servers);
+    }
+
+    public static Discipline dis(List<Exertion> clients, List<Service> servers) {
+        return new ServiceDiscipline(clients, servers);
+    }
+
+    public static Discipline add(Discipline disciplne, Exertion client, Service server) {
+         disciplne.add(client, server);
+         return disciplne;
+    }
+
+    public static Discipline add(Discipline disciplne, Fidelity clientFi, Fidelity providerFi) {
+        disciplne.add(clientFi, providerFi);
+        return disciplne;
     }
 }

@@ -338,9 +338,9 @@ public class Models {
             }
         };
 
-        Metafidelity fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-		Metafidelity fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-		Metafidelity fi4 = fi("sysFi4", fi("mFi3", "average"));
+        Metafidelity fi2 = metaFi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+		Metafidelity fi3 = metaFi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+		Metafidelity fi4 = metaFi("sysFi4", fi("mFi3", "average"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));

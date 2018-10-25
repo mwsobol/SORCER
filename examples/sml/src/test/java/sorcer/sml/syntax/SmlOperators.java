@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.co.operator;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.plexus.Morpher;
 import sorcer.service.*;
@@ -146,9 +145,9 @@ public class SmlOperators {
 			}
 		};
 
-		fi fi2 = fi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-		fi fi3 = fi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-		fi fi4 = fi("sysFi4", fi("mFi3", "average"));
+		fi fi2 = metaFi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
+		fi fi3 = metaFi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
+		fi fi4 = metaFi("sysFi4", fi("mFi3", "average"));
 
 		sig add = sig("add", AdderImpl.class,
 			result("result/y1", inPaths("arg/x1", "arg/x2")));

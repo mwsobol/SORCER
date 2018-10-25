@@ -18,6 +18,7 @@
 package sorcer.service;
 
 import sorcer.core.context.ServiceContext;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.service.modeling.Discipline;
 import sorcer.service.modeling.Getter;
 
@@ -25,6 +26,8 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public class ServiceDiscipline implements Discipline, Getter<Service> {
+
+    protected String  name;
 
     protected ServiceFidelity serverMultiFi;
 
@@ -71,8 +74,31 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         serverMultiFi = new ServiceFidelity(servers.toArray(pArray));
     }
 
+    public void add(Exertion client, Service server) {
+        clientMultiFi.getSelects().add(client);
+        serverMultiFi.getSelects().add(server);
+    }
+
+    @Override
+    public void add(Fidelity clientFi, Fidelity serverFi) {
+        Exertion client = (Exertion) clientFi.getSelect();
+        client.setName(clientFi.getName());
+        Object server = serverFi.getSelect();
+        if (server instanceof Signature) {
+            ((ServiceSignature)server).setName(serverFi.getName());
+        } else if (server instanceof Request) {
+            ((Request)server).setName(serverFi.getName());
+        }
+        clientMultiFi.getSelects().add(client);
+        serverMultiFi.getSelects().add((Service)server);
+    }
+
     @Override
     public Service getServer() throws MogramException {
+        // if no server then client is standalone
+        if (serverMultiFi == null || serverMultiFi.getSelect() == null) {
+            return  clientMultiFi.getSelect();
+        }
         return serverMultiFi.getSelect();
     }
 
@@ -134,6 +160,10 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     @Override
     public Object execute(Arg... args) throws ServiceException {
         try {
+            List<Fidelity> fis = Arg.selectFidelities(args);
+            if (fis != null && fis.size() > 0) {
+                selectFi(fis.get(0));
+            }
             Exertion xrt = getClient();
             if (input != null) {
                 if (inConnector != null) {
@@ -142,11 +172,16 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                     xrt.setContext(input);
                 }
             }
-            getClient().setProvider(getServer());
-            return result = getClient().exert();
+            xrt.setProvider(getServer());
+            return result = xrt.exert();
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }
+    }
+
+    private void selectFi(Fidelity fi) {
+        clientMultiFi.selectSelect(fi.getName());
+        serverMultiFi.selectSelect(fi.getPath());
     }
 
     @Override
@@ -158,4 +193,21 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     public Fi getMultiFi() {
         return clientMultiFi;
     }
+
+
+    @Override
+    public Object getId() {
+        return name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }

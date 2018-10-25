@@ -1445,7 +1445,7 @@ public class operator extends Operator {
         return signature;
     }
 
-    public static Metafidelity fi(String name, Fidelity... selectors) {
+    public static Metafidelity metaFi(String name, Fidelity... selectors) {
         Metafidelity fi = new Metafidelity(name, selectors);
         fi.fiType = Fi.Type.META;
         return fi;
@@ -1467,8 +1467,16 @@ public class operator extends Operator {
         return mogram.getSelectedFidelity();
     }
 
-    public static Fidelity fi(Mogram mogram, String selection) {
-        return mogram.selectFidelity(selection);
+
+    public static Fidelity fi(String name, Object select) {
+        if (select instanceof String) {
+                Fidelity fi = new Fidelity(name);
+                fi.setPath((String) select);
+                fi.fiType = Fi.Type.SELECT;
+                return fi;
+        } else {
+            return new Fidelity(name, select);
+        }
     }
 
     public static String fiName(Mogram exertion) {
@@ -1741,11 +1749,11 @@ public class operator extends Operator {
         return fi;
     }
 
-    public static Fidelity fi(String name, String path) {
-        Fidelity fi = new Fidelity(name, path);
-        fi.fiType = Fi.Type.SELECT;
-        return fi;
-    }
+//    public static Fidelity fi(String name, String path) {
+//        Fidelity fi = new Fidelity(name, path);
+//        fi.fiType = Fi.Type.SELECT;
+//        return fi;
+//    }
 
     public static Fidelity soaFi(String name, String path) {
         Fidelity fi = new Fidelity(name, path);

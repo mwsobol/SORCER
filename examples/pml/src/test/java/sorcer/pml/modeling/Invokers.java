@@ -146,13 +146,13 @@ public class Invokers {
 					nFi("n1", signals("x1", "x2"), weights(val("x1", 1.5), val("x2", 10.0))),
 					nFi("n2", signals("x1", "x2"), weights(val("x1", 2.0), val("x2", 12.0))))));
 
-//      logger.info("activate1 x4: " + activate(nm, "x4", fi("x4", "n1")));
+//      logger.info("activate1 x4: " + activate(nm, "x4", metaFi("x4", "n1")));
 		assertEquals(activate(nm, "x4", fi("x4", "n1")), 215.0);
 
-//		logger.info("activate2 x4: " + activate(em, "x4", th("x4", 200.0), fi("x4", "n1")));
+//		logger.info("activate2 x4: " + activate(em, "x4", th("x4", 200.0), metaFi("x4", "n1")));
 		assertEquals(activate(nm, "x4", th("n1", 200.0), fi("x4", "n1")), 1.0);
 
-//      logger.info("activate3 x4: " + activate(em, "x4", th("x4", 0.0), fi("x4", "n2")));
+//      logger.info("activate3 x4: " + activate(em, "x4", th("x4", 0.0), metaFi("x4", "n2")));
         assertEquals(activate(nm, "x4", th("n2", 0.0), fi("x4", "n2")), 260.0);
 	}
 

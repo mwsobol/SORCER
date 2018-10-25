@@ -44,6 +44,7 @@ import sorcer.service.Signature.ReturnPath;
 import sorcer.service.modeling.*;
 import sorcer.service.Domain;
 import sorcer.util.ObjectCloner;
+import sorcer.util.Row;
 import sorcer.util.SorcerUtil;
 
 import java.net.MalformedURLException;
@@ -203,7 +204,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
-	public ServiceContext(Object... objects) throws ContextException {
+	public ServiceContext(Row row) throws ContextException {
+		key = row.getName();
+		List<String> names = row.getNames();
+		List<Object> vals = row.getValues();
+		for (int i = 0; i < vals.size(); i++) {
+			putValue(names.get(i), vals.get(i));
+		}
+	}
+
+	public ServiceContext(Object[] objects) throws ContextException {
 		setArgsPath(Context.PARAMETER_VALUES);
 		setArgs(objects);
 		setParameterTypesPath(Context.PARAMETER_TYPES);

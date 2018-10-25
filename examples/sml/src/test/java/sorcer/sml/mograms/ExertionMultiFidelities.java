@@ -65,10 +65,10 @@ public class ExertionMultiFidelities {
             t3,
             pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
             pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-            fi("job1", fi("object", "j1/j2/t4"), fi("net", "j1/j2/t5")),
-            fi("job2",  fi("net", "j1/j2"),
+            metaFi("job1", fi("object", "j1/j2/t4"), fi("net", "j1/j2/t5")),
+            metaFi("job2",  fi("net", "j1/j2"),
                 fi("net", "j1/t3"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")),
-            fi("job3",  fi("j1", "net"), fi("j1/j2", "net"),
+            metaFi("job3",  fi("j1", "net"), fi("j1/j2", "net"),
                 fi("net", "j1/t3"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")));
 
         return (Job)tracable(job);
@@ -79,13 +79,13 @@ public class ExertionMultiFidelities {
 
         Job job = getMultiFiJob();
 
-        logger.info("j1 fi: " + fi(job));
+        logger.info("j1 metaFi: " + fi(job));
         logger.info("j1 fis: " + fis(job));
-        logger.info("j2 fi: " + fi(xrt(job, "j1/j2")));
+        logger.info("j2 metaFi: " + fi(xrt(job, "j1/j2")));
         logger.info("j2 fis: " + fis(xrt(job, "j1/tj2")));
-        logger.info("t3 fi: " + fi(xrt(job, "j1/t3")));
-        logger.info("t4 fi: " + fi(xrt(job, "j1/j2/t4")));
-        logger.info("t5 fi: " + fi(xrt(job, "j1/j2/t5")));
+        logger.info("t3 metaFi: " + fi(xrt(job, "j1/t3")));
+        logger.info("t4 metaFi: " + fi(xrt(job, "j1/j2/t4")));
+        logger.info("t5 metaFi: " + fi(xrt(job, "j1/j2/t5")));
         logger.info("job context: " + upcontext(job));
         Context out = null;
         // Jobbers and  all tasks are local
@@ -182,10 +182,10 @@ public class ExertionMultiFidelities {
 			t3,
 			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-			fi("job1", fi("object1", "j1/j2/t4"), fi("object2", "j1/j2/t5")),
-			fi("job2", fi("net", "j1/j2"),
+			metaFi("job1", fi("object1", "j1/j2/t4"), fi("object2", "j1/j2/t5")),
+			metaFi("job2", fi("net", "j1/j2"),
 				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5")),
-			fi("job3", fi("object2", "j1"), fi("object2", "j1/j2"),
+			metaFi("job3", fi("object2", "j1"), fi("object2", "j1/j2"),
 				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5")));
 
 		return (Job) tracable(job);
@@ -196,13 +196,13 @@ public class ExertionMultiFidelities {
 
         Job job = getMorphFiJob();
 
-        logger.info("j1 fi: " + fi(job));
+        logger.info("j1 metaFi: " + fi(job));
         logger.info("j1 fis: " + fis(job));
-        logger.info("j2 fi: " + fi(xrt(job, "j1/j2")));
+        logger.info("j2 metaFi: " + fi(xrt(job, "j1/j2")));
         logger.info("j2 fis: " + fis(xrt(job, "j1/tj2")));
-        logger.info("t3 fi: " + fi(xrt(job, "j1/t3")));
-        logger.info("t4 fi: " + fi(xrt(job, "j1/j2/t4")));
-        logger.info("t5 fi: " + fi(xrt(job, "j1/j2/t5")));
+        logger.info("t3 metaFi: " + fi(xrt(job, "j1/t3")));
+        logger.info("t4 metaFi: " + fi(xrt(job, "j1/j2/t4")));
+        logger.info("t5 metaFi: " + fi(xrt(job, "j1/j2/t5")));
         logger.info("job context: " + upcontext(job));
 
         logger.info("job context: " + context(job));

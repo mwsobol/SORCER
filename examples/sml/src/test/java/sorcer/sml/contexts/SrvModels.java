@@ -101,7 +101,7 @@ public class SrvModels {
 //        assertTrue(valuate(out, "mphFi").equals(100.0));
 //        assertTrue(eval(mod, "result/y").equals(100.0));
 //
-//        out = response(mod, fi("mphFi", "multiply"));
+//        out = response(mod, metaFi("mphFi", "multiply"));
 //        logger.info("out: " + out);
 //        assertTrue(valuate(out, "mphFi").equals(900.0));
 //        assertTrue(eval(mod, "result/y").equals(900.0));

@@ -67,6 +67,10 @@ public interface Discipline extends Request {
     public Context getOutput(Arg... args) throws ServiceException;
 
 
+    public void add(Exertion client, Service server);
+
+    public void add(Fidelity clientFi, Fidelity serverFi);
+
     /**
      * Returns a buider of this discipline to be used for replication it when needed.
      * */
