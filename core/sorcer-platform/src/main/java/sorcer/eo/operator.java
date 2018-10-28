@@ -1468,15 +1468,17 @@ public class operator extends Operator {
     }
 
 
-    public static Fidelity fi(String name, Object select) {
-        if (select instanceof String) {
-                Fidelity fi = new Fidelity(name);
-                fi.setPath((String) select);
-                fi.fiType = Fi.Type.SELECT;
-                return fi;
-        } else {
-            return new Fidelity(name, select);
-        }
+    public static Fidelity fi(String name, String path) {
+        Fidelity fi = new Fidelity(name, path);
+        fi.fiType = Fi.Type.SELECT;
+        return fi;
+    }
+
+    public static Fidelity fiSel(String name, Object select) {
+        Fidelity fi = new Fidelity(name);
+        fi.setSelect(select);
+        fi.fiType = Fi.Type.COMPONENT;
+        return fi;
     }
 
     public static String fiName(Mogram exertion) {

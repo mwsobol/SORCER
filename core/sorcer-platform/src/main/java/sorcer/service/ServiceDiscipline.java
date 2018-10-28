@@ -60,8 +60,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         // do nothing
     }
 
-    public ServiceDiscipline(Exertion... services) {
-        serviceMultiFi = new ServiceFidelity(services);
+    public ServiceDiscipline(Exertion... dispatchs) {
+        serviceMultiFi = new ServiceFidelity(dispatchs);
     }
 
     public ServiceDiscipline(Exertion dispatch, Service service) {
@@ -96,32 +96,32 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         } else if (service instanceof Request) {
             ((Request)service).setName(serviceFi.getName());
         }
-        serviceMultiFi.getSelects().add(dispatch);
-        dispatchMultiFi.getSelects().add((Service)service);
+        dispatchMultiFi.getSelects().add(dispatch);
+        serviceMultiFi.getSelects().add((Service)service);
     }
 
     @Override
     public Service getService() throws MogramException {
         // if no service then dispatch is standalone
-        if (dispatchMultiFi == null || dispatchMultiFi.getSelect() == null) {
-            return  serviceMultiFi.getSelect();
+        if (serviceMultiFi == null || serviceMultiFi.getSelect() == null) {
+            return  dispatchMultiFi.getSelect();
         }
-        return dispatchMultiFi.getSelect();
-    }
-
-    @Override
-    public ServiceFidelity getDispatchMultiFi() throws MogramException {
-        return dispatchMultiFi;
-    }
-
-    @Override
-    public Exertion getDispatch() throws ExertionException {
-        return (Exertion) serviceMultiFi.getSelect();
+        return serviceMultiFi.getSelect();
     }
 
     @Override
     public ServiceFidelity getServiceMultiFi() throws MogramException {
         return serviceMultiFi;
+    }
+
+    @Override
+    public Exertion getDispatch() throws ExertionException {
+        return (Exertion) dispatchMultiFi.getSelect();
+    }
+
+    @Override
+    public ServiceFidelity getDispatchMultiFi() throws MogramException {
+        return dispatchMultiFi;
     }
 
     @Override
@@ -187,8 +187,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     private void selectFi(Fidelity fi) {
-        serviceMultiFi.selectSelect(fi.getName());
-        dispatchMultiFi.selectSelect(fi.getPath());
+        dispatchMultiFi.selectSelect(fi.getName());
+        serviceMultiFi.selectSelect(fi.getPath());
     }
 
 
@@ -215,7 +215,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Fi getMultiFi() {
-        return serviceMultiFi;
+        return dispatchMultiFi;
     }
 
 

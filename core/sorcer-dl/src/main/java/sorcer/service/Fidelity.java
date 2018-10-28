@@ -44,17 +44,11 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 		this.fiName = name;
 	}
 
-	public Fidelity(String name, Object select) {
+	public Fidelity(String name, String path) {
 		this();
 		this.fiName = name;
-		this.select = (T) select;
+		this.path = path;
 	}
-
-//	public Fidelity(String name, String path) {
-//		this();
-//		this.fiName = name;
-//		this.path = path;
-//	}
 
     public Fidelity(String name, String path, String select) {
         this();
