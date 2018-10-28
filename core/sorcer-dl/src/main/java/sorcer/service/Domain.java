@@ -114,14 +114,23 @@ public interface Domain extends Mogram, Dependency, mog {
 	 * @param path
 	 *            the variable name
 	 * @return this domain execute at the path
-	 * @throws ModelException
+	 * @throws ContextException, RemoteException
 	 */
 	public Object getValue(String path, Arg... args) throws ContextException, RemoteException;
 
+	/**
+	 * Returns a execute of the object at the path od this domain
+	 * (evaluation or invocation on this object if needed).
+	 *
+	 * @param objects
+	 *            the identifiable objects by type accordingly
+	 * @return this domain updated
+	 * @throws ContextException
+	 */
 	public Domain add(Identifiable... objects) throws ContextException,
 			RemoteException;
 
-	public void execDependencies(String path, Arg... args) throws ContextException;
+    public void execDependencies(String path, Arg... args) throws ContextException;
 
 	public boolean isChanged();
 }

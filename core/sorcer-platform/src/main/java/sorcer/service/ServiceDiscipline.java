@@ -25,13 +25,16 @@ import sorcer.service.modeling.Getter;
 import java.rmi.RemoteException;
 import java.util.List;
 
+/**
+ *  Implements a service discipline as service-fidelity-dispatch
+ */
 public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected String  name;
 
-    protected ServiceFidelity serverMultiFi;
+    protected ServiceFidelity dispatchMultiFi;
 
-    protected ServiceFidelity clientMultiFi;
+    protected ServiceFidelity serviceMultiFi;
 
     protected Context input;
 
@@ -41,11 +44,15 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected Context outConnector;
 
-    // the executed client
+    // the executed service
     protected Service out;
 
-    // the service context of the executed client
+    // the service context of the executed service
     protected Mogram result;
+
+    protected Task precondition;
+
+    protected Task postcondition;
 
     protected Signature builder;
 
@@ -53,73 +60,73 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         // do nothing
     }
 
-    public ServiceDiscipline(Exertion... consumers) {
-        clientMultiFi = new ServiceFidelity(consumers);
+    public ServiceDiscipline(Exertion... services) {
+        serviceMultiFi = new ServiceFidelity(services);
     }
 
-    public ServiceDiscipline(Exertion client, Service server) {
-        clientMultiFi = new ServiceFidelity(new Exertion[] { client });
-        serverMultiFi = new ServiceFidelity(new Service[] { server });
+    public ServiceDiscipline(Exertion dispatch, Service service) {
+        serviceMultiFi = new ServiceFidelity(new Exertion[] { dispatch });
+        dispatchMultiFi = new ServiceFidelity(new Service[] { service });
     }
 
-    public ServiceDiscipline(Exertion[] clients, Service[] servers) {
-        clientMultiFi = new ServiceFidelity(clients);
-        serverMultiFi = new ServiceFidelity(servers);
+    public ServiceDiscipline(Exertion[] dispatchs, Service[] services) {
+        serviceMultiFi = new ServiceFidelity(dispatchs);
+        dispatchMultiFi = new ServiceFidelity(services);
     }
 
-    public ServiceDiscipline(List<Exertion> clients, List<Service> servers) {
-        Exertion[] cArray = new Exertion[clients.size()];
-        Service[] pArray = new Exertion[servers.size()];
-        clientMultiFi = new ServiceFidelity(clients.toArray(cArray));
-        serverMultiFi = new ServiceFidelity(servers.toArray(pArray));
+    public ServiceDiscipline(List<Exertion> dispatchs, List<Service> services) {
+        Exertion[] cArray = new Exertion[dispatchs.size()];
+        Service[] pArray = new Exertion[services.size()];
+        serviceMultiFi = new ServiceFidelity(dispatchs.toArray(cArray));
+        dispatchMultiFi = new ServiceFidelity(services.toArray(pArray));
     }
 
-    public void add(Exertion client, Service server) {
-        clientMultiFi.getSelects().add(client);
-        serverMultiFi.getSelects().add(server);
+    public void add(Exertion dispatch, Service service) {
+        serviceMultiFi.getSelects().add(dispatch);
+        dispatchMultiFi.getSelects().add(service);
     }
 
     @Override
-    public void add(Fidelity clientFi, Fidelity serverFi) {
-        Exertion client = (Exertion) clientFi.getSelect();
-        client.setName(clientFi.getName());
-        Object server = serverFi.getSelect();
-        if (server instanceof Signature) {
-            ((ServiceSignature)server).setName(serverFi.getName());
-        } else if (server instanceof Request) {
-            ((Request)server).setName(serverFi.getName());
+    public void add(Fidelity dispatchFi, Fidelity serviceFi) {
+        Exertion dispatch = (Exertion) dispatchFi.getSelect();
+        dispatch.setName(dispatchFi.getName());
+        Object service = serviceFi.getSelect();
+        if (service instanceof Signature) {
+            ((ServiceSignature)service).setName(serviceFi.getName());
+        } else if (service instanceof Request) {
+            ((Request)service).setName(serviceFi.getName());
         }
-        clientMultiFi.getSelects().add(client);
-        serverMultiFi.getSelects().add((Service)server);
+        serviceMultiFi.getSelects().add(dispatch);
+        dispatchMultiFi.getSelects().add((Service)service);
     }
 
     @Override
-    public Service getServer() throws MogramException {
-        // if no server then client is standalone
-        if (serverMultiFi == null || serverMultiFi.getSelect() == null) {
-            return  clientMultiFi.getSelect();
+    public Service getService() throws MogramException {
+        // if no service then dispatch is standalone
+        if (dispatchMultiFi == null || dispatchMultiFi.getSelect() == null) {
+            return  serviceMultiFi.getSelect();
         }
-        return serverMultiFi.getSelect();
+        return dispatchMultiFi.getSelect();
     }
 
     @Override
-    public ServiceFidelity getServerMultiFi() throws MogramException {
-        return serverMultiFi;
+    public ServiceFidelity getDispatchMultiFi() throws MogramException {
+        return dispatchMultiFi;
     }
 
     @Override
-    public Exertion getClient() throws ExertionException {
-        return (Exertion) clientMultiFi.getSelect();
+    public Exertion getDispatch() throws ExertionException {
+        return (Exertion) serviceMultiFi.getSelect();
     }
 
     @Override
-    public ServiceFidelity getClientMultiFi() throws MogramException {
-        return clientMultiFi;
+    public ServiceFidelity getServiceMultiFi() throws MogramException {
+        return serviceMultiFi;
     }
 
     @Override
     public Context getInput() throws ContextException, ExertionException {
-        return getClient().getContext();
+        return getDispatch().getContext();
     }
 
     @Override
@@ -164,7 +171,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             if (fis != null && fis.size() > 0) {
                 selectFi(fis.get(0));
             }
-            Exertion xrt = getClient();
+            Exertion xrt = getDispatch();
             if (input != null) {
                 if (inConnector != null) {
                     xrt.setContext(((ServiceContext) input).updateContextWith(inConnector));
@@ -172,7 +179,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                     xrt.setContext(input);
                 }
             }
-            xrt.setProvider(getServer());
+            xrt.setProvider(getService());
             return result = xrt.exert();
         } catch (RemoteException e) {
             throw new ServiceException(e);
@@ -180,8 +187,25 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     private void selectFi(Fidelity fi) {
-        clientMultiFi.selectSelect(fi.getName());
-        serverMultiFi.selectSelect(fi.getPath());
+        serviceMultiFi.selectSelect(fi.getName());
+        dispatchMultiFi.selectSelect(fi.getPath());
+    }
+
+
+    public Task getPrecondition() {
+        return precondition;
+    }
+
+    public void setPrecondition(Task precondition) {
+        this.precondition = precondition;
+    }
+
+    public Task getPostcondition() {
+        return postcondition;
+    }
+
+    public void setPostcondition(Task postcondition) {
+        this.postcondition = postcondition;
     }
 
     @Override
@@ -191,7 +215,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Fi getMultiFi() {
-        return clientMultiFi;
+        return serviceMultiFi;
     }
 
 

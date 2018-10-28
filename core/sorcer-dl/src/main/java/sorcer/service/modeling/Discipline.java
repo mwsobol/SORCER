@@ -18,6 +18,9 @@ package sorcer.service.modeling;
 
 import sorcer.service.*;
 
+/**
+ *  The interface for a service discipline design pattern as the triplet: service-fidelity-dispatch
+ */
 public interface Discipline extends Request {
 
     /**
@@ -25,51 +28,56 @@ public interface Discipline extends Request {
      *
      * @throws ServiceException
      */
-    public Service getServer() throws ServiceException;
+    public Service getService() throws ServiceException;
 
     /**
-     * Returns a server multifidelity
+     * Returns a dispatch multifidelity
      *
      * @throws ServiceException
      */
-    public ServiceFidelity getServerMultiFi() throws ServiceException;
+    public ServiceFidelity getDispatchMultiFi() throws ServiceException;
 
     /**
-     * Returns an client to rule this discipline
+     * Returns an dispatch to rule this discipline
      *
-     * @return a client of this discipline
+     * @return a dispatch of this discipline
      * @throws ExertionException
      */
-    public Exertion getClient() throws ExertionException;
+    public Exertion getDispatch() throws ExertionException;
 
     /**
-     * Returns an exertion multifidelity
+     * Returns an service multifidelity
      *
      * @throws MogramException
      */
-    public ServiceFidelity getClientMultiFi() throws MogramException;
+    public ServiceFidelity getServiceMultiFi() throws MogramException;
 
     /**
-     * Returns a discipline current input context.
+     * Returns a discipline input context.
      *
      * @return a current input context
      * @throws ContextException
      */
     public Context getInput() throws ContextException, ExertionException;
 
-
     /**
-     * Returns a model current output context.
+     * Returns a output of this discipline.
      *
      * @return a current output context
      * @throws ContextException
      */
     public Context getOutput(Arg... args) throws ServiceException;
 
+    /**
+     * Adds a dispatch-service fidelity of this discipline.
+     * Fidelity names are names of dispatch and service correspondingly.
+     */
+    public void add(Exertion dispatch, Service service);
 
-    public void add(Exertion client, Service server);
-
-    public void add(Fidelity clientFi, Fidelity serverFi);
+    /**
+     * Adds a dispatch-service fidelity to this discipline
+     */
+    public void add(Fidelity dispatchFi, Fidelity serviceFi);
 
     /**
      * Returns a buider of this discipline to be used for replication it when needed.

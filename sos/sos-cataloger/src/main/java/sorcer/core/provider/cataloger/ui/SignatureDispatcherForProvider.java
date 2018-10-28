@@ -507,7 +507,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.core.provider.cataloger.ui.SignatureDispatchment#getServer()
+	 * @see sorcer.core.provider.cataloger.ui.SignatureDispatchment#getService()
 	 */
 	@Override
 	public Provider getProvider() {
