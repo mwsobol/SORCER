@@ -17,28 +17,21 @@
 
 package sorcer.service;
 
-import sorcer.co.tuple.ExecDependency;
 import sorcer.core.Dispatcher;
-import sorcer.core.context.ModelStrategy;
-import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Subroutine;
 import sorcer.service.modeling.Discipline;
-import sorcer.service.modeling.Functionality;
-import sorcer.service.modeling.Multidiscipline;
+import sorcer.service.modeling.Transdiscipline;
 
-import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Map;
 
 import static sorcer.ent.operator.ent;
 
-public class Transdiscipline extends ServiceDiscipline implements Multidiscipline {
+public class Multidiscipline extends ServiceDiscipline implements Transdiscipline {
 
     protected String name;
 
     protected Map<String, Discipline> disciplines;
 
-    // the default exec order of active disciplines
+    // active disciplines
     protected Paths disciplinePaths;
 
     protected Dispatcher dispatcher;

@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class TransdisciplineDispatcher implements Service, Dispatcher {
 
-    Transdiscipline transdiscipline;
+    Multidiscipline transdiscipline;
     // exec discipline dependencies
     protected Map<String, List<ExecDependency>> dependentDisciplines;
 
