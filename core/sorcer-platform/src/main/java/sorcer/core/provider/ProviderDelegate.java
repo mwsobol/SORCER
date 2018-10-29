@@ -2830,8 +2830,7 @@ public class ProviderDelegate {
             if (exporterFactory == null)
                 exporterFactory = ExporterFactories.EXPORTER;
 
-			InetAddress inet = java.net.InetAddress.getLocalHost();
-			analyticsRecorder = new AnalyticsRecorder(inet.getHostName(),
+			analyticsRecorder = new AnalyticsRecorder(getHostName(),
 													  SorcerEnv.getHostAddress(),
 													  getServiceID(),
 													  getProviderName(),
