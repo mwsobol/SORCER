@@ -73,7 +73,8 @@ public class AnalyticsProducerTest {
 
 
         @Override public Analytics getAnalytics() {
-            return new Analytics(analyticsRecorder.getMethodAnalytics(),
+            return new Analytics("Ferris",
+                                 analyticsRecorder.getMethodAnalytics(),
                                  analyticsRecorder.getSystemAnalytics(),
                                  System.currentTimeMillis(),
                                  "http://foo:9090",

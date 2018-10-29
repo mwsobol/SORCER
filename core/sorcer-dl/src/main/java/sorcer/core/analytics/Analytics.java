@@ -24,6 +24,7 @@ import java.util.Map;
  */
 public class Analytics implements Serializable {
     static final long serialVersionUID = 1L;
+    private final String name;
     private final Map<String, MethodAnalytics> methodAnalyticsMap = new HashMap<>();
     private final SystemAnalytics systemAnalytics;
     private final long started;
@@ -31,15 +32,21 @@ public class Analytics implements Serializable {
     private final String scratchFree;
     private final long created;
 
-    public Analytics(Map<String, MethodAnalytics> methodAnalyticsMap,
+    public Analytics(String name,
+                     Map<String, MethodAnalytics> methodAnalyticsMap,
                      SystemAnalytics systemAnalytics,
                      long started, String scratchUrl, String scratchFree) {
+        this.name = name;
         this.methodAnalyticsMap.putAll(methodAnalyticsMap);
         this.systemAnalytics = systemAnalytics;
         this.started = started;
         this.scratchUrl = scratchUrl;
         this.scratchFree = scratchFree;
         this.created = System.currentTimeMillis();
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Map<String, MethodAnalytics> getMethodAnalytics() {

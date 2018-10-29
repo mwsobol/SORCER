@@ -1283,7 +1283,8 @@ import static sorcer.util.StringUtils.tName;
 	}
 
 	@Override public Analytics getAnalytics() {
-		return new Analytics(delegate.getAnalyticsRecorder().getMethodAnalytics(),
+		return new Analytics(delegate.getProviderName(),
+							 delegate.getAnalyticsRecorder().getMethodAnalytics(),
                              delegate.getAnalyticsRecorder().getSystemAnalytics(),
                              delegate.getAnalyticsRecorder().getStarted(),
                              ScratchManagerSupport.getDataUrl(),
