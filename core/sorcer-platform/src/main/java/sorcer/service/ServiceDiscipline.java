@@ -186,11 +186,10 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         }
     }
 
-    private void selectFi(Fidelity fi) {
+    protected void selectFi(Fidelity fi) {
         dispatchMultiFi.selectSelect(fi.getName());
         serviceMultiFi.selectSelect(fi.getPath());
     }
-
 
     public Task getPrecondition() {
         return precondition;

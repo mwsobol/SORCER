@@ -18,6 +18,7 @@
 package sorcer.service;
 
 import sorcer.co.tuple.ExecDependency;
+import sorcer.core.Dispatcher;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Subroutine;
@@ -40,20 +41,11 @@ public class Transdiscipline extends ServiceDiscipline implements Multidisciplin
     // the default exec order of active disciplines
     protected Paths disciplinePaths;
 
-    // exec discipline dependencies
-    protected Map<String, List<ExecDependency>> dependentDisciplines;
+    protected Dispatcher dispatcher;
 
     @Override
     public Discipline getDiscipline(String name) {
         return disciplines.get(name);
-    }
-
-    public Map<String, List<ExecDependency>> getDependentDisciplines() {
-        return dependentDisciplines;
-    }
-
-    public void setDependentDisciplines(Map<String, List<ExecDependency>> dependentDisciplines) {
-        this.dependentDisciplines = dependentDisciplines;
     }
 
     @Override
@@ -69,31 +61,6 @@ public class Transdiscipline extends ServiceDiscipline implements Multidisciplin
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void execDependencies(String path, Arg... args) throws ContextException {
-        Map<String, List<ExecDependency>> dpm = dependentDisciplines;
-        if (dpm != null && dpm.get(path) != null) {
-            List<ExecDependency> del = dpm.get(path);
-            Discipline dis = getDiscipline(path);
-            if (del != null && del.size() > 0) {
-                for (ExecDependency de : del) {
-                    List<Path> dpl = (List<Path>) de.getImpl();
-                    if (dpl != null && dpl.size() > 0) {
-                        for (Path p : dpl) {
-                            try {
-                                getDiscipline(p.path).execute(args);
-                            } catch (ServiceException e) {
-                                e.printStackTrace();
-                            } catch (RemoteException e) {
-                                throw new ContextException(e);
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
     }
 
 }
