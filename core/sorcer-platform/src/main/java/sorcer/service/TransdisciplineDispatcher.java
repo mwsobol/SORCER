@@ -11,6 +11,9 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
+import static sorcer.co.operator.from;
+import static sorcer.co.operator.path;
+
 public class TransdisciplineDispatcher implements Service, Dispatcher {
 
     Multidiscipline transdiscipline;
@@ -91,6 +94,5 @@ public class TransdisciplineDispatcher implements Service, Dispatcher {
 
     @Override
     public void setLrm(LeaseRenewalManager lrm) {
-
     }
 }

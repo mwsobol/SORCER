@@ -2944,6 +2944,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return getValue(path, args);
 	}
 
+	@Override
+	public T getValue(Path path, Arg... args) throws ContextException {
+		return getValue(path.path, args);
+	}
+
+	@Override
 	public T getValue(String path, Arg... args)
 			throws ContextException {
 	    substitute(args);

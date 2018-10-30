@@ -224,7 +224,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			} catch (RemoteException | ExertionException e) {
 				throw new EvaluationException(e);
 			}
-			return getValue(null, entries);
+			return getValue((String)null, entries);
 		} catch (ContextException e) {
 			throw new EvaluationException(e);
 		}

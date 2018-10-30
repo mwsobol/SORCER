@@ -118,6 +118,8 @@ public interface Domain extends Mogram, Dependency, mog {
 	 */
 	public Object getValue(String path, Arg... args) throws ContextException, RemoteException;
 
+	public Object getValue(Path path, Arg... args) throws ContextException, RemoteException;
+
 	/**
 	 * Returns a execute of the object at the path od this domain
 	 * (evaluation or invocation on this object if needed).

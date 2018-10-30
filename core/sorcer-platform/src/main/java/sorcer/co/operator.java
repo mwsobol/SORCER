@@ -447,10 +447,19 @@ public class operator extends Operator {
 	}
 
 	public static Path path(String path, Object info) {
-	    if (info instanceof Path) {
-            return new Path(path, info, Path.Type.MAP);
-        }
-        return new Path(path, info);
+		if (info instanceof Path) {
+			Path p = new Path(path);
+			p.from = (Path) info;
+			p.type = Path.Type.MAP;
+			return p;
+		}
+		return new Path(path, info);
+	}
+
+	public static Path path(String path, String tag, Path from) {
+		Path p = new Path(path, tag, Path.Type.MAP);
+       	p.from = from;
+        return p;
 	}
 
     public static Path path(String path, Signature.Direction dir) {

@@ -322,6 +322,7 @@ public class operator extends Operator {
         Class customContextClass = null;
         Out outPaths = null;
         In inPaths = null;
+        Paths paths = null;
         boolean autoDeps = true;
         for (Object o : entries) {
             if (o instanceof Complement) {
@@ -372,6 +373,8 @@ public class operator extends Operator {
                 outPaths = (Out)o;
             } else if (o instanceof In) {
                 inPaths = (In)o;
+            } else if (o instanceof Paths) {
+                paths = (Paths)o;
             } else if (o instanceof Context) {
                 cxts.add((ServiceContext) o);
             }
@@ -525,6 +528,15 @@ public class operator extends Operator {
                 cxt.getReturnPath().inPaths = inPaths.toPathArray();
             }
         }
+
+        if (paths != null) {
+            if (cxt.getReturnPath() == null) {
+                cxt.setReturnPath(new ReturnPath(paths.toPathArray()));
+            } else {
+                cxt.getReturnPath().inPaths = paths.toPathArray();
+            }
+        }
+
         if (accessType != null)
             cxt.getMogramStrategy().setAccessType(accessType);
         if (flowType != null)
@@ -1032,6 +1044,7 @@ public class operator extends Operator {
         Args args = null;
         Strategy.Provision provision = Provision.NO;
         ParameterTypes parTypes = null;
+        ServiceContext context = null;
         for (Object item : items) {
             if (item instanceof String) {
                 selector = (String) item;
@@ -1043,6 +1056,8 @@ public class operator extends Operator {
                 parTypes = (ParameterTypes)item;
             } else if (item instanceof Provision) {
                 provision = (Provision)item;
+            } else if (item instanceof ServiceContext) {
+                context = (ServiceContext)item;
             }
         }
         ServiceSignature signature = null;
@@ -1069,6 +1084,17 @@ public class operator extends Operator {
             signature = sig(selector, multitype.providerType, dest);
             signature.setProvisionable(provision);
         }
+
+        // if context is provided for created signature
+        if (context instanceof ServiceContext
+            // not applied to connectors in Signatures
+            && context.getClass() != MapContext.class) {
+            if (signature.getReturnPath() == null) {
+                signature.setReturnPath(new ReturnPath());
+            }
+            signature.getReturnPath().setDataContext(context);
+        }
+
         return signature;
     }
 

@@ -33,13 +33,15 @@ public class Path implements Arg, Service {
 
 	public enum State { CACHED, UNCACHED, VALID, INVALID, CHANGED, BEFORE, AFTER }
 
-	public String path = null;
+	public String path;
 
-	public Object info = null;
+	public Object info;
 
-	public String domain = null;
+	public String domain;
 
-	protected Type type = Type.PATH;
+	public Path from;
+
+	public Type type = Type.PATH;
 
 	protected  Signature.Direction direction = Signature.Direction.INOUT;
 
