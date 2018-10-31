@@ -1044,6 +1044,8 @@ public class operator extends Operator {
         Args args = null;
         Strategy.Provision provision = Provision.NO;
         ParameterTypes parTypes = null;
+        In inPaths = null;
+        Out outPaths = null;
         ServiceContext context = null;
         for (Object item : items) {
             if (item instanceof String) {
@@ -1058,6 +1060,10 @@ public class operator extends Operator {
                 provision = (Provision)item;
             } else if (item instanceof ServiceContext) {
                 context = (ServiceContext)item;
+            } else if (item instanceof In ) {
+                inPaths = (In)item;
+            }  else if (item instanceof Out ) {
+                outPaths = (Out)item;
             }
         }
         ServiceSignature signature = null;
@@ -1093,6 +1099,21 @@ public class operator extends Operator {
                 signature.setReturnPath(new ReturnPath());
             }
             signature.getReturnPath().setDataContext(context);
+        }
+
+        // handle input output paths
+        if (inPaths != null) {
+            if (signature.getReturnPath() == null) {
+                signature.setReturnPath(new ReturnPath(inPaths));
+            } else {
+                signature.getReturnPath().inPaths = inPaths.toPathArray();
+            }
+        } else if (outPaths != null) {
+            if (signature.getReturnPath() == null) {
+                signature.setReturnPath(new ReturnPath(outPaths));
+            } else {
+                signature.getReturnPath().outPaths = outPaths;
+            }
         }
 
         return signature;
