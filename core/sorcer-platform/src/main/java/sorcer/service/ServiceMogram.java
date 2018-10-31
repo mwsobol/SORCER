@@ -918,6 +918,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
                if (mdaComponent instanceof MdaEntry) {
                    mdaFi = new Fidelity(((MdaEntry)mdaComponent).getName());
                    mdaFi.addSelect((MdaEntry) mdaComponent);
+                   mdaFi.setSelect((MdaEntry)mdaComponent);
                } else if (mdaComponent instanceof ServiceFidelity
                        && ((ServiceFidelity) mdaComponent).getFiType().equals(Fi.Type.MDA)) {
                    mdaFi = (Fidelity) mdaComponent;
