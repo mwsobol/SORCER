@@ -272,7 +272,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	}
 
 	public enum Direction implements Arg {
-		IN, OUT, INOUT;
+		IN, OUT, INOUT, FROM, TO;
 
 		/* (non-Javadoc)
 		 * @see sorcer.service.Arg#getName()

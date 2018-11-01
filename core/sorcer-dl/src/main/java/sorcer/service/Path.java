@@ -28,7 +28,7 @@ public class Path implements Arg, Service {
 	private static final long serialVersionUID = 1L;
 
 	public enum Type {
-		PATH, MAP, ENT, CONTEXT, ARRAY, OUT
+		PATH, MAP, ENT, CONTEXT, ARRAY, OUT, FROM, TO
 	}
 
 	public enum State { CACHED, UNCACHED, VALID, INVALID, CHANGED, BEFORE, AFTER }
@@ -39,11 +39,11 @@ public class Path implements Arg, Service {
 
 	public String domain;
 
-	public Path from;
+	public Path dirPath;
 
 	public Type type = Type.PATH;
 
-	protected  Signature.Direction direction = Signature.Direction.INOUT;
+	public  Signature.Direction direction = Signature.Direction.INOUT;
 
 	public Path() {
 	}

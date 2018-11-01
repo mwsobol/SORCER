@@ -439,8 +439,16 @@ public class operator extends Operator {
 	}
 
     public static Path from(String path) {
-        return new Path(path);
+        Path p = new Path(path);
+        p.direction = Signature.Direction.FROM;
+        return p;
     }
+
+	public static Path to(String path) {
+		Path p = new Path(path);
+		p.direction = Signature.Direction.TO;
+		return p;
+	}
 
 	public static Path path(String path) {
 		return new Path(path);
@@ -449,16 +457,16 @@ public class operator extends Operator {
 	public static Path path(String path, Object info) {
 		if (info instanceof Path) {
 			Path p = new Path(path);
-			p.from = (Path) info;
+			p.dirPath = (Path) info;
 			p.type = Path.Type.MAP;
 			return p;
 		}
 		return new Path(path, info);
 	}
 
-	public static Path path(String path, String tag, Path from) {
+	public static Path path(String path, String tag, Path from$to) {
 		Path p = new Path(path, tag, Path.Type.MAP);
-       	p.from = from;
+       	p.dirPath = from$to;
         return p;
 	}
 
