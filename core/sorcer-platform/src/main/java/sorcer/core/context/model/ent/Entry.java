@@ -13,6 +13,8 @@ import sorcer.util.url.sos.SdbUtil;
 
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Entry<V> extends MultiFiSlot<String, V>
         implements Identifiable, Request, Evaluation<V>, Activity, Callable<V>, Setter, Reactive<V>, ent<V> {
@@ -300,6 +302,40 @@ public class Entry<V> extends MultiFiSlot<String, V>
     @Override
     public String getName() {
         return key;
+    }
+
+    public String getProperName() {
+        int i = key.indexOf('$');
+        if (i > 0) {
+            return key.substring(0, i);
+        } else {
+            return key;
+        }
+    }
+
+    static public String getProperName(String name) {
+        int i = name.indexOf('$');
+        if (i > 0) {
+            return name.substring(0, i);
+        } else {
+            return name;
+        }
+    }
+
+    static public String[] getProperNames(String[] names) {
+        String[] properNames =  new String[names.length];
+        for (int i = 0; i < names.length; i++) {
+            properNames[0] = getProperName(names[i]);
+        }
+        return properNames;
+    }
+
+    public List<String> getProperNames(List<String> names) {
+        List<String> properNames =  new ArrayList<>();
+        for (int i = 0; i < names.size(); i++) {
+            properNames.add(getProperName(names.get(i)));
+        }
+        return properNames;
     }
 
     public void setName(String name) {

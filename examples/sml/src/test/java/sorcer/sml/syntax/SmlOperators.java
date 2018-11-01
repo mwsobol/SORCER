@@ -188,7 +188,7 @@ public class SmlOperators {
 
 
 	@Test
-	public void morphingMultiFidelityModel1() throws Exception {
-		logger.info("" + (new ServiceContext("NN") instanceof Arg));
+	public void testIt() throws Exception {
+		logger.info("" + ent("name$domain").getProperName());
 	}
 }
