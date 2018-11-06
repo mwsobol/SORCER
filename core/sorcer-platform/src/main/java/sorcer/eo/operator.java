@@ -23,7 +23,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.co.operator.*;
+import sorcer.co.operator.DataEntry;
 import sorcer.co.tuple.*;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
@@ -65,8 +65,10 @@ import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.*;
 
+import static sorcer.co.operator.path;
 import static sorcer.co.operator.*;
-import static sorcer.mo.operator.srvModel;
+import static sorcer.mo.operator.*;
+import static sorcer.po.operator.ent;
 import static sorcer.po.operator.srv;
 
 /**
@@ -944,7 +946,7 @@ public class operator extends sorcer.operator {
         return ts;
     }
 
-	public static Signature mtSig(Signature signature, Class... matchTypes)
+	public static Signature matchTypes(Signature signature, Class... matchTypes)
 			throws SignatureException {
 		Class[] types = matchTypes;
 		if (signature.getServiceType() != null) {
@@ -1021,16 +1023,15 @@ public class operator extends sorcer.operator {
                 return os;
             }
         }
-		Operation operation = null;
-		String selector = null;
+		String operation = null;
 		Args args = null;
 		Strategy.Provision provision = Provision.NO;
         ParTypes parTypes = null;
 		for (Object item : items) {
 			if (item instanceof String) {
-				selector = (String) item;
+				operation = (String) item;
 			} else if (item instanceof Operation) {
-				operation = (Operation)item;
+				operation = ((Operation)item).selector;
 			} else if (item instanceof Args) {
                 args = (Args)item;
             } else if (item instanceof ParTypes) {
@@ -1039,30 +1040,28 @@ public class operator extends sorcer.operator {
 				provision = (Provision)item;
 			}
 		}
-		ServiceSignature signature;
+		ServiceSignature signature = null;
         if (args != null && parTypes != null) {
-			signature = new ObjectSignature();
-			signature.setServiceType(serviceType);
-			signature.getServiceType();
-			signature.setProvisionable(provision);
-			((ObjectSignature)signature).setArgs(args.args);
-			((ObjectSignature)signature).setParameterTypes(parTypes.parameterTypes);
-        } else if (operation != null) {
-			signature = (ServiceSignature) sig(operation.getName());
-			signature.setServiceType(serviceType);
-			signature.setOperation(operation);
-		} else if (operation == null && selector == null) {
+            ObjectSignature os = new ObjectSignature();
+            os.setServiceType(serviceType);
+            os.getServiceType();
+            os.setArgs(args.args);
+            os.setParameterTypes(parTypes.parameterTypes);
+            os.setProvisionable(provision);
+			return os;
+        } else if (operation == null) {
 			signature = (ServiceSignature) sig("?", serviceType.providerType, items);
 			signature.setProvisionable(provision);
+			return signature;
 		} else {
 			Object[] dest = new Object[items.length+2];
 			System.arraycopy(items,  0, dest,  2, items.length);
 			dest[0] = operation;
             dest[1] = serviceType;
-			signature = (ServiceSignature) sig(selector, serviceType.providerType, dest);
+			signature = (ServiceSignature) sig(operation, serviceType.providerType, dest);
 			signature.setProvisionable(provision);
+			return signature;
 		}
-		return signature;
 	}
 
 	public static Signature sig(Class classType, Object... items) throws SignatureException {
@@ -1232,8 +1231,6 @@ public class operator extends sorcer.operator {
 				sop.isShellRemote = (Strategy.Shell) arg;
 			} else if (arg instanceof Strategy.Provision) {
 				sop.isProvisionable = Strategy.isProvisionable((Strategy.Provision) arg);
-			} else if (arg instanceof Tokens) {
-				sop.setMatchTokens((Tokens)arg);
 			}
 		}
 		return sop;
