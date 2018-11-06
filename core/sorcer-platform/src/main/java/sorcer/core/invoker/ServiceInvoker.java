@@ -506,10 +506,12 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		return name;
 	}
 
-	public void setName(String name) {
+	@Override
+	public ServiceInvoker setName(String name) {
 		this.name = name;
+		return this;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see sorcer.service.Evaluator#compute(sorcer.service.Arg[])
 	 */

@@ -504,8 +504,9 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 		return name;
 	}
 
-	public void setName(String name) {
+	public ServiceSignature setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public boolean isService() {

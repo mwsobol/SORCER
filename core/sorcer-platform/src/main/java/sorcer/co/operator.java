@@ -1842,6 +1842,21 @@ public class operator extends Operator {
 		}
 	}
 
+	public static Slot setName(Slot slot, String name) {
+		slot.setKey(name);
+		return slot;
+	}
+
+	public static Signature setName(Signature signature, String name) {
+		((ServiceSignature)signature).setName(name);
+		return signature;
+	}
+
+	public static Evaluator setName(Evaluator evaluator, String name) {
+		evaluator.setName(name);
+		return evaluator;
+	}
+	
 	public static URL url(String urlName) throws MalformedURLException {
 		return new URL(urlName);
 	}
