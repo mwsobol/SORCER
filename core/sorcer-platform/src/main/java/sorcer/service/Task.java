@@ -390,7 +390,7 @@ public class Task extends ServiceExertion {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Mappable#execute(java.lang.String, sorcer.service.Arg[])
+	 * @see sorcer.service.Contexting#execute(java.lang.String, sorcer.service.Arg[])
 	 */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {

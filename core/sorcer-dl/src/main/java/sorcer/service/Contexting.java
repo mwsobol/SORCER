@@ -21,49 +21,40 @@ package sorcer.service;
 import java.rmi.RemoteException;
 
 /**
- * Implicit Maps such that a path indicates internal structure of composition
- * with the last inner component indicated by the path. Contexts, Exertions,
- * Vars are examples of mappables.
+ * Contexting associates attribute-based paths with values or evaluations.
  * 
  * @author Mike Sobolewski
  */
-public interface Mappable<T> extends Identifiable {
+public interface Contexting<T> extends Identifiable {
 
 	/**
-	 * Returns a execute at the path.
+	 * Returns the value at a given path.
 	 * 
 	 * @param path
-	 *            the attribute-based path
-	 * @return this mappable execute
+	 *            an attribute-based path
+	 * @return the value at the path
 	 * @throws ContextException
 	 */
 	public T getValue(String path, Arg... args)
 			throws ContextException, RemoteException;
 	
 	/**
-	 * Returns a execute at the path as is with no reevaluation.
+	 * Returns a value at the path as-is with no execution of the service at the path.
 	 * 
 	 * @param path
 	 *            the attribute-based path
-	 * @return this mappable execute with no reevaluation
+	 * @return the value as-is at the path
 	 * @throws ContextException
 	 */
 	public T asis(String path) throws ContextException;
 		
 	/**
-	 * Maps the specified <code>path</code> to the specified <code>execute</code>
-	 * in this mappable. Neither the path nor the execute can be
-	 * <code>null</code>. <p>
-	 * 
-	 * The execute can be retrieved by calling the <code>execute</code> method with a
-	 * path that is equal to the original path.
-	 * 
+	 * Associated a given value with a given path
+	 *
 	 * @param path the attribute-based path
+	 * @param value the value to be associated with a given path
 	 * 
-	 * @param value the new execute
-	 * 
-	 * @return the previous execute of the specified path in this mappable, or
-	 * <code>null</code> if it did not have one
+	 * @return the previous value at the path
 	 * 
 	 * @throws ContextException
 	 */

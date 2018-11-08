@@ -48,7 +48,7 @@ import static sorcer.so.operator.exec;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Pro<T> extends Subroutine<T> implements Mappable<T>,
+public class Pro<T> extends Subroutine<T> implements Contexting<T>,
 		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, func<T> {
 
 	private static final long serialVersionUID = 7495489980319169695L;
@@ -119,7 +119,7 @@ public class Pro<T> extends Subroutine<T> implements Mappable<T>,
 		this.impl = entity;
 	}
 	
-	public Pro(Mappable map, String name, String path) {
+	public Pro(Contexting map, String name, String path) {
 		this(name);
 		impl =  path;
 	}
@@ -472,7 +472,7 @@ public class Pro<T> extends Subroutine<T> implements Mappable<T>,
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Mappable#execute(java.lang.String, sorcer.service.Arg[])
+	 * @see sorcer.service.Contexting#execute(java.lang.String, sorcer.service.Arg[])
 	 */
 	@Override
 	public T getValue(String path, Arg... args) throws ContextException {
@@ -489,7 +489,7 @@ public class Pro<T> extends Subroutine<T> implements Mappable<T>,
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Mappable#asis(java.lang.String)
+	 * @see sorcer.service.Contexting#asis(java.lang.String)
 	 */
 	@Override
 	public T asis(String path) throws ContextException {
@@ -502,7 +502,7 @@ public class Pro<T> extends Subroutine<T> implements Mappable<T>,
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Mappable#putValue(java.lang.String, java.lang.Object)
+	 * @see sorcer.service.Contexting#putValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public T putValue(String path, Object value) throws ContextException {

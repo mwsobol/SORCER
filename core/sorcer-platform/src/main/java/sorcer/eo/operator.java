@@ -2558,8 +2558,8 @@ public class operator extends Operator {
         Object obj = null;
         if (service instanceof Context) {
             obj = ((ServiceContext) service).get(path);
-            if (obj != null && obj instanceof Mappable) {
-                while (obj instanceof Mappable ||
+            if (obj != null && obj instanceof Contexting) {
+                while (obj instanceof Contexting ||
                     (obj instanceof Reactive && ((Reactive) obj).isReactive())) {
                     try {
                         obj = ((Evaluation) obj).asis();
@@ -2596,7 +2596,7 @@ public class operator extends Operator {
         return map.get(path);
     }
 
-    public static <V> V pathValue(Mappable<V> map, String path, Arg... args) throws ContextException {
+    public static <V> V pathValue(Contexting<V> map, String path, Arg... args) throws ContextException {
         try {
             return map.getValue(path, args);
         } catch (RemoteException e) {
@@ -3083,14 +3083,14 @@ public class operator extends Operator {
     public static class Pipe {
         String inPath;
         String outPath;
-        Mappable in;
-        Mappable out;
+        Contexting in;
+        Contexting out;
         String outComponentPath;
         String inComponentPath;
 
         Pro callEntry;
 
-        Pipe(Exertion out, String outPath, Mappable in, String inPath) {
+        Pipe(Exertion out, String outPath, Contexting in, String inPath) {
             this.out = out;
             this.outPath = outPath;
             this.in = in;
@@ -3135,10 +3135,10 @@ public class operator extends Operator {
 
     private static class InEndPoint {
         String inPath;
-        Mappable in;
+        Contexting in;
         String inComponentPath;
 
-        InEndPoint(Mappable in, String inDataPath) {
+        InEndPoint(Contexting in, String inDataPath) {
             this.inPath = inDataPath;
             this.in = in;
         }
@@ -3151,10 +3151,10 @@ public class operator extends Operator {
 
     private static class OutEndPoint {
         public String outPath;
-        public Mappable out;
+        public Contexting out;
         public String outComponentPath;
 
-        OutEndPoint(Mappable out, String outDataPath) {
+        OutEndPoint(Contexting out, String outDataPath) {
             this.outPath = outDataPath;
             this.out = out;
         }
@@ -3354,10 +3354,10 @@ public class operator extends Operator {
         return new LoopTask(name, condition, target);
     }
 
-    public static Exertion xrt(Mappable mappable, String path)
+    public static Exertion xrt(Contexting mappable, String path)
         throws ContextException {
         Object obj = ((ServiceContext) mappable).asis(path);
-        while (obj instanceof Mappable || obj instanceof Pro) {
+        while (obj instanceof Contexting || obj instanceof Pro) {
             try {
                 obj = ((Evaluation) obj).asis();
             } catch (RemoteException e) {

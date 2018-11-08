@@ -104,7 +104,7 @@ public class operator extends Operator {
 		return p;
 	}
 
-	public static Pro pro(Mappable argument, String name, String path) {
+	public static Pro pro(Contexting argument, String name, String path) {
 		Pro p = new Pro(argument, name, path);
 		return p;
 	}
@@ -210,7 +210,7 @@ public class operator extends Operator {
 		return p;
 	}
 
-	public static Pro pipe(Mappable in, String name, String path, Service out) throws ContextException {
+	public static Pro pipe(Contexting in, String name, String path, Service out) throws ContextException {
 		Pro p = new Pro(name, path, out);
 		add(p, in);
 		return p;
@@ -227,10 +227,10 @@ public class operator extends Operator {
 		return parameter;
 	}
 
-	public static Invocation invoker(Mappable mappable, String path)
+	public static Invocation invoker(Contexting mappable, String path)
 			throws ContextException {
 		Object obj = mappable.asis(path);
-		while (obj instanceof Mappable || obj instanceof Pro) {
+		while (obj instanceof Contexting || obj instanceof Pro) {
 			try {
 				obj = ((Evaluation) obj).asis();
 			} catch (RemoteException e) {
