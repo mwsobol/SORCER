@@ -64,7 +64,7 @@ public class SdbConnection extends URLConnection {
 	 */
 	@Override
 	public void connect() throws IOException {
-		//Provider provider = (Provider)ProviderLookup.getService(providerName, serviceInfo);
+		//Provider provider = (Provider)ProviderLookup.getGovernance(providerName, serviceInfo);
         try {
             Provider provider = (Provider) Accessor.get().getService(providerName, Class.forName(serviceType));
             store = (StorageManagement)provider;

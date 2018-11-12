@@ -26,7 +26,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 /**
- *  Implements a service discipline as service-fidelity-dispatch
+ *  Implements a service discipline as governance-multiFi-dispatch
  */
 public class ServiceDiscipline implements Discipline, Getter<Service> {
 
@@ -44,8 +44,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected Context outConnector;
 
-    // the executed service
-    protected Service out;
+    // the executed mogram
+    protected Mogram out;
 
     // the service context of the executed service
     protected Mogram result;
@@ -81,7 +81,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         dispatchMultiFi = new ServiceFidelity(services.toArray(pArray));
     }
 
-    public void add(Exertion dispatch, Service service) {
+    public void add(Exertion dispatch, Mogram service) {
         serviceMultiFi.getSelects().add(dispatch);
         dispatchMultiFi.getSelects().add(service);
     }
@@ -101,16 +101,16 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public Service getService() throws MogramException {
+    public Service getGovernance() throws MogramException {
         // if no service then dispatch is standalone
         if (serviceMultiFi == null || serviceMultiFi.getSelect() == null) {
-            return  dispatchMultiFi.getSelect();
+            return (Mogram) dispatchMultiFi.getSelect();
         }
         return serviceMultiFi.getSelect();
     }
 
     @Override
-    public ServiceFidelity getServiceMultiFi() throws MogramException {
+    public ServiceFidelity getGovernanceMultiFi() throws MogramException {
         return serviceMultiFi;
     }
 
@@ -179,7 +179,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                     xrt.setContext(input);
                 }
             }
-            xrt.setProvider(getService());
+            xrt.setProvider(getGovernance());
             return result = xrt.exert();
         } catch (RemoteException e) {
             throw new ServiceException(e);

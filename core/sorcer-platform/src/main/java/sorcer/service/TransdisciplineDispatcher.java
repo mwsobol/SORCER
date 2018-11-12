@@ -11,7 +11,6 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
-import static sorcer.co.operator.from;
 import static sorcer.co.operator.path;
 
 public class TransdisciplineDispatcher implements Service, Dispatcher {
@@ -53,7 +52,7 @@ public class TransdisciplineDispatcher implements Service, Dispatcher {
                     xrt.setContext(transdiscipline.input);
                 }
             }
-            xrt.setProvider(transdiscipline.getService());
+            xrt.setProvider(transdiscipline.getGovernance());
             transdiscipline.result = xrt.exert();
             execDependencies(transdiscipline.getName(), args);
             return transdiscipline.getOutput();

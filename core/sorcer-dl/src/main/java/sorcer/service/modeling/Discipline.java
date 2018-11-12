@@ -19,16 +19,18 @@ package sorcer.service.modeling;
 import sorcer.service.*;
 
 /**
- *  The interface for a service discipline design pattern as the triplet: service-fidelity-dispatch
+ *  The interface for a service discipline design pattern as governance-multiFi-dispatch.
+ *  Service governance is the indeterminate multifidelity process of decision-making
+ *  and the process by which decisions are actualized in the form of a service federation.
  */
 public interface Discipline extends Request {
 
     /**
-     * Returns a service specifying actualization of this discipline
+     * Returns a service governance specifying actualization of this discipline
      *
      * @throws ServiceException
      */
-    public Service getService() throws ServiceException;
+    public Service getGovernance() throws ServiceException;
 
     /**
      * Returns a dispatch multifidelity
@@ -38,7 +40,7 @@ public interface Discipline extends Request {
     public ServiceFidelity getDispatchMultiFi() throws ServiceException;
 
     /**
-     * Returns an dispatch to rule this discipline
+     * Returns a dispatch to govern this discipline
      *
      * @return a dispatch of this discipline
      * @throws ExertionException
@@ -46,11 +48,11 @@ public interface Discipline extends Request {
     public Exertion getDispatch() throws ExertionException;
 
     /**
-     * Returns an service multifidelity
+     * Returns a service governance multifidelity
      *
      * @throws MogramException
      */
-    public ServiceFidelity getServiceMultiFi() throws MogramException;
+    public ServiceFidelity getGovernanceMultiFi() throws MogramException;
 
     /**
      * Returns a discipline input context.
@@ -61,7 +63,7 @@ public interface Discipline extends Request {
     public Context getInput() throws ContextException, ExertionException;
 
     /**
-     * Returns a output of this discipline.
+     * Returns an output context of this discipline.
      *
      * @return a current output context
      * @throws ContextException
@@ -72,15 +74,16 @@ public interface Discipline extends Request {
      * Adds a dispatch-service fidelity of this discipline.
      * Fidelity names are names of dispatch and service correspondingly.
      */
-    public void add(Exertion dispatch, Service service);
+    public void add(Exertion dispatcher, Mogram governance);
 
     /**
-     * Adds a dispatch-service fidelity to this discipline
+     * Adds a dispatch and governance fidelities to this discipline
      */
-    public void add(Fidelity dispatchFi, Fidelity serviceFi);
+    public void add(Fidelity dispatchFi, Fidelity governanceFi);
 
     /**
-     * Returns a buider of this discipline to be used for replication it when needed.
+     * Returns a builder of this discipline to be used for replication
+     * of this discipline when needed.
      * */
     public Signature getBuilder();
 }

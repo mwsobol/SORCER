@@ -867,7 +867,7 @@ public class operator {
         return new ServiceDiscipline(clients, servers);
     }
 
-    public static Discipline add(Discipline disciplne, Exertion client, Service server) {
+    public static Discipline add(Discipline disciplne, Exertion client, Mogram server) {
          disciplne.add(client, server);
          return disciplne;
     }
