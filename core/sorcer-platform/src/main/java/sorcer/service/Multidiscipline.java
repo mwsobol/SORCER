@@ -17,8 +17,8 @@
 
 package sorcer.service;
 
-import sorcer.core.Dispatcher;
 import sorcer.service.modeling.Discipline;
+import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.Transdiscipline;
 
 import java.util.Map;
@@ -34,11 +34,19 @@ public class Multidiscipline extends ServiceDiscipline implements Transdisciplin
     // active disciplines
     protected Paths disciplinePaths;
 
-    protected Dispatcher dispatcher;
+    protected DisciplineExplorer explorer;
 
     @Override
     public Discipline getDiscipline(String name) {
         return disciplines.get(name);
+    }
+
+    public Exploration getExplorer() {
+        return explorer;
+    }
+
+    public void setExplorer(Exploration explorer) {
+        this.explorer = (DisciplineExplorer) explorer;
     }
 
     @Override

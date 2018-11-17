@@ -44,7 +44,7 @@ public class ModelThread extends Thread {
 	}
 
 	public void run() {
-		logger.debug("*** Exertion dispatcher started with control context ***\n"
+		logger.debug("*** Exertion explorer started with control context ***\n"
 				+ task.getControlContext());
 		Dispatcher dispatcher = null;
 		try {
@@ -70,13 +70,13 @@ public class ModelThread extends Thread {
 
 			/*int COUNT = 1000;
 			int count = COUNT;
-			while (dispatcher.getState() != Exec.DONE
-					&& dispatcher.getState() != Exec.FAILED
-					&& dispatcher.getState() != Exec.SUSPENDED) {
+			while (explorer.getState() != Exec.DONE
+					&& explorer.getState() != Exec.FAILED
+					&& explorer.getState() != Exec.SUSPENDED) {
 				count--;
 				if (count < 0) {
 					logger.debug("*** Concatenator's Exertion Dispatcher waiting in state: "
-							+ dispatcher.getState());
+							+ explorer.getState());
 					count = COUNT;
 				}
 				Thread.sleep(SLEEP_TIME);
@@ -88,7 +88,7 @@ public class ModelThread extends Thread {
         } catch (DispatcherException de) {
 			de.printStackTrace();
 		}
-		//result = (Block) dispatcher.getMogram();
+		//result = (Block) explorer.getMogram();
 	}
 
 	public Task getTask() {

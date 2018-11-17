@@ -59,9 +59,9 @@ abstract public class ExertDispatcher implements Dispatcher {
     // All dispatchers spawned by this one.
     protected List<Uuid> runningExertionIDs = Collections.synchronizedList(new LinkedList<Uuid>());
 
-    // subject for whom this dispatcher is running.
+    // subject for whom this explorer is running.
     // make sure subject is set before and after any object goes out and comes
-    // in dispatcher.
+    // in explorer.
     protected Subject subject;
 
     protected Provider provider;
@@ -113,7 +113,7 @@ abstract public class ExertDispatcher implements Dispatcher {
             afterExec(xrt);
             xrt.finalizeOutDataContext();
         } catch (Exception e) {
-            logger.warn("Exertion dispatcher thread killed by exception: ", e);
+            logger.warn("Exertion explorer thread killed by exception: ", e);
             xrt.setStatus(Exec.FAILED);
             state = Exec.FAILED;
             xrt.reportException(e);
@@ -148,9 +148,9 @@ abstract public class ExertDispatcher implements Dispatcher {
         } catch (ContextException e) {
             throw new ExertionException(e);
         }
-        // If Job, new dispatcher will update inputs for it's Exertion
-        // in catalog dispatchers, if it is a job, then new dispatcher is
-        // spawned and the shared contexts are passed. So the new dispatcher
+        // If Job, new explorer will update inputs for it's Exertion
+        // in catalog dispatchers, if it is a job, then new explorer is
+        // spawned and the shared contexts are passed. So the new explorer
         // will update inputs of tasks inside the jobExertion. But in space,
         // all inputs to a new job are to be updated before dropping.
         try {

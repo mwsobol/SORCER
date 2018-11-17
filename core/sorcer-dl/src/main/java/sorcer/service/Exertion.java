@@ -74,9 +74,9 @@ public interface Exertion extends Mogram, Dependency, Invocation<Object>,
 
 
 	/**
-	 * Assigns a provider for this exertion.
+	 * Assigns a dispatch for this exertion.
 	 */
-	public void setProvider(Service service);
+	public void dispatch(Service service);
 
 	/**
 	 * Returns a deployment ID for this exertion.

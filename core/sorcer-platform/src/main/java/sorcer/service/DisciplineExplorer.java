@@ -6,6 +6,8 @@ import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.modeling.Discipline;
+import sorcer.service.modeling.Exploration;
+import sorcer.service.modeling.ExploreException;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.Map;
 
 import static sorcer.co.operator.path;
 
-public class TransdisciplineDispatcher implements Service, Dispatcher {
+public class DisciplineExplorer implements Service, Exploration {
 
     Multidiscipline transdiscipline;
     // exec discipline dependencies
@@ -28,23 +30,13 @@ public class TransdisciplineDispatcher implements Service, Dispatcher {
     }
 
     @Override
-    public void exec(Arg... arg) {
-
-    }
-
-    @Override
-    public DispatchResult getResult() {
-        return null;
-    }
-
-    @Override
     public Object execute(Arg... args) throws ServiceException {
         try {
             List<Fidelity> fis = Arg.selectFidelities(args);
             if (fis != null && fis.size() > 0) {
                 transdiscipline.selectFi(fis.get(0));
             }
-            Exertion xrt = transdiscipline.getDispatch();
+            Exertion xrt = transdiscipline.getDispatcher();
             if (transdiscipline.input != null) {
                 if (transdiscipline.inConnector != null) {
                     xrt.setContext(((ServiceContext) transdiscipline.input).updateContextWith(transdiscipline.inConnector));
@@ -52,7 +44,7 @@ public class TransdisciplineDispatcher implements Service, Dispatcher {
                     xrt.setContext(transdiscipline.input);
                 }
             }
-            xrt.setProvider(transdiscipline.getGovernance());
+            xrt.dispatch(transdiscipline.getGovernance());
             transdiscipline.result = xrt.exert();
             execDependencies(transdiscipline.getName(), args);
             return transdiscipline.getOutput();
@@ -87,11 +79,7 @@ public class TransdisciplineDispatcher implements Service, Dispatcher {
     }
 
     @Override
-    public LeaseRenewalManager getLrm() {
+    public Context explore(Context searchContext, Arg... args) throws ExploreException, RemoteException {
         return null;
-    }
-
-    @Override
-    public void setLrm(LeaseRenewalManager lrm) {
     }
 }

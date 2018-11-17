@@ -50,7 +50,7 @@ public class BrowserWindow extends JSplitPane {
 				dispatcher.getInterfaceListener(), dispatcher
 						.getMethodListener());
 
-		//ContextView contextPane = new ContextView(dispatcher);
+		//ContextView contextPane = new ContextView(explorer);
 		
 		ContextScriptView scriptPane = new ContextScriptView(dispatcher, model);
 		scriptPane.setMinimumSize(new Dimension(300, 300));

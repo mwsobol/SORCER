@@ -19,7 +19,7 @@ package sorcer.service.modeling;
 import sorcer.service.*;
 
 /**
- *  The interface for a service discipline design pattern as governance-multiFi-dispatch.
+ *  The interface for a service discipline design pattern as governance-multiFi-dispatcher.
  *  Service governance is the indeterminate multifidelity process of decision-making
  *  and the process by which decisions are actualized in the form of a service federation.
  */
@@ -33,19 +33,19 @@ public interface Discipline extends Request {
     public Service getGovernance() throws ServiceException;
 
     /**
-     * Returns a dispatch multifidelity
+     * Returns a dispatcher multifidelity
      *
      * @throws ServiceException
      */
-    public ServiceFidelity getDispatchMultiFi() throws ServiceException;
+    public ServiceFidelity getDispatcherMultiFi() throws ServiceException;
 
     /**
-     * Returns a dispatch to govern this discipline
+     * Returns a dispatcher to govern this discipline
      *
-     * @return a dispatch of this discipline
+     * @return a dispatcher of this discipline
      * @throws ExertionException
      */
-    public Exertion getDispatch() throws ExertionException;
+    public Exertion getDispatcher() throws ExertionException;
 
     /**
      * Returns a service governance multifidelity
@@ -71,15 +71,15 @@ public interface Discipline extends Request {
     public Context getOutput(Arg... args) throws ServiceException;
 
     /**
-     * Adds a dispatch-service fidelity of this discipline.
-     * Fidelity names are names of dispatch and service correspondingly.
+     * Adds a dispatcher-governance fidelity of this discipline.
+     * Fidelity names are names of dispatcher and service correspondingly.
      */
-    public void add(Exertion dispatcher, Mogram governance);
+    public void add(Exertion dispatcher, Service governance);
 
     /**
-     * Adds a dispatch and governance fidelities to this discipline
+     * Adds a dispatcher and governance fidelities to this discipline
      */
-    public void add(Fidelity dispatchFi, Fidelity governanceFi);
+    public void add(Fidelity dispatcherFi, Fidelity governanceFi);
 
     /**
      * Returns a builder of this discipline to be used for replication

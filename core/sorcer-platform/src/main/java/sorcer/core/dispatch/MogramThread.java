@@ -47,7 +47,7 @@ public class MogramThread implements Runnable {
 	}
 
 	public void run() {
-		logger.debug("*** Exertion dispatcher started with control context ***\n"
+		logger.debug("*** Exertion explorer started with control context ***\n"
 				+ ((Exertion)job).getControlContext());
 		try {
             Dispatcher dispatcher = null;
@@ -58,20 +58,20 @@ public class MogramThread implements Runnable {
 			try {
 				((Exertion)job).getControlContext().appendTrace((
 						provider.getProviderName() != null ? provider.getProviderName() + " " : "") +
-						"run: " + job.getName() + " dispatcher: " + dispatcher.getClass().getName());
+						"run: " + job.getName() + " explorer: " + dispatcher.getClass().getName());
 			} catch (RemoteException e) {
-                logger.error("exception in dispatcher: " + e);
+                logger.error("exception in explorer: " + e);
 				// ignore it, locall call
 			}
 /*			 int COUNT = 1000;
 			 int count = COUNT;
-			while (dispatcher.getState() != Exec.DONE
-					&& dispatcher.getState() != Exec.FAILED
-					&& dispatcher.getState() != Exec.SUSPENDED) {
+			while (explorer.getState() != Exec.DONE
+					&& explorer.getState() != Exec.FAILED
+					&& explorer.getState() != Exec.SUSPENDED) {
 				 count--;
 				 if (count < 0) {
 				 logger.debug("*** Mogramber's Exertion Dispatcher waiting in state: "
-				 + dispatcher.getState());
+				 + explorer.getState());
 				 count = COUNT;
 				 }
 				Thread.sleep(SLEEP_TIME);

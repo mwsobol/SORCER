@@ -450,29 +450,60 @@ public class operator extends Operator {
 		return p;
 	}
 
+    public static Path prePath(String path) {
+        Path p = new Path(path);
+        p.type = Path.Type.PRE;
+        return p;
+    }
+
+    public static Path periPath(String path) {
+        Path p = new Path(path);
+        p.type = Path.Type.PERI;
+        return p;
+    }
+
+    public static Path postPath(String path) {
+        Path p = new Path(path);
+        p.type = Path.Type.POST;
+        return p;
+    }
+
 	public static Path path(String path) {
-		return new Path(path);
+        Path p = new Path(path);
+        p.type = Path.Type.PERI;
+        return p;
 	}
 
-	public static Path path(String path, Object info) {
-		if (info instanceof Path) {
+	public static Path path(String path, Object info, Path... paths) {
+		if (info instanceof Path && paths.length == 0) {
 			Path p = new Path(path);
 			p.dirPath = (Path) info;
 			p.type = Path.Type.MAP;
 			return p;
-		}
+		} else if (info instanceof String && paths.length == 1) {
+            Path p = new Path(path, info, Path.Type.MAP);
+            p.dirPath = paths[0];
+            return p;
+        } else if (paths.length > 1) {
+            Path p = new Path(path);
+            p.dirPath = (Path) info;
+            p.type = Path.Type.MAP;
+            for (Path dp : paths) {
+                if (dp.type.equals(dp.type.PRE)) {
+                    p.prePaths.add(dp);
+                } else if (dp.type.equals(dp.type.POST)) {
+                    p.postPaths.add(dp);
+                }
+            }
+        }
 		return new Path(path, info);
 	}
 
-	public static Path path(String path, String tag, Path from$to) {
-		Path p = new Path(path, tag, Path.Type.MAP);
-       	p.dirPath = from$to;
-        return p;
-	}
-
-    public static Path path(String path, Signature.Direction dir) {
-        return new Path(path, dir);
-    }
+//	public static Path path(String path, String tag, Path from$to) {
+//		Path p = new Path(path, tag, Path.Type.MAP);
+//       	p.dirPath = from$to;
+//        return p;
+//	}
 
 	public static Path map(String path, Object info) {
 		return new Path(path, info, Path.Type.MAP);

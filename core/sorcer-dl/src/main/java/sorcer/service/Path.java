@@ -28,7 +28,7 @@ public class Path implements Arg, Service {
 	private static final long serialVersionUID = 1L;
 
 	public enum Type {
-		PATH, MAP, ENT, CONTEXT, ARRAY, OUT, FROM, TO
+		PATH, PRE, PERI, POST, MAP, ENT, CONTEXT, ARRAY, OUT, FROM, TO
 	}
 
 	public enum State { CACHED, UNCACHED, VALID, INVALID, CHANGED, BEFORE, AFTER }
@@ -38,6 +38,10 @@ public class Path implements Arg, Service {
 	public Object info;
 
 	public String domain;
+
+	public List<Path> prePaths;
+
+	public List<Path> postPaths;
 
 	public Path dirPath;
 

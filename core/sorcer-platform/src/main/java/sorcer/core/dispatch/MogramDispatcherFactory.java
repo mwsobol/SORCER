@@ -152,7 +152,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
             throw e;
         } catch (Exception e) {
             throw new DispatcherException(
-                    "Failed to create the mogram dispatcher for job: "+ mogram.getName(), e);
+                    "Failed to create the mogram explorer for job: "+ mogram.getName(), e);
         }
         return dispatcher;
     }
@@ -199,10 +199,10 @@ public class MogramDispatcherFactory implements DispatcherFactory {
                     provisionManager);
         } catch (ContextException e) {
             throw new DispatcherException(
-                    "Failed to create the exertion dispatcher for job: "+ task.getName(), e);
+                    "Failed to create the exertion explorer for job: "+ task.getName(), e);
         } catch (ExertionException e) {
             throw new DispatcherException(
-                    "Failed to create the exertion dispatcher for job: "+ task.getName(), e);
+                    "Failed to create the exertion explorer for job: "+ task.getName(), e);
         }
     }
 }

@@ -29,7 +29,7 @@ import sorcer.service.Context;
 import sorcer.ui.exertlet.EditorViewSignature;
 
 /**
- * The BrowserModel, in standard model-view-controller, is the model for the
+ * The BrowserModel, in standard model-view-explorer, is the model for the
  * Cataloger User Interface service. This model is also utilized by the task
  * manager ui.
  */

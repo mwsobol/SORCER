@@ -81,7 +81,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         dispatchMultiFi = new ServiceFidelity(services.toArray(pArray));
     }
 
-    public void add(Exertion dispatch, Mogram service) {
+    public void add(Exertion dispatch, Service service) {
         serviceMultiFi.getSelects().add(dispatch);
         dispatchMultiFi.getSelects().add(service);
     }
@@ -115,18 +115,18 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public Exertion getDispatch() throws ExertionException {
+    public Exertion getDispatcher() throws ExertionException {
         return (Exertion) dispatchMultiFi.getSelect();
     }
 
     @Override
-    public ServiceFidelity getDispatchMultiFi() throws MogramException {
+    public ServiceFidelity getDispatcherMultiFi() throws MogramException {
         return dispatchMultiFi;
     }
 
     @Override
     public Context getInput() throws ContextException, ExertionException {
-        return getDispatch().getContext();
+        return getDispatcher().getContext();
     }
 
     @Override
@@ -171,7 +171,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             if (fis != null && fis.size() > 0) {
                 selectFi(fis.get(0));
             }
-            Exertion xrt = getDispatch();
+            Exertion xrt = getDispatcher();
             if (input != null) {
                 if (inConnector != null) {
                     xrt.setContext(((ServiceContext) input).updateContextWith(inConnector));
@@ -179,7 +179,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                     xrt.setContext(input);
                 }
             }
-            xrt.setProvider(getGovernance());
+            xrt.dispatch(getGovernance());
             return result = xrt.exert();
         } catch (RemoteException e) {
             throw new ServiceException(e);

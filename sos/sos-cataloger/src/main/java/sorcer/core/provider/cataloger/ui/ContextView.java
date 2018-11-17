@@ -117,7 +117,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 	private Context theContext;
 
 	/**
-	 * current dispatcher used to gather more information, like load other or to
+	 * current explorer used to gather more information, like load other or to
 	 * perform operations: save, save as, delete, and exerting the service
 	 */
 	private SignatureDispatchment signatureDispatcher;
@@ -181,7 +181,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 	 * Constructor for creating the context view panel
 	 * 
 	 * @param signatureDispatcher
-	 *            Remote dispatcher to use.
+	 *            Remote explorer to use.
 	 */
 	public ContextView(SignatureDispatchment signatureDispatcher) {
 		super(new BorderLayout());

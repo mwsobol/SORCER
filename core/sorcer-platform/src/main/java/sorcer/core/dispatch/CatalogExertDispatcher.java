@@ -89,7 +89,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
             ser.setStatus(DONE);
             // update all outputs from sharedcontext only for tasks. For jobs,
-            // spawned dispatcher does it.
+            // spawned explorer does it.
 			try {
 				if (result.isTask()) {
 					collectOutputs(result);
@@ -127,7 +127,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                                 task, null);
                         result.getControlContext().appendTrace(
                                 (provider.getProviderName() != null ? provider.getProviderName() + " " : "")
-                                        + "executed task: " + task.getName() + " dispatcher: " + getClass().getName());
+                                        + "executed task: " + task.getName() + " explorer: " + getClass().getName());
                         return result;
                     }
                 } catch (RemoteException re) {
@@ -222,7 +222,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                 }
                 if (result!=null)
                     result.getControlContext().appendTrace(
-                            (provider != null ? provider.getProviderName() + " " : "") + "dispatcher: "
+                            (provider != null ? provider.getProviderName() + " " : "") + "explorer: "
                                         + getClass().getName());
             }
             logger.debug("got result: {}", result);
@@ -254,17 +254,17 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 
         runningExertionIDs.add(job.getId());
 
-        // create a new instance of a dispatcher
+        // create a new instance of a explorer
         Dispatcher dispatcher = MogramDispatcherFactory.getFactory()
                 .createDispatcher(job, sharedContexts, true, provider);
         dispatcher.exec(args);
-        // wait until serviceJob is done by dispatcher
+        // wait until serviceJob is done by explorer
         Job out = (Job) dispatcher.getResult().exertion;
         // Not sure if good place
         out.stopExecTime();
         out.getControlContext().appendTrace((provider.getProviderName() != null ?
                 provider.getProviderName() + " " : "")  + "executed job: " + job.getName()
-                + " dispatcher: " + getClass().getName());
+                + " explorer: " + getClass().getName());
         return out;
     }
 
@@ -291,22 +291,22 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 			}
 
 			/*
-			 * Create a new dispatcher thread for the inner job, if no available
+			 * Create a new explorer thread for the inner job, if no available
 			 * Jobber is found in the network
 			 */
 			Dispatcher dispatcher;
 			runningExertionIDs.add(block.getId());
 
-			// create a new instance of a dispatcher
+			// create a new instance of a explorer
 			dispatcher = MogramDispatcherFactory.getFactory()
 					.createDispatcher(block, sharedContexts, true, provider);
 
             dispatcher.exec(args);
-			// wait until a block is done by dispatcher
+			// wait until a block is done by explorer
 			Block out = (Block) dispatcher.getResult().exertion;
             out.getControlContext().appendTrace((provider.getProviderName() != null
                     ? provider.getProviderName() + " " : "")
-                    + "executed block: " +  block.getName() + " dispatcher: " + getClass().getName());
+                    + "executed block: " +  block.getName() + " explorer: " + getClass().getName());
 			return out;
 		} catch (RemoteException | ExertionException | DispatcherException ex) {
 			throw new MogramException(ex);

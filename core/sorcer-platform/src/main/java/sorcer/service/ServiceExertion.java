@@ -93,7 +93,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     /*
      * Assigns a provider for this exertion.
      */
-    public void setProvider(Service service) {
+    public void dispatch(Service service) {
         // to be implemented in subclasses
     }
 
