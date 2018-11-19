@@ -89,7 +89,7 @@ public class ListContext<T extends Object> extends ServiceContext<T> implements 
 	 */
 	@Override
 	public Object putValue(int i, Object value) throws ContextException {
-		putValue(pathFor(i), value);
+		putValue(pathFor(i), (T)value);
 		elements.set(i, (T)value);
 		return value;
 	}
@@ -131,7 +131,7 @@ public class ListContext<T extends Object> extends ServiceContext<T> implements 
 	public boolean addAll(int index, Collection c) throws ContextException {
 		int i = index;
 		for (Object o : c) {
-			putValue(pathFor(i), o);
+			putValue(pathFor(i), (T)o);
 			i++;
 		}
 		return addAll(index, c);

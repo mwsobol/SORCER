@@ -133,7 +133,7 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 	@Override
 	public Object putInValueAt(String path, Object value,
 			int index) throws ContextException {
-		super.putValue(path, value);
+		super.putValue(path, (T)value);
 		if (index >= tally) tally++;
 		mark(path, Context.CONTEXT_PARAMETER + APS + Context.DA_IN + APS + APS + APS);
 		mark(path, Context.OPP + APS + Context.DA_IN + APS + index);
@@ -146,7 +146,7 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 	@Override
 	public Object putInoutValueAt(String path, Object value,
 			int index) throws ContextException {
-		super.putValue(path, value);
+		super.putValue(path, (T)value);
 		if (index >= tally) tally++;
 		mark(path, Context.CONTEXT_PARAMETER + APS + Context.DA_INOUT + APS + APS + APS);
 		mark(path, Context.OPP + APS + Context.DA_INOUT + APS + index);
@@ -164,7 +164,7 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 
 	public Object putOutValueAt(String path, Object value, Class valType, int index)
 			throws ContextException {
-		super.putValue(path, value);
+		super.putValue(path, (T)value);
 		if (index >= tally) tally++;
 		if (valType != null)
 			mark(path, Context.CONTEXT_PARAMETER + APS + Context.DA_OUT + APS + APS + APS + valType);
@@ -183,7 +183,7 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 	 */
 	@Override
 	public Object putValueAt(final String path, Object value, int index) throws ContextException {
-		super.putValue(path, value);
+		super.putValue(path, (T)value);
 		if (index >= tally) tally++;
 		mark(path, Context.INDEX + APS + index);
 		return value;
@@ -192,7 +192,7 @@ public class PositionalContext<T> extends ServiceContext<T> implements
 	@Override
 	public T putValue(String path, Object value) throws ContextException {
 		if (this.containsPath(path)) {
-			return super.putValue(path, value);
+			return super.putValue(path, (T)value);
 		}
 		else {
 			int index = tally++;

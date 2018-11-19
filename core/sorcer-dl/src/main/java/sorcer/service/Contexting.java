@@ -37,7 +37,7 @@ public interface Contexting<T> extends Identifiable {
 	 */
 	public T getValue(String path, Arg... args)
 			throws ContextException, RemoteException;
-	
+
 	/**
 	 * Returns a value at the path as-is with no execution of the service at the path.
 	 * 
@@ -47,7 +47,9 @@ public interface Contexting<T> extends Identifiable {
 	 * @throws ContextException
 	 */
 	public T asis(String path) throws ContextException;
-		
+
+	public T asis(Path path) throws ContextException;
+
 	/**
 	 * Associated a given value with a given path
 	 *
@@ -58,6 +60,8 @@ public interface Contexting<T> extends Identifiable {
 	 * 
 	 * @throws ContextException
 	 */
-	public T putValue(String path, Object value) throws ContextException;
+	public T putValue(String path, T value) throws ContextException;
+
+	public T putValue(Path path, T value) throws ContextException;
 
 }

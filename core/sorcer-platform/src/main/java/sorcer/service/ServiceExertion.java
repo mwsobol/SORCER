@@ -929,6 +929,10 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         return cxt.get(path);
     }
 
+    public Object asis(Path path) throws ContextException {
+        return asis(path.path);
+    }
+
     public Object putValue(String path, Object value) throws ContextException {
         Context cxt = null;
         if (isJob()) {
@@ -937,6 +941,10 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
             cxt = dataContext;
         }
         return cxt.putValue(path, value);
+    }
+
+    public Object putValue(Path path, Object value) throws ContextException {
+        return putValue(path.path, value);
     }
 
     public List<Setter> getSetters() {

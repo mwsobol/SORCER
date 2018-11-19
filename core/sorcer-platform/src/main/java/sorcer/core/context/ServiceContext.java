@@ -67,6 +67,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	private static final long serialVersionUID = 3311956866023311727L;
 	protected Map<String, T> data = new ConcurrentHashMap<String, T>();
+    protected Map<String, Path> paths = new ConcurrentHashMap<String, Path>();
 	protected String subjectPath = "";
 	protected Object subjectValue = "";
 	// default eval new ReturnPath(Context.RETURN);
@@ -200,7 +201,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public ServiceContext(List<Identifiable> objects) throws ContextException {
 		for (Identifiable obj : objects) {
-			putValue(obj.getName(), obj);
+			putValue(obj.getName(), (T)obj);
 		}
 	}
 
@@ -209,7 +210,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		List<String> names = row.getNames();
 		List<Object> vals = row.getValues();
 		for (int i = 0; i < vals.size(); i++) {
-			putValue(names.get(i), vals.get(i));
+			putValue(names.get(i), (T)vals.get(i));
 		}
 	}
 
@@ -542,11 +543,19 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return val;
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.service.AssociativeContext#putValue(java.lang.String, java.lang.Object)
-	 */
+    public T putValue(final Path path, T value) throws ContextException {
+        paths.put(path.path, path);
+        putValue(path.path, value);
+        return value;
+    }
+
+    public Path getPath(String path) throws ContextException {
+        return paths.get(path);
+    }
+
+
 	@Override
-	public T putValue(final String path, Object value) throws ContextException {
+	public T putValue(final String path, T value) throws ContextException {
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");
 		// first test if path is in a linked context
@@ -609,7 +618,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			throws ContextException {
 		// for the special case where the attribute-eval pair or
 		// (meta)association can be represented as a single string
-		T obj = putValue(path, value);
+		T obj = putValue(path, (T) value);
 
 		if (association != null) {
 		    String assoc = association.toString();
@@ -1264,6 +1273,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return list;
 	}
 
+    public Map<String, Path> getMetapaths() throws ContextException {
+	    return paths;
+    }
+
 	public List<String> getPaths() throws ContextException {
 		ArrayList<String> paths = new ArrayList<String>();
 		Iterator i = keyIterator();
@@ -1898,9 +1911,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 						prefix = "";
 						if (mappedCntxt.getSubjectPath().length() > 0)
 							prefix = mappedCntxt.getSubjectPath() + CPS;
-						putValue(prefix + newKey, mappedCntxt.get(oldKey));
+						putValue(prefix + newKey, (T) mappedCntxt.get(oldKey));
 					} else
-						putValue(newKey, mappedCntxt.get(oldKey));
+						putValue(newKey, (T) mappedCntxt.get(oldKey));
 				}
 			}
 		}
@@ -2299,7 +2312,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (value == null)
 			putValue(returnPath.path, (T)none);
 		else
-			putValue(returnPath.path, value);
+			putValue(returnPath.path, (T) value);
 
 		if (returnPath.direction == Direction.IN)
 			Contexts.markIn(this, returnPath.path);
@@ -2783,7 +2796,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 					} else  {
 						val = ((Entry) e).get();
 					}
-					putValue(e.getName(), val);
+					putValue(e.getName(), (T) val);
 				}
 			}
 		} catch (ContextException | RemoteException ex) {
@@ -2870,14 +2883,19 @@ public class ServiceContext<T> extends ServiceMogram implements
         return val;
 	}
 
-	@Override
+    @Override
+    public T asis(Path path) throws ContextException {
+        return asis(path.path);
+    }
+
+    @Override
 	public Domain add(Identifiable... objects) throws ContextException, RemoteException {
 		boolean changed = false;
 		for (Identifiable obj : objects) {
 			if (obj instanceof Subroutine) {
-				putValue(obj.getName(), ((Subroutine) obj).asis());
+				putValue(obj.getName(), (T) ((Subroutine) obj).asis());
 			} else {
-				putValue(obj.getName(), obj);
+				putValue(obj.getName(), (T) obj);
 			}
 		}
 		if (changed) {
@@ -2910,7 +2928,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			RemoteException {
 		List<String> pl = ((ServiceContext) context).getOutPaths();
 		for (String p : pl) {
-			putValue(p, context.getValue(p));
+			putValue(p, (T)context.getValue(p));
 		}
 		return this;
 	}
@@ -3145,7 +3163,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public Context getResponses(String path, Path... paths) throws ContextException, RemoteException {
 		Context results = getMergedSubcontext(null, Arrays.asList(paths));
-		putValue(path, results);
+		putValue(path, (T)results);
 		return results;
 	}
 
@@ -3235,9 +3253,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public Object addValue(Identifiable value) throws ContextException {
 		if (value instanceof Entry && !((Entry)value).isPersistent()) {
-			return putValue(value.getName(), ((Entry)value).get());
+			return putValue(value.getName(), (T) ((Entry)value).get());
 		}
-		return putValue(value.getName(), value);
+		return putValue(value.getName(), (T)value);
 	}
 
 	/* (non-Javadoc)
@@ -3247,7 +3265,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public Object putDbValue(String path, Object value) throws ContextException, RemoteException {
 		Pro callEntry = new Pro(path, value == null ? Context.none : value);
 		callEntry.setPersistent(true);
-		return putValue(path, callEntry);
+		return putValue(path, (T)callEntry);
 	}
 
 	/* (non-Javadoc)
@@ -3259,7 +3277,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Pro callEntry = new Pro(path, value == null ? Context.none : value);
 		callEntry.setPersistent(true);
 		callEntry.setDbURL(datastoreUrl);
-		return putValue(path, callEntry);
+		return putValue(path, (T) callEntry);
 	}
 
 	public List<EntryList> getEntryLists() {

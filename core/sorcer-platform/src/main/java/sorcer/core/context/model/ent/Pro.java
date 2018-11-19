@@ -48,8 +48,8 @@ import static sorcer.so.operator.exec;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Pro<T> extends Subroutine<T> implements Contexting<T>,
-		Invocation<T>, Setter, Scopable, Comparable<T>, Reactive<T>, func<T> {
+public class Pro<T> extends Subroutine<T> implements Invocation<T>,
+	Setter, Scopable, Comparable<T>, Reactive<T>, func<T> {
 
 	private static final long serialVersionUID = 7495489980319169695L;
 	 
@@ -471,10 +471,6 @@ public class Pro<T> extends Subroutine<T> implements Contexting<T>,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.service.Contexting#execute(java.lang.String, sorcer.service.Arg[])
-	 */
-	@Override
 	public T getValue(String path, Arg... args) throws ContextException {
 		String[] attributes = path.split(SorcerConstants.CPS);
 		if (attributes[0].equals(name)) {
@@ -488,10 +484,6 @@ public class Pro<T> extends Subroutine<T> implements Contexting<T>,
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.service.Contexting#asis(java.lang.String)
-	 */
-	@Override
 	public T asis(String path) throws ContextException {
 		String[] attributes = path.split(SorcerConstants.CPS);
 		if (attributes[0].equals(name)) {
@@ -501,17 +493,13 @@ public class Pro<T> extends Subroutine<T> implements Contexting<T>,
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.service.Contexting#putValue(java.lang.String, java.lang.Object)
-	 */
-	@Override
 	public T putValue(String path, Object value) throws ContextException {
 		String[] attributes = path.split(SorcerConstants.CPS);
 		if (attributes[0].equals(name)) {
 			if (attributes.length == 1)
 				this.out = (T)value;
 		}
-		return (T)value;	
+		return (T)value;
 	}
 
 	/* (non-Javadoc)
