@@ -1277,6 +1277,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	    return paths;
     }
 
+	public Path putMetapath(Path path) throws ContextException {
+		return paths.put(path.path, path);
+	}
+
 	public List<String> getPaths() throws ContextException {
 		ArrayList<String> paths = new ArrayList<String>();
 		Iterator i = keyIterator();
