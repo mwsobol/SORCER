@@ -1240,6 +1240,14 @@ public class operator extends Operator {
 		return valuation.valuate();
 	}
 
+	public static Object value(Row row, String item) throws ContextException {
+		try {
+			return row.getValue(item);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
+		}
+	}
+
 	public static Object evalValue(Mogram mogram, String path) throws MogramException {
 		return mogram.getEvaluatedValue(path);
 	}
