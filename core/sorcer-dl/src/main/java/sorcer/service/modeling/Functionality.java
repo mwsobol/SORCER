@@ -48,7 +48,7 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 		// Simultaneous Analysis and Design (SAND),
 		// Individual Discipline Feasible (IDF),
 		// Multidiscipline Feasible (MDF)
-		// AAO, SAND, IDF, MDF, MDA, NONE,
+		 AAO, SAND, IDF, MDF, MDA, NONE,
 
 		VDD,    // derivative difference
 		VFD,    // var finite difference
