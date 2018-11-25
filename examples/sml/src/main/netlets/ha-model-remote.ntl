@@ -24,13 +24,11 @@ import sorcer.arithmetic.provider.Subtractor
 Model mo = model(
         inVal("arg/x1", 10.0d), inVal("arg/x2", 50.0d),
         inVal("arg/x3", 20.0d), inVal("arg/x4", 80.0d),
-        proc(sig("multiply", Multiplier.class, result("result/y1",
+        ent(sig("multiply", Multiplier.class, result("result/y1",
                 inPaths("arg/x1", "arg/x2")))),
-        proc(sig("add", Adder.class, result("result/y2",
+        ent(sig("add", Adder.class, result("result/y2",
                 inPaths("arg/x3", "arg/x4")))),
-        proc(sig("out", "subtract", Subtractor.class, result("result/y3",
+        ent(sig("out", "subtract", Subtractor.class, result("result/y3",
                 inPaths("result/y1", "result/y2")))),
         response("out", "result/y1", "result/y2", "result/y3"));
-
-dependsOn(mo, proc("out", paths("multiply", "add")));
 
