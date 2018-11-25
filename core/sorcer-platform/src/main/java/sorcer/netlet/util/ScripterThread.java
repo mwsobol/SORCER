@@ -148,6 +148,7 @@ public class ScripterThread extends Thread {
             "sorcer.eo.operator",
             "sorcer.co.operator",
             "sorcer.ent.operator",
+            "sorcer.so.operator",
             "sorcer.mo.operator",
             "sorcer.util.exec.ExecUtils",
             "sorcer.util.StringUtils"
@@ -179,6 +180,7 @@ public class ScripterThread extends Thread {
             "sorcer.co.operator",
             "sorcer.ent.operator",
             "sorcer.mo.operator",
+            "sorcer.so.operator",
             "sorcer.util.exec.ExecUtils",
             "sorcer.util.StringUtils",
             // var-oriented modeling
