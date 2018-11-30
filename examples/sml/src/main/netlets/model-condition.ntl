@@ -26,15 +26,13 @@ IncrementerImpl incrementer = new IncrementerImpl(100.0d);
 
 Model model = model(
         inVal("by", 10.0d), inVal("out", 0.0d),
-        proc(sig("increment", incrementer, result("out", inPaths("by")))),
-        proc("multiply", invoker("add * out", ents("add", "out"))));
+        ent(sig("increment", incrementer, result("out", inPaths("by")))),
+        ent("multiply", invoker("add * out", args("add", "out"))));
 
 
 responseUp(model, "increment", "out", "multiply");
 
-block(
-        context(inVal("offDesignCasesTemplate", "URL")),
-        task(sig("add", AdderImpl.class),
-                context(inVal("arg/x1", 20.0d), inVal("arg/x2", 80.0d), result("add"))),
-        loop(condition({ context -> ((double)value(context, "out")) < 1000.0d }),
-                model));
+block(context(inVal("offDesignCasesTemplate", "URL")),
+      task(sig("add", AdderImpl.class),
+      context(inVal("arg/x1", 20.0d), inVal("arg/x2", 80.0d), result("add"))),
+      loop(condition({ context -> ((double)value(context, "out")) < 1000.0d }), model));
