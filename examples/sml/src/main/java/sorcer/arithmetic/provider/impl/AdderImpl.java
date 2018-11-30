@@ -5,6 +5,7 @@ import net.jini.lookup.ui.MainUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.arithmetic.provider.Adder;
+import sorcer.arithmetic.provider.DoubleSrv;
 import sorcer.arithmetic.provider.ui.CalculatorUI;
 import sorcer.core.provider.Provider;
 import sorcer.service.Context;
@@ -21,7 +22,7 @@ import static sorcer.co.operator.get;
 import static sorcer.mo.operator.value;
 
 @SuppressWarnings("rawtypes")
-public class AdderImpl implements Adder {
+public class AdderImpl implements Adder, DoubleSrv {
     private static final long serialVersionUID = -8098772962245123252L;
 	private Arithmometer arithmometer = new Arithmometer();
 	private Provider provider;

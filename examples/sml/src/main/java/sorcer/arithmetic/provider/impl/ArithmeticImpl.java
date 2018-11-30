@@ -27,13 +27,6 @@ public class ArithmeticImpl implements Arithmetic {
 		return arithmometer.add(context);
 	}
 
-	@Override
-	public Context add2(Context context) throws RemoteException, ContextException, MonitorException {
-		Context out = arithmometer.add(context);
-		out.putValue("result/eval", (double)value(out, "result/eval") + 100.0);
-		return out;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -1302,8 +1302,8 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		}
 		shellOutput.println(buffer.toString());
 		shellOutput
-				.println("\nFor help on any of these commands fiType 'help [<command>]'."
-						+ "\nTo leave this program fiType 'quit'");
+				.println("\nFor help on any of these commands type 'help [<command>]'."
+						+ "\nTo leave this program type 'quit'");
 	}
 	
 

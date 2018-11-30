@@ -22,15 +22,16 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl
 import sorcer.arithmetic.provider.impl.SubtractorImpl
 
 Model m = model(
-        inEnt("multiply/x1", 10.0d), inVal("multiply/x2", 50.0d),
-        inEnt("add/x1", 20.0d), inVal("add/x2", 80.0d),
-        proc(sig("multiply", MultiplierImpl.class, result("multiply/out",
+        inVal("multiply/x1", 10.0d), inVal("multiply/x2", 50.0d),
+        inVal("add/x1", 20.0d), inVal("add/x2", 80.0d),
+        ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                 inPaths("multiply/x1", "multiply/x2")))),
-        proc(sig("add", AdderImpl.class, result("add/out",
+        ent(sig("add", AdderImpl.class, result("add/out",
                 inPaths("add/x1", "add/x2")))),
-        proc(sig("out", "subtract", SubtractorImpl.class, result("model/response",
+        ent(sig("out", "subtract", SubtractorImpl.class, result("model/response",
                 inPaths("multiply/out", "add/out")))),
-        response("out"));
+        response("subtract"));
 
-dependsOn(m, proc("out", paths("multiply", "add")));
+     response(m);
+
 
