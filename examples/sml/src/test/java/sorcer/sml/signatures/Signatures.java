@@ -37,6 +37,7 @@ import static sorcer.so.operator.exert;
 public class Signatures {
 	private final static Logger logger = LoggerFactory.getLogger(Signatures.class);
 
+	@Test
 	public void instantiationWithSignature() throws Exception {
 
 		// Object orientation
