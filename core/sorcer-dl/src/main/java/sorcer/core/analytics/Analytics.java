@@ -30,15 +30,18 @@ public class Analytics implements Serializable {
     private final long started;
     private final String scratchUrl;
     private final String scratchFree;
+    private final int numWorkers;
     private final long created;
 
     public Analytics(String name,
                      Map<String, MethodAnalytics> methodAnalyticsMap,
                      SystemAnalytics systemAnalytics,
+                     int numWorkers,
                      long started, String scratchUrl, String scratchFree) {
         this.name = name;
         this.methodAnalyticsMap.putAll(methodAnalyticsMap);
         this.systemAnalytics = systemAnalytics;
+        this.numWorkers = numWorkers;
         this.started = started;
         this.scratchUrl = scratchUrl;
         this.scratchFree = scratchFree;
@@ -59,6 +62,10 @@ public class Analytics implements Serializable {
 
     public SystemAnalytics getSystemAnalytics() {
         return systemAnalytics;
+    }
+
+    public int getNumWorkers() {
+        return numWorkers;
     }
 
     public long getStarted() {

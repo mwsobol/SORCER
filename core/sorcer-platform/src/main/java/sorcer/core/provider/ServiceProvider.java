@@ -1286,6 +1286,7 @@ import static sorcer.util.StringUtils.tName;
 		return new Analytics(delegate.getProviderName(),
 							 delegate.getAnalyticsRecorder().getMethodAnalytics(),
                              delegate.getAnalyticsRecorder().getSystemAnalytics(),
+                             delegate.getWorkerCount(),
                              delegate.getAnalyticsRecorder().getStarted(),
                              ScratchManagerSupport.getDataUrl(),
                              scratchManager.getScratchGbFree());
