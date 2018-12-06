@@ -1,5 +1,5 @@
 /*
-* Copyright 2015 SORCERsoft.org.
+* Copyright 2018 SORCERsoft.org.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -13,22 +13,10 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+package sorcer.service;
 
+public interface MorphFi<T> extends Fi<T> {
 
-package sorcer.core.plexus;
+    public Fidelity getFidelity();
 
-import sorcer.service.Arg;
-import sorcer.service.FidelityManagement;
-import sorcer.service.Service;
-import sorcer.service.ServiceException;
-
-import java.rmi.RemoteException;
-
-/**
- * Created by Mike Sobolewski on 11/9/15.
- */
-@FunctionalInterface
-public interface Morpher<T extends Service> {
-
-    public void morph(FidelityManagement<T> manager, MorphFidelity mFi, Object value) throws RemoteException, ServiceException;
 }

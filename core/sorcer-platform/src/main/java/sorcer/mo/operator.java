@@ -35,7 +35,7 @@ import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.Morpher;
+import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.Domain;
 import sorcer.service.modeling.*;

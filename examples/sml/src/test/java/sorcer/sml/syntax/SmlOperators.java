@@ -8,8 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.core.context.ServiceContext;
-import sorcer.core.plexus.Morpher;
+import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
 

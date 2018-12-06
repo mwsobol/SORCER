@@ -11,7 +11,7 @@ import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.*;
 import sorcer.core.context.model.srv.Srv;
-import sorcer.core.plexus.Morpher;
+import sorcer.service.Morpher;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;

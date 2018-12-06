@@ -49,7 +49,7 @@ import java.util.Set;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class Task extends ServiceExertion {
+public class Task extends ServiceExertion implements ElementaryRequest {
 
 	private static final long serialVersionUID = 5179772214884L;
 

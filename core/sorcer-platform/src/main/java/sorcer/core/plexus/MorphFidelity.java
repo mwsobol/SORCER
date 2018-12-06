@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Created by Mike Sobolewski on 04/26/16.
  */
-public class MorphFidelity<T> extends Observable implements Identifiable, Fi<T>, Arg {
+public class MorphFidelity<T> extends Observable implements Identifiable, MorphFi<T>, Arg {
 
     // fidelity of fidelities thatare observable
     private Fidelity<T> fidelity;

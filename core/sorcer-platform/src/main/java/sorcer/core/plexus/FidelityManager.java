@@ -28,7 +28,6 @@ import sorcer.co.tuple.Tuple2;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.invoker.Observer;
-import sorcer.core.service.Projection;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;

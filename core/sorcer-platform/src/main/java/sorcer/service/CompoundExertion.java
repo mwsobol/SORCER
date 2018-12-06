@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * @author Mike Sobolewski
  */
-abstract public class CompoundExertion extends ServiceExertion {
+abstract public class CompoundExertion extends ServiceExertion implements Mogram {
 
 	/**
 	 * Component mograms of this job (the Composite Design pattern)

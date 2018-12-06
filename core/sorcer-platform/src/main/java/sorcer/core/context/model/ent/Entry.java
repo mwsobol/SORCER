@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Entry<V> extends MultiFiSlot<String, V>
-        implements Identifiable, Request, Evaluation<V>, Activity, Callable<V>, Setter, Reactive<V>, ent<V> {
+        implements Identifiable, ElementaryRequest, Evaluation<V>, Activity, Callable<V>, Setter, Reactive<V>, ent<V> {
 
     private static final long serialVersionUID = 1L;
 
@@ -394,5 +394,10 @@ public class Entry<V> extends MultiFiSlot<String, V>
         } catch (ContextException e) {
             throw new EvaluationException(e);
         }
+    }
+
+    @Override
+    public Morpher getMorpher() {
+        return null;
     }
 }

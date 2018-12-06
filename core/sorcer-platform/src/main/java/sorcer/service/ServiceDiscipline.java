@@ -56,6 +56,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected Signature builder;
 
+    protected Morpher morpher;
+
     public ServiceDiscipline() {
         // do nothing
     }
@@ -217,6 +219,14 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         return dispatchMultiFi;
     }
 
+    @Override
+    public Morpher getMorpher() {
+        return morpher;
+    }
+
+    public void setMorpher(Morpher morpher) {
+        this.morpher = morpher;
+    }
 
     @Override
     public Object getId() {

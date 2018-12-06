@@ -69,7 +69,7 @@ import sorcer.service.modeling.mog;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Exertion extends Mogram, Dependency, Invocation<Object>,
+public interface Exertion extends Dependency, Invocation<Object>,
 		Paradigmatic, Contexting, Serializable, mog {
 
 

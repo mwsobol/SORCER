@@ -33,5 +33,8 @@ public interface Request extends Service, Identifiable {
 
     public Fi getMultiFi();
 
+    public Morpher getMorpher();
+
     public void setName(String name);
+
 }

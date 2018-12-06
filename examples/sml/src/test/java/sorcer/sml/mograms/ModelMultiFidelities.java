@@ -12,7 +12,6 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.invoker.Observable;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.plexus.Morpher;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.service.*;
 import sorcer.service.Strategy.FidelityManagement;

@@ -12,7 +12,7 @@ import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.plexus.Morpher;
+import sorcer.service.Morpher;
 import sorcer.core.provider.Jobber;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Context;

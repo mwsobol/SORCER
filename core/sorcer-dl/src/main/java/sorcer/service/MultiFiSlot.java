@@ -35,6 +35,8 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
 
     protected Fi multiFi;
 
+    protected Morpher morpher;
+
     protected Object annotation;
 
     // used for returning the requested value of this type
@@ -150,6 +152,14 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
         if (impl instanceof MultiFiSlot) {
             ((MultiFiSlot) impl).isValid = state;
         }
+    }
+
+    public Morpher getMorpher() {
+        return morpher;
+    }
+
+    public void setMorpher(Morpher morpher) {
+        this.morpher = morpher;
     }
 
     public boolean isCached() {
