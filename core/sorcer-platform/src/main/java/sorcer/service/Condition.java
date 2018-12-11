@@ -93,11 +93,11 @@ import java.util.Map;
 		this.value = status;
 	}
 
-	public Condition(Context<?> context) {
+	public Condition(Context context) {
 		conditionalContext = context;
 	}
 
-	public Condition(Context<?> context, String parPath) {
+	public Condition(Context context, String parPath) {
 		evaluationPath = parPath;
 		conditionalContext = context;
 	}
@@ -107,7 +107,7 @@ import java.util.Map;
 		this.pars = parameters;
 	}
 
-	public Condition(Context<?> context, String closure, String... parameters) {
+	public Condition(Context context, String closure, String... parameters) {
 		this.closureExpression = closure;
 		conditionalContext = context;
 		this.pars = parameters;
@@ -118,7 +118,7 @@ import java.util.Map;
 		this.pars = parameters;
 	}
 
-	public Condition(Context<?> context, ConditionCallable closure, String... parameters) {
+	public Condition(Context context, ConditionCallable closure, String... parameters) {
 		this.lambda = closure;
 		conditionalContext = context;
 		this.pars = parameters;
