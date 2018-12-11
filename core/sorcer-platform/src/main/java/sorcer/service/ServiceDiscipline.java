@@ -17,18 +17,27 @@
 
 package sorcer.service;
 
+import net.jini.core.transaction.Transaction;
+import net.jini.id.Uuid;
+import net.jini.id.UuidFactory;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.ThrowableTrace;
+import sorcer.core.provider.Provider;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.modeling.Discipline;
 import sorcer.service.modeling.Getter;
 
 import java.rmi.RemoteException;
+import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 /**
  *  Implements a service discipline as governance-multiFi-dispatch
  */
 public class ServiceDiscipline implements Discipline, Getter<Service> {
+
+    protected Uuid disciplineId;
 
     protected String  name;
 
@@ -59,7 +68,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     protected Morpher morpher;
 
     public ServiceDiscipline() {
-        // do nothing
+        disciplineId = UuidFactory.generate();
     }
 
     public ServiceDiscipline(Exertion... dispatchs) {
@@ -167,6 +176,11 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
+    public String describe() {
+        return null;
+    }
+
+    @Override
     public Object execute(Arg... args) throws ServiceException {
         try {
             List<Fidelity> fis = Arg.selectFidelities(args);
@@ -220,6 +234,111 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
+    public FidelityManagement getFidelityManager() {
+        return null;
+    }
+
+    @Override
+    public FidelityManagement getRemoteFidelityManager() throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public boolean isMonitorable() throws RemoteException {
+        return false;
+    }
+
+    @Override
+    public Uuid getParentId() {
+        return null;
+    }
+
+    @Override
+    public Date getCreationDate() {
+        return null;
+    }
+
+    @Override
+    public Date getGoodUntilDate() {
+        return null;
+    }
+
+    @Override
+    public void setGoodUntilDate(Date date) {
+
+    }
+
+    @Override
+    public String getDomainId() {
+        return null;
+    }
+
+    @Override
+    public void setDomainId(String id) {
+
+    }
+
+    @Override
+    public String getSubdomainId() {
+        return null;
+    }
+
+    @Override
+    public void setSubdomainId(String id) {
+
+    }
+
+    @Override
+    public String getDomainName() {
+        return null;
+    }
+
+    @Override
+    public void setDomainName(String name) {
+
+    }
+
+    @Override
+    public String getSubdomainName() {
+        return null;
+    }
+
+    @Override
+    public Object getEvaluatedValue(String path) throws ContextException {
+        return null;
+    }
+
+    @Override
+    public boolean isEvaluated() {
+        return false;
+    }
+
+    @Override
+    public void setSubdomainName(String name) {
+
+    }
+
+    @Override
+    public Principal getPrincipal() {
+        return null;
+    }
+
+    @Override
+    public Date getLastUpdateDate() {
+        return null;
+    }
+
+    @Override
+    public void setLastUpdateDate(Date date) {
+
+    }
+
+    @Override
+    public void setDescription(String description) {
+
+    }
+
+    @Override
     public Morpher getMorpher() {
         return morpher;
     }
@@ -229,8 +348,138 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public Object getId() {
-        return name;
+    public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws MogramException, RemoteException {
+        return null;
+    }
+
+    @Override
+    public <T extends Mogram> T exert(Arg... entries) throws MogramException, RemoteException {
+        return null;
+    }
+
+    @Override
+    public Uuid getId() {
+        return disciplineId;
+    }
+
+    @Override
+    public void setId(Uuid id) {
+
+    }
+
+    @Override
+    public int getIndex() {
+        return 0;
+    }
+
+    @Override
+    public void setIndex(int i) {
+
+    }
+
+    @Override
+    public Mogram getParent() {
+        return null;
+    }
+
+    @Override
+    public void setParentId(Uuid parentId) {
+
+    }
+
+    @Override
+    public Signature getProcessSignature() {
+        return null;
+    }
+
+    @Override
+    public Mogram deploy(List<Signature> builders) throws MogramException, ConfigurationException {
+        return null;
+    }
+
+    @Override
+    public int getStatus() {
+        return 0;
+    }
+
+    @Override
+    public void setStatus(int value) {
+
+    }
+
+    @Override
+    public Context getContext() throws ContextException {
+        return null;
+    }
+
+    @Override
+    public Object get(String key) {
+        return null;
+    }
+
+    @Override
+    public Mogram clearScope() throws MogramException {
+        return null;
+    }
+
+    @Override
+    public Mogram clear() throws MogramException {
+        return null;
+    }
+
+    @Override
+    public void reportException(Throwable t) {
+
+    }
+
+    @Override
+    public List<ThrowableTrace> getExceptions() throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public void reportException(String message, Throwable t) {
+
+    }
+
+    @Override
+    public void reportException(String message, Throwable t, ProviderInfo info) {
+
+    }
+
+    @Override
+    public void reportException(String message, Throwable t, Provider provider) {
+
+    }
+
+    @Override
+    public void reportException(String message, Throwable t, Provider provider, ProviderInfo info) {
+
+    }
+
+    @Override
+    public List<String> getTrace() throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public void appendTrace(String info) throws RemoteException {
+
+    }
+
+    @Override
+    public List<ThrowableTrace> getAllExceptions() throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public Fidelity selectFidelity(String selection) {
+        return null;
+    }
+
+    @Override
+    public Fidelity getSelectedFidelity() {
+        return null;
     }
 
     @Override
@@ -243,4 +492,128 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         this.name = name;
     }
 
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
+    @Override
+    public String getOwnerId() {
+        return null;
+    }
+
+    @Override
+    public String getSubjectId() {
+        return null;
+    }
+
+    @Override
+    public void setProjectName(String projectName) {
+
+    }
+
+    @Override
+    public String getProjectName() {
+        return null;
+    }
+
+    @Override
+    public boolean isValid() {
+        return false;
+    }
+
+    @Override
+    public void setValid(boolean state) {
+
+    }
+
+    @Override
+    public Context getDataContext() throws ContextException {
+        return null;
+    }
+
+    @Override
+    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
+
+    }
+
+    @Override
+    public void morph(String... metaFiNames) throws ContextException, RemoteException {
+
+    }
+
+    @Override
+    public void update(Setup... contextEntries) throws ContextException, RemoteException {
+
+    }
+
+    @Override
+    public String getProjectionFi(String projectionName) throws ContextException, RemoteException {
+        return null;
+    }
+
+    @Override
+    public boolean isExportControlled() {
+        return false;
+    }
+
+    @Override
+    public Signature getBuilder(Arg... args) throws MogramException {
+        return null;
+    }
+
+    @Override
+    public void applyFidelity(String name) {
+
+    }
+
+    @Override
+    public MogramStrategy getMogramStrategy() {
+        return null;
+    }
+
+    @Override
+    public Object getValue(String path, Arg... args) throws ContextException, RemoteException {
+        return null;
+    }
+
+    @Override
+    public Object asis(String path) throws ContextException {
+        return null;
+    }
+
+    @Override
+    public Object asis(Path path) throws ContextException {
+        return null;
+    }
+
+    @Override
+    public Object putValue(String path, Object value) throws ContextException {
+        return null;
+    }
+
+    @Override
+    public Object putValue(Path path, Object value) throws ContextException {
+        return null;
+    }
+
+    @Override
+    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... entries) throws MogramException, RemoteException {
+        return null;
+    }
+
+    @Override
+    public Context getScope() {
+        return null;
+    }
+
+    @Override
+    public void setScope(Context scope) {
+
+    }
+
+    @Override
+    public void substitute(Arg... entries) throws SetterException, RemoteException {
+
+    }
 }

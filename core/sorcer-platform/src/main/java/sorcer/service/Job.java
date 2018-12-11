@@ -58,7 +58,7 @@ import java.util.*;
  * 
  * @author Mike Sobolewski
  */
-public class Job extends CompoundExertion {
+public class Job extends CompositeExertion {
 
 	private static final long serialVersionUID = -6161435179772214884L;
 
@@ -574,7 +574,7 @@ public class Job extends CompoundExertion {
 		Exertion exti = this;
 		for (String attribute : attributes) {
 			if (((ServiceExertion) exti).hasChild(attribute)) {
-				exti = (Exertion)((CompoundExertion) exti).getChild(attribute);
+				exti = (Exertion)((CompositeExertion) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					break;
 				}

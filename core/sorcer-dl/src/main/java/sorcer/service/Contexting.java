@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public interface Contexting<T> extends Identifiable {
+public interface Contexting<T> extends Identifiable, Mogram {
 
 	/**
 	 * Returns the value at a given path.

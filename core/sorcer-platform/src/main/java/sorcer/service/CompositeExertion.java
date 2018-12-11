@@ -27,18 +27,18 @@ import java.util.List;
 /**
  * @author Mike Sobolewski
  */
-abstract public class CompoundExertion extends ServiceExertion implements Mogram {
+abstract public class CompositeExertion extends ServiceExertion implements Mogram {
 
 	/**
 	 * Component mograms of this job (the Composite Design pattern)
 	 */
 	protected List<Mogram> mograms = new ArrayList<Mogram>();
 
-	public CompoundExertion() {
+	public CompositeExertion() {
 		this("compound xrt=" + count++);
 	}
 
-	public CompoundExertion(String name) {
+	public CompositeExertion(String name) {
 		super(name);
 		mograms = new ArrayList<Mogram>();
 	}
@@ -144,9 +144,9 @@ abstract public class CompoundExertion extends ServiceExertion implements Mogram
 	}
 
 	public int compareByIndex(Exertion e) {
-		if (this.getIndex() > ((CompoundExertion) e).getIndex())
+		if (this.getIndex() > ((CompositeExertion) e).getIndex())
 			return 1;
-		else if (this.getIndex() < ((CompoundExertion) e).getIndex())
+		else if (this.getIndex() < ((CompositeExertion) e).getIndex())
 			return -1;
 		else
 			return 0;

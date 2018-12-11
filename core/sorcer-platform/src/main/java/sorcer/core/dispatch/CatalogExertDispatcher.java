@@ -20,7 +20,6 @@ package sorcer.core.dispatch;
 
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
-import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.Dispatcher;
@@ -85,7 +84,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     protected void afterExec(Exertion ex, Exertion result)
             throws SignatureException, ExertionException, ContextException {
         ServiceExertion ser = (ServiceExertion) result;
-		((CompoundExertion)xrt).setMogramAt(result, ex.getIndex());
+		((CompositeExertion)xrt).setMogramAt(result, ex.getIndex());
         if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
             ser.setStatus(DONE);
             // update all outputs from sharedcontext only for tasks. For jobs,

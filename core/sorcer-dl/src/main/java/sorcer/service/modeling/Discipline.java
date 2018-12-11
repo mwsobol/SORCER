@@ -23,7 +23,7 @@ import sorcer.service.*;
  *  Service governance is the indeterminate multifidelity process of decision-making
  *  and the process by which decisions are actualized in the form of a service federation.
  */
-public interface Discipline extends Request {
+public interface Discipline extends FederatedRequest, Contexting {
 
     /**
      * Returns a service governance specifying actualization of this discipline
