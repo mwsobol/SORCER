@@ -20,9 +20,7 @@
 package sorcer.service;
 
 public class ServiceException extends Exception {
-
-	private static final long serialVersionUID = 1L;
-
+	static final long serialVersionUID = 1L;
 	private ProviderInfo providerInfo;
 
 	public ServiceException() {
@@ -36,8 +34,7 @@ public class ServiceException extends Exception {
 	/**
 	 * Constructs a new ServiceException with an embedded exception.
 	 *
-	 * @param cause
-	 *            embedded exception
+	 * @param cause embedded exception
 	 */
 	public ServiceException(Throwable cause) {
 		super(cause);
@@ -53,16 +50,21 @@ public class ServiceException extends Exception {
 		super(message, cause);
 	}
 
-	public ServiceException(String message, Throwable cause, ProviderInfo providerInfo) {
-		super(message, cause);
+	public ServiceException(String message, ProviderInfo providerInfo) {
+		super(message);
 		this.providerInfo = providerInfo;
 	}
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder(getClass().getName()).append("\n");
-		sb.append(getLocalizedMessage()).append("\n");
-		sb.append(providerInfo);
+    public ServiceException(String message, Throwable cause, ProviderInfo providerInfo) {
+        super(message, cause);
+        this.providerInfo = providerInfo;
+    }
 
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toString());
+        if(providerInfo!=null)
+            sb.append("\n").append(providerInfo);
 		return sb.toString();
 	}
 }
