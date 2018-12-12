@@ -386,6 +386,8 @@ public class operator extends Operator {
             } else if (service instanceof Mogram) {
                 if (service instanceof DataContext || service instanceof MultiFiMogram) {
                     return new sorcer.core.provider.exerter.ServiceShell().exec(service, args);
+                } else if (service instanceof Discipline) {
+                    return service.execute(args);
                 } else {
                     return execMogram((Mogram) service, args);
                 }
