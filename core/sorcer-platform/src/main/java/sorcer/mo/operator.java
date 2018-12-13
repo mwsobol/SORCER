@@ -136,7 +136,7 @@ public class operator {
         return value(context, path, args);
     }
 
-    public static Object value(Row response, String path,
+    public static Object value(Response response, String path,
                               Arg... args) throws ContextException {
         if (response instanceof DataTable) {
             try {
