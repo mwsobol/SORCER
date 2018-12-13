@@ -684,28 +684,25 @@ public class ModelMultiFidelities {
     public void morphingInitFidelities() throws Exception {
 
         Morpher mdlMorpher = (mgr, mFi, value) -> {
-            Fidelity<Signature> fi = mFi.getFidelity();
-            if (fi.getSelectName().equals("divide")) {
-                if (((Double) value) <= 9.0) {
-                    mgr.morph("sysFi5");
-                } else {
-                    mgr.morph("sysFi3");
-                }
+            // model mFi not set
+            Double x1 = (Double) exec(((Model)value), "arg/x1");
+            Double x2 = (Double) exec(((Model)value), "arg/x2");
+            if (x1  > x2) {
+                mgr.reconfigure(fi("mFi1", "multiply"));
             }
         };
 
         mog mdl = getMorphingModel();
         setMorpher(mdl, mdlMorpher);
-//        traced(mdl, true);
-//        cxt out = response(mdl);
-//
-//        logger.info("out: " + out);
-//        logger.info("trace: " + fiTrace(mdl));
-//        logger.info("trace: " + fiTrace((Mogram) impl(mdl, "mFi4")));
-//        assertTrue(value(out, "mFi1").equals(100.0));
-//        assertTrue(value(out, "mFi2").equals(9.0));
-//        assertTrue(value(out, "mFi3").equals(900.0));
-//        assertTrue(value(out, "mFi4").equals(110.0));
+        traced(mdl, true);
+        cxt out = response(mdl);
+        logger.info("out: " + out);
+        logger.info("trace: " + fiTrace(mdl));
+        logger.info("trace: " + fiTrace((Mogram) impl(mdl, "mFi4")));
+        assertTrue(value(out, "mFi1").equals(900.0));
+        assertTrue(value(out, "mFi2").equals(50.0));
+        assertTrue(value(out, "mFi3").equals(9.0));
+        assertTrue(value(out, "mFi4").equals(110.0));
     }
 
     @Test
