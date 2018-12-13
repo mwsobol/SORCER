@@ -40,6 +40,8 @@ import sorcer.service.*;
 import sorcer.service.Domain;
 import sorcer.service.modeling.*;
 import sorcer.service.Signature.ReturnPath;
+import sorcer.util.DataTable;
+import sorcer.util.Row;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.io.IOException;
@@ -132,6 +134,18 @@ public class operator {
     public static <T> T v(Context<T> context, String path,
                           Arg... args) throws ContextException {
         return value(context, path, args);
+    }
+
+    public static Object value(Row response, String path,
+                              Arg... args) throws ContextException {
+        if (response instanceof DataTable) {
+            try {
+                return  response.getValue(path, args);
+            } catch (RemoteException e) {
+                throw new ContextException(e);
+            }
+        }
+        return null;
     }
 
     public static <T> T value(Context<T> context, String path,
