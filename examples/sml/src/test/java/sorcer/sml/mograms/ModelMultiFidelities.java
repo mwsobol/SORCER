@@ -681,7 +681,7 @@ public class ModelMultiFidelities {
     }
 
     @Test
-    public void morphingInitFidelities() throws Exception {
+    public void morphingModelDefauldFidelities() throws Exception {
 
         Morpher mdlMorpher = (mgr, mFi, value) -> {
             // model mFi not set
