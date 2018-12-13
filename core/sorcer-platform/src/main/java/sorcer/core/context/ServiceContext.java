@@ -3071,6 +3071,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public Context getResponse(Arg... args) throws ContextException, RemoteException {
 		Context result = null;
+		if (morpher != null) {
+			try {
+				morpher.morph(fiManager, multiFi, this);
+			} catch (ServiceException e) {
+				throw new ContextException(e);
+			}
+		}
 		if (((ModelStrategy)mogramStrategy).outConnector != null) {
 			ServiceContext mc = null;
 			try {

@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class MorphFidelity<T> extends Observable implements Identifiable, MorphFi<T>, Arg {
 
-    // fidelity of fidelities thatare observable
+    // fidelity of fidelities that are observable
     private Fidelity<T> fidelity;
 
     private Morpher morpher;

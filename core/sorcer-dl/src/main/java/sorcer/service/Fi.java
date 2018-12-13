@@ -89,5 +89,8 @@ public interface Fi<T> extends Identifiable, Service {
 
 	public void clearFi();
 
+	// inner fidelity otherwise self
+    public Fidelity getFidelity();
+
 }
 

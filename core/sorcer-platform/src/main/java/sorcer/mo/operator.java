@@ -537,6 +537,11 @@ public class operator {
         return mogram;
     }
 
+    public static Mogram setMorpher(Mogram mogram, Morpher mdlMorpher) {
+        ((MultiFiSlot)mogram).setMorpher(mdlMorpher);
+        return mogram;
+    }
+
     public static Mogram reconfigure(Mogram mogram, Fidelity... fidelities) throws ContextException {
         FidelityList fis = new FidelityList();
         List<String> metaFis = new ArrayList<>();

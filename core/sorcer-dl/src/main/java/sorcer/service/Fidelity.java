@@ -191,6 +191,11 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 	}
 
 	@Override
+	public Fidelity getFidelity() {
+		return this;
+	}
+
+	@Override
 	public boolean equals(Object object) {
 
 		if(object == this) {

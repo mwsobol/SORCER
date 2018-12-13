@@ -280,6 +280,11 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
+    public Fidelity getFidelity() {
+        return morphFidelity.getFidelity();
+    }
+
+    @Override
     public Mogram getSelect() {
         Mogram req = null;
         Object select = getMultifidelity().getSelect();
