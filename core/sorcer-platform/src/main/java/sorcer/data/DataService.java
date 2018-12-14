@@ -404,4 +404,13 @@ public class DataService implements FileURLHandler {
     public String getDir() {
         return DataService.getDataDir();
     }
+
+    /**
+     * Get the roots the DataService has been created with
+     *
+     * @return The roots the DataService has been created with
+     */
+    public String[] getRoots() {
+        return this.roots;
+    }
 }

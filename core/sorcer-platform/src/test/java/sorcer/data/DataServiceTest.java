@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.data.DataService.DATA_DIR;
 
@@ -199,6 +200,13 @@ public class DataServiceTest {
                                                                   File.separator))).getAbsolutePath();
         System.err.println("===> "+dataDirName);
         assertTrue(dataDirName.equals(DataService.getDataDir()));
+    }
+
+    @Test
+    public void testGetRoots() {
+        String root = System.getProperty("user.dir");
+        DataService dataService = new DataService(root);
+        assertEquals(dataService.getRoots()[0], root);
     }
 
     void write(File f) throws IOException {
