@@ -55,6 +55,7 @@ import sorcer.util.url.sos.SdbUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.InetAddress;
@@ -962,17 +963,6 @@ public class operator extends Operator {
         return ts;
     }
 
-    public static Signature sig(Signature signature, Class... matchTypes)
-        throws SignatureException {
-        Class[] types = matchTypes;
-        if (signature.getMultitype() != null) {
-            types = Arrays.copyOf(matchTypes, matchTypes.length+1);
-            types[matchTypes.length] = signature.getServiceType();
-        }
-        ((ServiceSignature)signature).setMatchTypes(types);
-        return signature;
-    }
-
     public static Signature sig(Class serviceType, String initSelector) throws SignatureException {
         try {
             Method selectorMethod = serviceType.getDeclaredMethod(initSelector, Context.class);
@@ -1076,7 +1066,7 @@ public class operator extends Operator {
             os.setProvisionable(provision);
             return os;
         } else if (operation != null) {
-            signature = (ServiceSignature) sig(operation.getName(), multitype.getProviderType());
+            signature = sig(operation.getName(), multitype.getProviderType());
             signature.setMultitype(multitype);
             signature.setOperation(operation);
         } else if (operation == null && selector == null) {
@@ -1136,6 +1126,67 @@ public class operator extends Operator {
 
     public static ServiceSignature op(String operation, Class serviceType, Object... items) throws SignatureException {
         return sig(operation, serviceType, items);
+    }
+
+
+    public static Signature sig(Signature signature, Object... items) throws SignatureException {
+        if (items == null || items.length == 0) {
+            return signature;
+        }
+        if (items instanceof Class[]) {
+            Class[] matchTypes = (Class[])items;
+            if (signature.getMultitype() != null) {
+                matchTypes = Arrays.copyOf((Class[])items, ((Class[])items).length+1);
+                matchTypes[items.length] = signature.getServiceType();
+            }
+            ((ServiceSignature)signature).setMatchTypes(matchTypes);
+            return signature;
+        } else {
+            if (items.length > 0) {
+                for (Object o : items) {
+                    if (o instanceof Type) {
+                        signature.setType((Type) o);
+                    } else if (o instanceof Operating) {
+                        ((ServiceSignature) signature).setActive((Operating) o);
+                    } else if (o instanceof Provision) {
+                        ((ServiceSignature) signature).setProvisionable((Provision) o);
+                    } else if (o instanceof Strategy.Shell) {
+                        ((ServiceSignature) signature).setShellRemote((Strategy.Shell) o);
+                    } else if (o instanceof ReturnPath) {
+                        signature.setReturnPath((ReturnPath) o);
+                    } else if (o instanceof ParameterTypes) {
+                        ((ServiceSignature) signature).setMatchTypes(((ParameterTypes) o).parameterTypes);
+                    } else if (o instanceof In) {
+                        if (signature.getReturnPath() == null) {
+                            signature.setReturnPath(new ReturnPath((In) o));
+                        } else {
+                            ((ReturnPath) signature.getReturnPath()).inPaths = ((In) o).toPathArray();
+                        }
+                    } else if (o instanceof Out) {
+                        if (signature.getReturnPath() == null) {
+                            signature.setReturnPath(new ReturnPath((Out) o));
+                        } else {
+                            ((ReturnPath) signature.getReturnPath()).outPaths = (Out) o;
+                        }
+                    } else if (o instanceof ServiceDeployment) {
+                        ((ServiceSignature) signature).setDeployment((ServiceDeployment) o);
+                    } else if (o instanceof Version && signature instanceof NetSignature) {
+                        ((NetSignature) signature).setVersion(((Version) o).getName());
+                    } else if (o instanceof ServiceSignature && signature instanceof ObjectSignature) {
+                        ((ObjectSignature) signature).setTargetSignature(((ServiceSignature) o));
+                    } else if (o instanceof ServiceContext
+                            // not applied to connectors in Signatures
+                            && o.getClass() != MapContext.class) {
+                        if (signature.getReturnPath() == null) {
+                            signature.setReturnPath(new ReturnPath());
+                        }
+                        ((ReturnPath) signature.getReturnPath()).setDataContext((Context) o);
+                    }
+                }
+            }
+        }
+
+        return signature;
     }
 
     public static ServiceSignature sig(String operation, Class serviceType, Object... items) throws SignatureException {
