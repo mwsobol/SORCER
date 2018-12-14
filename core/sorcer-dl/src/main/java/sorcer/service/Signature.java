@@ -306,7 +306,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	static final Type APD = Type.APD_DATA;
 
 
-	public static class Out extends Paths {
+	public static class Out extends Paths implements SupportComponent {
 
 	    private static final long serialVersionUID = 1L;
 
