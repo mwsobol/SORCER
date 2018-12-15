@@ -17,10 +17,17 @@
 
 package sorcer.service;
 
+import sorcer.core.context.ThrowableTrace;
+
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class EvaluationException extends ContextException {
-
 	private static final long serialVersionUID = 5987271488623420213L;
-
+	private List<ThrowableTrace> throwableTraces = new ArrayList<>();
 
 	public EvaluationException() {
 	}
@@ -36,5 +43,33 @@ public class EvaluationException extends ContextException {
 	public EvaluationException(String msg) {
 		super(msg);
 	}
-	
+
+    public EvaluationException(String msg, List<ThrowableTrace> throwableTraces) {
+	    super(msg);
+        this.throwableTraces.addAll(throwableTraces);
+    }
+
+    @Override public void printStackTrace() {
+        printStackTrace(System.err);
+    }
+
+    @Override public void printStackTrace(PrintStream s) {
+        super.printStackTrace(s);
+        for(ThrowableTrace t : throwableTraces)
+            s.print(t.printStackTrace());
+    }
+
+    @Override public void printStackTrace(PrintWriter s) {
+        super.printStackTrace(s);
+        for(ThrowableTrace t : throwableTraces)
+            s.print(t.printStackTrace());
+    }
+
+    @Override public StackTraceElement[] getStackTrace() {
+	    List<StackTraceElement> stackTrace = new ArrayList<>();
+        Collections.addAll(stackTrace, super.getStackTrace());
+        for(ThrowableTrace t : throwableTraces)
+            Collections.addAll(stackTrace, t.getStackTrace());
+        return stackTrace.toArray(new StackTraceElement[0]);
+    }
 }

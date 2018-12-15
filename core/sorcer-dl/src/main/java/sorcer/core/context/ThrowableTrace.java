@@ -51,6 +51,17 @@ public class ThrowableTrace implements Serializable {
 		return sw.toString();
 	}
 
+	public String printStackTrace() {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		throwable.printStackTrace(pw);
+		return sw.toString();
+	}
+
+	public StackTraceElement[] getStackTrace() {
+	    return throwable.getStackTrace();
+    }
+
 	public String toString() {
 		String info = message != null ? message : throwable.getMessage();
 		if (throwable != null)

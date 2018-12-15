@@ -76,6 +76,7 @@ public class AnalyticsProducerTest {
             return new Analytics("Ferris",
                                  analyticsRecorder.getMethodAnalytics(),
                                  analyticsRecorder.getSystemAnalytics(),
+                                 23,
                                  System.currentTimeMillis(),
                                  "http://foo:9090",
                                  "1024.0");
