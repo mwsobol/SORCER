@@ -65,7 +65,6 @@ public class EntryModels {
 
 	}
 
-
 	@Test
 	public void createEntModel() throws Exception {
 

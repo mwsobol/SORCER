@@ -45,7 +45,7 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
     protected Context scope;
 
     // when out is still valid
-    protected boolean isValid = true;
+    protected boolean isValid = false;
 
     // when this slot has changed
     protected boolean isChanged = false;
@@ -75,6 +75,7 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
             this.out = (O) item;
             this.impl = item;
         }
+        isValid = true;
 	}
 
 	public Object getImpl() {

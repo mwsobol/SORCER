@@ -1505,13 +1505,34 @@ public class operator extends Operator {
          return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
 
-    // TODO after testing merge domainDependency and funcDependency into one method
     public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
-        if (dependee instanceof Model && ((ServiceContext)dependee).getType().equals(Functionality.Type.MADO)) {
-            return domainDependency(dependee, dependers);
+		List<ExecDependency> functional = new ArrayList<>();
+		List<ExecDependency> domain = new ArrayList<>();
+        List<ExecDependency> vals = new ArrayList<>();
+
+		for (Evaluation ed : dependers) {
+			if (ed instanceof ExecDependency && ((ExecDependency) ed).getType() == Type.FUNCTION) {
+				functional.add((ExecDependency)ed);
+			} else if (ed instanceof ExecDependency && ((ExecDependency) ed).getType() == Type.DOMAIN) {
+				domain.add((ExecDependency)ed);
+			} else if (ed instanceof ExecDependency && ((ExecDependency) ed).getType() == Type.VAL) {
+                vals.add((ExecDependency)ed);
+            }
+		}
+
+		ExecDependency[] edArray;
+        if (vals.size() > 0 && ((ServiceContext)dependee).getType().equals(Functionality.Type.MADO)) {
+            edArray = new ExecDependency[vals.size()];
+            return domainDependency(dependee, vals.toArray(edArray));
+        } else if (domain.size() > 0) {
+			edArray = new ExecDependency[domain.size()];
+            return domainDependency(dependee, domain.toArray(edArray));
+        } else if (functional.size() > 0) {
+			edArray = new ExecDependency[functional.size()];
+			return funcDependency(dependee, functional.toArray(edArray));
         } else {
-            return funcDependency(dependee, dependers);
-        }
+			return funcDependency(dependee, dependers);
+		}
     }
 
     public static Dependency domainDependency(Dependency dependee,  Evaluation... dependers) throws ContextException {

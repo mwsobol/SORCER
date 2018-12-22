@@ -96,6 +96,7 @@ public class Pro<T> extends Subroutine<T> implements Invocation<T>,
 			multiFi = (Fi) entity;
 			impl = multiFi.getSelects().get(0);
 		}
+		isValid = true;
 	}
 
 	public Pro(String path, Object entity, Object scope)
@@ -117,6 +118,7 @@ public class Pro<T> extends Subroutine<T> implements Invocation<T>,
 			((Scopable) entity).setScope(this.scope);
 		}
 		this.impl = entity;
+		isValid = true;
 	}
 	
 	public Pro(Contexting map, String name, String path) {

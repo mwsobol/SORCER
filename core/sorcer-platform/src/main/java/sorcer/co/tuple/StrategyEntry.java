@@ -32,12 +32,14 @@ public class StrategyEntry extends Entry<Strategy> implements Arg {
 	public StrategyEntry(String path, Strategy strategy) {
 		super(path, strategy);
 		out = strategy;
+		isValid = true;
 	};
 
 	public StrategyEntry(String path, URL strategy) {
 		super(path);
 		impl = strategy;
 		out = null;
+		isValid = true;
 	};
 
 	@Override
@@ -47,11 +49,11 @@ public class StrategyEntry extends Entry<Strategy> implements Arg {
 		} else {
 			try {
 				out = (Strategy) ((URL) impl).getContent();
-				isValid = true;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+		isValid = true;
 		return out;
 	}
 

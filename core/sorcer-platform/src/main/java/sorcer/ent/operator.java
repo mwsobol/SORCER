@@ -791,6 +791,7 @@ public class operator extends Operator {
 		} catch (ContextException e) {
 			e.printStackTrace();
 		}
+		entry.setValid(true);
 		return entry;
 	}
 
