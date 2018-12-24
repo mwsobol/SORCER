@@ -21,7 +21,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Pro;
-import sorcer.core.context.model.ent.EntryModel;
+import sorcer.core.context.model.EntryModel;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.signature.EvaluationSignature;

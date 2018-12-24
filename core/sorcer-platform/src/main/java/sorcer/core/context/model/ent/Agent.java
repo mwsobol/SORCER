@@ -26,6 +26,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Arrays;
 
+import sorcer.core.context.model.EntryModel;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.service.Arg;
 import sorcer.service.Context;

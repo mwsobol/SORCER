@@ -18,6 +18,7 @@ package sorcer.core.context.model.ent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.context.model.EntryModel;
 import sorcer.core.invoker.Activator;
 import sorcer.eo.operator;
 import sorcer.service.*;

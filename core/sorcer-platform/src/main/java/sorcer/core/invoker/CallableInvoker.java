@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import sorcer.core.context.model.ent.Pro;
-import sorcer.core.context.model.ent.EntryModel;
+import sorcer.core.context.model.EntryModel;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;
 import sorcer.service.Context;

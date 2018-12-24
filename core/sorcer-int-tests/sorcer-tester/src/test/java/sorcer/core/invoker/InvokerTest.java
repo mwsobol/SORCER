@@ -12,7 +12,7 @@ import sorcer.arithmetic.tester.provider.impl.AdderImpl;
 import sorcer.arithmetic.tester.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.tester.provider.impl.SubtractorImpl;
 import sorcer.arithmetic.tester.volume.Volume;
-import sorcer.core.context.model.ent.EntryModel;
+import sorcer.core.context.model.EntryModel;
 import sorcer.core.context.model.ent.Pro;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;

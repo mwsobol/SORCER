@@ -19,7 +19,7 @@ package sorcer.core.invoker;
 
 import java.rmi.RemoteException;
 
-import sorcer.core.context.model.ent.EntryModel;
+import sorcer.core.context.model.EntryModel;
 import sorcer.core.context.model.ent.Pro;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;

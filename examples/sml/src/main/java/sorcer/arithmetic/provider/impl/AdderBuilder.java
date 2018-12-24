@@ -1,6 +1,6 @@
 package sorcer.arithmetic.provider.impl;
 
-import sorcer.core.context.model.ent.EntryModel;
+import sorcer.core.context.model.EntryModel;
 import sorcer.service.ContextException;
 import sorcer.service.EvaluationException;
 

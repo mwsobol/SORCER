@@ -26,6 +26,8 @@ import sorcer.co.operator.DataSlot;
 import sorcer.co.tuple.*;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
+import sorcer.core.context.model.DataContext;
+import sorcer.core.context.model.EntryModel;
 import sorcer.core.context.model.QueueStrategy;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.srv.Srv;
@@ -55,7 +57,6 @@ import sorcer.util.url.sos.SdbUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.InetAddress;

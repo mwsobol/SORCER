@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
 import sorcer.core.SorcerConstants;
+import sorcer.core.context.model.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.ent.Pro;
 import sorcer.core.context.node.ContextNode;

@@ -23,7 +23,7 @@ import net.jini.lease.LeaseRenewalManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.EntryModel;
+import sorcer.core.context.model.EntryModel;
 import sorcer.core.exertion.AltTask;
 import sorcer.core.exertion.EvaluationTask;
 import sorcer.core.exertion.LoopTask;

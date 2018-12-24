@@ -26,6 +26,7 @@ import sorcer.co.tuple.ExecDependency;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ModelStrategy;
+import sorcer.core.context.model.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;

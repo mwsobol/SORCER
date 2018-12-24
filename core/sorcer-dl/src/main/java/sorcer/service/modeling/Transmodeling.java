@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
 /**
  * @author Mike Sobolewski
  */
-public interface Transmodeling extends OptimizationModeling, Configurable {
+public interface Transmodeling extends Configurable {
 
 	public Context analyze(Context modelContext, Arg... args) throws EvaluationException, RemoteException;
 

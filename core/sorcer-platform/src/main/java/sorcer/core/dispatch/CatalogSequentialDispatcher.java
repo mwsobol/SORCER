@@ -19,7 +19,7 @@ package sorcer.core.dispatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.context.model.ent.EntryModel;
+import sorcer.core.context.model.EntryModel;
 import sorcer.core.exertion.Mograms;
 import sorcer.core.provider.Provider;
 import sorcer.service.*;

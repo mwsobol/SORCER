@@ -25,6 +25,7 @@ import sorcer.core.context.MapContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
@@ -41,7 +42,6 @@ import sorcer.service.Domain;
 import sorcer.service.modeling.*;
 import sorcer.service.Signature.ReturnPath;
 import sorcer.util.DataTable;
-import sorcer.util.Row;
 import sorcer.util.url.sos.SdbUtil;
 
 import java.io.IOException;

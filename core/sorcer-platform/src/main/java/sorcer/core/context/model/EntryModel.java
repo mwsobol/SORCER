@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sorcer.core.context.model.ent;
+package sorcer.core.context.model;
 
 import sorcer.core.context.Contexts;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.Domain;
@@ -136,7 +137,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 			} else if (val instanceof Pro) {
 				if (((Pro) val).isCached()) {
 					return ((Pro) val).getOut();
-				} else if (((Pro) val).isPersistent) {
+				} else if (((Pro) val).isPersistent()) {
 					return ((Pro) val).evaluate();
 				} else if ((((Pro) val).asis() instanceof Subroutine)) {
 					bindEntry((Subroutine) ((Pro) val).asis());

@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-package sorcer.core.context.model.ent;
+package sorcer.core.context.model;
 
 import net.jini.id.UuidFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
+import sorcer.core.context.model.ent.Entry;
 import sorcer.service.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;

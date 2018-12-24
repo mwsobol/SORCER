@@ -33,6 +33,7 @@ import sorcer.core.context.ControlContext;
 import sorcer.core.context.ModelTask;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.context.model.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.DispatcherException;

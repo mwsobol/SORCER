@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.Operator;
 import sorcer.co.tuple.*;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.EntryModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.ent.Pro;
 import sorcer.core.context.model.srv.Srv;
