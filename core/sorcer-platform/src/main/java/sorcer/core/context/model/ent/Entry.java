@@ -306,6 +306,14 @@ public class Entry<V> extends MultiFiSlot<String, V>
         return key;
     }
 
+    public String getDomainName() {
+        if (domain != null) {
+            return key + "$" + domain;
+        } else {
+            return key;
+        }
+    }
+
     public String getProperName() {
         int i = key.indexOf('$');
         if (i > 0) {
