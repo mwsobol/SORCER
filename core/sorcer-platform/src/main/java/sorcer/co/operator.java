@@ -511,7 +511,7 @@ public class operator extends Operator {
 
 	public static <T> Value<T> predVal(String path, String domain, T value) {
 		Value ent = new Value<T>(path, value);
-		ent.annotation(domain);
+		ent.setDomain(domain);
 		ent.setType(Type.DOMAIN_PRED);
 		return ent;
 	}
@@ -536,7 +536,7 @@ public class operator extends Operator {
 
 	public static <T> Value<T> val(String path, String domain, T value) {
 		Value ent = new Value<T>(path, value);
-		ent.annotation(domain);
+		ent.setDomain(domain);
 		ent.setType(Type.DOMAIN_CONSTANT);
 		return ent;
 	}
@@ -724,7 +724,7 @@ public class operator extends Operator {
         return de;
 	}
 
-    public static ExecDependency disDep(String path, List<Path> paths) {
+    public static ExecDependency mdlDep(String path, List<Path> paths) {
         ExecDependency de =  new ExecDependency(path, paths);
         de.setType(Type.DOMAIN);
         return de;
@@ -736,6 +736,13 @@ public class operator extends Operator {
         return de;
 	}
 
+
+	public static ExecDependency mdlDep(String path, Fidelity fi, List<Path> paths) {
+		ExecDependency de = new ExecDependency(path, paths);
+		de.annotation(fi);
+		de.setType(Type.MODEL);
+		return de;
+	}
 
 	public static ExecDependency dep(String path, Fidelity fi, List<Path> paths) {
 		ExecDependency de = new ExecDependency(path, paths);

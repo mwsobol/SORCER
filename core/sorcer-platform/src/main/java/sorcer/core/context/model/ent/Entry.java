@@ -25,6 +25,8 @@ public class Entry<V> extends MultiFiSlot<String, V>
 
     protected Uuid id = UuidFactory.generate();
 
+    protected String domain;
+
     protected boolean negative;
 
     // its arguments is persisted
@@ -340,6 +342,14 @@ public class Entry<V> extends MultiFiSlot<String, V>
 
     public void setName(String name) {
         key = name;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     public String getKey() {
