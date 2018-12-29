@@ -1099,7 +1099,8 @@ public class operator extends Operator {
             } else {
                 signature.getReturnPath().inPaths = inPaths.toPathArray();
             }
-        } else if (outPaths != null) {
+        }
+        if (outPaths != null) {
             if (signature.getReturnPath() == null) {
                 signature.setReturnPath(new ReturnPath(outPaths));
             } else {
@@ -1108,6 +1109,77 @@ public class operator extends Operator {
         }
 
         return signature;
+    }
+
+    public static Signature sig(Signature signature, Object... items) throws SignatureException {
+        Multitype multitype = ((ServiceSignature) signature).getMultitype();
+        Operation operation = ((ServiceSignature) signature).getOperation();
+        Args args = null;
+        Strategy.Provision provision = Provision.NO;
+        ParameterTypes parTypes = null;
+        In inPaths = null;
+        Out outPaths = null;
+        ServiceContext context = null;
+        for (Object item : items) {
+            if (item instanceof Args) {
+                args = (Args) item;
+            } else if (item instanceof ParameterTypes) {
+                parTypes = (ParameterTypes) item;
+            } else if (item instanceof Provision) {
+                provision = (Provision) item;
+            } else if (item instanceof ServiceContext) {
+                context = (ServiceContext) item;
+            } else if (item instanceof In) {
+                inPaths = (In) item;
+            } else if (item instanceof Out) {
+                outPaths = (Out) item;
+            }
+        }
+        ServiceSignature newSig = null;
+        if (args != null && parTypes != null) {
+            ObjectSignature os = new ObjectSignature();
+            os.setMultitype(multitype);
+            os.getServiceType();
+            os.setArgs(args.args);
+            os.setParameterTypes(parTypes.parameterTypes);
+            os.setProvisionable(provision);
+            return os;
+        } else if (operation != null) {
+            newSig = sig(operation.getName(), multitype.getProviderType());
+            newSig.setMultitype(multitype);
+            newSig.setOperation(operation);
+        }
+
+        if (provision != null) {
+            newSig.setProvisionable(provision);
+        }
+
+        // if context is provided for created signature
+        if (context instanceof ServiceContext
+            // not applied to connectors in Signatures
+            && context.getClass() != MapContext.class) {
+            if (newSig.getReturnPath() == null) {
+                newSig.setReturnPath(new ReturnPath());
+            }
+            newSig.getReturnPath().setDataContext(context);
+        }
+
+        // handle input output paths
+        if (inPaths != null) {
+            if (newSig.getReturnPath() == null) {
+                newSig.setReturnPath(new ReturnPath(inPaths));
+            } else {
+                newSig.getReturnPath().inPaths = inPaths.toPathArray();
+            }
+        }
+        if (outPaths != null) {
+            if (newSig.getReturnPath() == null) {
+                newSig.setReturnPath(new ReturnPath(outPaths));
+            } else {
+                newSig.getReturnPath().outPaths = outPaths;
+            }
+        }
+        return newSig;
     }
 
     public static Signature sig(Class classType, Object... items) throws SignatureException {
@@ -1127,67 +1199,6 @@ public class operator extends Operator {
 
     public static ServiceSignature op(String operation, Class serviceType, Object... items) throws SignatureException {
         return sig(operation, serviceType, items);
-    }
-
-
-    public static Signature sig(Signature signature, Object... items) throws SignatureException {
-        if (items == null || items.length == 0) {
-            return signature;
-        }
-        if (items instanceof Class[]) {
-            Class[] matchTypes = (Class[])items;
-            if (signature.getMultitype() != null) {
-                matchTypes = Arrays.copyOf((Class[])items, ((Class[])items).length+1);
-                matchTypes[items.length] = signature.getServiceType();
-            }
-            ((ServiceSignature)signature).setMatchTypes(matchTypes);
-            return signature;
-        } else {
-            if (items.length > 0) {
-                for (Object o : items) {
-                    if (o instanceof Type) {
-                        signature.setType((Type) o);
-                    } else if (o instanceof Operating) {
-                        ((ServiceSignature) signature).setActive((Operating) o);
-                    } else if (o instanceof Provision) {
-                        ((ServiceSignature) signature).setProvisionable((Provision) o);
-                    } else if (o instanceof Strategy.Shell) {
-                        ((ServiceSignature) signature).setShellRemote((Strategy.Shell) o);
-                    } else if (o instanceof ReturnPath) {
-                        signature.setReturnPath((ReturnPath) o);
-                    } else if (o instanceof ParameterTypes) {
-                        ((ServiceSignature) signature).setMatchTypes(((ParameterTypes) o).parameterTypes);
-                    } else if (o instanceof In) {
-                        if (signature.getReturnPath() == null) {
-                            signature.setReturnPath(new ReturnPath((In) o));
-                        } else {
-                            ((ReturnPath) signature.getReturnPath()).inPaths = ((In) o).toPathArray();
-                        }
-                    } else if (o instanceof Out) {
-                        if (signature.getReturnPath() == null) {
-                            signature.setReturnPath(new ReturnPath((Out) o));
-                        } else {
-                            ((ReturnPath) signature.getReturnPath()).outPaths = (Out) o;
-                        }
-                    } else if (o instanceof ServiceDeployment) {
-                        ((ServiceSignature) signature).setDeployment((ServiceDeployment) o);
-                    } else if (o instanceof Version && signature instanceof NetSignature) {
-                        ((NetSignature) signature).setVersion(((Version) o).getName());
-                    } else if (o instanceof ServiceSignature && signature instanceof ObjectSignature) {
-                        ((ObjectSignature) signature).setTargetSignature(((ServiceSignature) o));
-                    } else if (o instanceof ServiceContext
-                            // not applied to connectors in Signatures
-                            && o.getClass() != MapContext.class) {
-                        if (signature.getReturnPath() == null) {
-                            signature.setReturnPath(new ReturnPath());
-                        }
-                        ((ReturnPath) signature.getReturnPath()).setDataContext((Context) o);
-                    }
-                }
-            }
-        }
-
-        return signature;
     }
 
     public static ServiceSignature sig(String operation, Class serviceType, Object... items) throws SignatureException {
