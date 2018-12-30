@@ -17,6 +17,7 @@
 
 package sorcer.core.context.model.ent;
 
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.Mda;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
