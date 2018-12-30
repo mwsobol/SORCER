@@ -499,12 +499,6 @@ public class operator extends Operator {
 		return new Path(path, info);
 	}
 
-//	public static Path path(String path, String tag, Path from$to) {
-//		Path p = new Path(path, tag, Path.Type.MAP);
-//       	p.dirPath = from$to;
-//        return p;
-//	}
-
 	public static Path map(String path, Object info) {
 		return new Path(path, info, Path.Type.MAP);
 	}
