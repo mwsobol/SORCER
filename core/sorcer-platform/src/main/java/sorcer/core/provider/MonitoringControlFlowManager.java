@@ -76,7 +76,7 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
         }
         monSession = getMonitoringSession(exertion);
         ServiceExertion result;
-        if (!(exertion instanceof CompositeExertion) && !exertion.isSpacable()) {
+        if (!(exertion instanceof FedMogram) && !exertion.isSpacable()) {
             try {
                 monSession.init((Monitorable) delegate.getProxy(), DEFAULT_LEASE_PERIOD, DEFAULT_TIMEOUT_PERIOD);
                 lrm.renewUntil(monSession.getLease(), Lease.FOREVER, TimeUnit.MINUTES.toMillis(1), null);
@@ -92,7 +92,7 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
             try {
                 if (sessionMonitor != null &&
                     monSession.getState() != resultState.ordinal() &&
-                    !(result instanceof CompositeExertion))
+                    !(result instanceof FedMogram))
                     monSession.changed(result.getContext(), result.getControlContext(), resultState.ordinal());
             } catch (RuntimeException e) {
                 log.error(e.getMessage(), e);
@@ -100,7 +100,7 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
                 log.warn("Error while executing monitorable exertion", e);
             } finally {
                 try {
-                    if (sessionMonitor != null && !(exertion instanceof CompositeExertion))
+                    if (sessionMonitor != null && !(exertion instanceof FedMogram))
                         lrm.remove(monSession.getLease());
                 } catch (UnknownLeaseException e) {
                     log.warn("Error while removing lease for {}", exertion.getName(), e);

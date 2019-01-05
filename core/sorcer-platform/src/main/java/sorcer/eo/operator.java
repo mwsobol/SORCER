@@ -206,7 +206,7 @@ public class operator extends Operator {
     }
 
     public static Context upcontext(Mogram mogram) throws ContextException {
-        if (mogram instanceof CompositeExertion)
+        if (mogram instanceof FedMogram)
             return mogram.getContext();
         else
             return  mogram.getDataContext();
@@ -218,7 +218,7 @@ public class operator extends Operator {
 
     public static Context taskContext(String path, Exertion service) throws ContextException {
         if (service instanceof ServiceExertion) {
-            return ((CompositeExertion) service).getComponentContext(path);
+            return ((FedMogram) service).getComponentContext(path);
         } else
             throw new ContextException("Service not an exertion: " + service);
     }
@@ -290,7 +290,7 @@ public class operator extends Operator {
             return new PositionalContext((String) entries[0]);
         } else if (entries.length == 2 && entries[0] instanceof String
             && entries[1] instanceof Exertion) {
-            return (ServiceContext) ((CompositeExertion) entries[1]).getComponentMogram(
+            return (ServiceContext) ((FedMogram) entries[1]).getComponentMogram(
                 (String) entries[0]).getContext();
         } else if (entries[0] instanceof Context && entries[1] instanceof List) {
             return ((ServiceContext) entries[0]).getDirectionalSubcontext(Path.getPathArray((List)entries[1]));
@@ -3103,7 +3103,15 @@ public class operator extends Operator {
         public Arg[] args() {
             Arg[] as = new Arg[args.length];
             for (int i = 0; i < args.length; i++) {
-                as[i] = new Subroutine(args[i].toString());
+                Subroutine sub = new Subroutine(args[i].toString());
+                if (paths != null) {
+                    Path p = paths.getPath(args[i].toString());
+                    if (p != null && p.type.equals(Type.PROC)) {
+                        sub.setDomain((p.domain));
+                        sub.setType(Functionality.Type.PROC);
+                    }
+                }
+                as[i] = sub;
             }
             return as;
         }
@@ -3111,7 +3119,15 @@ public class operator extends Operator {
         public ArgSet argSet() {
             ArgSet as = new ArgSet();
             for (int i = 0; i < args.length; i++) {
-                as.add(new Subroutine(args[i].toString()));
+                Subroutine sub = new Subroutine(args[i].toString());
+                if (paths != null) {
+                    Path p = paths.getPath(args[i].toString());
+                    if (p != null && p.type.equals(Type.PROC)) {
+                        sub.setDomain((p.domain));
+                        sub.setType(Functionality.Type.PROC);
+                    }
+                }
+                as.add(sub);
             }
             as.paths = this.paths;
             return as;

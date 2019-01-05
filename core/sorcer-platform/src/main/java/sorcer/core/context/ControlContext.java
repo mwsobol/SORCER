@@ -516,7 +516,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 
 	public void deregisterExertion(Mogram mogram, Mogram componentMogram)
 			throws ContextException {
-		CompositeExertion parent = (CompositeExertion)mogram;
+		FedMogram parent = (FedMogram)mogram;
 		Exertion component = (Exertion)componentMogram;
 		String path = component.getContext().getName();
 		remove(path);
@@ -589,7 +589,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		Iterator e = keyIterator();
 		while (e.hasNext()) {
 			key = (String) e.next();
-			if (key.endsWith("[" + ((CompositeExertion) exertion).getIndex()
+			if (key.endsWith("[" + ((FedMogram) exertion).getIndex()
 					+ "]" + ID)) {
 				oldPath = key;
 				break;

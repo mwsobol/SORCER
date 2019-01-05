@@ -27,18 +27,18 @@ import java.util.List;
 /**
  * @author Mike Sobolewski
  */
-abstract public class CompositeExertion extends ServiceExertion implements Mogram {
+abstract public class FedMogram extends ServiceExertion implements Mogram, FederatedRequest  {
 
 	/**
 	 * Component mograms of this job (the Composite Design pattern)
 	 */
 	protected List<Mogram> mograms = new ArrayList<Mogram>();
 
-	public CompositeExertion() {
+	public FedMogram() {
 		this("compound xrt=" + count++);
 	}
 
-	public CompositeExertion(String name) {
+	public FedMogram(String name) {
 		super(name);
 		mograms = new ArrayList<Mogram>();
 	}
@@ -144,9 +144,9 @@ abstract public class CompositeExertion extends ServiceExertion implements Mogra
 	}
 
 	public int compareByIndex(Exertion e) {
-		if (this.getIndex() > ((CompositeExertion) e).getIndex())
+		if (this.getIndex() > ((FedMogram) e).getIndex())
 			return 1;
-		else if (this.getIndex() < ((CompositeExertion) e).getIndex())
+		else if (this.getIndex() < ((FedMogram) e).getIndex())
 			return -1;
 		else
 			return 0;

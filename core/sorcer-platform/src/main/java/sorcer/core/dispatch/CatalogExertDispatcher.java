@@ -84,7 +84,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     protected void afterExec(Exertion ex, Exertion result)
             throws SignatureException, ExertionException, ContextException {
         ServiceExertion ser = (ServiceExertion) result;
-		((CompositeExertion)xrt).setMogramAt(result, ex.getIndex());
+		((FedMogram)xrt).setMogramAt(result, ex.getIndex());
         if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
             ser.setStatus(DONE);
             // update all outputs from sharedcontext only for tasks. For jobs,

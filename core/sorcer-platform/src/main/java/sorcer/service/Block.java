@@ -39,7 +39,7 @@ import java.util.*;
 /**
  * @author Mike Sobolewski
  */
-public abstract class Block extends CompositeExertion {
+public abstract class Block extends FedMogram {
 	
 	private URL contextURL;
 	
@@ -221,7 +221,7 @@ public abstract class Block extends CompositeExertion {
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.CompositeExertion#isCompound()
+	 * @see sorcer.service.FedMogram#isCompound()
 	 */
 	@Override
 	public boolean isCompound() {
@@ -267,7 +267,7 @@ public abstract class Block extends CompositeExertion {
 		Mogram exti = this;
 		for (String attribute : attributes) {
 			if (((ServiceExertion) exti).hasChild(attribute)) {
-				exti = ((CompositeExertion) exti).getChild(attribute);
+				exti = ((FedMogram) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					last = attribute;
 					break;

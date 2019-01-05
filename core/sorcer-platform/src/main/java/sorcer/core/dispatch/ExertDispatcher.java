@@ -379,8 +379,8 @@ abstract public class ExertDispatcher implements Dispatcher {
                 inputXrts.remove(mo);
         } else {
             mo.setStatus(INITIAL);
-            if (mo instanceof CompositeExertion) {
-                CompositeExertion ce = (CompositeExertion) mo;
+            if (mo instanceof FedMogram) {
+                FedMogram ce = (FedMogram) mo;
                 for (Mogram sub : ce.getMograms())
                     reconcileInputExertions(sub);
             }

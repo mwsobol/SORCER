@@ -53,8 +53,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected Context outConnector;
 
-    // the executed mogram
-    protected Mogram out;
+    // the executed service
+    protected Service out;
 
     // the service context of the executed service
     protected Mogram result;
@@ -115,7 +115,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     public Service getGovernance() throws MogramException {
         // if no service then dispatch is standalone
         if (serviceMultiFi == null || serviceMultiFi.getSelect() == null) {
-            return (Mogram) dispatchMultiFi.getSelect();
+            return dispatchMultiFi.getSelect();
         }
         return serviceMultiFi.getSelect();
     }
@@ -338,7 +338,6 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     }
 
-    @Override
     public Morpher getMorpher() {
         return morpher;
     }

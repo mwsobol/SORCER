@@ -35,7 +35,7 @@ import java.util.List;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Identifiable, FederatedRequest, Exerter, Scopable, Substitutable, Arg {
+public interface Mogram extends Identifiable, Service, Exerter, Scopable, Substitutable, Arg {
 
     /**
      * Exerts this mogram by the assigned service provider if it is set. If a service
