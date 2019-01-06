@@ -25,7 +25,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.DataContext;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
@@ -172,7 +172,7 @@ public class operator extends Operator {
                 if (mogram instanceof Exertion) {
                     return mogram.exert(args).getContext();
                 } else {
-                    return (Response) ((EntryModel) mogram).getValue(args);
+                    return (Response) ((EntModel) mogram).getValue(args);
                 }
             }
         } catch (RemoteException | ServiceException e) {

@@ -18,7 +18,7 @@ package sorcer.core.context.model.ent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.invoker.Activator;
 import sorcer.eo.operator;
 import sorcer.service.*;
@@ -30,7 +30,7 @@ import java.util.Iterator;
 
 /**
  * In service-based modeling, an artificial neuron entry (for short a neu) is a special kind of
- * function, used in a service model {@link EntryModel} to refer to one of the
+ * function, used in a service model {@link EntModel} to refer to one of the
  * pieces of data provided as input to other neurons.
  * 
  * @author Mike Sobolewski

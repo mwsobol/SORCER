@@ -20,8 +20,8 @@ package sorcer.service;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.EntryModel;
 import sorcer.core.exertion.AltTask;
 import sorcer.core.exertion.LoopTask;
 import sorcer.core.exertion.OptTask;
@@ -55,7 +55,7 @@ public abstract class Block extends FedMogram {
 			((ServiceFidelity)multiFi).getSelects().add(sFi);// Add the signature
 			multiFi.setSelect(sFi);
 
-			setContext(new EntryModel("block context: " + getName()));
+			setContext(new EntModel("block context: " + getName()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

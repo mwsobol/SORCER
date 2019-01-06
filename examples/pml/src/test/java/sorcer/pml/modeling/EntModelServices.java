@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.pml.model.EntryModeler;
 import sorcer.service.Invocation;
 import sorcer.service.Task;
@@ -23,14 +23,14 @@ import static sorcer.so.operator.*;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/cml")
-public class EntryModelServices {
-	private final static Logger logger = LoggerFactory.getLogger(EntryModelServices.class
+public class EntModelServices {
+	private final static Logger logger = LoggerFactory.getLogger(EntModelServices.class
 			.getName());
 	
 	@Test
 	public void callModelerTest() throws Exception {
 
-		EntryModel em = EntryModeler.getEntryModel();
+		EntModel em = EntryModeler.getEntryModel();
 		logger.info("result: " + invoke(em, "expr"));
 		assertTrue(invoke(em, "expr").equals(60.0));
 
@@ -53,7 +53,7 @@ public class EntryModelServices {
 	public void callNetModelServiceTest() throws Exception {
 
 		// the provider in ex6/bin parmodel-prv-run.xml
-		Task emt = task(sig("invoke", Invocation.class, prvName("EntryModel Service")),
+		Task emt = task(sig("invoke", Invocation.class, prvName("EntModel Service")),
 				context(result("invoke/result", outPaths("expr"))));
 
 		assertTrue(exec(emt).equals(60.0));

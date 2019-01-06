@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.Operator;
 import sorcer.co.tuple.*;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.ent.Pro;
 import sorcer.core.context.model.srv.Srv;
@@ -222,7 +222,7 @@ public class operator extends Operator {
 		return callEntry;
 	}
 
-	public static Pro pro(EntryModel pm, String name) throws ContextException, RemoteException {
+	public static Pro pro(EntModel pm, String name) throws ContextException, RemoteException {
 		Pro parameter = new Pro(name, pm.asis(name));
 		parameter.setScope(pm);
 		return parameter;
@@ -254,19 +254,19 @@ public class operator extends Operator {
 			((ServiceInvoker)invoker).clearPars();
 	}
 
-	public static EntryModel append(EntryModel parContext, Arg... objects)
+	public static EntModel append(EntModel parContext, Arg... objects)
 			throws RemoteException, ContextException {
 		parContext.append(objects);
 		return parContext;
 	}
 
-//	public static Proc put(EntryModel entModel, String name, Object get) throws ContextException, RemoteException {
+//	public static Proc put(EntModel entModel, String name, Object get) throws ContextException, RemoteException {
 //		entModel.putValue(name, get);
 //		entModel.setContextChanged(true);
 //		return call(entModel, name);
 //	}
 //
-//	public static EntryModel put(EntryModel entModel, Entry... entries) throws ContextException {
+//	public static EntModel put(EntModel entModel, Entry... entries) throws ContextException {
 //		for (Entry e : entries) {
 //			entModel.putValue(e.getName(), e.getImpl());
 //		}
@@ -345,17 +345,17 @@ public class operator extends Operator {
             if (ane.getMultiFi() != null) {
                 List<Fidelity> fiList = Arg.selectFidelities(args);
                 ((FidelityManager) model.getFidelityManager()).reconfigure(fiList);
-                return invoke((EntryModel) model, path, args);
+                return invoke((EntModel) model, path, args);
 
             } else {
-                return invoke((EntryModel) model, path, args);
+                return invoke((EntModel) model, path, args);
             }
         } catch (RemoteException | ContextException e) {
             throw new InvocationException(e);
         }
     }
 
-	public static Object invoke(EntryModel procModel, String parname, Arg... parameters)
+	public static Object invoke(EntModel procModel, String parname, Arg... parameters)
 			throws RemoteException, InvocationException {
 		try {
 			Object obj;
@@ -399,7 +399,7 @@ public class operator extends Operator {
 		return invoker.getArgs();
 	}
 
-	public static Arg[] args(EntryModel pm, String... parnames)
+	public static Arg[] args(EntModel pm, String... parnames)
 			throws ContextException {
 		ArgSet ps = new ArgSet();
 		for (String name : parnames) {
@@ -553,7 +553,7 @@ public class operator extends Operator {
 		return incrementor.next();
 	}
 
-	public static <T> T next(EntryModel model, String name) throws ContextException {
+	public static <T> T next(EntModel model, String name) throws ContextException {
 		Incrementor<T> inceremntor = (Incrementor<T>)invoker(model, name);
 		return inceremntor.next();
 	}

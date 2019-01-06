@@ -1072,7 +1072,7 @@ public class ProviderDelegate {
 //			Method m = null;
 //			try {
 //				// select the proper method for the bean type
-//				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof EntryModel)) {
+//				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof EntModel)) {
 //					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
 //					isContextual = true;
 //				} else if (selector.equals("compute") && impl instanceof Domain) {

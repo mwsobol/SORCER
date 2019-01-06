@@ -26,7 +26,7 @@ import sorcer.co.tuple.ExecDependency;
 import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ModelStrategy;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
@@ -57,7 +57,7 @@ import static sorcer.eo.operator.*;
  *   
  * Created by Mike Sobolewski on 1/29/15.
  */
-public class SrvModel extends EntryModel implements Invocation<Object> {
+public class SrvModel extends EntModel implements Invocation<Object> {
     private static final Logger logger = LoggerFactory.getLogger(SrvModel.class);
 
     public static SrvModel instance(Signature builder) throws SignatureException {

@@ -10,7 +10,7 @@ import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.Pro;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.ent.operator;
@@ -41,9 +41,9 @@ public class ContextModels {
 	@Test
 	public void entryModel() throws Exception {
 
-		// use entModel to create an EntryModel the same way as a regular context
+		// use entModel to create an EntModel the same way as a regular context
 		// or convert any context to entModel(<context>)
-		EntryModel mdl = entModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
+		EntModel mdl = entModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
 				val("arg/x3", 3.0), val("arg/x4", 4.0), val("arg/x5", 5.0));
 
 		setValues(mdl, val("arg/x6", 6.0));

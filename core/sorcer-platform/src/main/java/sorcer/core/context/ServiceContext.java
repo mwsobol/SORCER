@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
 import sorcer.core.SorcerConstants;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.ent.Pro;
 import sorcer.core.context.node.ContextNode;
@@ -3349,7 +3349,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public Pro appendCall(Pro p) throws ContextException {
 		put(p.getName(), (T)p);
 		if (p.getScope() == null)
-			p.setScope(new EntryModel(p.getName()).append(this));
+			p.setScope(new EntModel(p.getName()).append(this));
 		if (p.asis() instanceof ServiceInvoker) {
 			((ServiceInvoker) p.asis()).setScope(this);
 		}

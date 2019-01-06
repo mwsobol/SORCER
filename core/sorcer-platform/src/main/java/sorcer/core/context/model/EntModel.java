@@ -55,7 +55,7 @@ import static sorcer.so.operator.exec;
  */
 
 /**
- * The EntryModel is an active shared service context as a map of associations,
+ * The EntModel is an active shared service context as a map of associations,
  * key and its get (argument). The association <key, argument> is the definition
  * of an independent or a dependent argument. Arguments that dependent on other
  * arguments are subroutines (evaluators, invokers), so that, each time the
@@ -65,17 +65,17 @@ import static sorcer.so.operator.exec;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class EntryModel extends PositionalContext<Object> implements Model, Invocation<Object>, Contexter<Object> {
+public class EntModel extends PositionalContext<Object> implements Model, Invocation<Object>, Contexter<Object> {
 
     private static final long serialVersionUID = -6932730998474298653L;
 
-	public static EntryModel instance(Signature builder) throws SignatureException {
-		EntryModel model = (EntryModel) sorcer.co.operator.instance(builder);
+	public static EntModel instance(Signature builder) throws SignatureException {
+		EntModel model = (EntModel) sorcer.co.operator.instance(builder);
 		model.setBuilder(builder);
 		return model;
 	}
 
-    public EntryModel() {
+    public EntModel() {
 		super();
 		key = PROC_MODEL;
 		out = new Date();
@@ -83,24 +83,24 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		isRevaluable = true;
 	}
 
-    public EntryModel(String name) {
+    public EntModel(String name) {
         super(name);
 		isRevaluable = true;
 	}
 
-	public EntryModel(String name, Signature builder) {
+	public EntModel(String name, Signature builder) {
 		this(name);
 		this.builder = builder;
 	}
 
-    public EntryModel(Context context) throws RemoteException, ContextException {
+    public EntModel(Context context) throws RemoteException, ContextException {
         super(context);
         key = PROC_MODEL;
         setSubject("call/model", new Date());
 		isRevaluable = true;
 	}
 
-    public EntryModel(Identifiable... objects) throws RemoteException,
+    public EntModel(Identifiable... objects) throws RemoteException,
             ContextException {
         this();
         add(objects);
@@ -270,14 +270,14 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 		return ent;
 	}
 
-	public EntryModel add(List<Identifiable> objects) throws RemoteException, ContextException {
+	public EntModel add(List<Identifiable> objects) throws RemoteException, ContextException {
 		Identifiable[] objs = new Identifiable[objects.size()];
 		objects.toArray(objs);
 		add(objs);
 		return this;
 	}
 
-	public EntryModel append(Arg... objects) throws ContextException {
+	public EntModel append(Arg... objects) throws ContextException {
 		Pro p = null;
 		boolean changed = false;
 		for (Arg obj : objects) {
@@ -292,7 +292,7 @@ public class EntryModel extends PositionalContext<Object> implements Model, Invo
 //			restrict identifiables
 //			else if (obj instanceof Identifiable) {
 //				String pn = obj.getName();
-//				p = new Proc(pn, obj, new EntryModel(pn).append(this));
+//				p = new Proc(pn, obj, new EntModel(pn).append(this));
 //			}
 
 			if (p != null) {

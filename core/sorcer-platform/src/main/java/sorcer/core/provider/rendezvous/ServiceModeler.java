@@ -56,8 +56,8 @@ public class ServiceModeler extends SystemServiceBean implements Modeler {
         try {
             if (mogram instanceof SrvModel) {
                   return ((SrvModel)mogram).exert(args);
-            } else if (mogram instanceof ModelerObjectTask) {
-                taskModel = ((ModelerObjectTask) mogram).getModelTask();
+            } else if (mogram instanceof ModelerTask) {
+                taskModel = ((ModelerTask) mogram).getModelTask();
                 if (taskModel != null) {
                     model = taskModel.getModel();
                     builder = taskModel.getBuilder();

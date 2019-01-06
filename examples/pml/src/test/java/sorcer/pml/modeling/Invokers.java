@@ -10,7 +10,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.invoker.AltInvoker;
 import sorcer.core.invoker.Updater;
 import sorcer.core.invoker.OptInvoker;
@@ -45,7 +45,7 @@ import static sorcer.so.operator.*;
 public class Invokers {
 	private final static Logger logger = LoggerFactory.getLogger(Invokers.class);
 
-	private EntryModel em;
+	private EntModel em;
 	private ent x;
 	private ent y;
 	private ent z;
@@ -72,7 +72,7 @@ public class Invokers {
 
 	@Before
 	public void initEntModel() throws Exception {
-		em = new EntryModel();
+		em = new EntModel();
 		//force for x and y procedural entries
 		x = pro("x", 10.0);
 		y = pro("y", 20.0);
@@ -109,7 +109,7 @@ public class Invokers {
 
 	@Test
 	public void groovyInvoker() throws Exception {
-		EntryModel pm = entModel("ent-model");
+		EntModel pm = entModel("ent-model");
 		add(pm, val("x", 10.0), val("y", 20.0));
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
 		logger.info("invoke eval: " + invoke(pm, "expr"));
@@ -220,7 +220,7 @@ public class Invokers {
 
 	@Test
 	public void modelConditions() throws Exception {
-		final EntryModel pm = new EntryModel("ent-model");
+		final EntModel pm = new EntModel("ent-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
 		pm.putValue("condition", invoker("x > y", args("x", "y")));
@@ -260,7 +260,7 @@ public class Invokers {
 
 	@Test
 	public void optInvoker() throws Exception {
-		EntryModel pm = new EntryModel("ent-model");
+		EntModel pm = new EntModel("ent-model");
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
 				"{ x, y -> x > y }", "x", "y"), 
@@ -284,7 +284,7 @@ public class Invokers {
 
 	@Test
 	public void cretaeOptInvoker() throws Exception {
-		EntryModel pm = entModel("ent-model");
+		EntModel pm = entModel("ent-model");
 		add(pm,
 				val("x", 10.0),
 				val("y", 20.0),
@@ -301,7 +301,7 @@ public class Invokers {
 
 	@Test
 	public void altInvoker() throws Exception {
-		EntryModel pm = new EntryModel("ent-model");
+		EntModel pm = new EntModel("ent-model");
 		pm.putValue("x", 30.0);
 		pm.putValue("y", 20.0);
 		pm.putValue("x2", 50.0);
@@ -361,7 +361,7 @@ public class Invokers {
 
 	@Test
 	public void smlAltInvoker() throws Exception {
-		EntryModel pm = entModel("ent-model");
+		EntModel pm = entModel("ent-model");
 		add(pm, val("x", 10.0), val("y", 20.0), val("x2", 50.0),
 				val("y2", 40.0), val("x3", 50.0), val("y3", 60.0));
 
@@ -400,7 +400,7 @@ public class Invokers {
 
 	@Test
 	public void invokerLoop() throws Exception {
-		EntryModel pm = entModel("ent-model");
+		EntModel pm = entModel("ent-model");
 		add(pm, val("x", 1));
 		add(pm, ent("y", invoker("x + 1", args("x"))));
 		add(pm, ent("z", inc(invoker(pm, "y"), 2)));
@@ -413,7 +413,7 @@ public class Invokers {
 
 	@Test
 	public void incrementorStepBy1() throws Exception {
-		EntryModel pm = entModel("ent-model");
+		EntModel pm = entModel("ent-model");
 		add(pm, val("x", 1));
 		add(pm, ent("y", invoker("x + 1", args("x"))));
 		add(pm, ent("z", inc(invoker(pm, "y"))));
@@ -425,7 +425,7 @@ public class Invokers {
 
 	@Test
 	public void incrementorStepBy2() throws Exception {
-		EntryModel pm = entModel("ent-model");
+		EntModel pm = entModel("ent-model");
 		add(pm, val("x", 1));
 		add(pm, ent("y", invoker("x + 1", args("x"))));
 		add(pm, ent("z", inc(invoker(pm, "y"), 2)));
@@ -438,7 +438,7 @@ public class Invokers {
 
 	@Test
 	public void incrementorDouble() throws Exception {
-		EntryModel pm = entModel("ent-model");
+		EntModel pm = entModel("ent-model");
 		add(pm, ent("x", 1.0));
 		add(pm, ent("y", invoker("x + 1.2", args("x"))));
 		add(pm, ent("z", inc(invoker(pm, "y"), 2.1)));

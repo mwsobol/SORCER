@@ -23,7 +23,7 @@ import net.jini.lease.LeaseRenewalManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.exertion.AltTask;
 import sorcer.core.exertion.EvaluationTask;
 import sorcer.core.exertion.LoopTask;
@@ -79,7 +79,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
                     exertion.getDataContext().getScope().append(xrt.getDataContext());
                 else {
 //                  exertion.getDataContext().setScope(xrt.getContext());
-                    exertion.getDataContext().setScope(new EntryModel());
+                    exertion.getDataContext().setScope(new EntModel());
                     exertion.getDataContext().getScope().append(xrt.getContext());
                 }
             }
@@ -144,7 +144,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             Context pc = ((OptTask)exertion).getCondition().getConditionalContext();
             ((OptTask)exertion).getCondition().setStatus(null);
             if (pc == null) {
-				pc = new EntryModel(exertion.getName());
+				pc = new EntModel(exertion.getName());
 				((OptTask)exertion).getCondition().setConditionalContext(pc);
             }
             pc.append(xrt.getContext());
@@ -152,7 +152,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             ((LoopTask)exertion).getCondition().setStatus(null);
 			Context pc = ((LoopTask)exertion).getCondition().getConditionalContext();
 			if (pc == null) {
-				pc = new EntryModel(exertion.getName());
+				pc = new EntModel(exertion.getName());
 				((LoopTask)exertion).getCondition().setConditionalContext(pc);
 			}
 			pc.append(xrt.getContext());
@@ -200,9 +200,9 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		}
 
 //		if (exertion instanceof AltExertion) {
-//			((EntryModel)((Block)xrt).getContext()).appendNew(((AltExertion)exertion).getActiveOptExertion().getContext());
+//			((EntModel)((Block)xrt).getContext()).appendNew(((AltExertion)exertion).getActiveOptExertion().getContext());
 //		} else if (exertion instanceof OptExertion) {
-//			((EntryModel)((Block)xrt).getContext()).appendNew(((OptExertion)exertion).getContext());
+//			((EntModel)((Block)xrt).getContext()).appendNew(((OptExertion)exertion).getContext());
 //		}
 		
 		ServiceContext cxt = (ServiceContext)xrt.getDataContext();
