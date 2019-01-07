@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * @author Mike Sobolewski
  */
-abstract public class FedMogram extends ServiceExertion implements Mogram, FederatedRequest  {
+abstract public class FedMogram extends ServiceExertion implements FederatedRequest  {
 
 	/**
 	 * Component mograms of this job (the Composite Design pattern)
