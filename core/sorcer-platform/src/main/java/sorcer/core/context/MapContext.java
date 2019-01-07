@@ -17,7 +17,7 @@ public class MapContext extends ServiceContext {
     }
 
     /**
-     * Constructor for a named instance of MapContext. It calls on the default constructor
+     * Constructor for a named instance of MapContext
      * @param name
      * @see ServiceContext
      */
