@@ -104,7 +104,7 @@ task ss {
     }
 }
 
-// run with "gradle run -q"
+// run with "gradle runCoffeemaker -q"
 task runCoffeemaker(type:JavaExec, dependsOn:[install]) {
     description = 'Runs a Coffeemaker main.'
     main = "edu.pjatk.inn.requestor.CoffeemakerClient"
@@ -115,16 +115,16 @@ task runCoffeemaker(type:JavaExec, dependsOn:[install]) {
 //task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
 task runRequestor(type:JavaExec, dependsOn:[jar]) {
     description = 'Runs a service requestor executing a local or remote service.'
-    main = "sorcer.core.requestor.ExertRequestor"
+    main = "sorcer.core.requestor.ServiceConsumer"
     classpath = sourceSets.main.runtimeClasspath
     systemProperty "project.version", "${version}"
     systemProperty "java.rmi.server.codebase",
             "${websterUrl}/${repoPath()}/coffeemaker-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
     dependsOn([install, bootme])
-  args = ["edu.pjatk.inn.requestor.CoffeemakerRequestor", "netlet"]
-//    args = ["edu.pjatk.inn.requestor.CoffeemakerRequestor", "exertion"]
-//    args = ["edu.pjatk.inn.requestor.CoffeemakerRequestor", "model"]
+  args = ["edu.pjatk.inn.requestor.CoffeemakerConsumer", "netlet"]
+//    args = ["edu.pjatk.inn.requestor.CoffeemakerConsumer", "exertion"]
+//    args = ["edu.pjatk.inn.requestor.CoffeemakerConsumer", "model"]
     finalizedBy (stopme)
 }
 
