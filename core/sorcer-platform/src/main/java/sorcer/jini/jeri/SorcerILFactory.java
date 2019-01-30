@@ -383,7 +383,7 @@ public class SorcerILFactory extends BasicILFactory {
     private static boolean isSorcerType(Object target) throws SignatureException {
         if (target instanceof Exertion) {
             Class serviceType = ((Exertion) target).getProcessSignature().getServiceType();
-            if (target instanceof FedMogram
+            if (target instanceof CompositeExertion
                     || Modeler.class.isAssignableFrom(serviceType)
                     || Evaluation.class.isAssignableFrom(serviceType)
                     || Invocation.class.isAssignableFrom(serviceType)) {

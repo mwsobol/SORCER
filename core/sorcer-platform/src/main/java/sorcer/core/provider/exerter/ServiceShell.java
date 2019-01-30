@@ -200,7 +200,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 					exertion.setContext(xrt.getDataContext());
 					exertion.setControlContext((ControlContext) xrt.getControlContext());
 					if (exertion.isCompound()) {
-						((FedMogram) exertion).setMograms(xrt.getMograms());
+						((CompositeExertion) exertion).setMograms(xrt.getMograms());
 					}
 					return (T) xrt;
 				} else {

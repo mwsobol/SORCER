@@ -129,13 +129,13 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 	private void init() throws MonitorException {
 		cookie = UuidFactory.generate();
 		if (initialExertion.isJob() || initialExertion.isBlock())
-			addSessions((FedMogram) initialExertion, (FedMogram) runtimeExertion, this);
+			addSessions((CompositeExertion) initialExertion, (CompositeExertion) runtimeExertion, this);
 
         if (initialExertion instanceof ConditionalTask)
             addSessionsForConditionals((ConditionalTask)initialExertion, (ConditionalTask)runtimeExertion, this);
     }
 
-	private void addSessions(FedMogram initial, FedMogram runtime, MonitorSession parent) throws MonitorException {
+	private void addSessions(CompositeExertion initial, CompositeExertion runtime, MonitorSession parent) throws MonitorException {
 		for (int i = 0; i < initial.size(); i++) {
             try {
                 if (!runtime.get(i).isMonitorable())

@@ -58,7 +58,7 @@ import java.util.*;
  * 
  * @author Mike Sobolewski
  */
-public class Job extends FedMogram {
+public class Job extends CompositeExertion {
 
 	private static final long serialVersionUID = -6161435179772214884L;
 
@@ -574,7 +574,7 @@ public class Job extends FedMogram {
 		Exertion exti = this;
 		for (String attribute : attributes) {
 			if (((ServiceExertion) exti).hasChild(attribute)) {
-				exti = (Exertion)((FedMogram) exti).getChild(attribute);
+				exti = (Exertion)((CompositeExertion) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					break;
 				}

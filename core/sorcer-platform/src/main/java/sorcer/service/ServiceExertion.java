@@ -408,7 +408,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     public void setSessionId(Uuid id) {
         sessionId = id;
-        if (this instanceof FedMogram) {
+        if (this instanceof CompositeExertion) {
             List<Mogram> v =  this.getMograms();
             for (int i = 0; i < v.size(); i++) {
                 ((ServiceExertion) v.get(i)).setSessionId(id);
