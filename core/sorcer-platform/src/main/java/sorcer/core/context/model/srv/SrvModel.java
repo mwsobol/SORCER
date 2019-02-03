@@ -57,7 +57,7 @@ import static sorcer.eo.operator.*;
  *   
  * Created by Mike Sobolewski on 1/29/15.
  */
-public class SrvModel extends EntModel implements Invocation<Object> {
+public class SrvModel extends EntModel implements Invocation<Object>, ServiceGovernance {
     private static final Logger logger = LoggerFactory.getLogger(SrvModel.class);
 
     public static SrvModel instance(Signature builder) throws SignatureException {
