@@ -32,6 +32,8 @@ public class CoffeemakerConsumer extends ServiceConsumer {
         try {
             if (option.equals("block")) {
                 return createExertionBlock();
+            } else if (option.equals("remoteBlock")) {
+                return createExertionRemoteBlock();
             } else if (option.equals("model")) {
                 return createModel();
             } else if (option.equals("job")) {
@@ -64,6 +66,23 @@ public class CoffeemakerConsumer extends ServiceConsumer {
             val("recipe", getEspressoContext())));
 
         Task delivery = task("delivery", sig("deliver", DeliveryImpl.class), context(
+            inVal("location", "PJATK"),
+            inVal("room", "101"),
+            outPaths("coffee/change", "delivery/cost", "change$")));
+
+        Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
+
+        return drinkCoffee;
+    }
+
+    private Exertion createExertionRemoteBlock() throws Exception {
+        Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
+            inVal("recipe/key", "espresso"),
+            inVal("coffee/paid", 120),
+            outPaths("coffee/change"),
+            val("recipe", getEspressoContext())));
+
+        Task delivery = task("delivery", sig("deliver", Delivery.class), context(
             inVal("location", "PJATK"),
             inVal("room", "101"),
             outPaths("coffee/change", "delivery/cost", "change$")));

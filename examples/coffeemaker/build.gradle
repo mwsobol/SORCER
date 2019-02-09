@@ -112,8 +112,8 @@ task runCoffeemaker(type:JavaExec, dependsOn:[install]) {
     standardInput = System.in
 }
 
-//task runRequestor(type:JavaExec, dependsOn:[jar, "bootme"]) {
-task runRequestor(type:JavaExec, dependsOn:[jar]) {
+//task runConsumer(type:JavaExec, dependsOn:[jar, "bootme"]) {
+task runConsumer(type:JavaExec, dependsOn:[jar]) {
     description = 'Runs a service requestor executing a local or remote service.'
     main = "sorcer.core.requestor.ServiceConsumer"
     classpath = sourceSets.main.runtimeClasspath
@@ -122,10 +122,11 @@ task runRequestor(type:JavaExec, dependsOn:[jar]) {
             "${websterUrl}/${repoPath()}/coffeemaker-${version}-dl.jar ${websterUrl}/sorcer-dl-${version}.jar ${websterUrl}/jsk-dl-${riverVersion}.jar"
 
     dependsOn([install, bootme])
-    args = ["edu.pjatk.inn.requestor.CoffeemakerRequestor", "block"]
-//    args = ["edu.pjatk.inn.requestor.CoffeemakerRequestor", "job"]
-//    args = ["edu.pjatk.inn.requestor.CoffeemakerRequestor", "model"]
-//    args = "edu.pjatk.inn.requestor.CoffeemakerRequestor", "netlet"]
+    args = ["edu.pjatk.inn.requestor.CoffeemakerConsumer", "block"]
+//    args = ["edu.pjatk.inn.requestor.CoffeemakerConsumer", "remoteBlock"]
+//    args = ["edu.pjatk.inn.requestor.CoffeemakerConsumer", "job"]
+//    args = ["edu.pjatk.inn.requestor.CoffeemakerConsumer", "model"]
+//    args = ["edu.pjatk.inn.requestor.CoffeemakerConsumer", "netlet"]
 
     finalizedBy (stopme)
 }
