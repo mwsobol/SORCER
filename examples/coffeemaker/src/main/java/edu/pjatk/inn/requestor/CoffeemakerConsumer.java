@@ -2,6 +2,8 @@ package edu.pjatk.inn.requestor;
 
 import edu.pjatk.inn.coffeemaker.CoffeeService;
 import edu.pjatk.inn.coffeemaker.Delivery;
+import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
+import edu.pjatk.inn.coffeemaker.impl.DeliveryImpl;
 import sorcer.core.requestor.ServiceConsumer;
 import sorcer.service.*;
 import sorcer.service.Domain;
@@ -28,12 +30,14 @@ public class CoffeemakerConsumer extends ServiceConsumer {
             throw new MogramException("wrong arguments for: ExertRequestor fiType, mogram fiType");
         }
         try {
-            if (option.equals("netlet")) {
-                return (Exertion) evaluate(new File("src/main/netlets/coffeemaker-exertion-remote.ntl"));
+            if (option.equals("block")) {
+                return createExertionBlock();
             } else if (option.equals("model")) {
                 return createModel();
-            } else if (option.equals("exertion")) {
-                return createExertion();
+            } else if (option.equals("job")) {
+                return createExertionJob();
+            } else if (option.equals("netlet")) {
+                return (Exertion) evaluate(new File("src/main/netlets/coffeemaker-exertion-remote.ntl"));
             }
         } catch (Throwable e) {
             throw new MogramException(e);
@@ -52,7 +56,24 @@ public class CoffeemakerConsumer extends ServiceConsumer {
        return task("recipe", sig("addRecipe", CoffeeService.class), getEspressoContext());
     }
 
-    private Exertion createExertion() throws Exception {
+    private Exertion createExertionBlock() throws Exception {
+        Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
+            inVal("recipe/key", "espresso"),
+            inVal("coffee/paid", 120),
+            outPaths("coffee/change"),
+            val("recipe", getEspressoContext())));
+
+        Task delivery = task("delivery", sig("deliver", DeliveryImpl.class), context(
+            inVal("location", "PJATK"),
+            inVal("room", "101"),
+            outPaths("coffee/change", "delivery/cost", "change$")));
+
+        Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
+
+        return drinkCoffee;
+    }
+
+    private Exertion createExertionJob() throws Exception {
         Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
             val("recipe/key", "espresso"),
             val("coffee/paid", 120),

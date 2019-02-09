@@ -3111,7 +3111,12 @@ public class operator extends Operator {
         public ArgSet argSet() {
             ArgSet as = new ArgSet();
             for (int i = 0; i < args.length; i++) {
-                as.add(new Subroutine(args[i].toString()));
+                Subroutine sub = new Subroutine(args[i].toString());
+                as.add(sub);
+                if (args[i] instanceof Path) {
+                    sub.setDomain(((Path)args[i]).domain);
+                    sub.setType(Functionality.Type.PROC);
+                }
             }
             as.paths = this.paths;
             return as;
