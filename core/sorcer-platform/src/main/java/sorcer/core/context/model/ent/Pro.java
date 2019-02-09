@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
@@ -42,7 +42,7 @@ import static sorcer.so.operator.exec;
 
 /**
  * In service-based modeling, a parameter (for short a call) is a special kind of
- * variable, used in a service context {@link EntryModel} to refer to one of the
+ * variable, used in a service context {@link EntModel} to refer to one of the
  * pieces of data provided as input to the invokers (subroutines of the
  * context). These pieces of data are called arguments.
  * 
@@ -283,7 +283,7 @@ public class Pro<T> extends Subroutine<T> implements Invocation<T>,
                         out = ((Entry<T>) arg).getData();
                     } else {
 					    if (scope == null) {
-					        scope = new EntryModel();
+					        scope = new EntModel();
                         }
                         ((ServiceContext)scope).put(arg.getName(), ((Entry)arg).getData());
 					}

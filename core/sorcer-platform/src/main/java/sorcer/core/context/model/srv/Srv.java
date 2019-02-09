@@ -7,7 +7,7 @@ import sorcer.co.tuple.MogramEntry;
 import sorcer.co.tuple.SignatureEntry;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.service.*;
@@ -281,7 +281,7 @@ public class Srv extends Subroutine<Object> implements Serviceableness,
     public Object execute(Arg... args) throws ServiceException, RemoteException {
         Domain mod = Arg.selectDomain(args);
         if (mod != null) {
-            if (mod instanceof EntryModel && impl instanceof ValueCallable) {
+            if (mod instanceof EntModel && impl instanceof ValueCallable) {
                 return ((ValueCallable) impl).call((Context) mod);
             } else if (mod instanceof Context && impl instanceof SignatureEntry) {
                 return ((ServiceContext) mod).execSignature((Signature) ((SignatureEntry) impl).getImpl(), args);

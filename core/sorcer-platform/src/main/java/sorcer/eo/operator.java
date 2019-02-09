@@ -27,7 +27,7 @@ import sorcer.co.tuple.*;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
 import sorcer.core.context.model.DataContext;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.QueueStrategy;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.srv.Srv;
@@ -2041,7 +2041,7 @@ public class operator extends Operator {
         if (signature instanceof NetSignature) {
             task = new ModelerNetTask(name, signature);
         } else if (signature instanceof ObjectSignature) {
-            task = new ModelerObjectTask(name, signature);
+            task = new ModelerTask(name, signature);
         }
         return task;
     }
@@ -2052,7 +2052,7 @@ public class operator extends Operator {
         if (signature instanceof NetSignature) {
             task = new ModelerNetTask(signature, context);
         } else if (signature instanceof ObjectSignature) {
-            task = new ModelerObjectTask(signature, context);
+            task = new ModelerTask(signature, context);
         }
         return task;
     }
@@ -2332,7 +2332,7 @@ public class operator extends Operator {
         Context cxt = null;
         boolean isBlock =false;
         for (int i = 0; i < items.length; i++) {
-            if (items[i] instanceof Exertion || items[i] instanceof EntryModel) {
+            if (items[i] instanceof Exertion || items[i] instanceof EntModel) {
                 exertions.add((Mogram) items[i]);
                 if (items[i] instanceof ConditionalTask)
                     isBlock = true;
@@ -3103,7 +3103,15 @@ public class operator extends Operator {
         public Arg[] args() {
             Arg[] as = new Arg[args.length];
             for (int i = 0; i < args.length; i++) {
-                as[i] = new Subroutine(args[i].toString());
+                Subroutine sub = new Subroutine(args[i].toString());
+                if (paths != null) {
+                    Path p = paths.getPath(args[i].toString());
+                    if (p != null && p.type.equals(Type.PROC)) {
+                        sub.setDomain((p.domain));
+                        sub.setType(Functionality.Type.PROC);
+                    }
+                }
+                as[i] = sub;
             }
             return as;
         }
@@ -3112,11 +3120,14 @@ public class operator extends Operator {
             ArgSet as = new ArgSet();
             for (int i = 0; i < args.length; i++) {
                 Subroutine sub = new Subroutine(args[i].toString());
-                as.add(sub);
-                if (args[i] instanceof Path) {
-                    sub.setDomain(((Path)args[i]).domain);
-                    sub.setType(Functionality.Type.PROC);
+                if (paths != null) {
+                    Path p = paths.getPath(args[i].toString());
+                    if (p != null && p.type.equals(Type.PROC)) {
+                        sub.setDomain((p.domain));
+                        sub.setType(Functionality.Type.PROC);
+                    }
                 }
+                as.add(sub);
             }
             as.paths = this.paths;
             return as;
@@ -3357,7 +3368,7 @@ public class operator extends Operator {
         return provider;
     }
 
-    public static Condition condition(EntryModel parcontext, String expression,
+    public static Condition condition(EntModel parcontext, String expression,
                                       String... pars) {
         return new Condition(parcontext, expression, pars);
     }
@@ -3487,7 +3498,7 @@ public class operator extends Operator {
         Context context = null;
         Evaluator evaluator = null;
         for (int i = 0; i < items.length; i++) {
-            if (items[i] instanceof Exertion || items[i] instanceof EntryModel) {
+            if (items[i] instanceof Exertion || items[i] instanceof EntModel) {
                 mograms.add((Mogram) items[i]);
             } else if (items[i] instanceof Evaluation) {
                 evaluators.add((Evaluator)items[i]);
@@ -3530,19 +3541,19 @@ public class operator extends Operator {
         } catch (Exception se) {
             throw new ExertionException(se);
         }
-        //make sure it has EntryModel as the data context
-        EntryModel pm = null;
+        //make sure it has EntModel as the data context
+        EntModel pm = null;
         Context cxt = null;
         try {
             cxt = block.getDataContext();
             if (cxt == null) {
-                cxt = new EntryModel();
+                cxt = new EntModel();
                 block.setContext(cxt);
             }
-            if (cxt instanceof EntryModel) {
-                pm = (EntryModel)cxt;
+            if (cxt instanceof EntModel) {
+                pm = (EntModel)cxt;
             } else {
-                pm = new EntryModel("block context: " + cxt.getName());
+                pm = new EntModel("block context: " + cxt.getName());
                 block.setContext(pm);
                 pm.append(cxt);
                 pm.setScope(pm);
@@ -3572,7 +3583,7 @@ public class operator extends Operator {
                     e.setScope(pm.getScope());
                     if (((EvaluationTask)e).getEvaluation() instanceof Pro) {
                         Pro p = (Pro)((EvaluationTask)e).getEvaluation();
-                        ((EntryModel)pm.getScope()).addCall(p);
+                        ((EntModel)pm.getScope()).addCall(p);
 //						pm.addCall(p);
 
                     }

@@ -33,7 +33,7 @@ import sorcer.core.context.ControlContext;
 import sorcer.core.context.ModelTask;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.dispatch.DispatcherException;
@@ -902,13 +902,13 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				return evaluate((Mogram)se.interpret());
 			} else if (service instanceof Entry) {
 				return exec(service, args);
-			} else if (service instanceof EntryModel) {
+			} else if (service instanceof EntModel) {
 				((Model)service).getResponse(args);
 			} else if (service instanceof Context) {
 				ServiceContext cxt = (ServiceContext)service;
 				cxt.substitute(args);
 				ReturnPath returnPath = cxt.getReturnPath();
-				if (cxt instanceof EntryModel) {
+				if (cxt instanceof EntModel) {
 					return ((Model)service).getResponse(args);
 				} else if (returnPath != null){
 					return cxt.getValue(returnPath.path, args);

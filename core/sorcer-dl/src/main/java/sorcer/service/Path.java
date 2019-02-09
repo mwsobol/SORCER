@@ -28,7 +28,7 @@ public class Path implements Arg, Service {
 	private static final long serialVersionUID = 1L;
 
 	public enum Type {
-		PATH, PRE, PERI, POST, MAP, ENT, CONTEXT, ARRAY, OUT, FROM, TO
+		PATH, PRE, PERI, POST, MAP, ENT, PROC, CONTEXT, ARRAY, OUT, FROM, TO
 	}
 
 	public enum State { CACHED, UNCACHED, VALID, INVALID, CHANGED, BEFORE, AFTER }
@@ -62,6 +62,9 @@ public class Path implements Arg, Service {
 			if (domain.isEmpty()) {
 				pn = path;
 				domain = null;
+				type = Type.PATH;
+			} else {
+				type = Type.PROC;
 			}
 		}
 		this.path = pn;
@@ -79,16 +82,27 @@ public class Path implements Arg, Service {
 	}
 
 	public Path(String path, Object info) {
-		this(path, info, Type.PATH);
+		this(path);
+        this.info = info;
 	}
 
 	public Object info() {
 		return this.info;
 	}
 
-	@Override
-	public String getName() {
-		return path;
+
+    @Override
+    public String getName() {
+        return path;
+    }
+
+	public String getDomainName() {
+	    // procedural paths ins args bind to a path's domain
+	    if (type.equals(Type.PROC)) {
+	        return path + "$" + domain;
+        } else {
+            return path;
+        }
 	}
 
 	public static Path[] toArray(List<Path> paths) {

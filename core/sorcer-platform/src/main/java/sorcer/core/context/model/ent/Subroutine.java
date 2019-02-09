@@ -93,9 +93,13 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
 
 	@Override
 	public String getName() {
-		return name;
+		if (type.equals(Functionality.Type.PROC) && domain != null) {
+			//used for procedural attchemnt with entry names name$domain
+			return name + "$" + domain;
+		} else {
+			return name;
+		}
 	}
-
 
 	@Override
 	public T evaluate(Arg... args) throws EvaluationException, RemoteException {

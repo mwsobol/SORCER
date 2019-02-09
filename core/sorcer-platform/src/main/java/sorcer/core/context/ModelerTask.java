@@ -30,27 +30,27 @@ import sorcer.service.modeling.ModelingTask;
  *
  * @author Mike Sobolewski
  */
-public class ModelerObjectTask extends ObjectTask implements ModelingTask {
+public class ModelerTask extends ObjectTask implements ModelingTask {
 
 	static final long serialVersionUID = 1L;
 
 	private ModelTask modelTask;
 
-	public ModelerObjectTask(String name, ModelTask task) {
+	public ModelerTask(String name, ModelTask task) {
 		super(name);
 		modelTask = task;
 	}
 
-	public ModelerObjectTask(String name, Signature... signatures) {
+	public ModelerTask(String name, Signature... signatures) {
 		super(name, signatures);
 	}
 
-	public ModelerObjectTask(String name, Signature signature, Context context)
+	public ModelerTask(String name, Signature signature, Context context)
 			throws SignatureException {
 		super(name, signature, context);
 	}
 
-	public ModelerObjectTask(Signature signature, Context context)
+	public ModelerTask(Signature signature, Context context)
 			throws SignatureException {
 		super(signature, context);
 	}

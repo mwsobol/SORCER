@@ -25,7 +25,7 @@ import sorcer.core.context.MapContext;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.context.model.srv.SrvModel;
@@ -275,8 +275,8 @@ public class operator {
         return model;
     }
 
-    public static EntryModel entModel(String name, Signature builder) throws SignatureException {
-        EntryModel model = (EntryModel) instance(builder);
+    public static EntModel entModel(String name, Signature builder) throws SignatureException {
+        EntModel model = (EntModel) instance(builder);
         model.setBuilder(builder);
         return model;
     }
@@ -287,33 +287,33 @@ public class operator {
         return model;
     }
 
-    public static EntryModel entModel(String name, Identifiable... objects)
+    public static EntModel entModel(String name, Identifiable... objects)
             throws ContextException, RemoteException {
-        EntryModel entModel = new EntryModel(objects);
+        EntModel entModel = new EntModel(objects);
         entModel.setName(name);
         return entModel;
     }
 
-    public static EntryModel entModel(Identifiable... objects)
+    public static EntModel entModel(Identifiable... objects)
             throws ContextException, RemoteException {
-        return new EntryModel(objects);
+        return new EntModel(objects);
     }
 
-    public static EntryModel entModel(Object... entries)
+    public static EntModel entModel(Object... entries)
             throws ContextException {
         if (entries != null && entries.length == 1 && entries[0] instanceof Context) {
             ((Context)entries[0]).setModeling(true);
             try {
-                return new EntryModel((Context)entries[0]);
+                return new EntModel((Context)entries[0]);
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }
         }
-        EntryModel model = new EntryModel();
+        EntModel model = new EntModel();
         Object[] dest = new Object[entries.length+1];
         System.arraycopy(entries,  0, dest,  1, entries.length);
         dest[0] = model;
-        return (EntryModel) context(dest);
+        return (EntModel) context(dest);
     }
 
     public static Model inConn(Model model, Context inConnector) {
@@ -695,7 +695,7 @@ public class operator {
                     if (i instanceof Value) {
                         pc.putValueAt(i.getName(), ((Entry) i).getOut(), pc.getTally() + 1);
                     } else {
-                        if (context instanceof EntryModel || isReactive) {
+                        if (context instanceof EntModel || isReactive) {
                             pc.putValueAt(i.getName(), i, pc.getTally() + 1);
                         } else {
                             pc.putValueAt(i.getName(), ((Entry) i).getImpl(), pc.getTally() + 1);
@@ -722,7 +722,7 @@ public class operator {
                         context.putInoutValue(i.getName(), ((Subroutine) i).getImpl());
                     }
                 } else {
-                    if (context instanceof EntryModel || isReactive) {
+                    if (context instanceof EntModel || isReactive) {
                         context.putValue(i.getName(), i);
                     } else {
                         context.putValue(i.getName(), ((Entry) i).getImpl());
@@ -754,9 +754,9 @@ public class operator {
         return srvModel(name, objects);
     }
 
-    public static EntryModel entModel(String name, Object... objects)
+    public static EntModel entModel(String name, Object... objects)
             throws RemoteException, ContextException {
-        EntryModel pm = new EntryModel(name);
+        EntModel pm = new EntModel(name);
         for (Object o : objects) {
             if (o instanceof Identifiable)
                 pm.add((Identifiable)o);
@@ -764,7 +764,7 @@ public class operator {
         return pm;
     }
 
-    public static Object get(EntryModel pm, String parname, Arg... parametrs)
+    public static Object get(EntModel pm, String parname, Arg... parametrs)
             throws ContextException, RemoteException {
         Object obj = pm.asis(parname);
         if (obj instanceof Pro)
@@ -886,7 +886,7 @@ public class operator {
         return new ServiceDiscipline(clients, servers);
     }
 
-    public static Discipline add(Discipline disciplne, Exertion client, Mogram server) {
+    public static Discipline add(Discipline disciplne, Exertion client, Service server) {
          disciplne.add(client, server);
          return disciplne;
     }

@@ -4,20 +4,20 @@ import sorcer.service.*
 import static sorcer.co.operator.*
 import static sorcer.eo.operator.*
 
-Context espresso = context(proc("name", "espresso"), proc("price", 50),
-                proc("amtCoffee", 6), proc("amtMilk", 0),
-                proc("amtSugar", 1), proc("amtChocolate", 0));
+Context espresso = context(val("key", "espresso"), val("price", 50),
+                val("amtCoffee", 6), val("amtMilk", 0),
+                val("amtSugar", 1), val("amtChocolate", 0));
 
 Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
-        proc("recipe/name", "espresso"),
-        proc("coffee/paid", 120),
-        proc("coffee/change"),
-        proc("recipe", espresso)));
+        val("recipe/key", "espresso"),
+        val("coffee/paid", 120),
+        val("coffee/change"),
+        val("recipe", espresso)));
 
 Task delivery = task("delivery", sig("deliver", Delivery.class), context(
-        proc("location", "PJATK"),
-        proc("delivery/paid"),
-        proc("room", "101")));
+        val("location", "PJATK"),
+        val("delivery/paid"),
+        val("room", "101")));
 
 job(coffee, delivery,
         pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "delivery/paid")));

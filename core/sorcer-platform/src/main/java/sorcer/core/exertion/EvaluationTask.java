@@ -21,7 +21,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Pro;
-import sorcer.core.context.model.EntryModel;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.signature.EvaluationSignature;
@@ -55,7 +55,7 @@ public class EvaluationTask extends Task {
 		dataContext.setExertion(this);
 		if (es.getEvaluator() instanceof Pro) {
 			if (dataContext.getScope() == null)
-				dataContext.setScope(new EntryModel(key));
+				dataContext.setScope(new EntModel(key));
 		}
 		if (evaluator instanceof Srv) {
 			if (dataContext.getReturnPath() == null)

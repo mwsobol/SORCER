@@ -60,9 +60,18 @@ public class Paths extends ArrayList<Path> implements Arg {
         return this.toArray(paths);
     }
 
+    public Path getPath(String path) {
+        for (Path p : this) {
+            if (p.path.equals(path)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     public boolean containsPath(String path) {
         for (Path p : this) {
-            if (p.getName().equals(path)) {
+            if (p.path.equals(path)) {
                 return true;
             }
         }
