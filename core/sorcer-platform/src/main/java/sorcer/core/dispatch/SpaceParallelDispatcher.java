@@ -148,6 +148,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         List<ExertionEnvelop> templates = Arrays.asList(getTemplate(DONE), getTemplate(FAILED), getTemplate(ERROR));
         while(count < inputXrts.size() && state != FAILED) {
             Collection<ExertionEnvelop> results;
+	        logger.info("collectResults(), state = " + state);
             try {
                 results = space.take(templates, null, SpaceTaker.SPACE_TIMEOUT, Integer.MAX_VALUE);
                 if (results.isEmpty())
@@ -229,6 +230,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     protected void addPoison(Exertion exertion) {
+        logger.info("adding poison to exertion = " + exertion);
         space = SpaceAccessor.getSpace();
         if (space == null) {
             return;
