@@ -148,7 +148,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         List<ExertionEnvelop> templates = Arrays.asList(getTemplate(DONE), getTemplate(FAILED), getTemplate(ERROR));
         while(count < inputXrts.size() && state != FAILED) {
             Collection<ExertionEnvelop> results;
-	        logger.info("collectResults(): in while looop, state = " + state);
+	        logger.info("collectResults(): in while looop, state = " + state + "; count = " + count + "; inputXrts.size() = " + inputXrts.size());
             try {
                 results = space.take(templates, null, SpaceTaker.SPACE_TIMEOUT, Integer.MAX_VALUE);
                 if (results.isEmpty())
@@ -203,10 +203,11 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     protected void handleResult(Collection<ExertionEnvelop> results) throws ExertionException, SignatureException, RemoteException {
+        logger.info("handleResult(): starting...results = " + results);
         boolean poisoned = false;
         for (ExertionEnvelop resultEnvelop : results) {
 
-            logger.debug("handle results() got result: " + resultEnvelop.describe());
+            logger.info("handle results() got result: " + resultEnvelop.describe());
             ServiceExertion input = (ServiceExertion) ((NetJob) xrt)
                     .get(resultEnvelop.exertion
                             .getIndex());
@@ -217,6 +218,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                 postExecExertion(input, result);
             else if (status == FAILED) {
                 if (!poisoned) {
+                    logger.info("handleResult(): adding poison.");
                     addPoison(xrt);
                     poisoned = true;
                 }
@@ -230,6 +232,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                 logger.error("Problem sending status after exec to monitor");
             }
         }
+        logger.info("handleResult(): DONE.");
     }
 
     protected void addPoison(Exertion exertion) {
@@ -243,7 +246,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
             ee.parentID = exertion.getId();
         else
             ee.parentID = exertion.getParentId();
-        ee.state = Exec.POISONED;
+            ee.state = Exec.POISONED;
         try {
             space.write(ee, null, Lease.FOREVER);
             logger.debug("written poisoned envelop for: "
@@ -352,6 +355,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     protected void handleError(Exertion exertion) throws RemoteException {
+        logger.info("handleError(): starting...");
         if (exertion != xrt)
             ((NetJob) xrt).setMogramAt(exertion,
                     exertion.getIndex());
@@ -366,6 +370,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                 logger.warn("Unable to notify monitor about failure of exertion: " + exertion.getName() + " " + ce.getMessage());
             }
         }
+        logger.info("handleError(): DONE.");
     }
 
     private void cleanRemainingFailedExertions(Uuid id) {
