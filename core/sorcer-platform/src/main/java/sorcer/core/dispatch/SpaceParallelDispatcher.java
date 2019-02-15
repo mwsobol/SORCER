@@ -148,6 +148,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         List<ExertionEnvelop> templates = Arrays.asList(getTemplate(DONE), getTemplate(FAILED), getTemplate(ERROR));
         while(count < inputXrts.size() && state != FAILED) {
             Collection<ExertionEnvelop> results;
+	        logger.info("collectResults(): in while looop, state = " + state + "; count = " + count + "; inputXrts.size() = " + inputXrts.size());
             try {
                 results = space.take(templates, null, SpaceTaker.SPACE_TIMEOUT, Integer.MAX_VALUE);
                 if (results.isEmpty())
@@ -159,6 +160,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                 }
                 count += results.size();
             } catch (UnusableEntriesException e) {
+                logger.info("collectResults(): 1st catch, e = " + e);
                 xrt.setStatus(FAILED);
                 state = FAILED;
                 Collection<UnusableEntryException> exceptions = e.getUnusableEntryExceptions();
@@ -169,6 +171,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 
                 throw new ExertionException(e);
             } catch (Exception e) {
+                logger.info("collectResults(): 2nd catch, e = " + e);
                 xrt.setStatus(FAILED);
                 state = FAILED;
                 throw new ExertionException("Taking exertion envelop failed", e);
@@ -178,8 +181,9 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                 }
             }
             handleResult(results);
+            logger.info("result was handled.");
         }
-
+        logger.info("collectResults(): state = " + state);
         if(xrt.getStatus()!=FAILED) {
             executeMasterExertion();
             state = DONE;
@@ -200,19 +204,22 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     protected void handleResult(Collection<ExertionEnvelop> results) throws ExertionException, SignatureException, RemoteException {
+        logger.info("handleResult(): starting...results = " + results);
         boolean poisoned = false;
         for (ExertionEnvelop resultEnvelop : results) {
 
-            logger.debug("HandleResult got result: " + resultEnvelop.describe());
+            logger.info("handle results() got result: " + resultEnvelop.describe());
             ServiceExertion input = (ServiceExertion) ((NetJob) xrt)
                     .get(resultEnvelop.exertion
                             .getIndex());
             ServiceExertion result = (ServiceExertion) resultEnvelop.exertion;
             int status = result.getStatus();
+            logger.info("handleResult(): status = " + status + "; result.getId() = " + result.getId());
             if(status == DONE)
                 postExecExertion(input, result);
             else if (status == FAILED) {
                 if (!poisoned) {
+                    logger.info("handleResult(): adding poison.");
                     addPoison(xrt);
                     poisoned = true;
                 }
@@ -226,9 +233,11 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                 logger.error("Problem sending status after exec to monitor");
             }
         }
+        logger.info("handleResult(): DONE.");
     }
 
     protected void addPoison(Exertion exertion) {
+        logger.info("adding poison to exertion = " + exertion);
         space = SpaceAccessor.getSpace();
         if (space == null) {
             return;
@@ -238,7 +247,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
             ee.parentID = exertion.getId();
         else
             ee.parentID = exertion.getParentId();
-        ee.state = Exec.POISONED;
+            ee.state = Exec.POISONED;
         try {
             space.write(ee, null, Lease.FOREVER);
             logger.debug("written poisoned envelop for: "
@@ -249,6 +258,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     protected synchronized void changeDoneExertionIndex(int index) {
+        logger.info("changeDoneExertionIndex(): index = " + index);
         logger.debug("[" + Thread.currentThread().getName() + "] - Updating changeDoneExertionIndex to: " + index+1);
         doneExertionIndex = index + 1;
         notifyAll();
@@ -330,6 +340,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         try {
             ((NetJob) xrt).setMogramAt(result, ex.getIndex());
             ServiceExertion ser = (ServiceExertion) result;
+            logger.info("postExecExertion(): ser.getStatus() = " + ser.getStatus());
             if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
                 ser.setStatus(DONE);
                 collectOutputs(result);
@@ -345,20 +356,28 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     protected void handleError(Exertion exertion) throws RemoteException {
-        if (exertion != xrt)
-            ((NetJob) xrt).setMogramAt(exertion,
-                    exertion.getIndex());
+        logger.info("handleError(): starting...");
+
+        // SAB 2/15/2019: added check for NetJob because NetTask causes exception which results in
+        //                a model hanging for a table run (RemoteException is thrown in the setMogramAt())
+        if (xrt instanceof NetJob) {
+            if (exertion != xrt) {
+                    ((NetJob) xrt).setMogramAt(exertion, exertion.getIndex());
+            }
+        }
 
         // notify monitor about failure
         MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
+
         if (exertion.isMonitorable() && monSession!=null) {
-            logger.debug("Notifying monitor about failure of exertion: " + exertion.getName());
+            logger.info("Notifying monitor about failure of exertion: " + exertion.getName());
             try {
                 monSession.changed(exertion.getContext(), exertion.getControlContext(), exertion.getStatus());
             } catch (Exception ce) {
-                logger.warn("Unable to notify monitor about failure of exertion: " + exertion.getName() + " " + ce.getMessage());
+                logger.info("Unable to notify monitor about failure of exertion: " + exertion.getName() + " " + ce.getMessage());
             }
         }
+        logger.info("handleError(): DONE.");
     }
 
     private void cleanRemainingFailedExertions(Uuid id) {

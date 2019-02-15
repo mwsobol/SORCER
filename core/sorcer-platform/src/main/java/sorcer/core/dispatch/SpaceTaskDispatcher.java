@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.ExertionEnvelop;
 import sorcer.core.loki.member.LokiMemberUtil;
 import sorcer.service.*;
@@ -31,6 +33,8 @@ import sorcer.service.*;
 import static sorcer.service.Exec.*;
 
 public class SpaceTaskDispatcher extends SpaceParallelDispatcher {
+
+    private final Logger logger = LoggerFactory.getLogger(SpaceTaskDispatcher.class);
 
 	public SpaceTaskDispatcher(final Task task,
             final Set<Context> sharedContexts,
@@ -47,21 +51,28 @@ public class SpaceTaskDispatcher extends SpaceParallelDispatcher {
 
     @Override
     protected void handleResult(Collection<ExertionEnvelop> results) throws ExertionException, SignatureException, RemoteException {
-        if (results.size() != 1)
+        logger.info("handleResult(): starting....");
+        if (results.size() != 1) {
+            logger.info("results.size !=1, throwing exception.");
             throw new ExertionException("Invalid number of results (" + results.size() + "), expecting 1");
+        }
 
 
         Task result = (Task) results.iterator().next().exertion;
+
         int status = result.getStatus();
+
+        logger.info("handleResult(): status = " + status);
         if (status == DONE) {
             state = DONE;
             result.setStatus(DONE);
             xrt = result;
 
         } else if (status == FAILED) {
-                addPoison(xrt);
-
+            //addPoison(xrt); //commented by SAB 2/15/2019 to prevent model hanging and poisened
+            //                  sitting in the space forever
             handleError(result);
         }
+        logger.info("handleResult(): DONE.");
     }
 }

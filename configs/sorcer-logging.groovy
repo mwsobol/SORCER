@@ -108,7 +108,7 @@ if (System.getProperty("org.rioproject.service")!=null) {
 /* ==================================================================
  *  Rio Loggers
  * ==================================================================*/
-logger("org.rioproject.cybernode", DEBUG)
+/*logger("org.rioproject.cybernode", DEBUG)
 logger("org.rioproject.cybernode.loader", DEBUG)
 logger("org.rioproject.config", INFO)
 logger("org.rioproject.resources.servicecore", INFO)
@@ -138,17 +138,19 @@ logger("org.rioproject.config.GroovyConfig", INFO)
 logger("net.jini.discovery.LookupDiscovery", OFF)
 logger("net.jini.lookup.JoinManager", OFF)
 logger("org.rioproject.resolver.aether.util.ConsoleRepositoryListener", WARN)
+*/
+
 
 /* ==================================================================
  *  SORCER Loggers
  * ==================================================================*/
-
+/*
 logger("sorcer.util.ProviderAccessor", WARN)
 logger("sorcer.core.provider.cataloger.ServiceCataloger", WARN)
-//logger("sorcer.provider.boot", TRACE)
+logger("sorcer.provider.boot", TRACE)
 logger("sorcer.core.provider.ServiceProvider", WARN)
-//logger("sorcer.core.provider.rendezvous.RendezvousBean", ALL)
-//logger("sorcer.core.provider.rendezvous.ServiceModeler", ALL)
+logger("sorcer.core.provider.rendezvous.RendezvousBean", ALL)
+logger("sorcer.core.provider.rendezvous.ServiceModeler", ALL)
 logger("sorcer.core.provider.ControlFlowManager", WARN)
 logger("sorcer.core.provider.ProviderDelegate", WARN)
 logger("sorcer.tools.shell.NetworkShell", WARN)
@@ -163,11 +165,12 @@ logger("sorcer.service.Accessor", WARN)
 logger("sorcer.core.provider.exerter", WARN)
 logger("sorcer.platform.logger", WARN)
 logger("sorcer.core.provider.logger", WARN)
+*/
 
 /* ==================================================================
  *  SORCER Variable oriented loggers
  * ==================================================================*/
-logger("sorcer.modeling.vfe.filter.Filter", OFF)
+//logger("sorcer.modeling.vfe.filter.Filter", OFF)
 
 /*
 logger("sorcer.modeling", OFF)
@@ -185,20 +188,24 @@ logger("sorcer.core.context.model.explore.ModelManager", TRACE)
 logger("sorcer.core.context.model.opti", TRACE)
 logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
 logger("sorcer.modeling.vfe.persist.TaskContextSetter", OFF)
-*/
 logger("sorcer.modeling.core.context.model.var.ResponseModel", WARN)
 logger("sorcer.modeling.core.context.model.var.ParametricModel", WARN)
+*/
 
 /* ==================================================================
  *  SORCER Other specialized loggers
  * ==================================================================*/
+/*
 logger("sorcer.core.context.eval", OFF)
 logger("sorcer.core.context", TRACE)
 logger("sorcer.jini.jeri.SorcerILFactory", WARN)
 
 logger("sorcer.ui.tools", DEBUG)
 logger("sorcer.util", DEBUG)
+*/
+logger("sorcer.core.dispatch", INFO)
+logger("sorcer.core.provider", INFO)
 
-root(OFF, appenders)
+root(INFO, appenders)
 
 
