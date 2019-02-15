@@ -357,18 +357,24 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 
     protected void handleError(Exertion exertion) throws RemoteException {
         logger.info("handleError(): starting...");
-        if (exertion != xrt)
+        if (exertion != xrt) {
+            logger.info("handleError(): setting exertion...");
             ((NetJob) xrt).setMogramAt(exertion,
                     exertion.getIndex());
+            logger.info("handleError(): DONE setting exertion.");
+        }
 
         // notify monitor about failure
+        logger.info("handleError(): getting monitor session...");
         MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
+        logger.info("handleError(): DONE getting monitor session.");
+
         if (exertion.isMonitorable() && monSession!=null) {
-            logger.debug("Notifying monitor about failure of exertion: " + exertion.getName());
+            logger.info("Notifying monitor about failure of exertion: " + exertion.getName());
             try {
                 monSession.changed(exertion.getContext(), exertion.getControlContext(), exertion.getStatus());
             } catch (Exception ce) {
-                logger.warn("Unable to notify monitor about failure of exertion: " + exertion.getName() + " " + ce.getMessage());
+                logger.info("Unable to notify monitor about failure of exertion: " + exertion.getName() + " " + ce.getMessage());
             }
         }
         logger.info("handleError(): DONE.");
