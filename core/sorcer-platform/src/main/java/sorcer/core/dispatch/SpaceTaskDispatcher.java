@@ -59,7 +59,12 @@ public class SpaceTaskDispatcher extends SpaceParallelDispatcher {
 
 
         Task result = (Task) results.iterator().next().exertion;
+
+        logger.info("setting status to failed for simulation!!!!!!!!!!!!");
+        result.setStatus(FAILED);
+
         int status = result.getStatus();
+
         logger.info("handleResult(): status = " + status);
         if (status == DONE) {
             state = DONE;
@@ -68,12 +73,12 @@ public class SpaceTaskDispatcher extends SpaceParallelDispatcher {
 
         } else if (status == FAILED) {
 
-            // addPoison(xrt); commented by SAB 2/15/2019 to prevent model hanging
+            addPoison(xrt); commented by SAB 2/15/2019 to prevent model hanging
             handleError(result);
 
             // added below by SAB 2/15/2019 to prevent model hanging
-            state = DONE;
-            xrt = result;
+            //state = DONE;
+            //xrt = result;
         }
         logger.info("handleResult(): DONE.");
     }
