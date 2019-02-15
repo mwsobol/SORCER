@@ -355,7 +355,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         changeDoneExertionIndex(result.getIndex());
     }
 
-    protected void handleError(Exertion exertion) throws Exception {
+    protected void handleError(Exertion exertion) throws RemoteException {
         logger.info("handleError(): starting...");
         if (exertion != xrt) {
             logger.info("handleError(): setting exertion...xrt " + xrt + "\n\texertion = " + exertion);
