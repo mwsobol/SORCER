@@ -364,7 +364,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                 ((NetJob) xrt).setMogramAt(exertion, exertion.getIndex());
             } catch (Exception e) {
                 logger.info("problem setMogramAt()");
-                throw e;
+                throw new RemoteException(e.toString());
              }
             logger.info("handleError(): DONE setting exertion.");
         }
