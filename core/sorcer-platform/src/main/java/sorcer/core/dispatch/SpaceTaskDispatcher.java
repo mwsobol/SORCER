@@ -73,7 +73,7 @@ public class SpaceTaskDispatcher extends SpaceParallelDispatcher {
 
         } else if (status == FAILED) {
 
-            addPoison(xrt); commented by SAB 2/15/2019 to prevent model hanging
+            addPoison(xrt); //commented by SAB 2/15/2019 to prevent model hanging
             handleError(result);
 
             // added below by SAB 2/15/2019 to prevent model hanging
