@@ -41,7 +41,7 @@ public class SpaceTaskDispatcher extends SpaceParallelDispatcher {
 	}
 
     @Override
-    protected List<Mogram> getInputExertions() throws ContextException {
+    protected List<Mogram> getInputExertions() thb0146w0016876rows ContextException {
         return Arrays.asList((Mogram)xrt);
     }
 
@@ -59,7 +59,8 @@ public class SpaceTaskDispatcher extends SpaceParallelDispatcher {
             xrt = result;
 
         } else if (status == FAILED) {
-                addPoison(xrt);
+            //addPoison(xrt); //commented by SAB 2/15/2019 to prevent model hanging and poisened
+            //                  sitting in the space forever
 
             handleError(result);
         }

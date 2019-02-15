@@ -343,9 +343,14 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     protected void handleError(Exertion exertion) throws RemoteException {
-        if (exertion != xrt)
-            ((NetJob) xrt).setMogramAt(exertion,
-                    exertion.getIndex());
+
+        // SAB 2/15/2019: added check for NetJob because NetTask causes exception which results in
+        //                a model hanging for a table run (RemoteException is thrown in the setMogramAt())
+        if (xrt instanceof NetJob) {
+            if (exertion != xrt) {
+                    ((NetJob) xrt).setMogramAt(exertion, exertion.getIndex());
+            }
+        }
 
         // notify monitor about failure
         MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
