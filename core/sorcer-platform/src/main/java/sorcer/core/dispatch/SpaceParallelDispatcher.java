@@ -357,22 +357,17 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 
     protected void handleError(Exertion exertion) throws RemoteException {
         logger.info("handleError(): starting...");
-        if (exertion != xrt) {
-            logger.info("handleError(): setting exertion...xrt " + xrt + "\n\texertion = " + exertion);
-            logger.info("handleError(): exertion.getIndex() = " + exertion.getIndex());
-            try {
-                ((NetJob) xrt).setMogramAt(exertion, exertion.getIndex());
-            } catch (Exception e) {
-                logger.info("problem setMogramAt()");
-                throw new RemoteException(e.toString());
-             }
-            logger.info("handleError(): DONE setting exertion.");
+
+        // SAB 2/15/2019: added check for NetJob because NetTask causes exception which results in
+        //                a model hanging for a table run (RemoteException is thrown in the setMogramAt())
+        if (xrt instanceof NetJob) {
+            if (exertion != xrt) {
+                    ((NetJob) xrt).setMogramAt(exertion, exertion.getIndex());
+            }
         }
 
         // notify monitor about failure
-        logger.info("handleError(): getting monitor session...");
         MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
-        logger.info("handleError(): DONE getting monitor session.");
 
         if (exertion.isMonitorable() && monSession!=null) {
             logger.info("Notifying monitor about failure of exertion: " + exertion.getName());
