@@ -355,12 +355,17 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         changeDoneExertionIndex(result.getIndex());
     }
 
-    protected void handleError(Exertion exertion) throws RemoteException {
+    protected void handleError(Exertion exertion) throws Exception {
         logger.info("handleError(): starting...");
         if (exertion != xrt) {
-            logger.info("handleError(): setting exertion...");
-            ((NetJob) xrt).setMogramAt(exertion,
-                    exertion.getIndex());
+            logger.info("handleError(): setting exertion...xrt " + xrt + "\n\texertion = " + exertion);
+            logger.info("handleError(): exertion.getIndex() = " + exertion.getIndex());
+            try {
+                ((NetJob) xrt).setMogramAt(exertion, exertion.getIndex());
+            } catch (Exception e) {
+                logger.info("problem setMogramAt()");
+                throw e;
+             }
             logger.info("handleError(): DONE setting exertion.");
         }
 
