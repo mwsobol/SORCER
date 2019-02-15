@@ -181,6 +181,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                 }
             }
             handleResult(results);
+            logger.info("result was handled.");
         }
         logger.info("collectResults(): state = " + state);
         if(xrt.getStatus()!=FAILED) {
