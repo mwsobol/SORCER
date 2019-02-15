@@ -148,7 +148,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         List<ExertionEnvelop> templates = Arrays.asList(getTemplate(DONE), getTemplate(FAILED), getTemplate(ERROR));
         while(count < inputXrts.size() && state != FAILED) {
             Collection<ExertionEnvelop> results;
-	        logger.info("collectResults(), state = " + state);
+	        logger.info("collectResults(): in while looop, state = " + state);
             try {
                 results = space.take(templates, null, SpaceTaker.SPACE_TIMEOUT, Integer.MAX_VALUE);
                 if (results.isEmpty())
@@ -160,6 +160,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                 }
                 count += results.size();
             } catch (UnusableEntriesException e) {
+                logger.info("collectResults(): 1st catch, e = " + e);
                 xrt.setStatus(FAILED);
                 state = FAILED;
                 Collection<UnusableEntryException> exceptions = e.getUnusableEntryExceptions();
@@ -170,6 +171,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 
                 throw new ExertionException(e);
             } catch (Exception e) {
+                logger.info("collectResults(): 2nd catch, e = " + e);
                 xrt.setStatus(FAILED);
                 state = FAILED;
                 throw new ExertionException("Taking exertion envelop failed", e);
@@ -180,7 +182,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
             }
             handleResult(results);
         }
-
+        logger.info("collectResults(): state = " + state);
         if(xrt.getStatus()!=FAILED) {
             executeMasterExertion();
             state = DONE;
@@ -204,12 +206,13 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         boolean poisoned = false;
         for (ExertionEnvelop resultEnvelop : results) {
 
-            logger.debug("HandleResult got result: " + resultEnvelop.describe());
+            logger.debug("handle results() got result: " + resultEnvelop.describe());
             ServiceExertion input = (ServiceExertion) ((NetJob) xrt)
                     .get(resultEnvelop.exertion
                             .getIndex());
             ServiceExertion result = (ServiceExertion) resultEnvelop.exertion;
             int status = result.getStatus();
+            logger.info("handleResult(): status = " + status + "; result.getId() = " + result.getId());
             if(status == DONE)
                 postExecExertion(input, result);
             else if (status == FAILED) {
@@ -251,6 +254,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     protected synchronized void changeDoneExertionIndex(int index) {
+        logger.info("changeDoneExertionIndex(): index = " + index);
         logger.debug("[" + Thread.currentThread().getName() + "] - Updating changeDoneExertionIndex to: " + index+1);
         doneExertionIndex = index + 1;
         notifyAll();
@@ -332,6 +336,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         try {
             ((NetJob) xrt).setMogramAt(result, ex.getIndex());
             ServiceExertion ser = (ServiceExertion) result;
+            logger.info("postExecExertion(): ser.getStatus() = " + ser.getStatus());
             if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
                 ser.setStatus(DONE);
                 collectOutputs(result);
