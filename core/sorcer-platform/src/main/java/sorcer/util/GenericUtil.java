@@ -292,7 +292,7 @@ public class GenericUtil {
 		scriptVect.add("\techo $EXIT_CODE > compiledMatlabFail.txt");
 		scriptVect.add("\techo \"done\" > compiledMatlabDone.txt");
 		scriptVect.add("\texit $EXIT_CODE");
-		scriptVect.add("metaFi");
+		scriptVect.add("fi");
 		scriptVect.add("source " + mcrEnv);
 		
 		// mcr cache root should be set; it will use up all the space
@@ -311,15 +311,15 @@ public class GenericUtil {
 //		scriptVect.add("\texport MCR_CACHE_ROOT=`cygpath -ds $MCR_CACHE_ROOT`");
 		scriptVect.add("\texport MCR_CACHE_ROOT=`cygpath -w $MCR_CACHE_ROOT`");
 		scriptVect.add("\techo \"MCR_CACHE_ROOT=$MCR_CACHE_ROOT\"");
-		scriptVect.add("metaFi");
+		scriptVect.add("fi");
 				
 		scriptVect.add("echo \"starting\" > compiledMatlabRunning.txt");
 		scriptVect.add("EXIT_CODE=0");
 		scriptVect.add(command);
 		scriptVect.add("EXIT_CODE=$?");
 		scriptVect.add("rm compiledMatlabRunning.txt");
-		scriptVect.add("if [ $EXIT_CODE -eq 0 ]; then echo \"$ctr\" > compiledMatlabGood.txt; metaFi");
-		scriptVect.add("if [ $EXIT_CODE -ne 0 ]; then echo \"$EXIT_CODE\" > compiledMatlabFail.txt; metaFi");
+		scriptVect.add("if [ $EXIT_CODE -eq 0 ]; then echo \"$ctr\" > compiledMatlabGood.txt; fi");
+		scriptVect.add("if [ $EXIT_CODE -ne 0 ]; then echo \"$EXIT_CODE\" > compiledMatlabFail.txt; fi");
 		scriptVect.add("echo \"done\" > compiledMatlabDone.txt");
 		scriptVect.add("echo \"exit code = $EXIT_CODE\"");
 		scriptVect.add("echo $EXIT_CODE > compiledMatlabExitCode.txt");
@@ -1765,7 +1765,7 @@ public class GenericUtil {
 		//script.add("\tps axo pid,ppid,cmd");
 		script.add("\tif [ -z \"$line\" ]; then");
 		script.add("\t\tline=\"null\"");
-		script.add("\tmetaFi");
+		script.add("\tfi");
 		script.add("\techo \"line1=$line\"");
 		script.add("\techo \"line1=$line\" >> " + wrapperLog);
 		script.add("\tif [ $line = \"KILL\" ]; then"); 
@@ -1791,10 +1791,10 @@ public class GenericUtil {
 		script.add("\t\techo \"DONE killing child processes; exiting with status = 1.\"");
 		script.add("\t\techo \"DONE killing child processes; exiting with status = 1.\" >> " + wrapperLog);
 		script.add("\t\texit 1");
-		script.add("\tmetaFi");
+		script.add("\tfi");
 		script.add("\t# check to see if child is still running");
 		//script.add("\tIS_RUN=`ps -p $SCRIPT_PID | awk -v p=\"$SCRIPT_PID\" 'BEGIN{flag=0} {if ($0~p) {flag=1}} END{print flag}'`");
-		script.add("\tif [ -f psLoop.txt ]; then mv psLoop.txt psLoop0.txt; metaFi");
+		script.add("\tif [ -f psLoop.txt ]; then mv psLoop.txt psLoop0.txt; fi");
 		script.add("\tIS_RUN=0");
 		script.add("\tIS_RUN=`ps -p $SCRIPT_PID > psLoop.txt ; awk -v p=\"$SCRIPT_PID\" 'BEGIN{flag=0} {if ($1~p) {flag=1}} END{print flag}' psLoop.txt`");
 		//script.add("\tIS_RUN=`ps -p $SCRIPT_PID > psLoop.txt ; awk -v p=\"$SCRIPT_PID\" 'BEGIN{flag=0} {if ($0~p) {flag=1}} END{print flag}' psLoop.txt`");
@@ -1812,8 +1812,8 @@ public class GenericUtil {
 
 		script.add("\t\tif [ $IS_RUN -eq 0 ]; then");
 		script.add("\t\t\tscriptState=\"DONE\"");
-		script.add("\t\tmetaFi");
-		script.add("\tmetaFi");
+		script.add("\t\tfi");
+		script.add("\tfi");
 		script.add("\techo \"1 scriptState = $scriptState\"");   
 		script.add("\techo \"1 scriptState = $scriptState\" >> " + wrapperLog);  
 		script.add("done");
@@ -1852,7 +1852,7 @@ public class GenericUtil {
 		
 		script.add("echo \"done waiting, setting exit code from background compute = $EXIT_CODE\"");
 		script.add("echo \"done waiting, setting exit code from background compute = $EXIT_CODE\" >> " + wrapperLog );
-		//script.add("metaFi");
+		//script.add("fi");
 
 //		script.add("echo \"0 ps coming====v\"");
 //		script.add("echo \"0 ps coming====v\" >> " + wrapperLog);
@@ -1874,7 +1874,7 @@ public class GenericUtil {
 //		script.add("\tkill -9 $SCRIPT_PID");
 //		script.add("\techo \"DONE killing SCRIPT_PID=$SCRIPT_PID.\"");
 //		script.add("\tEXIT_CODE=007");
-//		script.add("metaFi");
+//		script.add("fi");
 		script.add("echo \"exiting with code = $EXIT_CODE\"");
 		script.add("echo \"exiting with code = $EXIT_CODE\" >> " + wrapperLog);
 		script.add("exit $EXIT_CODE");
@@ -3322,7 +3322,7 @@ public class GenericUtil {
 						+ " is done, with ERRORs; middleScript did not find slurm job id file.\" > "
 						+ middleScriptDoneFile);
 		middleScriptRecords.add("	exit 1");
-		middleScriptRecords.add("metaFi");
+		middleScriptRecords.add("fi");
 		middleScriptRecords.add("SLURM_JOB_ID=`cat "
 				+ srunCmdJobIdFile.getAbsolutePath() + "`");
 		middleScriptRecords.add("echo \"SLURM_JOB_ID=$SLURM_JOB_ID\"");
@@ -3343,7 +3343,7 @@ public class GenericUtil {
 		middleScriptRecords.add("		SCRIPT_RUNNING=1");
 		middleScriptRecords.add("	else");
 		middleScriptRecords.add("		SCRIPT_RUNNING=0");
-		middleScriptRecords.add("	metaFi");
+		middleScriptRecords.add("	fi");
 		middleScriptRecords
 				.add("	ELAPSED_TIME=`echo $ELAPSED_TIME | awk '{t=$0+1.0; print t}'`");
 		middleScriptRecords
@@ -3365,7 +3365,7 @@ public class GenericUtil {
 		middleScriptRecords.add("		echo \"$EXIT_CODE\" > "
 				+ middleScriptDoneFile);
 		middleScriptRecords.add("		exit $EXIT_CODE");
-		middleScriptRecords.add("	metaFi");
+		middleScriptRecords.add("	fi");
 		middleScriptRecords.add("	sleep 0.1");
 		middleScriptRecords.add("done");
 		middleScriptRecords.add("wait $SCRIPT_PID");
@@ -3429,7 +3429,7 @@ public class GenericUtil {
 				.addElement("     echo \"middleScriptDoneFile missing, reporting error!\" > "
 						+ slurmRunErrorFile.getAbsolutePath());
 		slurmScriptRecords.addElement("     EXIT_VALUE=1");
-		slurmScriptRecords.addElement("metaFi");
+		slurmScriptRecords.addElement("fi");
 		slurmScriptRecords.addElement("EXIT_VALUE=`cat "
 				+ middleScriptDoneFile.getAbsolutePath() + "`");
 		slurmScriptRecords.addElement("rm -f "
@@ -3609,7 +3609,7 @@ public class GenericUtil {
 		middleScriptRecords.add("	echo \"$EXIT_VALUE\" > "
 				+ middleScriptDoneFile);
 		middleScriptRecords.add("	exit $EXIT_VALUE");
-		middleScriptRecords.add("metaFi");
+		middleScriptRecords.add("fi");
 		middleScriptRecords.add("SLURM_JOB_ID=`cat "
 				+ srunCmdJobIdFile.getAbsolutePath() + "`");
 		middleScriptRecords.add("EXIT_VALUE=$?");
@@ -3628,7 +3628,7 @@ public class GenericUtil {
 		middleScriptRecords.add("	echo \"$EXIT_VALUE\" > "
 				+ middleScriptDoneFile);
 		middleScriptRecords.add("	exit $EXIT_VALUE");
-		middleScriptRecords.add("metaFi");
+		middleScriptRecords.add("fi");
 		middleScriptRecords.add("echo \"SLURM_JOB_ID=$SLURM_JOB_ID\"");
 		middleScriptRecords.add("ELAPSED_TIME=0");
 		middleScriptRecords.add("echo \"invoking in background: "
@@ -3650,7 +3650,7 @@ public class GenericUtil {
 		middleScriptRecords.add("		SCRIPT_RUNNING=1");
 		middleScriptRecords.add("	else");
 		middleScriptRecords.add("		SCRIPT_RUNNING=0");
-		middleScriptRecords.add("	metaFi");
+		middleScriptRecords.add("	fi");
 		middleScriptRecords
 				.add("	ELAPSED_TIME=`echo $ELAPSED_TIME | awk '{t=$0+1.0; print t}'`");
 		middleScriptRecords
@@ -3679,7 +3679,7 @@ public class GenericUtil {
 		middleScriptRecords.add("		echo \"$EXIT_VALUE\" > "
 				+ middleScriptDoneFile.getAbsolutePath());
 		middleScriptRecords.add("		exit $EXIT_VALUE");
-		middleScriptRecords.add("	metaFi");
+		middleScriptRecords.add("	fi");
 		middleScriptRecords.add("	sleep 0.1");
 		middleScriptRecords.add("done");
 		middleScriptRecords
@@ -3696,7 +3696,7 @@ public class GenericUtil {
 		middleScriptRecords
 				.add("	echo \"user script exit eval was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping middleFailFile and exiting with $EXIT_VALUE.\" > "
 						+ middleScriptFailFile.getAbsolutePath());
-		middleScriptRecords.add("metaFi");
+		middleScriptRecords.add("fi");
 		middleScriptRecords.add("rm -f "
 				+ middleScriptRunningFile.getAbsolutePath());
 		middleScriptRecords.add("exit $EXIT_VALUE");
@@ -3761,8 +3761,8 @@ public class GenericUtil {
 		slurmScriptRecords
 				.add("		 rm -f " + slurmRunningFile.getAbsolutePath());
 		slurmScriptRecords.add("		exit $EXIT_VALUE");
-		slurmScriptRecords.add("	metaFi");
-		slurmScriptRecords.add("metaFi");
+		slurmScriptRecords.add("	fi");
+		slurmScriptRecords.add("fi");
 
 		slurmScriptRecords.add("SLURM_JOB_ID=`cat "
 				+ srunCmdJobIdFile.getAbsolutePath() + "`");
@@ -3781,7 +3781,7 @@ public class GenericUtil {
 		slurmScriptRecords.add("	echo \"$EXIT_VALUE\" > "
 				+ slurmDoneFile.getAbsolutePath());
 		slurmScriptRecords.add("	exit $EXIT_VALUE");
-		slurmScriptRecords.add("metaFi");
+		slurmScriptRecords.add("fi");
 
 		slurmScriptRecords.add("echo \"SLURM_JOB_ID=$SLURM_JOB_ID\"");
 		slurmScriptRecords
@@ -3797,7 +3797,7 @@ public class GenericUtil {
 		slurmScriptRecords.add("	 echo \"$EXIT_VALUE\" > "
 				+ slurmDoneFile.getAbsolutePath());
 		slurmScriptRecords.add("	 rm -f " + slurmRunningFile.getAbsolutePath());
-		slurmScriptRecords.add("metaFi");
+		slurmScriptRecords.add("fi");
 		slurmScriptRecords.add("EXIT_VALUE=`cat "
 				+ middleScriptDoneFile.getAbsolutePath() + "`");
 
@@ -3807,7 +3807,7 @@ public class GenericUtil {
 		slurmScriptRecords
 				.add("	echo \"middle script exit eval was non-zero, EXIT_VALUE=$EXIT_VALUE, dropping slurmFailFile and exiting with $EXIT_VALUE.\" > "
 						+ slurmFailFile.getAbsolutePath());
-		slurmScriptRecords.add("metaFi");
+		slurmScriptRecords.add("fi");
 
 		slurmScriptRecords.add("rm -f " + slurmRunningFile.getAbsolutePath());
 		slurmScriptRecords.add("echo \"slurm done, EXIT_VALUE=$EXIT_VALUE\"");
