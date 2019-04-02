@@ -2523,7 +2523,9 @@ public class operator extends Operator {
         }
 
         if (exertions.size() > 0) {
-            for (Exertion ex : exertions) {
+            for (int i = 0; i < exertions.size(); i++) {
+                Exertion ex = exertions.get(i);
+                ex.setIndex(i);
                 job.addMogram(ex);
             }
             for (Pipe p : pipes) {
@@ -3532,7 +3534,9 @@ public class operator extends Operator {
                 ((ServiceContext)context).setInitContext((Context)ObjectCloner.clone(context));
             }
 
-            for (Mogram m : mograms) {
+            for (int j = 0; j < mograms.size(); j++) {
+                Mogram m = mograms.get(j);
+                m.setIndex(j);
                 block.addMogram(m);
             }
             for (Evaluator e :evaluators) {

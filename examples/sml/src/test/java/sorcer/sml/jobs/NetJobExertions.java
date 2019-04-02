@@ -9,6 +9,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
+import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.provider.*;
@@ -71,6 +72,53 @@ public class NetJobExertions implements SorcerConstants {
 	public static Exertion createJob() throws Exception {
 		return createJob(Flow.SEQ, Access.PUSH);
 	}
+
+	@Test
+	public void exertJobTwoLocal() throws Exception {
+		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
+            context("subtract", inVal("arg/x1", 100.0), inVal("arg/x2", 10.0),
+//						outVal("result/y")), strategy(Monitor.YES));
+				outVal("result/y")));
+
+		Task t4 = task("t4", sig("subtract", SubtractorImpl.class),
+            context("subtract", inVal("arg/x1", 100.0), inVal("arg/x2", 10.0),
+//						outVal("result/y")), strategy(Monitor.YES));
+				outVal("result/y")));
+
+		Job job = job("j1",  sig(ServiceJobber.class), t3, t4);
+
+		Job out = job.exert();
+		logger.info("job context: " + out);
+	}
+
+    @Test
+    public void exertJobTwoLocal2() throws Exception {
+        Context cxt = context("subtract", inVal("arg/x1", 100.0), inVal("arg/x2", 10.0));
+
+        Task t3 = task("t3", sig("subtract", SubtractorImpl.class), cxt);
+        Task t4 = task("t4", sig("subtract", SubtractorImpl.class), cxt);
+        Job job = job("j1",  sig(ServiceJobber.class), t3, t4);
+
+        Job out = job.exert();
+        logger.info("job context: " + out);
+    }
+
+    @Test
+	public void exertJobTwoRemote() throws Exception {
+
+        Context cxt = context(inVal("arg/x1", 100.0), inVal("arg/x2", 10.0));
+		Task t3 = task("t3", sig("subtract", Subtractor.class), cxt);
+		Task t4 = task("t4", sig("subtract", Subtractor.class), cxt);
+//        Task t4 = task("t4", sig("subtract", Subtractor.class),
+//            context("subtract", inVal("arg/x1", 100.0), inVal("arg/x2", 10.0)));
+
+		Job job = job("j1", t3, t4);
+
+		Job out = exert(job);
+		logger.info("t3 context: " + cxt(get(out, "j1/t3")));
+		logger.info("t4 context: " + cxt(get(out, "j1/t4")));
+
+    }
 
 	@Test
 	public void exertJobPushParTest() throws Exception {
