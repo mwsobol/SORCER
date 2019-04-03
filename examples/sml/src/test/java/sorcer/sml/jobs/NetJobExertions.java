@@ -9,7 +9,6 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
-import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.provider.*;
@@ -37,92 +36,45 @@ import static sorcer.so.operator.*;
 @ProjectContext("examples/sml")
 public class NetJobExertions implements SorcerConstants {
 	private final static Logger logger = LoggerFactory.getLogger(NetJobExertions.class);
-	
+
 	// two level job composition with PULL and PAR execution
 	private static Job createJob(Flow flow, Access access) throws Exception {
-		
-		Task t3 = task("t3", sig("subtract", Subtractor.class), 
-				context("subtract", inVal("arg/x1"), inVal("arg/x2"),
-//						outVal("result/y")), strategy(Monitor.YES));
-						outVal("result/y")));
-		Task t4 = task("t4", sig("multiply", Multiplier.class), 
-				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-//						outVal("result/y")), strategy(Monitor.YES));
-						outVal("result/y")));
 
-		Task t5 = task("t5", sig("add", Adder.class), 
-				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+		Task t3 = task("t3", sig("subtract", Subtractor.class),
+			context("subtract", inVal("arg/x1"), inVal("arg/x2"),
 //						outVal("result/y")), strategy(Monitor.YES));
-						outVal("result/y")));
+				outVal("result/y")));
+		Task t4 = task("t4", sig("multiply", Multiplier.class),
+			context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+//						outVal("result/y")), strategy(Monitor.YES));
+				outVal("result/y")));
+
+		Task t5 = task("t5", sig("add", Adder.class),
+			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+//						outVal("result/y")), strategy(Monitor.YES));
+				outVal("result/y")));
 
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
-		Job job = job("j1", 
+		Job job = job("j1",
 //				job("j2", t4, t5, strategy(flow, access, Monitor.YES)),
-				t3,
-                job("j2", t4, t5, strategy(flow, access)),
+			t3,
+			job("j2", t4, t5, strategy(flow, access)),
 
-                pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 //                strategy(Monitor.YES));
-				
+
 		return job;
 	}
-	
+
 	public static Exertion createJob() throws Exception {
 		return createJob(Flow.SEQ, Access.PUSH);
 	}
 
 	@Test
-	public void exertJobTwoLocal() throws Exception {
-		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-            context("subtract", inVal("arg/x1", 100.0), inVal("arg/x2", 10.0),
-//						outVal("result/y")), strategy(Monitor.YES));
-				outVal("result/y")));
-
-		Task t4 = task("t4", sig("subtract", SubtractorImpl.class),
-            context("subtract", inVal("arg/x1", 100.0), inVal("arg/x2", 10.0),
-//						outVal("result/y")), strategy(Monitor.YES));
-				outVal("result/y")));
-
-		Job job = job("j1",  sig(ServiceJobber.class), t3, t4);
-
-		Job out = job.exert();
-		logger.info("job context: " + out);
-	}
-
-    @Test
-    public void exertJobTwoLocal2() throws Exception {
-        Context cxt = context("subtract", inVal("arg/x1", 100.0), inVal("arg/x2", 10.0));
-
-        Task t3 = task("t3", sig("subtract", SubtractorImpl.class), cxt);
-        Task t4 = task("t4", sig("subtract", SubtractorImpl.class), cxt);
-        Job job = job("j1",  sig(ServiceJobber.class), t3, t4);
-
-        Job out = job.exert();
-        logger.info("job context: " + out);
-    }
-
-    @Test
-	public void exertJobTwoRemote() throws Exception {
-
-        Context cxt = context(inVal("arg/x1", 100.0), inVal("arg/x2", 10.0));
-		Task t3 = task("t3", sig("subtract", Subtractor.class), cxt);
-		Task t4 = task("t4", sig("subtract", Subtractor.class), cxt);
-//        Task t4 = task("t4", sig("subtract", Subtractor.class),
-//            context("subtract", inVal("arg/x1", 100.0), inVal("arg/x2", 10.0)));
-
-		Job job = job("j1", t3, t4);
-
-		Job out = exert(job);
-		logger.info("t3 context: " + cxt(get(out, "j1/t3")));
-		logger.info("t4 context: " + cxt(get(out, "j1/t4")));
-
-    }
-
-	@Test
 	public void exertJobPushParTest() throws Exception {
-		
+
 		Job job = createJob(Flow.PAR, Access.PUSH);
 		job = exert(job);
 		//logger.info("job j1: " + job);
@@ -130,7 +82,7 @@ public class NetJobExertions implements SorcerConstants {
 		logger.info("job j1 job context: " + upcontext(job));
 		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
-		
+
 	}
 
 	@Test
@@ -145,9 +97,9 @@ public class NetJobExertions implements SorcerConstants {
 //		logger.info("job j1 job context: " + upcontext(job));
 		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
-		
+
 	}
-	
+
 	@Test
 	public void exertJobPullParTest() throws Exception {
 
@@ -160,10 +112,10 @@ public class NetJobExertions implements SorcerConstants {
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 
 	}
-	
+
 	@Test
 	public void exertJobPullSeqTest() throws Exception {
-		
+
 		Job job = createJob(Flow.SEQ, Access.PULL);
 		job = exert(job);
 		//logger.info("job j1: " + job);
@@ -171,36 +123,36 @@ public class NetJobExertions implements SorcerConstants {
 		logger.info("job j1 job context: " + upcontext(job));
 		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
-		
+
 	}
-	
+
 	@Test
 	public void localJobber() throws Exception {
-		
+
 		Task t3 = task(
-				"t3",
-				sig("subtract", Subtractor.class),
-				context("subtract", inVal("arg/x1", null), inVal("arg/x2", null),
-						outVal("result/y", null)));
+			"t3",
+			sig("subtract", Subtractor.class),
+			context("subtract", inVal("arg/x1", null), inVal("arg/x2", null),
+				outVal("result/y", null)));
 
 		Task t4 = task(
-				"t4",
-				sig("multiply", Multiplier.class),
-				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						outVal("result/y", null)));
+			"t4",
+			sig("multiply", Multiplier.class),
+			context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+				outVal("result/y", null)));
 
 		Task t5 = task(
-				"t5",
-				sig("add", Adder.class),
-				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						outVal("result/y", null)));
+			"t5",
+			sig("add", Adder.class),
+			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+				outVal("result/y", null)));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job(
-				"j1", sig("exert", ServiceJobber.class),
-				job("j2", t4, t5), t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+			"j1", sig("exert", ServiceJobber.class),
+			job("j2", t4, t5), t3,
+			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
@@ -209,30 +161,30 @@ public class NetJobExertions implements SorcerConstants {
 
 	@Test
 	public void remoteServiceShell() throws Exception {
-		
+
 		Task t3 = task(
-				"t3",
-				sig("subtract", Subtractor.class),
-				context("subtract", inVal("arg/x1", null), inVal("arg/x2", null),
-						outVal("result/y", null)));
+			"t3",
+			sig("subtract", Subtractor.class),
+			context("subtract", inVal("arg/x1", null), inVal("arg/x2", null),
+				outVal("result/y", null)));
 
 		Task t4 = task(
-				"t4",
-				sig("multiply", Multiplier.class),
-				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						outVal("result/y", null)));
+			"t4",
+			sig("multiply", Multiplier.class),
+			context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+				outVal("result/y", null)));
 
 		Task t5 = task(
-				"t5",
-				sig("add", Adder.class),
-				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						outVal("result/y", null)));
+			"t5",
+			sig("add", Adder.class),
+			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+				outVal("result/y", null)));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job("j1", // sig("exert", ServiceJobber.class),
-				job("j2", t4, t5), t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+			job("j2", t4, t5), t3,
+			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Provider shell = (Provider) provider(sig(RemoteServiceShell.class));
 		Context out = upcontext(exert(shell, job));
@@ -243,78 +195,78 @@ public class NetJobExertions implements SorcerConstants {
 
 	@Test
 	public void serviceShellRemote() throws Exception {
-		
+
 		Task t3 = task(
-				"t3",
-				sig("subtract", Subtractor.class),
-				context("subtract", inVal("arg/x1", null), inVal("arg/x2", null),
-						outVal("result/y", null)));
+			"t3",
+			sig("subtract", Subtractor.class),
+			context("subtract", inVal("arg/x1", null), inVal("arg/x2", null),
+				outVal("result/y", null)));
 
 		Task t4 = task(
-				"t4",
-				sig("multiply", Multiplier.class),
-				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						outVal("result/y")));
+			"t4",
+			sig("multiply", Multiplier.class),
+			context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+				outVal("result/y")));
 
 		Task t5 = task(
-				"t5",
-				sig("add", Adder.class),
-				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						outVal("result/y", null)));
+			"t5",
+			sig("add", Adder.class),
+			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+				outVal("result/y", null)));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job(
-				"j1", sig("exert", Jobber.class, Shell.REMOTE),
-				job("j2", t4, t5), t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+			"j1", sig("exert", Jobber.class, Shell.REMOTE),
+			job("j2", t4, t5), t3,
+			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
 		assertEquals(value(context, "j1/t3/result/y"), 400.0);
 
 	}
-	
+
 	public static Context createContext() throws Exception {
 		return context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0));
 	}
-	
+
 	@Test
 	public void contexterTest() throws Exception {
-		
+
 		Task cxtt = task("getAddContext", sig("getContext", Contexter.class, prvName("Add Contexter")),
-				context("add", input("arg/x1"), input("arg/x2")));
-		 
+			context("add", input("arg/x1"), input("arg/x2")));
+
 		Context result = context(exert(cxtt));
 //		logger.info("contexter context 1: " + result);
-		
+
 		assertEquals(value(result, "arg/x1"), 20.0);
 		assertEquals(value(result, "arg/x2"), 80.0);
-	
+
 		cxtt = task("appendContext", sig("appendContext", Contexter.class, prvName("Add Contexter")),
-				context("add", inVal("arg/x1", 200.0), inVal("arg/x2", 800.0)));
+			context("add", inVal("arg/x1", 200.0), inVal("arg/x2", 800.0)));
 
 		result = context(exert(cxtt));
 //		logger.info("contexter context 2: " + result);
 
 		cxtt = task("getAddContext", sig("getContext", Contexter.class, prvName("Add Contexter")),
-				context("add", input("arg/x1"), input("arg/x2")));
+			context("add", input("arg/x1"), input("arg/x2")));
 
 		result = context(exert(cxtt));
 //		logger.info("contexter context 3: " + result);
-		
+
 		assertEquals(value(result, "arg/x1"), 200.0);
 		assertEquals(value(result, "arg/x2"), 800.0);
-		
+
 		// reset the contexter
 		cxtt = task("appendContext", sig("appendContext", Contexter.class, prvName("Add Contexter")),
-				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
+			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		result = context(exert(cxtt));
 //		logger.info("contexter context 4: " + result);
 		assertEquals(value(result, "arg/x1"), 20.0);
 		assertEquals(value(result, "arg/x2"), 80.0);
-		
+
 	}
 
 	@Test
@@ -364,20 +316,20 @@ public class NetJobExertions implements SorcerConstants {
 	public void createModelWithTask() throws Exception {
 
 		EntModel vm = entModel(
-				"Hello Arithmetic #2",
-				// inputs
-				val("x1"), val("x2"), val("x3", 20.0), val("x4"),
-				// outputs
-				pro("t4", invoker("x1 * x2", args("x1", "x2"))),
-				pro("t5",
-					task("t5",
-						sig("add", Adder.class),
-						cxt("add", inVal("x3"), inVal("x4"),
+			"Hello Arithmetic #2",
+			// inputs
+			val("x1"), val("x2"), val("x3", 20.0), val("x4"),
+			// outputs
+			pro("t4", invoker("x1 * x2", args("x1", "x2"))),
+			pro("t5",
+				task("t5",
+					sig("add", Adder.class),
+					cxt("add", inVal("x3"), inVal("x4"),
 						result("result/y")))),
-				pro("j1", invoker("t4 - t5", args("t4", "t5"))));
+			pro("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		setValues(vm, val("x1", 10.0), val("x2", 50.0), val("x4", 80.0));
-				 
+
 		assertTrue(exec(vm, "j1").equals(400.0));
 	}
 
