@@ -198,6 +198,7 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
     public String fiName() {
         return ((Identifiable)multiFi.getSelect()).getName();
     }
+
     public boolean equals(Object object) {
         if (object instanceof MultiFiSlot) {
             if (impl != null && ((MultiFiSlot) object).impl == null) {

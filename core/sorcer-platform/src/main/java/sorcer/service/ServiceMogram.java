@@ -1007,6 +1007,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.serviceFidelitySelector = serviceFidelitySelector;
     }
 
+    public boolean equals(Object object) {
+        if (object instanceof Mogram && mogramId.equals(((Mogram) object).getId())) {
+                return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public Object getEvaluatedValue(String path) throws ContextException {
         // reimplement in subclasses
