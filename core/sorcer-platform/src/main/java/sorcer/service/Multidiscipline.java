@@ -17,7 +17,6 @@
 
 package sorcer.service;
 
-import net.jini.id.Uuid;
 import sorcer.service.modeling.Discipline;
 import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.Transdiscipline;
@@ -35,7 +34,7 @@ public class Multidiscipline extends ServiceDiscipline implements Transdisciplin
     // active disciplines
     protected Paths disciplinePaths;
 
-    protected DisciplineExplorer explorer;
+    protected TransdisciplineExplorer explorer;
 
     @Override
     public Discipline getDiscipline(String name) {
@@ -47,7 +46,7 @@ public class Multidiscipline extends ServiceDiscipline implements Transdisciplin
     }
 
     public void setExplorer(Exploration explorer) {
-        this.explorer = (DisciplineExplorer) explorer;
+        this.explorer = (TransdisciplineExplorer) explorer;
     }
 
     @Override

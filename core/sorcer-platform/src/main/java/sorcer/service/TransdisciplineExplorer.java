@@ -15,7 +15,7 @@ import java.util.Map;
 
 import static sorcer.co.operator.path;
 
-public class DisciplineExplorer implements Service, Exploration {
+public class TransdisciplineExplorer implements Service, Exploration {
 
     Multidiscipline transdiscipline;
     // exec discipline dependencies
