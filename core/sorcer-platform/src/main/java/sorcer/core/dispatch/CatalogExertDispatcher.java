@@ -52,7 +52,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     protected Exertion execExertion(Exertion ex, Arg... args) throws SignatureException,
             ExertionException {
         beforeExec(ex);
-        // setValue subject before task goes out.
+        // setValue subject before task goes outGovernance.
         // ex.setSubject(subject);
         ServiceExertion result = null;
         try {
@@ -66,8 +66,8 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                 logger.warn("Unknown ServiceExertion: {}", ex);
             }
             afterExec(ex, result);
-            // setValue subject after result is received
-            // result.setSubject(subject);
+            // setValue subject after outDispatcher is received
+            // outDispatcher.setSubject(subject);
             result.setStatus(DONE);
         } catch (Exception e) {
             logger.warn("Error while executing exertion: ", e);
@@ -93,7 +93,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 				if (result.isTask()) {
 					collectOutputs(result);
 				}
-				//notifyExertionExecution(ex, result);
+				//notifyExertionExecution(ex, outDispatcher);
 			} catch (ContextException e) {
 				throw new ExertionException(e);
 			}
@@ -120,7 +120,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                 logger.info("\n*** service is set in signature testing if it is the same provider ***\n");
                 try {
                     if (((NetSignature) task.getProcessSignature()).getService().equals(provider)) {
-                        logger.info("\n*** getting result from delegate of "
+                        logger.info("\n*** getting outDispatcher from delegate of "
                                 + provider.getProviderName() + "... ***\n");
                         result = ((ServiceProvider) provider).getDelegate().doTask(
                                 task, null);
@@ -195,12 +195,12 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                          * if(client!=null&&task.getPrincipal()!=null){
                          * Util.debug(this,"Abhijit:: >>>>>--------------Inside
                          * Client!=null, PRINCIPAL != NULL, subject="+client);
-                         * result = (RemoteServiceTask)provider.service(task);
+                         * outDispatcher = (RemoteServiceTask)provider.service(task);
                          * }else{ Util.debug(this,"Abhijit::
-                         * >>>>>--------------Inside null Subject"); result =
+                         * >>>>>--------------Inside null Subject"); outDispatcher =
                          * (RemoteServiceTask)provider.service(task); }
                          */
-                        logger.debug("getting result from provider...");
+                        logger.debug("getting outDispatcher from provider...");
                         result = ((Exerter)service).exert(task, null);
 
                     } catch (Exception re) {
@@ -224,7 +224,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                             (provider != null ? provider.getProviderName() + " " : "") + "explorer: "
                                         + getClass().getName());
             }
-            logger.debug("got result: {}", result);
+            logger.debug("got outDispatcher: {}", result);
         } catch (Exception re) {
             logger.error("+++++++++++++++Dispatcher failed for task, tried: " + tried + " : "
                     + xrt.getName());

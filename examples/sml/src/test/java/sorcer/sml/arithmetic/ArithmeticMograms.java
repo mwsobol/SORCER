@@ -46,7 +46,7 @@ public class ArithmeticMograms {
 				lambda("multiply", (Context <Double> model) ->
 						value(model, "multiply/x1") * value(model, "multiply/x2"), args("multiply/x1", "multiply/x2")),
 				lambda("subtract", (Context <Double> model) ->
-						value(model, "multiply") - value(model, "add"), result("add/out",
+						value(model, "multiply") - value(model, "add"), result("add/outGovernance",
                         inPaths("multiply", "add"))),
 				response("subtract", "multiply", "add"));
 
@@ -106,22 +106,22 @@ public class ArithmeticMograms {
 				ent("arg/x1", 30.0), ent("arg/x2", 90.0),
 				lambda("add", (Context <Double> model) ->
 						value(model, "add/x1") + value(model, "add/x2"),
-						result("add/out",
+						result("add/outGovernance",
 								inPaths("add/x1", "add/x2"))),
 				lambda("multiply", (Context <Double> model) ->
 								value(model, "multiply/x1") * value(model, "multiply/x2"),
-						result("multiply/out",
+						result("multiply/outGovernance",
 								inPaths("multiply/x1", "multiply/x2"))),
 				lambda("subtract", (Context <Double> model) ->
-						value(model, "multiply/out") - value(model, "add/out"),
-						result("model/response", inPaths("multiply/out", "add/out"))),
-				response("subtract", "multiply/out", "add/out", "model/response"));
+						value(model, "multiply/outGovernance") - value(model, "add/outGovernance"),
+						result("model/response", inPaths("multiply/outGovernance", "add/outGovernance"))),
+				response("subtract", "multiply/outGovernance", "add/outGovernance", "model/response"));
 
 		Context out = response(mo);
 		logger.info("model response: " + out);
 		assertTrue(get(out, "model/response").equals(400.0));
-		assertTrue(get(out, "multiply/out").equals(500.0));
-		assertTrue(get(out, "add/out").equals(100.0));
+		assertTrue(get(out, "multiply/outGovernance").equals(500.0));
+		assertTrue(get(out, "add/outGovernance").equals(100.0));
 	}
 
 	@Test
@@ -131,12 +131,12 @@ public class ArithmeticMograms {
 		Model m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+				ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", AdderImpl.class, result("add/out",
+				ent(sig("add", AdderImpl.class, result("add/outGovernance",
 						inPaths("add/x1", "add/x2")))),
 				ent(sig("subtract", SubtractorImpl.class, result("model/response",
-						inPaths("multiply/out", "add/out")))),
+						inPaths("multiply/outGovernance", "add/outGovernance")))),
 				response("subtract"));
 
 		logger.info("dependencies: " + deps(m));
@@ -154,12 +154,12 @@ public class ArithmeticMograms {
 		Model m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-				ent(sig("multiply", Multiplier.class, result("multiply/out",
+				ent(sig("multiply", Multiplier.class, result("multiply/outGovernance",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", Adder.class, result("add/out",
+				ent(sig("add", Adder.class, result("add/outGovernance",
 						inPaths("add/x1", "add/x2")))),
 				ent(sig("subtract", Subtractor.class, result("model/response",
-						inPaths("multiply/out", "add/out")))),
+						inPaths("multiply/outGovernance", "add/outGovernance")))),
 				response("subtract"));
 
 		logger.info("dependencies: " + deps(m));
@@ -176,12 +176,12 @@ public class ArithmeticMograms {
 		Model m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+				ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", AdderImpl.class, result("add/out",
+				ent(sig("add", AdderImpl.class, result("add/outGovernance",
 						inPaths("add/x1", "add/x2")))),
 				ent(sig("subtract", Subtractor.class, result("model/response",
-						inPaths("multiply/out", "add/out")))),
+						inPaths("multiply/outGovernance", "add/outGovernance")))),
 				response("subtract"));
 
 		logger.info("dependencies: " + deps(m));
@@ -201,15 +201,15 @@ public class ArithmeticMograms {
                 type(sig("add", AdderImpl.class,
 						result("subtract/x2", Signature.Direction.IN)), Signature.PRE),
                 sig("subtract", SubtractorImpl.class,
-						result("result/y", inPaths("subtract/x1", "subtract/x2"))),
+						result("outDispatcher/y", inPaths("subtract/x1", "subtract/x2"))),
                 context(inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                         inVal("add/x1", 20.0), inVal("add/x2", 80.0)));
 
         logger.info("task getSelects:" + fi(batch3));
 
         batch3 = exert(batch3);
-		//logger.info("task result/y: " + get(batch3, "result/y"));
-		assertEquals(get(batch3, "result/y"), 400.0);
+		//logger.info("task outDispatcher/y: " + get(batch3, "outDispatcher/y"));
+		assertEquals(get(batch3, "outDispatcher/y"), 400.0);
     }
 
 	@Test
@@ -217,7 +217,7 @@ public class ArithmeticMograms {
 
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
 				context("subtract", inVal("arg/t4"), inVal("arg/t5"),
-						result("block/result", Signature.Direction.OUT)));
+						result("block/outDispatcher", Signature.Direction.OUT)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
 				context("multiply", inVal("arg/x1"), inVal("arg/x2"),
@@ -232,14 +232,14 @@ public class ArithmeticMograms {
 				inVal("arg/x3", 20.0), inVal("arg/x4", 80.0)));
 
 		Block result = exert(block);
-		assertEquals(value(context(result), "block/result"), 400.00);
+		assertEquals(value(context(result), "block/outDispatcher"), 400.00);
 	}
 
     @Test
     public void altBlock() throws Exception {
         Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
                 context("subtract", inVal("arg/t4"), inVal("arg/t5"),
-                        result("block/result", Signature.Direction.OUT)));
+                        result("block/outDispatcher", Signature.Direction.OUT)));
 
         Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
@@ -251,7 +251,7 @@ public class ArithmeticMograms {
 
         Task t6 = task("t6", sig("average", AveragerImpl.class),
                 context("average", inVal("arg/t4"), inVal("arg/t5"),
-                        result("block/result", Signature.Direction.OUT)));
+                        result("block/outDispatcher", Signature.Direction.OUT)));
 
         Block block = block("block", t4, t5,
                 alt(opt(condition((Context<Double> cxt) ->
@@ -261,7 +261,7 @@ public class ArithmeticMograms {
 
 
         Block result = exert(block);
-        assertEquals(value(context(result), "block/result"), 400.00);
+        assertEquals(value(context(result), "block/outDispatcher"), 400.00);
     }
 
     @Test
@@ -282,26 +282,26 @@ public class ArithmeticMograms {
 		Task t3 = task("t3",
 				sig("subtract", SubtractorImpl.class),
 				context("subtract", inVal("arg/x1"), inVal("arg/x2"),
-						outVal("result/y")));
+						outVal("outDispatcher/y")));
 
 		Task t4 = task("t4",
 				sig("multiply", MultiplierImpl.class),
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						outVal("result/y")));
+						outVal("outDispatcher/y")));
 
 		Task t5 = task("t5",
 				sig("add", AdderImpl.class),
 				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						outVal("result/y")));
+						outVal("outDispatcher/y")));
 
 		Job job = job(sig("exert", ServiceJobber.class),
 				"j1", t4, t5, t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+				pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		assertTrue(value(context, "j1/t3/result/y").equals(400.0));
+		assertTrue(value(context, "j1/t3/outDispatcher/y").equals(400.0));
 	}
 
 	@Test
@@ -310,28 +310,28 @@ public class ArithmeticMograms {
 		Task t3 = task("t3",
 				sig("subtract", SubtractorImpl.class),
 				context("subtract", inVal("arg/x1"), inVal("arg/x2"),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		Task t4 = task("t4",
 				sig("multiply", MultiplierImpl.class),
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		Task t5 = task("t5",
 				sig("add", AdderImpl.class),
 				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job(
 				"j1", sig("exert", ServiceJobber.class),
 				job("j2", t4, t5), t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+				pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		assertTrue(value(context, "j1/t3/result/y").equals(400.0));
+		assertTrue(value(context, "j1/t3/outDispatcher/y").equals(400.0));
 	}
 
     @Test public void amorphousModel() throws Exception {
@@ -365,15 +365,15 @@ public class ArithmeticMograms {
 		Metafidelity fi4 = metaFi("sysFi4", fi("mFi3", "average"));
 
 		Signature add = sig("add", AdderImpl.class,
-			result("result/y1", inPaths("arg/x1", "arg/x2")));
+			result("outDispatcher/y1", inPaths("arg/x1", "arg/x2")));
 		Signature subtract = sig("subtract", SubtractorImpl.class,
-			result("result/y2", inPaths("arg/x1", "arg/x2")));
+			result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
 		Signature average = sig("average", AveragerImpl.class,
-			result("result/y2", inPaths("arg/x1", "arg/x2")));
+			result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
 		Signature multiply = sig("multiply", MultiplierImpl.class,
-			result("result/y1", inPaths("arg/x1", "arg/x2")));
+			result("outDispatcher/y1", inPaths("arg/x1", "arg/x2")));
 		Signature divide = sig("divide", DividerImpl.class,
-			result("result/y2", inPaths("arg/x1", "arg/x2")));
+			result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
 
 		// multifidelity model with morphers
 		Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
@@ -384,18 +384,18 @@ public class ArithmeticMograms {
 			response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);
-		logger.info("out: " + out);
+		logger.info("outGovernance: " + out);
 		assertTrue(get(out, "mFi1").equals(100.0));
 		assertTrue(get(out, "mFi2").equals(9.0));
 		assertTrue(get(out, "mFi3").equals(50.0));
 
 //        // first closing the fidelity for mFi1
-//        out = response(mod , metaFi("mFi1", "multiply"));
-//        logger.info("out: " + out);
-//        assertTrue(get(out, "mFi1").equals(900.0));
-//        assertTrue(get(out, "mFi2").equals(50.0));
+//        outGovernance = response(mod , metaFi("mFi1", "multiply"));
+//        logger.info("outGovernance: " + outGovernance);
+//        assertTrue(get(outGovernance, "mFi1").equals(900.0));
+//        assertTrue(get(outGovernance, "mFi2").equals(50.0));
 
-//        assertTrue(get(out, "mFi3").equals(9.0));
+//        assertTrue(get(outGovernance, "mFi3").equals(9.0));
     }
 }
 	

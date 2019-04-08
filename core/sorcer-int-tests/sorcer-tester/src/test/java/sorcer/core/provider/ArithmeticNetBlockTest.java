@@ -46,11 +46,11 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 	public void contextAltTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", Multiplier.class), 
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						result("block/result")));
+						result("block/outDispatcher")));
 
 		Task t5 = task("t5", sig("add", Adder.class), 
 				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("block/result")));
+						result("block/outDispatcher")));
 		
 		Block block = block("block", // sig(Concatenator.class),
 				context(val("y1", 100), val("y2", 200)),
@@ -59,20 +59,20 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 		
 		block = exert(block);
 		logger.info("block context: " + context(block));
-//		logger.info("result: " + eval(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 100.00);
+//		logger.info("outDispatcher: " + eval(context(block), "block/outDispatcher"));
+		assertEquals(value(context(block), "block/outDispatcher"), 100.00);
 
 		block = exert(block, val("block/y1", 200.0), val("block/y2", 100.0));
 		logger.info("block context: " + context(block));
-//		logger.info("result: " + eval(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 500.0);
+//		logger.info("outDispatcher: " + eval(context(block), "block/outDispatcher"));
+		assertEquals(value(context(block), "block/outDispatcher"), 500.0);
 	}
 
 	@Test
 	public void taskAltBlockTest() throws Exception {
 		Task t3 = task("t3",  sig("subtract", Subtractor.class), 
 				context("subtract", inVal("arg/t4"), inVal("arg/t5"),
-						result("block/result")));
+						result("block/outDispatcher")));
 
 		Task t4 = task("t4", sig("multiply", Multiplier.class), 
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
@@ -84,7 +84,7 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 		
 		Task t6 = task("t6", sig("average", Averager.class),
 				context("average", inVal("arg/t4"), inVal("arg/t5"),
-						result("block/result")));
+						result("block/outDispatcher")));
 		
 		Block block = block("block", //sig(Concatenator.class),
 				t4, t5,
@@ -93,38 +93,38 @@ public class ArithmeticNetBlockTest implements SorcerConstants {
 
 		block = exert(block);
 		logger.info("block context 1: " + context(block));
-//		logger.info("result: " + eval(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 400.00);
+//		logger.info("outDispatcher: " + eval(context(block), "block/outDispatcher"));
+		assertEquals(value(context(block), "block/outDispatcher"), 400.00);
 
 		block = exert(block, val("block/t5/arg/x1", 200.0), val("block/t5/arg/x2", 800.0));
 		logger.info("block context 2: " + context(block));
-//		logger.info("result: " + eval(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 750.00);
+//		logger.info("outDispatcher: " + eval(context(block), "block/outDispatcher"));
+		assertEquals(value(context(block), "block/outDispatcher"), 750.00);
 	}
 	
 	@Test
 	public void optBlockTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", Multiplier.class), 
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						result("out")));
+						result("outGovernance")));
 		
 		Task t5 = task("t5", sig("add", Adder.class), 
 				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("out")));
+						result("outGovernance")));
 		
 		Block block = block("block", //sig(Concatenator.class),
 				t4,
-				opt(condition("{ out -> out > 600 }", "out"), t5));
+				opt(condition("{ outGovernance -> outGovernance > 600 }", "outGovernance"), t5));
 		
 		block = exert(block);
 		logger.info("block context 1: " + context(block));
-//		logger.info("result: " + get(context(block), "out"));
-		assertEquals(value(context(block), "out"), 500.0);
+//		logger.info("outDispatcher: " + get(context(block), "outGovernance"));
+		assertEquals(value(context(block), "outGovernance"), 500.0);
 		
 		block = exert(block, val("block/t4/arg/x1", 200.0), val("block/t4/arg/x2", 800.0));
 		logger.info("block context 2: " + context(block));
-//		logger.info("result: " + eval(context(block), "out"));
-		assertEquals(value(context(block), "out"), 100.0);
+//		logger.info("outDispatcher: " + eval(context(block), "outGovernance"));
+		assertEquals(value(context(block), "outGovernance"), 100.0);
 	}
 	
 }

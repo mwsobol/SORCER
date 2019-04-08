@@ -48,7 +48,7 @@ import static sorcer.core.deploy.DeploySetup.verifySorcerRunning;
  *
  * When creating operating systems to match on, the following transformations occur:
  *
- * If the operating system is provided as "Mac" or "OSX" (case ignored), the result is transformed to "Mac OS X"
+ * If the operating system is provided as "Mac" or "OSX" (case ignored), the outDispatcher is transformed to "Mac OS X"
  * If "Win or "win" is provided, it is translated to "Windows".
  *
  * When entering IP addresses, execEnt either the IP Address or the fully qualified host key

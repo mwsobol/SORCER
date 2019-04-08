@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *  Implements a service discipline as governance-multiFi-dispatch
+ *  Implements a service discipline as outGovernance-multiFi-dispatch
  */
 public class ServiceDiscipline implements Discipline, Getter<Service> {
 
@@ -43,21 +43,23 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected ServiceFidelity dispatchMultiFi;
 
-    protected ServiceFidelity serviceMultiFi;
+    protected ServiceFidelity governanceMultiFi;
 
+    // the input of thsi discipline
     protected Context input;
 
+    // the output of this discipline
     protected Context output;
 
     protected Context inConnector;
 
     protected Context outConnector;
 
-    // the executed service
-    protected Service out;
+    // the executed governance
+    protected Service outGovernance;
 
-    // the service context of the executed service
-    protected Mogram result;
+    // the executed dispatcher
+    protected Mogram outDispatcher;
 
     protected Task precondition;
 
@@ -72,28 +74,28 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     public ServiceDiscipline(Exertion... dispatchs) {
-        serviceMultiFi = new ServiceFidelity(dispatchs);
+        governanceMultiFi = new ServiceFidelity(dispatchs);
     }
 
     public ServiceDiscipline(Exertion dispatch, Service service) {
-        serviceMultiFi = new ServiceFidelity(new Exertion[] { dispatch });
+        governanceMultiFi = new ServiceFidelity(new Exertion[] { dispatch });
         dispatchMultiFi = new ServiceFidelity(new Service[] { service });
     }
 
     public ServiceDiscipline(Exertion[] dispatchs, Service[] services) {
-        serviceMultiFi = new ServiceFidelity(dispatchs);
+        governanceMultiFi = new ServiceFidelity(dispatchs);
         dispatchMultiFi = new ServiceFidelity(services);
     }
 
     public ServiceDiscipline(List<Exertion> dispatchs, List<Service> services) {
         Exertion[] cArray = new Exertion[dispatchs.size()];
         Service[] pArray = new Exertion[services.size()];
-        serviceMultiFi = new ServiceFidelity(dispatchs.toArray(cArray));
+        governanceMultiFi = new ServiceFidelity(dispatchs.toArray(cArray));
         dispatchMultiFi = new ServiceFidelity(services.toArray(pArray));
     }
 
     public void add(Exertion dispatch, Service service) {
-        serviceMultiFi.getSelects().add(dispatch);
+        governanceMultiFi.getSelects().add(dispatch);
         dispatchMultiFi.getSelects().add(service);
     }
 
@@ -108,21 +110,25 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             ((Request)service).setName(serviceFi.getName());
         }
         dispatchMultiFi.getSelects().add(dispatch);
-        serviceMultiFi.getSelects().add((Service)service);
+        governanceMultiFi.getSelects().add((Service)service);
     }
 
     @Override
     public Service getGovernance() throws MogramException {
         // if no service then dispatch is standalone
-        if (serviceMultiFi == null || serviceMultiFi.getSelect() == null) {
+        if (governanceMultiFi == null || governanceMultiFi.getSelect() == null) {
             return dispatchMultiFi.getSelect();
         }
-        return serviceMultiFi.getSelect();
+        return governanceMultiFi.getSelect();
     }
 
     @Override
     public ServiceFidelity getGovernanceMultiFi() throws MogramException {
-        return serviceMultiFi;
+        return governanceMultiFi;
+    }
+
+    public Service getOutGovernance() {
+        return outGovernance;
     }
 
     @Override
@@ -142,28 +148,35 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Context getOutput(Arg... args) throws ServiceException {
-        if (result == null || ! result.isValid()) {
+        if (outDispatcher == null) {
             execute(args);
         }
+        Context out = null;
         if (outConnector != null) {
-            if (result instanceof Context) {
-                return ((ServiceContext) result).updateContextWith(outConnector);
-            } else if (result instanceof Mogram) {
+            if (outDispatcher instanceof Context) {
+                out = ((ServiceContext) outDispatcher).updateContextWith(outConnector);
+            } else if (outDispatcher instanceof Mogram) {
                 if (outConnector != null)
-                    return ((ServiceContext) result.getContext()).updateContextWith(outConnector);
+                    out = ((ServiceContext) outDispatcher.getContext()).updateContextWith(outConnector);
             }
         } else {
-            if (result instanceof Context) {
-                return (Context) result;
-            } else if (result instanceof Mogram) {
-                return result.getContext();
+            if (outDispatcher instanceof Context) {
+                out = (Context) outDispatcher;
+            } else if (outDispatcher instanceof Mogram) {
+                out = outDispatcher.getContext();
             }
         }
+        if (output == null) {
+            output = out;
+        } else if (out != null) {
+            output.append(out);
+        }
+
         return output;
     }
 
-    public Mogram getResult() {
-        return result;
+    public Mogram getOutDispatcher() {
+        return outDispatcher;
     }
 
     @Override
@@ -195,8 +208,11 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                     xrt.setContext(input);
                 }
             }
-            xrt.dispatch(getGovernance());
-            return result = xrt.exert();
+            outGovernance = getGovernance();
+            xrt.dispatch(outGovernance);
+            outDispatcher = xrt.exert();
+
+            return getOutput();
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }
@@ -204,7 +220,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected void selectFi(Fidelity fi) {
         dispatchMultiFi.selectSelect(fi.getName());
-        serviceMultiFi.selectSelect(fi.getPath());
+        governanceMultiFi.selectSelect(fi.getPath());
     }
 
     public Task getPrecondition() {
@@ -225,7 +241,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Service get(Arg... args) throws ContextException {
-        return out;
+        return outGovernance;
     }
 
     @Override
@@ -423,7 +439,10 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Mogram clear() throws MogramException {
-        return null;
+        outGovernance = null;
+        outDispatcher = null;
+        output = null;
+        return this;
     }
 
     @Override

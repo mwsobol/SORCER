@@ -43,7 +43,7 @@ public class ConditionalTaskTest {
 				"add",
 				sig("add", AdderImpl.class),
 				context(operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		OptTask ift = opt("ift", condition(pm,
 				"{ x, y -> x > y }", "x", "y"), task);
@@ -63,7 +63,7 @@ public class ConditionalTaskTest {
 		// logger.info("opt eval: " + exert(ift));
 		assertEquals(get(task, Condition.CONDITION_VALUE), true);
 		assertEquals(get(task, Condition.CONDITION_TARGET), "add");
-		assertEquals(get(task, "result/y"), 100.0);
+		assertEquals(get(task, "outDispatcher/y"), 100.0);
 	}
 
 	@Test
@@ -77,15 +77,15 @@ public class ConditionalTaskTest {
 
 		mog t3 = xrt("t3", sig("subtract", SubtractorImpl.class),
 				cxt("subtract", operator.inVal("arg/x1", 200.0), operator.inVal("arg/x2", 50.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		mog t4 = xrt("t4", sig("multiply", MultiplierImpl.class),
 				cxt("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		mog t5 = xrt("t5", sig("add", AdderImpl.class),
 				cxt("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 		
 		OptTask opt1 = opt("opt1", condition(pm,
 				"{ x1, y1 -> x1 > y1 }", "x1", "y1"), t3);
@@ -135,7 +135,7 @@ public class ConditionalTaskTest {
 //				 try {
 //					while ((Double)eval(pm, "x") < 25.0) {
 //						 setValue(x, eval(x) + 1.0);
-//						 System.out.println("running ... " + eval(pm, "x"));
+//						 System.outGovernance.println("running ... " + eval(pm, "x"));
 //						 Thread.sleep(200);
 //					}
 //				} catch (Exception e) {

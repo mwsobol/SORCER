@@ -474,8 +474,12 @@ public class operator {
          return mogram;
     }
 
-    public static ServiceContext out(Mogram mogram) {
+    public static ServiceContext out(Mogram mogram) throws ServiceException {
+        if (mogram instanceof Discipline) {
+                return (ServiceContext) ((Discipline)mogram).getOutput();
+        } else {
             return (ServiceContext) mogram.getMogramStrategy().getOutcome();
+        }
     }
 
     public static void traced(Mogram mogram, boolean isTraced) throws ContextException {

@@ -34,7 +34,7 @@ public class Works implements Serializable {
 				int arg1 = (Integer)value(cxt, "req/arg/1");
 				int arg2 = (Integer)value(cxt, "req/arg/2");
 				int result =  arg1 * arg2;
-				put(cxt, "prv/result", result);
+				put(cxt, "prv/outDispatcher", result);
 				cxt.setReturnValue(result);
 				return cxt;
 			}
@@ -69,7 +69,7 @@ public class Works implements Serializable {
 				        cxt.putOutValue(mpaths[0], result);
 				    }
 				} else
-					cxt.putOutValue("prv/result", result);
+					cxt.putOutValue("prv/outDispatcher", result);
 				
 				cxt.setReturnValue(result);
 				return cxt;
@@ -105,7 +105,7 @@ public class Works implements Serializable {
 				        cxt.putOutValue(mpaths[0], result);
 				    }
 				} else
-					cxt.putOutValue("prv/result", result);
+					cxt.putOutValue("prv/outDispatcher", result);
 				
 				cxt.setReturnValue(result);
 				return cxt;
@@ -141,7 +141,7 @@ public class Works implements Serializable {
 				        cxt.putOutValue(mpaths[0], result);
 				    }
 				} else
-					cxt.putOutValue("prv/result", result);
+					cxt.putOutValue("prv/outDispatcher", result);
 				
 				cxt.setReturnValue(result);
 				return cxt;
@@ -180,7 +180,7 @@ public class Works implements Serializable {
 				        cxt.putOutValue(mpaths[0], result);
 				    }
 				} else
-					cxt.putOutValue("prv/result", result);
+					cxt.putOutValue("prv/outDispatcher", result);
 				
 				cxt.setReturnValue(result);
 				return cxt;

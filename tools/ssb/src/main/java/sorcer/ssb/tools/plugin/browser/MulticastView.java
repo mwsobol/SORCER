@@ -183,7 +183,7 @@ public class MulticastView extends JFrame {
 		// }
 		// });
 
-		// System.out.println(msg);
+		// System.outGovernance.println(msg);
 	}
 
 	private void listen(final String address, final int type) {
@@ -191,7 +191,7 @@ public class MulticastView extends JFrame {
 
 			MulticastSocket socket = new MulticastSocket(4160);
 
-			// System.out.println("Multicast address="+address);
+			// System.outGovernance.println("Multicast address="+address);
 
 			socket.joinGroup(InetAddress.getByName(address));
 
@@ -205,7 +205,7 @@ public class MulticastView extends JFrame {
 				try {
 					socket.receive(packet);
 
-					// System.out.println("Received packet "+fiType);
+					// System.outGovernance.println("Received packet "+fiType);
 
 					if (type == 0) {
 						processAnn(buf);
@@ -237,7 +237,7 @@ public class MulticastView extends JFrame {
 		int slen = dis.readUnsignedShort();
 
 		if (slen == 0) {
-			// System.out.println("Missing host protocol version="+ver);
+			// System.outGovernance.println("Missing host protocol version="+ver);
 			return;
 		}
 
@@ -313,15 +313,15 @@ public class MulticastView extends JFrame {
 		// dis.readFully(sb);
 		// String host=new String(sb);
 
-		// System.out.println("ver="+ver);
+		// System.outGovernance.println("ver="+ver);
 
 		int port = dis.readInt();
 
-		// System.out.println("port="+port);
+		// System.outGovernance.println("port="+port);
 
 		int nsids = dis.readInt();
 
-		// System.out.println("nsids="+nsids);
+		// System.outGovernance.println("nsids="+nsids);
 		if (nsids > 5) {
 			return;
 		}
@@ -338,7 +338,7 @@ public class MulticastView extends JFrame {
 
 		int ngroups = dis.readInt();
 
-		// System.out.println("ngroups="+ngroups);
+		// System.outGovernance.println("ngroups="+ngroups);
 
 		String[] grps = new String[ngroups];
 		StringBuffer gbuf = new StringBuffer();

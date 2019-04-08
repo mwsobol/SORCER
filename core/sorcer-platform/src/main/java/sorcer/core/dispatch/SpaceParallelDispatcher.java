@@ -201,7 +201,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         boolean poisoned = false;
         for (ExertionEnvelop resultEnvelop : results) {
 
-            logger.debug("HandleResult got result: " + resultEnvelop.describe());
+            logger.debug("HandleResult got outDispatcher: " + resultEnvelop.describe());
             ServiceExertion input = (ServiceExertion) ((NetJob) xrt)
                     .get(resultEnvelop.exertion
                             .getIndex());
@@ -219,7 +219,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 
             try {
                 afterExec(result);
-                //this.removeExertionListener(result.getId());
+                //this.removeExertionListener(outDispatcher.getId());
             } catch (ContextException ce) {
                 logger.error("Problem sending status after execEnt to monitor");
             }

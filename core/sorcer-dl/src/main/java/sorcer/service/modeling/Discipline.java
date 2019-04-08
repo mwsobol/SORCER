@@ -33,6 +33,13 @@ public interface Discipline extends Service, Contexting {
     public Service getGovernance() throws ServiceException;
 
     /**
+     * Returns an executed governance of this discipline
+     *
+     * @throws ServiceException
+     */
+    public Service getOutGovernance() throws ServiceException;
+
+    /**
      * Returns a dispatcher multifidelity
      *
      * @throws ServiceException

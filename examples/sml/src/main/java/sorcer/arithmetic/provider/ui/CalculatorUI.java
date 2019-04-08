@@ -23,7 +23,7 @@ public class CalculatorUI extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 3689977306529761391L;
 
-	private JTextField input; // To accept user input and display result
+	private JTextField input; // To accept user input and display outDispatcher
 
 	private JButton button0, // This button to pass 0 to panel
 			button1, // This button to pass 1 to panel
@@ -39,7 +39,7 @@ public class CalculatorUI extends JPanel implements ActionListener {
 			buttonMul, // This button operate multiplication
 			buttonAdd, // This button operate addition
 			buttonSub, // This button operate subtraction
-			buttonAss, // This button return result
+			buttonAss, // This button return outDispatcher
 			buttonOpar, // This button call open parentheses
 			buttonCpar, // This button call close parentheses
 			buttonPoint, // This button to pass . to panel
@@ -292,7 +292,7 @@ public class CalculatorUI extends JPanel implements ActionListener {
 	}
 
 	/*
-	 * Calculates the expression and dispays the result, when the user hit
+	 * Calculates the expression and dispays the outDispatcher, when the user hit
 	 * return key or "=" button.
 	 */
 	private void compute() {
@@ -335,7 +335,7 @@ public class CalculatorUI extends JPanel implements ActionListener {
 		if (errLevel != 0)
 			errMessage(errLevel); // An error perform to prompt error message
 		else
-			input.setText(Result); // No error show result
+			input.setText(Result); // No error show outDispatcher
 	}
 
 	/*

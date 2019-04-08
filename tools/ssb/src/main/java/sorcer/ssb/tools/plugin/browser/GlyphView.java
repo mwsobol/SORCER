@@ -56,7 +56,7 @@ public class GlyphView extends JComponent{
 			public void mouseMoved(MouseEvent evt){
 				Point p=evt.getPoint();
 				processPoint(p);
-				//System.out.println(evt);
+				//System.outGovernance.println(evt);
 			}
 			public void mouseDragged(MouseEvent evt){
 				

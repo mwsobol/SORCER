@@ -52,13 +52,13 @@ public class operator extends Operator {
             ContextSelector contextSelector = selectContextSelector(args);
             Object result = service.execute(args);
             if (result instanceof Context && contextSelector != null) {
-                    try {
-                        result = contextSelector.doSelect(result);
-                    } catch (ContextException e) {
-                        throw new ServiceException(e);
-                    }
+                try {
+                    result = contextSelector.doSelect(result);
+                } catch (ContextException e) {
+                    throw new ServiceException(e);
+                }
             }
-            return new Entry(((Identifiable)service).getName(), result);
+            return new Entry(((Identifiable) service).getName(), result);
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }
@@ -67,7 +67,7 @@ public class operator extends Operator {
     public static ContextSelector selectContextSelector(Arg[] args) {
         for (Arg arg : args) {
             if (arg instanceof ContextSelector)
-                return (ContextSelector)arg;
+                return (ContextSelector) arg;
         }
         return null;
     }
@@ -81,7 +81,7 @@ public class operator extends Operator {
     }
 
     public static <T> T exec(Entry<T> entry, Arg... args)
-            throws EvaluationException {
+        throws EvaluationException {
         try {
             synchronized (entry) {
                 if (entry instanceof Valuation) {
@@ -94,14 +94,14 @@ public class operator extends Operator {
                     return (T) ((Exertion) entry).exert(args).getContext();
                 } else if (entry instanceof Functionality) {
                     if (entry instanceof Srv && entry.getImpl() instanceof SignatureEntry) {
-                        return  (T) entry.execute(args);
+                        return (T) entry.execute(args);
                     } else {
                         return (T) ((Functionality) entry).getValue(args);
                     }
                 } else if (entry instanceof Evaluation) {
                     return (T) ((Entry) entry).evaluate(args);
                 } else {
-                    return (T)  entry.execute(args);
+                    return (T) entry.execute(args);
                 }
             }
         } catch (Exception e) {
@@ -110,9 +110,9 @@ public class operator extends Operator {
     }
 
     public static <T> T eval(evr<T> invoker, Arg... args)
-            throws EvaluationException {
+        throws EvaluationException {
         try {
-            if (invoker instanceof Incrementor){
+            if (invoker instanceof Incrementor) {
                 return ((Incrementor<T>) invoker).next();
             } else {
                 return invoker.compute(args);
@@ -125,7 +125,7 @@ public class operator extends Operator {
     public static Object exec(Mogram domain, String path, Arg... args) throws ContextException {
         if (domain instanceof Model) {
             try {
-                return ((Model)domain).getValue(path, args);
+                return ((Model) domain).getValue(path, args);
             } catch (RemoteException e) {
                 throw new ContextException(e);
             }
@@ -152,6 +152,19 @@ public class operator extends Operator {
             }
         } else {
             return value((Context) domain, path, args);
+        }
+    }
+
+    public static void clear(Discipline discipline) throws MogramException {
+        discipline.clear();
+    }
+
+    public static Context eval(Discipline discipline, Arg... args)
+        throws ContextException {
+        try {
+            return (Context) discipline.execute(args);
+        } catch (ServiceException | RemoteException e) {
+            throw new ContextException(e);
         }
     }
 

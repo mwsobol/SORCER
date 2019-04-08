@@ -188,7 +188,7 @@ public class Signatures {
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 //		logger.info("ss: " + execEnt(ss));
 		assertEquals(100.0, exec(ss));
@@ -204,7 +204,7 @@ public class Signatures {
 		Context cxt = context("add",
 				inVal("arg/x1", 20.0),
 				inVal("arg/x2", 80.0),
-				result("result/y"));
+				result("outDispatcher/y"));
 
 //		logger.info("ss: " + execEnt(ss, cxt));
 		assertEquals(100.0, exec(ss, cxt));
@@ -219,7 +219,7 @@ public class Signatures {
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 //		logger.info("ss: " + execEnt(ss));
 		assertEquals(100.0, exec(ss));
@@ -234,7 +234,7 @@ public class Signatures {
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		assertEquals(100.0, exec(as));
 
@@ -254,7 +254,7 @@ public class Signatures {
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		assertEquals(100.0, exec(as));
 
@@ -275,7 +275,7 @@ public class Signatures {
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		assertEquals(100.0, exec(as));
 
@@ -289,7 +289,7 @@ public class Signatures {
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		assertEquals(100.0, exec(as));
 
@@ -309,7 +309,7 @@ public class Signatures {
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		assertEquals(100.0, exec(as));
 
@@ -323,7 +323,7 @@ public class Signatures {
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		assertEquals(100.0, exec(as));
 
@@ -337,7 +337,7 @@ public class Signatures {
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		assertEquals(100.0, exec(as));
 
@@ -351,10 +351,10 @@ public class Signatures {
 				types(Service.class, Provider.class),
 				// comma separated list of hosts, when empty localhost is a default locator
 				srvName("Adder", locators(), group)),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
 
 		Exertion out = exert(t5);
-		assertEquals(100.0, value(context(out), "result/y"));
+		assertEquals(100.0, value(context(out), "outDispatcher/y"));
 	}
 
     public void signatureWithMultipletypes() throws Exception  {
@@ -363,10 +363,10 @@ public class Signatures {
         Task t5 = task("t5", sig("add", Adder.class, Service.class, Provider.class,
                 // comma separated list of hosts, when empty localhost is a default locator
                 srvName("Adder", locators(), group)),
-                cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+                cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
 
         Exertion out = exert(t5);
-        assertEquals(100.0, value(context(out), "result/y"));
+        assertEquals(100.0, value(context(out), "outDispatcher/y"));
     }
 
 	@Test
@@ -377,11 +377,11 @@ public class Signatures {
                 op("add"),
 				//locators() - default locator or list of hosts
 				srvName("Adder", locators(), group)),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
 
 		Exertion out = exert(t5);
-//		logger.info("out: " + context(out));
-		assertEquals(100.0, value(context(out), "result/y"));
+//		logger.info("outGovernance: " + context(outGovernance));
+		assertEquals(100.0, value(context(out), "outDispatcher/y"));
 	}
 
 	@Test
@@ -398,7 +398,7 @@ public class Signatures {
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		assertEquals(100.0, exec(as));
 	}
@@ -411,7 +411,7 @@ public class Signatures {
 				inVal("y2", 80.0));
 
 		Context result = (Context) exec(sig("add", AdderImpl.class), cxt);
-		assertTrue(value(result, "result/eval").equals(100.0));
+		assertTrue(value(result, "outDispatcher/eval").equals(100.0));
 	}
 
 	@Test
@@ -420,7 +420,7 @@ public class Signatures {
 		Context<Double> cxt = context(
 				inVal("y1", 20.0),
 				inVal("y2", 80.0),
-				result("result/y"));
+				result("outDispatcher/y"));
 
 		Object result = exec(sig("add", Adder.class), cxt);
 		assertTrue(result.equals(100.0));
@@ -454,10 +454,10 @@ public class Signatures {
 				"f5",
 				sig("add", Adder.class),
 				context("add", inVal("arg/x1", 20.0),
-						inVal("arg/x2", 80.0), result("result/y")));
+						inVal("arg/x2", 80.0), result("outDispatcher/y")));
 
 		Context  out = (Context) exec(sig(ServiceShell.class), f5);
-		assertEquals(value(out, "result/y"), 100.00);
+		assertEquals(value(out, "outDispatcher/y"), 100.00);
 	}
 
 	@Test
@@ -467,10 +467,10 @@ public class Signatures {
 				"f5",
 				sig("add", Adder.class),
 				context("add", inVal("arg/x1", 20.0),
-						inVal("arg/x2", 80.0), result("result/y")));
+						inVal("arg/x2", 80.0), result("outDispatcher/y")));
 
 		Context  out = (Context) exec(sig(RemoteServiceShell.class), f5);
-		assertEquals(get(out, "result/y"), 100.00);
+		assertEquals(get(out, "outDispatcher/y"), 100.00);
 	}
 
 	@Test
@@ -480,7 +480,7 @@ public class Signatures {
 				"f5",
 				sig("add", Adder.class),
 				context("add", inVal("arg/x1", 20.0),
-						inVal("arg/x2", 80.0), result("result/y")));
+						inVal("arg/x2", 80.0), result("outDispatcher/y")));
 
 		Context  out = (Context) exec(sig("add", Adder.class, Shell.REMOTE), f5);
 		assertEquals(get(out), 100.00);
@@ -492,7 +492,7 @@ public class Signatures {
 		Context cxt = context(
 				inVal("y1", 20.0),
 				inVal("y2", 80.0),
-				result("result/y"));
+				result("outDispatcher/y"));
 
 		Context outConnector = outConn(
 				inVal("arg/x1", "y1"),
@@ -513,7 +513,7 @@ public class Signatures {
 		// but output context from provider remapped
 		assertEquals(20.0, value(context(task), "arg/x1"));
 		assertEquals(80.0, value(context(task), "arg/x2"));
-		assertEquals(100.0, value(context(task), "result/y"));
+		assertEquals(100.0, value(context(task), "outDispatcher/y"));
 	}
 
 	@Test
@@ -522,7 +522,7 @@ public class Signatures {
 		Context cxt = context(
 				inVal("y1", 20.0),
 				inVal("y2", 80.0),
-				result("result/y"));
+				result("outDispatcher/y"));
 
 		// in connector reads output context of an exertion
 		Context inc = inConn(inVal("arg/x1", "y1"),
@@ -541,12 +541,12 @@ public class Signatures {
 		// exert service provider
 		Task out = exert(in);
 
-		logger.info("out context: " + context(out));
+		logger.info("outGovernance context: " + context(out));
 
 		// the input context for provider is reconnected to as requested
 		assertEquals(20.0, value(context(out), "arg/x1"));
 		assertEquals(80.0, value(context(out), "arg/x2"));
-		assertEquals(100.0, value(context(out), "result/y"));
+		assertEquals(100.0, value(context(out), "outDispatcher/y"));
 	}
 
 }

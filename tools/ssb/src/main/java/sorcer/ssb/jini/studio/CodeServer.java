@@ -167,7 +167,7 @@ public class CodeServer implements Runnable {
 
 			InetAddress host = InetAddress.getLocalHost();
 
-			// System.out.println("ssb.webster="+=System.getProperty("ssb.webster"));
+			// System.outGovernance.println("ssb.webster="+=System.getProperty("ssb.webster"));
 
 			String hostToUse = System.getProperty("ssb.webster",
 					host.getHostAddress());
@@ -210,14 +210,14 @@ public class CodeServer implements Runnable {
 			String fileName = null;
 			String resourceName = ln.substring(spos + 1, epos);
 
-			//System.out.println("Request for " + resourceName);
+			//System.outGovernance.println("Request for " + resourceName);
 			boolean isJar = false;
 
 			if (resourceName.endsWith(".class")) {
 				// just get the key
 				spos = resourceName.indexOf(".class");
 				String className = pathToClass(resourceName.substring(0, spos));
-				//System.out.println("Class key="+className);
+				//System.outGovernance.println("Class key="+className);
 				String path = getPathForClass(Class.forName(className));
 				if (path.endsWith(".jar")) {
 					fileName = path;
@@ -247,7 +247,7 @@ public class CodeServer implements Runnable {
 						ZipEntry ze = zippy.getEntry(resourceName);
 						len = ze.getSize();
 						fis = zippy.getInputStream(ze);
-						// System.out.println("Using ZIP len="+len);
+						// System.outGovernance.println("Using ZIP len="+len);
 					} else {
 						File file = new File(fileName);
 						len = file.length();
@@ -272,7 +272,7 @@ public class CodeServer implements Runnable {
 			os.flush();
 			os.close();
 			request.close();
-			//System.out.println("Completed request for "+fileName);
+			//System.outGovernance.println("Completed request for "+fileName);
 		} catch (Exception ex) {
 			//ex.printStackTrace();
 		}

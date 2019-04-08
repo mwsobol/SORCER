@@ -143,7 +143,7 @@ public class SpaceTaker implements Runnable {
 	/**
 	 * This is a Constructor. It executes the default constructor plus setValue the
 	 * provider worker data and executor service pool. The transaction lease
-	 * time is setValue and space time out time is established.
+	 * time is setValue and space time outGovernance time is established.
 	 * 
 	 * @param data
 	 *            SpaceDispatcher data
@@ -406,7 +406,7 @@ public class SpaceTaker implements Runnable {
 				try {
 					space.write(result, null, Lease.FOREVER);
 				} catch (Exception e) {
-                    logger.warn("Error while writing the result", e);
+                    logger.warn("Error while writing the outDispatcher", e);
                     try {
 						TX.abortTransaction(txnCreated);
 					} catch (Exception e1) {

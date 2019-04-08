@@ -123,7 +123,7 @@ public class Glyph{
 		}
 		return false;
 	}
-	//flsu out child rects before repaint
+	//flsu outGovernance child rects before repaint
 	private void reset(){
 		int ng=_kids.size();
 		for(int i=0;i<ng;i++){

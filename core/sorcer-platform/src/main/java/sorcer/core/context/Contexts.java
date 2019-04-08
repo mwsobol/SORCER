@@ -322,7 +322,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/*
-	 * Return boolean result indicating if the eval at the designated path is
+	 * Return boolean outDispatcher indicating if the eval at the designated path is
 	 * setValue as an empty leaf node.
 	 */
 	public static boolean isEmptyLeafNode(Context cntxt, String path)
@@ -357,7 +357,7 @@ public class Contexts implements SorcerConstants {
 				Context.CONTEXT_PARAMETER);
 		if (cp == null)
 			throw new ContextException(
-					"no marked attribute as in, out, or inout");
+					"no marked attribute as in, outGovernance, or inout");
 		if (cp.startsWith(Context.DA_IN)) {
 			cp0 = Context.DA_INOUT + cp.substring(Context.DA_IN.length());
 			fromContext.mark(toPath, Context.CONTEXT_PARAMETER + APS + cp0 + APS + APS + APS);
@@ -421,7 +421,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/**
-	 * Sets context fiType as out for a path
+	 * Sets context fiType as outGovernance for a path
 	 */
 	public static Context markOut(Context cntxt, String path)
 			throws ContextException {
@@ -875,17 +875,17 @@ public class Contexts implements SorcerConstants {
 	}
 
 	public static List getNamedOutPaths(Context cntxt) throws ContextException {
-		// get all the in and out paths
+		// get all the in and outGovernance paths
 		return getPrefixedOutPaths(cntxt, ((ServiceContext)cntxt).getMogramStrategy().getCurrentSelector());
 	}
 	
 	public static List getPrefixedOutPaths(Context cntxt) throws ContextException {
-		// get all the in and out paths
+		// get all the in and outGovernance paths
 		return getPrefixedOutPaths(cntxt, ((ServiceContext)cntxt).getCurrentPrefix());
 	}
 	
 	public static List getPrefixedOutPaths(Context cntxt, String prefix) throws ContextException {
-		// get all the in and out paths
+		// get all the in and outGovernance paths
 		String outAssoc = Context.DIRECTION + APS + Context.DA_OUT;
 		String inoutAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
 		String[] outPaths = Contexts.getMarkedPaths(cntxt, outAssoc);
@@ -943,7 +943,7 @@ public class Contexts implements SorcerConstants {
 	 */
 	public static Hashtable getOutPathsMap(Context cntxt)
 			throws ContextException {
-		// get all the out and inout paths
+		// get all the outGovernance and inout paths
 		String outAssoc = Context.DIRECTION + APS + Context.DA_OUT;
 		String inoutAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
 		String[] outPaths = Contexts.getMarkedPaths(cntxt, outAssoc);
@@ -1218,7 +1218,7 @@ public class Contexts implements SorcerConstants {
 							if (thisMatch == 0)
 								break; // no possible match for this candidate
 						}
-						// System.out.println("candidate="+candidate+"
+						// System.outGovernance.println("candidate="+candidate+"
 						// match="+match+" required maches="+(paths.length-1));
 						if (match == paths.length - 1)
 							keys.addElement(candidate);
@@ -1336,7 +1336,7 @@ public class Contexts implements SorcerConstants {
 							if (thisMatch == 0)
 								break; // no possible match for this candidate
 						}
-						// System.out.println("candidate="+candidate+"
+						// System.outGovernance.println("candidate="+candidate+"
 						// match="+match+" required maches="+(paths.length-1));
 						if (match == paths.length - 1)
 							keys.addElement(candidate);
@@ -1473,11 +1473,11 @@ public class Contexts implements SorcerConstants {
 		Hashtable values;
 		attr = metaAssoc.substring(0, metaAssoc.indexOf(APS));
 		value = metaAssoc.substring(metaAssoc.indexOf(APS) + 1);
-//		System.out.println("attr, eval" + attr + "," + eval);
+//		System.outGovernance.println("attr, eval" + attr + "," + eval);
 		if (!context.isMetaattribute(attr))
 			return false;
 		values = (Hashtable) context.getMetacontext().get(attr);
-//		System.out.println("values" + values);
+//		System.outGovernance.println("values" + values);
 		Enumeration e = values.keys();
 		while (e.hasMoreElements()) {
 			key = (String) e.nextElement();

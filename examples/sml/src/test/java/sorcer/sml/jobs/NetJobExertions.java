@@ -42,17 +42,17 @@ public class NetJobExertions implements SorcerConstants {
 
 		Task t3 = task("t3", sig("subtract", Subtractor.class),
 			context("subtract", inVal("arg/x1"), inVal("arg/x2"),
-//						outVal("result/y")), strategy(Monitor.YES));
-				outVal("result/y")));
+//						outVal("outDispatcher/y")), strategy(Monitor.YES));
+				outVal("outDispatcher/y")));
 		Task t4 = task("t4", sig("multiply", Multiplier.class),
 			context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-//						outVal("result/y")), strategy(Monitor.YES));
-				outVal("result/y")));
+//						outVal("outDispatcher/y")), strategy(Monitor.YES));
+				outVal("outDispatcher/y")));
 
 		Task t5 = task("t5", sig("add", Adder.class),
 			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-//						outVal("result/y")), strategy(Monitor.YES));
-				outVal("result/y")));
+//						outVal("outDispatcher/y")), strategy(Monitor.YES));
+				outVal("outDispatcher/y")));
 
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
@@ -61,8 +61,8 @@ public class NetJobExertions implements SorcerConstants {
 			t3,
 			job("j2", t4, t5, strategy(flow, access)),
 
-			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+			pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+			pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
 //                strategy(Monitor.YES));
 
 		return job;
@@ -80,8 +80,8 @@ public class NetJobExertions implements SorcerConstants {
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
 		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
-		assertEquals(get(job, "j1/t3/result/y"), 400.00);
+		//logger.info("job j1 eval @ j1/t3/outDispatcher/y = " + get(job, "j1/t3/outDispatcher/y"));
+		assertEquals(get(job, "j1/t3/outDispatcher/y"), 400.00);
 
 	}
 
@@ -95,8 +95,8 @@ public class NetJobExertions implements SorcerConstants {
 		logger.info("job j1: " + job.describe());
 //		logger.info("job j1 job context: " + context(job, "j1/t3));
 //		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
-		assertEquals(get(job, "j1/t3/result/y"), 400.00);
+		//logger.info("job j1 eval @ j1/t3/outDispatcher/y = " + get(job, "j1/t3/outDispatcher/y"));
+		assertEquals(get(job, "j1/t3/outDispatcher/y"), 400.00);
 
 	}
 
@@ -108,8 +108,8 @@ public class NetJobExertions implements SorcerConstants {
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
 		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
-		assertEquals(get(job, "j1/t3/result/y"), 400.00);
+		//logger.info("job j1 eval @ j1/t3/outDispatcher/y = " + get(job, "j1/t3/outDispatcher/y"));
+		assertEquals(get(job, "j1/t3/outDispatcher/y"), 400.00);
 
 	}
 
@@ -121,8 +121,8 @@ public class NetJobExertions implements SorcerConstants {
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
 		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
-		assertEquals(get(job, "j1/t3/result/y"), 400.00);
+		//logger.info("job j1 eval @ j1/t3/outDispatcher/y = " + get(job, "j1/t3/outDispatcher/y"));
+		assertEquals(get(job, "j1/t3/outDispatcher/y"), 400.00);
 
 	}
 
@@ -133,30 +133,30 @@ public class NetJobExertions implements SorcerConstants {
 			"t3",
 			sig("subtract", Subtractor.class),
 			context("subtract", inVal("arg/x1", null), inVal("arg/x2", null),
-				outVal("result/y", null)));
+				outVal("outDispatcher/y", null)));
 
 		Task t4 = task(
 			"t4",
 			sig("multiply", Multiplier.class),
 			context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-				outVal("result/y", null)));
+				outVal("outDispatcher/y", null)));
 
 		Task t5 = task(
 			"t5",
 			sig("add", Adder.class),
 			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-				outVal("result/y", null)));
+				outVal("outDispatcher/y", null)));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job(
 			"j1", sig("exert", ServiceJobber.class),
 			job("j2", t4, t5), t3,
-			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+			pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+			pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		assertEquals(value(context, "j1/t3/result/y"), 400.0);
+		assertEquals(value(context, "j1/t3/outDispatcher/y"), 400.0);
 	}
 
 	@Test
@@ -166,30 +166,30 @@ public class NetJobExertions implements SorcerConstants {
 			"t3",
 			sig("subtract", Subtractor.class),
 			context("subtract", inVal("arg/x1", null), inVal("arg/x2", null),
-				outVal("result/y", null)));
+				outVal("outDispatcher/y", null)));
 
 		Task t4 = task(
 			"t4",
 			sig("multiply", Multiplier.class),
 			context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-				outVal("result/y", null)));
+				outVal("outDispatcher/y", null)));
 
 		Task t5 = task(
 			"t5",
 			sig("add", Adder.class),
 			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-				outVal("result/y", null)));
+				outVal("outDispatcher/y", null)));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job("j1", // sig("exert", ServiceJobber.class),
 			job("j2", t4, t5), t3,
-			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+			pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+			pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
 
 		Provider shell = (Provider) provider(sig(RemoteServiceShell.class));
 		Context out = upcontext(exert(shell, job));
 		logger.info("job context: " + out);
-		assertEquals(value(out, "j1/t3/result/y"), 400.0);
+		assertEquals(value(out, "j1/t3/outDispatcher/y"), 400.0);
 
 	}
 
@@ -200,30 +200,30 @@ public class NetJobExertions implements SorcerConstants {
 			"t3",
 			sig("subtract", Subtractor.class),
 			context("subtract", inVal("arg/x1", null), inVal("arg/x2", null),
-				outVal("result/y", null)));
+				outVal("outDispatcher/y", null)));
 
 		Task t4 = task(
 			"t4",
 			sig("multiply", Multiplier.class),
 			context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-				outVal("result/y")));
+				outVal("outDispatcher/y")));
 
 		Task t5 = task(
 			"t5",
 			sig("add", Adder.class),
 			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-				outVal("result/y", null)));
+				outVal("outDispatcher/y", null)));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job(
 			"j1", sig("exert", Jobber.class, Shell.REMOTE),
 			job("j2", t4, t5), t3,
-			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+			pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+			pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
 
 		Context context = upcontext(exert(job));
 		logger.info("job context: " + context);
-		assertEquals(value(context, "j1/t3/result/y"), 400.0);
+		assertEquals(value(context, "j1/t3/outDispatcher/y"), 400.0);
 
 	}
 
@@ -238,7 +238,7 @@ public class NetJobExertions implements SorcerConstants {
 			context("add", input("arg/x1"), input("arg/x2")));
 
 		Context result = context(exert(cxtt));
-//		logger.info("contexter context 1: " + result);
+//		logger.info("contexter context 1: " + outDispatcher);
 
 		assertEquals(value(result, "arg/x1"), 20.0);
 		assertEquals(value(result, "arg/x2"), 80.0);
@@ -247,13 +247,13 @@ public class NetJobExertions implements SorcerConstants {
 			context("add", inVal("arg/x1", 200.0), inVal("arg/x2", 800.0)));
 
 		result = context(exert(cxtt));
-//		logger.info("contexter context 2: " + result);
+//		logger.info("contexter context 2: " + outDispatcher);
 
 		cxtt = task("getAddContext", sig("getContext", Contexter.class, prvName("Add Contexter")),
 			context("add", input("arg/x1"), input("arg/x2")));
 
 		result = context(exert(cxtt));
-//		logger.info("contexter context 3: " + result);
+//		logger.info("contexter context 3: " + outDispatcher);
 
 		assertEquals(value(result, "arg/x1"), 200.0);
 		assertEquals(value(result, "arg/x2"), 800.0);
@@ -263,7 +263,7 @@ public class NetJobExertions implements SorcerConstants {
 			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		result = context(exert(cxtt));
-//		logger.info("contexter context 4: " + result);
+//		logger.info("contexter context 4: " + outDispatcher);
 		assertEquals(value(result, "arg/x1"), 20.0);
 		assertEquals(value(result, "arg/x2"), 80.0);
 
@@ -275,8 +275,8 @@ public class NetJobExertions implements SorcerConstants {
 		// get the current eval of the exertlet
 		Exerter exerter = task("exert", sig("exert", Exerter.class, prvName("Arithmetic Exerter")));
 		Context out = exert(exerter, context());
-		logger.info("out: " + out);
-		assertEquals(value(out, "j1/t3/result/y"), 400.0);
+		logger.info("outGovernance: " + out);
+		assertEquals(value(out, "j1/t3/outDispatcher/y"), 400.0);
 
 		// update inputs contexts
 		Context multiplyContext = context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 70.0));
@@ -286,8 +286,8 @@ public class NetJobExertions implements SorcerConstants {
 		link(invokeContext, "t5", addContext);
 		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
 		out = exert(exerter, invokeContext);
-		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));
-		assertEquals(value(out, "j1/t3/result/y"), 500.0);
+		logger.info("j1/t3/outDispatcher/y: " + value(out, "j1/t3/outDispatcher/y"));
+		assertEquals(value(out, "j1/t3/outDispatcher/y"), 500.0);
 
 		// update contexts partially
 		multiplyContext = context("multiply", inVal("arg/x1", 20.0));
@@ -297,8 +297,8 @@ public class NetJobExertions implements SorcerConstants {
 		link(invokeContext, "t5", addContext);
 		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
 		out = exert(exerter, invokeContext);
-		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));
-		assertEquals(value(out, "j1/t3/result/y"), 1210.0);
+		logger.info("j1/t3/outDispatcher/y: " + value(out, "j1/t3/outDispatcher/y"));
+		assertEquals(value(out, "j1/t3/outDispatcher/y"), 1210.0);
 
 		// reverse the state to the initial one
 		multiplyContext = context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0));
@@ -308,8 +308,8 @@ public class NetJobExertions implements SorcerConstants {
 		link(invokeContext, "t5", addContext);
 		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
 		out = exert(exerter, invokeContext);
-		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));
-		assertEquals(value(out, "j1/t3/result/y"), 400.0);
+		logger.info("j1/t3/outDispatcher/y: " + value(out, "j1/t3/outDispatcher/y"));
+		assertEquals(value(out, "j1/t3/outDispatcher/y"), 400.0);
 	}
 
 	@Test
@@ -325,7 +325,7 @@ public class NetJobExertions implements SorcerConstants {
 				task("t5",
 					sig("add", Adder.class),
 					cxt("add", inVal("x3"), inVal("x4"),
-						result("result/y")))),
+						result("outDispatcher/y")))),
 			pro("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		setValues(vm, val("x1", 10.0), val("x2", 50.0), val("x4", 80.0));

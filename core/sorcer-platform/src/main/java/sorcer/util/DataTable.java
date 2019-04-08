@@ -478,7 +478,7 @@ public class DataTable implements ModelTable, Response, rsp {
 	 * @param to
 	 *            the destination of the rows to be moved
 	 * @exception ArrayIndexOutOfBoundsException
-	 *                if any of the elements would be moved out of the dataTable's
+	 *                if any of the elements would be moved outGovernance of the dataTable's
 	 *                range
 	 * 
 	 */
@@ -1148,7 +1148,7 @@ public class DataTable implements ModelTable, Response, rsp {
 	/**
 	 * Describe the dataTable input and output sources.
 	 * 
-	 * @return a dataTable in/out sources description
+	 * @return a dataTable in/outGovernance sources description
 	 */
 	public String describe(StringBuilder sb) {
 		if (inputFileName != null || inputTableURL != null) {

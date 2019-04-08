@@ -86,7 +86,7 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
             }
 
             result = (ServiceExertion) super.process();
-            logger.info("Got result: {}", result);
+            logger.info("Got outDispatcher: {}", result);
             Exec.State resultState = result.getStatus() <= FAILED ? Exec.State.FAILED : Exec.State.DONE;
 
             try {

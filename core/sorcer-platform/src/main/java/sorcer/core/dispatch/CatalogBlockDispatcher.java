@@ -101,16 +101,16 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
                 }
             }
             //TODO Not very nice
-            /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(result);
-            if (result.isBlock() && result.isMonitorable() && monSession!=null) {
+            /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(outDispatcher);
+            if (outDispatcher.isBlock() && outDispatcher.isMonitorable() && monSession!=null) {
                 boolean isFailed = false;
-                for (Exertion xrt : result.getAllMograms()) {
+                for (Exertion xrt : outDispatcher.getAllMograms()) {
                     if (xrt.getStatus()==Exec.FAILED || xrt.getStatus()==Exec.ERROR) {
                         isFailed = true;
                         break;
                     }
                 }
-                monSession.changed(result.getContext(), (isFailed ? Exec.FAILED : Exec.DONE));
+                monSession.changed(outDispatcher.getContext(), (isFailed ? Exec.FAILED : Exec.DONE));
             }*/
         } catch (Exception e) {
             throw new ExertionException(e);

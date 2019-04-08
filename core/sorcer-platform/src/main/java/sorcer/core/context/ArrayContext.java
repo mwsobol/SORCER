@@ -44,11 +44,11 @@ import sorcer.service.IndexedContext;
  * <li>the description of the i-th element: by ivd(i) and the setter ivd(i, description);<br>
  * implicit path: array/in/[i]/description
  * <li>the output eval of the i-th element: by ov(i) and the setter ov(i, obj);<br>
- * implicit path: array/out/[i]/eval<br>
+ * implicit path: array/outGovernance/[i]/eval<br>
  *<li>the comment of the i-th element: by ovc(i) and the setter ovc(i, comment);<br>
- * implicit path: array/out/[i]/comment<br>
+ * implicit path: array/outGovernance/[i]/comment<br>
  *<li>the description of the i-th element: by ovd(i) and the setter ovd(i, description);<br>
- * implicit path: array/out/[i]/description
+ * implicit path: array/outGovernance/[i]/description
  */
 public class ArrayContext extends ServiceContext implements IndexedContext,
 		SorcerConstants {
@@ -426,10 +426,10 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 		// insertion sort
 		int in, out;
 
-		for (out = 1; out < tally; out++) // out is dividing line
+		for (out = 1; out < tally; out++) // outGovernance is dividing line
 		{
 			String temp = list[out]; // remove marked impl
-			in = out; // start shifts at out
+			in = out; // start shifts at outGovernance
 			// until one is smaller
 			while (in > 0 && getIndex((String) list[in - 1]) >= getIndex(temp)) {
 				list[in] = list[in - 1]; // shift impl right,

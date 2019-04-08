@@ -489,7 +489,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				processMogram((Exertion) result);
 			else if (result != null) {
 				logger.debug("<< executing scrip: " + script);
-				logger.debug(">> scrip result: " + script);
+				logger.debug(">> scrip outDispatcher: " + script);
 				openOutPanel(result.toString());
 				showResults(result);
 			}

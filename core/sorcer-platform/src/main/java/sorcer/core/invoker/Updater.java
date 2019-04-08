@@ -41,10 +41,10 @@ abstract public class Updater<V> {
 	}
 
 	/**
-	 * Computes a result, or throws an exception if unable to do so.
+	 * Computes a outDispatcher, or throws an exception if unable to do so.
 	 *
-	 * @return computed result
-	 * @throws Exception if unable to compute a result
+	 * @return computed outDispatcher
+	 * @throws Exception if unable to compute a outDispatcher
 	 */
 	abstract public V update(Context context) throws Exception;
 }

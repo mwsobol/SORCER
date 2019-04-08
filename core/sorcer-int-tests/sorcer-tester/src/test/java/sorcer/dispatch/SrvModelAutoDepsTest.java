@@ -33,14 +33,14 @@ public class SrvModelAutoDepsTest {
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 inVal("addfinal/x1", 1000.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/out",
+                ent(sig("add", AdderImpl.class, result("add/outGovernance",
                         inPaths("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class,
                         result(path("model/response", Signature.Direction.INOUT),
-                            inPaths("multiply/out", "add/out")))),
-                ent(sig("divide", DividerImpl.class, result("divider/out",
+                            inPaths("multiply/outGovernance", "add/outGovernance")))),
+                ent(sig("divide", DividerImpl.class, result("divider/outGovernance",
                         inPaths("model/response", "multiply/x1")))),
                 response("divide"));
 
@@ -48,7 +48,7 @@ public class SrvModelAutoDepsTest {
         logger.info("Dependencies: " + printDeps(m));
         Context out = response(m);
         logger.info("response: " + out);
-        logger.info("result: " + get(out, "divide"));
+        logger.info("outDispatcher: " + get(out, "divide"));
         assertTrue(get(out, "divide").equals(40.0));
     }
 
@@ -57,24 +57,24 @@ public class SrvModelAutoDepsTest {
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                inVal("addfinal/x1", 1000.0), inVal("divider/out"),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                inVal("addfinal/x1", 1000.0), inVal("divider/outGovernance"),
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/out",
+                ent(sig("add", AdderImpl.class, result("add/outGovernance",
                         inPaths("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class, result("model/response",
-                        inPaths("multiply/out", "add/out")))),
-                ent(sig("divide", DividerImpl.class, result("divider/out",
+                        inPaths("multiply/outGovernance", "add/outGovernance")))),
+                ent(sig("divide", DividerImpl.class, result("divider/outGovernance",
                         inPaths("model/response", "multiply/x1")))),
-                ent("addfinal", sig("add", AdderImpl.class, result("addfinal/out",
-                        inPaths("addfinal/x1", "divider/out")))),
+                ent("addfinal", sig("add", AdderImpl.class, result("addfinal/outGovernance",
+                        inPaths("addfinal/x1", "divider/outGovernance")))),
                 response("addfinal"));
 
         logger.info("Map of dependents: " + deps(m));
         logger.info("Dependencies: " + printDeps(m));
         Context out = response(m);
         logger.info("response: " + out);
-        logger.info("result: " + get(out, "addfinal"));
+        logger.info("outDispatcher: " + get(out, "addfinal"));
         assertTrue(get(out, "addfinal").equals(1040.0));
     }
 }

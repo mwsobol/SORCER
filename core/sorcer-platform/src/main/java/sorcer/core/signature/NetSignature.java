@@ -386,7 +386,7 @@ public class NetSignature extends ObjectSignature implements sig {
 		return this.getClass().getSimpleName() + ":" + providerName + ":"
 				+ multitype + "." + operation.selector
 				+ (prefix != null ? "#" + prefix : "")
-				+ (returnPath != null ? "; result: " + returnPath : "")
+				+ (returnPath != null ? "; outDispatcher: " + returnPath : "")
 				+ ("; provisionable: " + operation.isProvisionable)
 				+ ((deployment != null && deployment.getConfig() != null)
 					? "; config: " + deployment.getConfig() : "");

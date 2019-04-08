@@ -187,7 +187,7 @@ public class JarProxy implements JarURLConnection.JarOpener {
         }
 
         public ZipEntry getEntry(String name) {
-            // super.getJarEntry() would result in stack overflow
+            // super.getJarEntry() would outDispatcher in stack overflow
             return super.getEntry(name);
         }
 

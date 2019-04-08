@@ -207,6 +207,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public ServiceContext(Row row) throws ContextException {
+	    this(row.getName());
 		key = row.getName();
 		List<String> names = row.getNames();
 		List<Object> vals = row.getValues();
@@ -216,12 +217,19 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public ServiceContext(Object[] objects) throws ContextException {
-		setArgsPath(Context.PARAMETER_VALUES);
-		setArgs(objects);
-		setParameterTypesPath(Context.PARAMETER_TYPES);
-		Class[] parTypes = new Class[objects.length];
-		for (int i = 0; i < objects.length; i++) {
-			parTypes[i] = objects[i].getClass();
+        this("generated from object array");
+		if (objects.length > 0 && objects[0] instanceof Entry) {
+			for (int i = 0; i < objects.length; i++) {
+				putValue(((Entry)objects[i]).getName(), (T)((Entry)objects[i]).get());
+			}
+		} else {
+			setArgsPath(Context.PARAMETER_VALUES);
+			setArgs(objects);
+			setParameterTypesPath(Context.PARAMETER_TYPES);
+			Class[] parTypes = new Class[objects.length];
+			for (int i = 0; i < objects.length; i++) {
+				parTypes[i] = objects[i].getClass();
+			}
 		}
 	}
 
@@ -822,7 +830,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (result[0] == null) {
 			// the path belongs in this context, but is not in the
 			// hashtable. We'll return the map anyway.
-			// System.out.println("getContextMap: no mapping");
+			// System.outGovernance.println("getContextMap: no mapping");
 			result[0] = this;
 			result[1] = path; // this is null
 		}
@@ -1174,7 +1182,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 							if (thisMatch == 0)
 								break; // no possible match for this candidate
 						}
-						// System.out.println("candidate="+candidate+"
+						// System.outGovernance.println("candidate="+candidate+"
 						// match="+match+" required maches="+(paths.length-1));
 						if (match == paths.length - 1)
 							keys.add(candidate);
@@ -1582,7 +1590,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		resultContext = outcxt;
 		if (ops != null && ops.size() > 0) {
 			Context returnContext = outcxt.getDirectionalSubcontext(ops);
-			// make sure the result is returned correctly
+			// make sure the outDispatcher is returned correctly
 			resultContext.putValue(returnPath, returnContext);
 			this.appendInout(returnContext);
 			this.setChanged(true);
@@ -1741,7 +1749,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return null;
 	}
 
-	// TODO in/out/inout marking as defined in the connector
+	// TODO in/outGovernance/inout marking as defined in the connector
 	public Context updateContextWith(Context context) throws ContextException {
 		boolean isRedundant = false;
 		if (context instanceof MapContext) {
@@ -1796,7 +1804,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	public Context append(Context context) throws ContextException {
 		if (context != null && this != context) {
-			putAll((ServiceContext)context);
+			putAll(context);
 			// annotate as in the argument context
 			List<String> inpaths = ((ServiceContext) context).getInPaths();
 			List<String> outpaths = ((ServiceContext) context).getOutPaths();
@@ -1806,7 +1814,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 			for (String p : outpaths) {
 				Contexts.markOut(this, p);
-//				tag(p, "cp|out||");
+//				tag(p, "cp|outGovernance||");
 			}
 			if (containsPath(Condition._closure_))
 				remove(Condition._closure_);
@@ -1887,10 +1895,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		map = cntxt.getContextMapping(path);
 		ServiceContext mappedCntxt = (ServiceContext) map[0];
 		String mappedKey = (String) map[1];
-		// System.out.println("path="+path);
-		// System.out.println("mappedKey="+mappedKey);
-		// System.out.println("orig context key="+cntxt.getName());
-		// System.out.println("mapped context key="+mappedCntxt.getName());
+		// System.outGovernance.println("path="+path);
+		// System.outGovernance.println("mappedKey="+mappedKey);
+		// System.outGovernance.println("orig context key="+cntxt.getName());
+		// System.outGovernance.println("mapped context key="+mappedCntxt.getName());
 
 		int len = mappedKey.length();
 		String prefix;
@@ -2116,10 +2124,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Object val;
 		while (e.hasNext()) {
 			path = (String) e.next();
-			// System.out.print(path);
+			// System.outGovernance.print(path);
 			sb.append(path).append(" = ");
 			try {
-				// System.out.println(" = "+execute(path));
+				// System.outGovernance.println(" = "+execute(path));
 				val = getValue(path);
 			} catch (Exception ex) {
 				sb.append("\nUnable to retrieve eval: " + ex.getMessage());
@@ -2456,7 +2464,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public boolean isLinkedContext(Object path) {
 		Object result;
-		// System.out.println("execute: path = \""+path+"\"");
+		// System.outGovernance.println("execute: path = \""+path+"\"");
 		result = data.get(path);
 		if (result instanceof ContextLink) {
 			return true;
@@ -2770,7 +2778,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see sorcer.service.Context#getGovernance()
+	 * @see sorcer.service.Context#getOutGovernance()
 	 */
 	@Override
 	public Provider getProvider() throws SignatureException {

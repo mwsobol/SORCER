@@ -1095,15 +1095,15 @@ public class ProviderDelegate {
 //				if (pf != null)
 //					((ServiceContext) task.getContext()).setCurrentPrefix(pf);
 //
-//				Context result = task.getContext();
+//				Context outDispatcher = task.getContext();
 //				if (isContextual)
-//					result = execContextualBean(m, task, impl, args);
+//					outDispatcher = execContextualBean(m, task, impl, args);
 //				else
-//					result = execParametricBean(m, task, impl, args);
+//					outDispatcher = execParametricBean(m, task, impl, args);
 //
 //				// clearSessions task in the context
-//				result.setExertion(null);
-//				task.setContext(result);
+//				outDispatcher.setExertion(null);
+//				task.setContext(outDispatcher);
 //				task.setStatus(Exec.DONE);
 //				return task;
 //            } catch (InvocationTargetException e){
@@ -1225,7 +1225,7 @@ public class ProviderDelegate {
 			logger.debug("getProviderName: {} invoking: {}" + getProviderName(), m);
 			logger.debug("imp: {} args: {}" + impl, Arrays.toString(pars));
 			result = (Context) m.invoke(impl, pars);
-			logger.debug("result: {}", result);
+			logger.debug("outDispatcher: {}", result);
 		}
 		return result;
 	}
@@ -1252,7 +1252,7 @@ public class ProviderDelegate {
 			task.getControlContext().getExceptions()
 				.addAll(xrt.getExceptions());
 			task.getTrace().addAll(xrt.getTrace());
-			//((ServiceContext) result).setReturnValue(result);
+			//((ServiceContext) outDispatcher).setReturnValue(outDispatcher);
 		} else if (selector.equals("evaluate") && impl instanceof Evaluation) {
 			if (argTypes == null) {
 				obj = m.invoke(impl, new Object[] { args });
@@ -2817,7 +2817,7 @@ public class ProviderDelegate {
 				getProviderName(),
 				System.getProperty("user.name"));
 
-			// find it out if service bean signature are available
+			// find it outGovernance if service bean signature are available
 			Signature signature = (Signature) config.getEntry(ServiceProvider.COMPONENT,
 				BEAN_SIG,
 				Signature.class,
@@ -2833,7 +2833,7 @@ public class ProviderDelegate {
 				exports.put(bean, this);
 				logger.warn("session bean: {} \nfor: {}", beanSignature, getProviderName());
 			} else {
-				// find it out if session service bean is available
+				// find it outGovernance if session service bean is available
 				sessionBean = config.getEntry(ServiceProvider.COMPONENT,
 					SESSION_BEAN,
 					Object.class,
@@ -2896,7 +2896,7 @@ public class ProviderDelegate {
 	}
 
 	private void otherServiceBeans(Configuration config, List<Object> allBeans) throws Exception {
-		// find it out if service bean instances are available
+		// find it outGovernance if service bean instances are available
 		Object[] beans = (Object[]) Config.getNonNullEntry(config,
 			ServiceProvider.COMPONENT,
 			BEANS,
@@ -2911,7 +2911,7 @@ public class ProviderDelegate {
 			}
 		}
 
-		// find it out if data service bean instances are available
+		// find it outGovernance if data service bean instances are available
 		Object[] dataBeans = (Object[]) Config.getNonNullEntry(config,
 			ServiceProvider.COMPONENT,
 			DATA_BEANS,
@@ -2927,7 +2927,7 @@ public class ProviderDelegate {
 			}
 		}
 
-		// find it out if service classes are available
+		// find it outGovernance if service classes are available
 		Class[] beanClasses = (Class[]) Config.getNonNullEntry(config,
 			ServiceProvider.COMPONENT,
 			BEAN_CLASSES,
@@ -2939,7 +2939,7 @@ public class ProviderDelegate {
 				allBeans.add(instantiate(beanClass));
 		}
 
-		// find it out if Groovy scripts are available
+		// find it outGovernance if Groovy scripts are available
 		String[] scriptlets = (String[]) Config.getNonNullEntry(config,
 			ServiceProvider.COMPONENT,
 			SCRIPTLETS,

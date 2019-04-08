@@ -31,22 +31,22 @@ public class ArithmeticUtil implements SorcerConstants {
 	private static Job createJob(Flow flow, Access access) throws Exception {
 		Task t3 = task("t3", sig("subtract", Subtractor.class), 
 				context("subtract", operator.inVal("arg/x1"), operator.inVal("arg/x2"),
-						outVal("result/y")));
+						outVal("outDispatcher/y")));
 
 		Task t4 = task("t4", sig("multiply", Multiplier.class), 
 				context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
-						outVal("result/y")));
+						outVal("outDispatcher/y")));
 
 		Task t5 = task("t5", sig("add", Adder.class), 
 				context("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
-						outVal("result/y")));
+						outVal("outDispatcher/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job("j1", 
 				job("j2", t4, t5, strategy(flow, access)), 
 				t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+				pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
 				
 		return job;
 	}
@@ -58,22 +58,22 @@ public class ArithmeticUtil implements SorcerConstants {
 	public static Job createLocalJob() throws Exception {
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
 				context("subtract", operator.inVal("arg/x1"), operator.inVal("arg/x2"),
-						outVal("result/y")));
+						outVal("outDispatcher/y")));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
 				context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
-						outVal("result/y")));
+						outVal("outDispatcher/y")));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 				context("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
-						outVal("result/y")));
+						outVal("outDispatcher/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job("j1", sig("exert", ServiceJobber.class),
 				job("j2", t4, t5, sig("exert", ServiceJobber.class)),
 				t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+				pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
 
 		return job;
 	}

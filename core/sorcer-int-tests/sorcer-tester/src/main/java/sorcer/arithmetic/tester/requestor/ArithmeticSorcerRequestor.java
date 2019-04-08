@@ -27,24 +27,24 @@ public class ArithmeticSorcerRequestor extends SorcerRequestor {
                 sFi("net/subtract", sig("subtract", Subtractor.class)),
                 sFi("net/average", sig("average", Averager.class)),
                 context("t3-cxt", operator.inVal("arg/x1"), operator.inVal("arg/x2"),
-                        outVal("result/y")));
+                        outVal("outDispatcher/y")));
 
         Task t4 = task("t4", sFi("object", sig("multiply", MultiplierImpl.class)),
                 sFi("net", sig("multiply", Multiplier.class)),
                 context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
-                        outVal("result/y")));
+                        outVal("outDispatcher/y")));
 
         Task t5 = task("t5", sFi("object", sig("add", AdderImpl.class)),
                 sFi("net", sig("add", Adder.class)),
                 context("add", operator.inVal("arg/x1", 20.0), operator.inVal("arg/x2", 80.0),
-                        outVal("result/y")));
+                        outVal("outDispatcher/y")));
 
         Job job = job("j1", sFi("object", sig("exert", ServiceJobber.class)),
                 sFi("net", sig("exert", Jobber.class)),
                 job("j2", sig("exert", ServiceJobber.class), t4, t5),
                 t3,
-                pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-                pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
+                pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+                pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")),
                 metaFi("job1", fi("net", "j1"), fi("net", "j1/j2/t4")),
                 metaFi("job2", fi("net", "j1"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")));
 

@@ -76,7 +76,7 @@ public class SorcerDatabase {
     public SorcerDatabase(String homeDirectory)
         throws DatabaseException {
         // Open the Berkeley DB environment in transactional mode.
-        //System.out.println("Opening environment in: " + homeDirectory);
+        //System.outGovernance.println("Opening environment in: " + homeDirectory);
         EnvironmentConfig envConfig = new EnvironmentConfig();
         envConfig.setLockTimeout(LOCK_TIMEOUT, TimeUnit.MILLISECONDS);
         envConfig.setTransactional(true);

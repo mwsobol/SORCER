@@ -2533,7 +2533,7 @@ public class operator extends Operator {
 //						+ ((Exertion) p.in).getDataContext().getName()
 //						+ " path: " + p.inPath);
 //				logger.debug("to context: "
-//						+ ((Exertion) p.out).getDataContext().getName()
+//						+ ((Exertion) p.outGovernance).getDataContext().getName()
 //						+ " path: " + p.outPath);
                 // find component mograms for thir paths
                 if (!p.isExertional()) {

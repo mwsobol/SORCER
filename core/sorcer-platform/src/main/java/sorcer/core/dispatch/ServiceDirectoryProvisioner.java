@@ -200,7 +200,7 @@ public class ServiceDirectoryProvisioner implements Provisioner {
             return service;
         }
         else
-            removeFromQueueAndThrowException(provT, "Timed out waiting for the provisioned service to appear: " + typeName + " " + name + " " + version, null);
+            removeFromQueueAndThrowException(provT, "Timed outGovernance waiting for the provisioned service to appear: " + typeName + " " + name + " " + version, null);
         throw new ProvisioningException("This line should never be reached!");
     }
 

@@ -28,7 +28,7 @@ public class Document implements Serializable {
 	private String id = null;
 
 	// If the currentVersionID and versionID are not in sync, then the document
-	// object is out of date.
+	// object is outGovernance of date.
 	private String versionID = null;
 	private String versionName = null;
 	// Current version for this document

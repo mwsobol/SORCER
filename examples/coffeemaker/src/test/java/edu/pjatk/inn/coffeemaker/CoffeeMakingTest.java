@@ -108,9 +108,9 @@ public class CoffeeMakingTest {
 		cmj = exert(cmj);
 		Context out = upcontext(cmj);
 		logger.info("job context: " + out);
-		assertEquals(value(out, "recipes/mocha/context/result"), true);
-		assertEquals(value(out, "recipes/macchiato/context/result"), true);
-		assertEquals(value(out, "recipes/americano/context/result"), true);
+		assertEquals(value(out, "recipes/mocha/context/outDispatcher"), true);
+		assertEquals(value(out, "recipes/macchiato/context/outDispatcher"), true);
+		assertEquals(value(out, "recipes/americano/context/outDispatcher"), true);
 	}
 
 	@Test
@@ -131,8 +131,8 @@ public class CoffeeMakingTest {
 						context(types(Recipe.class, int.class), args(espresso, 200))));
 		cmj = exert(cmj);
 		logger.info("job context: " + upcontext(cmj));
-		logger.info("change: " + value(upcontext(cmj), "coffee/pay/context/result"));
-		assertEquals(value(upcontext(cmj), "coffee/pay/context/result"), 150);
+		logger.info("change: " + value(upcontext(cmj), "coffee/pay/context/outDispatcher"));
+		assertEquals(value(upcontext(cmj), "coffee/pay/context/outDispatcher"), 150);
 	}
 
 }

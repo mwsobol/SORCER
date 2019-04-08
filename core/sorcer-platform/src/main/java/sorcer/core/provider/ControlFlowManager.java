@@ -196,7 +196,7 @@ public class ControlFlowManager {
      * Process the Exertion accordingly if it is a job, task, or a Conditional
      * Exertion.
      *
-     * @return Exertion the result
+     * @return Exertion the outDispatcher
      * @see NetJob
      * @see NetTask
      * @see Conditional
@@ -210,19 +210,19 @@ public class ControlFlowManager {
             if (exertion.isConditional()) {
                 logger.info("exertion Conditional");
                 result = doConditional(exertion);
-                logger.info("exertion Conditional; result: " + result);
+                logger.info("exertion Conditional; outDispatcher: " + result);
             } else if (exertion.isJob()) {
                 logger.info("exertion isJob()");
                 result = doRendezvousExertion((Job) exertion);
-                logger.info("exertion isJob(); result: " + result);
+                logger.info("exertion isJob(); outDispatcher: " + result);
             } else if (exertion.isBlock()) {
                 logger.info("exertion isBlock()");
                 result = doBlock((Block) exertion);
-                logger.info("exertion isBlock(); result: " + result);
+                logger.info("exertion isBlock(); outDispatcher: " + result);
             } else if (exertion.isTask()) {
                 logger.info("exertion isTask()");
                 result = doTask((Task) exertion);
-                logger.info("exertion isTask(); result: " + result);
+                logger.info("exertion isTask(); outDispatcher: " + result);
                 for(ThrowableTrace t : ((Task)result).getExceptions()) {
                     logger.warn("Exception processing Task", t.getThrowable());
                 }

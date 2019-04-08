@@ -58,7 +58,7 @@ public class ExecCmd extends ShellCmd {
 		String token = tok.nextToken();
 		String arg = "";
 		if (token.equals("execEnt")) {
-			//CmdResult result = null;
+			//CmdResult outDispatcher = null;
 			token = tok.nextToken();
 			if (token.equals("more") || token.equals("less")
 					|| token.equals("cat")) {
@@ -85,10 +85,10 @@ public class ExecCmd extends ShellCmd {
 			out.println(result.getOut());   	
 			out.flush();
 			
-//			out.println(result.getExitValue());
-//			out.flush();
-//			out.println(result.getErr());
-//			out.flush();
+//			outGovernance.println(outDispatcher.getExitValue());
+//			outGovernance.flush();
+//			outGovernance.println(outDispatcher.getErr());
+//			outGovernance.flush();
 		} else {
 			out.println(COMMAND_USAGE);
 		}

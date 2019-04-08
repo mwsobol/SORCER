@@ -1,9 +1,6 @@
 package sorcer.service;
 
-import net.jini.lease.LeaseRenewalManager;
 import sorcer.co.tuple.ExecDependency;
-import sorcer.core.DispatchResult;
-import sorcer.core.Dispatcher;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.modeling.Discipline;
 import sorcer.service.modeling.Exploration;
@@ -44,8 +41,8 @@ public class TransdisciplineExplorer implements Service, Exploration {
                     xrt.setContext(transdiscipline.input);
                 }
             }
-            xrt.dispatch(transdiscipline.getGovernance());
-            transdiscipline.result = xrt.exert();
+            xrt.dispatch(transdiscipline.getOutGovernance());
+            transdiscipline.outDispatcher = xrt.exert();
             execDependencies(transdiscipline.getName(), args);
             return transdiscipline.getOutput();
         } catch (RemoteException e) {

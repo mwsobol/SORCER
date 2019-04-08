@@ -62,7 +62,7 @@ public class Mandate implements Serializable {
 		return args.length;
 	}
 
-	// get result returned from DB transaction
+	// get outDispatcher returned from DB transaction
 	public Result getResult() {
 		return results;
 	}

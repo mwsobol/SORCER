@@ -42,7 +42,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
 				context("subtract", inVal("arg/t4"), inVal("arg/t5"),
-						result("block/result", Direction.OUT)));
+						result("block/outDispatcher", Direction.OUT)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
@@ -55,7 +55,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 		Block block = block("block", t4, t5, t3);
 
 		Block result = exert(block);
-		assertEquals(value(context(result), "block/result"), 400.00);
+		assertEquals(value(context(result), "block/outDispatcher"), 400.00);
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
                 context("subtract", inVal("arg/t4"), inVal("arg/t5"),
-						result("block/result", Direction.OUT)));
+						result("block/outDispatcher", Direction.OUT)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1"), inVal("arg/x2"),
@@ -78,7 +78,7 @@ public class  LocalBlockExertions implements SorcerConstants {
                 inVal("arg/x3", 20.0), inVal("arg/x4", 80.0)));
 
 		Block result = exert(block);
-		assertEquals(value(context(result), "block/result"), 400.00);
+		assertEquals(value(context(result), "block/outDispatcher"), 400.00);
 
 	}
 
@@ -89,7 +89,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 		// cosed with 10.0 and 50.0 respectively
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
                 context("subtract", inVal("arg/t4"), inVal("arg/t5"),
-						result("block/result", Direction.OUT)));
+						result("block/outDispatcher", Direction.OUT)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 20.0), inVal("arg/x2", 10.0),
@@ -104,7 +104,7 @@ public class  LocalBlockExertions implements SorcerConstants {
                 inVal("arg/x3", 20.0), inVal("arg/x4", 80.0)));
 
 		Block result = exert(block);
-		assertEquals(value(context(result), "block/result"), 400.00);
+		assertEquals(value(context(result), "block/outDispatcher"), 400.00);
 
 	}
 
@@ -115,11 +115,11 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						result("block/result")));
+						result("block/outDispatcher")));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
                 context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("block/result")));
+						result("block/outDispatcher")));
 
 		Block sb = block("block",
 				context(val("y1", 100), val("y2", 200)),
@@ -128,18 +128,18 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		Mogram out = exert(sb);
 //		logger.info("block context1: " + context(block));
-//		logger.info("result: " + eval(context(block), "block/result"));
-		assertEquals(value(context(out), "block/result"), 100.00);
+//		logger.info("outDispatcher: " + eval(context(block), "block/outDispatcher"));
+		assertEquals(value(context(out), "block/outDispatcher"), 100.00);
 
 		// the initial scope of block is updated
 		bind(sb, val("y1", 200.0), val("y2", 100.0));
 //		logger.info("block context1: " + context(sb));
 
-//		out = exert(sb, val("y1", 200.0), val("y2", 100.0));
+//		outGovernance = exert(sb, val("y1", 200.0), val("y2", 100.0));
 		out = exert(sb);
-//		logger.info("block context2: " + context(out));
-//		logger.info("result: " + eval(context(block), "block/result"));
-		assertEquals(value(context(out), "block/result"), 500.0);
+//		logger.info("block context2: " + context(outGovernance));
+//		logger.info("outDispatcher: " + eval(context(block), "block/outDispatcher"));
+		assertEquals(value(context(out), "block/outDispatcher"), 500.0);
 
 	}
 
@@ -148,11 +148,11 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						result("block/result")));
+						result("block/outDispatcher")));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
                 context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("block/result")));
+						result("block/outDispatcher")));
 
 		Block block = block("block",
 				context(val("y1", 100), val("y2", 200)),
@@ -161,13 +161,13 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		block = exert(block);
 //		logger.info("block context: " + context(block));
-//		logger.info("result: " + eval(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 100.00);
+//		logger.info("outDispatcher: " + eval(context(block), "block/outDispatcher"));
+		assertEquals(value(context(block), "block/outDispatcher"), 100.00);
 
 		block = exert(block, val("block/y1", 200.0), val("block/y2", 100.0));
 //		logger.info("block context: " + context(block));
-//		logger.info("result: " + eval(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 500.0);
+//		logger.info("outDispatcher: " + eval(context(block), "block/outDispatcher"));
+		assertEquals(value(context(block), "block/outDispatcher"), 500.0);
 
 	}
 
@@ -175,7 +175,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 	public void altBlockTest() throws Exception {
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
                 context("subtract", inVal("arg/t4"), inVal("arg/t5"),
-						result("block/result", Direction.OUT)));
+						result("block/outDispatcher", Direction.OUT)));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
@@ -187,7 +187,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		Task t6 = task("t6", sig("average", AveragerImpl.class),
                 context("average", inVal("arg/t4"), inVal("arg/t5"),
-						result("block/result", Direction.OUT)));
+						result("block/outDispatcher", Direction.OUT)));
 
 		Block block = block("block", t4, t5,
 				alt(opt(condition((Context<Double> cxt) -> value(cxt, "arg/t4") > value(cxt, "arg/t5")), t3),
@@ -198,21 +198,21 @@ public class  LocalBlockExertions implements SorcerConstants {
 //		logger.info("block context: " + context(block));
 
 		Block result = exert(block);
-//		logger.info("block context: " + context(result));
-//		logger.info("result: " + eval(context(result), "block/result"));
-		assertEquals(value(context(result), "block/result"), 400.00);
+//		logger.info("block context: " + context(outDispatcher));
+//		logger.info("outDispatcher: " + eval(context(outDispatcher), "block/outDispatcher"));
+		assertEquals(value(context(result), "block/outDispatcher"), 400.00);
 
 //		TODO the state after execution changes to reuse the block for another execution?
 // 		problem with clearScope() that is commented due to conflict with
 // 		return eval path when being as input path
-//		result = exert(block, val("block/t5/arg/x1", 200.0), val("block/t5/arg/x2", 800.0));
-//		logger.info("block context: " + context(result));
-//		logger.info("result: " + eval(context(result), "block/result"));
-//		assertEquals(eval(context(result), "block/result"), 750.00);
+//		outDispatcher = exert(block, val("block/t5/arg/x1", 200.0), val("block/t5/arg/x2", 800.0));
+//		logger.info("block context: " + context(outDispatcher));
+//		logger.info("outDispatcher: " + eval(context(outDispatcher), "block/outDispatcher"));
+//		assertEquals(eval(context(outDispatcher), "block/outDispatcher"), 750.00);
 
 		t3 = task("t3", sig("subtract", SubtractorImpl.class),
                 context("subtract", inVal("arg/t4"), inVal("arg/t5"),
-						result("block/result", Direction.OUT)));
+						result("block/outDispatcher", Direction.OUT)));
 
 		t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
@@ -224,38 +224,38 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		t6 = task("t6", sig("average", AveragerImpl.class),
                 context("average", inVal("arg/t4"), inVal("arg/t5"),
-						result("block/result", Direction.OUT)));
+						result("block/outDispatcher", Direction.OUT)));
 
 		block = block("block", t4, t5,
 				alt(opt(condition((Context<Double> cxt) -> (double)value(cxt, "arg/t4") > (double)value(cxt, "arg/t5")), t3),
 						opt(condition((Context<Double> cxt) -> value(cxt, "arg/t4") <= value(cxt, "arg/t5")), t6)));
 		result = exert(block, val("block/t5/arg/x1", 200.0), val("block/t5/arg/x2", 800.0));
-		assertEquals(value(context(result), "block/result"), 750.00);
+		assertEquals(value(context(result), "block/outDispatcher"), 750.00);
 	}
 
 	@Test
 	public void optBlockTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						result("out")));
+						result("outGovernance")));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
                 context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("out")));
+						result("outGovernance")));
 
 		Block block = block("block", t4,
-				opt(condition((Context<Double> cxt) -> value(cxt, "out") > 600.0), t5));
+				opt(condition((Context<Double> cxt) -> value(cxt, "outGovernance") > 600.0), t5));
 
 		block = exert(block);
 //		logger.info("block context: " + context(block));
-//		logger.info("result: " + eval(context(block), "out"));
+//		logger.info("outDispatcher: " + eval(context(block), "outGovernance"));
 		assertEquals(value(context(block), "condition/eval"), false);
-		assertEquals(value(context(block), "out"), 500.0);
+		assertEquals(value(context(block), "outGovernance"), 500.0);
 
 		block = exert(block, val("block/t4/arg/x1", 200.0), val("block/t4/arg/x2", 800.0));
 //		logger.info("block context: " + context(block));
-//		logger.info("result: " + eval(context(block), "out"));
-		assertEquals(value(context(block), "out"), 100.0);
+//		logger.info("outDispatcher: " + eval(context(block), "outGovernance"));
+		assertEquals(value(context(block), "outGovernance"), 100.0);
 	}
 
 	@Test
@@ -268,7 +268,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		block = exert(block);
 		logger.info("block context: " + context(block));
-		logger.info("result: " + value(context(block), "x1"));
+		logger.info("outDispatcher: " + value(context(block), "x1"));
 		assertEquals(value(context(block), "x1"), 82.00);
 	}
 
@@ -277,11 +277,11 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						result("block/result")));
+						result("block/outDispatcher")));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
                 context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("block/result")));
+						result("block/outDispatcher")));
 
 		Block block = block("block", sig("exert", ServiceConcatenator.class),
                 context(inVal("x1", 4.0), inVal("x2", 5.0)),
@@ -295,13 +295,13 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 		block = exert(block);
 //		logger.info("block context: " + context(block));
-//		logger.info("result: " + eval(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 100.00);
+//		logger.info("outDispatcher: " + eval(context(block), "block/outDispatcher"));
+		assertEquals(value(context(block), "block/outDispatcher"), 100.00);
 
 		block = exert(block, val("block/x1", 10.0), val("block/x2", 6.0));
 //		logger.info("block context: " + context(block));
-//		logger.info("result: " + eval(context(block), "block/result"));
-		assertEquals(value(context(block), "block/result"), 500.00);
+//		logger.info("outDispatcher: " + eval(context(block), "block/outDispatcher"));
+		assertEquals(value(context(block), "block/outDispatcher"), 500.00);
 	}
 
 }

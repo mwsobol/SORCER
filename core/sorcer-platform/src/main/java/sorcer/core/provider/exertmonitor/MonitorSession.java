@@ -502,7 +502,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 
 	public void timedOut() {
 		try {
-			runtimeExertion.reportException(new Exception("This exertion was timed out."));
+			runtimeExertion.reportException(new Exception("This exertion was timed outGovernance."));
 			runtimeExertion.setStatus(Exec.FAILED);
 
 			fireRemoteEvent();
@@ -510,7 +510,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 			persist();
 
 		} catch (Exception e) {
-			logger.error("Exception occurred which calling timed out");
+			logger.error("Exception occurred which calling timed outGovernance");
 		}
 	}
 
