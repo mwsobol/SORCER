@@ -1700,7 +1700,7 @@ public class operator extends Operator {
         return multiFi;
     }
 
-    public static ServiceFidelity sFi(Signature... signatures) {
+    public static ServiceFidelity sigFi(Signature... signatures) {
         ServiceFidelity fi = new ServiceFidelity(signatures);
         fi.fiType = Fi.Type.SIG;
         return fi;
@@ -1905,21 +1905,21 @@ public class operator extends Operator {
         return fi;
     }
 
-    public static ServiceFidelity sFi(String name, Signature... signatures) {
+    public static ServiceFidelity sigFi(String name, Signature... signatures) {
         ServiceFidelity fi = new ServiceFidelity(name, signatures);
         fi.setSelect(signatures[0]);
         fi.fiType = Fi.Type.SIG;
         return fi;
     }
 
-    public static ServiceFidelity sFi(String name, Ref... references) {
+    public static ServiceFidelity sigFi(String name, Ref... references) {
         ServiceFidelity fi = new ServiceFidelity(name, references);
         fi.setSelect(references[0]);
         fi.fiType = Fi.Type.REF;
         return fi;
     }
 
-    public static ServiceFidelity sFi(Ref... references) {
+    public static ServiceFidelity sigFi(Ref... references) {
         ServiceFidelity fi = new ServiceFidelity(references);
         fi.fiType = Fi.Type.REF;
         return fi;

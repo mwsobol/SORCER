@@ -65,7 +65,7 @@ public class NetletTest {
         if (!result.getErr().isEmpty())
             logger.info("batchCmdTest Result ERROR: " + result.getErr());
         assertFalse(result.getErr().contains(EXCEPTION));
-        assertTrue(res.contains("outGovernance/y = 300.0"));
+        assertTrue(res.contains("out/y = 300.0"));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class NetletTest {
         if (!result.getErr().isEmpty())
             logger.info("batchCmdTest Result ERROR: " + result.getErr());
         assertFalse(result.getErr().contains(EXCEPTION));
-        assertTrue(res.contains("outGovernance/y = 300.0"));
+        assertTrue(res.contains("out/y = 300.0"));
     }
 
     static  String getNshDir() {

@@ -121,7 +121,7 @@ public class AdderUI extends JPanel implements SorcerConstants {
 
 	private PositionalContext createServiceContext(String userLine) {
 		context = new PositionalContext("adder");
-//		System.outGovernance.println("user line: " + userLine);
+//		System.out.println("user line: " + userLine);
 		String data[] = SorcerUtil.getTokens(userLine, ", ");
 		try {
 			for (int i = 0; i < data.length; i++) {

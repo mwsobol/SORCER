@@ -34,35 +34,35 @@ public class NetMograms {
 	public void exertTask() throws Exception  {
 
 		Task t5 = task("t5", sig("add", Adder.class),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		Exertion out = exert(t5);
 		Context cxt = context(out);
-		logger.info("outGovernance context: " + cxt);
+		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
-		logger.info("context @ outDispatcher/y: " + value(cxt, "outDispatcher/y"));
+		logger.info("context @ result/y: " + value(cxt, "result/y"));
 
 		// get a single context argument
-		assertEquals(100.0, value(cxt, "outDispatcher/y"));
+		assertEquals(100.0, value(cxt, "result/y"));
 
 		// get the subcontext output from the context
-		assertTrue(context(ent("arg/x1", 20.0), ent("outDispatcher/y", 100.0)).equals(
-				value(cxt, result("outDispatcher/context", outPaths("arg/x1", "outDispatcher/y")))));
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
 	@Test
 	public void valueTask() throws Exception  {
 
 		Task t5 = task("t5", sig("add", Adder.class),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		// get the outDispatcher eval
+		// get the result eval
 		assertTrue(exec(t5).equals(100.0));
 
 		// get the subcontext output from the exertion
-		assertTrue(context(ent("arg/x1", 20.0), ent("outDispatcher/y", 100.0)).equals(
-				exec(t5, outPaths("arg/x1", "outDispatcher/y"))));
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				exec(t5, outPaths("arg/x1", "result/y"))));
 
 	}
 
@@ -70,7 +70,7 @@ public class NetMograms {
     public void sessionTask() throws Exception  {
 
         Task sum = task("t6", sig("sum", Adder.class, prvName("Adder")),
-                cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+                cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
         assertTrue(exec(sum).equals(100.0));
         assertTrue(exec(sum).equals(200.0));
@@ -81,11 +81,11 @@ public class NetMograms {
 	public void beanValueTask() throws Exception  {
 
 		Task t5 = task("t5", sig("add", Adder.class, prvName("Session Adder")),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
         Uuid cid = id(context(t5));
 		Context out = context(exert(t5));
-		assertTrue(value(out, "outDispatcher/y").equals(100.0));
+		assertTrue(value(out, "result/y").equals(100.0));
 		assertTrue(id(out).equals(cid));
 	}
 
@@ -96,18 +96,18 @@ public class NetMograms {
 		provider.clearSessions();
 
 		Task t5 = task("t5", sig("add", Adder.class, prvName("Session Adder")),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		t5.setContext(cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+		t5.setContext(cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 		Context out = context(exert(t5));
-		assertTrue(value(out, "outDispatcher/y").equals(100.0));
+		assertTrue(value(out, "result/y").equals(100.0));
 		assertTrue(provider.getSessionIds().size() == 1);
 
-		t5.setContext(cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+		t5.setContext(cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 		exert(t5);
 		assertTrue(provider.getSessionIds().size() == 2);
 
-		t5.setContext(cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+		t5.setContext(cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 		exert(t5);
 		assertTrue(provider.getSessionIds().size() == 3);
 
@@ -122,11 +122,11 @@ public class NetMograms {
 		provider.clearSessions();
 
 		Task t5 = task("t5", sig("add", Adder.class, prvName("Session Adder")),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		Uuid cid = id(context(t5));
 		Context out = context(exert(t5));
-		assertTrue(value(out, "outDispatcher/y").equals(100.0));
+		assertTrue(value(out, "result/y").equals(100.0));
 		assertTrue(id(out).equals(cid));
 		assertTrue(provider.getSessionIds().size() == 1);
 
@@ -147,13 +147,13 @@ public class NetMograms {
 				"t5",
 				sig("add", Adder.class),
 				context("add", inVal("arg/x1", 20.0),
-						inVal("arg/x2", 80.0), result("outDispatcher/y")),
+						inVal("arg/x2", 80.0), result("result/y")),
 				strategy(Access.PULL, Wait.YES));
 
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
-		logger.info("t5 eval: " + get(t5, "outDispatcher/y"));
-		assertEquals(get(t5, "outDispatcher/y"), 100.0);
+		logger.info("t5 eval: " + get(t5, "result/y"));
+		assertEquals(get(t5, "result/y"), 100.0);
 	}
 
 	@Test
@@ -161,14 +161,14 @@ public class NetMograms {
 
 		// three entry model
 		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-				ent(sig("add", Adder.class, prvName("Adder"), result("outDispatcher/y", inPaths("arg/x1", "arg/x2")))),
+				ent(sig("add", Adder.class, prvName("Adder"), result("result/y", inPaths("arg/x1", "arg/x2")))),
 				response("add", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);
 
-		logger.info("outGovernance: " +out );
+		logger.info("out: " +out );
 		assertTrue(get(out, "add").equals(100.0));
-		assertTrue(get(mod, "outDispatcher/y").equals(100.0));
+		assertTrue(get(mod, "result/y").equals(100.0));
 
 	}
 }

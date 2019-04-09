@@ -10,7 +10,6 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Multiply;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Provision;
@@ -112,8 +111,8 @@ public class TaskTest {
 		ServiceExertion.debug = true;
 
 		Task task = task("add",
-				sFi("net", sig("add", Adder.class)),
-				sFi("object", sig("add", AdderImpl.class)),
+				sigFi("net", sig("add", Adder.class)),
+				sigFi("object", sig("add", AdderImpl.class)),
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("outDispatcher/y")));
 
@@ -133,8 +132,8 @@ public class TaskTest {
 		ServiceExertion.debug = true;
 
 		Task task = task("add",
-				sFi("net", sig("add", Adder.class)),
-				sFi("object", sig("add", AdderImpl.class)),
+				sigFi("net", sig("add", Adder.class)),
+				sigFi("object", sig("add", AdderImpl.class)),
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("outDispatcher/y")));
 

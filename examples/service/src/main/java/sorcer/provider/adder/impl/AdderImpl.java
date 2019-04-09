@@ -31,11 +31,11 @@ public class AdderImpl implements Adder {
 		List<String> outpaths = cxt.getOutPaths();
 		logger.info("outpaths: " + outpaths);
 
-		// calculate the outDispatcher
+		// calculate the result
 		Double result = 0.0;
 		for (Double value : inputs)
 			result += value;
-		logger.info("outDispatcher: " + result);
+		logger.info("result: " + result);
 		
 		// update the service context
 		if (provider != null)
@@ -46,7 +46,7 @@ public class AdderImpl implements Adder {
 		if (context.getReturnPath() != null && context.getReturnPath().getPath() != null) {
 			context.setReturnValue(result);
 		} else if (outpaths.size() == 1) {
-			// put the outDispatcher in the existing output path
+			// put the result in the existing output path
 			cxt.putValue(outpaths.get(0), result);
 		} else {
 			cxt.putValue(RESULT_PATH, result);

@@ -42,7 +42,7 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mphFi", sFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
+                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mphFi", "arg/x1", "arg/x2"));
 
@@ -59,7 +59,7 @@ public class ModelMultiFidelities {
         Model mdl = model(
                 ent("arg/x1", entFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
                 ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
-                ent("mphFi", sFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
+                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mphFi", "arg/x1", "arg/x2"));
 
@@ -81,19 +81,19 @@ public class ModelMultiFidelities {
         Model mdl = model(
                 ent("arg/x1", entFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
                 ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
-                ent("sFi", sFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
+                ent("sigFi", sigFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))))),
-                response("sFi", "arg/x1", "arg/x2"));
+                response("sigFi", "arg/x1", "arg/x2"));
 
         logger.info("DEPS: " + printDeps(mdl));
 
-        reconfigure(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("sFi", "multiply"));
+        reconfigure(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("sigFi", "multiply"));
         logger.info("trace: " + fiTrace(mdl));
         Context out = response(mdl);
         logger.info("outGovernance: " + out);
         assertTrue(get(out, "arg/x1").equals(11.0));
         assertTrue(get(out, "arg/x2").equals(91.0));
-        assertTrue(get(out, "sFi").equals(1001.0));
+        assertTrue(get(out, "sigFi").equals(1001.0));
         assertTrue(get(mdl, "outDispatcher/y").equals(1001.0));
     }
 
@@ -102,7 +102,7 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mphFi", sFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
+                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mphFi", "arg/x1", "arg/x2"));
 
@@ -120,7 +120,7 @@ public class ModelMultiFidelities {
             val("sig1", sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2")))),
             val("sig2", sig("multiply", MultiplierImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2")))),
 
-            ent("mphFi", sFi(ref("sig1"), ref("sig2"))),
+            ent("mphFi", sigFi(ref("sig1"), ref("sig2"))),
             response("mphFi", "arg/x1", "arg/x2"));
 
         Context out = response(mod, fi("mphFi", "sig1"));

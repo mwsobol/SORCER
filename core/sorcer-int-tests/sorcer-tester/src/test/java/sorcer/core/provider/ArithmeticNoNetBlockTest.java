@@ -125,8 +125,8 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 	public void batchFiTask() throws Exception {
 
 		Task t4 = task("t4",
-				sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
-				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
+				sigFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
+				sigFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
 				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						outVal("outDispatcher/y")));
 

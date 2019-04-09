@@ -162,8 +162,8 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 	public void objectTaskFidelity() throws Exception {
 
 		Task t4 = task("t4",
-				sFi("object1", sig("multiply", MultiplierImpl.class)),
-				sFi("object2", sig("add", AdderImpl.class)),
+				sigFi("object1", sig("multiply", MultiplierImpl.class)),
+				sigFi("object2", sig("add", AdderImpl.class)),
 				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						outVal("outDispatcher/y")));
 

@@ -36,13 +36,13 @@ public class ServiceRequestor {
 
 		Context cxt = (Context) exec(req);
 
-		logger.info("outGovernance context: " + cxt);
+		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
-		logger.info("context @ outGovernance/y: " + value(cxt, "outGovernance/y"));
+		logger.info("context @ out/y: " + value(cxt, "out/y"));
 
 		// get a single context argument
-		assertEquals(300.0, value(cxt, "outGovernance/y"));
+		assertEquals(300.0, value(cxt, "out/y"));
 	}
 
 }

@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 @SuppressWarnings("rawtypes")
 public interface Adder {
 
-	String RESULT_PATH = "eval/outDispatcher";
+	String RESULT_PATH = "eval/result";
 
 	Context add(Context context) throws RemoteException, ContextException;
 

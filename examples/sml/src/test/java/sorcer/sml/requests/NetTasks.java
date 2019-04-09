@@ -205,12 +205,12 @@ public class NetTasks {
 	public void arithmeticNetFiTask() throws Exception {
 
 		Task task = task("add",
-				sFi("net", sig("add", Adder.class)),
-				sFi("object", sig("add", AdderImpl.class)),
+				sigFi("net", sig("add", Adder.class)),
+				sigFi("object", sig("add", AdderImpl.class)),
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("outDispatcher/y")));
 
-		logger.info("sFi: " + fi(task));
+		logger.info("sigFi: " + fi(task));
 		logger.info("sFis: " + size(srvFis(task)));
 
 //		task = exert(task, metaFi("object"));
@@ -274,8 +274,8 @@ public class NetTasks {
 	public void multiFiTask() throws Exception {
 
 		Task t4 = task("t4",
-				sFi("net1", sig("multiply", Multiplier.class)),
-				sFi("net2", sig("add", Adder.class)),
+				sigFi("net1", sig("multiply", Multiplier.class)),
+				sigFi("net2", sig("add", Adder.class)),
 				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("outDispatcher/y")));
 
@@ -292,8 +292,8 @@ public class NetTasks {
 	public void batchFiTask() throws Exception {
 
 		Task t4 = task("t4",
-				sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
-				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
+				sigFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
+				sigFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
 				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						outVal("outDispatcher/y")));
 
@@ -307,8 +307,8 @@ public class NetTasks {
 		ServiceExertion.debug = true;
 
 		Task task = task("add",
-				sFi("object", sig("add", Adder.class)),
-				sFi("net", sig("add", AdderImpl.class)),
+				sigFi("object", sig("add", Adder.class)),
+				sigFi("net", sig("add", AdderImpl.class)),
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("outDispatcher/y")));
 

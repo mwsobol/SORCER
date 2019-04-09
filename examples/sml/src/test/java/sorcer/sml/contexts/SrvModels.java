@@ -90,7 +90,7 @@ public class SrvModels {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mphFi", sFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
+                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mphFi", "arg/x1", "arg/x2"));
 

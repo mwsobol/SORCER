@@ -39,20 +39,20 @@ public class LocalMograms {
 
 		Task out = exert(t5);
 		Context cxt = context(out);
-		logger.info("outGovernance context: " + cxt);
+		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ calculated/provider: " + value(cxt, "calculated/provider"));
-		logger.info("context @ outDispatcher/eval: " + value(cxt, "eval/outDispatcher"));
-		// same as "eval/outDispatcher"
-		logger.info("context @ outDispatcher/eval: " + value(cxt, Adder.RESULT_PATH));
+		logger.info("context @ result/eval: " + value(cxt, "eval/result"));
+		// same as "eval/result"
+		logger.info("context @ result/eval: " + value(cxt, Adder.RESULT_PATH));
 
 		// get a single context argument
-		assertEquals(100.0, value(cxt, "eval/outDispatcher"));
+		assertEquals(100.0, value(cxt, "eval/result"));
 
 		// get the subcontext output from the context
-		assertTrue(context(ent("arg/x1", 20.0), ent("eval/outDispatcher", 100.0)).equals(
-				value(cxt, outPaths("arg/x1", "eval/outDispatcher"))));
+		assertTrue(context(ent("arg/x1", 20.0), ent("eval/result", 100.0)).equals(
+				value(cxt, outPaths("arg/x1", "eval/result"))));
 	}
 
 	@Test
@@ -64,20 +64,20 @@ public class LocalMograms {
 
 		Task out = exert(t5);
 		Context cxt = context(out);
-		logger.info("outGovernance context: " + cxt);
+		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ calculated/provider: " + value(cxt, "calculated/provider"));
-		logger.info("context @ outDispatcher/eval: " + value(cxt, "eval/outDispatcher"));
-		// same as "eval/outDispatcher"
-		logger.info("context @ outDispatcher/eval: " + value(cxt, Adder.RESULT_PATH));
+		logger.info("context @ result/eval: " + value(cxt, "eval/result"));
+		// same as "eval/result"
+		logger.info("context @ result/eval: " + value(cxt, Adder.RESULT_PATH));
 
 		// get a single context argument
-		assertEquals(100.0, value(cxt, "eval/outDispatcher"));
+		assertEquals(100.0, value(cxt, "eval/result"));
 
 		// get the subcontext output from the context
-		assertTrue(context(ent("arg/x1", 20.0), ent("eval/outDispatcher", 100.0)).equals(
-				value(cxt, outPaths("arg/x1", "eval/outDispatcher"))));
+		assertTrue(context(ent("arg/x1", 20.0), ent("eval/result", 100.0)).equals(
+				value(cxt, outPaths("arg/x1", "eval/result"))));
 	}
 
 	@Test
@@ -85,16 +85,16 @@ public class LocalMograms {
 
 		// a service bean AdderImpl exerted by the SessionBeanProvider container
 		Task t5 = task("t5", trgSig("add", AdderImpl.class, SessionBeanProvider.class),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		Uuid cid = id(context(t5));
 		Context out = context(exert(t5));
-		assertTrue(value(out, "outDispatcher/y").equals(100.0));
+		assertTrue(value(out, "result/y").equals(100.0));
 		assertTrue(value(out, "bean/session") == null);
 		assertTrue(id(out).equals(cid));
 
 		out = context(exert(t5));
-		assertTrue(value(out, "outDispatcher/y").equals(100.0));
+		assertTrue(value(out, "result/y").equals(100.0));
 		assertTrue(value(out, "bean/session").equals(cid));
 		assertTrue(id(out).equals(cid));
 	}
@@ -105,23 +105,23 @@ public class LocalMograms {
         Object provider = SessionBeanProvider.class.newInstance();
         Task t5 = task("t5", sig("add", AdderImpl.class, provider),
                 cxt("t5-add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                        result("outDispatcher/y", session(append("arg/x1", "arg/x2"),
-								read("arg/x1", "arg/x2"), write("outDispatcher/y")))));
+                        result("result/y", session(append("arg/x1", "arg/x2"),
+								read("arg/x1", "arg/x2"), write("result/y")))));
 
         Uuid cid = id(context(t5));
         Context out = context(exert(t5));
-        logger.info("outGovernance: " + out);
-        assertTrue(value(out, "outDispatcher/y").equals(100.0));
+        logger.info("out: " + out);
+        assertTrue(value(out, "result/y").equals(100.0));
         // no sessions yet
         assertTrue(value(out, "bean/session") == null);
 
         Task t6 = task("t6", sig("nothing", AdderImpl.class, provider),
-                cxt("t6-add", result(session(state("arg/x1", "arg/x2", "outDispatcher/y")))));
+                cxt("t6-add", result(session(state("arg/x1", "arg/x2", "result/y")))));
 
         setId(context(t6), id(out));
         out = context(exert(t6));
-        logger.info("outGovernance: " + out);
-        assertTrue(value(out, "outDispatcher/y").equals(100.0));
+        logger.info("out: " + out);
+        assertTrue(value(out, "result/y").equals(100.0));
         // session from the previous call
         assertTrue(value(out, "bean/session").equals(cid));
 
@@ -130,8 +130,8 @@ public class LocalMograms {
 
         setId(context(t7), id(out));
         out = context(exert(t7));
-        logger.info("outGovernance: " + out);
-        assertTrue(value(out, "outDispatcher/y").equals(100.0));
+        logger.info("out: " + out);
+        assertTrue(value(out, "result/y").equals(100.0));
         // session from the previous call
         assertTrue(value(out, "bean/session").equals(cid));
     }
@@ -140,36 +140,36 @@ public class LocalMograms {
 	public void evaluateTask() throws Exception {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		// get the outDispatcher eval
+		// get the result eval
 		assertEquals(100.0, exec(t5));
 
 		// get the output subcontext from the context
-		assertTrue(context(ent("arg/x1", 20.0), ent("outDispatcher/y", 100.0)).equals(
-				exec(t5, result(outPaths("arg/x1", "outDispatcher/y")))));
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
+				exec(t5, result(outPaths("arg/x1", "result/y")))));
 	}
 
 	@Test
 	public void filterTaskContext() throws Exception {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), outVal("outGovernance/val"),
-						outPaths("outGovernance/val", "calculated/provider")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), outVal("out/val"),
+						outPaths("out/val", "calculated/provider")));
 
 		// get the subcontext output from the exertion
 		assertTrue(context(ent("calculated/provider", AdderImpl.class.getName()),
-				ent("outGovernance/val", 100.0)).equals(exec(t5)));
+				ent("out/val", 100.0)).equals(exec(t5)));
 	}
 
 	@Test
 	public void singletonOutPathContext() throws Exception {
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), outVal("outGovernance/val"),
-						outPaths("outGovernance/val")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), outVal("out/val"),
+						outPaths("out/val")));
 
-		// get the outDispatcher eval
+		// get the result eval
 		assertEquals(100.0, exec(t5));
 	}
 
@@ -178,13 +178,13 @@ public class LocalMograms {
 
 		// three entry model
 		Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-				ent(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2")))),
+				ent(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
 					response("add", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);
 
 		assertTrue(get(out, "add").equals(100.0));
-		assertTrue(get(mod, "outDispatcher/y").equals(100.0));
+		assertTrue(get(mod, "result/y").equals(100.0));
 	}
 
 }

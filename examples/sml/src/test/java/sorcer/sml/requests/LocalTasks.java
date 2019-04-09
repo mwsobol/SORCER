@@ -110,8 +110,8 @@ public class LocalTasks {
 	public void batchFiTask() throws Exception {
 
 		Task t4 = task("t4",
-				sFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
-				sFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
+				sigFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
+				sigFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
 				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						outVal("outDispatcher/y")));
 
@@ -159,8 +159,8 @@ public class LocalTasks {
 	public void objectTaskFidelity() throws Exception {
 
 		Task t4 = task("t4",
-				sFi("object1", sig("multiply", MultiplierImpl.class)),
-				sFi("object2", sig("add", AdderImpl.class)),
+				sigFi("object1", sig("multiply", MultiplierImpl.class)),
+				sigFi("object2", sig("add", AdderImpl.class)),
 				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						outVal("outDispatcher/y")));
 
@@ -178,8 +178,8 @@ public class LocalTasks {
 		ServiceExertion.debug = true;
 
 		Task task = task("add",
-				sFi("net", sig("add", Adder.class)),
-				sFi("object", sig("add", AdderImpl.class)),
+				sigFi("net", sig("add", Adder.class)),
+				sigFi("object", sig("add", AdderImpl.class)),
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("outDispatcher/y")));
 

@@ -128,7 +128,7 @@ public class NshTest {
         String res =  result.getOut();
         logger.info("Result running: " + StringUtils.join(cmds, " ") + ":\n" + res);
         assertFalse(res.contains("ExertionException:"));
-        assertTrue(res.contains("outGovernance/y = 300.0"));
+        assertTrue(res.contains("out/y = 300.0"));
         assertFalse(result.getErr().contains("ExertionException:"));
     }
 
