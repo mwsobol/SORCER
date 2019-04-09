@@ -37,14 +37,14 @@ public interface Discipline extends Service, Contexting {
      *
      * @throws ServiceException
      */
-    public Service getOutGovernance() throws ServiceException;
+    public Service getOutGovernance();
 
     /**
      * Returns a dispatcher multifidelity
      *
      * @throws ServiceException
      */
-    public ServiceFidelity getDispatcherMultiFi() throws ServiceException;
+    public ServiceFidelity getDispatcherMultiFi();
 
     /**
      * Returns a dispatcher to govern this discipline
@@ -53,6 +53,14 @@ public interface Discipline extends Service, Contexting {
      * @throws ExertionException
      */
     public Exertion getDispatcher() throws ExertionException;
+
+    /**
+     * Returns an executed dispatcherof this discipline
+     *
+     * @return an executed dispatcher of this discipline
+     * @throws ExertionException
+     */
+    public Mogram getOutDispatcher();
 
     /**
      * Returns a service governance multifidelity

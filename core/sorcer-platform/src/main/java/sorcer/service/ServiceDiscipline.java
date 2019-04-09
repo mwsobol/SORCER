@@ -117,9 +117,9 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     public Service getGovernance() throws MogramException {
         // if no service then dispatch is standalone
         if (governanceMultiFi == null || governanceMultiFi.getSelect() == null) {
-            return dispatchMultiFi.getSelect();
+            return (Service) dispatchMultiFi.getSelect();
         }
-        return governanceMultiFi.getSelect();
+        return (Service) governanceMultiFi.getSelect();
     }
 
     @Override
@@ -137,7 +137,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public ServiceFidelity getDispatcherMultiFi() throws MogramException {
+    public ServiceFidelity getDispatcherMultiFi() {
         return dispatchMultiFi;
     }
 

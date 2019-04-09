@@ -168,6 +168,22 @@ public class operator extends Operator {
         }
     }
 
+    public static Service outGovernance(Discipline discipline) {
+        return discipline.getOutGovernance();
+    }
+
+    public static Service outGov(Discipline discipline) {
+        return discipline.getOutGovernance();
+    }
+
+    public static Mogram outDispatcher(Discipline discipline) {
+        return discipline.getOutDispatcher();
+    }
+
+    public static Mogram outDisp(Discipline discipline) {
+        return discipline.getOutDispatcher();
+    }
+
     public static Context eval(Model model, Context context)
             throws ContextException {
         Context rc = null;
