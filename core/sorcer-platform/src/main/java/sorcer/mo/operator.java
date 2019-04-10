@@ -879,15 +879,19 @@ public class operator {
         return servers;
     }
 
-    public static Discipline dis(Exertion consumer, Service server) {
+    public static Discipline disc(Mogram consumer, Service server) {
         return new ServiceDiscipline(consumer, server);
     }
-    public static Discipline dis(Exertion[] clients, Service[] servers) {
+    public static Discipline disc(Mogram[] clients, Service[] servers) {
         return new ServiceDiscipline(clients, servers);
     }
 
-    public static Discipline dis(List<Exertion> clients, List<Service> servers) {
+    public static Discipline disc(List<Mogram> clients, List<Service> servers) {
         return new ServiceDiscipline(clients, servers);
+    }
+
+    public static Discipline disc(Multidiscipline multidisc, String name) {
+        return multidisc.getDisciplines().get(name);
     }
 
     public static Discipline add(Discipline disciplne, Exertion client, Service server) {
@@ -899,4 +903,18 @@ public class operator {
         disciplne.add(clientFi, providerFi);
         return disciplne;
     }
+
+    public static Multidiscipline multidisc(Discipline... disciplines) {
+        return multidisc(null, disciplines);
+    }
+
+    public static Multidiscipline multidisc(String name, Discipline... disciplines) {
+        Multidiscipline md = new Multidiscipline(disciplines);
+        if (name != null) {
+            md.setName(name);
+        }
+        md.setExplorer(new TransdisciplineExplorer(md));
+        return md;
+    }
+
 }

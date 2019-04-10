@@ -14,9 +14,17 @@ import static sorcer.co.operator.path;
 
 public class TransdisciplineExplorer implements Service, Exploration {
 
-    Multidiscipline transdiscipline;
+    protected Multidiscipline transdiscipline;
     // exec discipline dependencies
     protected Map<String, List<ExecDependency>> dependentDisciplines;
+
+    public TransdisciplineExplorer() {
+        // do nothing
+    }
+
+    public TransdisciplineExplorer(Multidiscipline transdiscipline) {
+        this.transdiscipline = transdiscipline;
+    }
 
     public Map<String, List<ExecDependency>> getDependentDisciplines() {
         return dependentDisciplines;
@@ -33,7 +41,7 @@ public class TransdisciplineExplorer implements Service, Exploration {
             if (fis != null && fis.size() > 0) {
                 transdiscipline.selectFi(fis.get(0));
             }
-            Exertion xrt = transdiscipline.getDispatcher();
+            Exertion xrt = (Exertion) transdiscipline.getDispatcher();
             if (transdiscipline.input != null) {
                 if (transdiscipline.inConnector != null) {
                     xrt.setContext(((ServiceContext) transdiscipline.input).updateContextWith(transdiscipline.inConnector));
@@ -77,6 +85,11 @@ public class TransdisciplineExplorer implements Service, Exploration {
 
     @Override
     public Context explore(Context searchContext, Arg... args) throws ExploreException, RemoteException {
-        return null;
+        try {
+            transdiscipline.setInput(searchContext);
+            return (Context) execute(args);
+        } catch (ServiceException e) {
+            throw new ExploreException(e);
+        }
     }
 }

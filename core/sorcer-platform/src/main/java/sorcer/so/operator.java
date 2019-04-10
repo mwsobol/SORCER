@@ -31,6 +31,8 @@ import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.core.provider.Exerter;
 import sorcer.core.provider.exerter.ServiceShell;
+import sorcer.core.signature.ObjectSignature;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
 
@@ -157,6 +159,24 @@ public class operator extends Operator {
 
     public static void clear(Discipline discipline) throws MogramException {
         discipline.clear();
+    }
+
+    public static Context eval(Signature signature, Arg... args)
+        throws ContextException {
+        Context out = null;
+        try {
+            Object target = ((ObjectSignature) signature).build();
+
+            if (target instanceof Discipline) {
+                out = (Context) ((Discipline) target).execute(args);
+            } else if (target instanceof Model) {
+                Context cxt = Arg.selectContext(args);
+                out = ((Model)target).evaluate(cxt);
+            }
+        } catch (SignatureException | ServiceException | RemoteException e) {
+            throw new ContextException(e);
+        }
+        return out;
     }
 
     public static Context eval(Discipline discipline, Arg... args)

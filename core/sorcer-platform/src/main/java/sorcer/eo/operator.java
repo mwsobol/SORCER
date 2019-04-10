@@ -1584,7 +1584,27 @@ public class operator extends Operator {
         return fi;
     }
 
-    public static Fidelity fiSel(String name, Object select) {
+    public static DisciplineFidelity discFi(Fidelity dsptFi, Fidelity govFi) {
+        DisciplineFidelity fi = new DisciplineFidelity(dsptFi, govFi);
+        fi.fiType = Fi.Type.DISCIPLINE;
+        return fi;
+    }
+
+    public static Fidelity dsptFi(String name, Object select) {
+        Fidelity fi = new Fidelity(name);
+        fi.setSelect(select);
+        fi.fiType = Fi.Type.DISPATCHER;
+        return fi;
+    }
+
+    public static Fidelity govFi(String name, Object select) {
+        Fidelity fi = new Fidelity(name);
+        fi.setSelect(select);
+        fi.fiType = Fi.Type.GOVERNANCE;
+        return fi;
+    }
+
+    public static Fidelity cmptFi(String name, Object select) {
         Fidelity fi = new Fidelity(name);
         fi.setSelect(select);
         fi.fiType = Fi.Type.COMPONENT;

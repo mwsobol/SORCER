@@ -41,6 +41,14 @@ public interface Arg extends Serializable {
 		return null;
 	}
 
+	public static Context selectContext(Arg[] args) {
+		for (Arg arg : args) {
+			if (arg instanceof Context)
+				return (Context)arg;
+		}
+		return null;
+	}
+
 	public static Exertion selectExertion(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Exertion)

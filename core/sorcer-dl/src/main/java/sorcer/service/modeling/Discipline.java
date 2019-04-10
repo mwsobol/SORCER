@@ -23,7 +23,7 @@ import sorcer.service.*;
  *  Service governance is the indeterminate multifidelity process of decision-making
  *  and the process by which decisions are actualized in the form of a service federation.
  */
-public interface Discipline extends Service, Contexting {
+public interface Discipline extends Service, Contexting<Object> {
 
     /**
      * Returns a service governance specifying actualization of this discipline
@@ -41,8 +41,6 @@ public interface Discipline extends Service, Contexting {
 
     /**
      * Returns a dispatcher multifidelity
-     *
-     * @throws ServiceException
      */
     public ServiceFidelity getDispatcherMultiFi();
 
@@ -50,9 +48,9 @@ public interface Discipline extends Service, Contexting {
      * Returns a dispatcher to govern this discipline
      *
      * @return a dispatcher of this discipline
-     * @throws ExertionException
+     * @throws MogramException
      */
-    public Exertion getDispatcher() throws ExertionException;
+    public Mogram getDispatcher() throws MogramException;
 
     /**
      * Returns an executed dispatcherof this discipline
@@ -64,10 +62,8 @@ public interface Discipline extends Service, Contexting {
 
     /**
      * Returns a service governance multifidelity
-     *
-     * @throws MogramException
      */
-    public ServiceFidelity getGovernanceMultiFi() throws MogramException;
+    public ServiceFidelity getGovernanceMultiFi();
 
     /**
      * Returns a discipline input context.
@@ -75,7 +71,7 @@ public interface Discipline extends Service, Contexting {
      * @return a current input context
      * @throws ContextException
      */
-    public Context getInput() throws ContextException, ExertionException;
+    public Context getInput() throws ContextException, ContextException;
 
     /**
      * Returns an output context of this discipline.
@@ -83,13 +79,13 @@ public interface Discipline extends Service, Contexting {
      * @return a current output context
      * @throws ContextException
      */
-    public Context getOutput(Arg... args) throws ServiceException;
+    public Context getOutput(Arg... args) throws ContextException;
 
     /**
      * Adds a dispatcher-governance fidelity of this discipline.
      * Fidelity names are names of dispatcher and service correspondingly.
      */
-    public void add(Exertion dispatcher, Service governance);
+    public void add(Mogram dispatcher, Service governance);
 
     /**
      * Adds a dispatcher and governance fidelities to this discipline

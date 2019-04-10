@@ -1808,6 +1808,11 @@ public class operator extends Operator {
 		return signature.build(context);
 	}
 
+	public static Object instance(ObjectSignature signature)
+		throws SignatureException {
+		return signature.build();
+	}
+
 	public static <T> T build(ServiceMogram mogram) throws SignatureException {
 		return mogram.getInstance();
 	}
