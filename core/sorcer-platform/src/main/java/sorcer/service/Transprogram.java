@@ -27,18 +27,18 @@ import java.util.List;
 /**
  * @author Mike Sobolewski
  */
-abstract public class CompositeExertion extends ServiceExertion implements FederatedMogram  {
+abstract public class Transprogram extends ServiceProgram implements Governance {
 
 	/**
 	 * Component mograms of this job (the Composite Design pattern)
 	 */
 	protected List<Mogram> mograms = new ArrayList<Mogram>();
 
-	public CompositeExertion() {
+	public Transprogram() {
 		this("compound xrt=" + count++);
 	}
 
-	public CompositeExertion(String name) {
+	public Transprogram(String name) {
 		super(name);
 		mograms = new ArrayList<Mogram>();
 	}
@@ -53,7 +53,7 @@ abstract public class CompositeExertion extends ServiceExertion implements Feder
 
 	public void reset(int state) {
 		for(Mogram e : mograms)
-			((ServiceExertion)e).reset(state);
+			((ServiceProgram)e).reset(state);
 
 		this.setStatus(state);
 	}
@@ -66,7 +66,7 @@ abstract public class CompositeExertion extends ServiceExertion implements Feder
 		mograms.set(i, ex);
 	}
 
-	public Exertion getMasterExertion() {
+	public Program getMasterExertion() {
 		Uuid uuid = null;
 		try {
 			uuid = (Uuid) controlContext.getValue(ControlContext.MASTER_EXERTION);
@@ -77,9 +77,9 @@ abstract public class CompositeExertion extends ServiceExertion implements Feder
 				&& controlContext.getFlowType().equals(ControlContext.SEQUENTIAL)) {
 			return (size() > 0) ? get(size() - 1) : null;
 		} else {
-			Exertion master = null;
+			Program master = null;
 			for (int i = 0; i < size(); i++) {
-				if (((ServiceExertion) get(i)).getId().equals(
+				if (((ServiceProgram) get(i)).getId().equals(
 						uuid)) {
 					master = get(i);
 					break;
@@ -103,8 +103,8 @@ abstract public class CompositeExertion extends ServiceExertion implements Feder
 	/**
 	 * Returns the exertion at the specified index.
 	 */
-	public Exertion get(int index) {
-		return (Exertion) mograms.get(index);
+	public Program get(int index) {
+		return (Program) mograms.get(index);
 	}
 
 	public void setMograms(List<Mogram> mograms) {
@@ -112,7 +112,7 @@ abstract public class CompositeExertion extends ServiceExertion implements Feder
 
 	}
 
-	public Mogram addExertion(Exertion exertion, int priority) throws ExertionException {
+	public Mogram addExertion(Program exertion, int priority) throws ExertionException {
 		addMogram(exertion);
 		controlContext.setPriority(exertion, priority);
 		return this;
@@ -143,10 +143,10 @@ abstract public class CompositeExertion extends ServiceExertion implements Feder
 		return null;
 	}
 
-	public int compareByIndex(Exertion e) {
-		if (this.getIndex() > ((CompositeExertion) e).getIndex())
+	public int compareByIndex(Program e) {
+		if (this.getIndex() > ((Transprogram) e).getIndex())
 			return 1;
-		else if (this.getIndex() < ((CompositeExertion) e).getIndex())
+		else if (this.getIndex() < ((Transprogram) e).getIndex())
 			return -1;
 		else
 			return 0;

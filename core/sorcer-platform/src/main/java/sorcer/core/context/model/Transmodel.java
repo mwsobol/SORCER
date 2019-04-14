@@ -18,6 +18,7 @@
 package sorcer.core.context.model;
 
 import sorcer.core.context.model.ent.EntrySet;
+import sorcer.service.Governance;
 import sorcer.service.Mogram;
 import sorcer.service.Paths;
 import sorcer.service.modeling.OptimizationModeling;
@@ -26,6 +27,6 @@ import sorcer.service.modeling.Transmodeling;
 import java.util.HashMap;
 import java.util.Map;
 
-public interface Transmodel extends Transmodeling, OptimizationModeling {
+public interface Transmodel extends Governance, Transmodeling, OptimizationModeling {
 
 }

@@ -29,7 +29,7 @@ public class CoffeemakerConsumer extends ServiceConsumer {
         }
         try {
             if (option.equals("netlet")) {
-                return (Exertion) evaluate(new File("src/main/netlets/coffeemaker-exertion-remote.ntl"));
+                return (Program) evaluate(new File("src/main/netlets/coffeemaker-exertion-remote.ntl"));
             } else if (option.equals("model")) {
                 return createModel();
             } else if (option.equals("exertion")) {
@@ -52,7 +52,7 @@ public class CoffeemakerConsumer extends ServiceConsumer {
        return task("recipe", sig("addRecipe", CoffeeService.class), getEspressoContext());
     }
 
-    private Exertion createExertion() throws Exception {
+    private Program createExertion() throws Exception {
         Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
             val("recipe/key", "espresso"),
             val("coffee/paid", 120),

@@ -7,7 +7,7 @@ import sorcer.co.operator;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.Context;
-import sorcer.service.Exertion;
+import sorcer.service.Program;
 import sorcer.service.Job;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
@@ -51,7 +51,7 @@ public class ArithmeticUtil implements SorcerConstants {
 		return job;
 	}
 	
-	public static Exertion createJob() throws Exception {
+	public static Program createJob() throws Exception {
 		return createJob(Flow.SEQ, Access.PUSH);
 	}
 

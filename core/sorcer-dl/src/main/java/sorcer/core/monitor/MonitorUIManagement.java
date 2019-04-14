@@ -23,7 +23,7 @@ import net.jini.core.lease.LeaseDeniedException;
 import net.jini.id.Uuid;
 import sorcer.core.UEID;
 import sorcer.service.Exec;
-import sorcer.service.Exertion;
+import sorcer.service.Program;
 import sorcer.service.ExertionInfo;
 import sorcer.service.MonitorException;
 
@@ -73,7 +73,7 @@ public interface MonitorUIManagement {
 	 *             if there is a communication error
 	 * 
 	 */
-    Exertion getMonitorableExertion(UEID cookie, Principal credentials)
+    Program getMonitorableExertion(UEID cookie, Principal credentials)
         throws RemoteException, MonitorException;
 
 	/**
@@ -87,7 +87,7 @@ public interface MonitorUIManagement {
 	 *             if there is a communication error
 	 * 
 	 */
-	Exertion getMonitorableExertion(Uuid id, Principal credentials)
+	Program getMonitorableExertion(Uuid id, Principal credentials)
 			throws RemoteException, MonitorException;
 
     /**

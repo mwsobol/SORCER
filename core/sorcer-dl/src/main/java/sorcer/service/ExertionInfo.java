@@ -24,9 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import net.jini.id.Uuid;
-import sorcer.service.Exec.State;
-
 /**
  * @author Mike Sobolewski
  * 
@@ -51,7 +48,7 @@ public class ExertionInfo implements Comparable, Serializable {
 
     private Date lastUpdateDate;
 
-    private Exertion exertion;
+    private Program exertion;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -59,7 +56,7 @@ public class ExertionInfo implements Comparable, Serializable {
 		this.name = name;
 	}
 	
-	public ExertionInfo(Exertion exertion) throws RemoteException {
+	public ExertionInfo(Program exertion) throws RemoteException {
 		name = exertion.getName();
 		id = exertion.getId();
 		status = exertion.getStatus();
@@ -70,7 +67,7 @@ public class ExertionInfo implements Comparable, Serializable {
         this.exertion = exertion;
 	}
 
-	public ExertionInfo(Exertion exertion, Uuid storeId) throws RemoteException {
+	public ExertionInfo(Program exertion, Uuid storeId) throws RemoteException {
 		this(exertion);
 		this.storeId = storeId;
 	}
@@ -131,7 +128,7 @@ public class ExertionInfo implements Comparable, Serializable {
 		this.signature = signature;
 	}
 
-    public Exertion getExertion() {
+    public Program getExertion() {
         return exertion;
     }
 

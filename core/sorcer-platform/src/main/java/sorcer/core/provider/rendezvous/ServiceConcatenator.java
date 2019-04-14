@@ -42,12 +42,12 @@ public class ServiceConcatenator extends SystemServiceBean implements Concatenat
 
 	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
 			throws TransactionException, ExertionException, RemoteException {
-		Exertion exertion = (Exertion) mogram;
+		Program exertion = (Program) mogram;
 		setServiceID(exertion);
 		Block result;
 		try {
-			if (((ServiceExertion)exertion).getControlContext().isMonitorable()
-					&& !(((ServiceExertion)exertion).getControlContext()).isWaitable()) {
+			if (((ServiceProgram)exertion).getControlContext().isMonitorable()
+					&& !(((ServiceProgram)exertion).getControlContext()).isWaitable()) {
 				replaceNullExertionIDs(exertion);
 				new BlockThread((Block) exertion, provider).start();
 				return exertion;

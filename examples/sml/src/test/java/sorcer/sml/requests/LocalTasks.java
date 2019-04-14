@@ -35,7 +35,7 @@ public class LocalTasks {
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
-		Exertion out = exert(t5);
+		Program out = exert(t5);
 		Context cxt = context(out);
 
 		// get a single context argument
@@ -53,7 +53,7 @@ public class LocalTasks {
 		Task t5 = task(sig(AdderImpl.class), op("add"),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
-		Exertion out = exert(t5);
+		Program out = exert(t5);
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
@@ -75,7 +75,7 @@ public class LocalTasks {
 		Task t5 = task("t5", sig(AdderImpl.class), op("add"),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
-		Exertion out = exert(t5, op("t5", "add2"));
+		Program out = exert(t5, op("t5", "add2"));
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 
@@ -175,7 +175,7 @@ public class LocalTasks {
 
 	@Test
 	public void multiFiObjectTaskTest() throws Exception {
-		ServiceExertion.debug = true;
+		ServiceProgram.debug = true;
 
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),

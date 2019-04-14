@@ -20,7 +20,6 @@ package sorcer.service;
 import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
 
 /**
  * An pair of objects as an identifiable multifidelity containers.
@@ -140,8 +139,8 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
 
     public void initScope(Context scope) {
         this.scope = scope;
-        if (impl instanceof Exertion) {
-            ((Exertion) impl).setContext(scope);
+        if (impl instanceof Program) {
+            ((Program) impl).setContext(scope);
         }
     }
     public boolean isValid() {

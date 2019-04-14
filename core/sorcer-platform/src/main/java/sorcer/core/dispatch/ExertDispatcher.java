@@ -44,9 +44,9 @@ import static sorcer.service.Exec.*;
 abstract public class ExertDispatcher implements Dispatcher {
     private final Logger logger = LoggerFactory.getLogger(ExertDispatcher.class);
 
-    protected ServiceExertion xrt;
+    protected ServiceProgram xrt;
 
-    protected ServiceExertion masterXrt;
+    protected ServiceProgram masterXrt;
 
     protected List<Mogram> inputXrts;
 
@@ -86,12 +86,12 @@ abstract public class ExertDispatcher implements Dispatcher {
 
     private LeaseRenewalManager lrm = null;
 
-	public ExertDispatcher(Exertion exertion,
+	public ExertDispatcher(Program exertion,
                            Set<Context> sharedContexts,
                            boolean isSpawned,
                            Provider provider,
                            ProvisionManager provisionManager) {
-        ServiceExertion sxrt = (ServiceExertion)exertion;
+        ServiceProgram sxrt = (ServiceProgram)exertion;
 		this.xrt = sxrt;
         this.subject = sxrt.getSubject();
         this.sharedContexts = sharedContexts;
@@ -105,7 +105,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         state = Exec.RUNNING;
         xrt.setStatus(state);
         if (xrt instanceof Job) {
-            masterXrt = (ServiceExertion) ((Job) xrt).getMasterExertion();
+            masterXrt = (ServiceProgram) ((Job) xrt).getMasterExertion();
         }
         try {
             beforeParent(xrt);
@@ -113,7 +113,7 @@ abstract public class ExertDispatcher implements Dispatcher {
             afterExec(xrt);
             xrt.finalizeOutDataContext();
         } catch (Exception e) {
-            logger.warn("Exertion explorer thread killed by exception: ", e);
+            logger.warn("Program explorer thread killed by exception: ", e);
             xrt.setStatus(Exec.FAILED);
             state = Exec.FAILED;
             xrt.reportException(e);
@@ -131,7 +131,7 @@ abstract public class ExertDispatcher implements Dispatcher {
     abstract protected void doExec(Arg... args) throws SignatureException, ExertionException, RemoteException, MogramException;
     abstract protected List<Mogram> getInputExertions() throws ContextException;
 
-    protected void beforeParent(Exertion exertion) throws ContextException, ExertionException {
+    protected void beforeParent(Program exertion) throws ContextException, ExertionException {
         logger.debug("before parent {}", exertion);
         reconcileInputExertions(exertion);
         updateInputs(exertion);
@@ -139,7 +139,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         inputXrts = getInputExertions();
     }
 
-    protected void beforeExec(Exertion exertion) throws ExertionException, SignatureException {
+    protected void beforeExec(Program exertion) throws ExertionException, SignatureException {
         logger.debug("before exert {}", exertion);
         try {
             // Provider is expecting exertion to be in context
@@ -148,7 +148,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         } catch (ContextException e) {
             throw new ExertionException(e);
         }
-        // If Job, new explorer will update inputs for it's Exertion
+        // If Job, new explorer will update inputs for it's Program
         // in catalog dispatchers, if it is a job, then new explorer is
         // spawned and the shared contexts are passed. So the new explorer
         // will update inputs of tasks inside the jobExertion. But in space,
@@ -160,12 +160,12 @@ abstract public class ExertDispatcher implements Dispatcher {
         } catch (RemoteException e) {
             logger.warn("Exception on local call", e);
         }
-        ((ServiceExertion) exertion).startExecTime();
+        ((ServiceProgram) exertion).startExecTime();
         exertion.setStatus(Exec.RUNNING);
 
     }
 
-    protected void afterExec(Exertion result) throws ContextException, ExertionException {
+    protected void afterExec(Program result) throws ContextException, ExertionException {
         logger.debug("After exert {}", result);
     }
 
@@ -189,9 +189,9 @@ abstract public class ExertDispatcher implements Dispatcher {
     }
 
     /**
-     * If the {@code Exertion} is provisionable, deploy services.
+     * If the {@code Program} is provisionable, deploy services.
      *
-     * @throws ExertionException if there are issues dispatching the {@code Exertion}
+     * @throws ExertionException if there are issues dispatching the {@code Program}
      */
     protected void checkProvision() throws ExertionException {
         if(xrt.isProvisionable() && xrt.getDeployments().size()>0) {
@@ -204,7 +204,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         }
     }
 
-    public Exertion getExertion() {
+    public Program getExertion() {
         return xrt;
     }
 
@@ -241,8 +241,8 @@ abstract public class ExertDispatcher implements Dispatcher {
             logger.warn("Trying to update sharedContexts but it is null for exertion: " + mo);
             return;
         }
-        if (mo instanceof Exertion) {
-            List<Context> contexts = Mograms.getTaskContexts((Exertion) mo);
+        if (mo instanceof Program) {
+            List<Context> contexts = Mograms.getTaskContexts((Program) mo);
             logger.debug("Contexts to check if shared: " + contexts.toString());
             for (Context ctx : contexts) {
                 if (((ServiceContext) ctx).isShared()) {
@@ -267,7 +267,7 @@ abstract public class ExertDispatcher implements Dispatcher {
 //        }
     }
 
-    protected void updateInputs(Exertion ex) throws ExertionException, ContextException {
+    protected void updateInputs(Program ex) throws ExertionException, ContextException {
         logger.debug("updating inputs for {}", ex.getName());
         List<Context> inputContexts = Mograms.getTaskContexts(ex);
         for (Context inputContext : inputContexts)
@@ -379,8 +379,8 @@ abstract public class ExertDispatcher implements Dispatcher {
                 inputXrts.remove(mo);
         } else {
             mo.setStatus(INITIAL);
-            if (mo instanceof CompositeExertion) {
-                CompositeExertion ce = (CompositeExertion) mo;
+            if (mo instanceof Transprogram) {
+                Transprogram ce = (Transprogram) mo;
                 for (Mogram sub : ce.getMograms())
                     reconcileInputExertions(sub);
             }

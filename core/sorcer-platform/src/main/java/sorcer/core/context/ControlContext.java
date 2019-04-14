@@ -202,12 +202,12 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		put(EXERTION_TRACABLE, false);
 	}
 
-	public ControlContext(Exertion exertion) {
+	public ControlContext(Program exertion) {
 		this();
 		subjectValue = exertion.getName();
 		// make it visible via the path EXERTION
 		try {
-			Exertion erxt = (Exertion) getValue(EXERTION);
+			Program erxt = (Program) getValue(EXERTION);
 			if (exertion != null) {
 				putValue(EXERTION, exertion);
                 //
@@ -220,8 +220,8 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		}
 	}
 
-	public void setMasterExertion(Exertion e) {
-		put(MASTER_EXERTION, ((ServiceExertion) e).getId());
+	public void setMasterExertion(Program e) {
+		put(MASTER_EXERTION, ((ServiceProgram) e).getId());
 	}
 
 	public boolean isSequential() {
@@ -232,7 +232,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		return PARALLEL.equals(get(EXERTION_FLOW));
 	}
 
-	public boolean isExertionMaster(Exertion exertion) throws ContextException {
+	public boolean isExertionMaster(Program exertion) throws ContextException {
 		return (exertion != null && exertion.getContext().getName()
 				.equals(get(MASTER_EXERTION)));
 	}
@@ -419,21 +419,21 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		return (String) get(EXERTION_COMMENTS);
 	}
 
-	public void setExecTimeRequested(Exertion exertion, boolean b) {
+	public void setExecTimeRequested(Program exertion, boolean b) {
 		if (b)
 			addAttributeValue(exertion, GET_EXEC_TIME, TRUE);
 		else
 			addAttributeValue(exertion, GET_EXEC_TIME, FALSE);
 	}
 
-	public void setSkipped(Exertion exertion, boolean b) {
+	public void setSkipped(Program exertion, boolean b) {
 		if (b)
 			addAttributeValue(exertion, SKIPPED_, TRUE);
 		else
 			addAttributeValue(exertion, SKIPPED_, FALSE);
 	}
 
-	public boolean isSkipped(Exertion exertion) throws ContextException {
+	public boolean isSkipped(Program exertion) throws ContextException {
 		boolean result;
 		try {
 			String b = getAttributeValue(exertion, SKIPPED_);
@@ -465,20 +465,20 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 			return stopwatch.getTime();
 	}
 
-	public void setReview(Exertion ex, boolean b) {
+	public void setReview(Program ex, boolean b) {
         addAttributeValue(ex, EXERTION_REVIEW, Boolean.toString(b));
 	}
 
-	public boolean isReview(Exertion exertion) {
+	public boolean isReview(Program exertion) {
 		String b = getAttributeValue(exertion, EXERTION_REVIEW);
 		return TRUE.equals(b);
 	}
 
-	public void setPriority(Exertion exertion, int priorityValue) {
+	public void setPriority(Program exertion, int priorityValue) {
 		addAttributeValue(exertion, PRIORITY, Integer.toString(priorityValue));
 	}
 
-	public int getPriority(Exertion exertion) {
+	public int getPriority(Program exertion) {
 		int result;
 		try {
 			String i = getAttributeValue(exertion, PRIORITY);
@@ -490,34 +490,34 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		return result;
 	}
 
-	public void setNotifyList(Exertion exertion, String list) {
+	public void setNotifyList(Program exertion, String list) {
 		if (list == null || list.trim().length() == 0)
 			addAttributeValue(exertion, NOTIFY_EXEC, SorcerConstants.NULL);
 		addAttributeValue(exertion, NOTIFY_EXEC, list);
 	}
 
-	public String getNotifyList(Exertion ex) {
+	public String getNotifyList(Program ex) {
 		return getAttributeValue(ex, NOTIFY_EXEC);
 	}
 
 	public void registerExertion(Mogram mogram) throws ContextException {
 		if (mogram instanceof Job)
 			put(((Job)mogram).getControlContext().getName(), mogram.getId());
-		else if (mogram instanceof Exertion) {
+		else if (mogram instanceof Program) {
 			put(mogram.getContext().getName(), mogram.getId());
 		} else {
 			// TODO explain if registration is still needed
 			put(mogram.getName(), mogram.getId());
 			return;
 		}
-		setPriority((Exertion) mogram, MAX_PRIORITY - mogram.getIndex());
-		setExecTimeRequested(((Exertion)mogram), true);
+		setPriority((Program) mogram, MAX_PRIORITY - mogram.getIndex());
+		setExecTimeRequested(((Program)mogram), true);
 	}
 
 	public void deregisterExertion(Mogram mogram, Mogram componentMogram)
 			throws ContextException {
-		CompositeExertion parent = (CompositeExertion)mogram;
-		Exertion component = (Exertion)componentMogram;
+		Transprogram parent = (Transprogram)mogram;
+		Program component = (Program)componentMogram;
 		String path = component.getContext().getName();
 		remove(path);
 		for (int i = component.getIndex(); i < parent.size(); i++) {
@@ -543,8 +543,8 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		return addComponentAssociation(EXERTION, attributeName, attributeValue);
 	}
 
-	private Context addAttributeValue(Exertion exertion, String attributeName,
-			String attributeValue) {
+	private Context addAttributeValue(Program exertion, String attributeName,
+                                      String attributeValue) {
 		Context result = null;
 		try {
 			result = addComponentAssociation(exertion.getContext().getName(),
@@ -565,7 +565,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 				attributeValue);
 	}
 
-	public String getAttributeValue(Exertion exertion, String attributeName) {
+	public String getAttributeValue(Program exertion, String attributeName) {
 		try {
 			return getAttributeValue(exertion.getContext().getName(),
 					attributeName);
@@ -584,12 +584,12 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		}
 	}
 
-	public void updateExertionName(Exertion exertion) throws ContextException {
+	public void updateExertionName(Program exertion) throws ContextException {
 		String key, oldPath = null;
 		Iterator e = keyIterator();
 		while (e.hasNext()) {
 			key = (String) e.next();
-			if (key.endsWith("[" + ((CompositeExertion) exertion).getIndex()
+			if (key.endsWith("[" + ((Transprogram) exertion).getIndex()
 					+ "]" + ID)) {
 				oldPath = key;
 				break;
@@ -702,7 +702,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toString());
-		if (ServiceExertion.debug) {
+		if (ServiceProgram.debug) {
 			sb.append("\nControl Context Exceptions: \n");
 			sb.append(describeExceptions());
 		}

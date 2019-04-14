@@ -56,17 +56,17 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 
     public void doExec(Arg... args) throws ExertionException,
 			SignatureException {
-        List<Future<Exertion>> results = new ArrayList<Future<Exertion>>(inputXrts.size());
+        List<Future<Program>> results = new ArrayList<Future<Program>>(inputXrts.size());
         for (Mogram mogram : inputXrts) {
-            if (mogram instanceof Exertion)
-                results.add(executor.submit(new ExecExertion((Exertion)mogram)));
+            if (mogram instanceof Program)
+                results.add(executor.submit(new ExecExertion((Program)mogram)));
 		}
 
         boolean isFailed = false;
         boolean isSuspended = false;
-        for (Future<Exertion> result : results) {
+        for (Future<Program> result : results) {
             try {
-                ServiceExertion se = (ServiceExertion) result.get();
+                ServiceProgram se = (ServiceProgram) result.get();
                 se.stopExecTime();
                 if (se.getStatus() == FAILED)
                     isFailed = true;
@@ -105,8 +105,8 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 				dispatchers.remove(xrt.getId());
 				return;
 			}*/
-			// finally exert Master Exertion
-			masterXrt = (ServiceExertion) execExertion(masterXrt);
+			// finally exert Master Program
+			masterXrt = (ServiceProgram) execExertion(masterXrt);
 			masterXrt.stopExecTime();
 			if (masterXrt.getStatus() <= FAILED)
 				xrt.setStatus(FAILED);
@@ -124,15 +124,15 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
         return Mograms.getInputExertions(((Job) xrt));
     }
 
-    protected class ExecExertion implements Callable<Exertion> {
-        private final Exertion exertion;
+    protected class ExecExertion implements Callable<Program> {
+        private final Program exertion;
 
-        public ExecExertion(Exertion exertion) {
+        public ExecExertion(Program exertion) {
             this.exertion = exertion;
         }
 
         @Override
-        public Exertion call() throws Exception {
+        public Program call() throws Exception {
             return execExertion(exertion);
         }
 	}

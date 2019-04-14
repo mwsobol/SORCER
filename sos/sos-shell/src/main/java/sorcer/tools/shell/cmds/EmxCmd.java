@@ -176,7 +176,7 @@ public class EmxCmd extends ShellCmd {
 					}
 					if (selectedExertion < 0
 							|| selectedExertion >= exertionInfos.length)
-						out.println("No such Exertion for: " + next);
+						out.println("No such Program for: " + next);
 					else
 						out.println(exertionInfos[selectedExertion]);
 				}
@@ -203,7 +203,7 @@ public class EmxCmd extends ShellCmd {
 				} catch (NumberFormatException e) {
 					selectedExertion = selectExertionByName(next);
 					if (selectedExertion < 0)
-						out.println("No such Exertion for: " + next);
+						out.println("No such Program for: " + next);
 				}
 				if (selectedExertion >= 0
 						&& selectedExertion < exertionInfos.length) {
@@ -211,7 +211,7 @@ public class EmxCmd extends ShellCmd {
 					printExertion(xrtInfo.getStoreId(), isContext,
 							isControlContext);
 				} else
-					out.println("No such Exertion for: " + selectedExertion);
+					out.println("No such Program for: " + selectedExertion);
 			}
 		} else {
 			out.println(COMMAND_USAGE);
@@ -220,7 +220,7 @@ public class EmxCmd extends ShellCmd {
 
 	private void printExertion(Uuid id, boolean isContext,
 			boolean isControlContext) throws RemoteException, MonitorException, ContextException {
-        Exertion xrt = null;
+        Program xrt = null;
         if (emxMonitors == null || emxMonitors.length == 0) {
             findMonitors();
         }
@@ -239,7 +239,7 @@ public class EmxCmd extends ShellCmd {
 
         out.println(ansi().render("@|blue ---------"
                 + "|@ @|bold,blue EXERTION # " + selectedExertion + "|@ @|blue ---------|@"));
-		out.println(ansi().render("@|bold " + ((ServiceExertion) xrt).describe() + "|@"));
+		out.println(ansi().render("@|bold " + ((ServiceProgram) xrt).describe() + "|@"));
         if (isContext) {
 			out.println(ansi().render("@|yellow " + "\nData Context:" + "|@"));
 			out.println(ansi().render("@|bold,yellow " + xrt.getContext() + "|@"));

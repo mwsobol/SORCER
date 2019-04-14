@@ -31,9 +31,9 @@ import static sorcer.so.operator.*;
  */
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/sml")
-public class ExertionMultiFidelities {
+public class ProgramMultiFidelities {
 
-    private final static Logger logger = LoggerFactory.getLogger(ExertionMultiFidelities.class);
+    private final static Logger logger = LoggerFactory.getLogger(ProgramMultiFidelities.class);
 
     private Job getMultiFiJob() throws Exception {
 

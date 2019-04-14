@@ -48,10 +48,10 @@ task printClasspath() {
     }
 }
 
-task wrapper(type: Wrapper) {
-    description = 'Prints the Gradle wrapper version.'
-    gradleVersion = '2.12'
-}
+//task wrapper(type: Wrapper) {
+//    description = 'Prints the Gradle wrapper version.'
+//    gradleVersion = '2.12'
+//}
 
 ext {
     enclaveRepo = "10.131.7.138:7001"

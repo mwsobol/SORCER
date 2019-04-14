@@ -20,7 +20,6 @@ package sorcer.core.provider.exerter;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Subroutine;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -40,8 +39,8 @@ public class Binder {
         try {
             mogram.substitute(args);
 
-            if (mogram instanceof Exertion) {
-                ((ServiceExertion)mogram).selectFidelity(args);
+            if (mogram instanceof Program) {
+                ((ServiceProgram)mogram).selectFidelity(args);
                 initExecState(args);
             } else if (mogram instanceof Context) {
                 mogram.substitute(args);
@@ -55,7 +54,7 @@ public class Binder {
 
 
     private void initExecState(Arg... entries) throws ContextException, RemoteException {
-        ServiceExertion exertion = (ServiceExertion)mogram;
+        ServiceProgram exertion = (ServiceProgram)mogram;
         Context argCxt = null;
         if (entries!=null) {
             for (Arg arg : entries) {
@@ -73,19 +72,19 @@ public class Binder {
         Exec.State state = exertion.getControlContext().getExecState();
         if (state == Exec.State.INITIAL) {
             for (Mogram e : exertion.getAllMograms()) {
-                if (e instanceof Exertion) {
-                    if (((ControlContext) ((Exertion)e).getControlContext()).getExecState() == Exec.State.INITIAL) {
+                if (e instanceof Program) {
+                    if (((ControlContext) ((Program)e).getControlContext()).getExecState() == Exec.State.INITIAL) {
                         e.setStatus(Exec.INITIAL);
                     }
                 }
                 if (e instanceof Block) {
-                    resetContext((Exertion)e, argCxt);
+                    resetContext((Program)e, argCxt);
                 }
             }
         }
     }
 
-    private void resetContext(Exertion exertion, Context context, Arg... entries) throws ContextException, RemoteException {
+    private void resetContext(Program exertion, Context context, Arg... entries) throws ContextException, RemoteException {
         Context initContext = ((ServiceContext)exertion.getDataContext()).getInitContext();
         // overwrite initContext
         if (initContext != null) {
@@ -113,7 +112,7 @@ public class Binder {
         }
     }
 
-    private void resetScope(Exertion exertion) throws ContextException, RemoteException {
+    private void resetScope(Program exertion) throws ContextException, RemoteException {
         ((ServiceContext)exertion.getDataContext()).clearScope();
         exertion.getDataContext().append(((ServiceContext)exertion.getDataContext()).getInitContext());
     }

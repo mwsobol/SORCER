@@ -32,9 +32,9 @@ import java.rmi.RemoteException;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class ExertInvoker extends ServiceInvoker implements ExertionInvoking {
 	private static final long serialVersionUID = -8257643691945276788L;
-	private Exertion exertion;
+	private Program exertion;
 	private String path;
-	private Exertion evaluatedExertion;
+	private Program evaluatedExertion;
 	private Transaction txn;
 	private Object updatedValue;
 
@@ -42,18 +42,18 @@ public class ExertInvoker extends ServiceInvoker implements ExertionInvoking {
 		defaultName = "xrtInvoker-";
 	}
 	
-	public ExertInvoker(String name, Exertion exertion, String path, Pro... callEntries) {
+	public ExertInvoker(String name, Program exertion, String path, Pro... callEntries) {
 		super(name);
 		this.path = path;
 		this.exertion = exertion;
 		this.args = new ArgSet(callEntries);
 	}
 
-	public ExertInvoker(Exertion exertion, String path, Pro... callEntries) {
+	public ExertInvoker(Program exertion, String path, Pro... callEntries) {
 		this(exertion.getName(), exertion, path, callEntries);
 	}
 	
-	public ExertInvoker(Exertion exertion, Pro... callEntries) {
+	public ExertInvoker(Program exertion, Pro... callEntries) {
 		this(null, exertion, null, callEntries);
 	}
 
@@ -91,17 +91,17 @@ public class ExertInvoker extends ServiceInvoker implements ExertionInvoking {
 		return cxt;
 	}
 	
-	public Exertion getExertion() {
+	public Program getExertion() {
 		return exertion;
 	}
 
-	public Exertion getEvaluatedExertion() {
+	public Program getEvaluatedExertion() {
 		return evaluatedExertion;
 	}
 
 	public void substitute(Subroutine... entries) throws SetterException,
 			RemoteException {
-		((ServiceExertion)exertion).substitute(entries);
+		((ServiceProgram)exertion).substitute(entries);
 	}
 
 	public Object getUpdatedValue() {

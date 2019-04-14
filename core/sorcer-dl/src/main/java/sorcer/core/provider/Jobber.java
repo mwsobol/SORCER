@@ -17,8 +17,6 @@
 
 package sorcer.core.provider;
 
-import sorcer.service.Service;
-
 import java.rmi.Remote;
 
 /**
@@ -28,5 +26,5 @@ import java.rmi.Remote;
  * 
  * @author Mike Sobolewski
  */
-public interface Jobber extends Exerter, Remote {
+public interface Jobber extends Exertion, Remote {
 }

@@ -36,7 +36,7 @@ public class ConditionalTaskTest {
 
 	@Test
 	public void arithmeticTaskTest() throws Exception {
-		// to test tracing of execution enable ServiceExertion.debug
+		// to test tracing of execution enable ServiceProgram.debug
 		EntModel pm = new EntModel("call-model");
 
 		Task task = task(

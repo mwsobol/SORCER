@@ -378,7 +378,7 @@ public class operator {
     public static ServiceContext result(Mogram mogram) throws ContextException {
         if (mogram instanceof Domain) {
             return (ServiceContext)((ServiceContext) mogram).getMogramStrategy().getOutcome();
-        } else if (mogram instanceof Exertion) {
+        } else if (mogram instanceof Program) {
             return (ServiceContext)mogram.getContext();
         }
         return null;
@@ -391,7 +391,7 @@ public class operator {
     public static Object result(Mogram mogram, String path) throws ContextException {
         if (mogram instanceof Domain) {
             return ((ServiceContext) mogram).getMogramStrategy().getOutcome().asis(path);
-        } else if (mogram instanceof Exertion) {
+        } else if (mogram instanceof Program) {
             try {
                 return mogram.getContext().getValue(path);
             } catch (RemoteException e) {
@@ -601,7 +601,7 @@ public class operator {
         for (Object i : items) {
             if (i instanceof String) {
                 name = (String) i;
-            } else if (i instanceof Exertion) {
+            } else if (i instanceof Program) {
                 hasExertion = true;
             } else if (i instanceof Signature) {
                 hasSignature = true;
@@ -867,7 +867,7 @@ public class operator {
         return provisionManager.deployServices();
     }
 
-    public static Exertion[] clients(Exertion... consumers) {
+    public static Program[] clients(Program... consumers) {
         return consumers;
     }
 
@@ -875,18 +875,18 @@ public class operator {
         return servers;
     }
 
-    public static Discipline dis(Exertion consumer, Service server) {
+    public static Discipline dis(Program consumer, Service server) {
         return new ServiceDiscipline(consumer, server);
     }
-    public static Discipline dis(Exertion[] clients, Service[] servers) {
+    public static Discipline dis(Program[] clients, Service[] servers) {
         return new ServiceDiscipline(clients, servers);
     }
 
-    public static Discipline dis(List<Exertion> clients, List<Service> servers) {
+    public static Discipline dis(List<Program> clients, List<Service> servers) {
         return new ServiceDiscipline(clients, servers);
     }
 
-    public static Discipline add(Discipline disciplne, Exertion client, Service server) {
+    public static Discipline add(Discipline disciplne, Program client, Service server) {
          disciplne.add(client, server);
          return disciplne;
     }

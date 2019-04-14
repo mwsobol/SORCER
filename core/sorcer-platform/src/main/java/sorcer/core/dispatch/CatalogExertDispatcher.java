@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.Dispatcher;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.Concatenator;
-import sorcer.core.provider.Exerter;
+import sorcer.core.provider.Exertion;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
@@ -41,7 +41,7 @@ import static sorcer.service.Exec.*;
 abstract public class CatalogExertDispatcher extends ExertDispatcher {
     private final Logger logger = LoggerFactory.getLogger(CatalogExertDispatcher.class);
 
-    public CatalogExertDispatcher(Exertion job,
+    public CatalogExertDispatcher(Program job,
                                   Set<Context> sharedContext,
                                   boolean isSpawned,
                                   Provider provider,
@@ -49,12 +49,12 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         super(job, sharedContext, isSpawned, provider, provisionManager);
     }
 
-    protected Exertion execExertion(Exertion ex, Arg... args) throws SignatureException,
+    protected Program execExertion(Program ex, Arg... args) throws SignatureException,
             ExertionException {
         beforeExec(ex);
         // setValue subject before task goes out.
         // ex.setSubject(subject);
-        ServiceExertion result = null;
+        ServiceProgram result = null;
         try {
             if (ex.isTask()) {
                 result = execTask((Task) ex, args);
@@ -63,7 +63,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
             } else if (ex.isBlock()) {
                 result = execBlock((Block) ex, args);
             } else {
-                logger.warn("Unknown ServiceExertion: {}", ex);
+                logger.warn("Unknown ServiceProgram: {}", ex);
             }
             afterExec(ex, result);
             // setValue subject after result is received
@@ -72,7 +72,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         } catch (Exception e) {
             logger.warn("Error while executing exertion: ", e);
             // return original exertion with exception
-            result = (ServiceExertion) ex;
+            result = (ServiceProgram) ex;
             result.reportException(e);
             result.setStatus(FAILED);
             setState(Exec.FAILED);
@@ -81,10 +81,10 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         return result;
     }
 
-    protected void afterExec(Exertion ex, Exertion result)
+    protected void afterExec(Program ex, Program result)
             throws SignatureException, ExertionException, ContextException {
-        ServiceExertion ser = (ServiceExertion) result;
-		((CompositeExertion)xrt).setMogramAt(result, ex.getIndex());
+        ServiceProgram ser = (ServiceProgram) result;
+		((Transprogram)xrt).setMogramAt(result, ex.getIndex());
         if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
             ser.setStatus(DONE);
             // update all outputs from sharedcontext only for tasks. For jobs,
@@ -201,7 +201,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                          * (RemoteServiceTask)provider.service(task); }
                          */
                         logger.debug("getting result from provider...");
-                        result = ((Exerter)service).exert(task, null);
+                        result = ((Exertion)service).exert(task, null);
 
                     } catch (Exception re) {
                         if (tried >= maxTries) {

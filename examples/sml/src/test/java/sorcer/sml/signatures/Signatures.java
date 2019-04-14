@@ -353,7 +353,7 @@ public class Signatures {
 				srvName("Adder", locators(), group)),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		Exertion out = exert(t5);
+		Program out = exert(t5);
 		assertEquals(100.0, value(context(out), "result/y"));
 	}
 
@@ -365,7 +365,7 @@ public class Signatures {
                 srvName("Adder", locators(), group)),
                 cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-        Exertion out = exert(t5);
+        Program out = exert(t5);
         assertEquals(100.0, value(context(out), "result/y"));
     }
 
@@ -379,7 +379,7 @@ public class Signatures {
 				srvName("Adder", locators(), group)),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		Exertion out = exert(t5);
+		Program out = exert(t5);
 //		logger.info("out: " + context(out));
 		assertEquals(100.0, value(context(out), "result/y"));
 	}

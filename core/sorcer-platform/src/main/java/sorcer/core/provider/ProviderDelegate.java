@@ -26,7 +26,6 @@ import net.jini.core.event.RemoteEvent;
 import net.jini.core.lease.Lease;
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import net.jini.core.transaction.server.TransactionManager;
 import net.jini.export.Exporter;
 import net.jini.id.Uuid;
@@ -250,7 +249,7 @@ public class ProviderDelegate {
 	 * A remote inner proxy implements Remote interface. Usually outer proxy
 	 * complements its functionality by invoking remote calls on the inner proxy
 	 * server. Thus, inner proxy can make remote calls on another service
-	 * provider, for example {@code Provider.service(Exertion)), while the
+	 * provider, for example {@code Provider.service(Program)), while the
 	 * outer proxy still can call directly on the originating service provider.
 	 */
 	private Remote innerProxy = null;
@@ -333,7 +332,7 @@ public class ProviderDelegate {
 			}
 		};
 
-		public static void add(ServiceExertion ex) {
+		public static void add(ServiceProgram ex) {
 			ExertionSessionBundle esb = tl.get();
 			esb.exertionID = ex.getId();
 			esb.session = ex.getMonitorSession();
@@ -1072,7 +1071,7 @@ public class ProviderDelegate {
 //			Method m = null;
 //			try {
 //				// select the proper method for the bean type
-//				if (selector.equals("invoke") && (impl instanceof Exertion || impl instanceof EntModel)) {
+//				if (selector.equals("invoke") && (impl instanceof Program || impl instanceof EntModel)) {
 //					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
 //					isContextual = true;
 //				} else if (selector.equals("compute") && impl instanceof Domain) {
@@ -1138,13 +1137,13 @@ public class ProviderDelegate {
 			try {
 				// select the proper method for the bean type
 				if (selector.equals("exert") && (bean instanceof Domain
-					||  bean instanceof Exertion)) {
+					||  bean instanceof Program)) {
 					m = bean.getClass().getMethod(selector, Mogram.class, Transaction.class, Arg[].class);
 					isContextual = true;
 				} else if (selector.equals("evaluate") && bean instanceof Domain) {
 					m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
 					isContextual = true;
-				} else if (selector.equals("invoke") && (bean instanceof Exertion || bean instanceof Context)) {
+				} else if (selector.equals("invoke") && (bean instanceof Program || bean instanceof Context)) {
 					m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
 					isContextual = true;
 				} else if (selector.equals("exert") && bean instanceof ServiceShell) {
@@ -1199,7 +1198,7 @@ public class ProviderDelegate {
 		String selector = task.getProcessSignature().getSelector();
 		Object[] pars = new Object[] { task.getContext() };
 		if (selector.equals("invoke")
-			&& (impl instanceof Exertion || impl instanceof Context)) {
+			&& (impl instanceof Program || impl instanceof Context)) {
 			Object obj = m.invoke(impl, new Object[] { pars[0], args });
 
 			if (obj instanceof Job)
@@ -1211,9 +1210,9 @@ public class ProviderDelegate {
 			else
 				result.setReturnValue(obj);
 
-			if (obj instanceof Exertion) {
-				task.getControlContext().getExceptions().addAll(((Exertion) obj).getExceptions());
-				task.getTrace().addAll(((Exertion) obj).getTrace());
+			if (obj instanceof Program) {
+				task.getControlContext().getExceptions().addAll(((Program) obj).getExceptions());
+				task.getTrace().addAll(((Program) obj).getTrace());
 			}
 		} else if (impl instanceof Mogram && selector.equals("exert")) {
 			result = ((Mogram)m.invoke(impl, new Object[] { pars[0], null, args })).getContext();
@@ -1239,11 +1238,11 @@ public class ProviderDelegate {
 		Object[] pars = ((ServiceContext)result).getArgs();
 		Object obj = null;
 		if (selector.equals("exert") && impl instanceof ServiceShell) {
-			Exertion xrt = null;
+			Program xrt = null;
 			if (pars.length == 1) {
-				xrt = (Exertion) m.invoke(impl, new Object[] { pars[0], args });
+				xrt = (Program) m.invoke(impl, new Object[] { pars[0], args });
 			} else {
-				xrt = (Exertion) m.invoke(impl, pars);
+				xrt = (Program) m.invoke(impl, pars);
 			}
 			if (xrt.isJob())
 				result = ((Job) xrt).getJobContext();
@@ -1269,8 +1268,8 @@ public class ProviderDelegate {
 		return result;
 	}
 
-	protected ServiceExertion forwardTask(ServiceExertion task,
-										  Provider requestor) throws MogramException,
+	protected ServiceProgram forwardTask(ServiceProgram task,
+                                         Provider requestor) throws MogramException,
 		RemoteException, SignatureException, ContextException {
 		// check if we do not look with the same exertion
 		Service recipient = null;
@@ -1322,7 +1321,7 @@ public class ProviderDelegate {
 			notifyException(task, "", re);
 			throw re;
 		} else {
-			Task result = (Task) ((Exerter)recipient).exert(task, null);
+			Task result = (Task) ((Exertion)recipient).exert(task, null);
 			if (result != null) {
 				visited.remove(serviceID);
 				return result;
@@ -1335,7 +1334,7 @@ public class ProviderDelegate {
 		}
 	}
 
-	public ServiceExertion dropTask(Exertion entryTask)
+	public ServiceProgram dropTask(Program entryTask)
 		throws ExertionException, SignatureException, RemoteException {
 		return null;
 	}
@@ -1355,7 +1354,7 @@ public class ProviderDelegate {
 		}
 
 		Job outJob;
-		outJob = (Job) ((Exerter)jobber).exert(job, null);
+		outJob = (Job) ((Exertion)jobber).exert(job, null);
 		return outJob;
 	}
 
@@ -1423,7 +1422,7 @@ public class ProviderDelegate {
 		return task;
 	}
 
-	public Exertion invokeMethod(String selector, Exertion ex)
+	public Program invokeMethod(String selector, Program ex)
 		throws ExertionException {
 		Class[] argTypes = new Class[] { Mogram.class };
 		try {
@@ -1431,7 +1430,7 @@ public class ProviderDelegate {
 			logger.info("Executing method: " + m + " by: "
 				+ config.getProviderName());
 
-			Exertion result = (Exertion) m.invoke(provider, new Object[]{ex});
+			Program result = (Program) m.invoke(provider, new Object[]{ex});
 			return result;
 		} catch (Exception e) {
 			ex.getControlContext().addException(e);
@@ -1890,7 +1889,7 @@ public class ProviderDelegate {
 		provider.fireEvent();
 	}
 
-	public boolean isValidTask(Exertion servicetask) throws ExertionException, ContextException {
+	public boolean isValidTask(Program servicetask) throws ExertionException, ContextException {
 
 		if (servicetask.getContext() == null) {
 			servicetask.getContext().reportException(
@@ -1957,7 +1956,7 @@ public class ProviderDelegate {
 		return false;
 	}
 
-	protected void notify(Exertion task, int notificationType, String message) {
+	protected void notify(Program task, int notificationType, String message) {
 		if (!notifying)
 			return;
 		logger.info(getClass().getName() + "::notify() START message:"
@@ -1969,7 +1968,7 @@ public class ProviderDelegate {
 
 			mr = new MsgRef(task.getId(), notificationType,
 				config.getProviderName(), message,
-				((ServiceExertion) task).getSessionId());
+				((ServiceProgram) task).getSessionId());
 			// Util.debug(this, "::notify() RUNTIME SESSION ID:" +
 			// task.getRuntimeSessionID());
 			RemoteEvent re = new RemoteEvent(mr, eventID++, seqNum++, null);
@@ -1980,8 +1979,8 @@ public class ProviderDelegate {
 		}
 	}
 
-	public void notifyException(Exertion task, String message, Exception e,
-								boolean fullStackTrace) {
+	public void notifyException(Program task, String message, Exception e,
+                                boolean fullStackTrace) {
 
 		if (message == null && e == null)
 			message = "NO MESSAGE OR EXCEPTION PASSED";
@@ -2000,19 +1999,19 @@ public class ProviderDelegate {
 		notify(task, NOTIFY_EXCEPTION, message);
 	}
 
-	public void notifyException(Exertion task, String message, Exception e) {
+	public void notifyException(Program task, String message, Exception e) {
 		notifyException(task, message, e, false);
 	}
 
-	public void notifyExceptionWithStackTrace(Exertion task, Exception e) {
+	public void notifyExceptionWithStackTrace(Program task, Exception e) {
 		notifyException(task, null, e, true);
 	}
 
-	public void notifyException(Exertion task, Exception e) {
+	public void notifyException(Program task, Exception e) {
 		notifyException(task, null, e, false);
 	}
 
-	public void notifyInformation(Exertion task, String message) {
+	public void notifyInformation(Program task, String message) {
 		notify(task, NOTIFY_INFORMATION, message);
 	}
 
@@ -2025,15 +2024,15 @@ public class ProviderDelegate {
 	 * notify(task, NOTIFY_WARNING, message); }
 	 */
 
-	public void notifyFailure(Exertion task, Exception e) {
+	public void notifyFailure(Program task, Exception e) {
 		notifyFailure(task, e.getMessage());
 	}
 
-	public void notifyFailure(Exertion task, String message) {
+	public void notifyFailure(Program task, String message) {
 		notify(task, NOTIFY_FAILURE, message);
 	}
 
-	public void notifyWarning(Exertion task, String message) {
+	public void notifyWarning(Program task, String message) {
 		notify(task, NOTIFY_WARNING, message);
 	}
 

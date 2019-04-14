@@ -11,7 +11,7 @@ import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.netlet.util.NetletClassLoader;
 import sorcer.netlet.util.ScriptExertException;
 import sorcer.netlet.util.ScripterThread;
-import sorcer.service.Exertion;
+import sorcer.service.Program;
 
 import java.io.File;
 import java.io.FileReader;
@@ -124,7 +124,7 @@ public class ServiceScripter {
             scripterThread.evalScript();
             if (out!=null && debug) out.println("get target..." + (System.currentTimeMillis()-startTime)+"ms");
             this.target = scripterThread.getTarget();
-            if (target instanceof Exertion) {
+            if (target instanceof Program) {
                 isExertable = true;
             } else {
                 isExertable = false;

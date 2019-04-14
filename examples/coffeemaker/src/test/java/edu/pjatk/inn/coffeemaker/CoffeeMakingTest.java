@@ -11,7 +11,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
-import sorcer.service.Exertion;
+import sorcer.service.Program;
 import sorcer.service.Task;
 
 import static org.junit.Assert.assertEquals;
@@ -68,7 +68,7 @@ public class CoffeeMakingTest {
 
 	@After
 	public void cleanUp() throws Exception {
-		Exertion cmt =
+		Program cmt =
 				task(sig("deleteRecipes", CoffeeMaking.class),
 						context(types(), args()));
 
@@ -97,7 +97,7 @@ public class CoffeeMakingTest {
 
 	@Test
 	public void addRecipes() throws Exception {
-		Exertion cmj = job("recipes",
+		Program cmj = job("recipes",
 				task("mocha", sig("addRecipe", CoffeeMaking.class),
 					context(types(Recipe.class), args(mocha))),
 				task("macchiato", sig("addRecipe", CoffeeMaking.class),
@@ -115,7 +115,7 @@ public class CoffeeMakingTest {
 
 	@Test
 	public void getRecepies() throws Exception {
-		Exertion cmt = task(sig("getRecipes", CoffeeMaking.class),
+		Program cmt = task(sig("getRecipes", CoffeeMaking.class),
 				context(types(), args()));
 		cmt = exert(cmt);
 		logger.info("getRecipes: " + context(cmt));
@@ -124,7 +124,7 @@ public class CoffeeMakingTest {
 	@Test
 	public void makeCoffee() throws Exception {
 
-		Exertion cmj = job("coffee",
+		Program cmj = job("coffee",
 				task("recipe", sig("addRecipe", CoffeeMaking.class),
 						context(types(Recipe.class), args(espresso))),
 				task("pay", sig("makeCoffee", CoffeeMaking.class),

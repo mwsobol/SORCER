@@ -403,9 +403,9 @@ public class Entry<V> extends MultiFiSlot<String, V>
                 result = this.get(args);
             }
 
-            if (result instanceof Exertion) {
+            if (result instanceof Program) {
                 // we assume that exrtion is asked to be evaluated
-                return (V) ((Exertion) result).getContext();
+                return (V) ((Program) result).getContext();
             } else {
                 return (V) result;
             }

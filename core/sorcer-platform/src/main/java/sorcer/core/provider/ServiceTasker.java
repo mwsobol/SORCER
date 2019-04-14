@@ -16,7 +16,6 @@
  */
 package sorcer.core.provider;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import javax.security.auth.Subject;
@@ -24,10 +23,9 @@ import javax.security.auth.Subject;
 import net.jini.config.ConfigurationException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.service.Executor;
-import sorcer.service.Exertion;
+import sorcer.service.Program;
 import sorcer.service.ExertionException;
-import sorcer.service.ServiceExertion;
+import sorcer.service.ServiceProgram;
 import sorcer.service.Signature;
 import sorcer.service.Task;
 
@@ -61,7 +59,7 @@ public class ServiceTasker extends ServiceProvider {
 	}
 
 	/** {@inheritDoc} */
-	public ServiceExertion execute(Exertion task) throws TransactionException,
+	public ServiceProgram execute(Program task) throws TransactionException,
 			ExertionException {
 		return execute(task, null);
 	}
@@ -69,10 +67,10 @@ public class ServiceTasker extends ServiceProvider {
 	/** {@inheritDoc} 
 	 * @throws ConfigurationException 
 	 * @throws RemoteException */
-	public ServiceExertion execute(Exertion task, Transaction transaction)
+	public ServiceProgram execute(Program task, Transaction transaction)
 			throws ExertionException  {
 		try {
-			return (Task) new ControlFlowManager((Exertion) task, delegate)
+			return (Task) new ControlFlowManager((Program) task, delegate)
 					.process();
 		} catch (Exception e) {
 			throw new ExertionException(e);

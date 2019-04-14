@@ -171,7 +171,7 @@ public class EvalCmd extends ShellCmd {
 		if (target == null) {
 			return;
 		} else if (!(target instanceof Model ||
-				target instanceof Exertion ||
+				target instanceof Program ||
 				target instanceof Pro)) {
 			out.println("\n---> EVALUATION RESULT --->");
 			out.println(target);
@@ -204,7 +204,7 @@ public class EvalCmd extends ShellCmd {
 		if (result != null) {
 			if (ifEvaluation) {
 				out.println("\n---> EVALUATION RESULT --->");
-				if (result instanceof Exertion) {
+				if (result instanceof Program) {
 					out.println(((Mogram) result).getContext());
 				} else if (result instanceof Model) {
 					out.println(((Model) result).getResult());
@@ -231,8 +231,8 @@ public class EvalCmd extends ShellCmd {
 				out.println("\n---> OUTPUT MOGRAM --->");
 //				out.println(mog.describe());
 				out.println(mog.getName() + "@" + mog.getClass().getSimpleName());
-				if (mog instanceof Exertion) {
-					Exertion xrt = (Exertion) mog;
+				if (mog instanceof Program) {
+					Program xrt = (Program) mog;
 					out.println("\n---> OUTPUT DATA CONTEXT --->");
 					out.println(xrt.getContext());
 					saveFilesFromContext(xrt, out);
@@ -317,10 +317,10 @@ public class EvalCmd extends ShellCmd {
 		return sb;
 	}
 
-	private void saveFilesFromContext(Exertion xrt, PrintStream out) {
+	private void saveFilesFromContext(Program xrt, PrintStream out) {
 		try {
-			ContextNode[] cns = (xrt.isJob() ? Contexts.getTaskContextNodes((ServiceExertion)xrt)
-					: Contexts.getTaskContextNodes((ServiceExertion)xrt));
+			ContextNode[] cns = (xrt.isJob() ? Contexts.getTaskContextNodes((ServiceProgram)xrt)
+					: Contexts.getTaskContextNodes((ServiceProgram)xrt));
 			for (ContextNode cn : cns) {
 
 				if (cn.isOut() && cn.getData()!=null && cn.getData() instanceof byte[]) {

@@ -17,7 +17,7 @@
  */
 package sorcer.ext;
 
-import sorcer.service.Exertion;
+import sorcer.service.Program;
 
 /**
  * The <code>ExertionException</code> represents an exception that is thrown
@@ -34,12 +34,12 @@ public class ProvisioningException extends Exception {
 	/**
 	 * The exertion relevant to this exception.
 	 */
-	private Exertion exertion;
+	private Program exertion;
 
 	public ProvisioningException() {
 	}
 
-	public ProvisioningException(Exertion exertion) {
+	public ProvisioningException(Program exertion) {
 		this.exertion = exertion;
 	}
 
@@ -60,7 +60,7 @@ public class ProvisioningException extends Exception {
 	 * @param exertion
 	 *            the embedded exertion
 	 */
-	public ProvisioningException(String message, Exertion exertion) {
+	public ProvisioningException(String message, Program exertion) {
 		super(message);
 		this.exertion = exertion;
 	}
@@ -78,7 +78,7 @@ public class ProvisioningException extends Exception {
 	 * @param cause
 	 *            the nested throwable cause
 	 */
-	public ProvisioningException(String message, Exertion exertion, Throwable cause) {
+	public ProvisioningException(String message, Program exertion, Throwable cause) {
 		super(message, cause);
 		this.exertion = exertion;
 	}
@@ -88,7 +88,7 @@ public class ProvisioningException extends Exception {
 	 * 
 	 * @return embedded exertion
 	 */
-	public Exertion getExertion() {
+	public Program getExertion() {
 		return exertion;
 	}
 	

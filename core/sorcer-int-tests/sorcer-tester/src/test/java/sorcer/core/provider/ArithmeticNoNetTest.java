@@ -42,7 +42,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		Task task2 = getMultiplyTask();
 		Task task3 = getSubtractTask();
 
-		Exertion job = new ObjectJob("3tasks");
+		Program job = new ObjectJob("3tasks");
 		job.addMogram(task1);
 		job.addMogram(task2);
 		job.addMogram(task3);
@@ -71,7 +71,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		internal.addMogram(task2);
 		internal.addMogram(task1);
 		
-		Exertion job = new ObjectJob("1job1task");
+		Program job = new ObjectJob("1job1task");
 		job.addMogram(internal);
 		job.addMogram(task3);
 		
@@ -101,7 +101,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		internal.getControlContext().setFlowType(Flow.PAR);
 		internal.getControlContext().setAccessType(Access.PUSH);
 
-		Exertion job = new ObjectJob("1job1task");
+		Program job = new ObjectJob("1job1task");
 		job.addMogram(internal);
 		job.addMogram(task3);
 		internal.getControlContext().setFlowType(Flow.SEQ);

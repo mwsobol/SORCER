@@ -38,9 +38,9 @@ import sorcer.jini.lookup.AttributesUtil;
 import sorcer.service.ContextException;
 import sorcer.service.Exec;
 import sorcer.service.Exec.State;
-import sorcer.service.Exertion;
+import sorcer.service.Program;
 import sorcer.service.MonitorException;
-import sorcer.service.ServiceExertion;
+import sorcer.service.ServiceProgram;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
 import sorcer.tools.shell.WhitespaceTokenizer;
@@ -61,7 +61,7 @@ public class SpaceCmd extends ShellCmd {
 			+ "\n\t\t\t  | (-e | -c | -cc | -ccc) [<exertion index>] [-s <filename>]";
 
 		COMMAND_HELP = "Support for exertion spaces; 'space' mode"
-				+ "\n  'no option'; show Exertion Spaces, set the 'space' mode" 
+				+ "\n  'no option'; show Program Spaces, set the 'space' mode"
 				+ "\n  <Space index>   select the Space given <Space index>"
 				+ "\n  -sp set the 'space' mode" 
 				+ "\n  -a   show all space mograms, set the 'exertion' mode"
@@ -197,7 +197,7 @@ public class SpaceCmd extends ShellCmd {
 					}
 					if (selectedExertion < 0
 							|| selectedExertion >= instanceList.size()) {
-						out.println("No such Exertion for: " + next);
+						out.println("No such Program for: " + next);
 					}
 					else
 						printExertion(selectedExertion, true, true);
@@ -231,7 +231,7 @@ public class SpaceCmd extends ShellCmd {
 					printExertion(selectedExertion, isContext,
 							isControlContext);
 				} else
-					out.println("No such Exertion for: " + selectedExertion);
+					out.println("No such Program for: " + selectedExertion);
 			}
 		} else {
 			out.println(COMMAND_USAGE);
@@ -279,9 +279,9 @@ public class SpaceCmd extends ShellCmd {
 	}
 
 	private void printExertion(int index, boolean isContext, boolean isControlContext) throws ContextException {
-		Exertion xrt = ((ExertionEnvelop)instanceList.get(index)).exertion;
+		Program xrt = ((ExertionEnvelop)instanceList.get(index)).exertion;
 		out.println("--------- EXERTION # " + index + " ---------");
-		out.println(((ServiceExertion) xrt).describe());
+		out.println(((ServiceProgram) xrt).describe());
 		if (isContext) {
 			out.println("\nData Context:");
 			out.println(xrt.getContext());

@@ -46,11 +46,11 @@ public class ServiceJobber extends SystemServiceBean implements Jobber {
 
             setServiceID(mogram);
             try {
-                MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Exertion)mogram));
-                if (((Exertion)mogram).getControlContext().isMonitorable()
-                        && !((Exertion)mogram).getControlContext().isWaitable()) {
-                    replaceNullExertionIDs((Exertion)mogram);
-                    notifyViaEmail((Exertion)mogram);
+                MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Program)mogram));
+                if (((Program)mogram).getControlContext().isMonitorable()
+                        && !((Program)mogram).getControlContext().isWaitable()) {
+                    replaceNullExertionIDs((Program)mogram);
+                    notifyViaEmail((Program)mogram);
                     new Thread(mogramThread, ((Job)mogram).getContextName()).start();
                     return mogram;
                 } else {
@@ -67,7 +67,7 @@ public class ServiceJobber extends SystemServiceBean implements Jobber {
             }
 	}
 
-    protected DispatcherFactory getDispatcherFactory(Exertion exertion) {
+    protected DispatcherFactory getDispatcherFactory(Program exertion) {
         return MogramDispatcherFactory.getFactory();
     }
 

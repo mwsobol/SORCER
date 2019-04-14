@@ -114,7 +114,7 @@ public class SorcerServiceInfo extends ServiceType {
 	public java.util.List<String> apps;
 
 	/**
-	 * Indicates if the service provider uses Exertion Space.
+	 * Indicates if the service provider uses Program Space.
 	 */
 	public Boolean puller;
 	

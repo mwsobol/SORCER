@@ -17,7 +17,6 @@
 
 package sorcer.core.provider;
 
-import sorcer.service.Service;
 import sorcer.service.modeling.Model;
 
 import java.rmi.Remote;
@@ -29,5 +28,5 @@ import java.rmi.Remote;
  *
  * @author Mike Sobolewski
  */
-public interface Modeler extends Exerter, Remote {
+public interface Modeler extends Exertion, Remote {
 }

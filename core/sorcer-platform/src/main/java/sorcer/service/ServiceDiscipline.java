@@ -71,35 +71,35 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         disciplineId = UuidFactory.generate();
     }
 
-    public ServiceDiscipline(Exertion... dispatchs) {
+    public ServiceDiscipline(Program... dispatchs) {
         serviceMultiFi = new ServiceFidelity(dispatchs);
     }
 
-    public ServiceDiscipline(Exertion dispatch, Service service) {
-        serviceMultiFi = new ServiceFidelity(new Exertion[] { dispatch });
+    public ServiceDiscipline(Program dispatch, Service service) {
+        serviceMultiFi = new ServiceFidelity(new Program[] { dispatch });
         dispatchMultiFi = new ServiceFidelity(new Service[] { service });
     }
 
-    public ServiceDiscipline(Exertion[] dispatchs, Service[] services) {
+    public ServiceDiscipline(Program[] dispatchs, Service[] services) {
         serviceMultiFi = new ServiceFidelity(dispatchs);
         dispatchMultiFi = new ServiceFidelity(services);
     }
 
-    public ServiceDiscipline(List<Exertion> dispatchs, List<Service> services) {
-        Exertion[] cArray = new Exertion[dispatchs.size()];
-        Service[] pArray = new Exertion[services.size()];
+    public ServiceDiscipline(List<Program> dispatchs, List<Service> services) {
+        Program[] cArray = new Program[dispatchs.size()];
+        Service[] pArray = new Program[services.size()];
         serviceMultiFi = new ServiceFidelity(dispatchs.toArray(cArray));
         dispatchMultiFi = new ServiceFidelity(services.toArray(pArray));
     }
 
-    public void add(Exertion dispatch, Service service) {
+    public void add(Program dispatch, Service service) {
         serviceMultiFi.getSelects().add(dispatch);
         dispatchMultiFi.getSelects().add(service);
     }
 
     @Override
     public void add(Fidelity dispatchFi, Fidelity serviceFi) {
-        Exertion dispatch = (Exertion) dispatchFi.getSelect();
+        Program dispatch = (Program) dispatchFi.getSelect();
         dispatch.setName(dispatchFi.getName());
         Object service = serviceFi.getSelect();
         if (service instanceof Signature) {
@@ -126,8 +126,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public Exertion getDispatcher() throws ExertionException {
-        return (Exertion) dispatchMultiFi.getSelect();
+    public Program getDispatcher() throws ExertionException {
+        return (Program) dispatchMultiFi.getSelect();
     }
 
     @Override
@@ -187,7 +187,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             if (fis != null && fis.size() > 0) {
                 selectFi(fis.get(0));
             }
-            Exertion xrt = getDispatcher();
+            Program xrt = getDispatcher();
             if (input != null) {
                 if (inConnector != null) {
                     xrt.setContext(((ServiceContext) input).updateContextWith(inConnector));

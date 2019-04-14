@@ -51,11 +51,11 @@ import static sorcer.so.operator.exec;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public abstract class ServiceExertion extends ServiceMogram implements Exertion {
+public abstract class ServiceProgram extends ServiceMogram implements Program {
 
     static final long serialVersionUID = -3907402419486719293L;
 
-    protected final static Logger logger = LoggerFactory.getLogger(ServiceExertion.class.getName());
+    protected final static Logger logger = LoggerFactory.getLogger(ServiceProgram.class.getName());
 
     protected ServiceContext dataContext;
 
@@ -75,19 +75,19 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     // dependency management for this exertion
     protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
-    public ServiceExertion() {
+    public ServiceProgram() {
         super("xrt" +  count++);
         multiFi = new ServiceFidelity(key);
         List<Service> sl = new ArrayList<>();
         ((ServiceFidelity)multiFi).setSelects(sl);
     }
 
-    public ServiceExertion(String name) {
+    public ServiceProgram(String name) {
         super(name);
     }
 
-    public Exertion newInstance() throws SignatureException {
-        return (Exertion) sorcer.co.operator.instance(builder);
+    public Program newInstance() throws SignatureException {
+        return (Program) sorcer.co.operator.instance(builder);
     }
 
     /*
@@ -119,14 +119,14 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Service#service(sorcer.service.Exertion,
+     * @see sorcer.service.Service#service(sorcer.service.Program,
      * net.jini.core.transaction.Transaction)
      */
     public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args)
             throws MogramException, RemoteException {
         try {
-            if (mogram instanceof Exertion) {
-                ServiceExertion exertion = (ServiceExertion) mogram;
+            if (mogram instanceof Program) {
+                ServiceProgram exertion = (ServiceProgram) mogram;
                 Class serviceType = exertion.getServiceType();
                 if (provider != null) {
                     Task out = ((ServiceProvider)provider).getDelegate().doTask((Task) exertion, txn, args);
@@ -161,7 +161,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         }
     }
 
-    private void handleExertOutput(ServiceExertion exertion, Object result ) throws ContextException {
+    private void handleExertOutput(ServiceProgram exertion, Object result ) throws ContextException {
         ServiceContext dataContext = (ServiceContext) exertion.getDataContext();
         if (result instanceof Context)
             dataContext.updateEntries((Context)result);
@@ -212,7 +212,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         }
         try {
             Object obj = null;
-            Exertion xrt = exert(entries);
+            Program xrt = exert(entries);
             if (rp == null) {
                 obj =  xrt.getReturnValue();
             } else {
@@ -271,10 +271,10 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Exertion#exert(net.jini.core.transaction.Transaction,
+     * @see sorcer.service.Program#exert(net.jini.core.transaction.Transaction,
      * sorcer.servie.Arg[])
      */
-    public Exertion exert(Transaction txn, Arg... entries)
+    public Program exert(Transaction txn, Arg... entries)
             throws MogramException, RemoteException {
         try {
             substitute(entries);
@@ -296,7 +296,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Exertion#exert(sorcer.core.context.Path.Entry[])
+     * @see sorcer.service.Program#exert(sorcer.core.context.Path.Entry[])
      */
     public <T extends Mogram> T  exert(Arg... entries) throws MogramException, RemoteException {
         try {
@@ -408,10 +408,10 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     public void setSessionId(Uuid id) {
         sessionId = id;
-        if (this instanceof CompositeExertion) {
+        if (this instanceof Transprogram) {
             List<Mogram> v =  this.getMograms();
             for (int i = 0; i < v.size(); i++) {
-                ((ServiceExertion) v.get(i)).setSessionId(id);
+                ((ServiceProgram) v.get(i)).setSessionId(id);
             }
         }
     }
@@ -420,12 +420,12 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         this.dataContext = (ServiceContext) context;
     }
 
-    public ServiceExertion setControlContext(ControlContext context) {
+    public ServiceProgram setControlContext(ControlContext context) {
         controlContext = context;
         return this;
     }
 
-    public ServiceExertion updateStrategy(ControlContext context) {
+    public ServiceProgram updateStrategy(ControlContext context) {
         controlContext.setAccessType(context.getAccessType());
         controlContext.setFlowType(context.getFlowType());
         controlContext.setProvisionable(context.isProvisionable());
@@ -499,7 +499,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
 
     public Context getContext(String componentExertionName)
             throws ContextException {
-        Exertion component = (Exertion)getMogram(componentExertionName);
+        Program component = (Program)getMogram(componentExertionName);
         if (component != null)
             return getMogram(componentExertionName).getContext();
         else
@@ -507,9 +507,9 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     public Context getControlContext(String componentExertionName) {
-        Exertion component = (Exertion)getMogram(componentExertionName);
+        Program component = (Program)getMogram(componentExertionName);
         if (component != null)
-            return ((Exertion)getMogram(componentExertionName)).getControlContext();
+            return ((Program)getMogram(componentExertionName)).getControlContext();
         else
             return null;
     }
@@ -637,7 +637,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Exertion#getReturnValue(sorcer.service.Arg[])
+     * @see sorcer.service.Program#getReturnValue(sorcer.service.Arg[])
      */
     public Object getReturnValue(Arg... entries) throws ContextException,
             RemoteException {
@@ -731,7 +731,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Exertion#getExceptions()
+     * @see sorcer.service.Program#getExceptions()
      */
     @Override
     public List<ThrowableTrace> getExceptions() {
@@ -744,7 +744,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Exertion#getExceptions()
+     * @see sorcer.service.Program#getExceptions()
      */
     @Override
     public List<ThrowableTrace> getAllExceptions() {
@@ -772,7 +772,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         List<Mogram> allExertions = getAllMograms();
         for (Mogram e : allExertions) {
             if (e instanceof Task)
-                allSigs.add(((Exertion)e).getProcessSignature());
+                allSigs.add(((Program)e).getProcessSignature());
         }
         return allSigs;
     }
@@ -792,9 +792,9 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         // logger.info(" this exertion = " + this);
         // logger.info(" mograms = " + mograms);
         for (Mogram e : exertions) {
-            if (e instanceof Exertion && !((Exertion)e).isJob()) {
+            if (e instanceof Program && !((Program)e).isJob()) {
                 // logger.info(" exertion i = "+ e.getName());
-                Context cxt = ((Exertion)e).getContext();
+                Context cxt = ((Program)e).getContext();
                 ((ServiceContext) cxt).updateValue(value);
             }
         }
@@ -855,7 +855,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         Context cxt = null;
         try {
             substitute(entries);
-            Exertion evaluatedExertion = exert(entries);
+            Program evaluatedExertion = exert(entries);
             ReturnPath rp = (ReturnPath)evaluatedExertion.getDataContext()
                     .getReturnPath();
             if (evaluatedExertion instanceof Job) {
@@ -960,7 +960,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
     }
 
     /* (non-Javadoc)
-     * @see sorcer.service.Exertion#isCompound()
+     * @see sorcer.service.Program#isCompound()
      */
     @Override
     public boolean isCompound() {
@@ -1011,7 +1011,7 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         this.isProxy = isProxy;
     }
 
-    public Exertion addDepender(Evaluation depender) {
+    public Program addDepender(Evaluation depender) {
         if (this.dependers == null)
             this.dependers = new ArrayList<Evaluation>();
         dependers.add(depender);
@@ -1060,12 +1060,12 @@ public abstract class ServiceExertion extends ServiceMogram implements Exertion 
         StringBuffer info = new StringBuffer();
         try {
             info.append("\n" + stdoutSep)
-                    .append("[SORCER Service Exertion]\n")
-                    .append("\tExertion Type:        " + getClass().getName()
+                    .append("[SORCER Service Program]\n")
+                    .append("\tProgram Type:        " + getClass().getName()
                             + "\n")
-                    .append("\tExertion Tag:        " + key + "\n")
-                    .append("\tExertion Status:      " + status + "\n")
-                    .append("\tExertion ID:          " + mogramId + "\n")
+                    .append("\tProgram Tag:        " + key + "\n")
+                    .append("\tProgram Status:      " + status + "\n")
+                    .append("\tProgram ID:          " + mogramId + "\n")
                     .append("\tCreation Date:        " + sdf.format(creationDate) + "\n")
                     .append("\tRuntime ID:           " + runtimeId + "\n")
                     .append("\tParent ID:            " + parentId + "\n")

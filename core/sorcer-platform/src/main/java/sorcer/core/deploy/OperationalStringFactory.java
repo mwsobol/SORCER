@@ -28,10 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
-import sorcer.service.Exertion;
-import sorcer.service.ServiceExertion;
-import sorcer.service.Signature;
-import sorcer.service.SignatureException;
+import sorcer.service.*;
+import sorcer.service.Program;
+import sorcer.service.ServiceProgram;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +39,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Create an {@link OperationalString} from an {@link Exertion}.
+ * Create an {@link OperationalString} from an {@link Program}.
  *
  * @author Dennis Reedy
  */
@@ -65,7 +64,7 @@ public final class OperationalStringFactory {
     }
 
     /**
-     * Create {@link OperationalString}s from an {@code Exertion}.
+     * Create {@link OperationalString}s from an {@code Program}.
      *
      * @param exertion The exertion, must not be {@code null}.
      *
@@ -75,7 +74,7 @@ public final class OperationalStringFactory {
      * @throws IllegalArgumentException if the {@code exertion} is {@code null}.
      * @throws Exception if there are configuration issues, if the iGrid opstring cannot be loaded
      */
-    public static Map<ServiceDeployment.Unique, List<OperationalString>> create(final Exertion exertion) throws Exception {
+    public static Map<ServiceDeployment.Unique, List<OperationalString>> create(final Program exertion) throws Exception {
         if(exertion==null)
             throw new IllegalArgumentException("exertion is null");
 
@@ -227,10 +226,10 @@ public final class OperationalStringFactory {
         return undeployOption;
     }
 
-    private static Iterable<Signature> getNetSignatures(final Exertion exertion) {
+    private static Iterable<Signature> getNetSignatures(final Program exertion) {
         List<Signature> signatures = new ArrayList<>();
-        if(exertion instanceof ServiceExertion) {
-            ServiceExertion serviceExertion = (ServiceExertion)exertion;
+        if(exertion instanceof ServiceProgram) {
+            ServiceProgram serviceExertion = (ServiceProgram)exertion;
             signatures.addAll(serviceExertion.getAllNetTaskSignatures());
         }
         return signatures;

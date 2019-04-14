@@ -286,14 +286,14 @@ import java.util.Map;
 		return closureExpression;
 	}
 	
-	static public void cleanupScripts(Exertion exertion) throws ContextException {
+	static public void cleanupScripts(Program exertion) throws ContextException {
 		if (exertion == null)
 			return;
 		clenupContextScripts(exertion.getContext());
 		for (Mogram e : exertion.getMograms()) {
-			if (e instanceof Exertion) {
+			if (e instanceof Program) {
 				clenupContextScripts(e.getContext());
-				clenupExertionScripts((Exertion) e);
+				clenupExertionScripts((Program) e);
 			}
 		}
 	}
@@ -322,7 +322,7 @@ import java.util.Map;
 		}
 	}
 
-	public static void clenupExertionScripts(Exertion exertion)
+	public static void clenupExertionScripts(Program exertion)
 			throws ContextException {
 		if (exertion instanceof ConditionalTask) {
 			List<Conditional> cs = ((ConditionalTask) exertion)
@@ -332,8 +332,8 @@ import java.util.Map;
 			}
 			List<Mogram> tl = ((ConditionalTask) exertion).getTargets();
 			for (Mogram vt : tl) {
-				if (vt != null && vt instanceof Exertion)
-					clenupContextScripts(((Exertion)vt).getContext());
+				if (vt != null && vt instanceof Program)
+					clenupContextScripts(((Program)vt).getContext());
 			}
 		}
 	}

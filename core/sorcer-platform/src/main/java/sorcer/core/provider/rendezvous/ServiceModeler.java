@@ -87,7 +87,7 @@ public class ServiceModeler extends SystemServiceBean implements Modeler {
                     result = (Mogram) contextSelector.doSelect(result);
                 }
             }
-            ((ServiceExertion)mogram).setContext((Context)result);
+            ((ServiceProgram)mogram).setContext((Context)result);
             logger.trace("<==== Result: " + result);
 
         } catch (Throwable e) {

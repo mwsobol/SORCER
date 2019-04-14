@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The option Exertion. There is a single target exertion that executes if the
+ * The option Program. There is a single target exertion that executes if the
  * condition is true (like if... then).
  * 
  * @author Mike Sobolewski
@@ -76,9 +76,9 @@ public class OptTask extends ConditionalTask {
 //					target.setScope(dataContext);
 //				}
 				dataContext = (ServiceContext) target.getDataContext();
-				if (target instanceof Exertion) {
+				if (target instanceof Program) {
 					target.getContext().setExertion(null);
-					controlContext.append(((Exertion)target).getControlContext());
+					controlContext.append(((Program)target).getControlContext());
 				}
 				dataContext.putValue(Condition.CONDITION_VALUE, true);
 				dataContext.putValue(Condition.CONDITION_TARGET, target.getName());
@@ -104,7 +104,7 @@ public class OptTask extends ConditionalTask {
 	}
 
 	public void reset(int state) {
-		((ServiceExertion)target).reset(state);
+		((ServiceProgram)target).reset(state);
 		this.setStatus(state);
 	}
 

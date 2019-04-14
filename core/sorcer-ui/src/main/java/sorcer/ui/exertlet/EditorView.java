@@ -20,7 +20,6 @@
  */
 package sorcer.ui.exertlet;
 
-import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.provider.Provider;
@@ -485,8 +484,8 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				createRemoteLoggerListener((Mogram) target);
 				result = scriptExerter.execute();
 			}
-			if (result instanceof Exertion)
-				processMogram((Exertion) result);
+			if (result instanceof Program)
+				processMogram((Program) result);
 			else if (result != null) {
 				logger.debug("<< executing scrip: " + script);
 				logger.debug(">> scrip result: " + script);
@@ -556,8 +555,8 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			openOutPanel("Failed to compute the sorcer.netlet!");
 			return;
 		}
-		if (mogram instanceof Exertion) {
-			Exertion exertion = (Exertion)mogram;
+		if (mogram instanceof Program) {
+			Program exertion = (Program)mogram;
 			try {
 				if (exertion.getExceptions().size() > 0) {
                     openOutPanel(exertion.getExceptions().toString());
@@ -565,7 +564,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
                     StringBuilder sb = new StringBuilder(exertion.getContext().toString());
                     if (debug) {
                         sb.append("\n");
-                        sb.append(((ServiceExertion) exertion).getControlInfo().toString());
+                        sb.append(((ServiceProgram) exertion).getControlInfo().toString());
                     }
                     openOutPanel(sb.toString());
                 }

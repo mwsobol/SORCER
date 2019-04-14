@@ -31,8 +31,8 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.DatabaseStorer.Store;
 import sorcer.core.provider.ProviderRuntime;
 import sorcer.service.Context;
-import sorcer.service.Exertion;
-import sorcer.service.ServiceExertion;
+import sorcer.service.Program;
+import sorcer.service.ServiceProgram;
 import sorcer.util.DataTable;
 import sorcer.util.ModelTable;
 
@@ -73,7 +73,7 @@ public class SorcerDatabaseViews {
 		
 		SerialBinding exertiontKeyBinding = new SerialBinding(catalog, UuidKey.class);
 		EntityBinding exertionDataBinding = new ExertionBinding(catalog,
-				UuidKey.class, ServiceExertion.class);
+				UuidKey.class, ServiceProgram.class);
 	
 		exertionMap = new StoredSortedMap(db.getExertionDatabase(),
 				exertiontKeyBinding, exertionDataBinding, true);
@@ -108,9 +108,9 @@ public class SorcerDatabaseViews {
 	// convenience methods are provided here to return them in order to avoid
 	// down-casting elsewhere.
 	/**
-	 * Return a map view of the Exertion storage container.
+	 * Return a map view of the Program storage container.
 	 */
-	public StoredMap<UuidKey, Exertion> getExertionMap() {
+	public StoredMap<UuidKey, Program> getExertionMap() {
 		return exertionMap;
 	}
 
@@ -136,9 +136,9 @@ public class SorcerDatabaseViews {
 	}
 
 	/**
-	 * Return an entity setValue view of the Exertion storage container.
+	 * Return an entity setValue view of the Program storage container.
 	 */
-	public StoredValueSet<Exertion> getExertionSet() {
+	public StoredValueSet<Program> getExertionSet() {
 		return (StoredValueSet) exertionMap.values();
 	}
 
@@ -179,7 +179,7 @@ public class SorcerDatabaseViews {
 	
 	/**
 	 * ExertionBinding is used to bind the stored key/data entry pair to a
-	 * combined data object (entity - Exertion).
+	 * combined data object (entity - Program).
 	 */
 	private static class ExertionBinding extends SerialSerialBinding {
 
@@ -194,7 +194,7 @@ public class SorcerDatabaseViews {
 		 * Create the entity by combining the stored key and data. 
 		 */
 		public Object entryToObject(Object keyInput, Object object) {
-			((ServiceExertion)object).setId(((UuidKey)keyInput).getId());
+			((ServiceProgram)object).setId(((UuidKey)keyInput).getId());
 			return object;
 		}
 
@@ -202,7 +202,7 @@ public class SorcerDatabaseViews {
 		 * Create the stored key from the entity.
 		 */
 		public Object objectToKey(Object object) {
-			UuidKey key = new UuidKey(((Exertion)object).getId());
+			UuidKey key = new UuidKey(((Program)object).getId());
 			return key;
 		}
 

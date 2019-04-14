@@ -94,7 +94,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected Context initContext;
 
 	/** The exertion that uses this context */
-	protected ServiceExertion exertion;
+	protected ServiceProgram exertion;
 	protected String currentPrefix;
 	protected boolean isFinalized = false;
 	protected Functionality.Type type = Functionality.Type.CONTEXT;
@@ -195,7 +195,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		subdomainId = cxt.getSubdomainId();
 		domainName = cxt.getDomainName();
 		subdomainName = cxt.getSubdomainName();
-		exertion = (ServiceExertion) cxt.getMogram();
+		exertion = (ServiceProgram) cxt.getMogram();
 		principal = cxt.getPrincipal();
 		isPersistantTaskAssociated = cxt.isPersistantTaskAssociated;
 	}
@@ -341,13 +341,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.initContext = initContext;
 	}
 
-	public Exertion getMogram() {
+	public Program getMogram() {
 		return exertion;
 	}
 
-	public void setExertion(Exertion exertion) {
-		if (exertion == null || exertion instanceof Exertion)
-			this.exertion = (ServiceExertion) exertion;
+	public void setExertion(Program exertion) {
+		if (exertion == null || exertion instanceof Program)
+			this.exertion = (ServiceProgram) exertion;
 	}
 
 	public T getReturnValue(Arg... entries) throws RemoteException,
@@ -2074,8 +2074,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 					} catch (ContextNodeException e2) {
 						e2.printStackTrace();
 					}
-				} else if (val instanceof Exertion) {
-					sb.append(((ServiceExertion) val).info());
+				} else if (val instanceof Program) {
+					sb.append(((ServiceProgram) val).info());
 				} else
 					sb.append(val.toString());
 			}
@@ -3430,7 +3430,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-     * @see sorcer.service.Service#exert(sorcer.service.Exertion, net.jini.core.transaction.Transaction)
+     * @see sorcer.service.Service#exert(sorcer.service.Program, net.jini.core.transaction.Transaction)
      */
     public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
         try {

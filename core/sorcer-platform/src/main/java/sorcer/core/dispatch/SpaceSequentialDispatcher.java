@@ -29,21 +29,21 @@ import java.util.Set;
 public class SpaceSequentialDispatcher extends SpaceParallelDispatcher {
     private final Logger logger = LoggerFactory.getLogger(SpaceSequentialDispatcher.class);
 
-	public SpaceSequentialDispatcher(Exertion job,
-            Set<Context> sharedContexts,
-            boolean isSpawned,
-            LokiMemberUtil myMemberUtil,
-            Provider provider,
-            ProvisionManager provisionManager) throws ExertionException, ContextException  {
+	public SpaceSequentialDispatcher(Program job,
+                                     Set<Context> sharedContexts,
+                                     boolean isSpawned,
+                                     LokiMemberUtil myMemberUtil,
+                                     Provider provider,
+                                     ProvisionManager provisionManager) throws ExertionException, ContextException  {
 		super(job, sharedContexts, isSpawned, myMemberUtil, provider, provisionManager);
 	}
 
-    protected void dispatchExertion(Exertion exertion) throws ExertionException, SignatureException {
+    protected void dispatchExertion(Program exertion) throws ExertionException, SignatureException {
         super.dispatchExertion(exertion);
 		waitForExertion(exertion);
 	}
 
-    protected synchronized void waitForExertion(Exertion exertion) {
+    protected synchronized void waitForExertion(Program exertion) {
         while (exertion.getIndex() - getDoneExertionIndex() > -1) {
             try {
                 logger.debug("Waiting for exertion: " + exertion.getName() + " to finish index/done: " + exertion.getIndex() + "/" + getDoneExertionIndex());

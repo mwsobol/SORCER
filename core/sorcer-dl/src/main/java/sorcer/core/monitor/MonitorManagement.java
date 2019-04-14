@@ -20,7 +20,7 @@ package sorcer.core.monitor;
 
 import net.jini.core.event.RemoteEventListener;
 import sorcer.core.provider.MonitorManagementSession;
-import sorcer.service.Exertion;
+import sorcer.service.Program;
 import sorcer.service.MonitorException;
 import sorcer.service.Monitorable;
 
@@ -30,7 +30,7 @@ import java.rmi.RemoteException;
 /**
  * 
  * An interface to be implemented by a monitoring service. It must give
- * registrations to the client for an Exertion and Lease the Server side
+ * registrations to the client for an Program and Lease the Server side
  * resource maintained for this registration. Also it must return the exertions
  * with MonitorSessions inside it corresponding to each exertion. These monitor
  * session are sub resources for the controlling the session in the server.
@@ -42,7 +42,7 @@ import java.rmi.RemoteException;
 
 public interface MonitorManagement extends Monitorable {
 
-    Exertion register(RemoteEventListener lstnr, Exertion ex, long duration) throws MonitorException,
+    Program register(RemoteEventListener lstnr, Program ex, long duration) throws MonitorException,
                                                                                     RemoteException;
 
 	boolean persist(MonitorManagementSession session) throws IOException;

@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.monitor.MonitorEvent;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.ServiceExertion;
+import sorcer.service.ServiceProgram;
 
 import java.rmi.RemoteException;
 import java.security.SecureRandom;
@@ -99,7 +99,7 @@ public class ExertMonitorEventHandler {
         for(ServiceResource sr : resourceMgr.getServiceResources()) {
             EventRegistrationResource er = (EventRegistrationResource) sr.getResource();
             SorcerPrincipal principal = er.getPrincipal();
-            ServiceExertion xrt = (ServiceExertion) monitorEvent.getExertion();
+            ServiceProgram xrt = (ServiceProgram) monitorEvent.getExertion();
             if (principal == null || xrt.getPrincipal().getId().equals(principal.getId())) {
                 RemoteEventListener listener = er.getListener();
                 try {

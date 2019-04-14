@@ -52,12 +52,12 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     protected LokiMemberUtil loki;
     private final Logger logger = LoggerFactory.getLogger(SpaceParallelDispatcher.class);
 
-    public SpaceParallelDispatcher(Exertion exertion,
-           Set<Context> sharedContexts,
-           boolean isSpawned,
-           LokiMemberUtil loki,
-           Provider provider,
-           ProvisionManager provisionManager) throws ExertionException, ContextException {
+    public SpaceParallelDispatcher(Program exertion,
+                                   Set<Context> sharedContexts,
+                                   boolean isSpawned,
+                                   LokiMemberUtil loki,
+                                   Provider provider,
+                                   ProvisionManager provisionManager) throws ExertionException, ContextException {
         super(exertion, sharedContexts, isSpawned, provider, provisionManager);
 
         space = SpaceAccessor.getSpace();
@@ -92,7 +92,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 
         for (Mogram mogram : inputXrts) {
             logger.info("Calling monSession.init from SpaceParallelDispatcher for: {}", mogram.getName());
-            MonitoringSession monSession = MonitorUtil.getMonitoringSession((Exertion)mogram);
+            MonitoringSession monSession = MonitorUtil.getMonitoringSession((Program)mogram);
             if (xrt.isMonitorable() && monSession!=null) {
                 try {
                     if (monSession.getState()==State.INITIAL.ordinal()) {
@@ -103,16 +103,16 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                     logger.error("Problem starting monitoring for {}", xrt.getName(), e);
                 }
             }
-            dispatchExertion((Exertion)mogram);
+            dispatchExertion((Program)mogram);
             try {
-                afterExec((Exertion)mogram);
+                afterExec((Program)mogram);
             } catch (ContextException ce) {
                 logger.warn("Problem sending state to monitor");
             }
         }
 	}
 
-    protected void dispatchExertion(Exertion exertion) throws ExertionException, SignatureException {
+    protected void dispatchExertion(Program exertion) throws ExertionException, SignatureException {
         logger.debug("exertion #{}: exertion: {}", exertion.getIndex(), exertion);
         try {
             writeEnvelop(exertion);
@@ -202,10 +202,10 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         for (ExertionEnvelop resultEnvelop : results) {
 
             logger.debug("HandleResult got result: " + resultEnvelop.describe());
-            ServiceExertion input = (ServiceExertion) ((NetJob) xrt)
+            ServiceProgram input = (ServiceProgram) ((NetJob) xrt)
                     .get(resultEnvelop.exertion
                             .getIndex());
-            ServiceExertion result = (ServiceExertion) resultEnvelop.exertion;
+            ServiceProgram result = (ServiceProgram) resultEnvelop.exertion;
             int status = result.getStatus();
             if(status == DONE)
                 postExecExertion(input, result);
@@ -226,7 +226,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         }
     }
 
-    protected void addPoison(Exertion exertion) {
+    protected void addPoison(Program exertion) {
         space = SpaceAccessor.getSpace();
         if (space == null) {
             return;
@@ -253,7 +253,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     // abstract in ExertionDispatcher
-    protected void preExecExertion(Exertion exertion) throws ExertionException,
+    protected void preExecExertion(Program exertion) throws ExertionException,
             SignatureException {
 //		try {
 //			exertion.getControlContext().appendTrace(provider.getProviderName()
@@ -266,15 +266,15 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         } catch (ContextException e) {
             throw new ExertionException(e);
         }
-        ((ServiceExertion) exertion).startExecTime();
-        ((ServiceExertion) exertion).setStatus(RUNNING);
+        ((ServiceProgram) exertion).startExecTime();
+        ((ServiceProgram) exertion).setStatus(RUNNING);
     }
 
-/*    private void provisionProviderForExertion(Exertion exertion) {
+/*    private void provisionProviderForExertion(Program exertion) {
         ProviderProvisionManager.provision(exertion, this);
     }*/
 
-    protected void writeEnvelop(Exertion exertion) throws
+    protected void writeEnvelop(Program exertion) throws
             ExertionException, SignatureException, RemoteException {
         // setSubject before exertion is dropped
         space = SpaceAccessor.getSpace();
@@ -285,7 +285,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         /*if (exertion.isProvisionable())
             provisionProviderForExertion(exertion);*/
 
-        ((ServiceExertion) exertion).setSubject(subject);
+        ((ServiceProgram) exertion).setSubject(subject);
         preExecExertion(exertion);
         ExertionEnvelop ee = ExertionEnvelop.getTemplate(exertion);
         ee.state = INITIAL;
@@ -322,12 +322,12 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         }
     }
 
-    protected void postExecExertion(Exertion ex, Exertion result)
+    protected void postExecExertion(Program ex, Program result)
             throws ExertionException, SignatureException {
-        ((ServiceExertion) result).stopExecTime();
+        ((ServiceProgram) result).stopExecTime();
         try {
             ((NetJob) xrt).setMogramAt(result, ex.getIndex());
-            ServiceExertion ser = (ServiceExertion) result;
+            ServiceProgram ser = (ServiceProgram) result;
             if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
                 ser.setStatus(DONE);
                 collectOutputs(result);
@@ -342,7 +342,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         changeDoneExertionIndex(result.getIndex());
     }
 
-    protected void handleError(Exertion exertion) throws RemoteException {
+    protected void handleError(Program exertion) throws RemoteException {
         if (exertion != xrt)
             ((NetJob) xrt).setMogramAt(exertion,
                     exertion.getIndex());

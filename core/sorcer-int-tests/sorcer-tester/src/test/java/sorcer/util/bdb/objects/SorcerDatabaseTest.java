@@ -11,7 +11,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.SorcerConstants;
 import sorcer.service.Context;
-import sorcer.service.Exertion;
+import sorcer.service.Program;
 import sorcer.util.ModelTable;
 import sorcer.util.SorcerUtil;
 
@@ -139,14 +139,14 @@ public class SorcerDatabaseTest implements SorcerConstants {
 	
 	@Test
 	public void storedExertionMapTest() throws Exception {
-		StoredMap<UuidKey, Exertion> sm = runner.getViews()
+		StoredMap<UuidKey, Program> sm = runner.getViews()
 				.getExertionMap();
 		
-		Iterator<Map.Entry<UuidKey, Exertion>> it = sm
+		Iterator<Map.Entry<UuidKey, Program>> it = sm
 				.entrySet().iterator();
 				
 		List<String> names = new ArrayList<String>();
-		Map.Entry<UuidKey, Exertion> entry = null;
+		Map.Entry<UuidKey, Program> entry = null;
 
 		while (it.hasNext()) {
 			entry = it.next();

@@ -68,8 +68,8 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 	static transient final int EVENT_TASK_POOL_MAX = 5;
 	static transient final long INITIAL_TIMEOUT = Long.MAX_VALUE;
 	private Uuid cookie;
-	private ServiceExertion initialExertion;
-	private ServiceExertion runtimeExertion;
+	private ServiceProgram initialExertion;
+	private ServiceProgram runtimeExertion;
 	private Monitorable provider;
 	private MonitorSession parentResource;
 	private RemoteEventListener listener;
@@ -89,15 +89,15 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 
 	private Lease lease;
 
-    public MonitorSession(Exertion ex,
+    public MonitorSession(Program ex,
                           RemoteEventListener listener,
                           long duration) throws MonitorException {
         super();
 		if (ex == null)
 			throw new NullPointerException("Assertion Failed: initialExertion cannot be NULL");
 
-		this.initialExertion = (ServiceExertion) ex;
-		runtimeExertion = (ServiceExertion) ObjectCloner.cloneAnnotated(ex);
+		this.initialExertion = (ServiceProgram) ex;
+		runtimeExertion = (ServiceProgram) ObjectCloner.cloneAnnotated(ex);
 		this.listener = listener;
 		init();
 		runtimeExertion.setStatus(Exec.INITIAL);
@@ -113,13 +113,13 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
         setMonitorSession(runtimeExertion, new MonitorableSession(sessionManager, cookie, lease));
 	}
 
-	private MonitorSession(Exertion xrt, Exertion runtimeXrt, MonitorSession parentSession) throws MonitorException {
+	private MonitorSession(Program xrt, Program runtimeXrt, MonitorSession parentSession) throws MonitorException {
 		super();
 		if (xrt == null || runtimeXrt == null)
 			throw new NullPointerException("Assertion Failed: initialExertion cannot be NULL");
 
-		this.initialExertion = (ServiceExertion) xrt;
-		this.runtimeExertion = (ServiceExertion) runtimeXrt;
+		this.initialExertion = (ServiceProgram) xrt;
+		this.runtimeExertion = (ServiceProgram) runtimeXrt;
 		this.parentResource = parentSession;
 		this.listener = parentSession.getListener();
 		init();
@@ -129,19 +129,19 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 	private void init() throws MonitorException {
 		cookie = UuidFactory.generate();
 		if (initialExertion.isJob() || initialExertion.isBlock())
-			addSessions((CompositeExertion) initialExertion, (CompositeExertion) runtimeExertion, this);
+			addSessions((Transprogram) initialExertion, (Transprogram) runtimeExertion, this);
 
         if (initialExertion instanceof ConditionalTask)
             addSessionsForConditionals((ConditionalTask)initialExertion, (ConditionalTask)runtimeExertion, this);
     }
 
-	private void addSessions(CompositeExertion initial, CompositeExertion runtime, MonitorSession parent) throws MonitorException {
+	private void addSessions(Transprogram initial, Transprogram runtime, MonitorSession parent) throws MonitorException {
 		for (int i = 0; i < initial.size(); i++) {
             try {
                 if (!runtime.get(i).isMonitorable())
-                    ((ServiceExertion)runtime.get(i)).setMonitored(true);
+                    ((ServiceProgram)runtime.get(i)).setMonitored(true);
             } catch (RemoteException e) {
-                throw new MonitorException("Could not determine whether Exertion is monitorable", e);
+                throw new MonitorException("Could not determine whether Program is monitorable", e);
             }
             add(new MonitorSession(initial.get(i), runtime.get(i), parent));
         }
@@ -152,11 +152,11 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
         for (int i = 0; i<initial.getTargets().size(); i++) {
             try {
                 if (!runtime.getTargets().get(i).isMonitorable())
-                    ((ServiceExertion)runtime.getTargets().get(i)).setMonitored(true);
+                    ((ServiceProgram)runtime.getTargets().get(i)).setMonitored(true);
             } catch (RemoteException e) {
-                throw new MonitorException("Could not determine whether Exertion is monitorable", e);
+                throw new MonitorException("Could not determine whether Program is monitorable", e);
             }
-            add(new MonitorSession((Exertion)initial.getTargets().get(i), (Exertion)runtime.getTargets().get(i), parent));
+            add(new MonitorSession((Program)initial.getTargets().get(i), (Program)runtime.getTargets().get(i), parent));
         }
     }
 
@@ -242,7 +242,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		if (ctx == null)
 			throw new NullPointerException("Assertion Failed: ctx cannot be NULL");
 		logger.info("Updating state of exertion: " + runtimeExertion.getName() + ": " + Exec.State.name(aspect));
-        if (runtimeExertion instanceof ServiceExertion) {
+        if (runtimeExertion instanceof ServiceProgram) {
 			if (aspect!=runtimeExertion.getStatus())
 				runtimeExertion.setStatus(aspect);
             runtimeExertion.setContext(ctx);
@@ -259,14 +259,14 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		if (!isRunning() && !isUpdated()) {
 		//if (!isRunning()) {
 			logger.error("Trying to call done on a non running resource" + this + " state: " + Exec.State.name(getState()));
-			throw new MonitorException("Exertion " + runtimeExertion.getName() + " not running, state = "
+			throw new MonitorException("Program " + runtimeExertion.getName() + " not running, state = "
 					+ Exec.State.name(getState()));
 		}
 
 		logger.info("This exertion is completed " + runtimeExertion.getName());
 
 		runtimeExertion.setStatus(Exec.DONE);
-        if (runtimeExertion instanceof ServiceExertion) {
+        if (runtimeExertion instanceof ServiceProgram) {
             runtimeExertion.setContext(ctx);
             runtimeExertion.setControlContext((ControlContext)controlContext);
         }
@@ -284,7 +284,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		if (!isRunning() && !isInSpace()  && !isProvision()) {
 			logger.error(
 					"Trying to call failed on a non running resource" + this);
-			throw new MonitorException("Exertion " + runtimeExertion.getName() + " not running. state = "
+			throw new MonitorException("Program " + runtimeExertion.getName() + " not running. state = "
 					+ Exec.State.name(getState()));
 		}
 
@@ -522,11 +522,11 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		return cookie;
 	}
 
-	public ServiceExertion getInitialExertion() {
+	public ServiceProgram getInitialExertion() {
 		return initialExertion;
 	}
 
-	public Exertion getRuntimeExertion() {
+	public Program getRuntimeExertion() {
 		return runtimeExertion;
 	}
 

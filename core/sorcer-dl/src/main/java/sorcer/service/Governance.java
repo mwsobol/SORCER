@@ -17,5 +17,5 @@
 
 package sorcer.service;
 
-public interface FederatedMogram extends Mogram, FederatedRequest {
+public interface Governance extends Mogram, FederatedRequest {
 }

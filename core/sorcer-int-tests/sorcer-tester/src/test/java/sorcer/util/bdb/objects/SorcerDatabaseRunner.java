@@ -160,7 +160,7 @@ public class SorcerDatabaseRunner {
 	}
 	
 	 /**
-     * Populate the Exertion database in a single transaction.
+     * Populate the Program database in a single transaction.
      */
 	public class PopulateExertionDatabase implements TransactionWorker {
 
@@ -320,7 +320,7 @@ public class SorcerDatabaseRunner {
 	 * @throws ExertionException 
      */
 	private void addExertions() throws ExertionException, SignatureException, ContextException {
-		StoredValueSet<Exertion> exertionSet = views.getExertionSet();
+		StoredValueSet<Program> exertionSet = views.getExertionSet();
 		exertionSet.add(getTask());
 		exertionSet.add(getJob());
 	}
@@ -373,9 +373,9 @@ public class SorcerDatabaseRunner {
      */
 	public List<String> returnExertionNames() throws IOException, ClassNotFoundException {
 		List<String> names = new ArrayList<String>();
-		Iterator<Exertion> iterator = views.getExertionSet().iterator();
+		Iterator<Program> iterator = views.getExertionSet().iterator();
 		while (iterator.hasNext()) {
-			Exertion xrt = iterator.next();
+			Program xrt = iterator.next();
 			names.add(xrt.getName());
 		}
 		return names;

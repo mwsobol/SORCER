@@ -56,7 +56,7 @@ public class ServiceSpacer extends SystemServiceBean implements Spacer {
     @Override
     public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
             throws TransactionException, ExertionException, RemoteException {
-         if (mogram instanceof Exertion && ((Exertion)mogram).isCompound())
+         if (mogram instanceof Program && ((Program)mogram).isCompound())
             return doCompound(mogram, txn);
         else
             return doTask((Task)mogram);
@@ -66,11 +66,11 @@ public class ServiceSpacer extends SystemServiceBean implements Spacer {
             throws TransactionException, ExertionException, RemoteException {
         setServiceID(mogram);
         try {
-            MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Exertion)mogram));
-            if (((Exertion)mogram).getControlContext().isMonitorable()
-                    && !((Exertion)mogram).getControlContext().isWaitable()) {
-                replaceNullExertionIDs((Exertion)mogram);
-                notifyViaEmail((Exertion)mogram);
+            MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Program)mogram));
+            if (((Program)mogram).getControlContext().isMonitorable()
+                    && !((Program)mogram).getControlContext().isWaitable()) {
+                replaceNullExertionIDs((Program)mogram);
+                notifyViaEmail((Program)mogram);
                 new Thread(mogramThread, ((Job)mogram).getContextName()).start();
                 return mogram;
             } else {
@@ -80,7 +80,7 @@ public class ServiceSpacer extends SystemServiceBean implements Spacer {
                 return result;
             }
         } catch (Exception e) {
-            ((ServiceExertion)mogram).reportException(e);
+            ((ServiceProgram)mogram).reportException(e);
             logger.warn("Error: " + e.getMessage());
             return mogram;
         }
@@ -127,7 +127,7 @@ public class ServiceSpacer extends SystemServiceBean implements Spacer {
         }
     }
 
-    public Exertion doTask(Exertion task) throws RemoteException {
+    public Program doTask(Program task) throws RemoteException {
         setServiceID(task);
         try {
             if (task.isMonitorable()
@@ -150,7 +150,7 @@ public class ServiceSpacer extends SystemServiceBean implements Spacer {
         }
     }
 
-    protected DispatcherFactory getDispatcherFactory(Exertion exertion) {
+    protected DispatcherFactory getDispatcherFactory(Program exertion) {
         if (exertion.isSpacable())
             return MogramDispatcherFactory.getFactory(myMemberUtil);
         else

@@ -47,18 +47,18 @@ import java.security.Principal;
 import java.util.*;
 
 /**
- * A job is a composite service-oriented message comprised of {@link sorcer.service.Exertion}
+ * A job is a composite service-oriented message comprised of {@link Program}
  * instances with its own service {@link sorcer.service.Context} and a collection of service
  * {@link sorcer.service.Signature}s. The job's signature is usually referring to a
  * {@link Jobber} and the job's context describes the composition
  * of component mograms as defined by the Interpreter programming pattern.
  * 
- * @see Exertion
+ * @see Program
  * @see Task
  * 
  * @author Mike Sobolewski
  */
-public class Job extends CompositeExertion {
+public class Job extends Transprogram {
 
 	private static final long serialVersionUID = -6161435179772214884L;
 
@@ -75,7 +75,7 @@ public class Job extends CompositeExertion {
 	 */
 	public Job() {
 		this("job-" + count++);
-		// mograms = Collections.synchronizedList(new ArrayList<Exertion>());
+		// mograms = Collections.synchronizedList(new ArrayList<Program>());
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class Job extends CompositeExertion {
 	 * Constructs a job and sets all default values to it.
 	 * 
 	 * @param mogram
-	 *            The first Exertion of the job.
+	 *            The first Program of the job.
 	 * @throws ContextException 
 	 */
 	public Job(Mogram mogram) throws ExertionException {
@@ -139,7 +139,7 @@ public class Job extends CompositeExertion {
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Exertion#isCompound()
+	 * @see sorcer.service.Program#isCompound()
 	 */
 	@Override
 	public boolean isCompound() {
@@ -159,7 +159,7 @@ public class Job extends CompositeExertion {
 		return mograms.size();
 	}
 
-	public int indexOf(Exertion ex) {
+	public int indexOf(Program ex) {
 		return mograms.indexOf(ex);
 	}
 
@@ -168,7 +168,7 @@ public class Job extends CompositeExertion {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Exertion#addMogram(sorcer.service.Exertion)
+	 * @see sorcer.service.Program#addMogram(sorcer.service.Program)
 	 */
 	@Override
 	public Mogram addMogram(Mogram ex) throws ExertionException {
@@ -187,7 +187,7 @@ public class Job extends CompositeExertion {
 
 	public List<Mogram> getMograms(List<Mogram> exs) {
 		for (Mogram e : mograms)
-			((ServiceExertion) e).getMograms(exs);
+			((ServiceProgram) e).getMograms(exs);
 		exs.add(this);
 		return exs;
 	}
@@ -268,7 +268,7 @@ public class Job extends CompositeExertion {
 	public void setSubject(Subject subject) {
 		this.subject = subject;
 		for (int i = 0; i < size(); i++) {
-			((ServiceExertion) get(i)).setSubject(subject);
+			((ServiceProgram) get(i)).setSubject(subject);
 		}
 	}
 
@@ -296,15 +296,15 @@ public class Job extends CompositeExertion {
 	public String jobContextToString() throws ExertionException {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < mograms.size(); i++) {
-			if (((ServiceExertion) get(i)).isJob())
+			if (((ServiceProgram) get(i)).isJob())
 				sb.append(((Job) get(i)).jobContextToString());
 			else
-				sb.append(((ServiceExertion) get(i)).contextToString());
+				sb.append(((ServiceProgram) get(i)).contextToString());
 		}
 		return sb.toString();
 	}
 
-	public void setMasterExertion(Exertion exertion) {
+	public void setMasterExertion(Program exertion) {
 		controlContext.setMasterExertion(exertion);
 	}
 
@@ -313,7 +313,7 @@ public class Job extends CompositeExertion {
 		if (controlContext != null)
 			controlContext.setOwnerId(id);
 		for (int i = 0; i < mograms.size(); i++)
-			(((ServiceExertion) get(i))).setOwnerId(id);
+			(((ServiceProgram) get(i))).setOwnerId(id);
 	}
 
 	public String getContextName() {
@@ -325,7 +325,7 @@ public class Job extends CompositeExertion {
 		desc.append("\n=== START PRINTING JOB ===\n");	
 		desc.append("\n=============================\nListing Component Exertions\n=============================\n");
 		for (int i = 0; i < size(); i++) {
-			desc.append("\n===========\n Exertion ").append(i).append("\n===========\n").append((get(i)).describe());
+			desc.append("\n===========\n Program ").append(i).append("\n===========\n").append((get(i)).describe());
 		}
 		desc.append("\n=== DONE PRINTING JOB ===\n");
 		return desc.toString();
@@ -350,13 +350,13 @@ public class Job extends CompositeExertion {
 	 * @param visited
 	 *            a set of visited mograms
 	 * @return true if this <code>Job</code> composite is a tree
-	 * @see sorcer.service.Exertion#isTree()
+	 * @see Program#isTree()
 	 */
 	public boolean isTree(Set visited) {
 		visited.add(this);
 		Iterator i = mograms.iterator();
 		while (i.hasNext()) {
-			ServiceExertion e = (ServiceExertion) i.next();
+			ServiceProgram e = (ServiceProgram) i.next();
 			if (visited.contains(e) || !e.isTree(visited)) {
 				return false;
 			}
@@ -417,7 +417,7 @@ public class Job extends CompositeExertion {
 		for (int i = 0; i < size(); i++) {
 			ext = mograms.get(i);
 			try {
-				((ServiceExertion) ext).linkContext(context, path + CPS + ext.getName());
+				((ServiceProgram) ext).linkContext(context, path + CPS + ext.getName());
 			} catch (ContextException e) {
 				e.printStackTrace();
 			}
@@ -431,7 +431,7 @@ public class Job extends CompositeExertion {
 		for (int i = 0; i < size(); i++) {
 			ext = mograms.get(i);
 			try {
-				((ServiceExertion) ext).linkControlContext(context, path + CPS
+				((ServiceProgram) ext).linkControlContext(context, path + CPS
 						+ ext.getName());
 			} catch (ContextException e) {
 				e.printStackTrace();
@@ -452,7 +452,7 @@ public class Job extends CompositeExertion {
 		String last = attributes[0];
 		Mogram exti = this;
 		for (String attribute : attributes) {
-			if (((ServiceExertion) exti).hasChild(attribute)) {
+			if (((ServiceProgram) exti).hasChild(attribute)) {
 				exti = ((Job) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					last = attribute;
@@ -509,10 +509,10 @@ public class Job extends CompositeExertion {
 			attributes = attributes1;
 		}
 		String last = attributes[0];
-		Exertion exti = this;
+		Program exti = this;
 		for (String attribute : attributes) {
-			if (((ServiceExertion) exti).hasChild(attribute)) {
-				exti = (Exertion)((Job) exti).getChild(attribute);
+			if (((ServiceProgram) exti).hasChild(attribute)) {
+				exti = (Program)((Job) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					last = attribute;
 					break;
@@ -553,12 +553,12 @@ public class Job extends CompositeExertion {
 	}
 	
 	public Context getComponentContext(String path) throws ContextException {
-		Exertion xrt = (Exertion)getComponentMogram(path);
+		Program xrt = (Program)getComponentMogram(path);
 		return xrt.getContext();
 	}
 	
 	public Context getComponentControlContext(String path) {
-		Exertion xrt = (Exertion)getComponentMogram(path);
+		Program xrt = (Program)getComponentMogram(path);
 		return xrt.getControlContext();
 	}
 	
@@ -571,10 +571,10 @@ public class Job extends CompositeExertion {
 					attributes.length - 1);
 			attributes = attributes1;
 		}
-		Exertion exti = this;
+		Program exti = this;
 		for (String attribute : attributes) {
-			if (((ServiceExertion) exti).hasChild(attribute)) {
-				exti = (Exertion)((CompositeExertion) exti).getChild(attribute);
+			if (((ServiceProgram) exti).hasChild(attribute)) {
+				exti = (Program)((Transprogram) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					break;
 				}
@@ -587,10 +587,10 @@ public class Job extends CompositeExertion {
 	
 	public void applyFidelityContext(FidelityContext fiContext) throws ExertionException {
 		Collection<ServiceFidelity> fidelities = fiContext.values();
-		ServiceExertion se = null;
+		ServiceProgram se = null;
 		for (ServiceFidelity fi : fidelities) {
 			if (fi instanceof ServiceFidelity) {
-				se = (ServiceExertion) getComponentMogram(fi.getPath());
+				se = (ServiceProgram) getComponentMogram(fi.getPath());
 				se.selectFidelity(fi.getName());
 			}
 		}

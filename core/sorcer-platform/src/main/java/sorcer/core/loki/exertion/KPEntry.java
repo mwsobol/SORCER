@@ -27,7 +27,7 @@ public class KPEntry implements Entry {
 	}
 
 	public String getName() {
-		return "KeyPair and KeyAgreement Exertion";
+		return "KeyPair and KeyAgreement Program";
 	}
 
 }

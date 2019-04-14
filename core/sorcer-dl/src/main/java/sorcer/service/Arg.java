@@ -41,10 +41,10 @@ public interface Arg extends Serializable {
 		return null;
 	}
 
-	public static Exertion selectExertion(Arg[] args) {
+	public static Program selectExertion(Arg[] args) {
 		for (Arg arg : args) {
-			if (arg instanceof Exertion)
-				return (Exertion)arg;
+			if (arg instanceof Program)
+				return (Program)arg;
 		}
 		return null;
 	}

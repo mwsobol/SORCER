@@ -35,7 +35,7 @@ import java.util.Set;
 
 /**
  * A <code>Task</code> is an elementary service-oriented message
- * {@link Exertion} (with its own service {@link Context} and a collection of
+ * {@link Program} (with its own service {@link Context} and a collection of
  * service {@link sorcer.service.Signature}s. Signatures of four
  * {@link Signature.Type}s can be associated with each task:
  * <code>SERVICE</code>, <code>PREPROCESS</code>, <code>POSTROCESS</code>, and
@@ -43,13 +43,13 @@ import java.util.Set;
  * can be associated with a task but multiple preprocessing, postprocessing, and
  * context appending methods can be added.
  * 
- * @see sorcer.service.Exertion
+ * @see Program
  * @see sorcer.service.Job
  * 
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class Task extends ServiceExertion implements ElementaryRequest {
+public class Task extends ServiceProgram implements ElementaryRequest {
 
 	private static final long serialVersionUID = 5179772214884L;
 
@@ -166,7 +166,7 @@ public class Task extends ServiceExertion implements ElementaryRequest {
 		return sig;
 	}
 
-	public Task doTask(Exertion xrt, Transaction txn) throws ExertionException {
+	public Task doTask(Program xrt, Transaction txn) throws ExertionException {
 		// implemented for example by VarTask
 		return null;
 	}
@@ -230,7 +230,7 @@ public class Task extends ServiceExertion implements ElementaryRequest {
 			return delegate.toString();
 		}
 		StringBuilder sb = new StringBuilder(
-				"\n=== START PRINTING TASK ===\nExertion Description: "
+				"\n=== START PRINTING TASK ===\nProgram Description: "
 						+ getClass().getName() + ":" + key);
 		sb.append("\n\tstatus: ").append(getStatus());
 		sb.append(", task ID=");
@@ -299,7 +299,7 @@ public class Task extends ServiceExertion implements ElementaryRequest {
 	 * @param visited
 	 *            ignored
 	 * @return true; elementary mograms are always "trees"
-	 * @see Exertion#isTree()
+	 * @see Program#isTree()
 	 */
 	public boolean isTree(Set visited) {
 		visited.add(this);
@@ -314,7 +314,7 @@ public class Task extends ServiceExertion implements ElementaryRequest {
 	 *            the fiType of needed task format
 	 * @return
 	 */
-	public Exertion getUpdatedExertion(int type) {
+	public Program getUpdatedExertion(int type) {
 		// the previous implementation of ServiceTask (thin) and
 		// RemoteServiceTask (thick) abandoned for a while.
 		return this;
@@ -343,7 +343,7 @@ public class Task extends ServiceExertion implements ElementaryRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Exertion#addMogram(sorcer.service.Exertion)
+	 * @see sorcer.service.Program#addMogram(sorcer.service.Program)
 	 */
 	@Override
 	public Mogram addMogram(Mogram component) {

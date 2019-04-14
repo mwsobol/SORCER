@@ -263,8 +263,8 @@ public class SorcerILFactory extends BasicILFactory {
                 MDC.put(MDC_PROVIDER_ID, identifiable.getId().toString());
                 MDC.put(MDC_PROVIDER_NAME, identifiable.getName());
             }
-            if (args.length > 0 && args[0] instanceof Exertion) {
-                Exertion xrt = ((Exertion) args[0]);
+            if (args.length > 0 && args[0] instanceof Program) {
+                Program xrt = ((Program) args[0]);
                 if (xrt != null && xrt.getId() != null)
                     MDC.put(MDC_MOGRAM_ID, xrt.getId().toString());
             }
@@ -317,7 +317,7 @@ public class SorcerILFactory extends BasicILFactory {
                     if (logger.isTraceEnabled()) {
                         logger.trace("Process Sorcer service type for {}", args[0].getClass().getName());
                     }
-                    service = serviceBeanMap.get(((Exertion) args[0]).getProcessSignature().getServiceType());
+                    service = serviceBeanMap.get(((Program) args[0]).getProcessSignature().getServiceType());
                     if (service != null && !(impl instanceof SessionBeanProvider)) {
                         if (logger.isTraceEnabled())
                             logger.trace("Service determined to be {}", service.getClass().getName());
@@ -381,9 +381,9 @@ public class SorcerILFactory extends BasicILFactory {
     }
 
     private static boolean isSorcerType(Object target) throws SignatureException {
-        if (target instanceof Exertion) {
-            Class serviceType = ((Exertion) target).getProcessSignature().getServiceType();
-            if (target instanceof CompositeExertion
+        if (target instanceof Program) {
+            Class serviceType = ((Program) target).getProcessSignature().getServiceType();
+            if (target instanceof Transprogram
                     || Modeler.class.isAssignableFrom(serviceType)
                     || Evaluation.class.isAssignableFrom(serviceType)
                     || Invocation.class.isAssignableFrom(serviceType)) {

@@ -10,7 +10,6 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Multiply;
 import sorcer.arithmetic.tester.provider.impl.AdderImpl;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Provision;
@@ -33,8 +32,8 @@ public class TaskTest {
 
 	@Test
 	public void freeArithmeticTaskTest() throws Exception {
-		//to test tracing of execution enable ServiceExertion.debug 		
-		Exertion task = task("add",
+		//to test tracing of execution enable ServiceProgram.debug
+		Program task = task("add",
 				sig("add"),
 				context(inVal("arg/x1"), inVal("arg/x2"),
 						result("result/y")));
@@ -51,8 +50,8 @@ public class TaskTest {
 	
 	@Test
 	public void arithmeticTaskTest() throws Exception {
-		//to test tracing of execution enable ServiceExertion.debug 
-		ServiceExertion.debug = true;
+		//to test tracing of execution enable ServiceProgram.debug
+		ServiceProgram.debug = true;
 		
 		Task task = task("add",
 				sig("add", AdderImpl.class),
@@ -78,8 +77,8 @@ public class TaskTest {
 
 	@Test
 	public void arithmeticCustomContextTest() throws Exception {
-		//to test tracing of execution enable ServiceExertion.debug
-		ServiceExertion.debug = true;
+		//to test tracing of execution enable ServiceProgram.debug
+		ServiceProgram.debug = true;
 
 		Task task = task("add",
 				sig("add", AdderImpl.class),
@@ -109,7 +108,7 @@ public class TaskTest {
 
 	@Test
 	public void arithmeticMultiFiObjectTaskTest() throws Exception {
-		ServiceExertion.debug = true;
+		ServiceProgram.debug = true;
 
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),
@@ -130,7 +129,7 @@ public class TaskTest {
 
 	@Test
 	public void arithmeticMultiFiNetTaskTest() throws Exception {
-		ServiceExertion.debug = true;
+		ServiceProgram.debug = true;
 
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),

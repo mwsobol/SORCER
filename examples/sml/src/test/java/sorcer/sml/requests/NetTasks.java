@@ -42,7 +42,7 @@ public class NetTasks {
 		Task t5 = task("t5", sig("add", Adder.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		Exertion out = exert(t5);
+		Program out = exert(t5);
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
@@ -64,7 +64,7 @@ public class NetTasks {
 			match(os("Mac OS X", "Win"), app("Astros")), Strategy.Access.PULL)),
 			cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
-		Exertion out = exert(t5);
+		Program out = exert(t5);
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
@@ -86,7 +86,7 @@ public class NetTasks {
 		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder")),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		Exertion out = exert(t5);
+		Program out = exert(t5);
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
@@ -108,7 +108,7 @@ public class NetTasks {
 		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder", group)),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		Exertion out = exert(t5);
+		Program out = exert(t5);
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
@@ -132,7 +132,7 @@ public class NetTasks {
 				srvName("Adder", group)),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		Exertion out = exert(t5);
+		Program out = exert(t5);
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
@@ -157,7 +157,7 @@ public class NetTasks {
 				srvName("Adder", locators(), group)),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		Exertion out = exert(t5);
+		Program out = exert(t5);
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
@@ -304,7 +304,7 @@ public class NetTasks {
 
 	@Test
 	public void multiFiObjectTaskTest() throws Exception {
-		ServiceExertion.debug = true;
+		ServiceProgram.debug = true;
 
 		Task task = task("add",
 				sFi("object", sig("add", Adder.class)),

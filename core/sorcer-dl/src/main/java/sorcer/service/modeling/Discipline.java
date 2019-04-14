@@ -45,7 +45,7 @@ public interface Discipline extends Service, Contexting {
      * @return a dispatcher of this discipline
      * @throws ExertionException
      */
-    public Exertion getDispatcher() throws ExertionException;
+    public Program getDispatcher() throws ExertionException;
 
     /**
      * Returns a service governance multifidelity
@@ -74,7 +74,7 @@ public interface Discipline extends Service, Contexting {
      * Adds a dispatcher-governance fidelity of this discipline.
      * Fidelity names are names of dispatcher and service correspondingly.
      */
-    public void add(Exertion dispatcher, Service governance);
+    public void add(Program dispatcher, Service governance);
 
     /**
      * Adds a dispatcher and governance fidelities to this discipline

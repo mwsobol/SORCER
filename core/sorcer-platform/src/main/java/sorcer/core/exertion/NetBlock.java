@@ -61,7 +61,7 @@ public class NetBlock extends Block implements Invocation<Object> {
 		setPrincipal(principal);
 	}
 
-	public static ServiceExertion getTemplate() {
+	public static ServiceProgram getTemplate() {
 		NetBlock temp = null;
 		try {
 			temp = new NetBlock();

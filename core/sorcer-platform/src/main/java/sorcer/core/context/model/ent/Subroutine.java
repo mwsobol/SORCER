@@ -26,7 +26,6 @@ import sorcer.service.modeling.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
-import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -317,7 +316,7 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
 				}
 				out.putValue(key, ((ServiceContext) mogram).getValue(key));
 			}
-		} else if (mogram instanceof Exertion) {
+		} else if (mogram instanceof Program) {
 			if (impl != null && impl != Context.none)
 				mogram.getContext().putValue(key, impl);
 			cxt =  mogram.exert(txn).getContext();

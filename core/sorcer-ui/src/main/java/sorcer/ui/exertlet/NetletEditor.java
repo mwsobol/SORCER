@@ -129,7 +129,7 @@ public class NetletEditor extends JPanel {
         UIManager.put("swing.boldMetal", Boolean.FALSE); 
 
         //Create and setValue up the window.
-        JFrame frame = new JFrame("Exertion Scripting");
+        JFrame frame = new JFrame("Program Scripting");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and setValue up the content pane.

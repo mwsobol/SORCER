@@ -86,7 +86,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	protected Multitype multitype = new Multitype();
 
 	// associated exertion only if needed
-	protected Exertion exertion;
+	protected Program exertion;
 
 	/** preprocess, compute, postprocess, append context */
 	protected Type execType = Type.PROC;
@@ -153,11 +153,11 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
         execType = Type.PROC;
     }
 
-	public void setExertion(Exertion exertion) throws ExertionException {
+	public void setExertion(Program exertion) throws ExertionException {
 		this.exertion = exertion;
 	}
 
-	public Exertion getExertion() {
+	public Program getExertion() {
 		return exertion;
 	}
 

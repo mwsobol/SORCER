@@ -47,7 +47,7 @@ public class BlockThread extends Thread {
 	}
 
 	public void run() {
-		logger.debug("*** Exertion explorer started with control context ***\n"
+		logger.debug("*** Program explorer started with control context ***\n"
 				+ block.getControlContext());
 		Dispatcher dispatcher = null;
 		try {
@@ -78,7 +78,7 @@ public class BlockThread extends Thread {
 					&& explorer.getState() != Exec.SUSPENDED) {
 				count--;
 				if (count < 0) {
-					logger.debug("*** Concatenator's Exertion Dispatcher waiting in state: "
+					logger.debug("*** Concatenator's Program Dispatcher waiting in state: "
 							+ explorer.getState());
 					count = COUNT;
 				}

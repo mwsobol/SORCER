@@ -21,7 +21,7 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import sorcer.core.provider.ProviderRuntime;
-import sorcer.service.ServiceExertion;
+import sorcer.service.ServiceProgram;
 
 import com.sleepycat.bind.serial.ClassCatalog;
 import com.sleepycat.bind.serial.StoredClassCatalog;
@@ -132,7 +132,7 @@ public class SorcerDatabase {
         secConfig.setForeignKeyDatabase(runtimeDb);
         secConfig.setForeignKeyDeleteAction(ForeignKeyDeleteAction.CASCADE);
         secConfig.setKeyCreator(new ExertionByRuntimeKeyCreator(javaCatalog,
-                                                             ServiceExertion.class));
+                                                             ServiceProgram.class));
     }
 
     /**

@@ -38,7 +38,7 @@ public class ProviderProvisionManager {
     private static final int MAX_ATTEMPTS = 3;
 
 
-    public static void provision(Exertion exertion, SpaceParallelDispatcher spaceExertDispatcher) throws SignatureException {
+    public static void provision(Program exertion, SpaceParallelDispatcher spaceExertDispatcher) throws SignatureException {
         getInstance().doProvision(exertion, spaceExertDispatcher);
     }
 
@@ -48,7 +48,7 @@ public class ProviderProvisionManager {
         return instance;
     }
 
-    private void doProvision(Exertion exertion, SpaceParallelDispatcher spaceExertDispatcher) throws SignatureException {
+    private void doProvision(Program exertion, SpaceParallelDispatcher spaceExertDispatcher) throws SignatureException {
         NetSignature sig = (NetSignature) exertion.getProcessSignature();
         // A hack to disable provisioning spacer itself
         if (!sig.getServiceType().getName().equals(Spacer.class.getName())) {
@@ -123,8 +123,8 @@ public class ProviderProvisionManager {
         result = sigEl.getSpaceExertDispatcher().takeEnvelop(ee);
         if (result!=null) {
             result.state = Exec.FAILED;
-            ((ServiceExertion)result.exertion).setStatus(Exec.FAILED);
-            ((ServiceExertion)result.exertion).reportException(exc);
+            ((ServiceProgram)result.exertion).setStatus(Exec.FAILED);
+            ((ServiceProgram)result.exertion).reportException(exc);
             try {
                 JavaSpace05 space = SpaceAccessor.getSpace();
                 if (space == null) {
@@ -147,7 +147,7 @@ public class ProviderProvisionManager {
         String version;
         Signature signature;
         int provisionAttempts = 0;
-        Exertion exertion;
+        Program exertion;
         SpaceParallelDispatcher spaceExertDispatcher;
 
         private String getServiceType() {
@@ -191,7 +191,7 @@ public class ProviderProvisionManager {
             this.provisionAttempts++;
         }
 
-        public Exertion getExertion() {
+        public Program getExertion() {
             return exertion;
         }
 
@@ -200,7 +200,7 @@ public class ProviderProvisionManager {
         }
 
         private SignatureElement(String serviceType, String providerName, String version, Signature signature,
-                                 Exertion exertion, SpaceParallelDispatcher spaceExertDispatcher) {
+                                 Program exertion, SpaceParallelDispatcher spaceExertDispatcher) {
             this.serviceType = serviceType;
             this.providerName = providerName;
             this.version = version;

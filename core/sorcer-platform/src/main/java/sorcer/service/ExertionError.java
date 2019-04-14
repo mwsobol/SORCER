@@ -32,12 +32,12 @@ public class ExertionError extends Error {
 	/**
 	 * The exertion relevant to this exception.
 	 */
-	private Exertion exertion;
+	private Program exertion;
 
 	public ExertionError() {
 	}
 
-	public ExertionError(Exertion exertion) {
+	public ExertionError(Program exertion) {
 		this.exertion = exertion;
 	}
 
@@ -58,7 +58,7 @@ public class ExertionError extends Error {
 	 * @param exertion
 	 *            the embedded exertion
 	 */
-	public ExertionError(String message, Exertion exertion) {
+	public ExertionError(String message, Program exertion) {
 		super(message);
 		this.exertion = exertion;
 	}
@@ -76,7 +76,7 @@ public class ExertionError extends Error {
 	 * @param cause
 	 *            the nested throwable cause
 	 */
-	public ExertionError(String message, Exertion exertion, Throwable cause) {
+	public ExertionError(String message, Program exertion, Throwable cause) {
 		super(message, cause);
 		this.exertion = exertion;
 	}
@@ -86,7 +86,7 @@ public class ExertionError extends Error {
 	 * 
 	 * @return embedded exertion
 	 */
-	public Exertion getExertion() {
+	public Program getExertion() {
 		return exertion;
 	}
 	

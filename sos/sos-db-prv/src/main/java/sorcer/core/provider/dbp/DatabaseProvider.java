@@ -32,7 +32,7 @@ import sorcer.core.provider.ServiceProvider;
 import sorcer.core.provider.StorageManagement;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
-import sorcer.service.Exertion;
+import sorcer.service.Program;
 import sorcer.service.Identifiable;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Variability;
@@ -183,10 +183,10 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
         }
 	}
 
-	public Exertion getExertion(Uuid uuid) {
+	public Program getExertion(Uuid uuid) {
         try {
             append(uuid, "exertion");
-            StoredMap<UuidKey, Exertion> xrtMap = views.getExertionMap();
+            StoredMap<UuidKey, Program> xrtMap = views.getExertionMap();
 		    return xrtMap.get(new UuidKey(uuid));
         } finally {
             objectsQueue.remove(uuid);
@@ -226,7 +226,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 //				if (inner instanceof Context) {
 //					storedSet = views.getContextSet();
 //					storedSet.add(object);
-//				} else if (inner instanceof Exertion) {
+//				} else if (inner instanceof Program) {
 //					storedSet = views.getExertionSet();
 //					storedSet.add(object);
 //				} else if (inner instanceof ModelTable) {
@@ -271,7 +271,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
                 if (object instanceof Context) {
                     storedMap = views.getContextMap();
                     storedMap.replace(key, object);
-                } else if (object instanceof Exertion) {
+                } else if (object instanceof Program) {
                     storedMap = views.getExertionMap();
                     storedMap.replace(key, object);
                 } else if (object instanceof ModelTable) {
@@ -621,7 +621,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		DeleteThread dt = null;
 		if (object instanceof Context) {
 			dt = new DeleteThread(id, Store.context);
-		} else if (object instanceof Exertion) {
+		} else if (object instanceof Program) {
 			dt = new DeleteThread(id, Store.exertion);
 		} else if (object instanceof Functionality) {
 			dt = new DeleteThread(id, Store.var);
@@ -654,7 +654,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		Store type = Store.object;
 		if (object instanceof Context) {
 			type = Store.context;
-		} else if (object instanceof Exertion) {
+		} else if (object instanceof Program) {
 			type = Store.exertion;
 		} else if (object instanceof Functionality) {
 			type = Store.var;
