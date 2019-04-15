@@ -45,17 +45,17 @@ public class Providers implements SorcerConstants {
 		return (retNodes);
 	}
 
-	public static ServiceProgram[] getServiceTasks(Job fJ) {
-		ServiceProgram[] fTA = new ServiceProgram[fJ.size()];
+	public static ServiceRoutine[] getServiceTasks(Job fJ) {
+		ServiceRoutine[] fTA = new ServiceRoutine[fJ.size()];
 		for (int i = 0; i < fJ.size(); i++) {
-			fTA[i] = (ServiceProgram) fJ.get(i);
+			fTA[i] = (ServiceRoutine) fJ.get(i);
 		}
 		return fTA;
 	}
 
-	public static ServiceProgram[] getServiceTasks(Job[] fJA) {
+	public static ServiceRoutine[] getServiceTasks(Job[] fJA) {
 		Vector fTV = new Vector();
-		ServiceProgram[] fTA = null;
+		ServiceRoutine[] fTA = null;
 		for (int i = 0; i < fJA.length; i++) {
 
 			fTA = Providers.getServiceTasks(fJA[i]);
@@ -64,14 +64,14 @@ public class Providers implements SorcerConstants {
 				fTV.addElement(fTA[j]);
 			}
 		}
-		ServiceProgram[] fTA2 = new ServiceProgram[fTV.size()];
+		ServiceRoutine[] fTA2 = new ServiceRoutine[fTV.size()];
 		for (int i = 0; i < fTV.size(); i++) {
-			fTA2[i] = (ServiceProgram) fTV.elementAt(i);
+			fTA2[i] = (ServiceRoutine) fTV.elementAt(i);
 		}
 		return fTA2;
 	}
 
-	public static Context[] getServiceContexts(ServiceProgram[] fTA)
+	public static Context[] getServiceContexts(ServiceRoutine[] fTA)
 			throws ContextException, MalformedURLException {
 		Vector scontexts = new Vector();
 		for (int i = 0; i < fTA.length; i++) {
@@ -82,7 +82,7 @@ public class Providers implements SorcerConstants {
 			// check contexts for SORCER nodes with jobs (recursion)
 			if (Providers.hasServiceJob(fTA[i].getContext())) {
 				Job[] fJA = null;
-				ServiceProgram[] fTA2 = null;
+				ServiceRoutine[] fTA2 = null;
 
 				fJA = Providers.getServiceJobs(fTA[i].getContext());
 				fTA2 = Providers.getServiceTasks(fJA);

@@ -87,7 +87,7 @@ public class ObjectTask extends Task {
 			this.dataContext = (ServiceContext) context;
 	}
 
-	public Task doTask(Transaction txn, Arg... args) throws SignatureException, RemoteException, MogramException {
+	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {
 		if (delegate != null) {
 			return delegate.doTask(txn);
 		}

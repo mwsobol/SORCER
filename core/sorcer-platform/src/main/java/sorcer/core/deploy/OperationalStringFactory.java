@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
-import sorcer.service.Program;
-import sorcer.service.ServiceProgram;
+import sorcer.service.Routine;
+import sorcer.service.ServiceRoutine;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +39,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Create an {@link OperationalString} from an {@link Program}.
+ * Create an {@link OperationalString} from an {@link Routine}.
  *
  * @author Dennis Reedy
  */
@@ -64,7 +64,7 @@ public final class OperationalStringFactory {
     }
 
     /**
-     * Create {@link OperationalString}s from an {@code Program}.
+     * Create {@link OperationalString}s from an {@code Routine}.
      *
      * @param exertion The exertion, must not be {@code null}.
      *
@@ -74,7 +74,7 @@ public final class OperationalStringFactory {
      * @throws IllegalArgumentException if the {@code exertion} is {@code null}.
      * @throws Exception if there are configuration issues, if the iGrid opstring cannot be loaded
      */
-    public static Map<ServiceDeployment.Unique, List<OperationalString>> create(final Program exertion) throws Exception {
+    public static Map<ServiceDeployment.Unique, List<OperationalString>> create(final Routine exertion) throws Exception {
         if(exertion==null)
             throw new IllegalArgumentException("exertion is null");
 
@@ -226,10 +226,10 @@ public final class OperationalStringFactory {
         return undeployOption;
     }
 
-    private static Iterable<Signature> getNetSignatures(final Program exertion) {
+    private static Iterable<Signature> getNetSignatures(final Routine exertion) {
         List<Signature> signatures = new ArrayList<>();
-        if(exertion instanceof ServiceProgram) {
-            ServiceProgram serviceExertion = (ServiceProgram)exertion;
+        if(exertion instanceof ServiceRoutine) {
+            ServiceRoutine serviceExertion = (ServiceRoutine)exertion;
             signatures.addAll(serviceExertion.getAllNetTaskSignatures());
         }
         return signatures;

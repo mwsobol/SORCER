@@ -116,13 +116,16 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 		return ((NetSignature) getProcessSignature()).getService();
 	}
 
-	public Task doTask(Transaction txn, Arg... args) throws MogramException,
-		SignatureException, RemoteException {
+	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {
 		if (delegate != null)
 			return delegate.doTask(txn, args);
 		else {
 			ServiceShell se = new ServiceShell(this);
-			return (Task) se.exert(args);
+			try {
+				return (Task) se.exert(args);
+			} catch (MogramException | RemoteException e) {
+				throw new EvaluationException(e);
+			}
 		}
 	}
 
@@ -142,11 +145,7 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 	}
 
 	@Override
-	public Object execute(Arg... args) throws MogramException, RemoteException {
-		try {
-			return doTask(null, args);
-		} catch (SignatureException e) {
-			throw new MogramException(e);
-		}
+	public Object execute(Arg... args) throws MogramException {
+		return doTask(null, args);
 	}
 }

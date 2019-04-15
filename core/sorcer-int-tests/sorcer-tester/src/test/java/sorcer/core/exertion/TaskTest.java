@@ -32,8 +32,8 @@ public class TaskTest {
 
 	@Test
 	public void freeArithmeticTaskTest() throws Exception {
-		//to test tracing of execution enable ServiceProgram.debug
-		Program task = task("add",
+		//to test tracing of execution enable ServiceRoutine.debug
+		Routine task = task("add",
 				sig("add"),
 				context(inVal("arg/x1"), inVal("arg/x2"),
 						result("result/y")));
@@ -50,8 +50,8 @@ public class TaskTest {
 	
 	@Test
 	public void arithmeticTaskTest() throws Exception {
-		//to test tracing of execution enable ServiceProgram.debug
-		ServiceProgram.debug = true;
+		//to test tracing of execution enable ServiceRoutine.debug
+		ServiceRoutine.debug = true;
 		
 		Task task = task("add",
 				sig("add", AdderImpl.class),
@@ -77,8 +77,8 @@ public class TaskTest {
 
 	@Test
 	public void arithmeticCustomContextTest() throws Exception {
-		//to test tracing of execution enable ServiceProgram.debug
-		ServiceProgram.debug = true;
+		//to test tracing of execution enable ServiceRoutine.debug
+		ServiceRoutine.debug = true;
 
 		Task task = task("add",
 				sig("add", AdderImpl.class),
@@ -108,7 +108,7 @@ public class TaskTest {
 
 	@Test
 	public void arithmeticMultiFiObjectTaskTest() throws Exception {
-		ServiceProgram.debug = true;
+		ServiceRoutine.debug = true;
 
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),
@@ -129,7 +129,7 @@ public class TaskTest {
 
 	@Test
 	public void arithmeticMultiFiNetTaskTest() throws Exception {
-		ServiceProgram.debug = true;
+		ServiceRoutine.debug = true;
 
 		Task task = task("add",
 				sFi("net", sig("add", Adder.class)),

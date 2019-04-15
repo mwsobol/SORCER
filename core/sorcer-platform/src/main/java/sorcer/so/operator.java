@@ -29,8 +29,9 @@ import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
-import sorcer.core.provider.Exertion;
+import sorcer.core.provider.Exerter;
 import sorcer.core.provider.exerter.ServiceShell;
+import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.*;
 
@@ -90,8 +91,8 @@ public class operator extends Operator {
                     return (T) ((ServiceContext) ((Entry) entry).getOut()).getValue(entry.getName(), args);
                 } else if (entry instanceof Incrementor) {
                     return ((Incrementor<T>) entry).next();
-                } else if (entry instanceof Program) {
-                    return (T) ((Program) entry).exert(args).getContext();
+                } else if (entry instanceof Routine) {
+                    return (T) ((Routine) entry).exert(args).getContext();
                 } else if (entry instanceof Functionality) {
                     if (entry instanceof Srv && entry.getImpl() instanceof SignatureEntry) {
                         return  (T) entry.execute(args);
@@ -166,10 +167,57 @@ public class operator extends Operator {
         return rc;
     }
 
+    public static void clear(Discipline discipline) throws MogramException {
+        discipline.clear();
+    }
+
+    public static Context eval(Signature signature, Arg... args)
+        throws ContextException {
+        Context out = null;
+        try {
+            Object target = ((ObjectSignature) signature).build();
+
+            if (target instanceof Discipline) {
+                out = (Context) ((Discipline) target).execute(args);
+            } else if (target instanceof Model) {
+                Context cxt = Arg.selectContext(args);
+                out = ((Model)target).evaluate(cxt);
+            }
+        } catch (SignatureException | ServiceException | RemoteException e) {
+            throw new ContextException(e);
+        }
+        return out;
+    }
+
+    public static Context eval(Discipline discipline, Arg... args)
+        throws ContextException {
+        try {
+            return (Context) discipline.execute(args);
+        } catch (ServiceException | RemoteException e) {
+            throw new ContextException(e);
+        }
+    }
+
+    public static Service outGovernance(Discipline discipline) {
+        return discipline.getOutGovernance();
+    }
+
+    public static Service outGov(Discipline discipline) {
+        return discipline.getOutGovernance();
+    }
+
+    public static Mogram outDispatcher(Discipline discipline) {
+        return discipline.getOutDispatcher();
+    }
+
+    public static Mogram outDisp(Discipline discipline) {
+        return discipline.getOutDispatcher();
+    }
+
     public static Response query(Mogram mogram, Arg... args) throws ContextException {
         try {
             synchronized (mogram) {
-                if (mogram instanceof Program) {
+                if (mogram instanceof Routine) {
                     return mogram.exert(args).getContext();
                 } else {
                     return (Response) ((EntModel) mogram).getValue(args);
@@ -195,7 +243,7 @@ public class operator extends Operator {
         return response(model);
     }
 
-    public static Object response(Program exertion, String path) throws ContextException {
+    public static Object response(Routine exertion, String path) throws ContextException {
         try {
             return ((ServiceContext)exertion.exert().getContext()).getResponseAt(path);
         } catch (RemoteException | MogramException e) {
@@ -249,8 +297,8 @@ public class operator extends Operator {
     }
 
     public static ServiceContext response(Mogram mogram, Object... items) throws ContextException {
-        if (mogram instanceof Program) {
-            return exertionResponse((Program) mogram, items);
+        if (mogram instanceof Routine) {
+            return exertionResponse((Routine) mogram, items);
         } else if (mogram instanceof Domain &&  ((ServiceMogram)mogram).getType().equals(Functionality.Type.MADO)) {
             if (mogram.isEvaluated()) {
                 return (ServiceContext) ((ServiceContext) mogram).getDomain((String) items[0]).getEvaluatedValue((String) items[1]);
@@ -296,7 +344,7 @@ public class operator extends Operator {
         }
     }
 
-    public static ServiceContext exertionResponse(Program exertion, Object... items) throws ContextException {
+    public static ServiceContext exertionResponse(Routine exertion, Object... items) throws ContextException {
         try {
             List<Arg> argl = new ArrayList();
             List<Path> paths = new ArrayList();;
@@ -329,7 +377,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Object eval(Program exertion, String selector,
+    public static Object eval(Routine exertion, String selector,
                               Arg... args) throws EvaluationException {
         try {
             exertion.getDataContext().setReturnPath(new Signature.ReturnPath(selector));
@@ -366,7 +414,7 @@ public class operator extends Operator {
         try {
             Object out = null;
             synchronized (mogram) {
-                if (mogram instanceof Program) {
+                if (mogram instanceof Routine) {
                     out = new ServiceShell().evaluate(mogram, args);
                 } else {
                     out = ((ServiceContext) mogram).getValue(args);
@@ -410,7 +458,7 @@ public class operator extends Operator {
         }
     }
 
-    public static List<ThrowableTrace> exceptions(Program exertion) throws RemoteException {
+    public static List<ThrowableTrace> exceptions(Routine exertion) throws RemoteException {
         return exertion.getExceptions();
     }
 
@@ -428,7 +476,7 @@ public class operator extends Operator {
         return new sorcer.core.provider.exerter.ServiceShell().exert(input, transaction, entries);
     }
 
-    public static <T extends Mogram> T exert(Exertion service, T mogram, Arg... entries)
+    public static <T extends Mogram> T exert(Exerter service, T mogram, Arg... entries)
             throws TransactionException, MogramException, RemoteException {
         return service.exert(mogram, null, entries);
     }

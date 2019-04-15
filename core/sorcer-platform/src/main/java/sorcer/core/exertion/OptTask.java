@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The option Program. There is a single target exertion that executes if the
+ * The option Routine. There is a single target exertion that executes if the
  * condition is true (like if... then).
  * 
  * @author Mike Sobolewski
@@ -61,8 +61,7 @@ public class OptTask extends ConditionalTask {
 		this.target = mogram;
 	}
 
-	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
-			SignatureException, RemoteException {
+	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {
 		try {
 
 			if (condition.isTrue()) {
@@ -76,14 +75,14 @@ public class OptTask extends ConditionalTask {
 //					target.setScope(dataContext);
 //				}
 				dataContext = (ServiceContext) target.getDataContext();
-				if (target instanceof Program) {
-					target.getContext().setExertion(null);
-					controlContext.append(((Program)target).getControlContext());
+				if (target instanceof Routine) {
+					target.getContext().setRoutine(null);
+					controlContext.append(((Routine)target).getControlContext());
 				}
 				dataContext.putValue(Condition.CONDITION_VALUE, true);
 				dataContext.putValue(Condition.CONDITION_TARGET, target.getName());
 
-				dataContext.setExertion(null);
+				dataContext.setRoutine(null);
 				return this;
 			} else {
 				dataContext.putValue(Condition.CONDITION_VALUE, false);
@@ -91,7 +90,7 @@ public class OptTask extends ConditionalTask {
 				return this;
 			}
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			throw new EvaluationException(e);
 		}
 	}
 		
@@ -104,7 +103,7 @@ public class OptTask extends ConditionalTask {
 	}
 
 	public void reset(int state) {
-		((ServiceProgram)target).reset(state);
+		((ServiceRoutine)target).reset(state);
 		this.setStatus(state);
 	}
 

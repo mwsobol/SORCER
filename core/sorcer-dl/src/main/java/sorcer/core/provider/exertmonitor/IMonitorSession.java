@@ -18,7 +18,7 @@
 package sorcer.core.provider.exertmonitor;
 
 import net.jini.id.Uuid;
-import sorcer.service.Program;
+import sorcer.service.Routine;
 
 /**
  * @author Rafał Krupiński
@@ -43,5 +43,5 @@ public interface IMonitorSession {
 
     String toString();
 
-    Program getInitialExertion();
+    Routine getInitialExertion();
 }

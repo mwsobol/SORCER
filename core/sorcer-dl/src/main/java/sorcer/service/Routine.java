@@ -43,14 +43,14 @@ import sorcer.service.modeling.mog;
  * also completely separate from each other and do not know what other exertions
  * do. However, they can pass parameters via contexts by mapping
  * {@link Context#map} expected input context values in terms of expected output
- * values calculated by other exertion. The operation {@link Program#exert} of
+ * values calculated by other exertion. The operation {@link Routine#exert} of
  * this interface provides for execution of desired actions enclosed in
  * exertions, thus keeping the knowledge of what to do inside of the exertions,
  * instead of having another parts of SO program to make these decisions. When
  * an exertion is invoked then the exertion redirects control to a dynamically
  * bound {@link Server} matching the exertion's signature of
  * type <code>PROCESS</code>. <br>
- * The <code>Program</code> interface also provides for the Composite design
+ * The <code>Routine</code> interface also provides for the Composite design
  * pattern and defines a common elementary behavior for all exertions of
  * {@link sorcer.service.Task} type and control flow exertions (for branching
  * and looping). A composite exertion called {@link sorcer.service.Job} contains
@@ -69,7 +69,7 @@ import sorcer.service.modeling.mog;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Program extends Dependency, Invocation<Object>,
+public interface Routine extends Dependency, Invocation<Object>,
 		Paradigmatic, Contexting, Serializable, mog {
 
 
@@ -209,19 +209,19 @@ public interface Program extends Dependency, Invocation<Object>,
 
 	/**
 	 * Returns a component exertion with a given name.
-	 * @return Program list
+	 * @return Routine list
 	 */ 
 	public Mogram getMogram(String name);
 
 	/**
 	 * Returns the list of direct component exertions.
-	 * @return Program list
+	 * @return Routine list
 	 */ 
 	public List<Mogram> getMograms();
 	
 	/**
 	 * Returns the list of all nested component exertions/
-	 * @return Program list
+	 * @return Routine list
 	 */ 
 	public List<Mogram> getAllMograms();
 	

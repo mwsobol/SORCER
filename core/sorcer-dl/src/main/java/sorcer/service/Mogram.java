@@ -20,7 +20,7 @@ package sorcer.service;
 import net.jini.core.transaction.Transaction;
 import net.jini.id.Uuid;
 import sorcer.core.context.ThrowableTrace;
-import sorcer.core.provider.Exertion;
+import sorcer.core.provider.Exerter;
 import sorcer.core.provider.Provider;
 
 import java.rmi.RemoteException;
@@ -33,7 +33,7 @@ import java.util.List;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Identifiable, Request, Service, Exertion, Scopable, Substitutable, Arg {
+public interface Mogram extends Identifiable, Request, Service, Exerter, Scopable, Substitutable, Arg {
 
     /**
      * Exerts this mogram by the assigned service provider if it is set. If a service

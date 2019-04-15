@@ -77,7 +77,7 @@ public interface Monitorable {
 	 *             if there is a communication error
 	 * 
 	 */
-	public void resume(Program ex) throws RemoteException, ExertionException;
+	public void resume(Routine ex) throws RemoteException, ExertionException;
 
 	/**
 	 * Step if the step functionality is supported by the monitorables. Else
@@ -90,6 +90,6 @@ public interface Monitorable {
 	 *             if there is a communication error
 	 * 
 	 */
-	public void step(Program ex) throws RemoteException, ExertionException;
+	public void step(Routine ex) throws RemoteException, ExertionException;
 
 }

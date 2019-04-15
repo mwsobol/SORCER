@@ -249,9 +249,9 @@ public interface Context<T> extends Domain, Selfable, Response, Contexting<T>, S
 	/**
 	 * Returns the mogram associated with this context.
 	 *
-	 * @return Program
+	 * @return Routine
 	 */
-	public Program getMogram();
+	public Routine getMogram();
 
 	/**
 	 * Returns the service provider associated with this context
@@ -274,7 +274,7 @@ public interface Context<T> extends Domain, Selfable, Response, Contexting<T>, S
 	 * @param task
 	 *            The task to set.
 	 */
-	public void setExertion(Program task);
+	public void setRoutine(Routine task);
 
 	/**
 	 * Returns the subject path in this context. A subject is a path/execute

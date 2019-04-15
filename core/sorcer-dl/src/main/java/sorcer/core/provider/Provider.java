@@ -39,7 +39,7 @@ import java.util.Properties;
  * @see Monitorable
  * @see Remote
  */
-public interface Provider extends Exertion, Monitorable, AnalyticsProducer, Administrable, Service, Remote {
+public interface Provider extends Exerter, Monitorable, AnalyticsProducer, Administrable, Service, Remote {
 
 	public ServiceID getProviderID() throws RemoteException;
 
@@ -80,25 +80,25 @@ public interface Provider extends Exertion, Monitorable, AnalyticsProducer, Admi
 	
 	public void fireEvent() throws RemoteException;
 
-//	public void notifyInformation(Program task, String message)
+//	public void notifyInformation(Routine task, String message)
 //			throws RemoteException;
 //
-//	public void notifyException(Program task, String message, Exception e)
+//	public void notifyException(Routine task, String message, Exception e)
 //			throws RemoteException;
 //
-//	public void notifyExceptionWithStackTrace(Program task, Exception e)
+//	public void notifyExceptionWithStackTrace(Routine task, Exception e)
 //			throws RemoteException;
 //
-//	public void notifyException(Program task, Exception e)
+//	public void notifyException(Routine task, Exception e)
 //			throws RemoteException;
 //
-//	public void notifyWarning(Program task, String message)
+//	public void notifyWarning(Routine task, String message)
 //			throws RemoteException;
 //
-//	public void notifyFailure(Program task, Exception e)
+//	public void notifyFailure(Routine task, Exception e)
 //			throws RemoteException;
 //
-//	public void notifyFailure(Program task, String message)
+//	public void notifyFailure(Routine task, String message)
 //			throws RemoteException;
 
 	public Object getProxy() throws RemoteException;

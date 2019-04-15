@@ -37,7 +37,8 @@ public interface Fi<T> extends Identifiable, Service {
 
     public enum Type implements Arg {
         VAL, ENTRY, SIG, REF, COMPONENT, MORPH, VAR, VAR_FI, PROC, SRV, ANE, EVALUATOR, GETTER, SETTER, GRADIENT, DERIVATIVE,
-        MULTI, REQUEST, RESPONSE, UPDATE, ADD, REPLACE, DELETE, SELECT, META, NAME, SOA, IF, IF_SOA, SYS, CONTEXT, MODEL, MDA, CONFIG;
+        MULTI, REQUEST, RESPONSE, UPDATE, ADD, REPLACE, DELETE, SELECT, META, NAME, SOA, IF, IF_SOA, SYS, CONTEXT, MODEL,
+        MDA, CONFIG, DISCIPLINE, DISPATCHER, GOVERNANCE;
 
 		static public String name(int fiType) {
 			for (Type s : Type.values()) {

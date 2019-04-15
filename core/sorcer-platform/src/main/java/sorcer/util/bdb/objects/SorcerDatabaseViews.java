@@ -31,8 +31,8 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.DatabaseStorer.Store;
 import sorcer.core.provider.ProviderRuntime;
 import sorcer.service.Context;
-import sorcer.service.Program;
-import sorcer.service.ServiceProgram;
+import sorcer.service.Routine;
+import sorcer.service.ServiceRoutine;
 import sorcer.util.DataTable;
 import sorcer.util.ModelTable;
 
@@ -46,7 +46,7 @@ import java.io.IOException;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class SorcerDatabaseViews {
-	protected StoredMap exertionMap;
+	protected StoredMap routineMap;
 	protected StoredMap runtimeMap;
 	protected StoredMap runtimeByProviderNameMap;
 	protected StoredMap contextMap;
@@ -73,9 +73,9 @@ public class SorcerDatabaseViews {
 		
 		SerialBinding exertiontKeyBinding = new SerialBinding(catalog, UuidKey.class);
 		EntityBinding exertionDataBinding = new ExertionBinding(catalog,
-				UuidKey.class, ServiceProgram.class);
+				UuidKey.class, ServiceRoutine.class);
 	
-		exertionMap = new StoredSortedMap(db.getExertionDatabase(),
+		routineMap = new StoredSortedMap(db.getExertionDatabase(),
 				exertiontKeyBinding, exertionDataBinding, true);
 		
 		SerialBinding contextKeyBinding = new SerialBinding(catalog, UuidKey.class);
@@ -108,10 +108,10 @@ public class SorcerDatabaseViews {
 	// convenience methods are provided here to return them in order to avoid
 	// down-casting elsewhere.
 	/**
-	 * Return a map view of the Program storage container.
+	 * Return a map view of the Routine storage container.
 	 */
-	public StoredMap<UuidKey, Program> getExertionMap() {
-		return exertionMap;
+	public StoredMap<UuidKey, Routine> getRoutineMap() {
+		return routineMap;
 	}
 
 	/**
@@ -136,10 +136,10 @@ public class SorcerDatabaseViews {
 	}
 
 	/**
-	 * Return an entity setValue view of the Program storage container.
+	 * Return an entity setValue view of the Routine storage container.
 	 */
-	public StoredValueSet<Program> getExertionSet() {
-		return (StoredValueSet) exertionMap.values();
+	public StoredValueSet<Routine> getRoutineSet() {
+		return (StoredValueSet) routineMap.values();
 	}
 
 	/**
@@ -179,7 +179,7 @@ public class SorcerDatabaseViews {
 	
 	/**
 	 * ExertionBinding is used to bind the stored key/data entry pair to a
-	 * combined data object (entity - Program).
+	 * combined data object (entity - Routine).
 	 */
 	private static class ExertionBinding extends SerialSerialBinding {
 
@@ -194,7 +194,7 @@ public class SorcerDatabaseViews {
 		 * Create the entity by combining the stored key and data. 
 		 */
 		public Object entryToObject(Object keyInput, Object object) {
-			((ServiceProgram)object).setId(((UuidKey)keyInput).getId());
+			((ServiceRoutine)object).setId(((UuidKey)keyInput).getId());
 			return object;
 		}
 
@@ -202,7 +202,7 @@ public class SorcerDatabaseViews {
 		 * Create the stored key from the entity.
 		 */
 		public Object objectToKey(Object object) {
-			UuidKey key = new UuidKey(((Program)object).getId());
+			UuidKey key = new UuidKey(((Routine)object).getId());
 			return key;
 		}
 

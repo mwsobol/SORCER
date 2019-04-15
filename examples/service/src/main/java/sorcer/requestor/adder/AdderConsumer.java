@@ -27,9 +27,9 @@ public class AdderConsumer extends ServiceConsumer {
         }
         try {
             if (option.equals("netlet")) {
-                return (Program) evaluate(new File("src/main/netlets/adder.ntl"));
+                return (Routine) evaluate(new File("src/main/netlets/adder.ntl"));
             } else if (option.equals("dynamic")) {
-                return (Program) evaluate(new File("src/main/netlets/adder-sbp.ntl"));
+                return (Routine) evaluate(new File("src/main/netlets/adder-sbp.ntl"));
             } else if (option.equals("model")) {
                 return createModel();
             } else if (option.equals("exertion")) {
@@ -41,7 +41,7 @@ public class AdderConsumer extends ServiceConsumer {
         return null;
     }
 
-    private Program createExertion() throws ContextException, SignatureException, ExertionException {
+    private Routine createExertion() throws ContextException, SignatureException, ExertionException {
         Double v1 = new Double(getProperty("arg/x1"));
         Double v2 = new Double(getProperty("arg/x2"));
 

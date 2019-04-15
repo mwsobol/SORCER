@@ -22,13 +22,12 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.service.*;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * The alternative Program that executes sequentially a collection of optional
+ * The alternative Routine that executes sequentially a collection of optional
  * mograms. It executes the first optExertion in the collection such that its
  * condition is true.
  * 
@@ -57,8 +56,7 @@ public class AltTask extends ConditionalTask {
 	}
 
 	@Override
-	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
-			SignatureException, RemoteException {
+	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {
 		OptTask opt = null;
 		try {
 			for (int i = 0; i < optExertions.size(); i++) {
@@ -74,12 +72,12 @@ public class AltTask extends ConditionalTask {
 //					opt.setContextScope(cxt);
 					opt.setContextScope(dataContext);
 					Mogram mog = opt.getTarget();
-					if (mog instanceof Program) {
-                        ((ServiceProgram)mog).setContextScope(cxt);
+					if (mog instanceof Routine) {
+                        ((ServiceRoutine)mog).setContextScope(cxt);
                     } else {
                         mog.setScope(cxt);
                     }
-					Program out = mog.exert(txn, args);
+					Routine out = mog.exert(txn, args);
 					opt.setTarget(out);
 					dataContext = (ServiceContext) out.getContext();
 					controlContext.append(out.getControlContext());
@@ -90,10 +88,10 @@ public class AltTask extends ConditionalTask {
 			}
 			dataContext.putValue(Condition.CONDITION_VALUE, false);
 			dataContext.putValue(Condition.CONDITION_TARGET, opt.getName());
-			dataContext.setExertion(null);
+			dataContext.setRoutine(null);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ExertionException(e);
+			throw new EvaluationException(e);
 		}
 		return this;
 	}
@@ -124,7 +122,7 @@ public class AltTask extends ConditionalTask {
 	}
 	
 	public void reset(int state) {
-			for (ServiceProgram e : optExertions)
+			for (ServiceRoutine e : optExertions)
 				e.reset(state);
 		
 		this.setStatus(state);
@@ -143,8 +141,8 @@ public class AltTask extends ConditionalTask {
 
 	@Override
 	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) {
-		for (Program ext : optExertions) {
-			exceptions.addAll(((ServiceProgram)ext).getExceptions(exceptions));
+		for (Routine ext : optExertions) {
+			exceptions.addAll(((ServiceRoutine)ext).getExceptions(exceptions));
 		}
 		exceptions.addAll(this.getExceptions());
 		return exceptions;
@@ -153,7 +151,7 @@ public class AltTask extends ConditionalTask {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Program#getMograms()
+	 * @see sorcer.service.Routine#getMograms()
 	 */
 	@Override
 	public List<Mogram> getMograms() {
@@ -163,8 +161,8 @@ public class AltTask extends ConditionalTask {
 	}
 	
 	public List<Mogram> getMograms(List<Mogram> exs) {
-		for (Program e : optExertions)
-			((ServiceProgram) e).getMograms(exs);
+		for (Routine e : optExertions)
+			((ServiceRoutine) e).getMograms(exs);
 		exs.add(this);
 		return exs;
 	}
@@ -181,7 +179,7 @@ public class AltTask extends ConditionalTask {
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Program#isCompound()
+	 * @see sorcer.service.Routine#isCompound()
 	 */
 	@Override
 	public boolean isCompound() {

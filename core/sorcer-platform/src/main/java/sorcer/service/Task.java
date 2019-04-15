@@ -35,7 +35,7 @@ import java.util.Set;
 
 /**
  * A <code>Task</code> is an elementary service-oriented message
- * {@link Program} (with its own service {@link Context} and a collection of
+ * {@link Routine} (with its own service {@link Context} and a collection of
  * service {@link sorcer.service.Signature}s. Signatures of four
  * {@link Signature.Type}s can be associated with each task:
  * <code>SERVICE</code>, <code>PREPROCESS</code>, <code>POSTROCESS</code>, and
@@ -43,13 +43,13 @@ import java.util.Set;
  * can be associated with a task but multiple preprocessing, postprocessing, and
  * context appending methods can be added.
  * 
- * @see Program
+ * @see Routine
  * @see sorcer.service.Job
  * 
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public class Task extends ServiceProgram implements ElementaryRequest {
+public class Task extends ServiceRoutine implements ElementaryRequest {
 
 	private static final long serialVersionUID = 5179772214884L;
 
@@ -111,18 +111,24 @@ public class Task extends ServiceProgram implements ElementaryRequest {
 		multiFi.setSelect(sFi);
 	}
 
-	public Task doTask(Arg... args) throws MogramException, SignatureException,
-			RemoteException {
-		return doTask(null, args);
+	public Task doTask(Arg... args) throws EvaluationException {
+		try {
+			return doTask(null, args);
+		} catch (MogramException e) {
+			throw new EvaluationException();
+		}
 	}
-	
-	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
-			SignatureException, RemoteException, MogramException {
-		initDelegate();
-		Task done = delegate.doTask(txn, args);
-		setContext(done.getDataContext());
-		setControlContext(done.getControlContext());
-		return this;
+
+	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {
+		try {
+			initDelegate();
+			Task done = delegate.doTask(txn, args);
+			setContext(done.getDataContext());
+			setControlContext(done.getControlContext());
+			return this;
+		} catch (SignatureException | MogramException e) {
+			throw new EvaluationException();
+		}
 	}
 
 	public void initDelegate() throws ContextException, ExertionException, SignatureException {
@@ -166,7 +172,7 @@ public class Task extends ServiceProgram implements ElementaryRequest {
 		return sig;
 	}
 
-	public Task doTask(Program xrt, Transaction txn) throws ExertionException {
+	public Task doTask(Routine xrt, Transaction txn) throws EvaluationException {
 		// implemented for example by VarTask
 		return null;
 	}
@@ -230,7 +236,7 @@ public class Task extends ServiceProgram implements ElementaryRequest {
 			return delegate.toString();
 		}
 		StringBuilder sb = new StringBuilder(
-				"\n=== START PRINTING TASK ===\nProgram Description: "
+				"\n=== START PRINTING TASK ===\nRoutine Description: "
 						+ getClass().getName() + ":" + key);
 		sb.append("\n\tstatus: ").append(getStatus());
 		sb.append(", task ID=");
@@ -299,7 +305,7 @@ public class Task extends ServiceProgram implements ElementaryRequest {
 	 * @param visited
 	 *            ignored
 	 * @return true; elementary mograms are always "trees"
-	 * @see Program#isTree()
+	 * @see Routine#isTree()
 	 */
 	public boolean isTree(Set visited) {
 		visited.add(this);
@@ -314,7 +320,7 @@ public class Task extends ServiceProgram implements ElementaryRequest {
 	 *            the fiType of needed task format
 	 * @return
 	 */
-	public Program getUpdatedExertion(int type) {
+	public Routine getUpdatedExertion(int type) {
 		// the previous implementation of ServiceTask (thin) and
 		// RemoteServiceTask (thick) abandoned for a while.
 		return this;
@@ -343,7 +349,7 @@ public class Task extends ServiceProgram implements ElementaryRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Program#addMogram(sorcer.service.Program)
+	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
 	 */
 	@Override
 	public Mogram addMogram(Mogram component) {

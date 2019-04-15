@@ -168,11 +168,11 @@ public class NetSignature extends ObjectSignature implements sig {
     }
 
 
-    public void setExertion(Program exertion) throws ExertionException {
+    public void setExertion(Routine exertion) throws ExertionException {
         this.exertion = exertion;
 	}
 
-	public Program getExertion() {
+	public Routine getExertion() {
 		return exertion;
 	}
 
@@ -285,13 +285,13 @@ public class NetSignature extends ObjectSignature implements sig {
 			((Closing)provider).close();
 	}
 
-	public Program invokeMethod(Program ex) throws RemoteException,
+	public Routine invokeMethod(Routine ex) throws RemoteException,
 			ExertionException {
 		// If customized method provided by Mobile Agent
 		Method m = getSubstituteMethod(new Class[] { Mogram.class });
 		try {
 			if (m != null)
-				return (Program) m.invoke(this, new Object[] { ex });
+				return (Routine) m.invoke(this, new Object[] { ex });
 
 			if (((ServiceProvider) provider).isValidMethod(operation.selector)) {
 				return ((ServiceProvider) provider).getDelegate()
@@ -394,7 +394,7 @@ public class NetSignature extends ObjectSignature implements sig {
 
 	@Override
 	public Object execute(Arg... args) throws MogramException, RemoteException {
-		Program mog = Arg.selectExertion(args);
+		Routine mog = Arg.selectRoutine(args);
 		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt == null && returnPath != null) {
 			cxt = returnPath.getDataContext();
@@ -403,13 +403,13 @@ public class NetSignature extends ObjectSignature implements sig {
 		try {
 			if (mog != null && cxt == null) {
 				if (multitype.providerType == RemoteServiceShell.class) {
-					Exertion prv = (Exertion) Accessor.get().getService(sig(RemoteServiceShell.class));
+					Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
 					result = prv.exert(mog, null, new Arg[] {});
 				} else {
 					if (mog.getProcessSignature() != null
 							&& ((ServiceSignature) mog.getProcessSignature()).isShellRemote()) {
-						Exertion prv = null;
-						prv = (Exertion) Accessor.get().getService(sig(RemoteServiceShell.class));
+						Exerter prv = null;
+						prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
 						result = prv.exert(mog, null);
 					} else {
 						result = (exert(mog));

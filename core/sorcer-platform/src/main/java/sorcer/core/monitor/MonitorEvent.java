@@ -18,7 +18,7 @@
 package sorcer.core.monitor;
 
 import sorcer.service.Exec;
-import sorcer.service.Program;
+import sorcer.service.Routine;
 import sorcer.service.RemoteServiceEvent;
 
 import java.io.Serializable;
@@ -30,19 +30,19 @@ import java.io.Serializable;
 public class MonitorEvent extends RemoteServiceEvent implements Serializable, Exec {
 	static final long serialVersionUID = -5433981459997252761L;
 	private int cause;
-	private Program ex;
+	private Routine ex;
 
 	public MonitorEvent(Object source) {
 		super(source);
 	}
 
-	public MonitorEvent(Object source, Program ex, int cause) {
+	public MonitorEvent(Object source, Routine ex, int cause) {
 		super(source);
 		this.ex = ex;
 		this.cause = cause;
 	}
 
-	public Program getExertion() {
+	public Routine getExertion() {
 		return (ex);
 	}
 

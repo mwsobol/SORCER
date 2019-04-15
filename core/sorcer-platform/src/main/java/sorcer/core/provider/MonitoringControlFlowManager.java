@@ -44,14 +44,14 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
     private MonitorSessionManagement sessionMonitor;
     private LeaseRenewalManager lrm;
 
-    public MonitoringControlFlowManager(Program exertion,
+    public MonitoringControlFlowManager(Routine exertion,
                                         ProviderDelegate delegate) throws RemoteException, ConfigurationException {
         super(exertion, delegate);
         sessionMonitor = Accessor.get().getService(null, MonitoringManagement.class);
         lrm = new LeaseRenewalManager(delegate.getProviderConfiguration());
     }
 
-    public MonitoringControlFlowManager(Program exertion,
+    public MonitoringControlFlowManager(Routine exertion,
                                         ProviderDelegate delegate,
                                         SystemServiceBean serviceBean) throws RemoteException, ConfigurationException {
         super(exertion, delegate, serviceBean);
@@ -60,11 +60,11 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
     }
 
     @Override
-    public Program process() throws ExertionException {
+    public Routine process() throws ExertionException {
         MonitoringSession monSession = getMonitoringSession(exertion);
         if (sessionMonitor==null) {
             logger.error("Monitoring enabled but ExertMonitor service could not be found!");
-            return (Program) super.process();
+            return (Routine) super.process();
         }
         try {
             if (monSession==null) {
@@ -75,8 +75,8 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
             logger.error("Failed registering exertion into monitoring session", e);
         }
         monSession = getMonitoringSession(exertion);
-        ServiceProgram result;
-        if (!(exertion instanceof Transprogram) && !exertion.isSpacable()) {
+        ServiceRoutine result;
+        if (!(exertion instanceof Transroutine) && !exertion.isSpacable()) {
             try {
                 monSession.init((Monitorable) delegate.getProxy(), DEFAULT_LEASE_PERIOD, DEFAULT_TIMEOUT_PERIOD);
                 lrm.renewUntil(monSession.getLease(), Lease.FOREVER, TimeUnit.MINUTES.toMillis(1), null);
@@ -85,14 +85,14 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
                 log.error("Failed issuing monitoring calls", e);
             }
 
-            result = (ServiceProgram) super.process();
+            result = (ServiceRoutine) super.process();
             logger.info("Got result: {}", result);
             Exec.State resultState = result.getStatus() <= FAILED ? Exec.State.FAILED : Exec.State.DONE;
 
             try {
                 if (sessionMonitor != null &&
                     monSession.getState() != resultState.ordinal() &&
-                    !(result instanceof Transprogram))
+                    !(result instanceof Transroutine))
                     monSession.changed(result.getContext(), result.getControlContext(), resultState.ordinal());
             } catch (RuntimeException e) {
                 log.error(e.getMessage(), e);
@@ -100,21 +100,21 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
                 log.warn("Error while executing monitorable exertion", e);
             } finally {
                 try {
-                    if (sessionMonitor != null && !(exertion instanceof Transprogram))
+                    if (sessionMonitor != null && !(exertion instanceof Transroutine))
                         lrm.remove(monSession.getLease());
                 } catch (UnknownLeaseException e) {
                     log.warn("Error while removing lease for {}", exertion.getName(), e);
                 }
             }
         } else {
-            result = (ServiceProgram) super.process();
+            result = (ServiceRoutine) super.process();
         }
         return result;
     }
 
-    private Program register(Program exertion) throws RemoteException, MonitorException {
+    private Routine register(Routine exertion) throws RemoteException, MonitorException {
 
-        ServiceProgram registeredExertion = (ServiceProgram) (sessionMonitor.register(null,
+        ServiceRoutine registeredExertion = (ServiceRoutine) (sessionMonitor.register(null,
                                                                                         exertion,
                                                                                         DEFAULT_LEASE_PERIOD));
         MonitoringSession session = getMonitoringSession(registeredExertion);

@@ -218,14 +218,14 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     ((MultiFiMogram) carrier).setScope(this);
                     Object out = ((MultiFiMogram)carrier).exert(args);
                     Context cxt = null;
-                    if (out instanceof Program) {
-                        cxt = ((Program) out).getContext();
-                        SignatureReturnPath rt = ((Program) out).getProcessSignature().getReturnPath();
+                    if (out instanceof Routine) {
+                        cxt = ((Routine) out).getContext();
+                        SignatureReturnPath rt = ((Routine) out).getProcessSignature().getReturnPath();
                         if (rt != null && rt.getPath() != null) {
                             Object obj = cxt.getReturnValue();
                             putInoutValue(rt.getPath(), obj);
                             ((Srv) get(path)).setOut(obj);
-                            ((Program) out).getContext().putValue(path, obj);
+                            ((Routine) out).getContext().putValue(path, obj);
                             out = obj;
                         } else {
                             ((Srv) get(path)).setOut(cxt);
@@ -389,7 +389,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         Mogram mogram = (Mogram) mogramEntry.getImpl();
 		mogram.setScope(this);
         Mogram out = mogram.exert(entries);
-        if (out instanceof Program){
+        if (out instanceof Routine){
             Context outCxt = out.getContext();
             if (outCxt.getReturnPath() != null) {
                 Object obj = outCxt.getReturnValue();
@@ -531,8 +531,8 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                 signature = (Signature)subjectValue;
             }
             if (signature != null) {
-                Program out = operator.xrt(key, subjectValue, this).exert(txn, entries);
-                Program xrt = out.exert();
+                Routine out = operator.xrt(key, subjectValue, this).exert(txn, entries);
+                Routine xrt = out.exert();
                 return xrt.getDataContext();
             } else {
                 // compute model response

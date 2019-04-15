@@ -553,14 +553,14 @@ public class SorcerDescriptorUtil {
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
 	 * {@link sorcer.core.provider.ServiceProvider} with beaned
-	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exertion.
+	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exerter.
 	 * 
 	 * @param policy
 	 *            The security policy file to use
 	 * @param exertConfig
 	 *            The configuration options the ExertProcessor provider will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
-	 *         Exertion using an anonymous port. The <tt>sorcer-platform.jar</tt> file
+	 *         Exerter using an anonymous port. The <tt>sorcer-platform.jar</tt> file
 	 *         will be loaded from <tt>sorcer.home/lib/sorcer/lib</tt>
 	 * 
 	 * @throws IOException
@@ -576,7 +576,7 @@ public class SorcerDescriptorUtil {
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
 	 * {@link sorcer.core.provider.ServiceProvider} with beaned
-	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exertion.
+	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exerter.
 	 * 
 	 * @param policy
 	 *            The security policy file to use
@@ -585,7 +585,7 @@ public class SorcerDescriptorUtil {
 	 * @param exertConfig
 	 *            The configuration options the ExertProcessor provider will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
-	 *         Exertion using an anonymous port. The <tt>sorcer-platform.jar</tt> file
+	 *         Exerter using an anonymous port. The <tt>sorcer-platform.jar</tt> file
 	 *         will be loaded from <tt>sorcer.home/lib/sorcer/lib</tt>
 	 * 
 	 * @throws IOException
@@ -602,7 +602,7 @@ public class SorcerDescriptorUtil {
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
 	 * {@link sorcer.core.provider.ServiceProvider} with beaned
-	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exertion.
+	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exerter.
 	 * 
 	 * @param policy
 	 *            The security policy file to use
@@ -613,7 +613,7 @@ public class SorcerDescriptorUtil {
 	 * @param exertConfig
 	 *            The configuration options the ExertProcessor provider will use
 	 * @return The {@link com.sun.jini.start.ServiceDescriptor} instance for the
-	 *         Exertion using an anonymous port. The <tt>sorcer-platform.jar</tt> file
+	 *         Exerter using an anonymous port. The <tt>sorcer-platform.jar</tt> file
 	 *         will be loaded from <tt>sorcer.home/lib/sorcer/lib</tt>
 	 * 
 	 * @throws IOException

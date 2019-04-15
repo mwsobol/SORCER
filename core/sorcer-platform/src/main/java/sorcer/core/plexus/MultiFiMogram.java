@@ -124,7 +124,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     public void setDataContext(ServiceContext dataContext) {
-        ((ServiceProgram) morphFidelity.getSelect()).setContext(dataContext);
+        ((ServiceRoutine) morphFidelity.getSelect()).setContext(dataContext);
     }
 
     @Override

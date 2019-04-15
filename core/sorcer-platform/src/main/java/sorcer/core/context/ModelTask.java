@@ -52,8 +52,7 @@ public class ModelTask extends Task {
 		addSignature(signature);
 	}
 
-	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
-			SignatureException, RemoteException {
+	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {
 		try {
 			if (model != null) {
 				model = ((Model) model).exert(txn, args);
@@ -61,7 +60,7 @@ public class ModelTask extends Task {
 				super.doTask(args);
 			}
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			throw new EvaluationException(e);
 		}
 		return this;
 	}

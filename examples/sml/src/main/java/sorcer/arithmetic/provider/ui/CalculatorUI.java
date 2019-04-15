@@ -53,7 +53,7 @@ public class CalculatorUI extends JPanel implements ActionListener {
 
 	private ServiceItem item;
 
-	// SORCER provider proxy Service#service(Program)
+	// SORCER provider proxy Service#service(Routine)
 	private Service provider;
 
 	/** Creates new CalulatorUI Component */

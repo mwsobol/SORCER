@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.service.ContextException;
-import sorcer.service.Program;
+import sorcer.service.Routine;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -98,7 +98,7 @@ public class CoffeeMakerTest {
 
 	@Test
 	public void addServiceRecepie() throws Exception {
-		Program cmt = task(sig("addRecipe", coffeeMaker),
+		Routine cmt = task(sig("addRecipe", coffeeMaker),
 						context(types(Recipe.class), args(espresso),
 							result("recipe/added")));
 

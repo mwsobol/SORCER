@@ -33,7 +33,7 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
     }
 
     /** {@inheritDoc} */
-    public ServiceProgram execute(Program task) throws TransactionException,
+    public ServiceRoutine execute(Routine task) throws TransactionException,
             ExertionException {
         return execute(task, null);
     }
@@ -41,10 +41,10 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
     /** {@inheritDoc}
      * @throws ConfigurationException
      * @throws RemoteException */
-    public ServiceProgram execute(Program task, Transaction transaction)
+    public ServiceRoutine execute(Routine task, Transaction transaction)
             throws ExertionException  {
         try {
-            return (Task) new ControlFlowManager((Program) task, delegate)
+            return (Task) new ControlFlowManager((Routine) task, delegate)
                     .process();
         } catch (Exception e) {
             throw new ExertionException(e);

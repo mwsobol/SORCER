@@ -21,14 +21,14 @@ import net.jini.core.transaction.TransactionException;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
-public class ExertCallable implements Callable<Program> {
-	private Program exertion;
+public class ExertCallable implements Callable<Routine> {
+	private Routine exertion;
 
-	public ExertCallable(Program exertion) {
+	public ExertCallable(Routine exertion) {
 		this.exertion = exertion;
 	}
 
-	public Program call() throws RemoteException, TransactionException,
+	public Routine call() throws RemoteException, TransactionException,
 			MogramException {
 		if (exertion != null)
 			return exertion.exert();
@@ -36,7 +36,7 @@ public class ExertCallable implements Callable<Program> {
 		return exertion;
 	}
 
-	public Program getExertion() {
+	public Routine getExertion() {
 		return exertion;
 	}
 }

@@ -97,7 +97,7 @@ import static sorcer.util.StringUtils.tName;
  * <p>
  * In the simplest case, the provider exports and registers its own (outer) proxy with
  * the primary methods {@code Service.execEnt(Arg[])} and service federation request
- * {@code Exertion.exert(Mogram, Transaction, Arg[])}. The functionality of an
+ * {@code Exerter.exert(Mogram, Transaction, Arg[])}. The functionality of an
  * outer proxy can be extended by its inner server functionality with its Remote
  * inner proxy. In this case, the outer proxies have to implement {@link sorcer.core.proxy.Outer}
  * interface and each outer proxy is registered with the inner proxy allocated
@@ -1083,7 +1083,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *
 	 * @return true if the provider is redy to exert the exertion
 	 */
-	public boolean isReady(Program exertion) {
+	public boolean isReady(Routine exertion) {
 		return true;
 	}
 
@@ -1414,7 +1414,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * A provider responsibility is to check a task completeness in paricular
 	 * the relevance of the task's context.
 	 */
-	public boolean isValidTask(Program task) throws ExertionException {
+	public boolean isValidTask(Routine task) throws ExertionException {
 		return true;
 	}
 
@@ -1431,7 +1431,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return delegate.invokeMethod(method, context);
 	}
 
-	public Program invokeMethod(String methodName, Program ex)
+	public Routine invokeMethod(String methodName, Routine ex)
 			throws ExertionException {
 		return delegate.invokeMethod(methodName, ex);
 	}
@@ -1441,20 +1441,20 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * accordingly to its compositional multitype.
 	 *
 	 * @param exertion
-	 *            Program
-	 * @return Program
+	 *            Routine
+	 * @return Routine
 	 * @throws sorcer.service.ExertionException
-	 * @see Program
+	 * @see Routine
 	 * @see sorcer.service.Conditional
 	 * @see sorcer.core.provider.ControlFlowManager
 	 * @throws java.rmi.RemoteException
 	 * @throws sorcer.service.ExertionException
 	 */
-    public Program doExertion(final Program exertion, Transaction txn) throws ExertionException {
+    public Routine doExertion(final Routine exertion, Transaction txn) throws ExertionException {
         logger.debug("service: {}", exertion.getName());
         // create an instance of the ControlFlowManager and call on the
-        // compute method, returns an Program
-        Program out;
+        // compute method, returns an Routine
+        Routine out;
         try {
 			if(delegate.isRemoteLogging()) {
 				MDC.put(MDC_SORCER_REMOTE_CALL, MDC_SORCER_REMOTE_CALL);
@@ -1464,7 +1464,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
             if (exertion.getId() != null)
                 MDC.put(MDC_MOGRAM_ID, exertion.getId().toString());
 
-            out = (Program) getControlFlownManager(exertion).process();
+            out = (Routine) getControlFlownManager(exertion).process();
 
         } finally  {
             MDC.remove(MDC_PROVIDER_NAME);
@@ -1475,7 +1475,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         return out;
     }
 
-    protected ControlFlowManager getControlFlownManager(Program exertion) throws ExertionException {
+    protected ControlFlowManager getControlFlownManager(Routine exertion) throws ExertionException {
         List<Class> publishedIfaces = Arrays.asList(this.delegate.getPublishedServiceTypes());
         if (!(exertion instanceof Task) && (!publishedIfaces.contains(Spacer.class))
             && (!publishedIfaces.contains(Jobber.class)) && (!publishedIfaces.contains(Concatenator.class)))
@@ -1491,7 +1491,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		}
 	}
 
-	public Program serviceContextOnly(Context mogram) throws ExertionException, RemoteException {
+	public Routine serviceContextOnly(Context mogram) throws ExertionException, RemoteException {
 		Task task = null;
 		try {
 			Object subject = mogram.getSubjectValue();
@@ -1507,9 +1507,9 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return task;
 	}
 
-	public Program service(Mogram exertion) throws RemoteException,
+	public Routine service(Mogram exertion) throws RemoteException,
 			ExertionException {
-		return doExertion((Program)exertion, null);
+		return doExertion((Routine)exertion, null);
 	}
 
 	@Override
@@ -1538,11 +1538,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 		// TODO transaction handling to be implemented when needed
 		// TO DO HANDLING SUSSPENDED mograms
-		// if (((ServiceProgram) exertion).monitorSession != null) {
+		// if (((ServiceRoutine) exertion).monitorSession != null) {
 		// new Thread(new ServiceThread(exertion, this)).start();
 		// return exertion;
 		// }
-		Program exertion = (Program)mogram;
+		Routine exertion = (Routine)mogram;
 		// when service Locker is used
 		if (delegate.mutualExlusion()) {
 			Object mutexId = ((ControlContext)exertion.getControlContext()).getMutexId();
@@ -1564,7 +1564,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		// + getProviderName() + ":" + getProviderID()
 		// : "in: " + getProviderName() + ":"
 		// + getProviderID());
-		Program out = exertion;
+		Routine out = exertion;
 		try {
 			out = doExertion(exertion, txn);
 		} catch (Exception e) {
@@ -1693,31 +1693,31 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return delegate.getProviderProperties();
 	}
 
-	public void notifyInformation(Program task, String message) {
+	public void notifyInformation(Routine task, String message) {
 		delegate.notifyInformation(task, message);
 	}
 
-	public void notifyException(Program task, String message, Exception e) {
+	public void notifyException(Routine task, String message, Exception e) {
 		delegate.notifyException(task, message, e);
 	}
 
-	public void notifyExceptionWithStackTrace(Program task, Exception e){
+	public void notifyExceptionWithStackTrace(Routine task, Exception e){
 		delegate.notifyExceptionWithStackTrace(task, e);
 	}
 
-	public void notifyException(Program task, Exception e) {
+	public void notifyException(Routine task, Exception e) {
 		delegate.notifyException(task, e);
 	}
 
-	public void notifyWarning(Program task, String message) {
+	public void notifyWarning(Routine task, String message) {
 		delegate.notifyWarning(task, message);
 	}
 
-	public void notifyFailure(Program task, Exception e) {
+	public void notifyFailure(Routine task, Exception e) {
 		delegate.notifyFailure(task, e);
 	}
 
-	public void notifyFailure(Program task, String message) {
+	public void notifyFailure(Routine task, String message) {
 		delegate.notifyFailure(task, message);
 	}
 
@@ -1754,7 +1754,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *             if there is a communication error
 	 *
 	 */
-	public void resume(Program ex) throws RemoteException, ExertionException {
+	public void resume(Routine ex) throws RemoteException, ExertionException {
 		service((Mogram) ex);
 	}
 
@@ -1769,7 +1769,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *             if there is a communication error
 	 *
 	 */
-	public void step(Program ex) throws RemoteException, ExertionException {
+	public void step(Routine ex) throws RemoteException, ExertionException {
 		service(ex);
 	}
 /*

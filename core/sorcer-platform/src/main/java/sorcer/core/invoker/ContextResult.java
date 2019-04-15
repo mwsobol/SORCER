@@ -20,7 +20,7 @@ package sorcer.core.invoker;
 import sorcer.core.context.ControlContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.service.ContextException;
-import sorcer.service.Program;
+import sorcer.service.Routine;
 import sorcer.util.exec.ExecUtils.CmdResult;
 
 /**
@@ -32,7 +32,7 @@ public class ContextResult<Objec> extends ServiceContext<Object> {
 
 	private static final long serialVersionUID = 2716822310344630839L;
 	
-	public ContextResult(Object result, Program exertion) throws ContextException {
+	public ContextResult(Object result, Routine exertion) throws ContextException {
 		putValue("exit/eval", 0);
 		putOutValue("result/out", result);
 		putErrValue("result/err", ((ControlContext)exertion.getControlContext()).getExceptions());

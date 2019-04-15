@@ -378,7 +378,7 @@ public class operator {
     public static ServiceContext result(Mogram mogram) throws ContextException {
         if (mogram instanceof Domain) {
             return (ServiceContext)((ServiceContext) mogram).getMogramStrategy().getOutcome();
-        } else if (mogram instanceof Program) {
+        } else if (mogram instanceof Routine) {
             return (ServiceContext)mogram.getContext();
         }
         return null;
@@ -391,7 +391,7 @@ public class operator {
     public static Object result(Mogram mogram, String path) throws ContextException {
         if (mogram instanceof Domain) {
             return ((ServiceContext) mogram).getMogramStrategy().getOutcome().asis(path);
-        } else if (mogram instanceof Program) {
+        } else if (mogram instanceof Routine) {
             try {
                 return mogram.getContext().getValue(path);
             } catch (RemoteException e) {
@@ -474,8 +474,12 @@ public class operator {
          return mogram;
     }
 
-    public static ServiceContext out(Mogram mogram) {
+    public static ServiceContext out(Mogram mogram) throws ServiceException {
+        if (mogram instanceof Discipline) {
+            return (ServiceContext) ((Discipline)mogram).getOutput();
+        } else {
             return (ServiceContext) mogram.getMogramStrategy().getOutcome();
+        }
     }
 
     public static void traced(Mogram mogram, boolean isTraced) throws ContextException {
@@ -601,7 +605,7 @@ public class operator {
         for (Object i : items) {
             if (i instanceof String) {
                 name = (String) i;
-            } else if (i instanceof Program) {
+            } else if (i instanceof Routine) {
                 hasExertion = true;
             } else if (i instanceof Signature) {
                 hasSignature = true;
@@ -867,7 +871,7 @@ public class operator {
         return provisionManager.deployServices();
     }
 
-    public static Program[] clients(Program... consumers) {
+    public static Routine[] clients(Routine... consumers) {
         return consumers;
     }
 
@@ -875,24 +879,41 @@ public class operator {
         return servers;
     }
 
-    public static Discipline dis(Program consumer, Service server) {
+    public static Discipline disc(Routine consumer, Service server) {
         return new ServiceDiscipline(consumer, server);
     }
-    public static Discipline dis(Program[] clients, Service[] servers) {
+    public static Discipline disc(Routine[] clients, Service[] servers) {
         return new ServiceDiscipline(clients, servers);
     }
 
-    public static Discipline dis(List<Program> clients, List<Service> servers) {
+    public static Discipline disc(List<Routine> clients, List<Service> servers) {
         return new ServiceDiscipline(clients, servers);
     }
 
-    public static Discipline add(Discipline disciplne, Program client, Service server) {
-         disciplne.add(client, server);
-         return disciplne;
+    public static Discipline disc(Multidiscipline multidisc, String name) {
+        return multidisc.getDisciplines().get(name);
+    }
+
+    public static Discipline add(Discipline disciplne, Routine client, Service server) {
+        disciplne.add(client, server);
+        return disciplne;
     }
 
     public static Discipline add(Discipline disciplne, Fidelity clientFi, Fidelity providerFi) {
         disciplne.add(clientFi, providerFi);
         return disciplne;
+    }
+
+    public static Multidiscipline multidisc(Discipline... disciplines) {
+        return multidisc(null, disciplines);
+    }
+
+    public static Multidiscipline multidisc(String name, Discipline... disciplines) {
+        Multidiscipline md = new Multidiscipline(disciplines);
+        if (name != null) {
+            md.setName(name);
+        }
+        md.setExplorer(new DisciplineExplorer(md));
+        return md;
     }
 }

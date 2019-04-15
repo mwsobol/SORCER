@@ -125,7 +125,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     // for already existing names
     protected String serviceFidelitySelector;
 
-    // Date of creation of this Program
+    // Date of creation of this Routine
     protected Date creationDate = new Date();
 
     protected Date lastUpdateDate;
@@ -1007,6 +1007,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.serviceFidelitySelector = serviceFidelitySelector;
     }
 
+    public boolean equals(Object object) {
+        if (object instanceof Mogram && mogramId.equals(((Mogram) object).getId())) {
+                return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public Object getEvaluatedValue(String path) throws ContextException {
         // reimplement in subclasses
@@ -1021,8 +1029,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
                 } catch (RemoteException e) {
                     throw new ContextException(e);
                 }
-            } else if (this instanceof Program) {
-                ((Program) this).getValue(path);
+            } else if (this instanceof Routine) {
+                ((Routine) this).getValue(path);
             }
         }
         throw new ContextException(getName() + "mogram not evaluated yet");

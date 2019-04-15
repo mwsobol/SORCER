@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *  Implements a service discipline as governance-multiFi-dispatch
+ *  Implements a service discipline as outGovernance-multiFi-dispatch
  */
 public class ServiceDiscipline implements Discipline, Getter<Service> {
 
@@ -43,21 +43,23 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected ServiceFidelity dispatchMultiFi;
 
-    protected ServiceFidelity serviceMultiFi;
+    protected ServiceFidelity governanceMultiFi;
 
+    // the input of this discipline
     protected Context input;
 
+    // the output of this discipline
     protected Context output;
 
     protected Context inConnector;
 
     protected Context outConnector;
 
-    // the executed service
-    protected Service out;
+    // the executed governance
+    protected Service outGovernance;
 
-    // the service context of the executed service
-    protected Mogram result;
+    // the executed dispatcher
+    protected Mogram outDispatcher;
 
     protected Task precondition;
 
@@ -67,39 +69,41 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected Morpher morpher;
 
+    protected Discipline parent;
+
     public ServiceDiscipline() {
         disciplineId = UuidFactory.generate();
     }
 
-    public ServiceDiscipline(Program... dispatchs) {
-        serviceMultiFi = new ServiceFidelity(dispatchs);
+    public ServiceDiscipline(Routine... dispatchs) {
+        governanceMultiFi = new ServiceFidelity(dispatchs);
     }
 
-    public ServiceDiscipline(Program dispatch, Service service) {
-        serviceMultiFi = new ServiceFidelity(new Program[] { dispatch });
+    public ServiceDiscipline(Routine dispatch, Service service) {
+        governanceMultiFi = new ServiceFidelity(new Mogram[] { dispatch });
         dispatchMultiFi = new ServiceFidelity(new Service[] { service });
     }
 
-    public ServiceDiscipline(Program[] dispatchs, Service[] services) {
-        serviceMultiFi = new ServiceFidelity(dispatchs);
+    public ServiceDiscipline(Routine[] dispatchs, Service[] services) {
+        governanceMultiFi = new ServiceFidelity(dispatchs);
         dispatchMultiFi = new ServiceFidelity(services);
     }
 
-    public ServiceDiscipline(List<Program> dispatchs, List<Service> services) {
-        Program[] cArray = new Program[dispatchs.size()];
-        Service[] pArray = new Program[services.size()];
-        serviceMultiFi = new ServiceFidelity(dispatchs.toArray(cArray));
+    public ServiceDiscipline(List<Routine> dispatchs, List<Service> services) {
+        Routine[] cArray = new Routine[dispatchs.size()];
+        Service[] pArray = new Routine[services.size()];
+        governanceMultiFi = new ServiceFidelity(dispatchs.toArray(cArray));
         dispatchMultiFi = new ServiceFidelity(services.toArray(pArray));
     }
 
-    public void add(Program dispatch, Service service) {
-        serviceMultiFi.getSelects().add(dispatch);
+    public void add(Routine dispatch, Service service) {
+        governanceMultiFi.getSelects().add(dispatch);
         dispatchMultiFi.getSelects().add(service);
     }
 
     @Override
     public void add(Fidelity dispatchFi, Fidelity serviceFi) {
-        Program dispatch = (Program) dispatchFi.getSelect();
+        Routine dispatch = (Routine) dispatchFi.getSelect();
         dispatch.setName(dispatchFi.getName());
         Object service = serviceFi.getSelect();
         if (service instanceof Signature) {
@@ -108,62 +112,85 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             ((Request)service).setName(serviceFi.getName());
         }
         dispatchMultiFi.getSelects().add(dispatch);
-        serviceMultiFi.getSelects().add((Service)service);
+        governanceMultiFi.getSelects().add((Service)service);
     }
 
     @Override
-    public Service getGovernance() throws MogramException {
+    public Service getGovernance() {
         // if no service then dispatch is standalone
-        if (serviceMultiFi == null || serviceMultiFi.getSelect() == null) {
+        if (governanceMultiFi == null || governanceMultiFi.getSelect() == null) {
             return dispatchMultiFi.getSelect();
         }
-        return serviceMultiFi.getSelect();
+        return governanceMultiFi.getSelect();
     }
 
     @Override
-    public ServiceFidelity getGovernanceMultiFi() throws MogramException {
-        return serviceMultiFi;
+    public ServiceFidelity getGovernanceMultiFi() {
+        return governanceMultiFi;
+    }
+
+    public Service getOutGovernance() {
+        return outGovernance;
     }
 
     @Override
-    public Program getDispatcher() throws ExertionException {
-        return (Program) dispatchMultiFi.getSelect();
+    public Mogram getDispatcher() {
+        return (Mogram) dispatchMultiFi.getSelect();
     }
 
     @Override
-    public ServiceFidelity getDispatcherMultiFi() throws MogramException {
+    public ServiceFidelity getDispatcherMultiFi() {
         return dispatchMultiFi;
     }
 
     @Override
-    public Context getInput() throws ContextException, ExertionException {
-        return getDispatcher().getContext();
+    public Context getInput() throws ContextException {
+        return input;
+    }
+
+    public Context setInput(Context input) throws ContextException {
+        return this.input = input;
+    }
+
+    public void setParent(Mogram parent) {
+        this.parent = (Discipline) parent;
     }
 
     @Override
-    public Context getOutput(Arg... args) throws ServiceException {
-        if (result == null || ! result.isValid()) {
-            execute(args);
+    public Context getOutput(Arg... args) throws ContextException {
+        if (outDispatcher == null) {
+            try {
+                execute(args);
+            } catch (ServiceException e) {
+                throw new ContextException(e);
+            }
         }
+        Context out = null;
         if (outConnector != null) {
-            if (result instanceof Context) {
-                return ((ServiceContext) result).updateContextWith(outConnector);
-            } else if (result instanceof Mogram) {
+            if (outDispatcher instanceof Context) {
+                out = ((ServiceContext) outDispatcher).updateContextWith(outConnector);
+            } else if (outDispatcher instanceof Mogram) {
                 if (outConnector != null)
-                    return ((ServiceContext) result.getContext()).updateContextWith(outConnector);
+                    out = ((ServiceContext) outDispatcher.getContext()).updateContextWith(outConnector);
             }
         } else {
-            if (result instanceof Context) {
-                return (Context) result;
-            } else if (result instanceof Mogram) {
-                return result.getContext();
+            if (outDispatcher instanceof Context) {
+                out = (Context) outDispatcher;
+            } else if (outDispatcher instanceof Mogram) {
+                out = outDispatcher.getContext();
             }
         }
+        if (output == null) {
+            output = out;
+        } else if (out != null) {
+            output.append(out);
+        }
+
         return output;
     }
 
-    public Mogram getResult() {
-        return result;
+    public Mogram getOutDispatcher() {
+        return outDispatcher;
     }
 
     @Override
@@ -187,7 +214,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             if (fis != null && fis.size() > 0) {
                 selectFi(fis.get(0));
             }
-            Program xrt = getDispatcher();
+            Routine xrt = (Routine) getDispatcher();
             if (input != null) {
                 if (inConnector != null) {
                     xrt.setContext(((ServiceContext) input).updateContextWith(inConnector));
@@ -195,8 +222,11 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                     xrt.setContext(input);
                 }
             }
-            xrt.dispatch(getGovernance());
-            return result = xrt.exert();
+            outGovernance = getGovernance();
+            xrt.dispatch(outGovernance);
+            outDispatcher = xrt.exert();
+
+            return getOutput();
         } catch (RemoteException e) {
             throw new ServiceException(e);
         }
@@ -204,7 +234,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected void selectFi(Fidelity fi) {
         dispatchMultiFi.selectSelect(fi.getName());
-        serviceMultiFi.selectSelect(fi.getPath());
+        governanceMultiFi.selectSelect(fi.getPath());
     }
 
     public Task getPrecondition() {
@@ -225,7 +255,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Service get(Arg... args) throws ContextException {
-        return out;
+        return outGovernance;
     }
 
     @Override
@@ -377,8 +407,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public Mogram getParent() {
-        return null;
+    public Discipline getParent() {
+        return parent;
     }
 
     @Override
@@ -423,7 +453,10 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Mogram clear() throws MogramException {
-        return null;
+        outGovernance = null;
+        outDispatcher = null;
+        output = null;
+        return this;
     }
 
     @Override

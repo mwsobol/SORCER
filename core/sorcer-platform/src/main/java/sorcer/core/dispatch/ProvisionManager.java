@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.deploy.OperationalStringFactory;
 import sorcer.core.deploy.ProvisionMonitorCache;
 import sorcer.core.deploy.ServiceDeployment;
-import sorcer.service.Program;
-import sorcer.service.ServiceProgram;
+import sorcer.service.Routine;
+import sorcer.service.ServiceRoutine;
 import sorcer.service.Signature;
 
 import java.rmi.RemoteException;
@@ -41,21 +41,21 @@ import java.util.concurrent.*;
 
 /**
  * The {@code ProvisionManager} handles the dynamic creation of {@link OperationalString}s created
- * from {@link Program}s.
+ * from {@link Routine}s.
  *
  * @author Dennis Reedy
  * @author Mike Sobolewski
  */
 public class ProvisionManager {
 	private static final Logger logger = LoggerFactory.getLogger(ProvisionManager.class.getName());
-	private final Program exertion;
+	private final Routine exertion;
     final List<Signature> signatures;
     private final List<String> deploymentNames = new ArrayList<>();
     private final ProvisionMonitorCache provisionMonitorCache;
 	private volatile DeployAdmin deployAdmin;
     private Map<ServiceDeployment.Unique, List<OperationalString>> deployments;
 
-	public ProvisionManager(final Program exertion) throws DispatcherException {
+	public ProvisionManager(final Routine exertion) throws DispatcherException {
 		this.exertion = exertion;
 		this.signatures = null;
         provisionMonitorCache = ProvisionMonitorCache.getInstance();
@@ -277,8 +277,8 @@ public class ProvisionManager {
 
     private Iterable<Signature> getNetSignatures() {
         List<Signature> signatures = new ArrayList<>();
-        if(exertion instanceof ServiceProgram) {
-            ServiceProgram serviceExertion = (ServiceProgram)exertion;
+        if(exertion instanceof ServiceRoutine) {
+            ServiceRoutine serviceExertion = (ServiceRoutine)exertion;
             signatures.addAll(serviceExertion.getAllNetTaskSignatures());
         }
         return signatures;

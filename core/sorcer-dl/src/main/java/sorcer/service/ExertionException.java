@@ -32,7 +32,7 @@ public class ExertionException extends MogramException {
 	public ExertionException() {
 	}
 
-	public ExertionException(Program exertion) {
+	public ExertionException(Routine exertion) {
 		this.mogram = exertion;
 	}
 
@@ -53,7 +53,7 @@ public class ExertionException extends MogramException {
 	 * @param exertion
 	 *            the embedded exertion
 	 */
-	public ExertionException(String message, Program exertion) {
+	public ExertionException(String message, Routine exertion) {
 		super(message);
 		this.mogram = exertion;
 	}
@@ -71,7 +71,7 @@ public class ExertionException extends MogramException {
 	 * @param cause
 	 *            the nested throwable cause
 	 */
-	public ExertionException(String message, Program exertion, Throwable cause) {
+	public ExertionException(String message, Routine exertion, Throwable cause) {
 		super(message, cause);
 		this.mogram = exertion;
 	}
@@ -81,8 +81,8 @@ public class ExertionException extends MogramException {
 	 * 
 	 * @return embedded exertion
 	 */
-	public Program getExertion() {
-		return (Program)mogram;
+	public Routine getExertion() {
+		return (Routine)mogram;
 	}
 	
 }

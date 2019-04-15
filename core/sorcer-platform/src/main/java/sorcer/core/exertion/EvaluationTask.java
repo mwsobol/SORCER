@@ -52,7 +52,7 @@ public class EvaluationTask extends Task {
 		EvaluationSignature es = new EvaluationSignature(evaluator);
 		addSignature(es);
 		es.setEvaluator(evaluator);
-		dataContext.setExertion(this);
+		dataContext.setRoutine(this);
 		if (es.getEvaluator() instanceof Pro) {
 			if (dataContext.getScope() == null)
 				dataContext.setScope(new EntModel(key));
@@ -94,8 +94,7 @@ public class EvaluationTask extends Task {
 	 * @see sorcer.service.Task#doTask(net.jini.core.transaction.Transaction)
 	 */
 	@Override
-	public Task doTask(Transaction txn, Arg... args) throws ExertionException,
-			SignatureException {
+	public Task doTask(Transaction txn, Arg... args) throws EvaluationException {
 		dataContext.getMogramStrategy().setCurrentSelector(getProcessSignature().getSelector());
 		dataContext.setCurrentPrefix(getProcessSignature().getPrefix());
 
@@ -104,7 +103,7 @@ public class EvaluationTask extends Task {
 				return super.doBatchTask(txn);
 			} catch (Exception e) {
 				e.printStackTrace();
-				throw new ExertionException(e);
+				throw new EvaluationException(e);
 			}
 		}
 		try {

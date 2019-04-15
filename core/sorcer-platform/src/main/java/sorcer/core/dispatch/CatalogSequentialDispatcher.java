@@ -35,7 +35,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
     private final Logger logger = LoggerFactory.getLogger(CatalogSequentialDispatcher.class);
 
 	@SuppressWarnings("rawtypes")
-    public CatalogSequentialDispatcher(Program job,
+    public CatalogSequentialDispatcher(Routine job,
                                        Set<Context> sharedContext,
                                        boolean isSpawned,
                                        Provider provider,
@@ -79,8 +79,8 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
             }
 
             try {
-                if (mogram instanceof Program) {
-                    ServiceProgram se = (ServiceProgram) mogram;
+                if (mogram instanceof Routine) {
+                    ServiceRoutine se = (ServiceRoutine) mogram;
                     // support for continuous pre and post execution of task
                     // signatures
                     if (previous != null && se.isTask() && ((Task) se).isContinous())
@@ -99,7 +99,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         }
 
         if (masterXrt != null) {
-            masterXrt = (ServiceProgram) execExertion(masterXrt, args); // executeMasterExertion();
+            masterXrt = (ServiceRoutine) execExertion(masterXrt, args); // executeMasterExertion();
             if (masterXrt.getStatus() <= FAILED) {
                 state = FAILED;
                 xrt.setStatus(FAILED);
@@ -114,8 +114,8 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         xrt.setStatus(DONE);
     }
 
-    protected void dispatchExertion(ServiceProgram se, Arg... args) throws SignatureException, ExertionException {
-        se = (ServiceProgram) execExertion(se, args);
+    protected void dispatchExertion(ServiceRoutine se, Arg... args) throws SignatureException, ExertionException {
+        se = (ServiceRoutine) execExertion(se, args);
         if (se.getStatus() <= FAILED) {
             xrt.setStatus(FAILED);
             state = FAILED;

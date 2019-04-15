@@ -47,18 +47,18 @@ import java.security.Principal;
 import java.util.*;
 
 /**
- * A job is a composite service-oriented message comprised of {@link Program}
+ * A job is a composite service-oriented message comprised of {@link Routine}
  * instances with its own service {@link sorcer.service.Context} and a collection of service
  * {@link sorcer.service.Signature}s. The job's signature is usually referring to a
  * {@link Jobber} and the job's context describes the composition
  * of component mograms as defined by the Interpreter programming pattern.
  * 
- * @see Program
+ * @see Routine
  * @see Task
  * 
  * @author Mike Sobolewski
  */
-public class Job extends Transprogram {
+public class Job extends Transroutine {
 
 	private static final long serialVersionUID = -6161435179772214884L;
 
@@ -75,7 +75,7 @@ public class Job extends Transprogram {
 	 */
 	public Job() {
 		this("job-" + count++);
-		// mograms = Collections.synchronizedList(new ArrayList<Program>());
+		// mograms = Collections.synchronizedList(new ArrayList<Routine>());
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class Job extends Transprogram {
 	 * Constructs a job and sets all default values to it.
 	 * 
 	 * @param mogram
-	 *            The first Program of the job.
+	 *            The first Routine of the job.
 	 * @throws ContextException 
 	 */
 	public Job(Mogram mogram) throws ExertionException {
@@ -139,7 +139,7 @@ public class Job extends Transprogram {
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Program#isCompound()
+	 * @see sorcer.service.Routine#isCompound()
 	 */
 	@Override
 	public boolean isCompound() {
@@ -159,7 +159,7 @@ public class Job extends Transprogram {
 		return mograms.size();
 	}
 
-	public int indexOf(Program ex) {
+	public int indexOf(Routine ex) {
 		return mograms.indexOf(ex);
 	}
 
@@ -168,7 +168,7 @@ public class Job extends Transprogram {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Program#addMogram(sorcer.service.Program)
+	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
 	 */
 	@Override
 	public Mogram addMogram(Mogram ex) throws ExertionException {
@@ -187,7 +187,7 @@ public class Job extends Transprogram {
 
 	public List<Mogram> getMograms(List<Mogram> exs) {
 		for (Mogram e : mograms)
-			((ServiceProgram) e).getMograms(exs);
+			((ServiceRoutine) e).getMograms(exs);
 		exs.add(this);
 		return exs;
 	}
@@ -268,7 +268,7 @@ public class Job extends Transprogram {
 	public void setSubject(Subject subject) {
 		this.subject = subject;
 		for (int i = 0; i < size(); i++) {
-			((ServiceProgram) get(i)).setSubject(subject);
+			((ServiceRoutine) get(i)).setSubject(subject);
 		}
 	}
 
@@ -296,15 +296,15 @@ public class Job extends Transprogram {
 	public String jobContextToString() throws ExertionException {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < mograms.size(); i++) {
-			if (((ServiceProgram) get(i)).isJob())
+			if (((ServiceRoutine) get(i)).isJob())
 				sb.append(((Job) get(i)).jobContextToString());
 			else
-				sb.append(((ServiceProgram) get(i)).contextToString());
+				sb.append(((ServiceRoutine) get(i)).contextToString());
 		}
 		return sb.toString();
 	}
 
-	public void setMasterExertion(Program exertion) {
+	public void setMasterExertion(Routine exertion) {
 		controlContext.setMasterExertion(exertion);
 	}
 
@@ -313,7 +313,7 @@ public class Job extends Transprogram {
 		if (controlContext != null)
 			controlContext.setOwnerId(id);
 		for (int i = 0; i < mograms.size(); i++)
-			(((ServiceProgram) get(i))).setOwnerId(id);
+			(((ServiceRoutine) get(i))).setOwnerId(id);
 	}
 
 	public String getContextName() {
@@ -325,7 +325,7 @@ public class Job extends Transprogram {
 		desc.append("\n=== START PRINTING JOB ===\n");	
 		desc.append("\n=============================\nListing Component Exertions\n=============================\n");
 		for (int i = 0; i < size(); i++) {
-			desc.append("\n===========\n Program ").append(i).append("\n===========\n").append((get(i)).describe());
+			desc.append("\n===========\n Routine ").append(i).append("\n===========\n").append((get(i)).describe());
 		}
 		desc.append("\n=== DONE PRINTING JOB ===\n");
 		return desc.toString();
@@ -350,13 +350,13 @@ public class Job extends Transprogram {
 	 * @param visited
 	 *            a set of visited mograms
 	 * @return true if this <code>Job</code> composite is a tree
-	 * @see Program#isTree()
+	 * @see Routine#isTree()
 	 */
 	public boolean isTree(Set visited) {
 		visited.add(this);
 		Iterator i = mograms.iterator();
 		while (i.hasNext()) {
-			ServiceProgram e = (ServiceProgram) i.next();
+			ServiceRoutine e = (ServiceRoutine) i.next();
 			if (visited.contains(e) || !e.isTree(visited)) {
 				return false;
 			}
@@ -417,7 +417,7 @@ public class Job extends Transprogram {
 		for (int i = 0; i < size(); i++) {
 			ext = mograms.get(i);
 			try {
-				((ServiceProgram) ext).linkContext(context, path + CPS + ext.getName());
+				((ServiceRoutine) ext).linkContext(context, path + CPS + ext.getName());
 			} catch (ContextException e) {
 				e.printStackTrace();
 			}
@@ -431,7 +431,7 @@ public class Job extends Transprogram {
 		for (int i = 0; i < size(); i++) {
 			ext = mograms.get(i);
 			try {
-				((ServiceProgram) ext).linkControlContext(context, path + CPS
+				((ServiceRoutine) ext).linkControlContext(context, path + CPS
 						+ ext.getName());
 			} catch (ContextException e) {
 				e.printStackTrace();
@@ -452,7 +452,7 @@ public class Job extends Transprogram {
 		String last = attributes[0];
 		Mogram exti = this;
 		for (String attribute : attributes) {
-			if (((ServiceProgram) exti).hasChild(attribute)) {
+			if (((ServiceRoutine) exti).hasChild(attribute)) {
 				exti = ((Job) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					last = attribute;
@@ -509,10 +509,10 @@ public class Job extends Transprogram {
 			attributes = attributes1;
 		}
 		String last = attributes[0];
-		Program exti = this;
+		Routine exti = this;
 		for (String attribute : attributes) {
-			if (((ServiceProgram) exti).hasChild(attribute)) {
-				exti = (Program)((Job) exti).getChild(attribute);
+			if (((ServiceRoutine) exti).hasChild(attribute)) {
+				exti = (Routine)((Job) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					last = attribute;
 					break;
@@ -553,12 +553,12 @@ public class Job extends Transprogram {
 	}
 	
 	public Context getComponentContext(String path) throws ContextException {
-		Program xrt = (Program)getComponentMogram(path);
+		Routine xrt = (Routine)getComponentMogram(path);
 		return xrt.getContext();
 	}
 	
 	public Context getComponentControlContext(String path) {
-		Program xrt = (Program)getComponentMogram(path);
+		Routine xrt = (Routine)getComponentMogram(path);
 		return xrt.getControlContext();
 	}
 	
@@ -571,10 +571,10 @@ public class Job extends Transprogram {
 					attributes.length - 1);
 			attributes = attributes1;
 		}
-		Program exti = this;
+		Routine exti = this;
 		for (String attribute : attributes) {
-			if (((ServiceProgram) exti).hasChild(attribute)) {
-				exti = (Program)((Transprogram) exti).getChild(attribute);
+			if (((ServiceRoutine) exti).hasChild(attribute)) {
+				exti = (Routine)((Transroutine) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					break;
 				}
@@ -587,10 +587,10 @@ public class Job extends Transprogram {
 	
 	public void applyFidelityContext(FidelityContext fiContext) throws ExertionException {
 		Collection<ServiceFidelity> fidelities = fiContext.values();
-		ServiceProgram se = null;
+		ServiceRoutine se = null;
 		for (ServiceFidelity fi : fidelities) {
 			if (fi instanceof ServiceFidelity) {
-				se = (ServiceProgram) getComponentMogram(fi.getPath());
+				se = (ServiceRoutine) getComponentMogram(fi.getPath());
 				se.selectFidelity(fi.getName());
 			}
 		}

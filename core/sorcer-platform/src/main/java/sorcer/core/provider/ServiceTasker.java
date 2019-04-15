@@ -23,11 +23,8 @@ import javax.security.auth.Subject;
 import net.jini.config.ConfigurationException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.service.Program;
-import sorcer.service.ExertionException;
-import sorcer.service.ServiceProgram;
-import sorcer.service.Signature;
-import sorcer.service.Task;
+import sorcer.service.*;
+import sorcer.service.Routine;
 
 import com.sun.jini.start.LifeCycle;
 
@@ -59,7 +56,7 @@ public class ServiceTasker extends ServiceProvider {
 	}
 
 	/** {@inheritDoc} */
-	public ServiceProgram execute(Program task) throws TransactionException,
+	public ServiceRoutine execute(Routine task) throws TransactionException,
 			ExertionException {
 		return execute(task, null);
 	}
@@ -67,10 +64,10 @@ public class ServiceTasker extends ServiceProvider {
 	/** {@inheritDoc} 
 	 * @throws ConfigurationException 
 	 * @throws RemoteException */
-	public ServiceProgram execute(Program task, Transaction transaction)
+	public ServiceRoutine execute(Routine task, Transaction transaction)
 			throws ExertionException  {
 		try {
-			return (Task) new ControlFlowManager((Program) task, delegate)
+			return (Task) new ControlFlowManager((Routine) task, delegate)
 					.process();
 		} catch (Exception e) {
 			throw new ExertionException(e);

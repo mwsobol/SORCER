@@ -41,7 +41,7 @@ import java.util.Vector;
  * 
  * @author Mike Sobolewski
  */
-abstract public class SystemServiceBean implements Exertion, ServiceBean {
+abstract public class SystemServiceBean implements Exerter, ServiceBean {
 	private Logger logger = LoggerFactory.getLogger(SystemServiceBean.class.getName());
 
 	protected ServiceProvider provider;
@@ -70,8 +70,8 @@ abstract public class SystemServiceBean implements Exertion, ServiceBean {
 		return true;
 	}
 	
-	protected void replaceNullExertionIDs(Program ex) {
-		if (ex != null && ((ServiceProgram) ex).getId() == null) {
+	protected void replaceNullExertionIDs(Routine ex) {
+		if (ex != null && ((ServiceRoutine) ex).getId() == null) {
 			ex.setId(UuidFactory.generate());
 			if (ex.isJob()) {
 				for (int i = 0; i < ((Job) ex).size(); i++)
@@ -80,7 +80,7 @@ abstract public class SystemServiceBean implements Exertion, ServiceBean {
 		}
 	}
 
-	protected void notifyViaEmail(Program ex) throws ContextException {
+	protected void notifyViaEmail(Routine ex) throws ContextException {
 		if (ex == null || ex.isTask())
 			return;
 		Job job = (Job) ex;
@@ -147,7 +147,7 @@ abstract public class SystemServiceBean implements Exertion, ServiceBean {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.core.provider.ServiceBean#service(sorcer.service.Program, net.jini.core.transaction.Transaction)
+	 * @see sorcer.core.provider.ServiceBean#service(sorcer.service.Routine, net.jini.core.transaction.Transaction)
 	 */
 	public Mogram exert(Mogram mogram, Transaction transaction, Arg... args) throws RemoteException, ExertionException {
 		Mogram out = null;
@@ -165,8 +165,8 @@ abstract public class SystemServiceBean implements Exertion, ServiceBean {
 				out = getControlFlownManager(mogram).process();
 			}
 
-			if (mogram instanceof Program)
-				mogram.getDataContext().setExertion(null);
+			if (mogram instanceof Routine)
+				mogram.getDataContext().setRoutine(null);
         }
 		catch (Exception e) {
 			logger.debug("exert failed for: " + mogram.getName(), e);
@@ -177,11 +177,11 @@ abstract public class SystemServiceBean implements Exertion, ServiceBean {
 
     protected ControlFlowManager getControlFlownManager(Mogram exertion) throws ExertionException {
         try {
-            if (exertion instanceof Program) {
+            if (exertion instanceof Routine) {
                 if (exertion.isMonitorable())
-                    return new MonitoringControlFlowManager((Program)exertion, delegate, this);
+                    return new MonitoringControlFlowManager((Routine)exertion, delegate, this);
                 else
-                    return new ControlFlowManager((Program)exertion, delegate, this);
+                    return new ControlFlowManager((Routine)exertion, delegate, this);
             }
             else
                 return null;

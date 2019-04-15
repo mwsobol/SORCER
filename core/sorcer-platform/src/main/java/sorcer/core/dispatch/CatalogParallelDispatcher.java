@@ -56,17 +56,17 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 
     public void doExec(Arg... args) throws ExertionException,
 			SignatureException {
-        List<Future<Program>> results = new ArrayList<Future<Program>>(inputXrts.size());
+        List<Future<Routine>> results = new ArrayList<Future<Routine>>(inputXrts.size());
         for (Mogram mogram : inputXrts) {
-            if (mogram instanceof Program)
-                results.add(executor.submit(new ExecExertion((Program)mogram)));
+            if (mogram instanceof Routine)
+                results.add(executor.submit(new ExecExertion((Routine)mogram)));
 		}
 
         boolean isFailed = false;
         boolean isSuspended = false;
-        for (Future<Program> result : results) {
+        for (Future<Routine> result : results) {
             try {
-                ServiceProgram se = (ServiceProgram) result.get();
+                ServiceRoutine se = (ServiceRoutine) result.get();
                 se.stopExecTime();
                 if (se.getStatus() == FAILED)
                     isFailed = true;
@@ -105,8 +105,8 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 				dispatchers.remove(xrt.getId());
 				return;
 			}*/
-			// finally exert Master Program
-			masterXrt = (ServiceProgram) execExertion(masterXrt);
+			// finally exert Master Routine
+			masterXrt = (ServiceRoutine) execExertion(masterXrt);
 			masterXrt.stopExecTime();
 			if (masterXrt.getStatus() <= FAILED)
 				xrt.setStatus(FAILED);
@@ -124,15 +124,15 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
         return Mograms.getInputExertions(((Job) xrt));
     }
 
-    protected class ExecExertion implements Callable<Program> {
-        private final Program exertion;
+    protected class ExecExertion implements Callable<Routine> {
+        private final Routine exertion;
 
-        public ExecExertion(Program exertion) {
+        public ExecExertion(Routine exertion) {
             this.exertion = exertion;
         }
 
         @Override
-        public Program call() throws Exception {
+        public Routine call() throws Exception {
             return execExertion(exertion);
         }
 	}

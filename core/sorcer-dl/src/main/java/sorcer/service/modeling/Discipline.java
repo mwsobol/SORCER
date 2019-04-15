@@ -23,7 +23,7 @@ import sorcer.service.*;
  *  Service governance is the indeterminate multifidelity process of decision-making
  *  and the process by which decisions are actualized in the form of a service federation.
  */
-public interface Discipline extends Service, Contexting {
+public interface Discipline extends Service, Contexting<Object> {
 
     /**
      * Returns a service governance specifying actualization of this discipline
@@ -33,26 +33,37 @@ public interface Discipline extends Service, Contexting {
     public Service getGovernance() throws ServiceException;
 
     /**
-     * Returns a dispatcher multifidelity
+     * Returns an executed governance of this discipline
      *
      * @throws ServiceException
      */
-    public ServiceFidelity getDispatcherMultiFi() throws ServiceException;
+    public Service getOutGovernance();
+
+    /**
+     * Returns a dispatcher multifidelity
+     */
+    public ServiceFidelity getDispatcherMultiFi();
 
     /**
      * Returns a dispatcher to govern this discipline
      *
      * @return a dispatcher of this discipline
+     * @throws MogramException
+     */
+    public Mogram getDispatcher() throws MogramException;
+
+    /**
+     * Returns an executed dispatcherof this discipline
+     *
+     * @return an executed dispatcher of this discipline
      * @throws ExertionException
      */
-    public Program getDispatcher() throws ExertionException;
+    public Mogram getOutDispatcher();
 
     /**
      * Returns a service governance multifidelity
-     *
-     * @throws MogramException
      */
-    public ServiceFidelity getGovernanceMultiFi() throws MogramException;
+    public ServiceFidelity getGovernanceMultiFi();
 
     /**
      * Returns a discipline input context.
@@ -60,7 +71,7 @@ public interface Discipline extends Service, Contexting {
      * @return a current input context
      * @throws ContextException
      */
-    public Context getInput() throws ContextException, ExertionException;
+    public Context getInput() throws ContextException, ContextException;
 
     /**
      * Returns an output context of this discipline.
@@ -68,13 +79,13 @@ public interface Discipline extends Service, Contexting {
      * @return a current output context
      * @throws ContextException
      */
-    public Context getOutput(Arg... args) throws ServiceException;
+    public Context getOutput(Arg... args) throws ContextException;
 
     /**
      * Adds a dispatcher-governance fidelity of this discipline.
      * Fidelity names are names of dispatcher and service correspondingly.
      */
-    public void add(Program dispatcher, Service governance);
+    public void add(Routine dispatcher, Service governance);
 
     /**
      * Adds a dispatcher and governance fidelities to this discipline

@@ -43,7 +43,7 @@ public class ServiceRendezvous extends SystemServiceBean implements Rendezvous, 
 	
 	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
 			throws TransactionException, ExertionException, RemoteException {
-		Program exertion = (Program) mogram;
+		Routine exertion = (Routine) mogram;
 		if (!isConfigured)
 			try {
 				configure();

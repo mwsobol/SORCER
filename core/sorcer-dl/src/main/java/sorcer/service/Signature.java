@@ -32,7 +32,7 @@ import java.util.Map;
 
 /**
  * A service <code>Signature</code> is an indirect behavioral feature of
- * {@link Program}s that declares a service that can be performed by instances
+ * {@link Routine}s that declares a service that can be performed by instances
  * of {@link Service}s. It contains a service fiType and a selector of operation
  * of that service fiType (interface). Its implicit parameter and return execute is
  * a service {@link Context}. Thus, the explicit signature of service-oriented

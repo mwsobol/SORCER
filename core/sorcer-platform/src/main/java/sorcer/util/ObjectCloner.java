@@ -76,13 +76,13 @@ public class ObjectCloner {
 	private static Object renewIDs(Object obj) {
 		if (obj instanceof Job) {
 			Uuid id = UuidFactory.generate();
-			((ServiceProgram) obj).setId(UuidFactory.generate());
+			((ServiceRoutine) obj).setId(UuidFactory.generate());
 			for (Mogram each : ((Job) obj).getMograms()) {
-				((ServiceProgram) each).setParentId(id);
+				((ServiceRoutine) each).setParentId(id);
 				renewIDs(each);
 			}
 		} else if (obj instanceof Task) {
-			((ServiceProgram) obj).setId(UuidFactory.generate());
+			((ServiceRoutine) obj).setId(UuidFactory.generate());
 		}
 		return obj;
 	}

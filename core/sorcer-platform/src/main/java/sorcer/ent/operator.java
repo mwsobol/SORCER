@@ -276,8 +276,8 @@ public class operator extends Operator {
 
 	public static Pro add(Pro callEntry, Object to)
 			throws ContextException {
-		if (to instanceof Program) {
-			((ServiceProgram)to).addPersister(callEntry);
+		if (to instanceof Routine) {
+			((ServiceRoutine)to).addPersister(callEntry);
 			return callEntry;
 		}
 		return callEntry;
@@ -494,7 +494,7 @@ public class operator extends Operator {
 		return new GroovyInvoker(expression);
 	}
 
-	public static ServiceInvoker invoker(Program exertion) {
+	public static ServiceInvoker invoker(Routine exertion) {
         return new ExertInvoker(exertion);
     }
 
@@ -574,15 +574,15 @@ public class operator extends Operator {
 		return mi;
 	}
 
-	public static ExertInvoker exertInvoker(String name, Program exertion, String path, Pro... callEntries) {
+	public static ExertInvoker exertInvoker(String name, Routine exertion, String path, Pro... callEntries) {
 		return new ExertInvoker(name, exertion, path, callEntries);
 	}
 
-	public static ExertInvoker exertInvoker(Program exertion, String path, Pro... callEntries) {
+	public static ExertInvoker exertInvoker(Routine exertion, String path, Pro... callEntries) {
 		return new ExertInvoker(exertion, path, callEntries);
 	}
 
-	public static ExertInvoker exertInvoker(Program exertion, Pro... callEntries) {
+	public static ExertInvoker exertInvoker(Routine exertion, Pro... callEntries) {
 		return new ExertInvoker(exertion, callEntries);
 	}
 

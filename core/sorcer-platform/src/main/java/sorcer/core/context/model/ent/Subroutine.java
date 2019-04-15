@@ -316,7 +316,7 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
 				}
 				out.putValue(key, ((ServiceContext) mogram).getValue(key));
 			}
-		} else if (mogram instanceof Program) {
+		} else if (mogram instanceof Routine) {
 			if (impl != null && impl != Context.none)
 				mogram.getContext().putValue(key, impl);
 			cxt =  mogram.exert(txn).getContext();

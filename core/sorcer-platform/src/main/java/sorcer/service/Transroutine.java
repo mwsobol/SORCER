@@ -27,18 +27,17 @@ import java.util.List;
 /**
  * @author Mike Sobolewski
  */
-abstract public class Transprogram extends ServiceProgram implements Governance {
-
+abstract public class Transroutine extends ServiceRoutine implements Governance {
 	/**
 	 * Component mograms of this job (the Composite Design pattern)
 	 */
 	protected List<Mogram> mograms = new ArrayList<Mogram>();
 
-	public Transprogram() {
+	public Transroutine() {
 		this("compound xrt=" + count++);
 	}
 
-	public Transprogram(String name) {
+	public Transroutine(String name) {
 		super(name);
 		mograms = new ArrayList<Mogram>();
 	}
@@ -53,7 +52,7 @@ abstract public class Transprogram extends ServiceProgram implements Governance 
 
 	public void reset(int state) {
 		for(Mogram e : mograms)
-			((ServiceProgram)e).reset(state);
+			((ServiceRoutine)e).reset(state);
 
 		this.setStatus(state);
 	}
@@ -66,7 +65,7 @@ abstract public class Transprogram extends ServiceProgram implements Governance 
 		mograms.set(i, ex);
 	}
 
-	public Program getMasterExertion() {
+	public Routine getMasterExertion() {
 		Uuid uuid = null;
 		try {
 			uuid = (Uuid) controlContext.getValue(ControlContext.MASTER_EXERTION);
@@ -77,9 +76,9 @@ abstract public class Transprogram extends ServiceProgram implements Governance 
 				&& controlContext.getFlowType().equals(ControlContext.SEQUENTIAL)) {
 			return (size() > 0) ? get(size() - 1) : null;
 		} else {
-			Program master = null;
+			Routine master = null;
 			for (int i = 0; i < size(); i++) {
-				if (((ServiceProgram) get(i)).getId().equals(
+				if (((ServiceRoutine) get(i)).getId().equals(
 						uuid)) {
 					master = get(i);
 					break;
@@ -103,8 +102,8 @@ abstract public class Transprogram extends ServiceProgram implements Governance 
 	/**
 	 * Returns the exertion at the specified index.
 	 */
-	public Program get(int index) {
-		return (Program) mograms.get(index);
+	public Routine get(int index) {
+		return (Routine) mograms.get(index);
 	}
 
 	public void setMograms(List<Mogram> mograms) {
@@ -112,7 +111,7 @@ abstract public class Transprogram extends ServiceProgram implements Governance 
 
 	}
 
-	public Mogram addExertion(Program exertion, int priority) throws ExertionException {
+	public Mogram addExertion(Routine exertion, int priority) throws ExertionException {
 		addMogram(exertion);
 		controlContext.setPriority(exertion, priority);
 		return this;
@@ -143,10 +142,10 @@ abstract public class Transprogram extends ServiceProgram implements Governance 
 		return null;
 	}
 
-	public int compareByIndex(Program e) {
-		if (this.getIndex() > ((Transprogram) e).getIndex())
+	public int compareByIndex(Routine e) {
+		if (this.getIndex() > ((Transroutine) e).getIndex())
 			return 1;
-		else if (this.getIndex() < ((Transprogram) e).getIndex())
+		else if (this.getIndex() < ((Transroutine) e).getIndex())
 			return -1;
 		else
 			return 0;

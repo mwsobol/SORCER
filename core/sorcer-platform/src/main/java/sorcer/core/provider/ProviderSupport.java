@@ -17,7 +17,7 @@ s * Copyright 2018 the original author or authors.
 
 package sorcer.core.provider;
 
-import sorcer.service.Program;
+import sorcer.service.Routine;
 
 import java.util.List;
 
@@ -34,5 +34,5 @@ public interface ProviderSupport {
 
 	public List<String> getAvailableApps();
 
-	public boolean isReady(Program exertion);
+	public boolean isReady(Routine exertion);
 }

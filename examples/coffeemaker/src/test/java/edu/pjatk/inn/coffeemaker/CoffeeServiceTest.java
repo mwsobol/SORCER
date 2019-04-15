@@ -69,7 +69,7 @@ public class CoffeeServiceTest {
 
 	@After
 	public void cleanUp() throws Exception {
-		Program cmt =
+		Routine cmt =
 				task(sig("deleteRecipes", CoffeeMaking.class),
 						context(types(), args()));
 
@@ -90,12 +90,12 @@ public class CoffeeServiceTest {
 	@Test
 	public void addRecipes() throws Exception {
 
-		Program cmt = task(sig("addRecipe", CoffeeService.class), espresso);
+		Routine cmt = task(sig("addRecipe", CoffeeService.class), espresso);
 		Context out = context(exert(cmt));
 		logger.info("job context: " + out);
 		assertEquals(value(out, "recipe/added"), true);
 
-		Program cmj = job("recipes",
+		Routine cmj = job("recipes",
 				task("mocha", sig("addRecipe", CoffeeService.class), mocha),
 				task("macchiato", sig("addRecipe", CoffeeService.class), macchiato),
 				task("americano", sig("addRecipe", CoffeeService.class), americano));
@@ -109,14 +109,14 @@ public class CoffeeServiceTest {
 
 	@Test
 	public void getRecepies() throws Exception {
-		Program cmt = task(sig("getRecipes", CoffeeService.class));
+		Routine cmt = task(sig("getRecipes", CoffeeService.class));
 		cmt = exert(cmt);
 		logger.info("getRecipes: " + context(cmt));
 	}
 
 	@Test
 	public void getDelivery() throws Exception {
-		Program cmt = task(sig("deliver", Delivery.class));
+		Routine cmt = task(sig("deliver", Delivery.class));
 		cmt = exert(cmt);
 		logger.info("getRecipes: " + context(cmt));
 		assertEquals(value(context(cmt), "delivery/cost"), 60);
@@ -125,7 +125,7 @@ public class CoffeeServiceTest {
 	@Test
 	public void deliverCoffee() throws Exception {
 		// make sure that the CoffeMaker knows the recipe
-		Program cmt = task(sig("addRecipe", CoffeeService.class), espresso);
+		Routine cmt = task(sig("addRecipe", CoffeeService.class), espresso);
 		exert(cmt);
 
 		// order espresso with delivery
@@ -168,10 +168,9 @@ public class CoffeeServiceTest {
 				inVal("room", "101")));
 
 		Job jcd = job("jcd", sig("exert", ServiceJobber.class), coffee, delivery,
-                pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "coffee/change")),
-				pipe(outPoint(coffee, "x"), inPoint(delivery, "y")));
+				pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "coffee/change")));
 
-        jcd = exert(jcd);
+		jcd = exert(jcd);
 
         //TODO where selfContext is created?
         // should be only when outPaths in thr job are declared

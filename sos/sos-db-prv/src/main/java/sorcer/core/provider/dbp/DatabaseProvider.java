@@ -32,7 +32,7 @@ import sorcer.core.provider.ServiceProvider;
 import sorcer.core.provider.StorageManagement;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
-import sorcer.service.Program;
+import sorcer.service.Routine;
 import sorcer.service.Identifiable;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Variability;
@@ -183,10 +183,10 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
         }
 	}
 
-	public Program getExertion(Uuid uuid) {
+	public Routine getExertion(Uuid uuid) {
         try {
             append(uuid, "exertion");
-            StoredMap<UuidKey, Program> xrtMap = views.getExertionMap();
+            StoredMap<UuidKey, Routine> xrtMap = views.getRoutineMap();
 		    return xrtMap.get(new UuidKey(uuid));
         } finally {
             objectsQueue.remove(uuid);
@@ -226,8 +226,8 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 //				if (inner instanceof Context) {
 //					storedSet = views.getContextSet();
 //					storedSet.add(object);
-//				} else if (inner instanceof Program) {
-//					storedSet = views.getExertionSet();
+//				} else if (inner instanceof Routine) {
+//					storedSet = views.getRoutineSet();
 //					storedSet.add(object);
 //				} else if (inner instanceof ModelTable) {
 //					storedSet = views.getTableSet();
@@ -271,8 +271,8 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
                 if (object instanceof Context) {
                     storedMap = views.getContextMap();
                     storedMap.replace(key, object);
-                } else if (object instanceof Program) {
-                    storedMap = views.getExertionMap();
+                } else if (object instanceof Routine) {
+                    storedMap = views.getRoutineMap();
                     storedMap.replace(key, object);
                 } else if (object instanceof ModelTable) {
                     storedMap = views.getTableMap();
@@ -584,7 +584,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		if (storeType == Store.context) {
 			storedMap = views.getContextMap();
 		} else if (storeType == Store.exertion) {
-			storedMap = views.getExertionMap();
+			storedMap = views.getRoutineMap();
 		} else if (storeType == Store.table) {
             storedMap = views.getTableMap();
         } else if (storeType == Store.object) {
@@ -599,7 +599,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		if (storeType == Store.context) {
 			storedSet = views.getContextSet();
 		} else if (storeType == Store.exertion) {
-			storedSet = views.getExertionSet();
+			storedSet = views.getRoutineSet();
 		} else if (storeType == Store.table) {
             storedSet = views.getTableSet();
         } else if (storeType == Store.object) {
@@ -621,7 +621,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		DeleteThread dt = null;
 		if (object instanceof Context) {
 			dt = new DeleteThread(id, Store.context);
-		} else if (object instanceof Program) {
+		} else if (object instanceof Routine) {
 			dt = new DeleteThread(id, Store.exertion);
 		} else if (object instanceof Functionality) {
 			dt = new DeleteThread(id, Store.var);
@@ -642,7 +642,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		if (type == Store.context) {
 			return views.getContextSet().size();
 		} else if (type == Store.exertion) {
-			return views.getExertionSet().size();
+			return views.getRoutineSet().size();
 		} else if (type == Store.table) {
             return views.getTableSet().size();
         } else {
@@ -654,7 +654,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		Store type = Store.object;
 		if (object instanceof Context) {
 			type = Store.context;
-		} else if (object instanceof Program) {
+		} else if (object instanceof Routine) {
 			type = Store.exertion;
 		} else if (object instanceof Functionality) {
 			type = Store.var;

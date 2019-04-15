@@ -32,7 +32,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Exertion {
+public interface Exerter {
 	/**
 	 * A generic federated execution.
 	 *

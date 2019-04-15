@@ -7,7 +7,7 @@ import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.RemoteAdder;
 import sorcer.arithmetic.tester.provider.Subtractor;
 import sorcer.core.SorcerConstants;
-import sorcer.core.provider.Exertion;
+import sorcer.core.provider.Exerter;
 import sorcer.service.*;
 import sorcer.service.Strategy.*;
 import sorcer.util.Log;
@@ -81,7 +81,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 	}
 
 	// two level composition
-	private Program f1a() throws Exception {
+	private Routine f1a() throws Exception {
 		String arg = "arg", result = "result";
 		String x1 = "x1", x2 = "x2", y = "y";
 
@@ -115,7 +115,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 	}
 
 	// two level composition
-	private Program f1() throws Exception {
+	private Routine f1() throws Exception {
 
 		Task f4 = task("f4", sig("multiply", Multiplier.class),
 				context("multiply", inVal("arg/x1", 10.0d), inVal("arg/x2", 50.0d),
@@ -135,7 +135,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
 				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
 
-		Program out = exert(f1);
+		Routine out = exert(f1);
 		if (out != null) {
 			logger.info("job f1 context: " + upcontext(out));
 			logger.info("job f1/f3/result/y3: " + get(out, "f1/f3/result/y3"));
@@ -146,7 +146,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		return out;
 	}
 
-	private Program f1provisioned() throws Exception {
+	private Routine f1provisioned() throws Exception {
 		Task f4 = task(
 				"f4",
 				sig("multiply", Multiplier.class,
@@ -180,7 +180,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
 				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
 
-		Program out = exert(f1);
+		Routine out = exert(f1);
 		if (out != null) {
 			logger.info("job f1 context: " + upcontext(out));
 			logger.info("job f1/f3/result/y3: " + get(out, "f1/f3/result/y3"));
@@ -192,7 +192,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 	}
 
 	// one level composition
-	private Program f1b() throws Exception {
+	private Routine f1b() throws Exception {
 		String arg = "arg", result = "result";
 		String x1 = "x1", x2 = "x2", y = "y";
 
@@ -213,7 +213,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		   pipe(outPoint(f4, attPath(result, y)), inPoint(f3, attPath(arg, x1))),
 		   pipe(outPoint(f5, attPath(result, y)), inPoint(f3, attPath(arg, x2))));
 
-		Program out = exert(f1);
+		Routine out = exert(f1);
 		logger.info("job f1 context: " + upcontext(out));
 		logger.info("job f1 f1/f3/result/y: " + get(out, attPath("f1", "f3", result, y)));
 
@@ -221,7 +221,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 	}
 
 	// job composed of job and task with PUSH/SEQ strategy
-	private Program f1c() throws Exception {
+	private Routine f1c() throws Exception {
 
 		Task f4 = task("f4", sig("multiply", Multiplier.class),
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
@@ -242,7 +242,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
 				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
 
-		Program out = exert(f1);
+		Routine out = exert(f1);
 
 		logger.info("job f1 context: " + upcontext(out));
 		logger.info("job f1 f3/result/y3: " + get(out, "f1/f3/result/y3"));
@@ -251,7 +251,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 	}
 
 	// composition with mixed flow/access strategy
-	private Program f1PARpull() throws Exception {
+	private Routine f1PARpull() throws Exception {
 
 		Task f4 = task("f4", sig("multiply", Multiplier.class),
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
@@ -273,7 +273,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
 
 		long start = System.currentTimeMillis();
-		Program out = exert(f1);
+		Routine out = exert(f1);
 		long end = System.currentTimeMillis();
 		System.out.println("Execution time: " + (end-start) + " ms.");
 
@@ -289,7 +289,7 @@ public class ArithmeticTesterClient implements SorcerConstants {
 		return out;
 	}
 
-private Program f1SEQpull() throws Exception {
+private Routine f1SEQpull() throws Exception {
 
 		Task f4 = task("f4", sig("multiply", Multiplier.class),
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
@@ -311,7 +311,7 @@ private Program f1SEQpull() throws Exception {
 				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
 
 		long start = System.currentTimeMillis();
-		Program out = exert(f1);
+		Routine out = exert(f1);
 		long end = System.currentTimeMillis();
 		System.out.println("Execution time: " + (end-start) + " ms.");
 
@@ -327,7 +327,7 @@ private Program f1SEQpull() throws Exception {
 		return out;
 	}
 
-	private Program f5() throws Exception {
+	private Routine f5() throws Exception {
 		Task f5 = task(
 				"f5",
 				sig("add", Adder.class),
@@ -335,7 +335,7 @@ private Program f1SEQpull() throws Exception {
 						inVal("arg/x2", 80.0), outVal("result/y", null)),
 				strategy(Monitor.NO, Wait.YES, Provision.YES));
 
-		Program out = null;
+		Routine out = null;
 		long start = System.currentTimeMillis();
 		out = exert(f5);
 		long end = System.currentTimeMillis();
@@ -356,7 +356,7 @@ private Program f1SEQpull() throws Exception {
 
 		Mogram out = null;
 		long start = System.currentTimeMillis();
-		Exertion exerter = Accessor.get().getService(null, Exertion.class);
+		Exerter exerter = Accessor.get().getService(null, Exerter.class);
 		logger.info("got exerter: " + exerter);
 
 		out = exerter.exert(f5, null);
@@ -374,7 +374,7 @@ private Program f1SEQpull() throws Exception {
 		return out;
 	}
 
-	private Program f5m() throws Exception {
+	private Routine f5m() throws Exception {
 		Task f5 = task(
 				"f5",
 				sig("add", Adder.class),
@@ -382,7 +382,7 @@ private Program f1SEQpull() throws Exception {
 						inVal("arg/x2", 80.0), outVal("result/y")),
 				strategy(Monitor.YES, Wait.YES));
 
-		Program out = null;
+		Routine out = null;
 		long start = System.currentTimeMillis();
 		out = exert(f5);
 		long end = System.currentTimeMillis();
@@ -394,7 +394,7 @@ private Program f1SEQpull() throws Exception {
 	}
 
 
-	private Program f5inh() throws Exception {
+	private Routine f5inh() throws Exception {
 
 		Task f5 = task(
 				"f5",
@@ -403,7 +403,7 @@ private Program f1SEQpull() throws Exception {
 						inVal("arg/x2", 80.0), outVal("result/y")),
 				strategy(Monitor.YES, Wait.YES));
 
-		Program out = null;
+		Routine out = null;
 		long start = System.currentTimeMillis();
 		out = exert(f5);
 		long end = System.currentTimeMillis();
@@ -414,7 +414,7 @@ private Program f1SEQpull() throws Exception {
 		return out;
 	}
 
-	private Program f5pull() throws Exception {
+	private Routine f5pull() throws Exception {
 
 		Task f5 = task(
 				"f5",
@@ -423,7 +423,7 @@ private Program f1SEQpull() throws Exception {
 						inVal("arg/x2", 80.0), outVal("result/y")),
 				strategy(Access.PULL, Wait.YES));
 
-		Program out = null;
+		Routine out = null;
 		long start = System.currentTimeMillis();
 		out = exert(f5);
 		long end = System.currentTimeMillis();
@@ -435,7 +435,7 @@ private Program f1SEQpull() throws Exception {
 		return out;
 	}
 
-	private Program f5a() throws Exception {
+	private Routine f5a() throws Exception {
 
 		Task f5 = task(
 				"f5",
@@ -446,7 +446,7 @@ private Program f1SEQpull() throws Exception {
 
 		logger.info("task f5 control context: " + control(f5));
 
-		Program out = null;
+		Routine out = null;
 		long start = System.currentTimeMillis();
 		out = exert(f5);
 		long end = System.currentTimeMillis();
@@ -457,7 +457,7 @@ private Program f1SEQpull() throws Exception {
 		return out;
 	}
 
-	private Program f5xS_PULL(String repeat) throws Exception {
+	private Routine f5xS_PULL(String repeat) throws Exception {
 		int to = new Integer(repeat);
 
 		Task f5 = task("f5", sig("add", Adder.class),
@@ -467,7 +467,7 @@ private Program f1SEQpull() throws Exception {
 
 		f5.setAccess(Access.PULL);
 
-		Program out = null;
+		Routine out = null;
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < to; i++) {
 			f5.setName("f5-" + i);
@@ -480,7 +480,7 @@ private Program f1SEQpull() throws Exception {
 		return out;
 	}
 
-	private Program f5xS_PUSH(String repeat) throws Exception {
+	private Routine f5xS_PUSH(String repeat) throws Exception {
 		int to = new Integer(repeat);
 
 		Task f5 = task("f5", sig("add", Adder.class),
@@ -490,7 +490,7 @@ private Program f1SEQpull() throws Exception {
 
 		f5.setAccess(Access.PUSH);
 
-		Program out = null;
+		Routine out = null;
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < to; i++) {
 			f5.setName("f5-" + i);
@@ -514,13 +514,13 @@ private Program f1SEQpull() throws Exception {
 		return f5;
 	}
 
-	private Program f5xP(String poolSizeStr, String size) throws Exception {
+	private Routine f5xP(String poolSizeStr, String size) throws Exception {
 		int poolSize = new Integer(size);
 		int tally = new Integer(size);
 		Task task = null;
 		ExertCallable ec = null;
 		long start = System.currentTimeMillis();
-		List<Future<Program>> fList = new ArrayList<Future<Program>>(tally);
+		List<Future<Routine>> fList = new ArrayList<Future<Routine>>(tally);
 		ExecutorService pool = Executors.newFixedThreadPool(poolSize);
 		for (int i = 0; i < tally; i++) {
 			task = getTask();
@@ -528,7 +528,7 @@ private Program f1SEQpull() throws Exception {
 			task.setName("f5-" + i);
 			ec = new ExertCallable(task);
 			logger.info("exertion submit: " + task.getName());
-			Future<Program> future = pool.submit(ec);
+			Future<Routine> future = pool.submit(ec);
 			fList.add(future);
 		}
 		pool.shutdown();

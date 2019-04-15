@@ -61,9 +61,9 @@ public class ControlFlowManager {
 	protected ProviderDelegate delegate;
 
 	/**
-	 * The Program that is going to be executed.
+	 * The Routine that is going to be executed.
 	 */
-	protected Program exertion;
+	protected Routine exertion;
 
     /**
      * Reference to a jobber proxy if available.
@@ -87,16 +87,16 @@ public class ControlFlowManager {
 	}
 
 	/**
-	 * Overloaded constructor which takes in an Program and an ExerterDelegate.
+	 * Overloaded constructor which takes in an Routine and an ExerterDelegate.
 	 * 
 	 * @param exertion
-	 *            Program
+	 *            Routine
 	 * @param delegate
 	 *            ExerterDelegate
      * @throws ConfigurationException
      * @throws RemoteException
      */
-	public ControlFlowManager(Program exertion, ProviderDelegate delegate)
+	public ControlFlowManager(Routine exertion, ProviderDelegate delegate)
             throws RemoteException, ConfigurationException {
 		this.delegate = delegate;
 		this.exertion = exertion;
@@ -104,11 +104,11 @@ public class ControlFlowManager {
 	}
 
     /**
-     * Overloaded constructor which takes in an Program, ExerterDelegate, and
+     * Overloaded constructor which takes in an Routine, ExerterDelegate, and
      * Spacer. This constructor is used when handling {@link sorcer.service.Job}s.
      *
      * @param exertion
-     *            Program
+     *            Routine
      * @param delegate
      *            ExerterDelegate
      * @param serviceBean
@@ -116,7 +116,7 @@ public class ControlFlowManager {
      * @throws ConfigurationException
      * @throws RemoteException
      */
-    public ControlFlowManager(Program exertion, ProviderDelegate delegate,
+    public ControlFlowManager(Routine exertion, ProviderDelegate delegate,
                               SystemServiceBean serviceBean) throws RemoteException, ConfigurationException {
         this.delegate = delegate;
         this.exertion = exertion;
@@ -134,11 +134,11 @@ public class ControlFlowManager {
 
 
     /**
-     * Overloaded constructor which takes in an Program, ExerterDelegate, and
+     * Overloaded constructor which takes in an Routine, ExerterDelegate, and
      * Spacer. This constructor is used when handling {@link sorcer.service.Job}s.
      *
      * @param exertion
-     *            Program
+     *            Routine
      * @param delegate
      *            ExerterDelegate
  	 * @param jobber
@@ -146,17 +146,17 @@ public class ControlFlowManager {
      * @throws ConfigurationException
      * @throws RemoteException
      */
-	public ControlFlowManager(Program exertion, ProviderDelegate delegate,
+	public ControlFlowManager(Routine exertion, ProviderDelegate delegate,
                               Jobber jobber) throws RemoteException, ConfigurationException {
         this(exertion, delegate);
 		this.jobber = jobber;
 	}
 	/**
-	 * Overloaded constructor which takes in an Program, ExerterDelegate, and
+	 * Overloaded constructor which takes in an Routine, ExerterDelegate, and
 	 * Concatenator. This constructor is used when handling {@link sorcer.service.Block}s.
 	 * 
 	 * @param exertion
-	 *            Program
+	 *            Routine
 	 * @param delegate
 	 *            ExerterDelegate
 	 * @param concatenator
@@ -164,7 +164,7 @@ public class ControlFlowManager {
      * @throws ConfigurationException
      * @throws RemoteException
 	 */
-	public ControlFlowManager(Program exertion, ProviderDelegate delegate,
+	public ControlFlowManager(Routine exertion, ProviderDelegate delegate,
                               Concatenator concatenator) throws RemoteException, ConfigurationException {
 		this(exertion, delegate);
 		this.concatenator = concatenator;
@@ -193,10 +193,10 @@ public class ControlFlowManager {
 
 
     /**
-     * Process the Program accordingly if it is a job, task, or a Conditional
-     * Program.
+     * Process the Routine accordingly if it is a job, task, or a Conditional
+     * Routine.
      *
-     * @return Program the result
+     * @return Routine the result
      * @see NetJob
      * @see NetTask
      * @see Conditional
@@ -295,7 +295,7 @@ public class ControlFlowManager {
      * @throws RemoteException
      * @throws ExertionException
      */
-    public Mogram doRendezvousExertion(ServiceProgram xrt) throws RemoteException, MogramException {
+    public Mogram doRendezvousExertion(ServiceRoutine xrt) throws RemoteException, MogramException {
         try {
             if (xrt.isSpacable()) {
                 logger.info("exertion isSpacable");
@@ -346,17 +346,17 @@ public class ControlFlowManager {
     }
     /**
      * This method handles the {@link Conditional} Exertions. It determines if
-     * the conditional Program: {@link OptTask}, {@link AltTask}, and
+     * the conditional Routine: {@link OptTask}, {@link AltTask}, and
      * {@link LoopTask}.
      *
      * @param exertion
-     *            Conditional multitype Program
-     * @return Program
+     *            Conditional multitype Routine
+     * @return Routine
      * @throws SignatureException
      * @throws ExertionException
      * @throws RemoteException
      */
-    public Task doConditional(Program exertion) throws RemoteException,
+    public Task doConditional(Routine exertion) throws RemoteException,
             MogramException, SignatureException {
         return ((Task) exertion).doTask();
     }
@@ -432,14 +432,14 @@ public class ControlFlowManager {
 */
 
     /*
-     * Checks if the Program is valid for this provider. Returns true if it is
+     * Checks if the Routine is valid for this provider. Returns true if it is
      * valid otherwise returns false.
      *
      * @param exertion
-     *            Program interface
+     *            Routine interface
      * @return boolean
 
-    public boolean isValidExertion(Program exertion) {
+    public boolean isValidExertion(Routine exertion) {
         String pn = exertion.getProcessSignature().getProviderName();
 
         if (!(pn == null || pn.equals(SorcerConstants.NULL) || SorcerConstants.ANY
@@ -475,7 +475,7 @@ public class ControlFlowManager {
      *
      * @param exertion
      *            Either a task or job
-    public void resetExertionStatus(Program exertion) {
+    public void resetExertionStatus(Routine exertion) {
 		if (exertion.isTask()) {
             ((Task) exertion).setStatus(Exec.INITIAL);
 		} else if (exertion.isJob()) {
@@ -494,13 +494,13 @@ public class ControlFlowManager {
         // append context from Contexters
         if (task.getApdProcessSignatures().size() > 0) {
             Context cxt = apdProcess(task);
-            cxt.setExertion(task);
+            cxt.setRoutine(task);
             task.setContext(cxt);
         }
         // do preprocessing
         if (task.getPreprocessSignatures().size() > 0) {
             Context cxt = preprocess(task);
-            cxt.setExertion(task);
+            cxt.setRoutine(task);
             task.setContext(cxt);
         }
         // exert service task
@@ -530,7 +530,7 @@ public class ControlFlowManager {
         // do postprocessing
         if (task.getPostprocessSignatures().size() > 0) {
             Context cxt = postprocess(task);
-            cxt.setExertion(task);
+            cxt.setRoutine(task);
             task.setContext(cxt);
         }
         if (task.getStatus() <= Exec.FAILED) {

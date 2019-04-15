@@ -18,39 +18,39 @@
 package sorcer.service;
 
 /**
- * The <code>ExertionError</code> represents an error that is thrown
+ * The <code>RoutineError</code> represents an error that is thrown
  * if an exertion is performed by a service provider failing to compute it
  * correctly. A complementary related throwable and/or ill behaving exertion can
  * be embedded into this exception.
  * 
  * @author Mike Sobolewski
  */
-public class ExertionError extends Error {
+public class RoutineError extends Error {
 
 //	private static final long serialVersionUID = 3961573000741782514L;
 
 	/**
 	 * The exertion relevant to this exception.
 	 */
-	private Program exertion;
+	private Routine exertion;
 
-	public ExertionError() {
+	public RoutineError() {
 	}
 
-	public ExertionError(Program exertion) {
+	public RoutineError(Routine exertion) {
 		this.exertion = exertion;
 	}
 
-	public ExertionError(String msg) {
+	public RoutineError(String msg) {
 		super(msg);
 	}
 
-	public ExertionError(Exception e) {
+	public RoutineError(Exception e) {
 		super(e);
 	}
 	
 	/**
-	 * Constructs a <code>ExertionError</code> with the specified detailed
+	 * Constructs a <code>RoutineError</code> with the specified detailed
 	 * message and the relevant exertion.
 	 * 
 	 * @param message
@@ -58,17 +58,17 @@ public class ExertionError extends Error {
 	 * @param exertion
 	 *            the embedded exertion
 	 */
-	public ExertionError(String message, Program exertion) {
+	public RoutineError(String message, Routine exertion) {
 		super(message);
 		this.exertion = exertion;
 	}
 
-	public ExertionError(String message, Throwable cause) {
+	public RoutineError(String message, Throwable cause) {
 		super(message, cause);
 	}
 	
 	/**
-	 * Constructs a <code>ExertionError</code> with the specified detail
+	 * Constructs a <code>RoutineError</code> with the specified detail
 	 * message and nested exception.
 	 * 
 	 * @param message
@@ -76,7 +76,7 @@ public class ExertionError extends Error {
 	 * @param cause
 	 *            the nested throwable cause
 	 */
-	public ExertionError(String message, Program exertion, Throwable cause) {
+	public RoutineError(String message, Routine exertion, Throwable cause) {
 		super(message, cause);
 		this.exertion = exertion;
 	}
@@ -86,7 +86,7 @@ public class ExertionError extends Error {
 	 * 
 	 * @return embedded exertion
 	 */
-	public Program getExertion() {
+	public Routine getExertion() {
 		return exertion;
 	}
 	

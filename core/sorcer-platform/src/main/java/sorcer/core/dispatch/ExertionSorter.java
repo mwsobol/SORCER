@@ -28,12 +28,12 @@ public class ExertionSorter {
     private final Map<String, String> contextIdsMap;
     private final Map<String, String> revContextIdsMap;
     private List<Mogram> sortedProjects = null;
-    private Program topLevelJob;
+    private Routine topLevelJob;
 
     /**
      * Construct the ExertionSorter
      */
-    public ExertionSorter(Program topLevelJob) throws ContextException, SortingException {
+    public ExertionSorter(Routine topLevelJob) throws ContextException, SortingException {
 
         dag = new DAG();
         projectMap = new HashMap();
@@ -65,7 +65,7 @@ public class ExertionSorter {
      *
      * @return
      */
-    public Program getSortedJob() {
+    public Routine getSortedJob() {
         return topLevelJob;
     }
 
@@ -93,7 +93,7 @@ public class ExertionSorter {
      * @param sortedSubXrt
      * @return
      */
-    private Strategy.Flow setFlow(Program topXrt, List<Mogram> sortedSubXrt) {
+    private Strategy.Flow setFlow(Routine topXrt, List<Mogram> sortedSubXrt) {
         List<String> sortedSubsetIds = addSubExertions(sortedSubXrt);
 
         int edges = 0;
@@ -125,12 +125,12 @@ public class ExertionSorter {
      * @throws CycleDetectedException
      * @throws ContextException
      */
-    private void reorderJob(Program topXrt, List<Mogram> sortedExertions) {
+    private void reorderJob(Routine topXrt, List<Mogram> sortedExertions) {
         List<Mogram> sortedSubset = new ArrayList(sortedExertions);
         sortedSubset.retainAll(topXrt.getMograms());
 
         if (topXrt.getFlowType()!=null && topXrt.getFlowType().equals(Strategy.Flow.AUTO)) {
-            ((ServiceProgram) topXrt).setFlowType(setFlow(topXrt, sortedSubset));
+            ((ServiceRoutine) topXrt).setFlowType(setFlow(topXrt, sortedSubset));
             logger.info("FLOW for exertion: " + topXrt.getName() + " set to: " + topXrt.getFlowType());
         }
         List<String> exertionsBefore = new ArrayList<String>();
@@ -150,7 +150,7 @@ public class ExertionSorter {
 
 
         for (Iterator i = topXrt.getMograms().iterator(); i.hasNext(); ) {
-            Program xrt = (Program) i.next();
+            Routine xrt = (Routine) i.next();
             if (xrt instanceof Job) {
                 reorderJob(xrt, sortedExertions);
             }
@@ -163,7 +163,7 @@ public class ExertionSorter {
      * @param topXrt
      * @throws SortingException
      */
-    private void addVertex(Program topXrt) throws ContextException, SortingException {
+    private void addVertex(Routine topXrt) throws ContextException, SortingException {
 
         String id = topXrt.getId().toString();
         dag.addVertex(id);
@@ -172,12 +172,12 @@ public class ExertionSorter {
         revContextIdsMap.put(topXrt.getDataContext().getId().toString(), id);
 
         for (Iterator i = topXrt.getMograms().iterator(); i.hasNext(); ) {
-            Program project = (Program) i.next();
+            Routine project = (Routine) i.next();
 
             id = project.getId().toString();
 
             if (dag.getVertex(id) != null) {
-                throw new SortingException("Program '" + project.getName() +
+                throw new SortingException("Routine '" + project.getName() +
                         "'(" + id + ") is duplicated in the job: '" + topXrt.getName() + "' (" + topXrt.getId() + ")");
             }
 
@@ -199,9 +199,9 @@ public class ExertionSorter {
      * @throws CycleDetectedException
      * @throws SortingException
      */
-    private void getMapping(Program topXrt) throws CycleDetectedException, ContextException, SortingException {
+    private void getMapping(Routine topXrt) throws CycleDetectedException, ContextException, SortingException {
         for (Iterator i = topXrt.getMograms().iterator(); i.hasNext(); ) {
-            Program project = (Program) i.next();
+            Routine project = (Routine) i.next();
             String id = project.getId().toString();
             String topId = topXrt.getId().toString();
             dag.addEdge(id, topId);
@@ -232,7 +232,7 @@ public class ExertionSorter {
      * @throws CycleDetectedException
      * @throws SortingException
      */
-    private void checkParentCycle(Program topXrt) throws CycleDetectedException, ContextException, SortingException {
+    private void checkParentCycle(Routine topXrt) throws CycleDetectedException, ContextException, SortingException {
         if (topXrt.getDataContext().getParentId() != null) {
             String parentId = topXrt.getDataContext().getParentId().toString();
             if (dag.getVertex(parentId) != null) {

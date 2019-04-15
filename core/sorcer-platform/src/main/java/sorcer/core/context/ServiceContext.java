@@ -94,7 +94,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected Context initContext;
 
 	/** The exertion that uses this context */
-	protected ServiceProgram exertion;
+	protected ServiceRoutine exertion;
 	protected String currentPrefix;
 	protected boolean isFinalized = false;
 	protected Functionality.Type type = Functionality.Type.CONTEXT;
@@ -195,34 +195,43 @@ public class ServiceContext<T> extends ServiceMogram implements
 		subdomainId = cxt.getSubdomainId();
 		domainName = cxt.getDomainName();
 		subdomainName = cxt.getSubdomainName();
-		exertion = (ServiceProgram) cxt.getMogram();
+		exertion = (ServiceRoutine) cxt.getMogram();
 		principal = cxt.getPrincipal();
 		isPersistantTaskAssociated = cxt.isPersistantTaskAssociated;
 	}
 
 	public ServiceContext(List<Identifiable> objects) throws ContextException {
-		for (Identifiable obj : objects) {
+        this("generated from Identifiable object list");
+        for (Identifiable obj : objects) {
 			putValue(obj.getName(), (T)obj);
 		}
 	}
 
-	public ServiceContext(Row row) throws ContextException {
-		key = row.getName();
-		List<String> names = row.getNames();
-		List<Object> vals = row.getValues();
-		for (int i = 0; i < vals.size(); i++) {
-			putValue(names.get(i), (T)vals.get(i));
-		}
-	}
+    public ServiceContext(Row row) throws ContextException {
+        this(row.getName());
+        key = row.getName();
+        List<String> names = row.getNames();
+        List<Object> vals = row.getValues();
+        for (int i = 0; i < vals.size(); i++) {
+            putValue(names.get(i), (T)vals.get(i));
+        }
+    }
 
-	public ServiceContext(Object[] objects) throws ContextException {
-		setArgsPath(Context.PARAMETER_VALUES);
-		setArgs(objects);
-		setParameterTypesPath(Context.PARAMETER_TYPES);
-		Class[] parTypes = new Class[objects.length];
-		for (int i = 0; i < objects.length; i++) {
-			parTypes[i] = objects[i].getClass();
-		}
+    public ServiceContext(Object[] objects) throws ContextException {
+		this("generated from object array");
+        if (objects.length > 0 && objects[0] instanceof Entry) {
+            for (int i = 0; i < objects.length; i++) {
+                putValue(((Entry)objects[i]).getName(), (T)((Entry)objects[i]).get());
+            }
+        } else {
+            setArgsPath(Context.PARAMETER_VALUES);
+            setArgs(objects);
+            setParameterTypesPath(Context.PARAMETER_TYPES);
+            Class[] parTypes = new Class[objects.length];
+            for (int i = 0; i < objects.length; i++) {
+                parTypes[i] = objects[i].getClass();
+            }
+        }
 	}
 
 	/**
@@ -341,13 +350,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.initContext = initContext;
 	}
 
-	public Program getMogram() {
+	public Routine getMogram() {
 		return exertion;
 	}
 
-	public void setExertion(Program exertion) {
-		if (exertion == null || exertion instanceof Program)
-			this.exertion = (ServiceProgram) exertion;
+	public void setRoutine(Routine exertion) {
+		if (exertion == null || exertion instanceof Routine)
+			this.exertion = (ServiceRoutine) exertion;
 	}
 
 	public T getReturnValue(Arg... entries) throws RemoteException,
@@ -2074,8 +2083,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 					} catch (ContextNodeException e2) {
 						e2.printStackTrace();
 					}
-				} else if (val instanceof Program) {
-					sb.append(((ServiceProgram) val).info());
+				} else if (val instanceof Routine) {
+					sb.append(((ServiceRoutine) val).info());
 				} else
 					sb.append(val.toString());
 			}
@@ -3430,7 +3439,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-     * @see sorcer.service.Service#exert(sorcer.service.Program, net.jini.core.transaction.Transaction)
+     * @see sorcer.service.Service#exert(sorcer.service.Routine, net.jini.core.transaction.Transaction)
      */
     public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
         try {
@@ -3707,7 +3716,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public void clean() {
 		exertion = null;
 		if (scope != null) {
-			scope.setExertion(null);
+			scope.setRoutine(null);
 		}
 	}
 }

@@ -48,7 +48,7 @@ public class ExertionInfo implements Comparable, Serializable {
 
     private Date lastUpdateDate;
 
-    private Program exertion;
+    private Routine exertion;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -56,7 +56,7 @@ public class ExertionInfo implements Comparable, Serializable {
 		this.name = name;
 	}
 	
-	public ExertionInfo(Program exertion) throws RemoteException {
+	public ExertionInfo(Routine exertion) throws RemoteException {
 		name = exertion.getName();
 		id = exertion.getId();
 		status = exertion.getStatus();
@@ -67,7 +67,7 @@ public class ExertionInfo implements Comparable, Serializable {
         this.exertion = exertion;
 	}
 
-	public ExertionInfo(Program exertion, Uuid storeId) throws RemoteException {
+	public ExertionInfo(Routine exertion, Uuid storeId) throws RemoteException {
 		this(exertion);
 		this.storeId = storeId;
 	}
@@ -128,7 +128,7 @@ public class ExertionInfo implements Comparable, Serializable {
 		this.signature = signature;
 	}
 
-    public Program getExertion() {
+    public Routine getExertion() {
         return exertion;
     }
 
