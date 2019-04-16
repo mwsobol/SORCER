@@ -48,12 +48,12 @@ public interface Executor {
 	 * @return a resulting exertion
 	 * @throws TransactionException
 	 *             if a transaction error occurs
-	 * @throws ExertionException
+	 * @throws RoutineException
 	 *             if an exertion invocation failed for any reason
 	 */
 	
 	public Mogram execute(Mogram mogram, Transaction txn)
-			throws TransactionException, ExertionException, RemoteException;
+			throws TransactionException, RoutineException, RemoteException;
 	
 	/**
 	 * Returns true if the <code>subject</code> is authorized to execute the

@@ -97,7 +97,7 @@ public class ServiceExertionTest {
 
 	@Test
 	public void accessingComponentExertionsTest() throws EvaluationException,
-			RemoteException, ExertionException {
+			RemoteException, RoutineException {
 		//logger.info("eJob mograms: " + names(mograms(eJob)));
 		assertTrue(names(mograms(eJob)).equals(list("t4", "t5", "j2", "t3", "j1")));
 

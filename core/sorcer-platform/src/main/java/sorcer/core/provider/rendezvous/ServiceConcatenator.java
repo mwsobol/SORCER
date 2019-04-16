@@ -41,7 +41,7 @@ public class ServiceConcatenator extends SystemServiceBean implements Concatenat
 	}
 
 	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-			throws TransactionException, ExertionException, RemoteException {
+			throws TransactionException, RoutineException, RemoteException {
 		Routine exertion = (Routine) mogram;
 		setServiceID(exertion);
 		Block result;
@@ -61,7 +61,7 @@ public class ServiceConcatenator extends SystemServiceBean implements Concatenat
 			}
 		} catch (Throwable e) {
 			logger.error("Failed exerting {}", mogram.getName(), e);
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 		return result;
 	}

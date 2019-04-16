@@ -49,12 +49,12 @@ public class NetBlock extends Block implements Invocation<Object> {
 			this.dataContext = (ServiceContext) context;
 	}
 	
-	public NetBlock(SorcerPrincipal principal) throws ExertionException {
+	public NetBlock(SorcerPrincipal principal) throws RoutineException {
 		this("net block-" + count++, principal);
 	}
 
 	public NetBlock(String name, SorcerPrincipal principal)
-			throws ExertionException {
+			throws RoutineException {
 		super(name);
 		if (principal != null)
 			subject = Auth.createSubject(principal);

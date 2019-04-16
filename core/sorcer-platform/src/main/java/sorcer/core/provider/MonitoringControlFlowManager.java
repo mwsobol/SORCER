@@ -60,7 +60,7 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
     }
 
     @Override
-    public Routine process() throws ExertionException {
+    public Routine process() throws RoutineException {
         MonitoringSession monSession = getMonitoringSession(exertion);
         if (sessionMonitor==null) {
             logger.error("Monitoring enabled but ExertMonitor service could not be found!");

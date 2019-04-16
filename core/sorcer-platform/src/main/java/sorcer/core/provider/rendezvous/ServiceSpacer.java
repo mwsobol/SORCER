@@ -55,7 +55,7 @@ public class ServiceSpacer extends SystemServiceBean implements Spacer {
 
     @Override
     public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-            throws TransactionException, ExertionException, RemoteException {
+            throws TransactionException, RoutineException, RemoteException {
          if (mogram instanceof Routine && ((Routine)mogram).isCompound())
             return doCompound(mogram, txn);
         else
@@ -63,7 +63,7 @@ public class ServiceSpacer extends SystemServiceBean implements Spacer {
     }
 
     public Mogram doCompound(Mogram mogram, Transaction txn, Arg... args)
-            throws TransactionException, ExertionException, RemoteException {
+            throws TransactionException, RoutineException, RemoteException {
         setServiceID(mogram);
         try {
             MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Routine)mogram));

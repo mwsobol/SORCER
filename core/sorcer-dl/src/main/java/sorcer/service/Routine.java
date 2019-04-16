@@ -92,7 +92,7 @@ public interface Routine extends Dependency, Invocation<Object>,
 	 * @return an added component exertion
 	 * @throws ContextException 
 	 */
-	public Mogram addMogram(Mogram component) throws ExertionException;
+	public Mogram addMogram(Mogram component) throws RoutineException;
 	
 	/**
 	 * Returns a data service context (service data) of this exertion to be

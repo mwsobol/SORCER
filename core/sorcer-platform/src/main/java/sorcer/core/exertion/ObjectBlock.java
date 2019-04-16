@@ -51,7 +51,7 @@ public class ObjectBlock extends Block {
 			this.dataContext = (ServiceContext) context;
 	}
 	
-	public Block doBlock(Transaction txn, Arg... args) throws ExertionException,
+	public Block doBlock(Transaction txn, Arg... args) throws RoutineException,
 			SignatureException, RemoteException {
 		// return (Job) new ServiceJobber().execEnt(job, txn);
 		Block result = null;

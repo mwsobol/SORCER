@@ -127,9 +127,9 @@ public class NshTest {
         ExecUtils.CmdResult result = ExecUtils.execCommand(cmds);
         String res =  result.getOut();
         logger.info("Result running: " + StringUtils.join(cmds, " ") + ":\n" + res);
-        assertFalse(res.contains("ExertionException:"));
+        assertFalse(res.contains("RoutineException:"));
         assertTrue(res.contains("out/y = 300.0"));
-        assertFalse(result.getErr().contains("ExertionException:"));
+        assertFalse(result.getErr().contains("RoutineException:"));
     }
 
     static  String getNshDir() {

@@ -56,7 +56,7 @@ public interface Discipline extends Service, Contexting<Object>, Governance {
      * Returns an executed dispatcherof this discipline
      *
      * @return an executed dispatcher of this discipline
-     * @throws ExertionException
+     * @throws RoutineException
      */
     public Mogram getOutDispatcher();
 

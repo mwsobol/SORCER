@@ -68,20 +68,20 @@ public abstract class Block extends Transroutine {
 			this.dataContext = (ServiceContext) context;
 	}
 	
-	public abstract Block doBlock(Transaction txn, Arg... args) throws ExertionException,
+	public abstract Block doBlock(Transaction txn, Arg... args) throws RoutineException,
 		SignatureException, RemoteException, TransactionException, MogramException;
 	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
 	 */
 	@Override
-	public Mogram addMogram(Mogram mogram) throws ExertionException {
+	public Mogram addMogram(Mogram mogram) throws RoutineException {
 		mograms.add(mogram);
 		mogram.setIndex(mograms.indexOf(mogram));
 		try {
 			controlContext.registerExertion(mogram);
 		} catch (ContextException e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 		mogram.setParentId(getId());
 		return this;
@@ -91,7 +91,7 @@ public abstract class Block extends Transroutine {
 		this.mograms = mograms;
 	}
 
-	public void setMograms(Mogram[] mograms) throws ExertionException {
+	public void setMograms(Mogram[] mograms) throws RoutineException {
 		for (Mogram mo :mograms)
 			addMogram(mo);
 	}

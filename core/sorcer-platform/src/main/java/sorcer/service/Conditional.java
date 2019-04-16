@@ -26,7 +26,7 @@ public interface Conditional {
 	 * the Conditonal. Thus returning the boolean eval true or false.
 	 * 
 	 * @return boolean true or false depending on the condition
-	 * @throws ExertionException
+	 * @throws RoutineException
 	 *             if there is any problem within the isTrue method.
 	 * @throws ContextException 
 	 */

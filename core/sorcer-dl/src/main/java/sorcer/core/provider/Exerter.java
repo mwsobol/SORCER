@@ -40,7 +40,7 @@ public interface Exerter extends Service {
 	 * @param txn      The transaction (if any) under which to provide service.
 	 * @return a resulting mogram
 	 * @throws TransactionException if a transaction error occurs
-	 * @throws ExertionException    if an exertion invocation failed for any reason
+	 * @throws RoutineException    if an exertion invocation failed for any reason
 	 * @throws RemoteException
 	 */
 	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... entries)

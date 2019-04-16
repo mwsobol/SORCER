@@ -52,7 +52,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                 pn = provider.getProviderName();
                 if (pn == null)
                     pn = provider.getClass().getName();
-                ExertionException fe = new ExertionException(pn + " received invalid job: "
+                RoutineException fe = new RoutineException(pn + " received invalid job: "
                         + xrt.getName(), xrt);
 
                 xrt.reportException(fe);
@@ -93,7 +93,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new ExertionException(e);
+                throw new RoutineException(e);
             }
 
         }
@@ -114,7 +114,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         xrt.setStatus(DONE);
     }
 
-    protected void dispatchExertion(ServiceRoutine se, Arg... args) throws SignatureException, ExertionException {
+    protected void dispatchExertion(ServiceRoutine se, Arg... args) throws SignatureException, RoutineException {
         se = (ServiceRoutine) execExertion(se, args);
         if (se.getStatus() <= FAILED) {
             xrt.setStatus(FAILED);
@@ -123,7 +123,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                 String pn = provider.getProviderName();
                 if (pn == null)
                     pn = provider.getClass().getName();
-                ExertionException fe = new ExertionException(pn
+                RoutineException fe = new RoutineException(pn
                         + " received failed task: " + se.getName(), se);
                 xrt.reportException(fe);
                 dispatchers.remove(xrt.getId());
@@ -134,7 +134,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
         } else if (se.getStatus() == SUSPENDED
                 || xrt.getControlContext().isReview(se)) {
             xrt.setStatus(SUSPENDED);
-            ExertionException ex = new ExertionException(
+            RoutineException ex = new RoutineException(
                     "exertion suspended", se);
             se.reportException(ex);
             dispatchers.remove(xrt.getId());

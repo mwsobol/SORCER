@@ -131,7 +131,7 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 		}
 	}
 
-	public void initDelegate() throws ContextException, ExertionException, SignatureException {
+	public void initDelegate() throws ContextException, RoutineException, SignatureException {
 		if (delegate != null && multiFi.getSelect() != delegate.getMultiFi().getSelect()) {
 			delegate = null;
 			dataContext.clearReturnPath();
@@ -158,7 +158,7 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 				delegate.setControlContext(controlContext);
 			}
 		} catch (SignatureException e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 	}
 
@@ -182,9 +182,9 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 		// implement is subclasses
 	}
 
-	public void undoTask() throws ExertionException, SignatureException,
+	public void undoTask() throws RoutineException, SignatureException,
 			RemoteException {
-		throw new ExertionException("Not implemneted by this Task: " + this);
+		throw new RoutineException("Not implemneted by this Task: " + this);
 	}
 
 	@Override
@@ -218,8 +218,8 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 			dataContext.setOwnerId(oid);
 	}
 
-	public ServiceContext doIt() throws ExertionException {
-		throw new ExertionException("Not supported method in this class");
+	public ServiceContext doIt() throws RoutineException {
+		throw new RoutineException("Not supported method in this class");
 	}
 
 	public boolean isNetTask() throws SignatureException {

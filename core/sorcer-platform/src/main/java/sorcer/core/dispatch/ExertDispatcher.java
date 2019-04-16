@@ -128,10 +128,10 @@ abstract public class ExertDispatcher implements Dispatcher {
         }
     }
 
-    abstract protected void doExec(Arg... args) throws SignatureException, ExertionException, RemoteException, MogramException;
+    abstract protected void doExec(Arg... args) throws SignatureException, RoutineException, RemoteException, MogramException;
     abstract protected List<Mogram> getInputExertions() throws ContextException;
 
-    protected void beforeParent(Routine exertion) throws ContextException, ExertionException {
+    protected void beforeParent(Routine exertion) throws ContextException, RoutineException {
         logger.debug("before parent {}", exertion);
         reconcileInputExertions(exertion);
         updateInputs(exertion);
@@ -139,14 +139,14 @@ abstract public class ExertDispatcher implements Dispatcher {
         inputXrts = getInputExertions();
     }
 
-    protected void beforeExec(Routine exertion) throws ExertionException, SignatureException {
+    protected void beforeExec(Routine exertion) throws RoutineException, SignatureException {
         logger.debug("before exert {}", exertion);
         try {
             // Provider is expecting exertion to be in context
             exertion.getContext().setRoutine(exertion);
             updateInputs(exertion);
         } catch (ContextException e) {
-            throw new ExertionException(e);
+            throw new RoutineException(e);
         }
         // If Job, new explorer will update inputs for it's Routine
         // in catalog dispatchers, if it is a job, then new explorer is
@@ -165,7 +165,7 @@ abstract public class ExertDispatcher implements Dispatcher {
 
     }
 
-    protected void afterExec(Routine result) throws ContextException, ExertionException {
+    protected void afterExec(Routine result) throws ContextException, RoutineException {
         logger.debug("After exert {}", result);
     }
 
@@ -191,15 +191,15 @@ abstract public class ExertDispatcher implements Dispatcher {
     /**
      * If the {@code Routine} is provisionable, deploy services.
      *
-     * @throws ExertionException if there are issues dispatching the {@code Routine}
+     * @throws RoutineException if there are issues dispatching the {@code Routine}
      */
-    protected void checkProvision() throws ExertionException {
+    protected void checkProvision() throws RoutineException {
         if(xrt.isProvisionable() && xrt.getDeployments().size()>0) {
             try {
                 provisionManager.deployServices();
             } catch (DispatcherException e) {
             	logger.warn("Unable to deploy services", e);
-                throw new ExertionException("Unable to deploy services", e);
+                throw new RoutineException("Unable to deploy services", e);
             }
         }
     }
@@ -233,8 +233,8 @@ abstract public class ExertDispatcher implements Dispatcher {
         }
     }
 
-    protected void collectResults() throws ExertionException, SignatureException, RemoteException {}
-    //protected abstract void dispatchExertions() throws ExertionException, SignatureException;
+    protected void collectResults() throws RoutineException, SignatureException, RemoteException {}
+    //protected abstract void dispatchExertions() throws RoutineException, SignatureException;
 
     protected void collectOutputs(Mogram mo) throws ContextException {
         if (sharedContexts == null) {
@@ -267,7 +267,7 @@ abstract public class ExertDispatcher implements Dispatcher {
 //        }
     }
 
-    protected void updateInputs(Routine ex) throws ExertionException, ContextException {
+    protected void updateInputs(Routine ex) throws RoutineException, ContextException {
         logger.debug("updating inputs for {}", ex.getName());
         List<Context> inputContexts = Mograms.getTaskContexts(ex);
         for (Context inputContext : inputContexts)
@@ -275,7 +275,7 @@ abstract public class ExertDispatcher implements Dispatcher {
     }
 
 	protected void updateInputs(ServiceContext toContext)
-			throws ExertionException {
+			throws RoutineException {
 		ServiceContext fromContext;
 		String toPath = null, newToPath = null, toPathcp, fromPath = null;
 		int argIndex = -1;
@@ -328,7 +328,7 @@ abstract public class ExertDispatcher implements Dispatcher {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-			throw new ExertionException("Failed to update data dataContext: " + toContext.getName()
+			throw new RoutineException("Failed to update data dataContext: " + toContext.getName()
                     + " at: " + toPath + " from: " + fromPath + "\n" + ex.getMessage(), ex);
         }
     }

@@ -20,7 +20,7 @@ package sorcer.ext;
 import sorcer.service.Routine;
 
 /**
- * The <code>ExertionException</code> represents an exception that is thrown
+ * The <code>RoutineException</code> represents an exception that is thrown
  * if an exertion is performed by a service provider failing to process it
  * correctly. A complementary related throwable and/or ill behaving exertion can
  * be embedded into this exception.
@@ -52,7 +52,7 @@ public class ProvisioningException extends Exception {
 	}
 
 	/**
-	 * Constructs a <code>ExertionException</code> with the specified detailed
+	 * Constructs a <code>RoutineException</code> with the specified detailed
 	 * message and the relevant exertion.
 	 *
 	 * @param message
@@ -70,7 +70,7 @@ public class ProvisioningException extends Exception {
 	}
 
 	/**
-	 * Constructs a <code>ExertionException</code> with the specified detail
+	 * Constructs a <code>RoutineException</code> with the specified detail
 	 * message and nested exception.
 	 *
 	 * @param message

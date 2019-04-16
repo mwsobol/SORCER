@@ -57,12 +57,12 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                                    boolean isSpawned,
                                    LokiMemberUtil loki,
                                    Provider provider,
-                                   ProvisionManager provisionManager) throws ExertionException, ContextException {
+                                   ProvisionManager provisionManager) throws RoutineException, ContextException {
         super(exertion, sharedContexts, isSpawned, provider, provisionManager);
 
         space = SpaceAccessor.getSpace();
         if (space == null) {
-            throw new ExertionException("NO exertion space available!");
+            throw new RoutineException("NO exertion space available!");
         }
 
         disatchGroup = new ThreadGroup("exertion-" + exertion.getId());
@@ -87,7 +87,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     @Override
-    public void doExec(Arg... args) throws SignatureException, ExertionException {
+    public void doExec(Arg... args) throws SignatureException, RoutineException {
         new Thread(disatchGroup, new CollectResultThread(), tName("collect-" + xrt.getName())).start();
 
         for (Mogram mogram : inputXrts) {
@@ -112,7 +112,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         }
 	}
 
-    protected void dispatchExertion(Routine exertion) throws ExertionException, SignatureException {
+    protected void dispatchExertion(Routine exertion) throws RoutineException, SignatureException {
         logger.debug("exertion #{}: exertion: {}", exertion.getIndex(), exertion);
         try {
             writeEnvelop(exertion);
@@ -124,7 +124,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 			space = SpaceAccessor.getSpace();
 			if (space == null) {
 				xrt.setStatus(FAILED);
-				throw new ExertionException("NO exertion space available!");
+				throw new RoutineException("NO exertion space available!");
 			}
 			if (masterXrt != null) {
 				try {
@@ -132,7 +132,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 				} catch (Exception e) {
 					e.printStackTrace();
 					xrt.setStatus(FAILED);
-					throw new ExertionException(
+					throw new RoutineException(
 							"Wrting master exertion into exertion space failed!",
 							e);
 				}
@@ -140,7 +140,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 		}
 	}
 
-	public void collectResults() throws ExertionException, SignatureException, RemoteException {
+	public void collectResults() throws RoutineException, SignatureException, RemoteException {
 		int count = 0;
 		// get all children of the underlying parent job
         List<ExertionEnvelop> templates = Arrays.asList(getTemplate(DONE), getTemplate(FAILED), getTemplate(ERROR));
@@ -165,11 +165,11 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                 }
                 cleanRemainingFailedExertions(xrt.getId());
 
-                throw new ExertionException(e);
+                throw new RoutineException(e);
             } catch (Exception e) {
                 xrt.setStatus(FAILED);
                 state = FAILED;
-                throw new ExertionException("Taking exertion envelop failed", e);
+                throw new RoutineException("Taking exertion envelop failed", e);
             } finally {
                 synchronized (this) {
                     notify();
@@ -197,7 +197,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         return tmpl;
     }
 
-    protected void handleResult(Collection<ExertionEnvelop> results) throws ExertionException, SignatureException, RemoteException {
+    protected void handleResult(Collection<ExertionEnvelop> results) throws RoutineException, SignatureException, RemoteException {
         boolean poisoned = false;
         for (ExertionEnvelop resultEnvelop : results) {
 
@@ -253,7 +253,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     // abstract in ExertionDispatcher
-    protected void preExecExertion(Routine exertion) throws ExertionException,
+    protected void preExecExertion(Routine exertion) throws RoutineException,
             SignatureException {
 //		try {
 //			exertion.getControlContext().appendTrace(provider.getProviderName()
@@ -264,7 +264,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         try {
             updateInputs(exertion);
         } catch (ContextException e) {
-            throw new ExertionException(e);
+            throw new RoutineException(e);
         }
         ((ServiceRoutine) exertion).startExecTime();
         ((ServiceRoutine) exertion).setStatus(RUNNING);
@@ -275,11 +275,11 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }*/
 
     protected void writeEnvelop(Routine exertion) throws
-            ExertionException, SignatureException, RemoteException {
+            RoutineException, SignatureException, RemoteException {
         // setSubject before exertion is dropped
         space = SpaceAccessor.getSpace();
         if (space == null) {
-            throw new ExertionException("NO exertion space available!");
+            throw new RoutineException("NO exertion space available!");
         }
 
         /*if (exertion.isProvisionable())
@@ -300,10 +300,10 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     protected ExertionEnvelop takeEnvelop(Entry template)
-            throws ExertionException {
+            throws RoutineException {
         space = SpaceAccessor.getSpace();
         if (space == null) {
-            throw new ExertionException("NO exertion space available!");
+            throw new RoutineException("NO exertion space available!");
         }
         ExertionEnvelop result;
         try {
@@ -316,14 +316,14 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
             return null;
         } catch (UnusableEntryException e) {
             logger.warn("UnusableEntryException! unusable fields = " + e.partialEntry, e);
-            throw new ExertionException("Taking exertion envelop failed", e);
+            throw new RoutineException("Taking exertion envelop failed", e);
         } catch (Throwable e) {
-            throw new ExertionException("Taking exertion envelop failed", e);
+            throw new RoutineException("Taking exertion envelop failed", e);
         }
     }
 
     protected void postExecExertion(Routine ex, Routine result)
-            throws ExertionException, SignatureException {
+            throws RoutineException, SignatureException {
         ((ServiceRoutine) result).stopExecTime();
         try {
             ((NetJob) xrt).setMogramAt(result, ex.getIndex());
@@ -337,7 +337,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                     + "done: " + ex.getName() + " explorer: " + getClass().getName());
 
         } catch (Exception e) {
-            throw new ExertionException(e);
+            throw new RoutineException(e);
         }
         changeDoneExertionIndex(result.getIndex());
     }
@@ -368,14 +368,14 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
             try {
                 logger.debug("take envelop {}", template);
                 ee = takeEnvelop(template);
-            } catch (ExertionException e) {
+            } catch (RoutineException e) {
                 logger.warn("Error while taking {}", template);
             }
         } while (ee != null);
     }
 
     protected void executeMasterExertion() throws
-            ExertionException, SignatureException {
+            RoutineException, SignatureException {
         if (masterXrt == null)
             return;
         logger.info("executeMasterExertion ==============> SPACE EXECUTE MASTER EXERTION");
@@ -386,7 +386,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
             logger.warn("Space died....resetting space");
             space = SpaceAccessor.getSpace();
             if (space == null) {
-                throw new ExertionException("NO exertion space available!");
+                throw new RoutineException("NO exertion space available!");
             }
             try {
                 writeEnvelop(masterXrt);

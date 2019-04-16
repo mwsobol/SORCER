@@ -36,7 +36,7 @@ public class SpaceTaskDispatcher extends SpaceParallelDispatcher {
             final Set<Context> sharedContexts,
             final boolean isSpawned, 
             final LokiMemberUtil myMemberUtil,
-            final ProvisionManager provisionManager) throws ContextException, ExertionException {
+            final ProvisionManager provisionManager) throws ContextException, RoutineException {
         super(task, sharedContexts, isSpawned, myMemberUtil, null, provisionManager);
 	}
 
@@ -46,9 +46,9 @@ public class SpaceTaskDispatcher extends SpaceParallelDispatcher {
     }
 
     @Override
-    protected void handleResult(Collection<ExertionEnvelop> results) throws ExertionException, SignatureException, RemoteException {
+    protected void handleResult(Collection<ExertionEnvelop> results) throws RoutineException, SignatureException, RemoteException {
         if (results.size() != 1)
-            throw new ExertionException("Invalid number of results (" + results.size() + "), expecting 1");
+            throw new RoutineException("Invalid number of results (" + results.size() + "), expecting 1");
 
 
         Task result = (Task) results.iterator().next().exertion;

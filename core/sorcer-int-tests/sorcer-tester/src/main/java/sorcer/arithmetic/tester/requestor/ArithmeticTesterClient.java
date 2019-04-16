@@ -503,7 +503,7 @@ private Routine f1SEQpull() throws Exception {
 		return out;
 	}
 
-	private Task getTask() throws ExertionException, SignatureException,
+	private Task getTask() throws RoutineException, SignatureException,
 			ContextException {
 
 		Task f5 = task(

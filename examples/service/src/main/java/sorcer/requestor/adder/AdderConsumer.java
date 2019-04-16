@@ -41,7 +41,7 @@ public class AdderConsumer extends ServiceConsumer {
         return null;
     }
 
-    private Routine createExertion() throws ContextException, SignatureException, ExertionException {
+    private Routine createExertion() throws ContextException, SignatureException, RoutineException {
         Double v1 = new Double(getProperty("arg/x1"));
         Double v2 = new Double(getProperty("arg/x2"));
 

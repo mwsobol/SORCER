@@ -46,7 +46,7 @@ public interface Mogram extends Identifiable, Request, Exerter, Scopable, Substi
      * @return a resulting exertion
      * @throws net.jini.core.transaction.TransactionException
      *             if a transaction error occurs
-     * @throws ExertionException
+     * @throws RoutineException
      *             if processing this exertion causes an error
      */
     public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws MogramException, RemoteException;

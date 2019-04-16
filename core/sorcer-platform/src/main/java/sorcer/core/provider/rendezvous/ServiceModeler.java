@@ -45,7 +45,7 @@ public class ServiceModeler extends SystemServiceBean implements Modeler {
     }
 
     public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-            throws TransactionException, ExertionException, RemoteException {
+            throws TransactionException, RoutineException, RemoteException {
         setServiceID(mogram);
         Mogram result = null;
         Model model = null;
@@ -91,7 +91,7 @@ public class ServiceModeler extends SystemServiceBean implements Modeler {
             logger.trace("<==== Result: " + result);
 
         } catch (Throwable e) {
-            throw new ExertionException(e);
+            throw new RoutineException(e);
         }
         return mogram;
     }

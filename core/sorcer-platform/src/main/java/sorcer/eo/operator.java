@@ -76,7 +76,8 @@ import static sorcer.ent.operator.srv;
  *
  * @author Mike Sobolewski
  */
-public class operator extends Operator {
+public class
+operator extends Operator {
 
     protected static int count = 0;
 
@@ -2340,12 +2341,12 @@ public class operator extends Operator {
         }
     }
 
-    public static Routine xrt(String name, Object... items) throws ExertionException,
+    public static Routine xrt(String name, Object... items) throws RoutineException,
         ContextException, SignatureException {
         return exertion(name, items);
     }
 
-    public static <E extends Routine> E exertion(String name, Object... items) throws ExertionException,
+    public static <E extends Routine> E exertion(String name, Object... items) throws RoutineException,
         ContextException, SignatureException {
         List<Mogram> exertions = new ArrayList<Mogram>();
         Signature sig = null;
@@ -2375,7 +2376,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Job job(Object... elems) throws ExertionException,
+    public static Job job(Object... elems) throws RoutineException,
         ContextException, SignatureException {
         String name = "job-" + count++;
         Signature signature = null;
@@ -2562,7 +2563,7 @@ public class operator extends Operator {
                     p.inPath, ((Routine) p.in).getContext());
             }
         } else
-            throw new ExertionException("No component exertion defined.");
+            throw new RoutineException("No component exertion defined.");
 
         unifyFiManager(job);
         return job;
@@ -2658,12 +2659,12 @@ public class operator extends Operator {
     }
 
     public static Object get(Routine exertion, String component, String path)
-        throws ExertionException {
+        throws RoutineException {
         Routine c = (Routine) exertion.getMogram(component);
         try {
             return get((ServiceRoutine) c, path);
         } catch (Exception e) {
-            throw new ExertionException(e);
+            throw new RoutineException(e);
         }
     }
 
@@ -3510,7 +3511,7 @@ public class operator extends Operator {
         return signature;
     }
 
-    public static Block block(Object...  items) throws ExertionException {
+    public static Block block(Object...  items) throws RoutineException {
         List<Mogram> mograms = new ArrayList<>();
         List<Evaluator> evaluators = new ArrayList<>();
         String name = null;
@@ -3561,7 +3562,7 @@ public class operator extends Operator {
                 block.addMogram(new EvaluationTask(e));
             }
         } catch (Exception se) {
-            throw new ExertionException(se);
+            throw new RoutineException(se);
         }
         //make sure it has EntModel as the data context
         EntModel pm = null;
@@ -3615,7 +3616,7 @@ public class operator extends Operator {
                 }
             }
         } catch (Exception ex) {
-            throw new ExertionException(ex);
+            throw new RoutineException(ex);
         }
         return block;
     }
@@ -3879,13 +3880,13 @@ public class operator extends Operator {
     }
 
     public static Routine add(Routine compound, Routine component)
-        throws ExertionException {
+        throws RoutineException {
         compound.addMogram(component);
         return compound;
     }
 
     public static Block block(Loop loop, Routine exertion)
-        throws ExertionException, SignatureException {
+        throws RoutineException, SignatureException {
         List<String> names = loop.getNames(exertion.getName());
         Block block;
         if (exertion instanceof NetTask || exertion instanceof NetJob

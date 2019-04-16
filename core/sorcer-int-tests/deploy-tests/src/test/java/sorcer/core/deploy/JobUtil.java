@@ -33,11 +33,11 @@ import static sorcer.eo.operator.*;
  */
 class JobUtil {
 
-    static Job createJob() throws ContextException, SignatureException, ExertionException {
+    static Job createJob() throws ContextException, SignatureException, RoutineException {
         return createJob(false);
     }
 
-    static Job createJob(boolean fork) throws ContextException, SignatureException, ExertionException {
+    static Job createJob(boolean fork) throws ContextException, SignatureException, RoutineException {
         Task f4 = task("f4",
                        sig("multiply",
                            Multiplier.class,
@@ -71,7 +71,7 @@ class JobUtil {
                    pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
     }
 
-    static Job createFixedProvisioningJob() throws SignatureException, ContextException, ExertionException {
+    static Job createFixedProvisioningJob() throws SignatureException, ContextException, RoutineException {
         Task f4 = task(
             "f4",
             sig("multiply",
@@ -107,7 +107,7 @@ class JobUtil {
                      pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
     }
 
-    static Job createJobWithIPAndOpSys() throws SignatureException, ContextException, ExertionException {
+    static Job createJobWithIPAndOpSys() throws SignatureException, ContextException, RoutineException {
         String[] opSys = new String[]{"OSX", "Linux"};
         String[] ips = new String[]{"10.131.5.106", "10.131.4.201", "macdna.rb.rad-e.wpafb.af.mil", "10.0.1.9"};
         return createJobWithIPAndOpSys(opSys, "x86_64", ips, false);
@@ -116,7 +116,7 @@ class JobUtil {
     static Job createJobWithIPAndOpSys(String[] opSys,
                                        String arch,
                                        String[] ips,
-                                       boolean excludeIPs) throws SignatureException, ContextException, ExertionException {
+                                       boolean excludeIPs) throws SignatureException, ContextException, RoutineException {
         Task f4;
         if(excludeIPs) {
             f4 = task("f4",

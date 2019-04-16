@@ -54,7 +54,7 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
         });
     }
 
-    public void doExec(Arg... args) throws ExertionException,
+    public void doExec(Arg... args) throws RoutineException,
 			SignatureException {
         List<Future<Routine>> results = new ArrayList<Future<Routine>>(inputXrts.size());
         for (Mogram mogram : inputXrts) {
@@ -83,7 +83,7 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 		if (isFailed) {
 			xrt.setStatus(FAILED);
 			state = FAILED;
-			ExertionException fe = new ExertionException(this.getClass().getName()
+			RoutineException fe = new RoutineException(this.getClass().getName()
 					+ " failed job", xrt);
 			xrt.reportException(fe);
 			dispatchers.remove(xrt.getId());
@@ -92,7 +92,7 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 		else if (isSuspended) {
 			xrt.setStatus(SUSPENDED);
 			state = SUSPENDED;
-			ExertionException fe = new ExertionException(this.getClass().getName()
+			RoutineException fe = new RoutineException(this.getClass().getName()
 					+ " suspended job", xrt);
 			xrt.reportException(fe);
 			dispatchers.remove(xrt.getId());

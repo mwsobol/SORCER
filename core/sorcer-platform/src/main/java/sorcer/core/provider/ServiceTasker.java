@@ -57,7 +57,7 @@ public class ServiceTasker extends ServiceProvider {
 
 	/** {@inheritDoc} */
 	public ServiceRoutine execute(Routine task) throws TransactionException,
-			ExertionException {
+			RoutineException {
 		return execute(task, null);
 	}
 
@@ -65,12 +65,12 @@ public class ServiceTasker extends ServiceProvider {
 	 * @throws ConfigurationException 
 	 * @throws RemoteException */
 	public ServiceRoutine execute(Routine task, Transaction transaction)
-			throws ExertionException  {
+			throws RoutineException  {
 		try {
 			return (Task) new ControlFlowManager((Routine) task, delegate)
 					.process();
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		} 
 	}
 

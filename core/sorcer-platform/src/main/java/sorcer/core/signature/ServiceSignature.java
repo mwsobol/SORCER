@@ -153,7 +153,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
         execType = Type.PROC;
     }
 
-	public void setExertion(Routine exertion) throws ExertionException {
+	public void setExertion(Routine exertion) throws RoutineException {
 		this.exertion = exertion;
 	}
 

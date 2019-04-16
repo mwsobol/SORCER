@@ -101,7 +101,7 @@ public class ProviderProvisionManager {
                 logger.error(logMsg);
                 try {
                     failExertionInSpace(srvToProvision, new ProvisioningException(logMsg));
-                } catch (ExertionException ile) {
+                } catch (RoutineException ile) {
                     logger.error("Problem trying to remove exertion from space after reattempting to provision");
                 }
             }
@@ -109,14 +109,14 @@ public class ProviderProvisionManager {
     }
 
 
-    private void failExertionInSpace(SignatureElement sigEl, Exception exc) throws ExertionException {
+    private void failExertionInSpace(SignatureElement sigEl, Exception exc) throws RoutineException {
         logger.info("Setting Failed state for service multitype: " + sigEl.getServiceType() + " exertion ID: " +
                 "" + sigEl.getExertion().getId());
         ExertionEnvelop ee = null;
         try {
             ee = ExertionEnvelop.getTemplate(sigEl.getExertion());
         } catch (SignatureException e) {
-            throw new ExertionException(e);
+            throw new RoutineException(e);
         }
 
         ExertionEnvelop result = null;
@@ -128,7 +128,7 @@ public class ProviderProvisionManager {
             try {
                 JavaSpace05 space = SpaceAccessor.getSpace();
                 if (space == null) {
-                    throw new ExertionException("NO exertion space available!");
+                    throw new RoutineException("NO exertion space available!");
                 }
                 space.write(result, null, Lease.FOREVER);
                 logger.debug("===========================> written failure envelop: "
@@ -136,7 +136,7 @@ public class ProviderProvisionManager {
             } catch (Exception e) {
                 //e.printStackTrace();
                 logger.error(this.getClass().getName(), "failExertionInSpace", e);
-                throw new ExertionException("Problem writing exertion back to space");
+                throw new RoutineException("Problem writing exertion back to space");
             }
         }
     }

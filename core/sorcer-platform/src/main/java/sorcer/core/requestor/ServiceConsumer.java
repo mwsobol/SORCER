@@ -105,7 +105,7 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 			}
 
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 		return mogram.getContext();
 	}
@@ -179,12 +179,12 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 		return jobberName;
 	}
 
-	public void preprocess(String... args) throws ExertionException, ContextException {
+	public void preprocess(String... args) throws RoutineException, ContextException {
 		Mogram in = null;
 		try {
 			in = requestor.getMogram(args);
 			if (in == null)
-				throw new ExertionException("No mogram definde for this consumer!");
+				throw new RoutineException("No mogram definde for this consumer!");
 
 			if (logger.isDebugEnabled())
 				logger.debug("ServiceConsumer java.rmi.server.codebase: "
@@ -220,7 +220,7 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 		}
 	}
 
-	public void process(String... args) throws ExertionException, ContextException {
+	public void process(String... args) throws RoutineException, ContextException {
 		try {
 			if (jobberName != null) {
 				mogram = mogram.exert(requestor.getTransaction(), prvName(requestor.getJobberName()));
@@ -229,11 +229,11 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 			}
 
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		} 
 	}
 
-	public void postprocess(String... args) throws ExertionException, ContextException {
+	public void postprocess(String... args) throws RoutineException, ContextException {
 		try {
 			if (mogram != null) {
 				if (mogram.getExceptions() != null && mogram.getExceptions().size() > 0)
@@ -249,7 +249,7 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 			}
 			if (listener != null) listener.destroy();
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 	}
 

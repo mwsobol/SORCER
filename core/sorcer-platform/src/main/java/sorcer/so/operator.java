@@ -466,13 +466,13 @@ public class operator extends Operator {
         try {
             return mogram.exert(null, args);
         } catch (Exception e) {
-            throw new ExertionException(e);
+            throw new RoutineException(e);
         }
     }
 
     public static <T extends Mogram> T exert(T input,
                                              Transaction transaction,
-                                             Arg... entries) throws ExertionException {
+                                             Arg... entries) throws RoutineException {
         return new sorcer.core.provider.exerter.ServiceShell().exert(input, transaction, entries);
     }
 

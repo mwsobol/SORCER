@@ -354,7 +354,7 @@ public class SorcerILFactory extends BasicILFactory {
                 }
             } catch (Throwable t) {
                 logger.error("SorcerInvocationDispatcher failed", t);
-                throw new ExertionException(t);
+                throw new RoutineException(t);
             }
             return obj;
         }

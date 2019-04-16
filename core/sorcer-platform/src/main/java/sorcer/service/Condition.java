@@ -129,7 +129,7 @@ import java.util.Map;
 	 * condition.
 	 *
 	 * @return boolean true or false depending on given contexts
-	 * @throws ExertionException if there is any problem within the isTrue method.
+	 * @throws RoutineException if there is any problem within the isTrue method.
 	 * @throws ContextException
 	 */
 	synchronized public boolean isTrue() throws ContextException {

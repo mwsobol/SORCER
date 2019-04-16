@@ -81,7 +81,7 @@ public class InvokerTest {
 
 	@Test
 	public void lambdaInvoker() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
+			SignatureException, RoutineException {
 		Invocation invoker = invoker("lambda",
 				cxt ->  (double) value(cxt, "x") + (double) value(cxt, "y") + 30,
 				context(val("x", 10.0), val("y", 20.0)),
@@ -161,7 +161,7 @@ public class InvokerTest {
 
 	@Test
 	public void invokeTaskTest() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
+			SignatureException, RoutineException {
 
 		Task t4 = task(
 				"t4",
@@ -175,7 +175,7 @@ public class InvokerTest {
 
 	@Test
 	public void invokeJobTest() throws RemoteException, ContextException,
-			SignatureException, ExertionException, TransactionException {
+			SignatureException, RoutineException, TransactionException {
 		Context c4 = context("multiply", inVal("arg/x1", 50.0),
 				inVal("arg/x2", 10.0), result("result/y"));
 		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
@@ -201,7 +201,7 @@ public class InvokerTest {
 
 	@Test
 	public void invokeProcTest() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
+			SignatureException, RoutineException {
 
 		Pro x1 = pro("x1", 1.0);
 		// logger.info("invoke eval:" + invoke(x1));
@@ -210,7 +210,7 @@ public class InvokerTest {
 
 	@Test
 	public void invokeProcArgTest() throws RemoteException, ContextException,
-			SignatureException, ExertionException {
+			SignatureException, RoutineException {
 		Pro x1, x2, y;
 		x1 = pro("x1", 1.0);
 		x2 = pro("x2", 2.0);
@@ -222,7 +222,7 @@ public class InvokerTest {
 	}
 
 	@Test
-	public void cmdInvokerTest() throws SignatureException, ExertionException,
+	public void cmdInvokerTest() throws SignatureException, RoutineException,
 			ContextException, IOException {
 		String riverVersion = System.getProperty("river.version");
 		String sorcerVersion = System.getProperty("sorcer.version");

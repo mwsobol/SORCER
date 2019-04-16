@@ -18,8 +18,8 @@
 package sorcer.service;
 
 /**
- * The <code>ExertionException</code> represents an exception that is thrown
- * if an exertion is performed by a service provider failing to process it
+ * The <code>RoutineException</code> represents an exception that is thrown
+ * if a routine is executed by a service provider failing to process it
  * correctly. A complementary related throwable and/or ill behaving exertion can
  * be embedded into this exception.
  * 
@@ -45,7 +45,7 @@ public class RoutineException extends MogramException {
 	}
 
 	/**
-	 * Constructs a <code>ExertionException</code> with the specified detailed
+	 * Constructs a <code>RoutineException</code> with the specified detailed
 	 * message and the relevant exertion.
 	 *
 	 * @param message
@@ -63,7 +63,7 @@ public class RoutineException extends MogramException {
 	}
 
 	/**
-	 * Constructs a <code>ExertionException</code> with the specified detail
+	 * Constructs a <code>RoutineException</code> with the specified detail
 	 * message and nested exception.
 	 *
 	 * @param message
@@ -71,17 +71,17 @@ public class RoutineException extends MogramException {
 	 * @param cause
 	 *            the nested throwable cause
 	 */
-	public RoutineException(String message, Routine exertion, Throwable cause) {
+	public RoutineException(String message, Routine routine, Throwable cause) {
 		super(message, cause);
-		this.mogram = exertion;
+		this.mogram = routine;
 	}
 
 	/**
-	 * Returns the embedded exertion causing this exception.
+	 * Returns the embedded routine causing this exception.
 	 * 
 	 * @return embedded exertion
 	 */
-	public Routine getExertion() {
+	public Routine getRoutne() {
 		return (Routine)mogram;
 	}
 	

@@ -34,11 +34,11 @@ public class SpaceSequentialDispatcher extends SpaceParallelDispatcher {
                                      boolean isSpawned,
                                      LokiMemberUtil myMemberUtil,
                                      Provider provider,
-                                     ProvisionManager provisionManager) throws ExertionException, ContextException  {
+                                     ProvisionManager provisionManager) throws RoutineException, ContextException  {
 		super(job, sharedContexts, isSpawned, myMemberUtil, provider, provisionManager);
 	}
 
-    protected void dispatchExertion(Routine exertion) throws ExertionException, SignatureException {
+    protected void dispatchExertion(Routine exertion) throws RoutineException, SignatureException {
         super.dispatchExertion(exertion);
 		waitForExertion(exertion);
 	}

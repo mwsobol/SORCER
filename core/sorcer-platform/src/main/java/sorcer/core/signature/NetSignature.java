@@ -168,7 +168,7 @@ public class NetSignature extends ObjectSignature implements sig {
     }
 
 
-    public void setExertion(Routine exertion) throws ExertionException {
+    public void setExertion(Routine exertion) throws RoutineException {
         this.exertion = exertion;
 	}
 
@@ -286,7 +286,7 @@ public class NetSignature extends ObjectSignature implements sig {
 	}
 
 	public Routine invokeMethod(Routine ex) throws RemoteException,
-			ExertionException {
+			RoutineException {
 		// If customized method provided by Mobile Agent
 		Method m = getSubstituteMethod(new Class[] { Mogram.class });
 		try {
@@ -297,7 +297,7 @@ public class NetSignature extends ObjectSignature implements sig {
 				return ((ServiceProvider) provider).getDelegate()
 						.invokeMethod(operation.selector, ex);
 			} else {
-				ExertionException eme = new ExertionException(
+				RoutineException eme = new RoutineException(
 						"Not supported method: " + multitype + "#" + operation.selector
 								+ " by: "
 								+  provider.getProviderName());
@@ -306,12 +306,12 @@ public class NetSignature extends ObjectSignature implements sig {
 				throw eme;
 			}
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 	}
 
 	public Context invokeMethod(Context context) throws RemoteException,
-			ExertionException {
+			RoutineException {
 		// If customized method provided by Mobile Agent
 		Method m = getSubstituteMethod(new Class[] { Context.class });
 		try {
@@ -323,7 +323,7 @@ public class NetSignature extends ObjectSignature implements sig {
 						.getDelegate().invokeMethod(operation.selector, context);
 				return resultContext;
 			} else {
-				ExertionException eme = new ExertionException(
+				RoutineException eme = new RoutineException(
 						"Not supported method: " + multitype + "#" + operation.selector
 								+ " by: "
 								+ ((Provider) provider).getProviderName());
@@ -332,7 +332,7 @@ public class NetSignature extends ObjectSignature implements sig {
 				throw eme;
 			}
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 	}
 

@@ -65,12 +65,12 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		try {
 			Condition.cleanupScripts(xrt);
 		} catch (ContextException e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 	}
 
     @Override
-    protected void beforeExec(Routine exertion) throws ExertionException, SignatureException {
+    protected void beforeExec(Routine exertion) throws RoutineException, SignatureException {
         super.beforeExec(exertion);
         try {
             preUpdate(exertion);
@@ -84,12 +84,12 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
                 }
             }
         } catch (Exception ex) {
-            throw new ExertionException(ex);
+            throw new RoutineException(ex);
         }
     }
 
     @Override
-    protected void afterExec(Routine result) throws ContextException, ExertionException {
+    protected void afterExec(Routine result) throws ContextException, RoutineException {
         super.afterExec(result);
         try {
             postUpdate(result);
@@ -113,9 +113,9 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
                 monSession.changed(result.getContext(), (isFailed ? Exec.FAILED : Exec.DONE));
             }*/
         } catch (Exception e) {
-            throw new ExertionException(e);
+            throw new RoutineException(e);
         /*} catch (MonitorException e) {
-            throw new ExertionException(e);*/
+            throw new RoutineException(e);*/
         }
     }
 

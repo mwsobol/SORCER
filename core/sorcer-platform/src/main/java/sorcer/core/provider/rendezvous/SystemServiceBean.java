@@ -149,7 +149,7 @@ abstract public class SystemServiceBean implements Exerter, ServiceBean {
 	/* (non-Javadoc)
 	 * @see sorcer.core.provider.ServiceBean#service(sorcer.service.Routine, net.jini.core.transaction.Transaction)
 	 */
-	public Mogram exert(Mogram mogram, Transaction transaction, Arg... args) throws RemoteException, ExertionException {
+	public Mogram exert(Mogram mogram, Transaction transaction, Arg... args) throws RemoteException, RoutineException {
 		Mogram out = null;
 		try {
 			setServiceID(mogram);
@@ -170,12 +170,12 @@ abstract public class SystemServiceBean implements Exerter, ServiceBean {
         }
 		catch (Exception e) {
 			logger.debug("exert failed for: " + mogram.getName(), e);
-			throw new ExertionException();
+			throw new RoutineException();
 		}
 		return out;
 	}
 
-    protected ControlFlowManager getControlFlownManager(Mogram exertion) throws ExertionException {
+    protected ControlFlowManager getControlFlownManager(Mogram exertion) throws RoutineException {
         try {
             if (exertion instanceof Routine) {
                 if (exertion.isMonitorable())
@@ -187,12 +187,12 @@ abstract public class SystemServiceBean implements Exerter, ServiceBean {
                 return null;
         } catch (Exception e) {
             ((Task) exertion).reportException(e);
-            throw new ExertionException(e);
+            throw new RoutineException(e);
         }
     }
 
 	abstract public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-			throws TransactionException, ExertionException, RemoteException;
+			throws TransactionException, RoutineException, RemoteException;
 
 	@Override
 	public Object execute(Arg... args) throws MogramException, RemoteException {

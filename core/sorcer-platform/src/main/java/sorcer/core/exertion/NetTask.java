@@ -100,7 +100,7 @@ public class NetTask extends ObjectTask implements Invocation<Object> {
 					throw new SignatureException("Net task requires NetSignature: "
 							+ s);
 			}
-		} catch (ExertionException e) {
+		} catch (RoutineException e) {
 			e.printStackTrace();
 		}
 		ServiceFidelity sFi = ((ServiceFidelity)multiFi.getSelect());

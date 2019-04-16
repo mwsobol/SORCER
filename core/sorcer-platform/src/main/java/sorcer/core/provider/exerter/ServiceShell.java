@@ -131,7 +131,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 		try {
 			xrt.substitute(entries);
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 		return exert(xrt, null, (String) null);
 	}
@@ -140,7 +140,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 	 * @see sorcer.service.Exerter#exert(sorcer.service.Routine, net.jini.core.transaction.Transaction, sorcer.service.Parameter[])
 	 */
 	@Override
-	public  <T extends Mogram> T exert(T mogram, Transaction transaction, Arg... entries) throws ExertionException {
+	public  <T extends Mogram> T exert(T mogram, Transaction transaction, Arg... entries) throws RoutineException {
 		Mogram result = null;
 		try {
 			if (mogram instanceof Routine) {
@@ -211,7 +211,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				return (T) mogram;
 			}
 		} catch (ContextException e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 	}
 
@@ -267,20 +267,20 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 	}
 
 	private void realizeDependencies(Arg... entries) throws RemoteException,
-			ExertionException {
+			RoutineException {
 		List<Evaluation> dependers = ((ServiceRoutine)mogram).getDependers();
 		if (dependers != null && dependers.size() > 0) {
 			for (Evaluation<Object> depender : dependers) {
 				try {
 					((Invocation)depender).invoke(mogram.getScope(), entries);
 				} catch (Exception e) {
-					throw new ExertionException(e);
+					throw new RoutineException(e);
 				}
 			}
 		}
 	}
 
-	private Routine initExertion(ServiceRoutine exertion, Transaction txn, Arg... entries) throws ExertionException {
+	private Routine initExertion(ServiceRoutine exertion, Transaction txn, Arg... entries) throws RoutineException {
 		try {
 			if (entries != null && entries.length > 0) {
 				exertion.substitute(entries);
@@ -299,7 +299,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 						provisionManager.deployServices();
 					}
 				} catch (DispatcherException e) {
-					throw new ExertionException("Unable to deploy services for: "+ mogram.getName(), e);
+					throw new RoutineException("Unable to deploy services for: "+ mogram.getName(), e);
 				}
 			}
 //			//TODO disabled due to problem with monitoring. Needs to be fixed to run with monitoring
@@ -312,7 +312,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				cxt.setRoutine(exertion);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			throw new ExertionException(ex);
+			throw new RoutineException(ex);
 		}
 		return exertion;
 	}
@@ -345,7 +345,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 	}
 
 	private Routine dispatchExertion(ServiceRoutine exertion, String providerName, Arg... args)
-			throws ExertionException, ExecutionException {
+			throws RoutineException, ExecutionException {
 		Signature signature = exertion.getProcessSignature();
 		Object provider = null;
 		try {
@@ -369,7 +369,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 						return new ControlFlowManager().doTask((Task) exertion);
 					} catch (ContextException e) {
 						e.printStackTrace();
-						throw new ExertionException(e);
+						throw new RoutineException(e);
 					}
 				}
 			}
@@ -385,7 +385,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 							return new ControlFlowManager().doTask((Task) exertion);
 						} catch (ContextException e) {
 							e.printStackTrace();
-							throw new ExertionException(e);
+							throw new RoutineException(e);
 						}
 					}
 				} else if (exertion instanceof Job) {
@@ -400,7 +400,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			logger.info("signature (after)  = {}", signature);
 
 			if (!((ServiceSignature) signature).isSelectable()) {
-				exertion.reportException(new ExertionException(
+				exertion.reportException(new RoutineException(
 						"No such operation in the requested signature: "+ signature));
 				logger.warn("Not selectable exertion operation: " + signature);
 				return exertion;
@@ -438,7 +438,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 											"an available lookup service with correct discovery settings",
 									signature.getProviderName(), signature.getServiceType().getName());
 					logger.error(message);
-					throw new ExertionException(message);
+					throw new RoutineException(message);
 				}
 				// lookup proxy
 				/*if (provider == null) {
@@ -450,7 +450,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				}*/
 			}
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 
 		if (provider != null) {
@@ -469,7 +469,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 					((Task)exertion).setDelegate(new ObjectTask(sig, cxt));
 					return ((Task)exertion).doTask(transaction);
 				} catch (Exception e) {
-					throw new ExertionException(e);
+					throw new RoutineException(e);
 				}
 			}
 		}
@@ -518,7 +518,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				}
 				result.setStatus(Exec.FAILED);
 			} else if (result == null) {
-				exertion.reportException(new ExertionException("ExertionDispatcher failed calling: "
+				exertion.reportException(new RoutineException("ExertionDispatcher failed calling: "
 						+ exertion.getProcessSignature()));
 				exertion.setStatus(Exec.FAILED);
 				result = exertion;
@@ -551,7 +551,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			txn.abort();
 		}
 		exertion.getControlContext().addException(
-				new ExertionException("no lock available for: "
+				new RoutineException("no lock available for: "
 						+ provider.getProviderName() + ":"
 						+ provider.getProviderID()));
 		return exertion;
@@ -671,12 +671,12 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 	}
 
 	public Object evaluate(Arg... args)
-			throws ExertionException, RemoteException, ContextException {
+			throws RoutineException, RemoteException, ContextException {
 		return evaluate(mogram, args);
 	}
 
 	public Object evaluate(Mogram mogram, Arg... args)
-			throws ExertionException, ContextException, RemoteException {
+			throws RoutineException, ContextException, RemoteException {
 		if (mogram instanceof Routine) {
 			Routine exertion = (Routine)mogram;
 			Object out;
@@ -697,7 +697,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				return finalize((Routine) out, args);
 			} catch (Exception e) {
 				logger.error("Failed in compute", e);
-				throw new ExertionException(e);
+				throw new RoutineException(e);
 			}
 		} else {
 			return ((Model)mogram).getResponse();
@@ -913,7 +913,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				} else if (returnPath != null){
 					return cxt.getValue(returnPath.path, args);
 				} else {
-					throw new ExertionException("No return path in the context: "
+					throw new RoutineException("No return path in the context: "
 							+ cxt.getName());
 				}
 			} else if (service instanceof MultiFiMogram) {

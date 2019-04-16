@@ -47,12 +47,12 @@ public class NetJob extends Job implements Invocation<Object> {
         addSignature(signatures);
     }
 	
-	public NetJob(SorcerPrincipal principal) throws ExertionException {
+	public NetJob(SorcerPrincipal principal) throws RoutineException {
 		this("undefined" + count++, principal);
 	}
 
 	public NetJob(String name, SorcerPrincipal principal)
-			throws ExertionException {
+			throws RoutineException {
 		super(name);
 		if (principal != null)
 			subject = Auth.createSubject(principal);

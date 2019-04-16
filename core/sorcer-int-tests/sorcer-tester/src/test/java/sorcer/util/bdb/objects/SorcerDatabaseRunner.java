@@ -284,14 +284,14 @@ public class SorcerDatabaseRunner {
         	tableSet.add(new DataTable());
     }
 	
-	private Task getTask() throws ExertionException, SignatureException, ContextException {
+	private Task getTask() throws RoutineException, SignatureException, ContextException {
 		Task f4 = task("f4", sig("multiply", Multiplier.class), 
 				context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
 						outVal("result/y1")));
 		return f4;
 	}
 		
-	private Job getJob() throws ExertionException, SignatureException, ContextException {
+	private Job getJob() throws RoutineException, SignatureException, ContextException {
 		Task f4 = task("f4", sig("multiply", Multiplier.class), 
 				context("multiply", operator.inVal("arg/x1", 10.0), operator.inVal("arg/x2", 50.0),
 						outVal("result/y1")));
@@ -317,9 +317,9 @@ public class SorcerDatabaseRunner {
      * Populate the exertion entities in the database.  
 	 * @throws ContextException 
 	 * @throws SignatureException 
-	 * @throws ExertionException 
+	 * @throws RoutineException
      */
-	private void addExertions() throws ExertionException, SignatureException, ContextException {
+	private void addExertions() throws RoutineException, SignatureException, ContextException {
 		StoredValueSet<Routine> exertionSet = views.getRoutineSet();
 		exertionSet.add(getTask());
 		exertionSet.add(getJob());

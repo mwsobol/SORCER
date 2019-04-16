@@ -157,7 +157,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
             else
                 mogram.setStatus(ERROR);
 
-            throw new ExertionException(e);
+            throw new RoutineException(e);
         }
     }
 
@@ -303,7 +303,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
             substitute(entries);
         } catch (SetterException e) {
             e.printStackTrace();
-            throw new ExertionException(e);
+            throw new RoutineException(e);
         }
         ServiceShell se = new ServiceShell(this);
         return se.exert(entries);

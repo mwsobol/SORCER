@@ -20,7 +20,7 @@ import static sorcer.so.operator.exert;
 
 public class ArithmeticSorcerRequestor extends SorcerRequestor {
 
-    public Routine getExertion(String... args) throws ExertionException, ContextException, SignatureException {
+    public Routine getExertion(String... args) throws RoutineException, ContextException, SignatureException {
 
         Task t3 = task("t3", sFi("object/subtract", sig("subtract", SubtractorImpl.class)),
                 sFi("object/average", sig("average", AveragerImpl.class)),

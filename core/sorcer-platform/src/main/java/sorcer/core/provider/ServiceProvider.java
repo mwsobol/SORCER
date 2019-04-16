@@ -1414,7 +1414,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * A provider responsibility is to check a task completeness in paricular
 	 * the relevance of the task's context.
 	 */
-	public boolean isValidTask(Routine task) throws ExertionException {
+	public boolean isValidTask(Routine task) throws RoutineException {
 		return true;
 	}
 
@@ -1427,12 +1427,12 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	public Context invokeMethod(String method, Context context)
-			throws ExertionException {
+			throws RoutineException {
 		return delegate.invokeMethod(method, context);
 	}
 
 	public Routine invokeMethod(String methodName, Routine ex)
-			throws ExertionException {
+			throws RoutineException {
 		return delegate.invokeMethod(methodName, ex);
 	}
 
@@ -1443,14 +1443,14 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * @param exertion
 	 *            Routine
 	 * @return Routine
-	 * @throws sorcer.service.ExertionException
+	 * @throws sorcer.service.RoutineException
 	 * @see Routine
 	 * @see sorcer.service.Conditional
 	 * @see sorcer.core.provider.ControlFlowManager
 	 * @throws java.rmi.RemoteException
-	 * @throws sorcer.service.ExertionException
+	 * @throws sorcer.service.RoutineException
 	 */
-    public Routine doExertion(final Routine exertion, Transaction txn) throws ExertionException {
+    public Routine doExertion(final Routine exertion, Transaction txn) throws RoutineException {
         logger.debug("service: {}", exertion.getName());
         // create an instance of the ControlFlowManager and call on the
         // compute method, returns an Routine
@@ -1475,11 +1475,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         return out;
     }
 
-    protected ControlFlowManager getControlFlownManager(Routine exertion) throws ExertionException {
+    protected ControlFlowManager getControlFlownManager(Routine exertion) throws RoutineException {
         List<Class> publishedIfaces = Arrays.asList(this.delegate.getPublishedServiceTypes());
         if (!(exertion instanceof Task) && (!publishedIfaces.contains(Spacer.class))
             && (!publishedIfaces.contains(Jobber.class)) && (!publishedIfaces.contains(Concatenator.class)))
-            throw new ExertionException(new IllegalArgumentException("Unknown exertion multitype " + exertion));
+            throw new RoutineException(new IllegalArgumentException("Unknown exertion multitype " + exertion));
         try {
             if (exertion.isMonitorable())
                 return new MonitoringControlFlowManager(exertion, delegate);
@@ -1487,11 +1487,11 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
                 return new ControlFlowManager(exertion, delegate);
         } catch (Exception e) {
 			((Task) exertion).reportException(e);
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 	}
 
-	public Routine serviceContextOnly(Context mogram) throws ExertionException, RemoteException {
+	public Routine serviceContextOnly(Context mogram) throws RoutineException, RemoteException {
 		Task task = null;
 		try {
 			Object subject = mogram.getSubjectValue();
@@ -1499,21 +1499,21 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 				task = new NetTask((Signature)mogram.getSubjectValue(), mogram);
 				task = delegate.doTask(task, null);
 			} else {
-				throw new ExertionException("no signature in the service context");
+				throw new RoutineException("no signature in the service context");
 			}
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 		return task;
 	}
 
 	public Routine service(Mogram exertion) throws RemoteException,
-			ExertionException {
+			RoutineException {
 		return doExertion((Routine)exertion, null);
 	}
 
 	@Override
-	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws ExertionException, RemoteException {
+	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws RoutineException, RemoteException {
 		if (mogram instanceof Task) {
 			ServiceContext cxt;
 			try {
@@ -1569,7 +1569,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			out = doExertion(exertion, txn);
 		} catch (Exception e) {
 			logger.error("{} failed", getProviderName(), e);
-			out.reportException(new ExertionException(getProviderName() + " failed", e));
+			out.reportException(new RoutineException(getProviderName() + " failed", e));
 		}
 		return out;
 	}
@@ -1754,7 +1754,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *             if there is a communication error
 	 *
 	 */
-	public void resume(Routine ex) throws RemoteException, ExertionException {
+	public void resume(Routine ex) throws RemoteException, RoutineException {
 		service((Mogram) ex);
 	}
 
@@ -1769,7 +1769,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 *             if there is a communication error
 	 *
 	 */
-	public void step(Routine ex) throws RemoteException, ExertionException {
+	public void step(Routine ex) throws RemoteException, RoutineException {
 		service(ex);
 	}
 /*

@@ -34,7 +34,7 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
 
     /** {@inheritDoc} */
     public ServiceRoutine execute(Routine task) throws TransactionException,
-            ExertionException {
+            RoutineException {
         return execute(task, null);
     }
 
@@ -42,17 +42,17 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
      * @throws ConfigurationException
      * @throws RemoteException */
     public ServiceRoutine execute(Routine task, Transaction transaction)
-            throws ExertionException  {
+            throws RoutineException  {
         try {
             return (Task) new ControlFlowManager((Routine) task, delegate)
                     .process();
         } catch (Exception e) {
-            throw new ExertionException(e);
+            throw new RoutineException(e);
         }
     }
 
     @Override
-    public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws ExertionException, RemoteException {
+    public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws RoutineException, RemoteException {
         if (mogram instanceof Task) {
             ServiceContext cxt = null;
             try {
@@ -75,7 +75,7 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
                         ps.setAttribute(id.toString(), bean);
                         logger.info("created new bean: {} for: {}", bean, id);
                     } catch (Exception e) {
-                        throw new ExertionException(e);
+                        throw new RoutineException(e);
                     }
                 } else {
                     bean = ps.getAttribute(id.toString());
@@ -127,7 +127,7 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
         } else if (mogram instanceof Context) {
             return serviceContextOnly((Context) mogram);
         } else {
-            mogram.reportException(new ExertionException("Wrong mogram for: " +  this.getClass().getSimpleName()));
+            mogram.reportException(new RoutineException("Wrong mogram for: " +  this.getClass().getSimpleName()));
             mogram.setStatus(Exec.ERROR);
             return mogram;
         }

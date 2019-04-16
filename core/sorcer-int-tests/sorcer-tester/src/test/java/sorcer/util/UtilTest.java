@@ -72,7 +72,7 @@ public class UtilTest {
 	}
 
 	@Test
-	public void spaceSuffixTest() throws ExertionException, ContextException,
+	public void spaceSuffixTest() throws RoutineException, ContextException,
 			SignatureException {
 
 		assertEquals(Sorcer.getSuffixedName(Sorcer.getSpaceName()),
@@ -85,7 +85,7 @@ public class UtilTest {
 	}
 
 	@Test
-	public void getSpaceTest() throws ExertionException, ContextException,
+	public void getSpaceTest() throws RoutineException, ContextException,
 			SignatureException {
 		logger.info("exert space:\n" + SpaceAccessor.getSpace());
 		

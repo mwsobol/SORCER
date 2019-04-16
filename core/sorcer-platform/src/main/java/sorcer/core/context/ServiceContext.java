@@ -3422,7 +3422,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws ExertionException, RemoteException {
+	public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws RoutineException, RemoteException {
 		Signature signature = null;
 		try {
 			if (subjectValue instanceof Class) {
@@ -3434,12 +3434,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 				return (T) this;
 			}
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 	}
 
 	@Override
-	public <T extends Mogram> T exert(Arg... entries) throws ExertionException, RemoteException {
+	public <T extends Mogram> T exert(Arg... entries) throws RoutineException, RemoteException {
 		return exert(null, entries);
 	}
 
@@ -3476,7 +3476,7 @@ public class ServiceContext<T> extends ServiceMogram implements
             else
                 mogram.setStatus(ERROR);
 
-            throw new ExertionException(e);
+            throw new RoutineException(e);
         }
     }
 

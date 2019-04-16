@@ -112,7 +112,7 @@ abstract public class Transroutine extends ServiceRoutine implements Governance 
 
 	}
 
-	public Mogram addExertion(Routine exertion, int priority) throws ExertionException {
+	public Mogram addExertion(Routine exertion, int priority) throws RoutineException {
 		addMogram(exertion);
 		controlContext.setPriority(exertion, priority);
 		return this;

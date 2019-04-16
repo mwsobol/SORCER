@@ -286,7 +286,7 @@ public class SdbUtil {
 		try {
 			return get((Context) exec(objectRetrieveTask));
 		} catch (RemoteException e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 	}
 

@@ -96,7 +96,7 @@ public class Job extends Transroutine {
 	 *            The first Routine of the job.
 	 * @throws ContextException 
 	 */
-	public Job(Mogram mogram) throws ExertionException {
+	public Job(Mogram mogram) throws RoutineException {
 		this("job-" + count++);
 		addMogram(mogram);
 	}
@@ -171,14 +171,14 @@ public class Job extends Transroutine {
 	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
 	 */
 	@Override
-	public Mogram addMogram(Mogram ex) throws ExertionException {
+	public Mogram addMogram(Mogram ex) throws RoutineException {
 		mograms.add(ex);
 		ex.setIndex(mograms.indexOf(ex));
 		try {
 			controlContext.registerExertion(ex);
 			ex.getDataContext().setScope(dataContext);
 		} catch (ContextException e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 		ex.setParentId(getId());
 //		((ServiceMogram)ex).setParent(this);
@@ -231,9 +231,9 @@ public class Job extends Transroutine {
         return delegate.doJob(txn);
     }
 
-	public void undoJob() throws ExertionException, SignatureException,
+	public void undoJob() throws RoutineException, SignatureException,
 			RemoteException {
-		throw new ExertionException("Not implemneted by this Job: " + this);
+		throw new RoutineException("Not implemneted by this Job: " + this);
 	}
 	
 	public void setState(int state) {
@@ -291,9 +291,9 @@ public class Job extends Transroutine {
 	/**
 	 * Returns a string representation of Contexts of this Job, containing the
 	 * String representation of each context in it's exertion.
-	 * @throws sorcer.service.ExertionException
+	 * @throws sorcer.service.RoutineException
 	 */
-	public String jobContextToString() throws ExertionException {
+	public String jobContextToString() throws RoutineException {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < mograms.size(); i++) {
 			if (((ServiceRoutine) get(i)).isJob())
@@ -585,7 +585,7 @@ public class Job extends Transroutine {
 		return exti;
 	}
 	
-	public void applyFidelityContext(FidelityContext fiContext) throws ExertionException {
+	public void applyFidelityContext(FidelityContext fiContext) throws RoutineException {
 		Collection<ServiceFidelity> fidelities = fiContext.values();
 		ServiceRoutine se = null;
 		for (ServiceFidelity fi : fidelities) {

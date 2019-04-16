@@ -952,7 +952,7 @@ public class ProviderDelegate {
 				} else {
 					provider.fireEvent();
 					task.stopExecTime();
-					ExertionException ex = new ExertionException("Unacceptable task received, requested provider: "
+					RoutineException ex = new RoutineException("Unacceptable task received, requested provider: "
 						+ getProviderName() + " task: " + task.getName());
 					task.reportException(ex);
 					task.setStatus(Exec.FAILED);
@@ -967,28 +967,28 @@ public class ProviderDelegate {
 		return (Task) forwardTask(task, provider);
 	}
 
-	private Context apdProcess(Task task) throws ExertionException, SignatureException, ContextException {
+	private Context apdProcess(Task task) throws RoutineException, SignatureException, ContextException {
 		return processContinousely(task, task.getApdProcessSignatures());
 	}
 
-	private Context preprocess(Task task) throws ExertionException,
+	private Context preprocess(Task task) throws RoutineException,
 		SignatureException, ContextException {
 		return processContinousely(task, task.getPreprocessSignatures());
 	}
 
-	private Context postprocess(Task task) throws ExertionException,
+	private Context postprocess(Task task) throws RoutineException,
 		SignatureException, ContextException {
 		return processContinousely(task, task.getPostprocessSignatures());
 	}
 
 	private Context processContinousely(Task task, List<Signature> signatures)
-		throws ExertionException, ContextException {
+		throws RoutineException, ContextException {
 		try {
 			ControlFlowManager cfm = new ControlFlowManager(task, this);
 			return cfm.processContinousely(task, signatures);
 		}   catch (Exception e) {
 			((Task) task).reportException(e);
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 	}
 
@@ -1284,7 +1284,7 @@ public class ProviderDelegate {
 
 		if (visited.contains(serviceID)) {
 			visited.remove(serviceID);
-			throw new ExertionException("Not able to get relevant multitype: "+ prvType + ", key: " + prvName);
+			throw new RoutineException("Not able to get relevant multitype: "+ prvType + ", key: " + prvName);
 		}
 		visited.add(serviceID);
 		if (serviceComponents != null) {
@@ -1307,7 +1307,7 @@ public class ProviderDelegate {
 		}
 		if (recipient == null) {
 			visited.remove(serviceID);
-			ExertionException re = new ExertionException(
+			RoutineException re = new RoutineException(
 				"Not able to get provider multitype: " + prvType + ", key: "
 					+ prvName);
 			notifyException(task, "", re);
@@ -1315,7 +1315,7 @@ public class ProviderDelegate {
 		} else if (recipient.getClass().getName()
 			.startsWith(requestor.getClass().getName())) {
 			visited.remove(serviceID);
-			ExertionException re = new ExertionException(
+			RoutineException re = new RoutineException(
 				"Invalid task for provider multitype: " + prvType + ", key: "
 					+ prvName + " " + task.toString());
 			notifyException(task, "", re);
@@ -1327,7 +1327,7 @@ public class ProviderDelegate {
 				return result;
 			} else {
 				visited.remove(serviceID);
-				throw new ExertionException(
+				throw new RoutineException(
 					"Not able to get relevant multitype: " + prvType
 						+ ", key: " + prvName);
 			}
@@ -1335,7 +1335,7 @@ public class ProviderDelegate {
 	}
 
 	public ServiceRoutine dropTask(Routine entryTask)
-		throws ExertionException, SignatureException, RemoteException {
+		throws RoutineException, SignatureException, RemoteException {
 		return null;
 	}
 
@@ -1349,7 +1349,7 @@ public class ProviderDelegate {
 				jobber = JobberAccessor.getJobber();
 		} catch (AccessorException ae) {
 			logger.warn("Failed", ae);
-			throw new ExertionException(
+			throw new RoutineException(
 				"Provider Delegate Could not find the Jobber");
 		}
 
@@ -1381,7 +1381,7 @@ public class ProviderDelegate {
 		return false;
 	}
 
-	public Task execTask(Task task) throws ContextException, ExertionException,
+	public Task execTask(Task task) throws ContextException, RoutineException,
 		SignatureException, RemoteException {
 		ServiceContext cxt = (ServiceContext) task.getContext();
 		try {
@@ -1417,13 +1417,13 @@ public class ProviderDelegate {
 				logger.debug("CONTEXT GOING OUT: " + cxt);
 			}
 		} catch (ContextException e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 		return task;
 	}
 
 	public Routine invokeMethod(String selector, Routine ex)
-		throws ExertionException {
+		throws RoutineException {
 		Class[] argTypes = new Class[] { Mogram.class };
 		try {
 			Method m = provider.getClass().getMethod(selector, argTypes);
@@ -1434,11 +1434,11 @@ public class ProviderDelegate {
 			return result;
 		} catch (Exception e) {
 			ex.getControlContext().addException(e);
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 	}
 
-	public Context invokeMethod(String selector, Context sc) throws ExertionException {
+	public Context invokeMethod(String selector, Context sc) throws RoutineException {
 		try {
 			Class[] argTypes = new Class[] { sc.getClass() };
 			Object[] args = new Object[] { sc };
@@ -1489,7 +1489,7 @@ public class ProviderDelegate {
 			return result;
 
 		} catch (Exception e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 	}
 
@@ -1889,11 +1889,11 @@ public class ProviderDelegate {
 		provider.fireEvent();
 	}
 
-	public boolean isValidTask(Routine servicetask) throws ExertionException, ContextException {
+	public boolean isValidTask(Routine servicetask) throws RoutineException, ContextException {
 
 		if (servicetask.getContext() == null) {
 			servicetask.getContext().reportException(
-				new ExertionException(getProviderName()
+				new RoutineException(getProviderName()
 					+ " no service context in task: "
 					+ servicetask.getClass().getName()));
 			return false;
@@ -1901,10 +1901,10 @@ public class ProviderDelegate {
 		Task task = (Task)servicetask;
 
 		// if (task.subject == null)
-		// throw new ExertionException("No subject provided with the task '" +
+		// throw new RoutineException("No subject provided with the task '" +
 		// task.getName() + "'");
 		// else if (!isAuthorized(task))
-		// throw new ExertionException("The subject provided with the task '" +
+		// throw new RoutineException("The subject provided with the task '" +
 		// task.getName() + "' not authorized to use the service '" +
 		// providerName + "'");
 
@@ -1912,7 +1912,7 @@ public class ProviderDelegate {
 		if (pn != null && !matchInterfaceOnly) {
 			if (!pn.equals(getProviderName())) {
 				servicetask.getContext().reportException(
-					new ExertionException(
+					new RoutineException(
 						"Not valid task for service provider: "
 							+ config.getProviderName() + " for:" + pn));
 				return false;
@@ -1922,12 +1922,12 @@ public class ProviderDelegate {
 		try {
 			st = ((NetSignature) task.getProcessSignature()).getServiceType();
 		} catch (SignatureException e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 
 		if (publishedServiceTypes == null) {
 			servicetask.getContext().reportException(
-				new ExertionException("No published interfaces defined by: "+ getProviderName()));
+				new RoutineException("No published interfaces defined by: "+ getProviderName()));
 			return false;
 		} else {
 			for (int i = 0; i < publishedServiceTypes.length; i++) {
@@ -1937,7 +1937,7 @@ public class ProviderDelegate {
 			}
 		}
 		servicetask.getContext().reportException(
-			new ExertionException("Not valid task for published service types: \n"
+			new RoutineException("Not valid task for published service types: \n"
 				+ Arrays.toString(publishedServiceTypes)
 				+ "\nwith Signature: \n"
 				+ servicetask.getProcessSignature()));

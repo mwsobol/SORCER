@@ -50,7 +50,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     }
 
     protected Routine execExertion(Routine ex, Arg... args) throws SignatureException,
-            ExertionException {
+            RoutineException {
         beforeExec(ex);
         // setValue subject before task goes out.
         // ex.setSubject(subject);
@@ -82,7 +82,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     }
 
     protected void afterExec(Routine ex, Routine result)
-            throws SignatureException, ExertionException, ContextException {
+            throws SignatureException, RoutineException, ContextException {
         ServiceRoutine ser = (ServiceRoutine) result;
 		((Transroutine)xrt).setMogramAt(result, ex.getIndex());
         if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
@@ -95,7 +95,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 				}
 				//notifyExertionExecution(ex, result);
 			} catch (ContextException e) {
-				throw new ExertionException(e);
+				throw new RoutineException(e);
 			}
         }
         afterExec(result);
@@ -110,7 +110,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         }
     }
 
-    protected Task execServiceTask(Task task, Arg... args) throws ExertionException {
+    protected Task execServiceTask(Task task, Arg... args) throws RoutineException {
         logger.info("Starting execServiceTask for: " + task.getName());
 		Task result = null;
         int maxTries = 6;
@@ -159,7 +159,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                     }
                     String msg = "Problem provisioning " + sig + " in task " + task.getName() + ": " +rootCause.getMessage();
                     logger.warn(msg);
-                    throw new ExertionException(msg, task);
+                    throw new RoutineException(msg, task);
                 }
             }*/
             if (service == null) {
@@ -170,7 +170,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                         + "Provider Interface: " + sig.getServiceType();
 
                 logger.info(msg);
-                throw new ExertionException(msg, task);
+                throw new RoutineException(msg, task);
             } else {
                 tried=0;
                 while (result==null && tried < maxTries) {
@@ -241,7 +241,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                 }
             } */
             task.reportException(re);
-            throw new ExertionException("Dispatcher failed for task, tried: " + tried + " : "
+            throw new RoutineException("Dispatcher failed for task, tried: " + tried + " : "
                     + xrt.getName(), re);
         }
         return result;
@@ -307,7 +307,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                     ? provider.getProviderName() + " " : "")
                     + "executed block: " +  block.getName() + " explorer: " + getClass().getName());
 			return out;
-		} catch (RemoteException | ExertionException | DispatcherException ex) {
+		} catch (RemoteException | RoutineException | DispatcherException ex) {
 			throw new MogramException(ex);
 		}
 	}

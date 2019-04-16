@@ -200,10 +200,10 @@ public class ControlFlowManager {
      * @see NetJob
      * @see NetTask
      * @see Conditional
-     * @throws ExertionException
+     * @throws RoutineException
      *             exception from other methods
      */
-    public Mogram process() throws ExertionException {
+    public Mogram process() throws RoutineException {
         logger.info("compute exertion: " + exertion.getName());
         try {
             Mogram result = null;
@@ -228,10 +228,10 @@ public class ControlFlowManager {
                 }
             }
             return result;
-        } catch (RuntimeException | ExertionException e) {
+        } catch (RuntimeException | RoutineException e) {
             throw e;
         } catch (Exception e) {
-            throw new ExertionException(e.getMessage(), e);
+            throw new RoutineException(e.getMessage(), e);
         }
     }
 
@@ -243,7 +243,7 @@ public class ControlFlowManager {
      * @return ServiceTask
      * @throws RemoteException
      *             exception from ExertionDelegate
-     * @throws ExertionException
+     * @throws RoutineException
      *             exception from ExertionDelegate
      * @throws SignatureException
      *             exception from ExertionDelegate
@@ -276,7 +276,7 @@ public class ControlFlowManager {
                 try {
                     concatenator = Accessor.get().getService(null, Concatenator.class);
                 } catch (Exception x) {
-                    throw new ExertionException("Could not find Concatenator", x);
+                    throw new RoutineException("Could not find Concatenator", x);
                 }
             }
             logger.info("Got Concatenator: " + concatenator);
@@ -293,7 +293,7 @@ public class ControlFlowManager {
      * @param xrt
      * 			the exertion to be processed
      * @throws RemoteException
-     * @throws ExertionException
+     * @throws RoutineException
      */
     public Mogram doRendezvousExertion(ServiceRoutine xrt) throws RemoteException, MogramException {
         try {
@@ -309,7 +309,7 @@ public class ControlFlowManager {
                         try {
                             spacerService = SpacerAccessor.getSpacer();
                         } catch (Exception x) {
-                            throw new ExertionException("Could not find Spacer", x);
+                            throw new RoutineException("Could not find Spacer", x);
                         }
                     }
                     logger.info("Got Spacer: " + spacerService);
@@ -330,7 +330,7 @@ public class ControlFlowManager {
                         try {
                             jobberService = JobberAccessor.getJobber();
                         } catch (AccessorException e) {
-                            throw new ExertionException("Could not find Jobber", e);
+                            throw new RoutineException("Could not find Jobber", e);
                         }
                     logger.info("Got Remote Jobber: " + jobber);
                     return jobberService.exert(xrt, null);
@@ -353,7 +353,7 @@ public class ControlFlowManager {
      *            Conditional multitype Routine
      * @return Routine
      * @throws SignatureException
-     * @throws ExertionException
+     * @throws RoutineException
      * @throws RemoteException
      */
     public Task doConditional(Routine exertion) throws RemoteException,
@@ -518,7 +518,7 @@ public class ControlFlowManager {
         task = task.doTask();
         if (task.getStatus() <= Exec.FAILED) {
             task.stopExecTime();
-            ExertionException ex = new ExertionException("Batch service task failed: "
+            RoutineException ex = new RoutineException("Batch service task failed: "
                     + task.getName());
             task.reportException(ex);
             task.setStatus(Exec.FAILED);
@@ -535,7 +535,7 @@ public class ControlFlowManager {
         }
         if (task.getStatus() <= Exec.FAILED) {
             task.stopExecTime();
-            ExertionException ex = new ExertionException("Batch service task failed: "
+            RoutineException ex = new RoutineException("Batch service task failed: "
                     + task.getName());
             task.reportException(ex);
             task.setStatus(Exec.FAILED);
@@ -547,20 +547,20 @@ public class ControlFlowManager {
         return task;
     }
 
-    private Context apdProcess(Task task) throws ExertionException, ContextException {
+    private Context apdProcess(Task task) throws RoutineException, ContextException {
         return processContinousely(task, task.getApdProcessSignatures());
     }
 
-    private Context preprocess(Task task) throws ExertionException, ContextException {
+    private Context preprocess(Task task) throws RoutineException, ContextException {
         return processContinousely(task, task.getPreprocessSignatures());
     }
 
-    private Context postprocess(Task task) throws ExertionException, ContextException {
+    private Context postprocess(Task task) throws RoutineException, ContextException {
         return processContinousely(task, task.getPostprocessSignatures());
     }
 
     public Context processContinousely(Task task, List<Signature> signatures)
-            throws ExertionException, ContextException {
+            throws RoutineException, ContextException {
         Signature.Type type = signatures.get(0).getType();
         Task t;
         Context shared = task.getContext();
@@ -583,7 +583,7 @@ public class ControlFlowManager {
                 shared = t.getContext();
                 if (t.getStatus() <= Exec.FAILED) {
                     task.setStatus(Exec.FAILED);
-                    ExertionException ne = new ExertionException(
+                    RoutineException ne = new RoutineException(
                             "Batch signature failed: " + signatures.get(i));
                     task.reportException(ne);
                     task.setContext(shared);

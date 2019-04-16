@@ -65,7 +65,7 @@ public class ObjectJob extends Job {
 			this.dataContext = (ServiceContext) context;
 	}
 	
-	public Job doJob(Transaction txn) throws ExertionException,
+	public Job doJob(Transaction txn) throws RoutineException,
 			SignatureException, RemoteException {
 		// return (Job) new ServiceJobber().execEnt(job, txn);
 		Job result = null;

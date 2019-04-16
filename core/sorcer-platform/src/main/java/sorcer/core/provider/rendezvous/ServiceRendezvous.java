@@ -42,13 +42,13 @@ public class ServiceRendezvous extends SystemServiceBean implements Rendezvous, 
 	}
 	
 	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-			throws TransactionException, ExertionException, RemoteException {
+			throws TransactionException, RoutineException, RemoteException {
 		Routine exertion = (Routine) mogram;
 		if (!isConfigured)
 			try {
 				configure();
 			} catch (ConfigurationException ex) {
-				throw new ExertionException(ex);
+				throw new RoutineException(ex);
 			}
 		
 		logger.info("*********************************************ServiceRendezvous.exert, exertion = " + exertion);
@@ -72,7 +72,7 @@ public class ServiceRendezvous extends SystemServiceBean implements Rendezvous, 
 					.getBean(Concatenator.class);
 			return concatenator.exert(exertion, txn, args);
 		}
-		throw new ExertionException("now rendevous service available for exertion of this fiType: " + exertion.getClass());
+		throw new RoutineException("now rendevous service available for exertion of this fiType: " + exertion.getClass());
 	}
 
 	@SuppressWarnings("unchecked")

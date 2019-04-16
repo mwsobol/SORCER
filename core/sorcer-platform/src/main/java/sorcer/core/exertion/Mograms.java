@@ -206,17 +206,17 @@ public class Mograms implements SorcerConstants {
 	}
 
 	public static ExertionEnvelop getEntryEnvelop(Routine ex)
-			throws ExertionException {
+			throws RoutineException {
 		if (ex == null)
 			return null;
 		else if (ex.getProcessSignature() != null)
-			throw new ExertionException("No Method For Routine e=" + ex);
+			throw new RoutineException("No Method For Routine e=" + ex);
 
 		ExertionEnvelop eenv = ExertionEnvelop.getTemplate();
 		try {
 			eenv.serviceType = ((NetSignature) ex.getProcessSignature()).getServiceType();
 		} catch (SignatureException e) {
-			throw new ExertionException(e);
+			throw new RoutineException(e);
 		}
 		eenv.providerName = ex.getProcessSignature().getProviderName().getName();
 		eenv.exertion = ex;

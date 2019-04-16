@@ -42,7 +42,7 @@ public class ServiceJobber extends SystemServiceBean implements Jobber {
 	}
 
 	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
-			throws TransactionException, ExertionException, RemoteException {
+			throws TransactionException, RoutineException, RemoteException {
 
             setServiceID(mogram);
             try {

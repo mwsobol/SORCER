@@ -59,7 +59,7 @@ public class ArithmeticServiceConsumer extends ServiceConsumer {
 	}
 
 	@Override
-	public void postprocess(String... args) throws ExertionException, ContextException {
+	public void postprocess(String... args) throws RoutineException, ContextException {
 		super.postprocess();
 		logger.info("<<<<<<<<<< f5 context: \n" + upcontext((Routine)mogram));
 	}

@@ -200,7 +200,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
         } catch (ContextException e) {
             throw new DispatcherException(
                     "Failed to create the exertion explorer for job: "+ task.getName(), e);
-        } catch (ExertionException e) {
+        } catch (RoutineException e) {
             throw new DispatcherException(
                     "Failed to create the exertion explorer for job: "+ task.getName(), e);
         }

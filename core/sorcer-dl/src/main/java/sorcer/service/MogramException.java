@@ -50,7 +50,7 @@ public class MogramException extends ServiceException {
     }
 
     /**
-     * Constructs a <code>ExertionException</code> with the specified detailed
+     * Constructs a <code>RoutineException</code> with the specified detailed
      * message and the relevant exertion.
      *
      * @param message
@@ -68,7 +68,7 @@ public class MogramException extends ServiceException {
     }
 
     /**
-     * Constructs a <code>ExertionException</code> with the specified detail
+     * Constructs a <code>RoutineException</code> with the specified detail
      * message and nested exception.
      *
      * @param message
