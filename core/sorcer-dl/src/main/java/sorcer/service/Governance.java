@@ -1,6 +1,6 @@
 /*
- * Copyright 2015 the original author or authors.
- * Copyright 2015 SorcerSoft.org.
+ * Copyright 2018 the original author or authors.
+ * Copyright 2018 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,4 +18,6 @@
 package sorcer.service;
 
 public interface Governance extends Mogram, FederatedRequest {
+
+    public Context govern(Context context, Arg... args) throws ServiceException;
 }

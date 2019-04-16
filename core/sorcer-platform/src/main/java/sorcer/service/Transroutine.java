@@ -20,6 +20,7 @@ package sorcer.service;
 import net.jini.id.Uuid;
 import sorcer.core.context.ControlContext;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -165,4 +166,14 @@ abstract public class Transroutine extends ServiceRoutine implements Governance 
 	
 	abstract public Context getComponentContext(String path) throws ContextException;
 
+	@Override
+	public Context govern(Context context, Arg... args) throws ServiceException {
+		try {
+		    getContext().substitute(context);
+			Routine out = exert(args);
+			return out.getContext();
+		} catch (RemoteException e) {
+			throw new ServiceException(e);
+		}
+	}
 }

@@ -3417,6 +3417,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
+	public void setContext(Context input) throws ContextException {
+		substitute(input);
+	}
+
+	@Override
 	public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws ExertionException, RemoteException {
 		Signature signature = null;
 		try {

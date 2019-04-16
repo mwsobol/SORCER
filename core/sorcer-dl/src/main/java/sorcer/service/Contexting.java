@@ -28,6 +28,21 @@ import java.rmi.RemoteException;
 public interface Contexting<T> extends Identifiable, FederatedRequest, Mogram {
 
 	/**
+	 * Returns the output context.
+	 *
+	 * @return the output context
+	 * @throws ContextException
+	*/
+	public Context getContext() throws ContextException;
+
+	/**
+	 * Sets the input context.
+	 *
+	 * @throws ContextException
+	 */
+	public void setContext(Context input) throws ContextException;
+
+	/**
 	 * Returns the value at a given path.
 	 * 
 	 * @param path

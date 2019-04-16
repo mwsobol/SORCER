@@ -438,7 +438,13 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Context getContext() throws ContextException {
-        return null;
+        return output;
+    }
+
+    @Override
+    public void setContext(Context input) throws ContextException {
+        this.input = input;
+
     }
 
     @Override
@@ -647,5 +653,10 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     @Override
     public void substitute(Arg... entries) throws SetterException, RemoteException {
 
+    }
+
+    @Override
+    public Context govern(Context context, Arg... args) throws ServiceException {
+        return (Context) execute(args);
     }
 }
