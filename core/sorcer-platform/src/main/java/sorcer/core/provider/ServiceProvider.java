@@ -97,7 +97,7 @@ import static sorcer.util.StringUtils.tName;
  * <p>
  * In the simplest case, the provider exports and registers its own (outer) proxy with
  * the primary methods {@code Service.execEnt(Arg[])} and service federation request
- * {@code Exerter.exert(Mogram, Transaction, Arg[])}. The functionality of an
+ * {@code Exertion.exert(Mogram, Transaction, Arg[])}. The functionality of an
  * outer proxy can be extended by its inner server functionality with its Remote
  * inner proxy. In this case, the outer proxies have to implement {@link sorcer.core.proxy.Outer}
  * interface and each outer proxy is registered with the inner proxy allocated

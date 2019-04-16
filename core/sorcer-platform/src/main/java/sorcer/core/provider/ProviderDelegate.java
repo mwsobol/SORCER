@@ -1321,7 +1321,7 @@ public class ProviderDelegate {
 			notifyException(task, "", re);
 			throw re;
 		} else {
-			Task result = (Task) ((Exerter)recipient).exert(task, null);
+			Task result = (Task) ((Exertion)recipient).exert(task, null);
 			if (result != null) {
 				visited.remove(serviceID);
 				return result;
@@ -1354,7 +1354,7 @@ public class ProviderDelegate {
 		}
 
 		Job outJob;
-		outJob = (Job) ((Exerter)jobber).exert(job, null);
+		outJob = (Job) ((Exertion)jobber).exert(job, null);
 		return outJob;
 	}
 

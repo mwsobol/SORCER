@@ -68,7 +68,7 @@ public class NetJobExertions implements SorcerConstants {
 		return job;
 	}
 
-	public static Exerter createJob() throws Exception {
+	public static Exertion createJob() throws Exception {
 		return createJob(Flow.SEQ, Access.PUSH);
 	}
 
@@ -273,8 +273,8 @@ public class NetJobExertions implements SorcerConstants {
 	public void arithmeticJobNetExerter() throws Exception {
 
 		// get the current eval of the exertlet
-		Exerter exerter = task("exert", sig("exert", Exerter.class, prvName("Arithmetic Exerter")));
-		Context out = exert(exerter, context());
+		Exertion exertion = task("exert", sig("exert", Exertion.class, prvName("Arithmetic Exerter")));
+		Context out = exert(exertion, context());
 		logger.info("out: " + out);
 		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 
@@ -284,8 +284,8 @@ public class NetJobExertions implements SorcerConstants {
 		Context invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
-		out = exert(exerter, invokeContext);
+		exertion = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
+		out = exert(exertion, invokeContext);
 		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));
 		assertEquals(value(out, "j1/t3/result/y"), 500.0);
 
@@ -295,8 +295,8 @@ public class NetJobExertions implements SorcerConstants {
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
-		out = exert(exerter, invokeContext);
+		exertion = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
+		out = exert(exertion, invokeContext);
 		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));
 		assertEquals(value(out, "j1/t3/result/y"), 1210.0);
 
@@ -306,8 +306,8 @@ public class NetJobExertions implements SorcerConstants {
 		invokeContext = context("invoke");
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
-		exerter = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
-		out = exert(exerter, invokeContext);
+		exertion = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
+		out = exert(exertion, invokeContext);
 		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));
 		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 	}

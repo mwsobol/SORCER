@@ -24,15 +24,15 @@ import sorcer.service.*;
 import java.rmi.RemoteException;
 
 /**
- * A functionality of executing a mogram (exerting collaboration of service providers)
- * with given parameters by service providers.
+ * An activity of executing a mogram (exerting its collaboration of service providers)
+ * with given parameters for service providers.
  *
- * In particular a SORCER service containers ServiceProvider, ServiceTasker, ServiceShell,
+ * In particular a SORCER service containers ServiceProvider, ServiceShell,
  * and system service beans of type SystemServiceBeans are exerters.
  *
  * @author Mike Sobolewski
  */
-public interface Exerter extends Service {
+public interface Exertion extends Service {
 	/**
 	 * A generic federated execution.
 	 *

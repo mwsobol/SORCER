@@ -29,7 +29,7 @@ public class ExertionSorterTest {
     private static void printExertions(List<Routine> exertions) {
         int i = 0;
         for (Routine xrt : exertions) {
-            System.out.println("Exerter: " + i + " " + xrt.getName());
+            System.out.println("Exertion: " + i + " " + xrt.getName());
             i++;
         }
     }

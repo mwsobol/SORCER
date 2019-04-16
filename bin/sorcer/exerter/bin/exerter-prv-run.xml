@@ -14,13 +14,13 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 	<echo message="WEBSTER: ${provider.webster.url}" />
 
 	<!-- set property values here -->
-	<property name="provider.bean" value="exerter" />
+	<property name="provider.bean" value="exertion" />
 	<property name="provider.class" value="sorcer.core.provider.ServiceProvider" />
 	<property name="webster" value="${provider.webster.url}" />
 
 	<!-- provider classpath -->
 	<path id="project.classpath">
-		<pathelement location="${sorcer.lib}/exerter-bean.jar" />
+		<pathelement location="${sorcer.lib}/exertion-bean.jar" />
 		<pathelement location="${sorcer.lib}/sorcer-platform.jar" />
 		<pathelement location="${jini.lib}/jsk-lib.jar" />
 		<pathelement location="${jini.lib}/jsk-platform.jar" />

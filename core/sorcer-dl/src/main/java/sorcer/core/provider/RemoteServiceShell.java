@@ -27,5 +27,5 @@ import java.rmi.Remote;
  *
  * @author Mike Sobolewski
  */
-public interface RemoteServiceShell extends Exerter, Client, Remote {
+public interface RemoteServiceShell extends Exertion, Client, Remote {
 }

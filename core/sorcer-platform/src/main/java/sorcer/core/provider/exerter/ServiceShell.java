@@ -74,7 +74,7 @@ import static sorcer.so.operator.eval;
 /**
  * @author Mike Sobolewski
  */
-public class ServiceShell implements Service, Activity, Exerter, Client, Callable, RemoteServiceShell {
+public class ServiceShell implements Service, Activity, Exertion, Client, Callable, RemoteServiceShell {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
 	private Service service;
 	private Mogram mogram;
@@ -82,7 +82,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 	private Transaction transaction;
 	private static MutualExclusion locker;
 	// a reference to a provider running this mogram
-	private Exerter provider;
+	private Exertion provider;
 	private static LoadingCache<Signature, Object> proxies;
 
 	public ServiceShell() {
@@ -137,7 +137,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Exerter#exert(sorcer.service.Routine, net.jini.core.transaction.Transaction, sorcer.service.Parameter[])
+	 * @see sorcer.service.Exertion#exert(sorcer.service.Routine, net.jini.core.transaction.Transaction, sorcer.service.Parameter[])
 	 */
 	@Override
 	public  <T extends Mogram> T exert(T mogram, Transaction transaction, Arg... entries) throws RoutineException {
@@ -149,7 +149,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 						&& ((ServiceSignature) mogram.getProcessSignature()).isShellRemote())
 						|| (exertion.getControlContext() != null
 						&& ((ControlContext) exertion.getControlContext()).isShellRemote())) {
-					Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
+					Exertion prv = (Exertion) Accessor.get().getService(sig(RemoteServiceShell.class));
 					result = prv.exert(mogram, transaction, entries);
 				} else {
 					mogram.substitute(entries);
@@ -885,7 +885,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 		} catch (SignatureException e) {
 			throw new MogramException(e);
 		}
-		return (T) ((Exerter)service).exert(mogram, txn);
+		return (T) ((Exertion)service).exert(mogram, txn);
 	}
 
 	public Object exec(Service service, Arg... args)

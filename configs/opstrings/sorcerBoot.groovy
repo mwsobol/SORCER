@@ -186,7 +186,7 @@ deployment(name: "Sorcer OS") {
 
         service(name: SorcerEnv.getActualName("Exerter")) {
             interfaces {
-                classes 'sorcer.core.provider.Exerter'
+                classes 'sorcer.core.provider.Exertion'
                 resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
             }
             implementation(class: 'sorcer.core.provider.ServiceTasker') {

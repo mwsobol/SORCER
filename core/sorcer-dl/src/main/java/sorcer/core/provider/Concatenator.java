@@ -26,5 +26,5 @@ import java.rmi.Remote;
  * 
  * @author Mike Sobolewski
  */
-public interface Concatenator extends Exerter, Remote {
+public interface Concatenator extends Exertion, Remote {
 }

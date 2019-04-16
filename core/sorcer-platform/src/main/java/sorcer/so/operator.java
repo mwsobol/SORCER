@@ -29,7 +29,7 @@ import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
-import sorcer.core.provider.Exerter;
+import sorcer.core.provider.Exertion;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
@@ -476,7 +476,7 @@ public class operator extends Operator {
         return new sorcer.core.provider.exerter.ServiceShell().exert(input, transaction, entries);
     }
 
-    public static <T extends Mogram> T exert(Exerter service, T mogram, Arg... entries)
+    public static <T extends Mogram> T exert(Exertion service, T mogram, Arg... entries)
             throws TransactionException, MogramException, RemoteException {
         return service.exert(mogram, null, entries);
     }

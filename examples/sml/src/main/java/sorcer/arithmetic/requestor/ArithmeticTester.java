@@ -6,7 +6,7 @@ import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.RemoteAdder;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.co.operator;
-import sorcer.core.provider.Exerter;
+import sorcer.core.provider.Exertion;
 import sorcer.core.requestor.SorcerRequestor;
 import sorcer.service.*;
 import sorcer.service.Strategy.*;
@@ -357,7 +357,7 @@ private Routine f1SEQpull() throws Exception {
 		
 		Mogram out = null;
 		long start = System.currentTimeMillis();
-		Exerter exerter = Accessor.get().getService(null, Exerter.class);
+		Exertion exerter = Accessor.get().getService(null, Exertion.class);
 		logger.info("got exerter: " + exerter);
 
 		out = exerter.exert(f5, null);
