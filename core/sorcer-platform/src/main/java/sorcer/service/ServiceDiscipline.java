@@ -59,7 +59,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     protected Service outGovernance;
 
     // the executed dispatcher
-    protected Mogram result;
+    protected Routine outDispatcher;
 
     protected Task precondition;
 
@@ -134,8 +134,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public Mogram getDispatcher() {
-        return (Mogram) dispatchMultiFi.getSelect();
+    public Routine getDispatcher() {
+        return (Routine) dispatchMultiFi.getSelect();
     }
 
     @Override
@@ -158,7 +158,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Context getOutput(Arg... args) throws ContextException {
-        if (result == null) {
+        if (outDispatcher == null) {
             try {
                 execute(args);
             } catch (ServiceException e) {
@@ -167,17 +167,17 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         }
         Context out = null;
         if (outConnector != null) {
-            if (result instanceof Context) {
-                out = ((ServiceContext) result).updateContextWith(outConnector);
-            } else if (result instanceof Mogram) {
+            if (outDispatcher instanceof Context) {
+                out = ((ServiceContext) outDispatcher).updateContextWith(outConnector);
+            } else if (outDispatcher instanceof Mogram) {
                 if (outConnector != null)
-                    out = ((ServiceContext) result.getContext()).updateContextWith(outConnector);
+                    out = ((ServiceContext) outDispatcher.getContext()).updateContextWith(outConnector);
             }
         } else {
-            if (result instanceof Context) {
-                out = (Context) result;
-            } else if (result instanceof Mogram) {
-                out = result.getContext();
+            if (outDispatcher instanceof Context) {
+                out = (Context) outDispatcher;
+            } else if (outDispatcher instanceof Mogram) {
+                out = outDispatcher.getContext();
             }
         }
         if (output == null) {
@@ -189,8 +189,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         return output;
     }
 
-    public Mogram getOutDispatcher() {
-        return result;
+    public Routine getOutDispatcher() {
+        return outDispatcher;
     }
 
     @Override
@@ -224,7 +224,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             }
             outGovernance = getGovernance();
             xrt.dispatch(outGovernance);
-            result = xrt.exert();
+            outDispatcher = xrt.exert();
 
             return getOutput();
         } catch (RemoteException e) {
@@ -460,7 +460,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     @Override
     public Mogram clear() throws MogramException {
         outGovernance = null;
-        result = null;
+        outDispatcher = null;
         output = null;
         return this;
     }

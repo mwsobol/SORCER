@@ -48,9 +48,9 @@ public interface Discipline extends Service, Contexting<Object>, Governance {
      * Returns a dispatcher to govern this discipline
      *
      * @return a dispatcher of this discipline
-     * @throws MogramException
+     * @throws RoutineException
      */
-    public Mogram getDispatcher() throws MogramException;
+    public Routine getDispatcher() throws RoutineException;
 
     /**
      * Returns an executed dispatcherof this discipline
@@ -58,7 +58,7 @@ public interface Discipline extends Service, Contexting<Object>, Governance {
      * @return an executed dispatcher of this discipline
      * @throws RoutineException
      */
-    public Mogram getOutDispatcher();
+    public Routine getOutDispatcher();
 
     /**
      * Returns a service governance multifidelity

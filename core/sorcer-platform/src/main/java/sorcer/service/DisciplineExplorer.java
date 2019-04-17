@@ -50,7 +50,7 @@ public class DisciplineExplorer implements Service, Exploration {
                 }
             }
             xrt.dispatch(transdiscipline.getOutGovernance());
-            transdiscipline.result = xrt.exert();
+            transdiscipline.outDispatcher = xrt.exert();
             execDependencies(transdiscipline.getName(), args);
             return transdiscipline.getOutput();
         } catch (RemoteException e) {
