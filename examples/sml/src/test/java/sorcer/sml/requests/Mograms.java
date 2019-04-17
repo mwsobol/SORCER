@@ -38,17 +38,17 @@ public class Mograms {
     public void evaluateModel() throws Exception  {
 
         Model context = model(val("x1", 20.0), val("x2", 80.0),
-                pro("result/y", invoker("x1 + x2", args("x1", "x2"))));
+                pro("outDispatcher/y", invoker("x1 + x2", args("x1", "x2"))));
 
         // declare response paths
-        responseUp(context, "result/y");
+        responseUp(context, "outDispatcher/y");
 
         assertTrue(get(context, "x1").equals(20.0));
         assertTrue(get(context, "x2").equals(80.0));
 
         Context out = response(context);
         assertEquals(1, size(out));
-        assertTrue(get(out, "result/y").equals(100.0));
+        assertTrue(get(out, "outDispatcher/y").equals(100.0));
 
     }
 
@@ -56,7 +56,7 @@ public class Mograms {
     public void modelInsOutsRsp() throws Exception  {
 
         Model context = model(inVal("x1", 20.0), inVal("x2", 80.0),
-                outVal("result/y", invoker("x1 + x2", args("x1", "x2"))));
+                outVal("outDispatcher/y", invoker("x1 + x2", args("x1", "x2"))));
 
         Context inputs = inputs(context);
         logger.info("inputs : " + inputs(context));
@@ -66,10 +66,10 @@ public class Mograms {
         logger.info("outputs : " + outputs(context));
 
         // declare response paths
-        responseUp(context, "result/y");
+        responseUp(context, "outDispatcher/y");
         Context out = eval(context);
         assertEquals(1, size(out));
-        assertTrue(get(out, "result/y").equals(100.0));
+        assertTrue(get(out, "outDispatcher/y").equals(100.0));
 
         // more response paths
         responseUp(context, "x1");
@@ -84,17 +84,17 @@ public class Mograms {
 
         Model model = model(sig("add", AdderImpl.class),
                 inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                outVal("result/y"));
+                outVal("outDispatcher/y"));
 
         Model out = exert(model);
         assertEquals(6, size(out));
 
-        logger.info("out : " + out);
-        logger.info("out @ arg/x1: " + get(out, "arg/x1"));
-        logger.info("out @ arg/x2: " + eval(out, "arg/x2"));
-        logger.info("out @ result/y: " + eval(out, "result/y"));
+        logger.info("outGovernance : " + out);
+        logger.info("outGovernance @ arg/x1: " + get(out, "arg/x1"));
+        logger.info("outGovernance @ arg/x2: " + eval(out, "arg/x2"));
+        logger.info("outGovernance @ outDispatcher/y: " + eval(out, "outDispatcher/y"));
 
-        assertEquals(100.0, exec(out, "result/y"));
+        assertEquals(100.0, exec(out, "outDispatcher/y"));
 
     }
 
@@ -104,12 +104,12 @@ public class Mograms {
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/out",
+                ent(sig("add", AdderImpl.class, result("add/outGovernance",
                         inPaths("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class, result("model/response",
-                        inPaths("multiply/out", "add/out")))),
+                        inPaths("multiply/outGovernance", "add/outGovernance")))),
                 aka("y1", "multiply/x1"),
                 response("subtract"));
 
@@ -126,16 +126,16 @@ public class Mograms {
 
         Mogram mogram = mog(sig("add", AdderImpl.class),
                             cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                            outVal("result/y")));
+                            outVal("outDispatcher/y")));
 
         Mogram out = exert(mogram);
         Context cxt = context(out);
-        logger.info("out context: " + cxt);
+        logger.info("outGovernance context: " + cxt);
         logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
         logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
-        logger.info("context @ result/y: " + value(cxt, "result/y"));
+        logger.info("context @ outDispatcher/y: " + value(cxt, "outDispatcher/y"));
 
-        assertEquals(100.0, value(cxt, "result/y"));
+        assertEquals(100.0, value(cxt, "outDispatcher/y"));
 
     }
 
@@ -144,16 +144,16 @@ public class Mograms {
 
         Mogram t5 = task("t5", sig("add", AdderImpl.class),
                 cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                        outVal("result/y")));
+                        outVal("outDispatcher/y")));
 
         Mogram out = exert(t5);
         Context cxt = context(out);
-        logger.info("out context: " + cxt);
+        logger.info("outGovernance context: " + cxt);
         logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
         logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
-        logger.info("context @ result/y: " + value(cxt, "result/y"));
+        logger.info("context @ outDispatcher/y: " + value(cxt, "outDispatcher/y"));
 
-        assertEquals(100.0, value(cxt, "result/y"));
+        assertEquals(100.0, value(cxt, "outDispatcher/y"));
 
     }
 
@@ -163,14 +163,14 @@ public class Mograms {
 
         Service t5 = task("t5", sig("add", AdderImpl.class),
                 cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                        result("result/y")));
+                        result("outDispatcher/y")));
 
-        // get a single context argument at the result path
+        // get a single context argument at the outDispatcher path
         assertEquals(100.0, exec(t5));
 
-        // get the subcontext output from the the result path
-        assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
-                exec(t5, outPaths("arg/x1", "result/y"))));
+        // get the subcontext output from the the outDispatcher path
+        assertTrue(context(ent("arg/x1", 20.0), ent("outDispatcher/y", 100.0)).equals(
+                exec(t5, outPaths("arg/x1", "outDispatcher/y"))));
     }
 
 
@@ -178,25 +178,25 @@ public class Mograms {
     public void exertJob() throws Exception {
 
         Mogram t3 = task("t3", sig("subtract", SubtractorImpl.class),
-                cxt("subtract", inVal("arg/x1"), inVal("arg/x2"), outVal("result/y")));
+                cxt("subtract", inVal("arg/x1"), inVal("arg/x2"), outVal("outDispatcher/y")));
 
         Mogram t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 // cxt("multiply", in("super/arg/x1"), in("arg/x2", 50.0),
                 cxt("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-                        outVal("result/y")));
+                        outVal("outDispatcher/y")));
 
         Mogram t5 = task("t5", sig("add", AdderImpl.class),
                 cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                        outVal("result/y")));
+                        outVal("outDispatcher/y")));
 
         Mogram job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
                 job("j1", sig(ServiceJobber.class),
                         cxt(inVal("arg/x1", 10.0),
-                                result("job/result", outPaths("j1/t3/result/y"))),
+                                result("job/outDispatcher", outPaths("j1/t3/outDispatcher/y"))),
                         job("j2", sig(ServiceJobber.class), t4, t5),
                         t3,
-                        pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-                        pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+                        pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+                        pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
 
         logger.info("srv job context: " + upcontext(job));
         logger.info("srv j1/t3 context: " + context(job, "j1/t3"));
@@ -215,32 +215,32 @@ public class Mograms {
     public void evaluateJob() throws Exception {
 
         Mogram t3 = task("t3", sig("subtract", SubtractorImpl.class),
-                cxt("subtract", inVal("arg/x1"), inVal("arg/x2"), result("result/y")));
+                cxt("subtract", inVal("arg/x1"), inVal("arg/x2"), result("outDispatcher/y")));
 
         Mogram t4 = task("t4", sig("multiply", MultiplierImpl.class),
-                cxt("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0), result("result/y")));
+                cxt("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0), result("outDispatcher/y")));
 
         Mogram t5 = task("t5", sig("add", AdderImpl.class),
-                cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
+                cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
 
         //TODO: CHECK Access.PULL doesn't work with ServiceJobber!!!
         Mogram job = //j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
-                job("j1", sig(ServiceJobber.class), result("job/result", outPaths("j1/t3/result/y")),
+                job("j1", sig(ServiceJobber.class), result("job/outDispatcher", outPaths("j1/t3/outDispatcher/y")),
                         job("j2", sig(ServiceJobber.class), t4, t5),
 //                            strategy(Strategy.Flow.PAR, Strategy.Access.PUSH)),
                         t3,
-                        pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-                        pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+                        pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+                        pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
 
-        // get the result eval
+        // get the outDispatcher eval
         assertEquals(400.0, exec(job));
 
         // get the subcontext output from the exertion
-        assertTrue(context(ent("j1/j2/t4/result/y", 500.0),
-                ent("j1/j2/t5/result/y", 100.0),
-                ent("j1/t3/result/y", 400.0)).equals(
-                exec(job, result("result/z",
-                        outPaths("j1/j2/t4/result/y", "j1/j2/t5/result/y", "j1/t3/result/y")))));
+        assertTrue(context(ent("j1/j2/t4/outDispatcher/y", 500.0),
+                ent("j1/j2/t5/outDispatcher/y", 100.0),
+                ent("j1/t3/outDispatcher/y", 400.0)).equals(
+                exec(job, result("outDispatcher/z",
+                        outPaths("j1/j2/t4/outDispatcher/y", "j1/j2/t5/outDispatcher/y", "j1/t3/outDispatcher/y")))));
 
 
     }

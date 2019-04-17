@@ -48,8 +48,8 @@ public class NshTest {
         assertTrue(res.contains(Sorcer.getLookupGroups()[0]));
         assertFalse(res.contains(EXCEPTION));
         if (!result.getErr().isEmpty())
-            logger.info("discoCmdTest result ERROR: " + result.getErr());
-        //assertFalse(result.getErr().contains(EXCEPTION));
+            logger.info("discoCmdTest outDispatcher ERROR: " + result.getErr());
+        //assertFalse(outDispatcher.getErr().contains(EXCEPTION));
     }
 
     @Test
@@ -67,8 +67,8 @@ public class NshTest {
         //assertTrue(res.contains(Sorcer.getLookupGroups()[0]));
         assertFalse(res.contains(EXCEPTION));
         if (!result.getErr().isEmpty())
-            logger.info("lupCmdTest result ERROR: " + result.getErr());
-        //assertFalse(result.getErr().contains(EXCEPTION));
+            logger.info("lupCmdTest outDispatcher ERROR: " + result.getErr());
+        //assertFalse(outDispatcher.getErr().contains(EXCEPTION));
     }
 
     @Test
@@ -82,8 +82,8 @@ public class NshTest {
         assertTrue(res.contains(Sorcer.getActualSpaceName()));
         assertFalse(res.contains(EXCEPTION));
         if (!result.getErr().isEmpty())
-            logger.info("spCmdTest result ERROR: " + result.getErr());
-        //assertFalse(result.getErr().contains(EXCEPTION));
+            logger.info("spCmdTest outDispatcher ERROR: " + result.getErr());
+        //assertFalse(outDispatcher.getErr().contains(EXCEPTION));
     }
 
     @Test
@@ -97,8 +97,8 @@ public class NshTest {
         assertTrue(res.contains(Sorcer.getActualDatabaseStorerName()));
         assertFalse(res.contains(EXCEPTION));
         if (!result.getErr().isEmpty())
-            logger.info("dsCmdTest result ERROR: " + result.getErr());
-        //assertFalse(result.getErr().contains(EXCEPTION));
+            logger.info("dsCmdTest outDispatcher ERROR: " + result.getErr());
+        //assertFalse(outDispatcher.getErr().contains(EXCEPTION));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class NshTest {
 //        assertTrue(res.contains(Sorcer.getActualDatabaseStorerName()));
 //        assertTrue(res.contains(Sorcer.getLookupGroups()[0]));
 //        assertFalse(res.contains(EXCEPTION));
-//        assertFalse(result.getErr().contains(EXCEPTION));
+//        assertFalse(outDispatcher.getErr().contains(EXCEPTION));
     }
 
     //@Category(TestsRequiringRio.class)

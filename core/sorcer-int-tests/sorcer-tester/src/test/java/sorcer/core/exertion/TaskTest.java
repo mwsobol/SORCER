@@ -36,7 +36,7 @@ public class TaskTest {
 		Routine task = task("add",
 				sig("add"),
 				context(inVal("arg/x1"), inVal("arg/x2"),
-						result("result/y")));
+						result("outDispatcher/y")));
 		
 		logger.info("get task: " + task);
 		logger.info("get context: " + context(task));
@@ -56,7 +56,7 @@ public class TaskTest {
 		Task task = task("add",
 				sig("add", AdderImpl.class),
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 		
 		// EXERTING
 		task = exert(task);
@@ -67,7 +67,7 @@ public class TaskTest {
 		print(trace(task));
 		
 		// EVALUATING
-		set(task, "result/y", Context.none);
+		set(task, "outDispatcher/y", Context.none);
 		print(task);
 		
 		double val = (Double) exec(task);
@@ -83,7 +83,7 @@ public class TaskTest {
 		Task task = task("add",
 				sig("add", AdderImpl.class),
 				context(CustomContext.class, inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		// EXERTING
 		task = exert(task);
@@ -100,7 +100,7 @@ public class TaskTest {
 				context(
 						types( double[].class),
 						args(new double[]{10.0, 50.0}),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		//logger.info("t4: " + eval(t4));
 		assertTrue(exec(t4).equals(500.0));
@@ -111,10 +111,10 @@ public class TaskTest {
 		ServiceRoutine.debug = true;
 
 		Task task = task("add",
-				sFi("net", sig("add", Adder.class)),
-				sFi("object", sig("add", AdderImpl.class)),
+				sigFi("net", sig("add", Adder.class)),
+				sigFi("object", sig("add", AdderImpl.class)),
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		logger.info("task metaFi: " + fi(task));
 		assertTrue(fis(task).size() == 2);
@@ -132,10 +132,10 @@ public class TaskTest {
 		ServiceRoutine.debug = true;
 
 		Task task = task("add",
-				sFi("net", sig("add", Adder.class)),
-				sFi("object", sig("add", AdderImpl.class)),
+				sigFi("net", sig("add", Adder.class)),
+				sigFi("object", sig("add", AdderImpl.class)),
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		logger.info("task metaFi: " + fi(task));
 		assertTrue(fis(task).size() == 2);
@@ -154,7 +154,7 @@ public class TaskTest {
 			sig("add", Adder.class,
 					deploy(configuration("bin/sorcer/test/arithmetic/configs/AdderProviderConfig.groovy"))),
 				context("add", inVal("arg/x3", 20.0d), inVal("arg/x4", 80.0d),
-							outVal("result/y")),
+							outVal("outDispatcher/y")),
 				strategy(Provision.YES));
 		logger.info("t5 is provisionable: " + t5.isProvisionable());
 		assertTrue(t5.isProvisionable());

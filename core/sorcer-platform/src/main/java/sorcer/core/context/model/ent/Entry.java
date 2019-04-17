@@ -200,9 +200,9 @@ public class Entry<V> extends MultiFiSlot<String, V>
             } else if (val instanceof Service) {
                 out = (V) ((Service)val).execute(args);
             } else {
-                // impl is just the out
-                // it is recommended to set out and impl to the same valuate
-                // when the impl is implementation of the out valuate
+                // impl is just the outGovernance
+                // it is recommended to set outGovernance and impl to the same valuate
+                // when the impl is implementation of the outGovernance valuate
                 if (out == null && impl != null) {
                     out = (V) impl;
                 }

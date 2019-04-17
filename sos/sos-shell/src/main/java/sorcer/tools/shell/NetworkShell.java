@@ -226,7 +226,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         //Ansi.setDetector(new AnsiDetector());
 		URL.setURLStreamHandlerFactory(new SdbURLStreamHandlerFactory());
 		String curToken = null;
-//		System.out.println("nsh main args: " + Arrays.toString(argv));
+//		System.outGovernance.println("nsh main args: " + Arrays.toString(argv));
 		if (argv.length > 0) {
 			if ((argv.length == 1 && argv[0].startsWith("--"))
 						|| (argv.length == 2 && (argv[0].equals("-e"))
@@ -260,7 +260,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 			instance.loadExternalCommands();
 			if (!instance.interactive) {
-				// System.out.println("main appMap: " + appMap);
+				// System.outGovernance.println("main appMap: " + appMap);
 				execNoninteractiveCommand(argv);
 				shellOutput.println();
 				System.exit(0);
@@ -280,7 +280,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			System.exit(1);
 		}
 		nshUrl = getWebsterUrl();
-		//System.out.println("main request: " + request);
+		//System.outGovernance.println("main request: " + request);
 		//ClassLoaderUtil.displayContextClassLoaderTree();    	
 
 		if (request==null || request.equals("q")) {
@@ -392,13 +392,13 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		CmdResult result = null;
 		if (appPath.endsWith(".xml")) {
 			result = ExecUtils.execCommand("ant -f " + appPath);
-			shellOutput.println("cmd result out: " + result.getOut());
+			shellOutput.println("cmd outDispatcher outGovernance: " + result.getOut());
 		} else {
 			result = ExecUtils.execCommand(appPath);
-			shellOutput.println("cmd result out: " + result.getOut());
+			shellOutput.println("cmd outDispatcher outGovernance: " + result.getOut());
 		}
 		if (result.getErr() != null && result.getErr().length() > 0)
-			shellOutput.println("cmd result err: " + result.getErr());
+			shellOutput.println("cmd outDispatcher err: " + result.getErr());
 		shellOutput.println("cmd exit eval: " + result.getExitValue());
 
 		if (result.getExitValue() != 0)
@@ -500,7 +500,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
         } catch (IOException io) {
             shellOutput.println(io.getMessage());
             System.err.println(io.getMessage());
-            // Do nothing since an error message was already printed out by th huntForTheScriptFile method
+            // Do nothing since an error message was already printed outGovernance by th huntForTheScriptFile method
         }
         System.err.println("----------------------------------------------------");
     }
@@ -636,7 +636,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			if (subCmds.length > 1) {
 				for (String subCmd : subCmds) {
 					commandTable.put(subCmd, cmdInstance);
-					// System.out.println("subCmd " + subCmd);
+					// System.outGovernance.println("subCmd " + subCmd);
 				}
 			}
 		}
@@ -660,7 +660,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 	public void addToCommandTable(String cmd, Class<? extends ShellCmd> inCls) {
 		try {
-			// System.out.println("creating command's instance - "
+			// System.outGovernance.println("creating command's instance - "
 			// + inCls.getName() + " for " + cmd);
 			ShellCmd cmdInstance = inCls.newInstance();
 			addToCommandTable(cmd, cmdInstance);
@@ -1227,9 +1227,9 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 				instance.webster = new Webster(port, realRoots,
 						instance.hostAddress, true);
 
-				//System.out.println("webster: " + instance.hostAddress + ":"
+				//System.outGovernance.println("webster: " + instance.hostAddress + ":"
 						//+ port);
-				//System.out.println("webster roots: " + realRoots);
+				//System.outGovernance.println("webster roots: " + realRoots);
 			} catch (Exception e) {
 				e.printStackTrace();
 				out.println("Problem creating HTTP server, " + "Exception :"
@@ -1334,7 +1334,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 
 		final LinkedList<String> commandArgs = new LinkedList<String>();
 		commandArgs.addAll(Arrays.asList(args));
-		// System.out.println("initShell args: " + Arrays.toString(args));
+		// System.outGovernance.println("initShell args: " + Arrays.toString(args));
 		// default initialization file
 		String nshConfigDir = Sorcer.getHome() + File.separator
 				+ "bin" + File.separator + "shell" + File.separator + "configs";
@@ -1352,7 +1352,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 				commandArgs.removeFirst();
 			}
 		}
-		// System.out.println("initShell configFilename: " + configFilename);
+		// System.outGovernance.println("initShell configFilename: " + configFilename);
 
 		File configf = new File(configFilename);
 		if (!configf.exists()) {

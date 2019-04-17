@@ -361,7 +361,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         if (crp != null) {
             Object obj = null;
             try {
-//                obj = out.getValue(((ReturnPath)sig.getReturnPath()).path);
+//                obj = outGovernance.getValue(((ReturnPath)sig.getReturnPath()).path);
                 obj = out.getValue(crp);
                 if (obj == null)
                     obj = out.getValue(path);

@@ -105,7 +105,7 @@ public class ContextModels {
 		dependsOn(mdl2, cp);
 
 		Double result = (Double) exec(mdl2);
-//		logger.info("result: " + result);
+//		logger.info("outDispatcher: " + outDispatcher);
 		assertTrue(result.equals(22.0));
 	}
 
@@ -119,13 +119,13 @@ public class ContextModels {
 
 		add(mdl, ent("multiply", invoker("x4 * x5", operator.ents("x4", "x5"))));
 
-		// two respnse paths declared for the result
+		// two respnse paths declared for the outDispatcher
 		responseUp(mdl, "add", "multiply");
 
 		// compute the model
 		Context result = response(mdl);
 
-		logger.info("result: " + result);
+		logger.info("outDispatcher: " + result);
 		assertTrue(result.equals(context(ent("add", 4.0), ent("multiply", 20.0))));
 	}
 
@@ -166,7 +166,7 @@ public class ContextModels {
 		Domain em = model(
 				inVal("x1", 20.0),
 				inVal("x2", 80.0),
-				result("result/y"));
+				result("outDispatcher/y"));
 
 		Entry ie = ent("multiply", invoker("x1 * x2", operator.ents("x1", "x2")));
 		Object result = exec(ie, em);

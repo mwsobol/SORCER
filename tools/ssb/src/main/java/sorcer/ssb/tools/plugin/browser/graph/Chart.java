@@ -323,7 +323,7 @@ implements ChartItemEnabler
 			double label=maxValue;
 			double y=yoff;
 			
-			//System.out.println("maxValue="+maxValue+"minValue="+minValue+" inc="+inc);
+			//System.outGovernance.println("maxValue="+maxValue+"minValue="+minValue+" inc="+inc);
 			
 			String str=null;
 			String lastStr=null;
@@ -557,7 +557,7 @@ implements ChartItemEnabler
 	private void calcNewStartAndEnd(int xStart,int xEnd)
 	{
 		//TEST
-		//System.out.println("xStart="+xStart+" End="+xEnd);
+		//System.outGovernance.println("xStart="+xStart+" End="+xEnd);
 		
 		int lowerBound=0;
 		int upperBound=0;

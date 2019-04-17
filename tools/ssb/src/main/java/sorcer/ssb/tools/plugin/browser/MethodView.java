@@ -131,7 +131,7 @@ class MethodView extends JPanel implements ActionListener {
 			Object result = _method.invoke(_proxy, params);
 			// special filters for handling known cases such as JoinAdmin
 			// could be exended to load additional filters from properties file
-			// result=MethodResultFilter.apply(_method,result);
+			// outDispatcher=MethodResultFilter.apply(_method,outDispatcher);
 
 			if (result != null) {
 				Class resClazz = result.getClass();

@@ -34,7 +34,7 @@ public class ExecUtils {
 	 * EOF. Example:
 	 * 
 	 * <pre>
-	 * System.out.println(ExecUtils.execCommand(&quot;/bin/ls&quot;).getOut());
+	 * System.outGovernance.println(ExecUtils.execCommand(&quot;/bin/ls&quot;).getOut());
 	 * </pre>
 	 * 
 	 * @param cmd
@@ -72,7 +72,7 @@ public class ExecUtils {
 	 * 
 	 * <pre>
 	 * String[] cmd = { &quot;/bin/ls&quot;, &quot;-lah&quot; };
-	 * System.out.println(ExecUtils.execCommand(cmd).getOut());
+	 * System.outGovernance.println(ExecUtils.execCommand(cmd).getOut());
 	 * </pre>
 	 * 
 	 * @param cmdarray
@@ -108,7 +108,7 @@ public class ExecUtils {
 	 * 
 	 * <pre>
 	 * Process p = runtime.execEnt(&quot;/bin/ls&quot;);
-	 * System.out.println(ExecUtils.execCommand(p).getOut());
+	 * System.outGovernance.println(ExecUtils.execCommand(p).getOut());
 	 * </pre>
 	 * 
 	 * @param process
@@ -131,7 +131,7 @@ public class ExecUtils {
 	 * 
 	 * <pre>
 	 * Process p = runtime.execEnt(&quot;/bin/ls&quot;);
-	 * System.out.println(ExecUtils.execCommand(p).getOut());
+	 * System.outGovernance.println(ExecUtils.execCommand(p).getOut());
 	 * </pre>
 	 * 
 	 * @param process
@@ -193,7 +193,7 @@ public class ExecUtils {
 		if (stdout != null) {
 			stdout.throwIfHadException();
 			out = new String(stdout.getResult());
-            logger.debug("out: " + out);
+            logger.debug("outGovernance: " + out);
         }
 		stderr.throwIfHadException();
 		String err = new String(stderr.getResult());
@@ -284,7 +284,7 @@ public class ExecUtils {
 	}
 
 	/**
-	 * Represents the result of a native command. Consists of the compute exit
+	 * Represents the outDispatcher of a native command. Consists of the compute exit
 	 * eval together with stdout and stderr dumped to strings.
 	 * 
 	 * @author Dawid Kurzyniec
@@ -315,7 +315,7 @@ public class ExecUtils {
 		
 		@Override
 		public String toString() {
-			StringBuilder sb = new StringBuilder("Cmd result [out:\n");
+			StringBuilder sb = new StringBuilder("Cmd outDispatcher [outGovernance:\n");
 			sb.append(out).append("\nerr: ").append(err)
 					.append("\nexitValue: ").append(exitValue).append("]");
 			return sb.toString();

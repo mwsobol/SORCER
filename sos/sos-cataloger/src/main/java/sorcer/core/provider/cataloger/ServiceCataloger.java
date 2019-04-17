@@ -108,7 +108,7 @@ import java.util.concurrent.ConcurrentMap;
  * 
  * <li> <code>getMethodContext(providerName, methodName))</code> returns the
  * template context with which the provider is registered. This template context
- * is pulled out of the service attribute (Entry): {@link SorcerServiceInfo}.
+ * is pulled outGovernance of the service attribute (Entry): {@link SorcerServiceInfo}.
  * </ol>
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })

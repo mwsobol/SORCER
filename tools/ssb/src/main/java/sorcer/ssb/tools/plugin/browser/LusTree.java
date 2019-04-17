@@ -91,8 +91,8 @@ public class LusTree {
 		_servicePreparer = pp;
 		_plugin = plugin;
 		/*
-		 * System.out.println("_name filters"); for(int i=0;i<names.length;i++){
-		 * System.out.println(names[i]); }
+		 * System.outGovernance.println("_name filters"); for(int i=0;i<names.length;i++){
+		 * System.outGovernance.println(names[i]); }
 		 */
 		// for now
 		// _exporter=new JrmpExporter();
@@ -212,11 +212,11 @@ public class LusTree {
 				String iName = iClazz.getName();
 				for (int j = 0; j < inf.length; j++) {
 
-					// System.out.println("Checking "+iName+" with
+					// System.outGovernance.println("Checking "+iName+" with
 					// "+_interfaceFilters[j]);
 
 					if (iName.equals(inf[j])) {
-						// System.out.println("Matched");
+						// System.outGovernance.println("Matched");
 						return true;
 					}
 				}
@@ -512,16 +512,16 @@ public class LusTree {
 
 	private void removeFromTree(ServiceID sid) {
 		int nServices = _root.getChildCount();
-		// System.out.println("removeFromTree() checking "+nServices+"
+		// System.outGovernance.println("removeFromTree() checking "+nServices+"
 		// services");
 
 		for (int i = 0; i < nServices; i++) {
-			// System.out.println("Checking "+i);
+			// System.outGovernance.println("Checking "+i);
 
 			DefaultMutableTreeNode service = (DefaultMutableTreeNode) _root
 					.getChildAt(i);
 			ServiceNode sNode = (ServiceNode) service.getUserObject();
-			// System.out.println("Checking "+sNode);
+			// System.outGovernance.println("Checking "+sNode);
 			if (sNode.sameServiceID(sid)) {
 				DefaultTreeModel model = (DefaultTreeModel) _tree.getModel();
 				model.removeNodeFromParent(service);

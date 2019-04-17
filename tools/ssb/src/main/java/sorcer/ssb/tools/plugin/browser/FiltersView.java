@@ -74,7 +74,7 @@ public class FiltersView extends JPanel{
 		ArrayList filterClasses=_reg.getFilters();
 		int n=filterClasses.size();
 		for(int i=0;i<n;i++){
-			//System.out.println("----- "+filterClasses.get(i));
+			//System.outGovernance.println("----- "+filterClasses.get(i));
 			SSBrowserFilter bf=(SSBrowserFilter)filterClasses.get(i);
 			model.addElement(bf.getDisplayName());
 		}
@@ -91,7 +91,7 @@ public class FiltersView extends JPanel{
 		
 		//FNAME=path+FNAME;
 		
-		//System.out.println("Filter store="+FNAME);
+		//System.outGovernance.println("Filter store="+FNAME);
 		
 		}catch(Exception ex){
 		

@@ -203,7 +203,7 @@ public class SrvModelAutoDeps {
     }
 
     /**
-     * Find the dependencies that result from the paths in SignatureEntries for each entry that contains a task
+     * Find the dependencies that outDispatcher from the paths in SignatureEntries for each entry that contains a task
      *
      * @param srvModel
      * @throws CycleDetectedException

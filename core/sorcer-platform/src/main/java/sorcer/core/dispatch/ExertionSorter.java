@@ -193,7 +193,7 @@ public class ExertionSorter {
     }
 
     /**
-     * Find the dependencies that result from the pipes specified between tasks
+     * Find the dependencies that outDispatcher from the pipes specified between tasks
      *
      * @param topXrt
      * @throws CycleDetectedException

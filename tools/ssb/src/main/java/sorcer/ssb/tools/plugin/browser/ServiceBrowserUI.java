@@ -415,7 +415,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 		 * final JEditorPane helpView=new JEditorPane(help);//new
 		 * HTMLView(help); helpView.setEditable(false);
 		 * helpView.addHyperlinkListener(new HyperlinkListener(){ public void
-		 * hyperlinkUpdate(HyperlinkEvent e) { System.out.println(e); if
+		 * hyperlinkUpdate(HyperlinkEvent e) { System.outGovernance.println(e); if
 		 * (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
 		 * 
 		 * if (e instanceof HTMLFrameHyperlinkEvent) { HTMLFrameHyperlinkEvent
@@ -463,10 +463,10 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 						.getLastPathComponent();
 				Object userObject = selectedNode.getUserObject();
 				if (theTree == _tree2) {
-					// System.out.println("_serviceSelectedNode="+selectedNode);
+					// System.outGovernance.println("_serviceSelectedNode="+selectedNode);
 					_serviceSelectedNode = selectedNode;
 				} else {
-					// System.out.println("_lusSelectedNode="+selectedNode);
+					// System.outGovernance.println("_lusSelectedNode="+selectedNode);
 					_lusSelectedNode = selectedNode;
 				}
 				// if(selectedNode == _root){
@@ -491,12 +491,12 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 		JScrollPane sp = new JScrollPane(_tree);
 		Dimension fd = frame.getSize();
 
-		// System.out.println(fd);
+		// System.outGovernance.println(fd);
 
 		sp.setMinimumSize(new Dimension(150, 200));
 		// sp.setPreferredSize(new Dimension(150,(int)(fd.height*.75)));
 
-		// System.out.println("sp="+sp.getPreferredSize());
+		// System.outGovernance.println("sp="+sp.getPreferredSize());
 
 		//_propsPane = new AttsPropPanel(new Entry[] {});
 		// _propsPane.setSize(new Dimension(150,(int)(fd.height*25)));
@@ -1504,7 +1504,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 				_splitter.setDividerLocation(divLoc);
 				String[] cp = jarView.getClasspathURLs();
 				if (cp != null) {
-					// System.out.println("Class-Path: jars detected");
+					// System.outGovernance.println("Class-Path: jars detected");
 					addClassPathJars(cp, cbn.getCodebase(),
 							(DefaultMutableTreeNode) selectedNode.getParent());
 				}
@@ -1696,7 +1696,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 
 					windowMenu = new JMenu("Windows");
 					for (int i = 0; i < atts.length; i++) {
-						//System.out.println("Att="+atts[i]);
+						//System.outGovernance.println("Att="+atts[i]);
 						if (atts[i] != null && atts[i] instanceof UIDescriptor) {
 							contentPane = new JPanel();
 							contentPane.setLayout(new BorderLayout());
@@ -1915,14 +1915,14 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 			Object userObject = tn.getUserObject();
 			ServiceNode sn = (ServiceNode) userObject;
 
-			// System.out.println("### check node for lease "+sn);
+			// System.outGovernance.println("### check node for lease "+sn);
 
 			if (sn == null) {
 				continue;
 			}
 			Object o = sn.getUserObject();
 
-			// System.out.println("### Node object = "+o);
+			// System.outGovernance.println("### Node object = "+o);
 
 			if (o instanceof Lease) {
 				try {
@@ -2788,7 +2788,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 			Iterator e = _windows.iterator();
 			while (e.hasNext()) {
 				JFrame win = (JFrame) e.next();
-				// System.out.println(win.getTitle()+" "+xpos+" "+ypos);
+				// System.outGovernance.println(win.getTitle()+" "+xpos+" "+ypos);
 
 				win.setState(Frame.NORMAL);
 
@@ -2832,7 +2832,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 	 * jf2=(JFrame)o2; Rectangle r1=jf1.getBounds(); Rectangle
 	 * r2=jf1.getBounds();
 	 * 
-	 * int ret= r2.y-r1.y; System.out.println(jf1.getTitle()+" "+ret);
+	 * int ret= r2.y-r1.y; System.outGovernance.println(jf1.getTitle()+" "+ret);
 	 * 
 	 * return ret; } }; Collections.sort(_windows,comp); }
 	 */

@@ -38,33 +38,33 @@ public class RoutineMultiFidelities {
     private Job getMultiFiJob() throws Exception {
 
         Task t3 = task("t3",
-            sFi("object", sig("subtract", SubtractorImpl.class)),
-            sFi("net", sig("subtract", Subtractor.class)),
+            sigFi("object", sig("subtract", SubtractorImpl.class)),
+            sigFi("net", sig("subtract", Subtractor.class)),
             context("subtract", inVal("arg/x1"), inVal("arg/x2"),
-                outVal("result/y")));
+                outVal("outDispatcher/y")));
 
         Task t4 = task("t4",
-            sFi("object", sig("multiply", MultiplierImpl.class)),
-            sFi("net", sig("multiply", Multiplier.class)),
+            sigFi("object", sig("multiply", MultiplierImpl.class)),
+            sigFi("net", sig("multiply", Multiplier.class)),
             context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-                outVal("result/y")));
+                outVal("outDispatcher/y")));
 
         Task t5 = task("t5",
-            sFi("object", sig("add", AdderImpl.class)),
-            sFi("net", sig("add", Adder.class)),
+            sigFi("object", sig("add", AdderImpl.class)),
+            sigFi("net", sig("add", Adder.class)),
             context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                outVal("result/y")));
+                outVal("outDispatcher/y")));
 
         Job job = job("j1",
-            sFi("object", sig("exert", ServiceJobber.class)),
-            sFi("net", sig("exert", Jobber.class)),
+            sigFi("object", sig("exert", ServiceJobber.class)),
+            sigFi("net", sig("exert", Jobber.class)),
             job("j2",
-                sFi("object", sig("exert", ServiceJobber.class)),
-                sFi("net", sig("exert", Jobber.class)),
+                sigFi("object", sig("exert", ServiceJobber.class)),
+                sigFi("net", sig("exert", Jobber.class)),
                 t4, t5),
             t3,
-            pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-            pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
+            pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+            pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")),
             metaFi("job1", fi("object", "j1/j2/t4"), fi("net", "j1/j2/t5")),
             metaFi("job2",  fi("net", "j1/j2"),
                 fi("net", "j1/t3"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")),
@@ -91,7 +91,7 @@ public class RoutineMultiFidelities {
         // Jobbers and  all tasks are local
         out = result(exert(job));
         logger.info("job context: " + out);
-        assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+        assertTrue(value(out, "j1/t3/outDispatcher/y").equals(400.0));
 
         //Local Jobbers with remote Multiplier nad Adder
         job = getMultiFiJob();
@@ -99,7 +99,7 @@ public class RoutineMultiFidelities {
         out = result(job);
         logger.info("job context: " + out);
         logger.info("job trace: " + trace(job));
-        assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+        assertTrue(value(out, "j1/t3/outDispatcher/y").equals(400.0));
 
         // Local Jobbers, Adder, and Multiplier with remote Subtractor
         job = getMultiFiJob();
@@ -107,7 +107,7 @@ public class RoutineMultiFidelities {
         out = result(job);
         logger.info("job context: " + out);
         logger.info("job trace: " + trace(job));
-        assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+        assertTrue(value(out, "j1/t3/outDispatcher/y").equals(400.0));
     }
 
 	@Test
@@ -115,24 +115,24 @@ public class RoutineMultiFidelities {
 
 		Morpher t4mrp = (mgr, mFi, context) -> {
 			if (mFi.getPath().equals("t4")) {
-				if (((Double) value((Context)context, "result/y")) >= 200.0) {
-					putValue((Context)context, "result/y", 300.0);
+				if (((Double) value((Context)context, "outDispatcher/y")) >= 200.0) {
+					putValue((Context)context, "outDispatcher/y", 300.0);
 				}
 			}
 		};
 
 		Task t4 = task("t4",
-				mphFi(t4mrp, sFi("object", sig("multiply", MultiplierImpl.class)),
-						sFi("net", sig("multiply", Multiplier.class))),
+				mphFi(t4mrp, sigFi("object", sig("multiply", MultiplierImpl.class)),
+						sigFi("net", sig("multiply", Multiplier.class))),
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						outVal("result/y")));
+						outVal("outDispatcher/y")));
 
 		assertEquals("object", fiName(t4));
 
 		t4 = exert(t4);
 		Context out = context(t4);
-		logger.info("out: " + out);
-		assertTrue(value(out, "result/y").equals(300.0));
+		logger.info("outGovernance: " + out);
+		assertTrue(value(out, "outDispatcher/y").equals(300.0));
 	}
 
 
@@ -140,7 +140,7 @@ public class RoutineMultiFidelities {
 
 		Morpher t4mrp = (mgr, mFi, context) -> {
 			if (mFi.getPath().equals("t4")) {
-				if (((Double) value((Context)context, "result/y")) >= 200.0) {
+				if (((Double) value((Context)context, "outDispatcher/y")) >= 200.0) {
 					mgr.reconfigure(fi("t4", "object2"));
 				}
 			}
@@ -148,40 +148,40 @@ public class RoutineMultiFidelities {
 
 		Morpher t5mrp = (mgr, mFi, context) -> {
 			if (mFi.getPath().equals("t5")) {
-				if (((Double) value((Context)context, "result/y")) <= 200.0) {
+				if (((Double) value((Context)context, "outDispatcher/y")) <= 200.0) {
 					mgr.reconfigure(fi("t5", "object2"));
 				}
 			}
 		};
 
 		Task t3 = task("t3",
-			sFi("object", sig("subtract", SubtractorImpl.class)),
-			sFi("net", sig("subtract", Subtractor.class)),
+			sigFi("object", sig("subtract", SubtractorImpl.class)),
+			sigFi("net", sig("subtract", Subtractor.class)),
 			context("subtract", inVal("arg/x1"), inVal("arg/x2"),
-				outVal("result/y")));
+				outVal("outDispatcher/y")));
 
 		Task t4 = task("t4",
-			mphFi(t4mrp, sFi("object1", sig("multiply", MultiplierImpl.class)),
-				sFi("object2", sig("add", AdderImpl.class))),
+			mphFi(t4mrp, sigFi("object1", sig("multiply", MultiplierImpl.class)),
+				sigFi("object2", sig("add", AdderImpl.class))),
 			context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-				outVal("result/y")));
+				outVal("outDispatcher/y")));
 
 		Task t5 = task("t5",
-			mphFi(t5mrp, sFi("object1", sig("add", AdderImpl.class)),
-				sFi("object2", sig("multiply", MultiplierImpl.class))),
+			mphFi(t5mrp, sigFi("object1", sig("add", AdderImpl.class)),
+				sigFi("object2", sig("multiply", MultiplierImpl.class))),
 			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-				outVal("result/y")));
+				outVal("outDispatcher/y")));
 
 		Job job = job("j1",
-			sFi("object", sig("exert", ServiceJobber.class)),
-			sFi("net", sig("exert", Jobber.class)),
+			sigFi("object", sig("exert", ServiceJobber.class)),
+			sigFi("net", sig("exert", Jobber.class)),
 			job("j2",
-				sFi("object", sig("exert", ServiceJobber.class)),
-				sFi("net", sig("exert", Jobber.class)),
+				sigFi("object", sig("exert", ServiceJobber.class)),
+				sigFi("net", sig("exert", Jobber.class)),
 				t4, t5),
 			t3,
-			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
+			pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+			pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")),
 			metaFi("job1", fi("object1", "j1/j2/t4"), fi("object2", "j1/j2/t5")),
 			metaFi("job2", fi("net", "j1/j2"),
 				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5")),
@@ -210,11 +210,11 @@ public class RoutineMultiFidelities {
         // Jobbers and  all tasks are local
 		Context out = upcontext(exert(job));
         logger.info("job context: " + out);
-        assertTrue(value(out, "j1/t3/result/y").equals(400.0));
+        assertTrue(value(out, "j1/t3/outDispatcher/y").equals(400.0));
 
         out = upcontext( exert(job));
         logger.info("job context: " + out);
-        assertTrue(value(out, "j1/t3/result/y").equals(-1540.0));
+        assertTrue(value(out, "j1/t3/outDispatcher/y").equals(-1540.0));
     }
 
 }

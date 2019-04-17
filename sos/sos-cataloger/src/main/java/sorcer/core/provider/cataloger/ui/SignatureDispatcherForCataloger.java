@@ -331,18 +331,18 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 
 		try {
 
-			// System.out.println("before get methods");
+			// System.outGovernance.println("before get methods");
 			String[] methods = catalog.getMethodsList(model
 					.getSelectedProvider(), "interface " + interfaceName); // ((Provider)
 			// catalog).getProxy();
-			// System.out.println("after begin methods");
+			// System.outGovernance.println("after begin methods");
 
 			try {
 				// catalog.getProxy(selectedProvider,"interface "+interfaceName);
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
-			// System.out.println("after proxy");
+			// System.outGovernance.println("after proxy");
 			java.util.Arrays.sort(methods);
 			return methods;
 
@@ -384,7 +384,7 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 		 * cxt.putValue("balance/amount",0); cxt.putValue("test3/Slacker",new
 		 * ContextNode("master3","eval")); cxt.putValue("test3/HEHE",new
 		 * ContextNode("master5","eval")); }catch (ContextException e) {
-		 * e.printStackTrace();} System.out.println("context"+cxt); return cxt;
+		 * e.printStackTrace();} System.outGovernance.println("context"+cxt); return cxt;
 		 */
 		Context cxt = new ServiceContext(model.getSelectedProvider());
 //		{
@@ -482,7 +482,7 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 		 * cxt.putValue("balance/amount",0); cxt.putValue("test3/Slacker",new
 		 * ContextNode("master3","eval")); cxt.putValue("test3/HEHE",new
 		 * ContextNode("master5","eval")); }catch (ContextException e) {
-		 * e.printStackTrace();} System.out.println("context"+cxt); return cxt;
+		 * e.printStackTrace();} System.outGovernance.println("context"+cxt); return cxt;
 		 */
 
 		// Context cxt=new ServiceContext(model.getSelectedProvider());
@@ -522,7 +522,7 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.core.provider.cataloger.ui.SignatureDispatchment#getGovernance()
+	 * @see sorcer.core.provider.cataloger.ui.SignatureDispatchment#getOutGovernance()
 	 */
 	@Override
 	public Provider getProvider() {

@@ -428,6 +428,6 @@ public class ObjectSignature extends ServiceSignature implements sig {
 		return this.getClass() + ";" + execType + ";"
 				+ (multitype.providerType == null ? "" : multitype.providerType + ";") + operation.selector
 				+ (prefix !=null ? "#" + prefix : "")
-				+ (returnPath != null ? ";"  + "result " + returnPath : "");
+				+ (returnPath != null ? ";"  + "outDispatcher " + returnPath : "");
 	}
 }

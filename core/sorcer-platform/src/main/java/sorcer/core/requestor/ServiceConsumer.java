@@ -369,7 +369,7 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 		} if (obj instanceof Routine) {
 			return context.append(((Routine)obj).getContext());
 		} else {
-			context.putValue("consumer/result", obj);
+			context.putValue("consumer/outDispatcher", obj);
 			return context;
 		}
 

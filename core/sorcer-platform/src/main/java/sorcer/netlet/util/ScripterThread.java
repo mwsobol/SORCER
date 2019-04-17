@@ -92,21 +92,21 @@ public class ScripterThread extends Thread {
 
             if (target instanceof Domain &&  !isExerted) {
                 result = ((ServiceContext)target).getResponse();
-                logger.info(">>>>>>>>>>> model eval result: " + result);
+                logger.info(">>>>>>>>>>> model eval outDispatcher: " + result);
             } else if (target instanceof Mogram) {
                 serviceShell = new ServiceShell((Mogram) target);
                 if (target instanceof Mogram && isExerted) {
                     result = serviceShell.exert();
-                    logger.info(">>>>>>>>>>> serviceShell exerted result: " + result);
+                    logger.info(">>>>>>>>>>> serviceShell exerted outDispatcher: " + result);
                 } else{
                     result = serviceShell.evaluate();
-                    logger.info(">>>>>>>>>>> serviceShell eval result: " + result);
+                    logger.info(">>>>>>>>>>> serviceShell eval outDispatcher: " + result);
                 }
             } else if (target instanceof Subroutine){
                 result = new Subroutine(((Subroutine)target).getName(), exec((Entry<? extends Object>) target));
                 logger.info(">>>>>>>>>>> eval entry: " + result);
             } else if (target != null) {
-                logger.info(">>>>>>>>>>> eval result: " + target);
+                logger.info(">>>>>>>>>>> eval outDispatcher: " + target);
             }
         } catch (CompilationFailedException | RemoteException | MogramException e) {
             e.printStackTrace();

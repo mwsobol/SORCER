@@ -32,7 +32,7 @@ public class IncrementBlockExertions implements SorcerConstants {
 	@Test
 	public void entryIncrementor() throws Exception {
 		Context cxt = context("add", inVal("arg/x1", 20),
-						inVal("arg/x2", 80.0), result("result++"));
+						inVal("arg/x2", 80.0), result("outDispatcher++"));
 
 		Incrementor z2 = inc(invoker(cxt, "arg/x1"), 2);
 		assertEquals(next(z2), 22);
@@ -43,9 +43,9 @@ public class IncrementBlockExertions implements SorcerConstants {
 	public void taskIncrement() throws Exception {
 		Task t = task(sig("add", AdderImpl.class),
 				model("add", inVal("arg/x1", inc("arg/x2", 2.0)),
-						inVal("arg/x2", 80.0), result("task/result")));
+						inVal("arg/x2", 80.0), result("task/outDispatcher")));
 
-//		logger.info("result: " + eval(t));
+//		logger.info("outDispatcher: " + eval(t));
 		assertEquals(exec(t), 162.00);
 	}
 

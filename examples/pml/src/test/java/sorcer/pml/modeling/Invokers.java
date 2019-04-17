@@ -162,7 +162,7 @@ public class Invokers {
 				"t4",
 				sig("multiply", MultiplierImpl.class),
 				context("multiply", inVal("arg/x1", 50.0), inVal("arg/x2", 10.0),
-						result("result/y")));
+						result("outDispatcher/y")));
 
 		// logger.info("invoke eval:" + invoke(t4));
 		assertEquals(invoke(t4), 500.0);
@@ -171,23 +171,23 @@ public class Invokers {
 	@Test
 	public void invokeJob() throws Exception {
 		Context c4 = context("multiply", inVal("arg/x1", 50.0),
-				inVal("arg/x2", 10.0), result("result/y"));
+				inVal("arg/x2", 10.0), result("outDispatcher/y"));
 		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-				result("result/y"));
+				result("outDispatcher/y"));
 
 		// mograms
 		Task t3 = task(
 				"t3",
 				sig("subtract", SubtractorImpl.class),
-				context("subtract", inVal("arg/x1"), inVal("arg/x2"), outVal("result/y")));
+				context("subtract", inVal("arg/x1"), inVal("arg/x2"), outVal("outDispatcher/y")));
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
 		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
 
 		Job j1 = job("j1", sig("exert", ServiceJobber.class),
 					job("j2", t4, t5, sig("exert", ServiceJobber.class)), t3,
-					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-					result("j1/t3/result/y"));
+					pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+					pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")),
+					result("j1/t3/outDispatcher/y"));
 
 		// logger.info("invoke eval:" + invoke(j1));
 		assertEquals(invoke(j1), 400.0);

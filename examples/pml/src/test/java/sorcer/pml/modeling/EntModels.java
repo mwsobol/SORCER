@@ -108,7 +108,7 @@ public class EntModels {
 			pro("t5",
 				task(sig("add", AdderImpl.class),
 					cxt("add", inVal("x3"), inVal("x4"),
-						result("result/y")))),
+						result("outDispatcher/y")))),
 			pro("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		setValues(vm, val("x1", 10.0), val("x2", 50.0),
@@ -221,7 +221,7 @@ public class EntModels {
     public void entryPersistence() throws Exception {
 
         Context cxt = context("multiply", dbVal("arg/x0", 1.0), dbInVal("arg/x1", 10.0),
-                dbOutVal("arg/x2", 50.0), outVal("result/y"));
+                dbOutVal("arg/x2", 50.0), outVal("outDispatcher/y"));
 
         assertEquals(value(cxt, "arg/x0"), 1.0);
         assertEquals(value(cxt, "arg/x1"), 10.0);
@@ -472,7 +472,7 @@ public class EntModels {
                         .getWebsterUrl() + "/pml-" + sorcerVersion+".jar")));
 
 		Object result = value((Context)value(em,"getSphereVolume"), "sphere/volume");
-		logger.info("result: " +result);
+		logger.info("outDispatcher: " +result);
 
 		assertTrue(result.equals(33510.32163829113));
 

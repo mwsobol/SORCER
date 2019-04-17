@@ -134,7 +134,7 @@ public class LoggerUI extends JPanel implements Observer {
 		deleteLoggerButton.addActionListener(new DeleteLoggerAction());
 		deleteLoggerButton.setEnabled(true);
 
-		// Lay out the buttons from left to right.
+		// Lay outGovernance the buttons from left to right.
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
 		buttonPane.setBorder(BorderFactory.createEmptyBorder(7, 0, 7, 10));
@@ -164,7 +164,7 @@ public class LoggerUI extends JPanel implements Observer {
 		clearLogTextAreaButton.addActionListener(new ClearLoggerTextAction());
 		clearLogTextAreaButton.setEnabled(true);
 
-		// Lay out the buttons from left to right.
+		// Lay outGovernance the buttons from left to right.
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.PAGE_AXIS));
 		buttonPane.setBorder(BorderFactory.createEmptyBorder(7, 0, 7, 10));

@@ -81,25 +81,25 @@ public class Entries {
                 mdl.reportException("cmd failed for lambda", ex);
                 throw ex;
             } else
-                return ent("cmd/out", out.getOut());
+                return ent("cmd/outGovernance", out.getOut());
         };
 
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/out",
+                ent(sig("add", AdderImpl.class, result("add/outGovernance",
                         inPaths("add/x1", "add/x2")))),
                 ent("cmd", invoker(args)),
                 lambda("lambda", verifyExitValue),
-                response("lambda", "cmd", "cmd/out"));
+                response("lambda", "cmd", "cmd/outGovernance"));
 
         Context out = response(m);
 
         String un = property("user.name");
         assertTrue(((String)get(out, "lambda")).trim().equals(un));
-        assertTrue(((String)get(out, "cmd/out")).trim().equals(un));
+        assertTrue(((String)get(out, "cmd/outGovernance")).trim().equals(un));
         assertTrue(((CmdResult)get(out, "cmd")).getOut().trim().equals(un));
     }
 

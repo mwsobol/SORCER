@@ -124,7 +124,7 @@ public class ServiceNode{
 			
 		}catch(Exception ex){
 			//ex.printStackTrace();
-			//System.out.println("ping() retuning false");
+			//System.outGovernance.println("ping() retuning false");
 			return false;
 		}
 		

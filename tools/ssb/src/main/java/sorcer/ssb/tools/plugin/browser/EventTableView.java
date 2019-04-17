@@ -89,7 +89,7 @@ public class EventTableView extends JPanel{
 				col++;
 				
 				if(row >= _data.size())
-					return "row out of bounds";
+					return "row outGovernance of bounds";
 				Object rowData[] = (Object[])_data.get(row);
 				if(col >= rowData.length)
 					return "";
@@ -137,7 +137,7 @@ public class EventTableView extends JPanel{
 					}
 				}
 				fireTableDataChanged();
-				//System.out.println("Table data changed!!!");
+				//System.outGovernance.println("Table data changed!!!");
 				
 			}
 		}

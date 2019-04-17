@@ -202,7 +202,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 				"Output Context");
 		tabbedContextPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-		// Lay everything out.
+		// Lay everything outGovernance.
 		treePanelInput.setPreferredSize(new Dimension(300, 400));
 		add(tabbedContextPane, BorderLayout.CENTER);
 
@@ -244,7 +244,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 		// deleteContextButton.setActionCommand(DELETE_CONTEXT_COMMAND);
 		// deleteContextButton.addActionListener(this);
 
-		// Lay everything out.
+		// Lay everything outGovernance.
 		// add(treePanelInput, BorderLayout.CENTER);
 
 		JPopupMenu popup = new JPopupMenu("Context Editor");
@@ -381,7 +381,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 				cnt++;
 				// path = (String)sortedVec.elementAt(i);
 				path = (String) key;
-				// System.out.println("path: "+path);
+				// System.outGovernance.println("path: "+path);
 				String data = "";
 				String splitPath[] = path.split("/");
 				DefaultMutableTreeNode parentNode = null;
@@ -457,7 +457,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 	 * Depending on the button the action is different.
 	 */
 	public void actionPerformed(ActionEvent actionEvent) {
-		// System.out.println("Current Context is " + theContext.toString());
+		// System.outGovernance.println("Current Context is " + theContext.toString());
 		String command = actionEvent.getActionCommand();
 
 		if (ADD_ATTRIBUTE.equals(command)) {
@@ -634,7 +634,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 			 * "Input Context"); tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 			 * 
 			 * JComponent panel4 =
-			 * makeTextPanel("OUTPUT CONTEXT\n\n"+result.toString());
+			 * makeTextPanel("OUTPUT CONTEXT\n\n"+outDispatcher.toString());
 			 * panel4.setPreferredSize(new Dimension(410, 200));
 			 * 
 			 * tabbedPane.addTab("Output Context", null, panel4,

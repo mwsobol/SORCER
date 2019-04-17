@@ -52,46 +52,46 @@ public class ExertionSorterTest {
                 "t3",
                 sig("subtract", Subtractor.class),
                 context("subtract", inVal("arg/x1", null), inVal("arg/x2", null),
-                        outVal("result/y", null)));
+                        outVal("outDispatcher/y", null)));
         Task t4 = task("t4",
                 sig("multiply", Multiplier.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-                        outVal("result/y", null)));
+                        outVal("outDispatcher/y", null)));
         Task t5 = task("t5",
                 sig("add", Adder.class),
                 context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                        outVal("result/y", null)));
+                        outVal("outDispatcher/y", null)));
 
         // Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
         return job("j1", t3, // sig("exert", Jobber.class),
                 job("j2", t5, t4, strategy(flow, access)),
-                pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-                pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+                pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+                pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
     }
 
 
     private static Job createSrv() throws Exception {
         Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
                 cxt("subtract", inVal("arg/x1"), inVal("arg/x2"),
-                        outVal("result/y")));
+                        outVal("outDispatcher/y")));
 
         Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 //cxt("multiply", inVal("super/arg/x1"), inVal("arg/x2", 50.0),
                 cxt("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-                        outVal("result/y")));
+                        outVal("outDispatcher/y")));
 
         Task t5 = task("t5", sig("add", AdderImpl.class),
                 cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                        outVal("result/y")));
+                        outVal("outDispatcher/y")));
 
         // Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
         //Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL, Access.PULL)), t3,
         return job("j1", sig("exert", ServiceJobber.class),
-                cxt(inVal("arg/x1", 10.0), result("job/result", outPaths("j1/t3/result/y"))),
+                cxt(inVal("arg/x1", 10.0), result("job/outDispatcher", outPaths("j1/t3/outDispatcher/y"))),
                 job("j2", sig("exert", ServiceJobber.class), t4, t5),
                 t3,
-                pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-                pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
+                pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
+                pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
     }
 
 
@@ -99,39 +99,39 @@ public class ExertionSorterTest {
 
         Task f4 = task("Task_f4", sig("multiply", Multiplier.class),
                 context("multiply", inVal("arg/x1", 2), inVal("arg/x2", 25 * 2),
-                        outVal("result/y1")),
+                        outVal("outDispatcher/y1")),
                 strategy(Access.PUSH, Flow.SEQ, Monitor.NOTIFY_ALL, Provision.TRUE, Wait.TRUE));
 
         Task f44 = task("Task_f44", sig("multiply", Multiplier.class),
                 context("multiply", inVal("arg/x41", 10.0d), inVal("arg/x42", 50.0d),
-                        outVal("result/y41", null)));
+                        outVal("outDispatcher/y41", null)));
 
         Task f5 = task("Task_f5", sig("add", Adder.class),
                 context("add", inVal("arg/x3", 20.0d), inVal("arg/x4", 80.0d),
-                        outVal("result/y2")));
+                        outVal("outDispatcher/y2")));
 
         Task f6 = task("Task_f6", sig("multiply", Multiplier.class),
                 context("multiply", inVal("arg/x7", 11.0d), inVal("arg/x8", 51.0d),
-                        outVal("result/y4")));
+                        outVal("outDispatcher/y4")));
 
         Task f7 = task("Task_f7", sig("multiply", Multiplier.class),
                 context("multiply", inVal("arg/x9", 12.0d), inVal("arg/x10", 52.0d),
-                        outVal("result/y5")));
+                        outVal("outDispatcher/y5")));
 
         Task f9 = task("Task_f9", sig("multiply", Multiplier.class),
                 context("multiply", inVal("arg/x11", 13.0d), inVal("arg/x12", 53.0d),
-                        outVal("result/y6")));
+                        outVal("outDispatcher/y6")));
 
         Task f10 = task("Task_f10", sig("multiply", Multiplier.class),
                 context("multiply", inVal("arg/x13", 14.0d), inVal("arg/x14", 54.0d),
-                        outVal("result/y7")));
+                        outVal("outDispatcher/y7")));
 
         Task f3 = task("Task_f3", sig("subtract", Subtractor.class),
                 context("subtract", inVal("arg/x5"), inVal("arg/x6"),
-                        outVal("result/y3")));
+                        outVal("outDispatcher/y3")));
 
         Task f55 = task("Task_f55", sig("add", Adder.class),
-                context("add", inVal("arg/x53", 20.0d), inVal("arg/x54", 80.0d), outVal("result/y52")));
+                context("add", inVal("arg/x53", 20.0d), inVal("arg/x54", 80.0d), outVal("outDispatcher/y52")));
 
         Task f21 = task("Task_f21", sig("multiply", Multiplier.class),
                 context("Task_f21", inVal("arg2", 50.5d), inVal("arg1", 20.0d), outVal("fillMeOut")),
@@ -143,17 +143,17 @@ public class ExertionSorterTest {
 
         Job f20 = job("Job_f20", f22 , f21 );
 
-        Job j8 = job("Job_f8", pipe(outPoint(f10, "result/y7"),
-                inPoint(f55, "arg/x54")), pipe(outPoint(f7, "result/y5"),
+        Job j8 = job("Job_f8", pipe(outPoint(f10, "outDispatcher/y7"),
+                inPoint(f55, "arg/x54")), pipe(outPoint(f7, "outDispatcher/y5"),
                 inPoint(f55, "arg/x53")), f55, f10, f9,
-                pipe(outPoint(f9, "result/y6"), inPoint(f10, "arg/x13")));
+                pipe(outPoint(f9, "outDispatcher/y6"), inPoint(f10, "arg/x13")));
 
-        Pipe p1 = pipe(outPoint(f4, "result/y1"), inPoint(f7, "arg/x9"));
+        Pipe p1 = pipe(outPoint(f4, "outDispatcher/y1"), inPoint(f7, "arg/x9"));
 
         return job("Job_f1", f3, j8, f20, job("Job_f2", f5, f7, f6, f4),
-                pipe(outPoint(f6, "result/y4"), inPoint(f5, "arg/x3")),
-                pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
-                pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")), p1);
+                pipe(outPoint(f6, "outDispatcher/y4"), inPoint(f5, "arg/x3")),
+                pipe(outPoint(f4, "outDispatcher/y1"), inPoint(f3, "arg/x5")),
+                pipe(outPoint(f5, "outDispatcher/y2"), inPoint(f3, "arg/x6")), p1);
     }
 
     @Test

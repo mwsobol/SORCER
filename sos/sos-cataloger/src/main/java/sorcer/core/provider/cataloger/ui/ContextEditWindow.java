@@ -161,7 +161,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 			for (int i = 0; i < directions.length; i++)
 				if (directions[i].equals(currentDirection))
 					direction.setSelectedIndex(i);
-			// System.out.println(currentDtype+" dtype");
+			// System.outGovernance.println(currentDtype+" dtype");
 			editSaveButton = new JButton("Save");
 			editSaveButton.setActionCommand(SAVE_BUTTON);
 			editSaveButton.addActionListener(this);
@@ -232,7 +232,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent actionEvent) {
 		// TODO Auto-generated method stub
 		String command = actionEvent.getActionCommand();
-		// System.out.println("command"+command);
+		// System.outGovernance.println("command"+command);
 		if (SAVE_BUTTON.equals(command)) {
 			String dType = dataType.getSelectedItem().toString();
 			Object value = new String(editField.getText());// default to String

@@ -35,7 +35,7 @@ public class PropertiesModel extends AbstractTableModel {
 
 	public Object getValueAt(int row, int col) {
 		if (row >= _data.size())
-			return "row out of bounds";
+			return "row outGovernance of bounds";
 		Object rowData[] = (Object[]) _data.get(row);
 		if (col >= rowData.length)
 			return "";
@@ -63,7 +63,7 @@ public class PropertiesModel extends AbstractTableModel {
 		_data = data;
 		_fields = fields;
 		fireTableDataChanged();
-		// System.out.println("Table data changed!!!");
+		// System.outGovernance.println("Table data changed!!!");
 
 	}
 

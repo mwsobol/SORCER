@@ -31,7 +31,7 @@ public class EntModelServices {
 	public void callModelerTest() throws Exception {
 
 		EntModel em = EntryModeler.getEntryModel();
-		logger.info("result: " + invoke(em, "expr"));
+		logger.info("outDispatcher: " + invoke(em, "expr"));
 		assertTrue(invoke(em, "expr").equals(60.0));
 
 	}
@@ -41,11 +41,11 @@ public class EntModelServices {
 
 		Model em = EntryModeler.getEntryModel();
 		Task pmt = task(sig("invoke", em),
-				context(result("invoke/result", outPaths("expr"))));
+				context(result("invoke/outDispatcher", outPaths("expr"))));
 
 		assertTrue(exec(pmt).equals(60.0));
 
-		assertTrue(get(exert(pmt), "invoke/result").equals(60.0));
+		assertTrue(get(exert(pmt), "invoke/outDispatcher").equals(60.0));
 
 	}
 
@@ -54,7 +54,7 @@ public class EntModelServices {
 
 		// the provider in ex6/bin parmodel-prv-run.xml
 		Task emt = task(sig("invoke", Invocation.class, prvName("EntModel Service")),
-				context(result("invoke/result", outPaths("expr"))));
+				context(result("invoke/outDispatcher", outPaths("expr"))));
 
 		assertTrue(exec(emt).equals(60.0));
 	}

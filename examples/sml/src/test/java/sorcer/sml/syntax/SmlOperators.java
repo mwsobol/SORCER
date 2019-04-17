@@ -149,15 +149,15 @@ public class SmlOperators {
 		fi fi4 = metaFi("sysFi4", fi("mFi3", "average"));
 
 		sig add = sig("add", AdderImpl.class,
-			result("result/y1", inPaths("arg/x1", "arg/x2")));
+			result("outDispatcher/y1", inPaths("arg/x1", "arg/x2")));
 		sig subtract = sig("subtract", SubtractorImpl.class,
-			result("result/y2", inPaths("arg/x1", "arg/x2")));
+			result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
 		sig average = sig("average", AveragerImpl.class,
-			result("result/y2", inPaths("arg/x1", "arg/x2")));
+			result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
 		sig multiply = sig("multiply", MultiplierImpl.class,
-			result("result/y1", inPaths("arg/x1", "arg/x2")));
+			result("outDispatcher/y1", inPaths("arg/x1", "arg/x2")));
 		sig divide = sig("divide", DividerImpl.class,
-			result("result/y2", inPaths("arg/x1", "arg/x2")));
+			result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
 
 		// five entry multifidelity model with morphers
 		mog mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
@@ -172,14 +172,14 @@ public class SmlOperators {
 			response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
 		cxt out = response(mod);
-		logger.info("out: " + out);
+		logger.info("outGovernance: " + out);
 		assertTrue(value(out, "mFi1").equals(100.0));
 		assertTrue(value(out, "mFi2").equals(9.0));
 		assertTrue(value(out, "mFi3").equals(50.0));
 
 		// closing the fidelity for mFi1
 		out = response(mod , fi("mFi1", "multiply"));
-		logger.info("out: " + out);
+		logger.info("outGovernance: " + out);
 		assertTrue(value(out, "mFi1").equals(900.0));
 		assertTrue(value(out, "mFi2").equals(50.0));
 		assertTrue(value(out, "mFi3").equals(9.0));

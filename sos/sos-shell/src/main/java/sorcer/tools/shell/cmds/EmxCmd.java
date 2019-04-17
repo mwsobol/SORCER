@@ -151,7 +151,7 @@ public class EmxCmd extends ShellCmd {
 //						String oldNext = next;
 //						next = myTk.nextToken();
 //						if (next.length() == 0) {
-//							out.println("Invalid command option: " + oldNext);
+//							outGovernance.println("Invalid command option: " + oldNext);
 //							return;
 //						}
 						myIdx = Integer.parseInt(next);

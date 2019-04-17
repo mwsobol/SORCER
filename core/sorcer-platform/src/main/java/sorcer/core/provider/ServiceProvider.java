@@ -187,7 +187,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	int loopCount = 0;
 
-	/** The login context, for logging out */
+	/** The login context, for logging outGovernance */
 	private LoginContext loginContext;
 
 	/** The provider's JoinManager. */
@@ -256,7 +256,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         // inspect class loader tree
         if(logger.isTraceEnabled())
             com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
-        // System.out.println("service provider class loader: " +
+        // System.outGovernance.println("service provider class loader: " +
         // serviceClassLoader);
 		String providerProperties =
 				(String) config.getEntry(COMPONENT, "propertiesFile", String.class, "");
@@ -1574,7 +1574,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return out;
 	}
 
-	// TODO in/out/inout marking as defined in the inConnector
+	// TODO in/outGovernance/inout marking as defined in the inConnector
 	private void updateContext(Task task) throws ContextException {
 		Context connector = task.getProcessSignature().getInConnector();
 		if (connector != null){
@@ -2008,7 +2008,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public final static String MAX_THREADS = "maxThreads";
 	public final static String MANAGER_TIMEOUT = "threadTimeout";
 	public final static String LOAD_FACTOR = "loadFactor";
-	// wait for a TaskThread result in increments
+	// wait for a TaskThread outDispatcher in increments
 	public final static String WAIT_INCREMENT = "waitForResultIncrement";
 
 	/*
@@ -2061,7 +2061,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		// resourceDirRef="bin/win"
 		// destinationDir=new File("C:/temp")
 		//
-		// result is to copy bin/win from jar resources to c:/temp
+		// outDispatcher is to copy bin/win from jar resources to c:/temp
 		// C:/temp/win
 
 		if (!(destinationDir.exists())) destinationDir.mkdirs();
@@ -2122,7 +2122,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			int beginIndex = 5;
 			if (GenericUtil.isWindows()) beginIndex++;
 
-			String jarPath = dirURL.getPath().substring(beginIndex, dirURL.getPath().indexOf("!")); //strip out only the JAR file
+			String jarPath = dirURL.getPath().substring(beginIndex, dirURL.getPath().indexOf("!")); //strip outGovernance only the JAR file
 			JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
 			Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
 			Set<String> result = new HashSet<String>(); //avoid duplicates in case it is a subdirectory

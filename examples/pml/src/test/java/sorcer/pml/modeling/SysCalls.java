@@ -62,7 +62,7 @@ public class SysCalls {
 				pro("add", invoker("x + y", args("x", "y"))));
 
 		CmdResult result = (CmdResult) invoke(pm, "volume");
-		// get from the result the volume of cylinder and assign to y parameter
+		// get from the outDispatcher the volume of cylinder and assign to y parameter
 		assertTrue("EXPECTED '0' return eval, GOT: "+result.getExitValue(), result.getExitValue() == 0);
 		Properties props = new Properties();
 		props.load(new StringReader(result.getOut()));
@@ -104,8 +104,8 @@ public class SysCalls {
         add(pm, caller);
 
 		Context result = (Context) eval(pm, "volume");
-//		Context result = (Context) invoke(pm, "volume");
-        // get from the result the volume of cylinder and assign to y parameter
+//		Context outDispatcher = (Context) invoke(pm, "volume");
+        // get from the outDispatcher the volume of cylinder and assign to y parameter
         assertTrue("EXPECTED '0' return eval, GOT: "+value(result, "exit/eval"),
                 value(result, "exit/eval").equals(0));
 
@@ -141,7 +141,7 @@ public class SysCalls {
 								outVal("cylinder/height")));
 
 		Context out = context(exert(callerTask));
-		logger.info("out:" + out);
+		logger.info("outGovernance:" + out);
 		assertTrue(value(out, "cylinder/height").equals("3.0"));
 		assertTrue(value(out, "cylinder/radius").equals("2.0"));
 		assertTrue(value(out, "cylinder/volume").equals("37.69911184307752"));

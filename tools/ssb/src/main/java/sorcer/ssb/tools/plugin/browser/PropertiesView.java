@@ -64,7 +64,7 @@ public class PropertiesView extends JPanel{
         if(userObject instanceof PropertiesNode){
 			TreeRenderer.setIconForProps(title,(PropertiesNode)userObject);
 			
-			//System.out.println("###PropertiesNode "+userObject);
+			//System.outGovernance.println("###PropertiesNode "+userObject);
 		}else{
 			title.setIcon(TreeRenderer._sidIcon);
 		}
