@@ -2008,7 +2008,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	public final static String MAX_THREADS = "maxThreads";
 	public final static String MANAGER_TIMEOUT = "threadTimeout";
 	public final static String LOAD_FACTOR = "loadFactor";
-	// wait for a TaskThread outDispatcher in increments
+	// wait for a TaskThread result in increments
 	public final static String WAIT_INCREMENT = "waitForResultIncrement";
 
 	/*
@@ -2061,7 +2061,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		// resourceDirRef="bin/win"
 		// destinationDir=new File("C:/temp")
 		//
-		// outDispatcher is to copy bin/win from jar resources to c:/temp
+		// result is to copy bin/win from jar resources to c:/temp
 		// C:/temp/win
 
 		if (!(destinationDir.exists())) destinationDir.mkdirs();

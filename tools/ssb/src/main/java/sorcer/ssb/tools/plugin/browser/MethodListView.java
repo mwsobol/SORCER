@@ -142,7 +142,7 @@ class MethodListView extends JPanel {
 									result = "null";
 								}
 
-								// outDispatcher=MethodResultFilter.apply(method,outDispatcher);
+								// result=MethodResultFilter.apply(method,result);
 
 								Class resClazz = result.getClass();
 								Object[] data = null;

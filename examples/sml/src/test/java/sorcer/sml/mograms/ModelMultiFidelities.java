@@ -42,14 +42,14 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))))),
+                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mphFi", "arg/x1", "arg/x2"));
 
         Context out = eval(mod, fi("mphFi", "multiply"));
         logger.info("outGovernance: " + out);
         assertTrue(get(out, "mphFi").equals(900.0));
-        assertTrue(get(mod, "outDispatcher/y").equals(900.0));
+        assertTrue(get(mod, "result/y").equals(900.0));
     }
 
     @Test
@@ -59,8 +59,8 @@ public class ModelMultiFidelities {
         Model mdl = model(
                 ent("arg/x1", entFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
                 ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
-                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))))),
+                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mphFi", "arg/x1", "arg/x2"));
 
         logger.info("DEPS: " + printDeps(mdl));
@@ -71,7 +71,7 @@ public class ModelMultiFidelities {
         assertTrue(get(out, "arg/x1").equals(11.0));
         assertTrue(get(out, "arg/x2").equals(91.0));
         assertTrue(get(out, "mphFi").equals(1001.0));
-        assertTrue(get(mdl, "outDispatcher/y").equals(1001.0));
+        assertTrue(get(mdl, "result/y").equals(1001.0));
     }
 
     @Test
@@ -81,8 +81,8 @@ public class ModelMultiFidelities {
         Model mdl = model(
                 ent("arg/x1", entFi(inVal("arg/x1/fi1", 10.0), inVal("arg/x1/fi2", 11.0))),
                 ent("arg/x2", entFi(inVal("arg/x2/fi1", 90.0), inVal("arg/x2/fi2", 91.0))),
-                ent("sigFi", sigFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))))),
+                ent("sigFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("sigFi", "arg/x1", "arg/x2"));
 
         logger.info("DEPS: " + printDeps(mdl));
@@ -94,7 +94,7 @@ public class ModelMultiFidelities {
         assertTrue(get(out, "arg/x1").equals(11.0));
         assertTrue(get(out, "arg/x2").equals(91.0));
         assertTrue(get(out, "sigFi").equals(1001.0));
-        assertTrue(get(mdl, "outDispatcher/y").equals(1001.0));
+        assertTrue(get(mdl, "result/y").equals(1001.0));
     }
 
     @Test
@@ -102,14 +102,14 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))))),
+                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mphFi", "arg/x1", "arg/x2"));
 
         Context out = response(mod, fi("mphFi", "add"));
         logger.info("outGovernance: " + out);
         assertTrue(get(out, "mphFi").equals(100.0));
-        assertTrue(get(mod, "outDispatcher/y").equals(100.0));
+        assertTrue(get(mod, "result/y").equals(100.0));
     }
 
     @Test
@@ -117,8 +117,8 @@ public class ModelMultiFidelities {
 
         // three entry model
         Model mod = srvModel(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-            val("sig1", sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2")))),
-            val("sig2", sig("multiply", MultiplierImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2")))),
+            val("sig1", sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
+            val("sig2", sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
 
             ent("mphFi", sigFi(ref("sig1"), ref("sig2"))),
             response("mphFi", "arg/x1", "arg/x2"));
@@ -126,12 +126,12 @@ public class ModelMultiFidelities {
         Context out = response(mod, fi("mphFi", "sig1"));
         logger.info("outGovernance: " + out);
 //        assertTrue(get(outGovernance, "mphFi").equals(100.0));
-        assertTrue(get(mod, "outDispatcher/y").equals(100.0));
+        assertTrue(get(mod, "result/y").equals(100.0));
 
         out = response(mod, fi("mphFi", "sig2"));
         logger.info("out2: " + out);
 //        assertTrue(get(outGovernance, "mphFi").equals(900.0));
-        assertTrue(get(mod, "outDispatcher/y").equals(900.0));
+        assertTrue(get(mod, "result/y").equals(900.0));
     }
 
     @Test
@@ -182,15 +182,15 @@ public class ModelMultiFidelities {
         };
 
         Signature add = sig("add", AdderImpl.class,
-                result("outDispatcher/y1", inPaths("arg/x1", "arg/x2")));
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
         Signature subtract = sig("subtract", SubtractorImpl.class,
-                result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
         Signature average = sig("average", AveragerImpl.class,
-                result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
         Signature multiply = sig("multiply", MultiplierImpl.class,
-                result("outDispatcher/y1", inPaths("arg/x1", "arg/x2")));
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
         Signature divide = sig("divide", DividerImpl.class,
-                result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
 
         // three entry multifidelity model
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
@@ -240,15 +240,15 @@ public class ModelMultiFidelities {
         Metafidelity fi3 = metaFi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
 
         Signature add = sig("add", AdderImpl.class,
-                result("outDispatcher/y1", inPaths("arg/x1", "arg/x2")));
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
         Signature subtract = sig("subtract", SubtractorImpl.class,
-                result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
         Signature average = sig("average", AveragerImpl.class,
-                result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
         Signature multiply = sig("multiply", MultiplierImpl.class,
-                result("outDispatcher/y1", inPaths("arg/x1", "arg/x2")));
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
         Signature divide = sig("divide", DividerImpl.class,
-                result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
 
         // three entry multifidelity model
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
@@ -301,15 +301,15 @@ public class ModelMultiFidelities {
         };
 
         Entry addEnt = ent(sig("add", AdderImpl.class,
-                result("outDispatcher/y1", inPaths("arg/x1", "arg/x2"))));
+                result("result/y1", inPaths("arg/x1", "arg/x2"))));
         Entry subtractEnt = ent(sig("subtract", SubtractorImpl.class,
-                result("outDispatcher/y1", inPaths("arg/x1", "arg/x2"))));
+                result("result/y1", inPaths("arg/x1", "arg/x2"))));
         Entry multiplyEnt = ent(sig("multiply", MultiplierImpl.class,
-                result("outDispatcher/y1", inPaths("arg/x1", "arg/x2"))));
+                result("result/y1", inPaths("arg/x1", "arg/x2"))));
         Entry divideEnt = ent(sig("divide", DividerImpl.class,
-                result("outDispatcher/y2", inPaths("arg/x1", "arg/x2"))));
+                result("result/y2", inPaths("arg/x1", "arg/x2"))));
         Entry averageEnt = ent(sig("average", AveragerImpl.class,
-                result("outDispatcher/y2", inPaths("arg/x1", "arg/x2"))));
+                result("result/y2", inPaths("arg/x1", "arg/x2"))));
 
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
                 addEnt, multiplyEnt, divideEnt, averageEnt,
@@ -365,15 +365,15 @@ public class ModelMultiFidelities {
         Metafidelity fi4 = metaFi("sysFi4", fi("mFi3", "average"));
 
         Signature add = sig("add", AdderImpl.class,
-                result("outDispatcher/y1", inPaths("arg/x1", "arg/x2")));
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
         Signature subtract = sig("subtract", SubtractorImpl.class,
-                result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
         Signature average = sig("average", AveragerImpl.class,
-                result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
         Signature multiply = sig("multiply", MultiplierImpl.class,
-                result("outDispatcher/y1", inPaths("arg/x1", "arg/x2")));
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
         Signature divide = sig("divide", DividerImpl.class,
-                result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
 
         // five entry multifidelity model with morphers
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
@@ -453,7 +453,7 @@ public class ModelMultiFidelities {
     public void selectMultifidelitySignatures() throws Exception {
 
         Context cxt = context(inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-                outVal("outDispatcher/y"));
+                outVal("result/y"));
         Signature ms = sig("multiply", MultiplierImpl.class);
         Signature as = sig("add", AdderImpl.class);
 
@@ -461,25 +461,25 @@ public class ModelMultiFidelities {
 
         Context out = (Context) exec(mfs);
         logger.info("outGovernance: " + out);
-        assertTrue(value(context(out), "outDispatcher/y").equals(500.0));
+        assertTrue(value(context(out), "result/y").equals(500.0));
 
         selectFi(mfs, "add");
         out = (Context) exec(mfs);
-        assertTrue(value(context(out), "outDispatcher/y").equals(60.0));
+        assertTrue(value(context(out), "result/y").equals(60.0));
     }
 
     @Test
     public void morphMultifidelitySignatures() throws Exception {
 
         Context cxt = context(inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-                outVal("outDispatcher/y"));
+                outVal("result/y"));
         Signature ms = sig("multiply", MultiplierImpl.class);
         Signature as = sig("add", AdderImpl.class);
 
         Morpher morpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("multiply")) {
-                if (((Double) value(context(value), "outDispatcher/y")) >= 500.0) {
+                if (((Double) value(context(value), "result/y")) >= 500.0) {
                     mgr.reconfigure(fi("sigFi", "add"));
                 }
             }
@@ -489,10 +489,10 @@ public class ModelMultiFidelities {
 
         Context out = (Context) exec(mfs);
         logger.info("outGovernance: " + out);
-        assertTrue(value(context(out), "outDispatcher/y").equals(500.0));
+        assertTrue(value(context(out), "result/y").equals(500.0));
 
         out = (Context) exec(mfs);
-        assertTrue(value(context(out), "outDispatcher/y").equals(60.0));
+        assertTrue(value(context(out), "result/y").equals(60.0));
     }
 
     @Test
@@ -501,23 +501,23 @@ public class ModelMultiFidelities {
         Task t4 = task("t4",
                 sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-                        outVal("outDispatcher/y")));
+                        outVal("result/y")));
 
         Task t5 = task("t5",
                 sig("add", AdderImpl.class),
                 context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                        outVal("outDispatcher/y")));
+                        outVal("result/y")));
 
 
         MultiFiMogram mfs = mogFi(mphFi("taskFi", t5, t4));
         Mogram mog = exert(mfs);
         logger.info("outGovernance: " + mog.getContext());
-        assertTrue(value(context(mog), "outDispatcher/y").equals(100.0));
+        assertTrue(value(context(mog), "result/y").equals(100.0));
 
         selectFi(mfs, "t4");
         mog = exert(mfs);
         logger.info("outGovernance: " + mog.getContext());
-        assertTrue(value(context(mog), "outDispatcher/y").equals(500.0));
+        assertTrue(value(context(mog), "result/y").equals(500.0));
     }
 
     @Test
@@ -527,19 +527,19 @@ public class ModelMultiFidelities {
                 "t4",
                 sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-                        outVal("outDispatcher/y")));
+                        outVal("result/y")));
 
         mog t5 = task(
                 "t5",
                 sig("add", AdderImpl.class),
                 context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                        outVal("outDispatcher/y")));
+                        outVal("result/y")));
 
 
         Morpher morpher = (mgr, mFi, value) -> {
             Fidelity<Signature> fi =  mFi.getFidelity();
             if (fi.getSelectName().equals("t5")) {
-                if (((Double) value(context(value), "outDispatcher/y")) <= 200.0) {
+                if (((Double) value(context(value), "result/y")) <= 200.0) {
                     mgr.reconfigure("t4");
                 }
             }
@@ -548,11 +548,11 @@ public class ModelMultiFidelities {
         MultiFiMogram mfs = mogFi(mphFi(morpher, t5, t4));
         Mogram mog = exert(mfs);
         logger.info("outGovernance: " + context(mog));
-        assertTrue(value(context(mog), "outDispatcher/y").equals(100.0));
+        assertTrue(value(context(mog), "result/y").equals(100.0));
 
         mog = exert(mfs);
         logger.info("outGovernance: " + mog.getContext());
-        assertTrue(value(context(mog), "outDispatcher/y").equals(500.0));
+        assertTrue(value(context(mog), "result/y").equals(500.0));
     }
 
     public mog getMorphingModel() throws Exception {
@@ -570,11 +570,11 @@ public class ModelMultiFidelities {
 
         mog t4 = task("t4",
                 sig("multiply", MultiplierImpl.class,
-                        result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))));
+                        result("result/y", inPaths("arg/x1", "arg/x2"))));
 
         mog t5 = task("t5",
                 sig("add", AdderImpl.class,
-                        result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))));
+                        result("result/y", inPaths("arg/x1", "arg/x2"))));
 
         Morpher morpher1 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
@@ -603,15 +603,15 @@ public class ModelMultiFidelities {
         Morpher morpher3 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
             if (fi.getSelectName().equals("t5")) {
-                Double val = ((Double) value(context(value), "outDispatcher/y"));
+                Double val = ((Double) value(context(value), "result/y"));
                 if (val <= 200.0) {
-                    putValue(context(value), "outDispatcher/y", val + 10.0);
+                    putValue(context(value), "result/y", val + 10.0);
                     mgr.reconfigure(fi("mFi4","t4"));
                 }
             } else if (fi.getSelectName().equals("t4")) {
                 // t4 is a mutiply task
-                Double val = ((Double) value(context(value), "outDispatcher/y"));
-                putValue(context(value), "outDispatcher/y", val + 20.0);
+                Double val = ((Double) value(context(value), "result/y"));
+                putValue(context(value), "result/y", val + 20.0);
             }
         };
 
@@ -717,7 +717,7 @@ public class ModelMultiFidelities {
 //        logger.info("DEPS: " + printDeps(mdl));
         mdlBlock = exert(mdlBlock, fi("mFi1", "multiply"));
 //        logger.info("block context: " + context(mdlBlock));
-//        logger.info("outDispatcher: " + get(context(mdlBlock), "mFi4"));
+//        logger.info("result: " + get(context(mdlBlock), "mFi4"));
 
         assertTrue(value(context(mdlBlock), "mFi4").equals(920.0));
     }

@@ -36,7 +36,7 @@ public class ServiceExertionTest {
 
 	private Routine eTask, eJob;
 	// to avoid spelling errors in test cases define instance variables
-	private String arg = "arg", result = "outDispatcher";
+	private String arg = "arg", result = "result";
 	private String x1 = "x1", x2 = "x2", y = "y";
 	
 	static {
@@ -57,7 +57,7 @@ public class ServiceExertionTest {
 		eTask = exert(eTask);
 
 		// exert and them get the eval from task's context
-		//logger.info("eTask eval @ outDispatcher/y = " + get(exert(eTask), path(outDispatcher, y)));
+		//logger.info("eTask eval @ result/y = " + get(exert(eTask), path(result, y)));
 		assertTrue("Wrong eTask eval for 100.0", get(eTask, attPath(result, y)).equals(100.0));
 		
 		//logger.info("eTask eval @ arg/x1 = " + exert(eTask, path("arg/x1")));
@@ -91,8 +91,8 @@ public class ServiceExertionTest {
 		//logger.info("eJob eval @  j2/t4/arg/x2 = " + exert(eJob, "j2/t4/arg/x2"));
 		assertTrue( value(out, "j1/j2/t4/arg/x2").equals(50.0));
 
-		// final outDispatcher by three services
-		assertEquals(value(out, "j1/t3/outDispatcher/y"), 400.0);
+		// final result by three services
+		assertEquals(value(out, "j1/t3/result/y"), 400.0);
 	}
 
 	@Test
@@ -116,7 +116,7 @@ public class ServiceExertionTest {
 		
 //		Task task = task("t1", sig("add", Adder.class), 
 //		   context("add", in(path(arg, x1), 20.0), in(path(arg, x2), 80.0),
-//		      outGovernance(path(outDispatcher, y), null)));
+//		      outGovernance(path(result, y), null)));
 
 		Task task = task("t1", sig("add", AdderImpl.class), 
 				   context("add", inVal(attPath(arg, x1), 20.0), inVal(attPath(arg, x2), 80.0),
@@ -130,21 +130,21 @@ public class ServiceExertionTest {
 	
 //		Task t3 = task("t3", sig("subtract", Subtractor.class), 
 //		   context("subtract", in(path(arg, x1), null), in(path(arg, x2), null),
-//		      outGovernance(path(outDispatcher, y), null)));
+//		      outGovernance(path(result, y), null)));
 //		
 //		Task t4 = task("t4", sig("multiply", Multiplier.class), 
 //				   context("multiply", in(path(arg, x1), 10.0), in(path(arg, x2), 50.0),
-//				      outGovernance(path(outDispatcher, y), null)));
+//				      outGovernance(path(result, y), null)));
 //		
 //		Task t5 = task("t5", sig("add", Adder.class), 
 //		   context("add", in(path(arg, x1), 20.0), in(path(arg, x2), 80.0),
-//		      outGovernance(path(outDispatcher, y), null)));
+//		      outGovernance(path(result, y), null)));
 //
 //		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 //		//Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL, Access.PULL)), t3,
 //		Job job = job("j1", job("j2", t4, t5), t3,
-//		   pipe(outGovernance(t4, path(outDispatcher, y)), in(t3, path(arg, x1))),
-//		   pipe(outGovernance(t5, path(outDispatcher, y)), in(t3, path(arg, x2))));
+//		   pipe(outGovernance(t4, path(result, y)), in(t3, path(arg, x1))),
+//		   pipe(outGovernance(t5, path(result, y)), in(t3, path(arg, x2))));
 		
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class), 
 				context("subtract", inVal(attPath(arg, x1)), inVal(attPath(arg, x2)),
@@ -177,7 +177,7 @@ public class ServiceExertionTest {
 		
 		logger.info("xrt eval @  t3/arg/x1 = " + get(xrt, "t3/arg/x1"));
 		logger.info("xrt eval @  t3/arg/x2 = " + get(xrt, "t3/arg/x2"));
-		logger.info("xrt eval @  t3/outDispatcher/y = " + get(xrt, "t3/outDispatcher/y"));
+		logger.info("xrt eval @  t3/result/y = " + get(xrt, "t3/result/y"));
 
 		//assertTrue("Wrong xrt eval for " + Context.Value.NULL, get(srv, "t3/arg/x2").equals(Context.Value.NULL));
 	}
@@ -187,24 +187,24 @@ public class ServiceExertionTest {
 		// using the data context in jobs
 		mog t3 = xrt("t3", sig("subtract", SubtractorImpl.class),
 				cxt("subtract", inVal("arg/x1"), inVal("arg/x2"),
-						outVal("outDispatcher/y")));
+						outVal("result/y")));
 
 		mog t4 = xrt("t4", sig("multiply", MultiplierImpl.class),
 				cxt("multiply", inVal("super/arg/x1"), inVal("arg/x2", 50.0),
-						outVal("outDispatcher/y")));
+						outVal("result/y")));
 
 		mog t5 = xrt("t5", sig("add", AdderImpl.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						outVal("outDispatcher/y")));
+						outVal("result/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		//Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL, Access.PULL)), t3,
 		mog job = xrt("j1", sig("exert", ServiceJobber.class),
-					cxt(inVal("arg/x1", 10.0), outVal("job/outDispatcher")),
+					cxt(inVal("arg/x1", 10.0), outVal("job/result")),
 				xrt("j2", sig("exert", ServiceJobber.class), t4, t5),
 				t3,
-				pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 				
 		return job;
 	}

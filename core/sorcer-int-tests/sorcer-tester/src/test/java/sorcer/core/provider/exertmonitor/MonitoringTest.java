@@ -55,14 +55,14 @@ public class MonitoringTest {
 				"t5",
 				sig("add", Adder.class),
 				context("add", inVal("arg/x1", 20.0),
-						inVal("arg/x2", 80.0), outVal("outDispatcher/y")),
+						inVal("arg/x2", 80.0), outVal("result/y")),
 				strategy(Strategy.Access.PULL, Strategy.Wait.YES, Strategy.Monitor.YES));
 
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
 		assertNotNull(context(t5).asis("context/checkpoint/time"));
-		logger.info("t5 eval: " + get(t5, "outDispatcher/y"));
-		assertEquals("Wrong eval for 100.0", 100d, get(t5, "outDispatcher/y"));
+		logger.info("t5 eval: " + get(t5, "result/y"));
+		assertEquals("Wrong eval for 100.0", 100d, get(t5, "result/y"));
 
 		verifyExertionMonitorStatus(t5, "DONE");
 	}
@@ -73,7 +73,7 @@ public class MonitoringTest {
 		Job job = createJob(Strategy.Flow.PAR, Strategy.Access.PUSH);
 		job = exert(job);
 		logger.info("job j1 job context: " + upcontext(job));
-		assertEquals(get(job, "j1/t3/outDispatcher/y"), 400.00);
+		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 		verifyExertionMonitorStatus(job, "DONE");
 	}
 
@@ -85,7 +85,7 @@ public class MonitoringTest {
 		job = exert(job);
 		logger.info("job j1: " + job);
 		logger.info("job j1 job context: " + upcontext(job));
-		assertEquals(get(job, "j1/t3/outDispatcher/y"), 400.00);
+		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 		verifyExertionMonitorStatus(job, "DONE");
 	}
 
@@ -94,7 +94,7 @@ public class MonitoringTest {
 		Job job = createJob(Strategy.Flow.PAR, Strategy.Access.PULL);
 		job = exert(job);
 		logger.info("job j1 job context: " + upcontext(job));
-		assertEquals(400d, get(job, "j1/t3/outDispatcher/y"));
+		assertEquals(400d, get(job, "j1/t3/result/y"));
 		verifyExertionMonitorStatus(job, "DONE");
 	}
 
@@ -104,7 +104,7 @@ public class MonitoringTest {
 		Job job = createJob(Strategy.Flow.SEQ, Strategy.Access.PULL);
 		job = exert(job);
 		logger.info("job j1 job context: " + upcontext(job));
-		assertEquals(400d, get(job, "j1/t3/outDispatcher/y"));
+		assertEquals(400d, get(job, "j1/t3/result/y"));
 		verifyExertionMonitorStatus(job, "DONE");
 	}
 
@@ -113,22 +113,22 @@ public class MonitoringTest {
 
 		Task t3 = task("t3", sig("subtract", Subtractor.class),
 				context("subtract", inVal("arg/x1"), inVal("arg/x2"),
-						outVal("outDispatcher/y")), strategy(Strategy.Monitor.YES));
+						outVal("result/y")), strategy(Strategy.Monitor.YES));
 
 		Task t4 = task("t4", sig("multiply", Multiplier.class),
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						outVal("outDispatcher/y")), strategy(Strategy.Monitor.YES));
+						outVal("result/y")), strategy(Strategy.Monitor.YES));
 
 		Task t5 = task("t5", sig("add", Adder.class),
 				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						outVal("outDispatcher/y")), strategy(Strategy.Monitor.YES));
+						outVal("result/y")), strategy(Strategy.Monitor.YES));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		Job job = job("j1",
 				job("j2", t4, t5, strategy(flow, access, Strategy.Monitor.YES)),
 				t3,
-				pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")),
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
 				strategy(Strategy.Monitor.YES));
 
 		return job;
@@ -150,12 +150,12 @@ public class MonitoringTest {
 
 		block = exert(block);
 		logger.info("block context 1: " + context(block));
-//		logger.info("outDispatcher: " + eval(context(block), "outGovernance"));
+//		logger.info("result: " + eval(context(block), "outGovernance"));
 		assertEquals(value(context(block), "outGovernance"), 500.0);
 
 		block = exert(block, operator.ent("block/t4/arg/x1", 200.0), operator.ent("block/t4/arg/x2", 800.0));
 		logger.info("block context 2: " + context(block));
-//		logger.info("outDispatcher: " + eval(context(block), "outGovernance"));
+//		logger.info("result: " + eval(context(block), "outGovernance"));
 		assertEquals(value(context(block), "outGovernance"), 100.0);
 
 	}

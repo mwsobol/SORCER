@@ -206,7 +206,7 @@ public class operator extends Operator {
         return discipline.getOutGovernance();
     }
 
-    public static Mogram outDispatcher(Discipline discipline) {
+    public static Mogram result(Discipline discipline) {
         return discipline.getOutDispatcher();
     }
 

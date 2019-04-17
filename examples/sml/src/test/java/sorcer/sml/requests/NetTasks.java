@@ -40,21 +40,21 @@ public class NetTasks {
 	public void exertTask() throws Exception  {
 
 		Task t5 = task("t5", sig("add", Adder.class),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
 		logger.info("outGovernance context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
-		logger.info("context @ outDispatcher/y: " + value(cxt, "outDispatcher/y"));
+		logger.info("context @ result/y: " + value(cxt, "result/y"));
 
 		// get a single context argument
-		assertEquals(100.0, value(cxt, "outDispatcher/y"));
+		assertEquals(100.0, value(cxt, "result/y"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("outDispatcher/y", 100.0)).equals(
-				value(cxt, result("outDispatcher/context", outPaths("arg/x1", "outDispatcher/y")))));
+		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
 	@Test
@@ -69,14 +69,14 @@ public class NetTasks {
 		logger.info("outGovernance context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
-		logger.info("context @ outDispatcher/eval: " + value(cxt, "outDispatcher/eval"));
+		logger.info("context @ result/eval: " + value(cxt, "result/eval"));
 
 		// get a single context argument
-		assertEquals(100.0, value(cxt, "outDispatcher/eval"));
+		assertEquals(100.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("outDispatcher/eval", 100.0), operator.ent("arg/x1", 20.0)).equals(
-			value(cxt, outPaths("outDispatcher/eval", "arg/x1"))));
+		assertTrue(context(operator.ent("result/eval", 100.0), operator.ent("arg/x1", 20.0)).equals(
+			value(cxt, outPaths("result/eval", "arg/x1"))));
 	}
 
 
@@ -84,21 +84,21 @@ public class NetTasks {
 	public void exertTaskSrvName() throws Exception  {
 
 		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder")),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
 		logger.info("outGovernance context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
-		logger.info("context @ outDispatcher/y: " + value(cxt, "outDispatcher/y"));
+		logger.info("context @ result/y: " + value(cxt, "result/y"));
 
 		// get a single context argument
-		assertEquals(100.0, value(cxt, "outDispatcher/y"));
+		assertEquals(100.0, value(cxt, "result/y"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("outDispatcher/y", 100.0)).equals(
-				value(cxt, result("outDispatcher/context", outPaths("arg/x1", "outDispatcher/y")))));
+		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
 	@Test
@@ -106,21 +106,21 @@ public class NetTasks {
 		String group = System.getProperty("user.name");
 
 		Task t5 = task("t5", sig("add", Adder.class, srvName("Adder", group)),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
 		logger.info("outGovernance context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
-		logger.info("context @ outDispatcher/y: " + value(cxt, "outDispatcher/y"));
+		logger.info("context @ result/y: " + value(cxt, "result/y"));
 
 		// get a single context argument
-		assertEquals(100.0, value(cxt, "outDispatcher/y"));
+		assertEquals(100.0, value(cxt, "result/y"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("outDispatcher/y", 100.0)).equals(
-				value(cxt, result("outDispatcher/context", outPaths("arg/x1", "outDispatcher/y")))));
+		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
 	@Test
@@ -130,21 +130,21 @@ public class NetTasks {
 		Task t5 = task("t5", sig("add", Adder.class,
 				types(Service.class, Provider.class),
 				srvName("Adder", group)),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
 		logger.info("outGovernance context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
-		logger.info("context @ outDispatcher/y: " + value(cxt, "outDispatcher/y"));
+		logger.info("context @ result/y: " + value(cxt, "result/y"));
 
 		// get a single context argument
-		assertEquals(100.0, value(cxt, "outDispatcher/y"));
+		assertEquals(100.0, value(cxt, "result/y"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("outDispatcher/y", 100.0)).equals(
-				value(cxt, result("outDispatcher/context", outPaths("arg/x1", "outDispatcher/y")))));
+		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
 	@Test
@@ -155,35 +155,35 @@ public class NetTasks {
 				types(Service.class, Provider.class),
 				// comma separated list of hosts, when empty localhost is a default locator
 				srvName("Adder", locators(), group)),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
 		logger.info("outGovernance context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
-		logger.info("context @ outDispatcher/y: " + value(cxt, "outDispatcher/y"));
+		logger.info("context @ result/y: " + value(cxt, "result/y"));
 
 		// get a single context argument
-		assertEquals(100.0, value(cxt, "outDispatcher/y"));
+		assertEquals(100.0, value(cxt, "result/y"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("outDispatcher/y", 100.0)).equals(
-				value(cxt, result("outDispatcher/context", outPaths("arg/x1", "outDispatcher/y")))));
+		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/y", 100.0)).equals(
+				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
 	@Test
 	public void evaluateTask() throws Exception  {
 
 		Task t5 = task("t5", sig("add", Adder.class),
-				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		// get the outDispatcher eval
+		// get the result eval
 		assertTrue(exec(t5).equals(100.0));
 
 		// get the subcontext output from the exertion
-		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("outDispatcher/y", 100.0)).equals(
-				exec(t5, outPaths("arg/x1", "outDispatcher/y"))));
+		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/y", 100.0)).equals(
+				exec(t5, outPaths("arg/x1", "result/y"))));
 
 	}
 
@@ -194,10 +194,10 @@ public class NetTasks {
 				"t6",
 				sig("average", Averager.class),
 				context("average", inVal("arg, x1", 20.0),
-						inVal("arg, x2", 80.0), result("outDispatcher/y")));
+						inVal("arg, x2", 80.0), result("result/y")));
 		t5 = exert(t5);
 		logger.info("t6 context: " + context(t5));
-		assertEquals(value(context(t5), "outDispatcher/y"), 50.0);
+		assertEquals(value(context(t5), "result/y"), 50.0);
 
 	}
 
@@ -208,7 +208,7 @@ public class NetTasks {
 				sigFi("net", sig("add", Adder.class)),
 				sigFi("object", sig("add", AdderImpl.class)),
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("outDispatcher/y")));
+						result("result/y")));
 
 		logger.info("sigFi: " + fi(task));
 		logger.info("sFis: " + size(srvFis(task)));
@@ -228,13 +228,13 @@ public class NetTasks {
 		Task t5 = task("t5",
 				sig("add", Adder.class),
 				context("add", inVal("arg/x1", 20.0),
-						inVal("arg/x2", 80.0), outVal("outDispatcher/y")),
+						inVal("arg/x2", 80.0), outVal("result/y")),
 				strategy(Access.PULL, Wait.YES));
 
 		t5 = exert(t5);
 		logger.info("t5 context: " + context(t5));
-		logger.info("t5 eval: " + get(t5, "outDispatcher/y"));
-		assertEquals("Wrong eval for 100.0", get(t5, "outDispatcher/y"), 100.0);
+		logger.info("t5 eval: " + get(t5, "result/y"));
+		assertEquals("Wrong eval for 100.0", get(t5, "result/y"), 100.0);
 
 	}
 
@@ -246,11 +246,11 @@ public class NetTasks {
 		Task f5 = task("f5",
 				sig("add", Adder.class),
 				context("add", inVal("arg/x1", 20.0),
-						inVal("arg/x2", 80.0), result("outDispatcher/y")),
+						inVal("arg/x2", 80.0), result("result/y")),
 				strategy(Monitor.NO, Wait.YES));
 
 		Context out = (Context) exec(sig(RemoteServiceShell.class), f5);
-		assertTrue(value(out, "outDispatcher/y").equals(100.00));
+		assertTrue(value(out, "result/y").equals(100.00));
 
 	}
 
@@ -261,13 +261,13 @@ public class NetTasks {
 		Task batch3 = task("batch3",
 				type(sig("multiply", Multiplier.class, result("subtract/x1", Signature.Direction.IN)), Signature.PRE),
 				type(sig("add", Adder.class, result("subtract/x2", Signature.Direction.IN)), Signature.PRE),
-				sig("subtract", Subtractor.class, result("outDispatcher/y", inPaths("subtract/x1", "subtract/x2"))),
+				sig("subtract", Subtractor.class, result("result/y", inPaths("subtract/x1", "subtract/x2"))),
 				context(inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 						inVal("add/x1", 20.0), inVal("add/x2", 80.0)));
 
 		batch3 = exert(batch3);
-		//logger.info("task outDispatcher/y: " + get(batch3, "outDispatcher/y"));
-		assertEquals(get(batch3, "outDispatcher/y"), 400.0);
+		//logger.info("task result/y: " + get(batch3, "result/y"));
+		assertEquals(get(batch3, "result/y"), 400.0);
 	}
 
 	@Test
@@ -277,15 +277,15 @@ public class NetTasks {
 				sigFi("net1", sig("multiply", Multiplier.class)),
 				sigFi("net2", sig("add", Adder.class)),
 				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						result("outDispatcher/y")));
+						result("result/y")));
 
 		Context out = context(exert(t4, fi("net1")));
 		logger.info("task context: " + context(t4));
-		assertTrue(get(out, "outDispatcher/y").equals(500.0));
+		assertTrue(get(out, "result/y").equals(500.0));
 
 		out = context(exert(t4, fi("net2")));
 		logger.info("task context: " + context(t4));
-		assertTrue(get(out, "outDispatcher/y").equals(60.0));
+		assertTrue(get(out, "result/y").equals(60.0));
 	}
 
 	@Test
@@ -295,11 +295,11 @@ public class NetTasks {
 				sigFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
 				sigFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
 				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						outVal("outDispatcher/y")));
+						outVal("result/y")));
 
 		Context out = context(exert(t4, fi("net")));
 		logger.info("task context: " + context(t4));
-		assertTrue(get(out, "outDispatcher/y").equals(500.0));
+		assertTrue(get(out, "result/y").equals(500.0));
 	}
 
 	@Test
@@ -310,7 +310,7 @@ public class NetTasks {
 				sigFi("object", sig("add", Adder.class)),
 				sigFi("net", sig("add", AdderImpl.class)),
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("outDispatcher/y")));
+						result("result/y")));
 
 		logger.info("task metaFi: " + fi(task));
 		assertTrue(fis(task).size() == 2);
@@ -330,13 +330,13 @@ public class NetTasks {
 		Task t5 = task("t5", sig("add", Adder.class),
 				sig("getContext", Contexter.class, prvName("Add Contexter"), Signature.APD),
 				context("add", inVal("arg/x1"), inVal("arg/x2"),
-						result("outDispatcher/y")));
+						result("result/y")));
 
 		Context result =  context(exert(t5));
 		logger.info("outGovernance context: " + result);
 		assertEquals(value(result, "arg/x1"), 20.0);
 		assertEquals(value(result, "arg/x2"), 80.0);
-		assertEquals(value(result, "outDispatcher/y"), 100.0);
+		assertEquals(value(result, "result/y"), 100.0);
 
 	}
 

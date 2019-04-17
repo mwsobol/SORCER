@@ -398,24 +398,24 @@ public class DataModels {
                 "t3",
                 sig("subtract", SubtractorImpl.class),
                 context("subtract", in(val("arg/x1")), in(val("arg/x2")),
-                        out(val("outDispatcher/y"))));
+                        out(val("result/y"))));
 
         Task t4 = task(
                 "t4",
                 sig("multiply", MultiplierImpl.class),
                 context("multiply", in(ent("arg/x1", 10.0)), in(ent("arg/x2", 50.0)),
-                        out(ent("outDispatcher/y"))));
+                        out(ent("result/y"))));
 
         Task t5 = task(
                 "t5",
                 sig("add", AdderImpl.class),
                 context("add", in(ent("arg/x1", 20.0)), in(ent("arg/x2", 80.0)),
-                        out(ent("outDispatcher/y"))));
+                        out(ent("result/y"))));
 
         Job job = job(sig("exert", ServiceJobber.class),
                 "j1", t4, t5, t3,
-                pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
-                pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
+                pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+                pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
         return job;
     }
@@ -432,8 +432,8 @@ public class DataModels {
         Job j1 = getArithmeticJob();
 
         Context bag = context(cxt1, cxt2,
-                execEnt(t5, self(selector("outDispatcher/eval"), true)),
-                execEnt(j1, selector("outDispatcher/y")));
+                execEnt(t5, self(selector("result/eval"), true)),
+                execEnt(j1, selector("result/y")));
 
         logger.info("context bag: " + bag);
         assertEquals(value(bag, "j1"), 400.0);

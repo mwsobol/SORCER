@@ -122,7 +122,7 @@ public class GroovyCmd extends ShellCmd {
 		et.start();
 		et.join();
 		Object outObject = et.getResult();
-		// System.outGovernance.println(">>>>>>>>>>> outDispatcher: " + xrt);
+		// System.outGovernance.println(">>>>>>>>>>> result: " + xrt);
 		if (outObject != null) {
 			out.println("\n---> GROOVY OUTPUT --->");
 			out.println(outObject.toString());

@@ -47,18 +47,18 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		job.addMogram(task2);
 		job.addMogram(task3);
 		
-		// make the outDispatcher of second task as the first argument of task
+		// make the result of second task as the first argument of task
 		// three
 		task2.getContext().connect("outGovernance/eval", "arg1/eval", task3.getContext());
-		// make the outDispatcher of the first task as the second argument of task
+		// make the result of the first task as the second argument of task
 		// three
 		task1.getContext().connect("outGovernance/eval", "arg2/eval", task3.getContext());
 		
 		job = job.exert();
 
 		logger.info("job context: " + ((Job)job).getJobContext());
-		// outDispatcher at the provider's default path"
-		assertEquals(((Job)job).getJobValue("3tasks/subtract/outDispatcher/eval"), 400.0);
+		// result at the provider's default path"
+		assertEquals(((Job)job).getJobValue("3tasks/subtract/result/eval"), 400.0);
 	}
 
 	@Test
@@ -75,18 +75,18 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		job.addMogram(internal);
 		job.addMogram(task3);
 		
-		// make the outDispatcher of second task as the first argument of task
+		// make the result of second task as the first argument of task
 		// three
 		task2.getContext().connect("outGovernance/eval", "arg1/eval", task3.getContext());
-		// make the outDispatcher of the first task as the second argument of task
+		// make the result of the first task as the second argument of task
 		// three
 		task1.getContext().connect("outGovernance/eval", "arg2/eval", task3.getContext());
 		
 		job = job.exert();
 
 		logger.info("job context: " + ((Job) job).getJobContext());
-		// outDispatcher at the provider's default path"
-		assertEquals(((Job) job).getJobValue("1job1task/subtract/outDispatcher/eval"), 400.0);
+		// result at the provider's default path"
+		assertEquals(((Job) job).getJobValue("1job1task/subtract/result/eval"), 400.0);
 	}
 	
 	@Test
@@ -107,18 +107,18 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		internal.getControlContext().setFlowType(Flow.SEQ);
 		internal.getControlContext().setAccessType(Access.PUSH);
 		
-		// make the outDispatcher of second task as the first argument of task
+		// make the result of second task as the first argument of task
 		// three
 		task2.getContext().connect("outGovernance/eval", "arg1/eval", task3.getContext());
-		// make the outDispatcher of the first task as the second argument of task
+		// make the result of the first task as the second argument of task
 		// three
 		task1.getContext().connect("outGovernance/eval", "arg2/eval", task3.getContext());
 		
 		job = job.exert();
 
 		logger.info("job context: " + ((Job)job).getJobContext());
-		// outDispatcher at the provider's default path"
-		assertEquals(((Job)job).getJobValue("1job1task/subtract/outDispatcher/eval"), 400.0);
+		// result at the provider's default path"
+		assertEquals(((Job)job).getJobValue("1job1task/subtract/result/eval"), 400.0);
 	}
 	
 	private Task getAddTask() throws Exception {
@@ -147,9 +147,9 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 
 	private Task getSubtractTask() throws Exception {
 		PositionalContext context = new PositionalContext("subtract");
-		// We want to stick in the outDispatcher of multiply in here
+		// We want to stick in the result of multiply in here
 		context.putInValueAt("arg1/eval", 0.0, 1);
-		// We want to stick in the outDispatcher of add in here
+		// We want to stick in the result of add in here
 		context.putInValueAt("arg2/eval", 0.0, 2);
 		Signature method = new ObjectSignature("subtract", SubtractorImpl.class);
 		Task task = new ObjectTask("subtract",
@@ -165,15 +165,15 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 				sigFi("object1", sig("multiply", MultiplierImpl.class)),
 				sigFi("object2", sig("add", AdderImpl.class)),
 				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						outVal("outDispatcher/y")));
+						outVal("result/y")));
 
 		Context out = context(exert(t4, fi("object1")));
 		logger.info("task context: " + context(t4));
-		assertTrue(value(out, "outDispatcher/y").equals(500.0));
+		assertTrue(value(out, "result/y").equals(500.0));
 
 		out = context(exert(t4, fi("object2")));
 		logger.info("task context: " + context(t4));
-		assertTrue(value(out, "outDispatcher/y").equals(60.0));
+		assertTrue(value(out, "result/y").equals(60.0));
 	}
 
 	@Test
@@ -183,7 +183,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 				context("add", input("arg/x1"), input("arg/x2")));
 
 		Context result = context(exert(cxtt));
-//		logger.info("contexter context: " + outDispatcher);
+//		logger.info("contexter context: " + result);
 		assertTrue(get(result, "arg/x1").equals(20.0));
 		assertTrue(get(result, "arg/x2").equals(80.0));
 	}
@@ -193,11 +193,11 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
 					type(sig("getContext", ArithmeticNetTest.createContext()), Signature.APD),
 					context("add", inVal("arg/x1"), inVal("arg/x2"),
-							result("outDispatcher/y")));
+							result("result/y")));
 		
 		Context result = context(exert(t5));
-//		logger.info("task context: " + outDispatcher);
-		assertTrue(get(result, "outDispatcher/y").equals(100.0));
+//		logger.info("task context: " + result);
+		assertTrue(get(result, "result/y").equals(100.0));
 	}
 	
 	@Test
@@ -218,19 +218,19 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 	// two level job composition
 	private Job createSrv() throws Exception {
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
-				cxt("subtract", inVal("arg/x1"), inVal("arg/x2"), outVal("outDispatcher/y")));
+				cxt("subtract", inVal("arg/x1"), inVal("arg/x2"), outVal("result/y")));
 
 		Task t4 = task("t4",
 				sig("multiply", MultiplierImpl.class),
 				// cxt("multiply", in("super/arg/x1"), in("arg/x2", 50.0),
 				cxt("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						outVal("outDispatcher/y")));
+						outVal("result/y")));
 
 		Task t5 = task(
 				"t5",
 				sig("add", AdderImpl.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						outVal("outDispatcher/y")));
+						outVal("result/y")));
 
 		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 		// Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL,
@@ -239,10 +239,10 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 				"j1",
 				sig("exert", ServiceJobber.class),
 				cxt(inVal("arg/x1", 10.0),
-						result("job/outDispatcher", outPaths("j1/t3/outDispatcher/y"))),
+						result("job/result", outPaths("j1/t3/result/y"))),
 				job("j2", sig("exert", ServiceJobber.class), t4, t5), t3,
-				pipe(outPoint(t4, "outDispatcher/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "outDispatcher/y"), inPoint(t3, "arg/x2")));
+				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
 		return job;
 	}

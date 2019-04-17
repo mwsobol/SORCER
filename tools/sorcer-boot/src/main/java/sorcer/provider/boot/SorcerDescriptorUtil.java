@@ -1306,7 +1306,7 @@ public class SorcerDescriptorUtil {
 	 * Concatenate the strings resulting from calling
 	 * {@link java.lang.String#valueOf(Object)} on each element of an array of
 	 * objects with a follow up separator. Passing a zero length array will
-	 * outDispatcher in the empty string being returned.
+	 * result in the empty string being returned.
 	 * 
 	 * @param objects
 	 *            the array of objects to be processed.

@@ -322,7 +322,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/*
-	 * Return boolean outDispatcher indicating if the eval at the designated path is
+	 * Return boolean result indicating if the eval at the designated path is
 	 * setValue as an empty leaf node.
 	 */
 	public static boolean isEmptyLeafNode(Context cntxt, String path)

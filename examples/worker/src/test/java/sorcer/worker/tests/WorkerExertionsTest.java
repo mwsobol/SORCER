@@ -64,7 +64,7 @@ public class WorkerExertionsTest {
 		Task et = exert(pt);
 	
 		logger.info("context: " + context(et));
-		assertEquals(get(et, "prv/outDispatcher"), 1111);
+		assertEquals(get(et, "prv/result"), 1111);
 		assertEquals(get(et, "prv/host/key"), hostname);
 		
 	}
@@ -77,7 +77,7 @@ public class WorkerExertionsTest {
 		Task et = exert(pt);
 
 		logger.info("context: " + context(et));
-		assertEquals(get(et, "prv/outDispatcher"), 1111);
+		assertEquals(get(et, "prv/result"), 1111);
 		assertEquals(get(et, "prv/host/key"), Context.none);
 
 	}
@@ -90,7 +90,7 @@ public class WorkerExertionsTest {
 		Task et = exert(pt);
 	
 		logger.info("context: " + context(et));
-		assertEquals(get(et, "prv/outDispatcher"), 1111);
+		assertEquals(get(et, "prv/result"), 1111);
 		assertEquals(get(et, "prv/host/key"), hostname);
 		
 	}
@@ -103,7 +103,7 @@ public class WorkerExertionsTest {
 		Task et = exert(pt);
 		
 		logger.info("context: " + context(et));
-		assertEquals(get(et, "prv/outDispatcher"), 1111);
+		assertEquals(get(et, "prv/result"), 1111);
 		assertEquals(get(et, "prv/message"), "Done work by: " + actualName("Worker1"));
 		assertEquals(get(et, "prv/host/key"), hostname);
 		
@@ -121,7 +121,7 @@ public class WorkerExertionsTest {
 					inVal("w2/req/arg/1", 10), inVal("w2/req/arg/2", 50),
 					inVal("w2/req/work", Works.work2), outVal("req/arg/2", "tag|w2"),
 
-					inVal("req/work", Works.work3), outVal("prv/outDispatcher"));
+					inVal("req/work", Works.work3), outVal("prv/result"));
 
 
 		Task bt = task("pBatch", 
@@ -130,13 +130,13 @@ public class WorkerExertionsTest {
 					type(sig("doWork#w2", Worker.class, prvName("Worker2"),
 							result("req/arg/2")), Signature.PRE),
 					sig("doWork", Worker.class, prvName("Worker3"),
-							result("prv/outDispatcher")),
+							result("prv/result")),
 					context);
 
 		requestTime(bt);
 		Task out = exert(bt);
 		logger.info("task context: " + context(out));
-		assertEquals(get(out, "prv/outDispatcher"), 400);
+		assertEquals(get(out, "prv/result"), 400);
 	}
 
 
@@ -146,29 +146,29 @@ public class WorkerExertionsTest {
 		Context cxt1 = context(operator.ent("req/key", "workaholic"),
 				operator.ent("req/arg/1", 20),  operator.ent("req/arg/2", 80),
 				operator.ent("req/work", Works.work1),  operator.ent("tp/prv/key", "Worker1"),
-				outVal("prv/outDispatcher"));
+				outVal("prv/result"));
 
 		Context cxt2 = context(operator.ent("req/key", "workaholic"),
 				operator.ent("req/arg/1", 10),  operator.ent("req/arg/2", 50),
 				operator.ent("req/work", Works.work2),  operator.ent("tp/prv/key", "Worker2"),
-				outVal("prv/outDispatcher"));
+				outVal("prv/result"));
 
 		Context cxt3 = context(operator.ent("req/key", "workaholic"),
 				inVal("req/arg/1"),  inVal("req/arg/2"),
 				operator.ent("req/work", Works.work3),  operator.ent("tp/prv/key", "Worker3"),
-				outVal("prv/outDispatcher"));
+				outVal("prv/result"));
 
 		Job job = job("strategy", 
 				task("work1", sig("doWork", Worker.class, prvName("Worker1")), cxt1),
 				task("work2", sig("doWork", Worker.class, prvName("Worker2")), cxt2),
 				task("work3", sig("doWork", Worker.class, prvName("Worker3")), cxt3),
-				pipe(outPoint("strategy/work1", "prv/outDispatcher"), inPoint("strategy/work3", "req/arg/1")),
-				pipe(outPoint("strategy/work2", "prv/outDispatcher"), inPoint("strategy/work3", "req/arg/2")));
+				pipe(outPoint("strategy/work1", "prv/result"), inPoint("strategy/work3", "req/arg/1")),
+				pipe(outPoint("strategy/work2", "prv/result"), inPoint("strategy/work3", "req/arg/2")));
 
 		requestTime(job);
 		Job out = exert(job);
 		logger.info("job context: " + upcontext(out));
-		assertEquals(get(out, "strategy/work3/prv/outDispatcher"), 400);
+		assertEquals(get(out, "strategy/work3/prv/result"), 400);
 		
 	}
 
@@ -200,30 +200,30 @@ public class WorkerExertionsTest {
 		Job out = exert(job, control1);
 		logger.info("job context: " + upcontext(out));
 		logger.info("control context: " + control(job));
-		assertEquals(get(out, "strategy/work1/prv/outDispatcher"), 100);
-		assertEquals(get(out, "strategy/work2/prv/outDispatcher"), 500);
-		assertEquals(get(out, "strategy/work3/prv/outDispatcher"), 0);
+		assertEquals(get(out, "strategy/work1/prv/result"), 100);
+		assertEquals(get(out, "strategy/work2/prv/result"), 500);
+		assertEquals(get(out, "strategy/work3/prv/result"), 0);
 		
 		out = exert(job, control2);
 		logger.info("job context: " + upcontext(out));
 		logger.info("control context: " + control(job));
-		assertEquals(get(out, "strategy/work1/prv/outDispatcher"), 100);
-		assertEquals(get(out, "strategy/work2/prv/outDispatcher"), 500);
-		assertEquals(get(out, "strategy/work3/prv/outDispatcher"), 0);
+		assertEquals(get(out, "strategy/work1/prv/result"), 100);
+		assertEquals(get(out, "strategy/work2/prv/result"), 500);
+		assertEquals(get(out, "strategy/work3/prv/result"), 0);
 		
 		out = exert(job, control3);
 		logger.info("job context: " + upcontext(out));
 		logger.info("control context: " + control(job));
-		assertEquals(get(out, "strategy/work1/prv/outDispatcher"), 100);
-		assertEquals(get(out, "strategy/work2/prv/outDispatcher"), 500);
-		assertEquals(get(out, "strategy/work3/prv/outDispatcher"), 0);
+		assertEquals(get(out, "strategy/work1/prv/result"), 100);
+		assertEquals(get(out, "strategy/work2/prv/result"), 500);
+		assertEquals(get(out, "strategy/work3/prv/result"), 0);
 		
 		out = exert(job, control4);
 		logger.info("job context: " + upcontext(out));
 		logger.info("control context: " + control(job));
-		assertEquals(get(out, "strategy/work1/prv/outDispatcher"), 100);
-		assertEquals(get(out, "strategy/work2/prv/outDispatcher"), 500);
-		assertEquals(get(out, "strategy/work3/prv/outDispatcher"), 0);
+		assertEquals(get(out, "strategy/work1/prv/result"), 100);
+		assertEquals(get(out, "strategy/work2/prv/result"), 500);
+		assertEquals(get(out, "strategy/work3/prv/result"), 0);
 
 	}
 	

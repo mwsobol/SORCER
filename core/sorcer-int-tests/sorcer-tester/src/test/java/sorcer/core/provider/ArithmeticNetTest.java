@@ -131,8 +131,8 @@ public class ArithmeticNetTest implements SorcerConstants {
 		ServiceRoutine.debug = true;
 
 		Task task = task("add",
-				sFi("object", sig("add", Adder.class)),
-				sFi("net", sig("add", AdderImpl.class)),
+			sigFi("object", sig("add", Adder.class)),
+			sigFi("net", sig("add", AdderImpl.class)),
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						result("result/y")));
 
@@ -150,29 +150,29 @@ public class ArithmeticNetTest implements SorcerConstants {
 	private Job getMultiFiJob() throws Exception {
 
 		Task t3 = task("t3",
-				sFi("object", sig("subtract", SubtractorImpl.class)),
-				sFi("net", sig("subtract", Subtractor.class)),
+			sigFi("object", sig("subtract", SubtractorImpl.class)),
+			sigFi("net", sig("subtract", Subtractor.class)),
 				context("subtract", inVal("arg/x1"), inVal("arg/x2"),
 						outVal("result/y")));
 
 		Task t4 = task("t4",
-				sFi("object", sig("multiply", MultiplierImpl.class)),
-				sFi("net", sig("multiply", Multiplier.class)),
+			sigFi("object", sig("multiply", MultiplierImpl.class)),
+			sigFi("net", sig("multiply", Multiplier.class)),
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						outVal("result/y")));
 
 		Task t5 = task("t5",
-				sFi("object", sig("add", AdderImpl.class)),
-				sFi("net", sig("add", Adder.class)),
+			sigFi("object", sig("add", AdderImpl.class)),
+			sigFi("net", sig("add", Adder.class)),
 				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 						outVal("result/y")));
 
 		Job job = job("j1",
-				sFi("object", sig("exert", ServiceJobber.class)),
-				sFi("net", sig("exert", Jobber.class)),
+			sigFi("object", sig("exert", ServiceJobber.class)),
+			sigFi("net", sig("exert", Jobber.class)),
 				job("j2",
-						sFi("object", sig("exert", ServiceJobber.class)),
-						sFi("net", sig("exert", Jobber.class)),
+					sigFi("object", sig("exert", ServiceJobber.class)),
+					sigFi("net", sig("exert", Jobber.class)),
 						t4, t5),
 				t3,
 				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),

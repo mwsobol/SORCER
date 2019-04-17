@@ -34,7 +34,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	
 	public static final String AVERAGE = "average";
 
-	public static final String RESULT_PATH = "outDispatcher/eval";
+	public static final String RESULT_PATH = "result/eval";
 			
 	public final static Logger logger = LoggerFactory.getLogger(Arithmometer.class
 			.getName());
@@ -123,7 +123,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	}
 
 	/**
-	 * Calculates the outDispatcher of arithmetic operation specified by a selector
+	 * Calculates the result of arithmetic operation specified by a selector
 	 * (add, subtract, multiply, or divide) from the instance of ArrayContext.
 	 *
 	 * @param context
@@ -171,7 +171,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				result = result / inputs.size();
 			}
 
-			logger.info(selector + " outDispatcher: \n" + result);
+			logger.info(selector + " result: \n" + result);
 
 			String outputMessage = "calculated by " + getHostname();
 			// setValue return eval
@@ -180,11 +180,11 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			}
 			//other ways to indicate the output eval
 			else if (outpaths.size() == 1) {
-				// put the outDispatcher in the existing output path
+				// put the result in the existing output path
 				cxt.putValue(outpaths.get(0), result);
 				cxt.putValue(attPath(outpaths.get(0), ArrayContext.DESCRIPTION), outputMessage);
 			} else {
-				// put the outDispatcher for a new output path
+				// put the result for a new output path
 				logger.info("max index; " + cxt.getMaxIndex());
 				int oi = cxt.getMaxIndex() + 1;
 				cxt.ov(oi, result);
@@ -204,7 +204,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 	}
 
 	/**
-	 * Calculates the outDispatcher of arithmetic operation specified by a selector
+	 * Calculates the result of arithmetic operation specified by a selector
 	 * (add, subtract, multiply, or divide) from the instance of ServiceContext.
 	 *
 	 * @param cxt
@@ -262,7 +262,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 
 				result = result / inputs.size();
 			}
-			logger.info(selector + " outDispatcher: \n" + result);
+			logger.info(selector + " result: \n" + result);
 
 			String outputMessage = "calculated by " + getHostname();
 			if (context.getReturnPath() != null) {
@@ -275,7 +275,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				context.setReturnValue(result);
 			}
 			else if (outpaths.size() == 1) {
-				// put the outDispatcher in the existing output path
+				// put the result in the existing output path
 				String outpath = outpaths.get(0);
 				if (outpath.indexOf("${key}") >= 0) {
 					if (outpath.indexOf("${key}") >= 0) {
@@ -321,7 +321,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				}
 				context.setReturnValue(result);
 			} else if (outpaths.size() == 1) {
-				// put the outDispatcher in the existing output path
+				// put the result in the existing output path
 				String outpath = outpaths.get(0);
 				if (outpath.indexOf("${key}") >= 0) {
 					if (outpath.indexOf("${key}") >= 0) {

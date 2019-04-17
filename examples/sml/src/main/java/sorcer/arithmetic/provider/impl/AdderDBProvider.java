@@ -38,7 +38,7 @@ public class AdderDBProvider extends DatabaseProvider implements RemoteAdder {
 		out.checkpoint();
 
 //		Logger remoteLogger =  provider.getRemoteLogger();
-//		remoteLogger.info("remote logging; add outDispatcher: " + outGovernance);
+//		remoteLogger.info("remote logging; add result: " + outGovernance);
 		
 		Uuid id =  store(context);
 		Context scxt = getContext(id);

@@ -135,7 +135,7 @@ public class Models {
 						v(model, "multiply") - v(model, "add")),
 				lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
 					double out = (double) exec(entry, scope);
-					// outGovernance is outDispatcher of multiply
+					// outGovernance is result of multiply
 					if (out > 400) {
 						putValue(scope, "multiply/x1", 20.0);
 						putValue(scope, "multiply/x2", 50.0);
@@ -226,7 +226,7 @@ public class Models {
 			put(context(task), "arg/x1", 20.0);
 			put(context(task), "arg/x2", 100.0);
 			out = context(exert(task));
-			value = (Double)get(out, "multiply/outDispatcher");
+			value = (Double)get(out, "multiply/result");
 			// overwrite the original eval with a new task
 			return val("multiply/outGovernance", value);
 		};
@@ -236,7 +236,7 @@ public class Models {
 				"task/multiply",
 				sig("multiply", MultiplierImpl.class),
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						result("multiply/outDispatcher")));
+						result("multiply/result")));
 
 		Domain mdl = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
@@ -270,7 +270,7 @@ public class Models {
 		Task ti = task(
 				sig("add", AdderImpl.class),
 				model("add", inVal("arg/x1", inc("arg/x2", 2.0)),
-						inVal("arg/x2", 80.0), result("task/outDispatcher")));
+						inVal("arg/x2", 80.0), result("task/result")));
 
 		Block lb = block(sig(ServiceConcatenator.class),
 				context(ent("sum", 0.0)),
@@ -289,7 +289,7 @@ public class Models {
 		Task ti = task(
 				sig("add", AdderImpl.class),
 				model("add", inVal("arg/x1", inc("arg/x2", 2.0)),
-						inVal("arg/x2", 80.0), result("task/outDispatcher")));
+						inVal("arg/x2", 80.0), result("task/result")));
 
 		Block lb = block(sig(ServiceConcatenator.class),
 				context(ent("sum", 0.0),
@@ -343,15 +343,15 @@ public class Models {
 		Metafidelity fi4 = metaFi("sysFi4", fi("mFi3", "average"));
 
         Signature add = sig("add", AdderImpl.class,
-                result("outDispatcher/y1", inPaths("arg/x1", "arg/x2")));
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
         Signature subtract = sig("subtract", SubtractorImpl.class,
-                result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
         Signature average = sig("average", AveragerImpl.class,
-                result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
         Signature multiply = sig("multiply", MultiplierImpl.class,
-                result("outDispatcher/y1", inPaths("arg/x1", "arg/x2")));
+                result("result/y1", inPaths("arg/x1", "arg/x2")));
         Signature divide = sig("divide", DividerImpl.class,
-                result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+                result("result/y2", inPaths("arg/x1", "arg/x2")));
 
         // three entry multifidelity model with morphers
         Model mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),

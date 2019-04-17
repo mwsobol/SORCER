@@ -39,11 +39,11 @@ public class LocalTasks {
 		Context cxt = context(out);
 
 		// get a single context argument
-		assertEquals(100.0, value(cxt, "outDispatcher/eval"));
+		assertEquals(100.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("outDispatcher/eval", 100.0), operator.ent("arg/x1", 20.0)).equals(
-				value(cxt, outPaths("outDispatcher/eval", "arg/x1"))));
+		assertTrue(context(operator.ent("result/eval", 100.0), operator.ent("arg/x1", 20.0)).equals(
+				value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
 
@@ -58,14 +58,14 @@ public class LocalTasks {
 		logger.info("outGovernance context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
-		logger.info("context @ outDispatcher/eval: " + value(cxt, "outDispatcher/eval"));
+		logger.info("context @ result/eval: " + value(cxt, "result/eval"));
 
 		// get a single context argument
-		assertEquals(100.0, value(cxt, "outDispatcher/eval"));
+		assertEquals(100.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("outDispatcher/eval", 100.0), operator.ent("arg/x1", 20.0)).equals(
-				value(cxt, outPaths("outDispatcher/eval", "arg/x1"))));
+		assertTrue(context(operator.ent("result/eval", 100.0), operator.ent("arg/x1", 20.0)).equals(
+				value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
 
@@ -80,11 +80,11 @@ public class LocalTasks {
 		logger.info("outGovernance context: " + cxt);
 
 		// get a single context argument
-		assertEquals(200.0, value(cxt, "outDispatcher/eval"));
+		assertEquals(200.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("outDispatcher/eval", 200.0), operator.ent("arg/x1", 20.0)).equals(
-				value(cxt, outPaths("outDispatcher/eval", "arg/x1"))));
+		assertTrue(context(operator.ent("result/eval", 200.0), operator.ent("arg/x1", 20.0)).equals(
+				value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
 
@@ -92,17 +92,17 @@ public class LocalTasks {
 	public void evaluateTask() throws Exception  {
 
 		Task t6 = task("t6", sig("average", AveragerImpl.class),
-				cxt("average", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("outDispatcher/y")));
+				cxt("average", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		// get the outDispatcher of task evaluation
+		// get the result of task evaluation
 		assertEquals(50.0, exec(t6));
 
-		// get the returned outDispatcher
+		// get the returned result
 		assertEquals(50.0, returnValue(t6));
 
 		// get the subcontext output from the exertion
-		assertTrue(context(operator.ent("outDispatcher/y", 50.0), operator.ent("arg/x1", 20.0)).equals(
-				exec(t6, outPaths("outDispatcher/y", "arg/x1"))));
+		assertTrue(context(operator.ent("result/y", 50.0), operator.ent("arg/x1", 20.0)).equals(
+				exec(t6, outPaths("result/y", "arg/x1"))));
 
 	}
 
@@ -113,11 +113,11 @@ public class LocalTasks {
 				sigFi("net", sig("multiply", Multiplier.class), sig("add", Adder.class)),
 				sigFi("object", sig("multiply", MultiplierImpl.class), sig("add", AdderImpl.class)),
 				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						outVal("outDispatcher/y")));
+						outVal("result/y")));
 
 		t4 = exert(t4, fi("object"));
 //		logger.info("task context: " + context(t4));
-		assertEquals(value(context(t4), "outDispatcher/y"), 500.0);
+		assertEquals(value(context(t4), "result/y"), 500.0);
 	}
 
     @Test
@@ -127,15 +127,15 @@ public class LocalTasks {
         Task batch3 = task("batch3",
                 type(sig("multiply", MultiplierImpl.class, result("subtract/x1", Signature.Direction.IN)), Signature.PRE),
                 type(sig("add", AdderImpl.class, result("subtract/x2", Signature.Direction.IN)), Signature.PRE),
-                sig("subtract", SubtractorImpl.class, result("outDispatcher/y", inPaths("subtract/x1", "subtract/x2"))),
+                sig("subtract", SubtractorImpl.class, result("result/y", inPaths("subtract/x1", "subtract/x2"))),
                 context(inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                         inVal("add/x1", 20.0), inVal("add/x2", 80.0)));
 
 //        logger.info("task getSelects:" + batch3.getSelectedFidelity());
 
         batch3 = exert(batch3);
-		//logger.info("task outDispatcher/y: " + get(batch3, "outDispatcher/y"));
-		assertEquals(value(context(batch3), "outDispatcher/y"), 400.0);
+		//logger.info("task result/y: " + get(batch3, "result/y"));
+		assertEquals(value(context(batch3), "result/y"), 400.0);
     }
 
     @Test
@@ -146,12 +146,12 @@ public class LocalTasks {
         Task batch3 = task("batch3",
                 type(sig("multiply#op1", MultiplierImpl.class, result("op3/x1", Signature.Direction.IN)), Signature.PRE),
                 type(sig("add#op2", AdderImpl.class, result("op3/x2", Signature.Direction.IN)), Signature.PRE),
-                sig("subtract", SubtractorImpl.class, result("outDispatcher/y", inPaths("op3/x1", "op3/x2"))),
+                sig("subtract", SubtractorImpl.class, result("result/y", inPaths("op3/x1", "op3/x2"))),
                 context(inVal("op1/x1", 10.0), inVal("op1/x2", 50.0),
                         inVal("op2/x1", 20.0), inVal("op2/x2", 80.0)));
 
         batch3 = exert(batch3);
-		assertTrue(value(context(batch3), "outDispatcher/y").equals(400.0));
+		assertTrue(value(context(batch3), "result/y").equals(400.0));
 
     }
 
@@ -162,15 +162,15 @@ public class LocalTasks {
 				sigFi("object1", sig("multiply", MultiplierImpl.class)),
 				sigFi("object2", sig("add", AdderImpl.class)),
 				context("shared", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						outVal("outDispatcher/y")));
+						outVal("result/y")));
 
 		Context out = context(exert(t4, fi("object1")));
 //		logger.info("task context: " + context(t4));
-		assertTrue(value(out, "outDispatcher/y").equals(500.0));
+		assertTrue(value(out, "result/y").equals(500.0));
 
 		out = context(exert(t4, fi("object2")));
 		logger.info("task context: " + context(t4));
-		assertTrue(value(out, "outDispatcher/y").equals(60.0));
+		assertTrue(value(out, "result/y").equals(60.0));
 	}
 
 	@Test
@@ -181,7 +181,7 @@ public class LocalTasks {
 				sigFi("net", sig("add", Adder.class)),
 				sigFi("object", sig("add", AdderImpl.class)),
 				context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("outDispatcher/y")));
+						result("result/y")));
 
 //		logger.info("task metaFi: " + metaFi(task));
 		assertTrue(fis(task).size() == 2);
@@ -201,7 +201,7 @@ public class LocalTasks {
 				context(
 						types(double[].class),
 						args(new double[]{10.0, 50.0}),
-						result("outDispatcher/y")));
+						result("result/y")));
 
 		//logger.info("t4: " + eval(t4));
 		assertTrue(exec(t4).equals(500.0));

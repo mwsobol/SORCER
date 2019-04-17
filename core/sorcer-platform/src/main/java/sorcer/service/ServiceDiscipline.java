@@ -59,7 +59,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     protected Service outGovernance;
 
     // the executed dispatcher
-    protected Mogram outDispatcher;
+    protected Mogram result;
 
     protected Task precondition;
 
@@ -158,7 +158,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Context getOutput(Arg... args) throws ContextException {
-        if (outDispatcher == null) {
+        if (result == null) {
             try {
                 execute(args);
             } catch (ServiceException e) {
@@ -167,17 +167,17 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         }
         Context out = null;
         if (outConnector != null) {
-            if (outDispatcher instanceof Context) {
-                out = ((ServiceContext) outDispatcher).updateContextWith(outConnector);
-            } else if (outDispatcher instanceof Mogram) {
+            if (result instanceof Context) {
+                out = ((ServiceContext) result).updateContextWith(outConnector);
+            } else if (result instanceof Mogram) {
                 if (outConnector != null)
-                    out = ((ServiceContext) outDispatcher.getContext()).updateContextWith(outConnector);
+                    out = ((ServiceContext) result.getContext()).updateContextWith(outConnector);
             }
         } else {
-            if (outDispatcher instanceof Context) {
-                out = (Context) outDispatcher;
-            } else if (outDispatcher instanceof Mogram) {
-                out = outDispatcher.getContext();
+            if (result instanceof Context) {
+                out = (Context) result;
+            } else if (result instanceof Mogram) {
+                out = result.getContext();
             }
         }
         if (output == null) {
@@ -190,7 +190,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     public Mogram getOutDispatcher() {
-        return outDispatcher;
+        return result;
     }
 
     @Override
@@ -224,7 +224,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             }
             outGovernance = getGovernance();
             xrt.dispatch(outGovernance);
-            outDispatcher = xrt.exert();
+            result = xrt.exert();
 
             return getOutput();
         } catch (RemoteException e) {
@@ -460,7 +460,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     @Override
     public Mogram clear() throws MogramException {
         outGovernance = null;
-        outDispatcher = null;
+        result = null;
         output = null;
         return this;
     }

@@ -406,7 +406,7 @@ public class SpaceTaker implements Runnable {
 				try {
 					space.write(result, null, Lease.FOREVER);
 				} catch (Exception e) {
-                    logger.warn("Error while writing the outDispatcher", e);
+                    logger.warn("Error while writing the result", e);
                     try {
 						TX.abortTransaction(txnCreated);
 					} catch (Exception e1) {

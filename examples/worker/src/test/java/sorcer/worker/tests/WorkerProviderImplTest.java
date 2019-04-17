@@ -49,7 +49,7 @@ public class WorkerProviderImplTest {
 				int arg1 = (Integer)value(cxt, "req/arg/1");
 				int arg2 = (Integer)value(cxt, "req/arg/2");
 				int result =  arg1 * arg2;
-				put(cxt, "prv/outDispatcher", result);
+				put(cxt, "prv/result", result);
 				cxt.setReturnValue(result);
 				return cxt;
 			}
@@ -71,7 +71,7 @@ public class WorkerProviderImplTest {
 	@Test
 	public void testSayHi() throws ContextException, IOException {
 		Context result = provider.sayHi(context);
-		logger.info("outDispatcher: " + result);
+		logger.info("result: " + result);
 		assertTrue(result.getValue("prv/message").equals("Hi " + hostname + "!"));
 	}
 
@@ -81,7 +81,7 @@ public class WorkerProviderImplTest {
 	@Test
 	public void testSayBye() throws RemoteException, ContextException {
 		Context result = provider.sayBye(context);
-		logger.info("outDispatcher: " + result);
+		logger.info("result: " + result);
 		assertEquals(result.getValue("prv/message"), "Bye " + hostname + "!");
 
 	}
@@ -92,8 +92,8 @@ public class WorkerProviderImplTest {
 	@Test
 	public void testDoWork() throws RemoteException, InvalidWork, ContextException {
 		Context result = provider.doWork(context);
-		logger.info("outDispatcher: " + result);
-		assertEquals(result.getValue("prv/outDispatcher"), 1111);
+		logger.info("result: " + result);
+		assertEquals(result.getValue("prv/result"), 1111);
 	}
 
 }

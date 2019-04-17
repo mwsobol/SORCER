@@ -47,17 +47,17 @@ public class ServiceMograms {
                 "t4",
                 sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-                        outVal("multiply/outDispatcher/y")));
+                        outVal("multiply/result/y")));
 
         Task t5 = task(
                 "t5",
                 sig("add", AdderImpl.class),
                 context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                        outVal("add/outDispatcher/y")));
+                        outVal("add/result/y")));
 
         // in connector from exertion to model
-        Context taskOutConnector = outConn(inVal("add/x1", "j2/t4/multiply/outDispatcher/y"),
-                inVal("multiply/x1", "j2/t5/add/outDispatcher/y"));
+        Context taskOutConnector = outConn(inVal("add/x1", "j2/t4/multiply/result/y"),
+                inVal("multiply/x1", "j2/t5/add/result/y"));
 
         Job j2 = job("j2", sig("exert", ServiceJobber.class),
                 t4, t5, strategy(Flow.PAR),
@@ -85,7 +85,7 @@ public class ServiceMograms {
 
         Context result = context(exert(block));
 
-        logger.info("outDispatcher: " + result);
+        logger.info("result: " + result);
 
         assertTrue(value(result, "add").equals(580.0));
         assertTrue(value(result, "multiply").equals(5000.0));
@@ -143,9 +143,9 @@ public class ServiceMograms {
 
         looping = exert(looping, fi("by-20", "by"));
         logger.info("block context: " + context(looping));
-        logger.info("outDispatcher: " + value(context(looping), "outGovernance"));
-        logger.info("model outDispatcher: " + value(result(mdl), "outGovernance"));
-        logger.info("multiply outDispatcher: " + value(result(mdl), "multiply"));
+        logger.info("result: " + value(context(looping), "outGovernance"));
+        logger.info("model result: " + value(result(mdl), "outGovernance"));
+        logger.info("multiply result: " + value(result(mdl), "multiply"));
         // outGovernance variable in block
         assertTrue(value(context(looping), "outGovernance").equals(1000.0));
         // outGovernance variable in model
@@ -162,7 +162,7 @@ public class ServiceMograms {
                 "task/multiply",
                 sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-                        result("multiply/outDispatcher")));
+                        result("multiply/result")));
 
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),

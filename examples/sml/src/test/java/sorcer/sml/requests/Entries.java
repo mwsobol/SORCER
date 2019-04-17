@@ -194,10 +194,10 @@ public class Entries {
         Subroutine cmd = pro("cmd", invoker(args));
 
         CmdResult result = (CmdResult) exec(cmd);
-        logger.info("outDispatcher: " + result);
+        logger.info("result: " + result);
 
-        logger.info("outDispatcher outGovernance: " + result.getOut());
-        logger.info("outDispatcher err: " + result.getErr());
+        logger.info("result outGovernance: " + result.getOut());
+        logger.info("result err: " + result.getErr());
         if (result.getExitValue() != 0)
             throw new RuntimeException();
         String userName = (GenericUtil.isWindows() ? System.getenv("USERNAME") : System.getenv("USER"));
@@ -223,8 +223,8 @@ public class Entries {
         Subroutine y1 = srv("y1", sig("add", AdderImpl.class),
                 context(inVal("x1", 10.0), inVal("x2", 20.0)));
 
-//        logger.info("outGovernance eval: {}", eval(y1, selector("outDispatcher/eval")));
-        assertEquals(30.0,  exec(y1, selector("outDispatcher/eval")));
+//        logger.info("outGovernance eval: {}", eval(y1, selector("result/eval")));
+        assertEquals(30.0,  exec(y1, selector("result/eval")));
     }
 
     @Test
@@ -232,7 +232,7 @@ public class Entries {
 
         Subroutine y1 = srv("y1", sig("add", AdderImpl.class),
                 context(inVal("x1", 10.0), inVal("x2", 20.0)),
-                selector("outDispatcher/eval"));
+                selector("result/eval"));
 
 //        logger.info("outGovernance eval: {}", eval(y1));
         assertEquals(30.0,  exec(y1));

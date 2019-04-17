@@ -392,13 +392,13 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 		CmdResult result = null;
 		if (appPath.endsWith(".xml")) {
 			result = ExecUtils.execCommand("ant -f " + appPath);
-			shellOutput.println("cmd outDispatcher outGovernance: " + result.getOut());
+			shellOutput.println("cmd result outGovernance: " + result.getOut());
 		} else {
 			result = ExecUtils.execCommand(appPath);
-			shellOutput.println("cmd outDispatcher outGovernance: " + result.getOut());
+			shellOutput.println("cmd result outGovernance: " + result.getOut());
 		}
 		if (result.getErr() != null && result.getErr().length() > 0)
-			shellOutput.println("cmd outDispatcher err: " + result.getErr());
+			shellOutput.println("cmd result err: " + result.getErr());
 		shellOutput.println("cmd exit eval: " + result.getExitValue());
 
 		if (result.getExitValue() != 0)

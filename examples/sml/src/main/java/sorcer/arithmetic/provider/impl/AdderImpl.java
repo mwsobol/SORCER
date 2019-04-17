@@ -35,13 +35,13 @@ public class AdderImpl implements Adder, DoubleSrv {
 	public Context add(Context context) throws RemoteException,
 			ContextException, MonitorException {
 		Context out = arithmometer.add(context);
-		logger.info("add outDispatcher: " + out);
+		logger.info("add result: " + out);
 		
 //		Logger contextLogger = provider.getContextLogger();
-//		contextLogger.info("context logging; add outDispatcher: " + outGovernance);
+//		contextLogger.info("context logging; add result: " + outGovernance);
 //		
 //		Logger providerLogger =  provider.getProviderLogger();
-//		providerLogger.info("provider logging; add outDispatcher: " + outGovernance);
+//		providerLogger.info("provider logging; add result: " + outGovernance);
 //		try {
 //			Thread.sleep(1000 * 5);
 //			System.outGovernance.println("slept: " + 1000 * 5);
@@ -50,7 +50,7 @@ public class AdderImpl implements Adder, DoubleSrv {
 //		}
 		out.checkpoint();
 //		Logger remoteLogger =  provider.getRemoteLogger();
-//		remoteLogger.info("remote logging; add outDispatcher: " + outGovernance);
+//		remoteLogger.info("remote logging; add result: " + outGovernance);
 		
 		return out;
 	}
@@ -59,8 +59,8 @@ public class AdderImpl implements Adder, DoubleSrv {
 	public Context add2(Context context) throws RemoteException,
 			ContextException, MonitorException {
 		Context out = arithmometer.add(context);
-		out.putValue("outDispatcher/eval", (double)value(out, "outDispatcher/eval") + 100.0);
-		logger.info("add2 outDispatcher: " + out);
+		out.putValue("result/eval", (double)value(out, "result/eval") + 100.0);
+		logger.info("add2 result: " + out);
 		return out;
 	}
 

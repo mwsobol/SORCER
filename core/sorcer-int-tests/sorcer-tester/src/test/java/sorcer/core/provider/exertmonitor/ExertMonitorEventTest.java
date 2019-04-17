@@ -82,7 +82,7 @@ public class ExertMonitorEventTest {
         Task t5 = task("t5",
                        sig("add", Adder.class),
                        context("add", operator.inVal("arg/x1", 20.0),
-                               operator.inVal("arg/x2", 80.0), outVal("outDispatcher/y")),
+                               operator.inVal("arg/x2", 80.0), outVal("result/y")),
                        strategy(Strategy.Access.PULL, Strategy.Wait.YES, Strategy.Monitor.YES));
 
         t5 = exert(t5);

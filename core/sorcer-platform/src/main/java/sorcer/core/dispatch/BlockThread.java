@@ -91,7 +91,7 @@ public class BlockThread extends Thread {
         } catch (DispatcherException de) {
 			de.printStackTrace();
 		}
-		//outDispatcher = (Block) explorer.getMogram();
+		//result = (Block) explorer.getMogram();
 	}
 
 	public Block getBlock() {

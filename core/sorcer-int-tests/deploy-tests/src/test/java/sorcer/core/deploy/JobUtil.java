@@ -47,14 +47,14 @@ class JobUtil {
                                   idle(1),
                                   Deployment.Type.SELF)),
                        context("multiply", operator.inVal("arg/x1", 10.0d),
-                               operator.inVal("arg/x2", 50.0d), result("outDispatcher/y1")));
+                               operator.inVal("arg/x2", 50.0d), result("result/y1")));
 
         Task f5 = task("f5",
                        sig("add",
                            Adder.class,
                            deploy(configuration(getConfigDir()+"/AdderProviderConfig.groovy"))),
                        context("add", operator.inVal("arg/x3", 20.0d), operator.inVal("arg/x4", 80.0d),
-                               result("outDispatcher/y2")));
+                               result("result/y2")));
 
         Task f3 = task("f3",
                        sig("subtract", Subtractor.class,
@@ -62,13 +62,13 @@ class JobUtil {
                                   idle(1),
                                   configuration(getConfigDir()+"/subtractor-prv.config"))),
                        context("subtract", operator.inVal("arg/x5"),
-                               operator.inVal("arg/x6"), result("outDispatcher/y3")));
+                               operator.inVal("arg/x6"), result("result/y3")));
 
         return job("f1", sig("exert", Jobber.class, deploy(idle(1))),
                    job("f2", f4, f5), f3,
                    strategy(Provision.YES),
-                   pipe(outPoint(f4, "outDispatcher/y1"), inPoint(f3, "arg/x5")),
-                   pipe(outPoint(f5, "outDispatcher/y2"), inPoint(f3, "arg/x6")));
+                   pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+                   pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
     }
 
     static Job createFixedProvisioningJob() throws SignatureException, ContextException, RoutineException {
@@ -80,7 +80,7 @@ class JobUtil {
                        idle(1),
                        fixed())),
             context("multiply", operator.inVal("arg/x1", 10.0d),
-                    operator.inVal("arg/x2", 50.0d), outVal("outDispatcher/y1", null)));
+                    operator.inVal("arg/x2", 50.0d), outVal("result/y1", null)));
 
         Task f5 = task(
             "f5",
@@ -88,7 +88,7 @@ class JobUtil {
                 Adder.class,
                 deploy(configuration(getConfigDir()+"/AdderProviderConfig.groovy"))),
             context("add", operator.inVal("arg/x3", 20.0d), operator.inVal("arg/x4", 80.0d),
-                    outVal("outDispatcher/y2", null)));
+                    outVal("result/y2", null)));
 
         Task f3 = task(
             "f3",
@@ -98,13 +98,13 @@ class JobUtil {
                        idle(1),
                        configuration(getConfigDir()+"/subtractor-prv.config"))),
             context("subtract", operator.inVal("arg/x5", null),
-                    operator.inVal("arg/x6"), outVal("outDispatcher/y3")));
+                    operator.inVal("arg/x6"), outVal("result/y3")));
 
         return job("f1", sig("exert", Jobber.class, "Jobber"),
                    job(sig("exert", Jobber.class, "Jobber"), "f2", f4, f5), f3,
                    strategy(Strategy.Provision.YES),
-                   pipe(outPoint(f4, "outDispatcher/y1"), inPoint(f3, "arg/x5")),
-                     pipe(outPoint(f5, "outDispatcher/y2"), inPoint(f3, "arg/x6")));
+                   pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+                     pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
     }
 
     static Job createJobWithIPAndOpSys() throws SignatureException, ContextException, RoutineException {
@@ -129,7 +129,7 @@ class JobUtil {
                                  ipsExclude(ips),
                                  ServiceDeployment.Type.SELF)),
                       context("multiply", operator.inVal("arg/x1", 10.0d),
-                              operator.inVal("arg/x2", 50.0d), result("outDispatcher/y1")));
+                              operator.inVal("arg/x2", 50.0d), result("result/y1")));
         } else {
             f4 = task("f4",
                       sig("multiply",
@@ -141,7 +141,7 @@ class JobUtil {
                                  ips(ips),
                                  ServiceDeployment.Type.SELF)),
                       context("multiply", operator.inVal("arg/x1", 10.0d),
-                              operator.inVal("arg/x2", 50.0d), result("outDispatcher/y1")));
+                              operator.inVal("arg/x2", 50.0d), result("result/y1")));
         }
 
         Task f5 = task("f5",
@@ -149,7 +149,7 @@ class JobUtil {
                            Adder.class,
                            deploy(configuration(getConfigDir()+"/AdderProviderConfig.groovy"))),
                        context("add", operator.inVal("arg/x3", 20.0d), operator.inVal("arg/x4", 80.0d),
-                               result("outDispatcher/y2")));
+                               result("result/y2")));
 
         Task f3 = task("f3",
                        sig("subtract", Subtractor.class,
@@ -157,13 +157,13 @@ class JobUtil {
                                   idle(1),
                                   configuration(getConfigDir()+"/subtractor-prv.config"))),
                        context("subtract", operator.inVal("arg/x5"),
-                               operator.inVal("arg/x6"), result("outDispatcher/y3")));
+                               operator.inVal("arg/x6"), result("result/y3")));
 
         return job("f1", sig("exert", Jobber.class, deploy(idle(1))),
                    job("f2", f4, f5), f3,
                    strategy(Provision.YES),
-                   pipe(outPoint(f4, "outDispatcher/y1"), inPoint(f3, "arg/x5")),
-                   pipe(outPoint(f5, "outDispatcher/y2"), inPoint(f3, "arg/x6")));
+                   pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+                   pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
     }
 
     static String getConfigDir() {

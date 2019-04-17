@@ -36,8 +36,8 @@ import java.util.Set;
  *
  * Each projection of the system can be treated as a fidelity selectable
  * at runtime for a group of multiple subsystems available in the metasystem.
- * A fidelity is associated with the outDispatcher of executing its own and/or other
- * subsystems and related services. The outDispatcher of a metasystem is a merged
+ * A fidelity is associated with the result of executing its own and/or other
+ * subsystems and related services. The result of a metasystem is a merged
  * service context of all contexts received from the executed fidelity.
  *
  * Created by Mike Sobolewski

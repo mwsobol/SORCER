@@ -167,7 +167,7 @@ public class EvalCmd extends ShellCmd {
 			return;
 		}
 		Object target = serviceScripter.interpret();
-//		outGovernance.println(">>>>>>>>>>> ServiceScripter.interpret outDispatcher: " + target);
+//		outGovernance.println(">>>>>>>>>>> ServiceScripter.interpret result: " + target);
 		if (target == null) {
 			return;
 		} else if (!(target instanceof Model ||
@@ -200,7 +200,7 @@ public class EvalCmd extends ShellCmd {
 
 //		if (NetworkShell.getInstance().isDebug()) outGovernance.println("Starting exert netlet!");
 		Object result = serviceScripter.execute();
-//		outGovernance.println(">>>>>>>>>>> ServiceScripter.execute outDispatcher: " + outDispatcher);
+//		outGovernance.println(">>>>>>>>>>> ServiceScripter.execute result: " + result);
 		if (result != null) {
 			if (ifEvaluation) {
 				out.println("\n---> EVALUATION RESULT --->");

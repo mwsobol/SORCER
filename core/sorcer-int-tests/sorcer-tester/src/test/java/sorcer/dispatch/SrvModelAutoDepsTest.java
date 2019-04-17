@@ -48,7 +48,7 @@ public class SrvModelAutoDepsTest {
         logger.info("Dependencies: " + printDeps(m));
         Context out = response(m);
         logger.info("response: " + out);
-        logger.info("outDispatcher: " + get(out, "divide"));
+        logger.info("result: " + get(out, "divide"));
         assertTrue(get(out, "divide").equals(40.0));
     }
 
@@ -74,7 +74,7 @@ public class SrvModelAutoDepsTest {
         logger.info("Dependencies: " + printDeps(m));
         Context out = response(m);
         logger.info("response: " + out);
-        logger.info("outDispatcher: " + get(out, "addfinal"));
+        logger.info("result: " + get(out, "addfinal"));
         assertTrue(get(out, "addfinal").equals(1040.0));
     }
 }

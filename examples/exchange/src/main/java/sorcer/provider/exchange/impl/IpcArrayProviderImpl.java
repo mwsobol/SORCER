@@ -99,7 +99,7 @@ public class IpcArrayProviderImpl extends ServiceTasker {
 
                     ib.clear();
                     ib.put(result);
-//                    logger.info("outDispatcher array: " + Arrays.toString(outDispatcher));
+//                    logger.info("result array: " + Arrays.toString(result));
                     bb.clear();
                     while (bb.hasRemaining()) {
                         int written = client.write(bb);

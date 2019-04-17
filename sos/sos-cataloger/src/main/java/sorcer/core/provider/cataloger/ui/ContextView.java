@@ -634,7 +634,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 			 * "Input Context"); tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 			 * 
 			 * JComponent panel4 =
-			 * makeTextPanel("OUTPUT CONTEXT\n\n"+outDispatcher.toString());
+			 * makeTextPanel("OUTPUT CONTEXT\n\n"+result.toString());
 			 * panel4.setPreferredSize(new Dimension(410, 200));
 			 * 
 			 * tabbedPane.addTab("Output Context", null, panel4,

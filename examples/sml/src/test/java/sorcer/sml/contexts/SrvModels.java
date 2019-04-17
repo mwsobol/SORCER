@@ -75,13 +75,13 @@ public class SrvModels {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-                ent(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2")))),
+                ent(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
         assertTrue(get(out, "add").equals(100.0));
 
-        assertTrue(get(mod, "outDispatcher/y").equals(100.0));
+        assertTrue(get(mod, "result/y").equals(100.0));
 
     }
 
@@ -90,8 +90,8 @@ public class SrvModels {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))),
-                        sig("multiply", MultiplierImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2"))))),
+                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                        sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
                 response("mphFi", "arg/x1", "arg/x2"));
 
         logger.info("fidelity: " + asis(mod, "mphFi"));
@@ -99,12 +99,12 @@ public class SrvModels {
         Context out = response(mod, fi("mphFi", "add"));
 //        logger.info("outGovernance: " + outGovernance);
 //        assertTrue(valuate(outGovernance, "mphFi").equals(100.0));
-//        assertTrue(eval(mod, "outDispatcher/y").equals(100.0));
+//        assertTrue(eval(mod, "result/y").equals(100.0));
 //
 //        outGovernance = response(mod, metaFi("mphFi", "multiply"));
 //        logger.info("outGovernance: " + outGovernance);
 //        assertTrue(valuate(outGovernance, "mphFi").equals(900.0));
-//        assertTrue(eval(mod, "outDispatcher/y").equals(900.0));
+//        assertTrue(eval(mod, "result/y").equals(900.0));
     }
 
     @Test
@@ -112,13 +112,13 @@ public class SrvModels {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-                ent(sig("add", AdderImpl.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2")))),
+                ent(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
         assertTrue(get(out, "add").equals(100.0));
 
-        assertTrue(get(mod, "outDispatcher/y").equals(100.0));
+        assertTrue(get(mod, "result/y").equals(100.0));
 
     }
 
@@ -127,12 +127,12 @@ public class SrvModels {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-                ent(sig("add", Adder.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2")))),
+                ent(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
         Model model = exert(mod);
 //        logger.info("model: " + exert(mod));
-        assertTrue(get(mod, "outDispatcher/y").equals(100.0));
+        assertTrue(get(mod, "result/y").equals(100.0));
     }
 
     @Test
@@ -140,13 +140,13 @@ public class SrvModels {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.00), inVal("arg/x2", 90.00),
-                ent(sig("add", Adder.class, result("outDispatcher/y", inPaths("arg/x1", "arg/x2")))),
+                ent(sig("add", Adder.class, result("result/y", inPaths("arg/x1", "arg/x2")))),
                 response("add", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
         assertTrue(get(out, "add").equals(100.0));
 
-        assertTrue(get(mod, "outDispatcher/y").equals(100.0));
+        assertTrue(get(mod, "result/y").equals(100.0));
 
     }
 
@@ -174,7 +174,7 @@ public class SrvModels {
         System.out.println("responses: " + response(model));
 
         assertTrue(response(model).equals(context(ent("add", 4.0), ent("multiply", 20.0))));
-//                context(call("add", 4.0), call("multiply", 20.0), call("outDispatcher/eval", 3.0))));
+//                context(call("add", 4.0), call("multiply", 20.0), call("result/eval", 3.0))));
 
     }
 
@@ -295,7 +295,7 @@ public class SrvModels {
 
 //        logger.info("block context: " + block.getContext());
         Context result = context(exert(block));
-//        logger.info("outDispatcher: " + outDispatcher);
+//        logger.info("result: " + result);
 
         assertTrue(value(result, "y1").equals(100.0));
         assertTrue(value(result, "y2").equals(500.0));
@@ -311,17 +311,17 @@ public class SrvModels {
                 "t4",
                 sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-                        outVal("multiply/outDispatcher/y")));
+                        outVal("multiply/result/y")));
 
         Task t5 = task(
                 "t5",
                 sig("add", AdderImpl.class),
                 context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                        outVal("add/outDispatcher/y")));
+                        outVal("add/result/y")));
 
         // in connector from exertion to model
-        Context taskOutConnector = outConn(inVal("add/x1", "j2/t4/multiply/outDispatcher/y"),
-                inVal("multiply/x1", "j2/t5/add/outDispatcher/y"));
+        Context taskOutConnector = outConn(inVal("add/x1", "j2/t4/multiply/result/y"),
+                inVal("multiply/x1", "j2/t5/add/result/y"));
 
         Job j2 = job("j2", sig("exert", ServiceJobber.class),
                 t4, t5, strategy(Flow.PAR),
@@ -350,7 +350,7 @@ public class SrvModels {
 
         Context result = context(exert(block));
 
-        logger.info("outDispatcher: " + result);
+        logger.info("result: " + result);
 
         assertTrue(value(result, "add").equals(580.0));
         assertTrue(value(result, "multiply").equals(5000.0));

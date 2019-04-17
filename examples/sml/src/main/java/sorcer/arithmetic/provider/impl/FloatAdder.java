@@ -28,7 +28,7 @@ public class FloatAdder implements Adder, FloatSrv {
         } else if (outpath != null) {
             context.putValue(outpath.toString(), result);
         } else {
-            context.putValue("outDispatcher", result);
+            context.putValue("result", result);
         }
         return context;
     }

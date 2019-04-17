@@ -147,7 +147,7 @@ public class CoffeeServiceTest {
 		responseUp(mod, "makeCoffee", "deliver", "change$", "paid$");
 		Context out = response(mod);
 		logger.info("outGovernance: " + out);
-		logger.info("outDispatcher: " + result(mod));
+		logger.info("result: " + result(mod));
 		assertEquals(value(result(mod), "paid$"), 120);
 		assertEquals(value(result(mod), "change$"), 10);
 		assertEquals(value(result(mod), "makeCoffee"), 50);

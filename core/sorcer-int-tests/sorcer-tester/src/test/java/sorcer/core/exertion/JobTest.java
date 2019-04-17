@@ -39,7 +39,7 @@ public class JobTest {
 						deploy(configuration("bin/sorcer/test/arithmetic/configs/multiplier-prv.config"),
 								idle(1), ServiceDeployment.Type.SELF)),
 				context("multiply", operator.inVal("arg/x1", 10.0d),
-						operator.inVal("arg/x2", 50.0d), outVal("outDispatcher/y1", null)));
+						operator.inVal("arg/x2", 50.0d), outVal("result/y1", null)));
 
 		Task f5 = task(
 				"f5",
@@ -47,7 +47,7 @@ public class JobTest {
 						Adder.class,
 						deploy(configuration("bin/sorcer/test/arithmetic/configs/AdderProviderConfig.groovy"))),
 				context("add", operator.inVal("arg/x3", 20.0d), operator.inVal("arg/x4", 80.0d),
-						outVal("outDispatcher/y2", null)));
+						outVal("result/y2", null)));
 
 		Task f3 = task(
 				"f3",
@@ -57,13 +57,13 @@ public class JobTest {
 								idle(1),
 								configuration("bin/sorcer/test/arithmetic/configs/subtractor-prv.config"))),
 				context("subtract", operator.inVal("arg/x5", null),
-						operator.inVal("arg/x6"), outVal("outDispatcher/y3")));
+						operator.inVal("arg/x6"), outVal("result/y3")));
 
 		Job f1 = job("f1", sig("exert", Jobber.class, "Jobber"),
 				job(sig("exert", Jobber.class, "Jobber"), "f2", f4, f5), f3,
 				strategy(Strategy.Provision.YES),
-				pipe(outPoint(f4, "outDispatcher/y1"), inPoint(f3, "arg/x5")),
-				pipe(outPoint(f5, "outDispatcher/y2"), inPoint(f3, "arg/x6")));
+				pipe(outPoint(f4, "result/y1"), inPoint(f3, "arg/x5")),
+				pipe(outPoint(f5, "result/y2"), inPoint(f3, "arg/x6")));
 
 		logger.info("f1 signature : " + f1.getProcessSignature());
 	}

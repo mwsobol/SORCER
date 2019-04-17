@@ -141,7 +141,7 @@ public class ServiceSpacer extends SystemServiceBean implements Spacer {
                 taskThread.start();
                 taskThread.join();
                 Task result = taskThread.getResult();
-                logger.trace("Spacer outDispatcher: " + result);
+                logger.trace("Spacer result: " + result);
                 return result;
             }
         } catch (Throwable e) {

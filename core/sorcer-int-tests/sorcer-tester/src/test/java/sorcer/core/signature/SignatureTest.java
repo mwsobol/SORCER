@@ -170,7 +170,7 @@ public class SignatureTest {
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
-						result("outDispatcher/y")));
+						result("result/y")));
 
 		assertEquals(100.0, exec(as));
 
@@ -191,7 +191,7 @@ public class SignatureTest {
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
-						result("outDispatcher/y")));
+						result("result/y")));
 
 		assertEquals(100.0, exec(as));
 
@@ -212,7 +212,7 @@ public class SignatureTest {
 				context("add",
 						inVal("arg/x1", 20.0),
 						inVal("arg/x2", 80.0),
-						result("outDispatcher/y")));
+						result("result/y")));
 
 		assertEquals(100.0, exec(as));
 	}
@@ -223,7 +223,7 @@ public class SignatureTest {
 		Context cxt = context(
 				inVal("y1", 20.0),
 				inVal("y2", 80.0),
-				result("outDispatcher/y"));
+				result("result/y"));
 
 		Context outConnector = outConn(
 				inVal("arg/x1", "y1"),
@@ -242,7 +242,7 @@ public class SignatureTest {
 
 		assertEquals(20.0, value(context(task), "arg/x1"));
 		assertEquals(80.0, value(context(task), "arg/x2"));
-		assertEquals(100.0, value(context(task), "outDispatcher/y"));
+		assertEquals(100.0, value(context(task), "result/y"));
 	}
 
 	@Test
@@ -251,7 +251,7 @@ public class SignatureTest {
 		Context cxt = context(
 				inVal("y1", 20.0),
 				inVal("y2", 80.0),
-				result("outDispatcher/y"));
+				result("result/y"));
 
 		Context inc = inConn(
 				inVal("arg/x1", "y1"),
@@ -270,7 +270,7 @@ public class SignatureTest {
 
 		assertEquals(20.0, value(context(task), "arg/x1"));
 		assertEquals(80.0, value(context(task), "arg/x2"));
-		assertEquals(100.0, value(context(task), "outDispatcher/y"));
+		assertEquals(100.0, value(context(task), "result/y"));
 	}
 
 }

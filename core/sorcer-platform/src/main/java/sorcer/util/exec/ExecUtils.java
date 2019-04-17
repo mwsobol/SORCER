@@ -284,7 +284,7 @@ public class ExecUtils {
 	}
 
 	/**
-	 * Represents the outDispatcher of a native command. Consists of the compute exit
+	 * Represents the result of a native command. Consists of the compute exit
 	 * eval together with stdout and stderr dumped to strings.
 	 * 
 	 * @author Dawid Kurzyniec
@@ -315,7 +315,7 @@ public class ExecUtils {
 		
 		@Override
 		public String toString() {
-			StringBuilder sb = new StringBuilder("Cmd outDispatcher [outGovernance:\n");
+			StringBuilder sb = new StringBuilder("Cmd result [outGovernance:\n");
 			sb.append(out).append("\nerr: ").append(err)
 					.append("\nexitValue: ").append(exitValue).append("]");
 			return sb.toString();

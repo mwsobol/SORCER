@@ -84,7 +84,7 @@ public class GenericUtil {
 			} finally {
 				// keep the compute alive so that threads reading
 				// streams can shut down before compute is destroyed
-				// as a outDispatcher of a timeout
+				// as a result of a timeout
 				//System.outGovernance.println("***worker destroying compute.");
 				//compute.destroy();
 			}

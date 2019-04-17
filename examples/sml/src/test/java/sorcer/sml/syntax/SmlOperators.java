@@ -149,15 +149,15 @@ public class SmlOperators {
 		fi fi4 = metaFi("sysFi4", fi("mFi3", "average"));
 
 		sig add = sig("add", AdderImpl.class,
-			result("outDispatcher/y1", inPaths("arg/x1", "arg/x2")));
+			result("result/y1", inPaths("arg/x1", "arg/x2")));
 		sig subtract = sig("subtract", SubtractorImpl.class,
-			result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+			result("result/y2", inPaths("arg/x1", "arg/x2")));
 		sig average = sig("average", AveragerImpl.class,
-			result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+			result("result/y2", inPaths("arg/x1", "arg/x2")));
 		sig multiply = sig("multiply", MultiplierImpl.class,
-			result("outDispatcher/y1", inPaths("arg/x1", "arg/x2")));
+			result("result/y1", inPaths("arg/x1", "arg/x2")));
 		sig divide = sig("divide", DividerImpl.class,
-			result("outDispatcher/y2", inPaths("arg/x1", "arg/x2")));
+			result("result/y2", inPaths("arg/x1", "arg/x2")));
 
 		// five entry multifidelity model with morphers
 		mog mod = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
