@@ -85,7 +85,7 @@ public class GenericUtil {
 				// keep the compute alive so that threads reading
 				// streams can shut down before compute is destroyed
 				// as a result of a timeout
-				//System.outGovernance.println("***worker destroying compute.");
+				//System.out.println("***worker destroying compute.");
 				//compute.destroy();
 			}
 		}
@@ -120,7 +120,7 @@ public class GenericUtil {
 		}
 
 		/**
-		 * Implementation is commented outGovernance
+		 * Implementation is commented out
 		 */
 		public void run() {
 			// try {
@@ -462,8 +462,8 @@ public class GenericUtil {
 	public static void copyDirectory(File sourceDir, File destinationDir)
 			throws IOException {
 		
-//		System.outGovernance.println("sourceDir = " + sourceDir);
-//		System.outGovernance.println("destinationDir = " + destinationDir);
+//		System.out.println("sourceDir = " + sourceDir);
+//		System.out.println("destinationDir = " + destinationDir);
 		
 		if (!sourceDir.isDirectory())
 			throw new IOException("sourceDir is not a directory: sourceDir = "
@@ -476,13 +476,13 @@ public class GenericUtil {
 		// if dest dir exists copy sourceDir to sub-dir of dest dir
 		if (destinationDir.exists()) {
 			destinationDir = new File(destinationDir, sourceDir.getName());
-//			System.outGovernance.println("mod destinationDir = " + destinationDir);
+//			System.out.println("mod destinationDir = " + destinationDir);
 		}
 			
 		for (File file : sourceDir.listFiles()) {
 			System.out.println("file = " + file);
 			if (file.isFile()) {
-//				System.outGovernance.println("\tcopying file = " + file + " to " + new File(destinationDir, file.getName()));
+//				System.out.println("\tcopying file = " + file + " to " + new File(destinationDir, file.getName()));
 				copyFile(file, new File(destinationDir, file.getName()));
 			} else {
 				// is directory
@@ -936,7 +936,7 @@ public class GenericUtil {
 	 */
 	public static Object[] getUniqueReferences(Vector<Object> myVect) {
 		int numElements = myVect.size();
-		// System.outGovernance.print("numElements: "+numElements+"\n");
+		// System.out.print("numElements: "+numElements+"\n");
 		Vector<Object> v = new Vector<Object>();
 		for (int i = 0; i < numElements; i++) {
 			// Object[] oA = (Object[]) myVect.elementAt(i);
@@ -974,11 +974,11 @@ public class GenericUtil {
 	}
 
 	public static boolean isElement(String[] array, String s) {
-		//System.outGovernance.println("looking for = \"" + s + "\"");
+		//System.out.println("looking for = \"" + s + "\"");
 		if (array == null || s == null || array.length == 0)
 			return false;
 		for (String test : array) {
-			//System.outGovernance.println("test = \"" + test + "\"");
+			//System.out.println("test = \"" + test + "\"");
 			if (test.trim().equals(s.trim()))
 				return true;
 		}
@@ -1380,7 +1380,7 @@ public class GenericUtil {
 		StringTokenizer sT = new StringTokenizer(tildePath, "/");
 		String lastName = sT.nextToken();
 		lastName = lastName.substring(1);
-		// System.outGovernance.println(lastName);
+		// System.out.println(lastName);
 		String vmDir = GenericUtil.getVmDir();
 		StringTokenizer sT2 = new StringTokenizer(vmDir, "/");
 		Vector<String> baseDir = new Vector<String>();
@@ -1983,7 +1983,7 @@ public class GenericUtil {
 	 * @param logFile
 	 *            Log file path
 	 * @param timeout
-	 *            Time outGovernance period
+	 *            Time out period
 	 * @param printStdOut
 	 *            Print standard output flag
 	 * @param printStdError
@@ -2083,7 +2083,7 @@ public class GenericUtil {
 //					cygwinHome = cygwinHomeTest;
 //				} else {
 //							+ cygwinHomeTest;
-//					System.outGovernance.println(msg);
+//					System.out.println(msg);
 //
 //				}
 //			}
@@ -2144,7 +2144,7 @@ public class GenericUtil {
 	 * @param scriptContents
 	 *            List of strings containing the script file contents
 	 * @param outFile
-	 *            Standard outGovernance file path
+	 *            Standard out file path
 	 * @param errFile
 	 *            Standard error file path
 	 * @param jobCheckInterval
@@ -2159,11 +2159,11 @@ public class GenericUtil {
 
 		File executionDir = scriptFile.getParentFile();
 		File jobSubmitFile = new File(executionDir, "pbs_jobSubmit.sh");
-		File jobSubmitOutFile = new File(executionDir, "pbs_jobSubmit.outGovernance");
+		File jobSubmitOutFile = new File(executionDir, "pbs_jobSubmit.out");
 		File jobSubmitErrFile = new File(executionDir, "pbs_jobSubmit.err");
 		File jobIDFile = new File(executionDir, "pbs_jobid.txt");
 		File checkJobFile = new File(executionDir, "pbs_checkJob.sh");
-		File jobCheckOutFile = new File(executionDir, "pbs_checkJob.outGovernance");
+		File jobCheckOutFile = new File(executionDir, "pbs_checkJob.out");
 		File jobCheckErrFile = new File(executionDir, "pbs_checkJob.err");
 		File jobStatusFile = new File(executionDir, "pbs_jobStatusStdErr.txt");
 		List<String> jobSubmitCont = new ArrayList<String>();
@@ -2250,7 +2250,7 @@ public class GenericUtil {
 
 		File executionDir = scriptFile.getParentFile();
 		File jobSubmitFile = new File(executionDir, "slurm_jobSubmit.sh");
-		File jobSubmitOutFile = new File(executionDir, "slurm_jobSubmit.outGovernance");
+		File jobSubmitOutFile = new File(executionDir, "slurm_jobSubmit.out");
 		File jobSubmitErrFile = new File(executionDir, "slurm_jobSubmit.err");
 		File jobIDFile = new File(executionDir, "slurm_jobid.txt");
 		File checkJobFile = new File(executionDir, "slurm_checkJob.sh");
@@ -2310,7 +2310,7 @@ public class GenericUtil {
 			// Write the job status check standard output to a string vector
 			List<String> jobStatusOUT = getFileContents(jobStatusFileOUT);
 			List<String> jobStatusERR = getFileContents(jobStatusFileERR);
-			// Checking standard outGovernance
+			// Checking standard out
 			for (int i = 0; i < jobStatusOUT.size(); i++) {
 				if (jobStatusOUT.size() == 1) {
 					jobInQueue = false;
@@ -2771,33 +2771,33 @@ public class GenericUtil {
 		
 		String urlDirName = (new File(dirUrl.getFile()).getName());
 		File destDir2 = new File(destDir, urlDirName);
-		//System.outGovernance.println("destDir2 = " + destDir2);
+		//System.out.println("destDir2 = " + destDir2);
 		
 		for (String line : dirListing) {
 			String[] fields = line.split("\\s");
-			//System.outGovernance.println("==============================");
+			//System.out.println("==============================");
 			//printArray(fields);
 			
-			//System.outGovernance.println("fields[0] = " +  fields[0]);
-			//System.outGovernance.println("dirUrl.getFile() = " +  dirUrl.getFile());
+			//System.out.println("fields[0] = " +  fields[0]);
+			//System.out.println("dirUrl.getFile() = " +  dirUrl.getFile());
 			
 			String fileField = fields[0].replace("\\", "/");
 			String[] fileFieldArray = fileField.split("/");
 			
 			String filename = fileFieldArray[fileFieldArray.length - 1];
-			//System.outGovernance.println("filename = " +  filename);
+			//System.out.println("filename = " +  filename);
 			URL fileUrl = new URL(dirUrl.toString() + "/" + filename);
-			//System.outGovernance.println("fileUrl = " + fileUrl);
+			//System.out.println("fileUrl = " + fileUrl);
 			
 			boolean madeDirs = destDir2.mkdirs();
-			//System.outGovernance.println(madeDirs + ": made " + destDir2);
+			//System.out.println(madeDirs + ": made " + destDir2);
 			destDir2.setWritable(true);
 			destDir2.setReadable(true);
 			destDir2.setExecutable(true);
 			
 			if (fields[1].equals("f")) {
 				File fileTarget = new File(destDir2, new File(fileUrl.getFile()).getName());
-				//System.outGovernance.println("downloading " + fileUrl + " to " + fileTarget);
+				//System.out.println("downloading " + fileUrl + " to " + fileTarget);
 				download(fileUrl, fileTarget);
 			}
 			if (fields[1].equals("d")) {
@@ -2817,7 +2817,7 @@ public class GenericUtil {
 		BufferedWriter bwOut = new BufferedWriter(out);
 
 		for (int i = 0; i < fC.size(); i++) {
-			// System.outGovernance.println("SabUtil: appendVectorToFile: element "
+			// System.out.println("SabUtil: appendVectorToFile: element "
 			// +i+" is "+fC.elementAt(i));
 			String pclLine = (String) fC.elementAt(i);
 			bwOut.write(pclLine, 0, pclLine.length());
@@ -2947,7 +2947,7 @@ public class GenericUtil {
 					return exitValue;
 				}
 				
-				String errorMessage = "***error: the command(s) timed outGovernance: \n"
+				String errorMessage = "***error: the command(s) timed out: \n"
 						+ arrayToOneLineSpaceDelimitedString(command) + "\n";
 				setFileContents(new File(dir, "timeout.txt"), errorMessage);
 				
@@ -3360,7 +3360,7 @@ public class GenericUtil {
 		middleScriptRecords.add("		rm -f "
 				+ middleScriptRunningFile.getAbsolutePath());
 		middleScriptRecords.add("		echo \"" + middleScriptFile.getName()
-				+ " is done, with ERRORs; middleScript timed outGovernance.\"");
+				+ " is done, with ERRORs; middleScript timed out.\"");
 		middleScriptRecords.add("		EXIT_CODE=1");
 		middleScriptRecords.add("		echo \"$EXIT_CODE\" > "
 				+ middleScriptDoneFile);
@@ -4006,7 +4006,7 @@ public class GenericUtil {
 		// while (attempts <= maxattempts && clocktime < minfailedtime) {
 		// while (true) {
 		// get the information used during the running of the App
-		// System.outGovernance.println(" >>>>>>>> Running " + appName+
+		// System.out.println(" >>>>>>>> Running " + appName+
 		// " by Queue in Directory " + scratchDir);
 		logger.info(" >>>>>>>> Running " + appName + " by Queue in Directory "
 				+ scratchDir);
@@ -4104,7 +4104,7 @@ public class GenericUtil {
 			// String jobID = null;
 			// for (int i = 0; i < logFileContents.size(); i++) {
 			// String rec1 = (String) (logFileContents.elementAt(i));
-			// //System.outGovernance.println("Queue record =  " + rec1);
+			// //System.out.println("Queue record =  " + rec1);
 			// logger.info("looking for \"" + jobName + "\" in queue record =  "
 			// + rec1);
 			// String[] jobsubrec = rec1.split(" ", 2);
@@ -4113,7 +4113,7 @@ public class GenericUtil {
 			// jobID = jobsubrec[1];
 			// }
 			// if (jobID == null) {
-			// //System.outGovernance.println("No Job found in queue with key = "+
+			// //System.out.println("No Job found in queue with key = "+
 			// jobName);
 			// logger.info("No Job found in queue with key = "+ jobName);
 			// throw new
@@ -4123,7 +4123,7 @@ public class GenericUtil {
 			// }
 
 			logger.info(appName + " Job Id =  " + jobID);
-			// System.outGovernance.println(appName + " Job Id =  " + jobID);
+			// System.out.println(appName + " Job Id =  " + jobID);
 			// clocktime = watchSLURMQueuedJob(scratchDir, shCmd, jobID,appName,
 			// servProps);
 
@@ -4136,16 +4136,16 @@ public class GenericUtil {
 			// return clocktime;
 
 			// if (clocktime < minfailedtime && attempts <= maxattempts)
-			// //System.outGovernance.println(appName+
+			// //System.out.println(appName+
 			// " Job ended prematurely submitting attempt # "+ attempts);
-			// //System.outGovernance.println(">>>>> Job Run Attempt # " + attempts+
+			// //System.out.println(">>>>> Job Run Attempt # " + attempts+
 			// "completed");
 			// logger.info(appName+
 			// " Job ended prematurely submitting attempt # "+ attempts);
 			// logger.info(">>>>> Job Run Attempt # " + attempts+ "completed");
 			// if (attempts > maxattempts)
 			// // attempts = attempts - 1;
-			// //System.outGovernance.println(appName + " Job ended prematurely "+
+			// //System.out.println(appName + " Job ended prematurely "+
 			// attempts+ " attempts made to submit job and failed");
 			// logger.info(appName + " Job ended prematurely "+ attempts+
 			// " attempts made to submit job and failed");
@@ -4215,7 +4215,7 @@ public class GenericUtil {
 		while (!jobDone) {
 			Thread.sleep(sleepTimeInterval.longValue() * 1000);
 			totalElapsedTime = totalElapsedTime + sleepTimeInterval.longValue();
-			// System.outGovernance.println("***************** Total Clock Time Elapsed During Run for Job Id = "
+			// System.out.println("***************** Total Clock Time Elapsed During Run for Job Id = "
 			// + jobID
 			// + " Time = "
 			// + totalElapsedTime
@@ -4233,7 +4233,7 @@ public class GenericUtil {
 			if (callqstat || (timeSinceqstat >= qstatIntervalTime.longValue())) {
 				timeSinceqstat = 0;
 				callqstat = false;
-				// System.outGovernance.println("***************** qstat for job Id = "+
+				// System.out.println("***************** qstat for job Id = "+
 				// jobID + "***************");
 				logger.info("***************** qstat for job Id = " + jobID
 						+ "***************");
@@ -4255,7 +4255,7 @@ public class GenericUtil {
 						Thread.sleep(500);
 					}
 				}
-				// System.outGovernance.println("qstatStatus = " + qstatStatus);
+				// System.out.println("qstatStatus = " + qstatStatus);
 				// if (qstatStatus.exitValue() == 0) {
 				if (exitValue == 0) {
 					// open the log file and get the queue Job ID
@@ -4266,7 +4266,7 @@ public class GenericUtil {
 					if (qstatlogFileContents.size() == 1)
 						jobDone = true;
 					for (int i = 0; i < qstatlogFileContents.size(); i++) {
-						// System.outGovernance.println(qstatlogFileContents.elementAt(i));
+						// System.out.println(qstatlogFileContents.elementAt(i));
 						logger.info(qstatlogFileContents.elementAt(i));
 					}
 				} else {
@@ -4274,7 +4274,7 @@ public class GenericUtil {
 					return totalElapsedTime;
 				}
 			}
-			// System.outGovernance.println("Job Done = " + jobDone);
+			// System.out.println("Job Done = " + jobDone);
 			logger.info("Job Done = " + jobDone);
 		}
 		return totalElapsedTime;
@@ -4384,7 +4384,7 @@ class StreamGobbler extends Thread {
 						+ " stream gobbler fiType = " + type + "; here2", dir);
 				
 				while (!br.ready() && keepGoing) {
-					//System.outGovernance.println("gobbler fiType = " + fiType + " is not ready.");
+					//System.out.println("gobbler fiType = " + fiType + " is not ready.");
 					GenericUtil.appendFileContents("StreamGobbler.run(): inner while loop; "
 							+ "br not ready; stream gobbler fiType = " + type + "keepGoing = " + keepGoing, dir);
 					try {
