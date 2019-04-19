@@ -1035,7 +1035,8 @@ operator extends Operator {
         Operation operation = null;
         String selector = null;
         Args args = null;
-        Strategy.Provision provision = Provision.NO;
+        Strategy.Provision provision = null;
+        Deployment deployment = null;
         ParameterTypes parTypes = null;
         In inPaths = null;
         Out outPaths = null;
@@ -1055,8 +1056,10 @@ operator extends Operator {
                 context = (ServiceContext)item;
             } else if (item instanceof In ) {
                 inPaths = (In)item;
-            }  else if (item instanceof Out ) {
+            } else if (item instanceof Out ) {
                 outPaths = (Out)item;
+            } else if (item instanceof Deployment ) {
+                deployment = (Deployment)item;
             }
         }
         ServiceSignature signature = null;
@@ -1066,7 +1069,6 @@ operator extends Operator {
             os.getServiceType();
             os.setArgs(args.args);
             os.setParameterTypes(parTypes.parameterTypes);
-            os.setProvisionable(provision);
             return os;
         } else if (operation != null) {
             signature = sig(operation.getName(), multitype.getProviderType());
@@ -1074,16 +1076,19 @@ operator extends Operator {
             signature.setOperation(operation);
         } else if (operation == null && selector == null) {
             signature = sig("?", multitype.providerType, items);
-            signature.setProvisionable(provision);
         } else {
             Object[] dest = new Object[items.length+2];
             System.arraycopy(items,  0, dest,  2, items.length);
             dest[0] = operation;
             dest[1] = multitype;
             signature = sig(selector, multitype.providerType, dest);
+        }
+        if (provision != null) {
             signature.setProvisionable(provision);
         }
-
+        if (deployment != null) {
+            signature.setDeployment((ServiceDeployment) deployment);
+        }
         // if context is provided for created signature
         if (context instanceof ServiceContext
             // not applied to connectors in Signatures

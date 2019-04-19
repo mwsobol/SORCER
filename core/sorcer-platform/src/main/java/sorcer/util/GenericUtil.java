@@ -3001,6 +3001,11 @@ public class GenericUtil {
 			currentLoader = currentLoader.getParent();
 		}
 		Collections.reverse(loaderList);
+		// get system loader class paths
+        if (loaderList.size() == 0) {
+            loaderList.add(Thread.currentThread()
+                .getContextClassLoader());
+        }
 		for (ClassLoader cl : loaderList) {
 			URL[] urls = null;
 			if (cl instanceof ServiceClassLoader) {
