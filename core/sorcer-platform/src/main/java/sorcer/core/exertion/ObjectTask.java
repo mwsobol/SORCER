@@ -176,7 +176,7 @@ public class ObjectTask extends Task {
 					if (rp.path!= null && ((Context) result).getValue(rp.path) != null) {
 						dataContext.setReturnValue(((Context) result).getValue(rp.path));
 					} else if (rp.outPaths != null && rp.outPaths.size() > 0) {
-						Context out = dataContext.getDirectionalSubcontext(rp.outPaths);
+						Context out = ((Context)result).getDirectionalSubcontext(rp.outPaths);
 						if (rp.outPaths.size() == 1) {
 							dataContext.setReturnValue(out.get(rp.outPaths.get(0).getName()));
 						} else {
