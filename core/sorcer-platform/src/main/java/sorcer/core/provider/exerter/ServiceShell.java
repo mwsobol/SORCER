@@ -291,15 +291,18 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				initExecState(entries);
 			}
 			realizeDependencies(entries);
-			if (exertion.isTask() && exertion.isProvisionable()) {
-				try {
-					List<ServiceDeployment> deploymnets = exertion.getDeploymnets();
-					if (deploymnets.size() > 0) {
-						ProvisionManager provisionManager = new ProvisionManager(exertion);
-						provisionManager.deployServices();
+			if (exertion.getProcessSignature() != null) {
+				if (exertion.isTask() && (exertion.isProvisionable()
+						|| ((ServiceSignature) exertion.getProcessSignature()).isProvisionable())) {
+					try {
+						List<ServiceDeployment> deploymnets = exertion.getDeploymnets();
+						if (deploymnets.size() > 0) {
+							ProvisionManager provisionManager = new ProvisionManager(exertion);
+							provisionManager.deployServices();
+						}
+					} catch (DispatcherException e) {
+						throw new RoutineException("Unable to deploy services for: " + mogram.getName(), e);
 					}
-				} catch (DispatcherException e) {
-					throw new RoutineException("Unable to deploy services for: "+ mogram.getName(), e);
 				}
 			}
 //			//TODO disabled due to problem with monitoring. Needs to be fixed to run with monitoring

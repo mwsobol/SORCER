@@ -898,12 +898,12 @@ public class ProviderDelegate {
 		 * actions); }
 		 */
 		if (isValidTask(task)) {
-			logger.info("task " + task.getName() + " is valid");
 			try {
 				task.updateContext();
 				task.startExecTime();
 				exertionStateTable.put(task.getId(), Exec.RUNNING);
 				if (((ServiceProvider) provider).isValidTask(task)) {
+					logger.info("task " + task.getName() + " is valid");
 					// append context from Contexters
 					if (task.getApdProcessSignatures().size() > 0) {
 						Context cxt = apdProcess(task);
@@ -950,6 +950,7 @@ public class ProviderDelegate {
 					logger.info("provider key = {}\nreturning task; transaction = {}", provider.getDescription(), transaction);
 					return task;
 				} else {
+                    logger.info("task " + task.getName() + " is NOT valid");
 					provider.fireEvent();
 					task.stopExecTime();
 					RoutineException ex = new RoutineException("Unacceptable task received, requested provider: "
@@ -964,6 +965,7 @@ public class ProviderDelegate {
 				exertionStateTable.remove(exertionStateTable.remove(task.getId()));
 			}
 		}
+        logger.info("task " + task.getName() + " is forwarded");
 		return (Task) forwardTask(task, provider);
 	}
 
@@ -1920,7 +1922,7 @@ public class ProviderDelegate {
 		}
 		Class st = null;
 		try {
-			st = ((NetSignature) task.getProcessSignature()).getServiceType();
+			st = task.getProcessSignature().getServiceType();
 		} catch (SignatureException e) {
 			throw new RoutineException(e);
 		}

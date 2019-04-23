@@ -26,6 +26,11 @@ import sorcer.service.*;
 public interface Discipline extends Service, Contexting<Object>, Governance {
 
     /**
+     * Returns a context multifidelity
+     */
+    public ServiceFidelity getContextMultiFi();
+
+    /**
      * Returns a service governance specifying actualization of this discipline
      *
      * @throws ServiceException
@@ -71,7 +76,7 @@ public interface Discipline extends Service, Contexting<Object>, Governance {
      * @return a current input context
      * @throws ContextException
      */
-    public Context getInput() throws ContextException, ContextException;
+    public Context getInput() throws ContextException;
 
     /**
      * Returns an output context of this discipline.

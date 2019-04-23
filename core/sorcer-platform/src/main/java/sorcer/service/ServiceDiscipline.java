@@ -41,6 +41,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected String  name;
 
+    protected ServiceFidelity contextMultiFi;
+
     protected ServiceFidelity dispatchMultiFi;
 
     protected ServiceFidelity governanceMultiFi;
@@ -125,6 +127,25 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
+    public Context getInput() throws ContextException {
+        // if no contextMultiFi then return direct input
+        if (contextMultiFi == null || contextMultiFi.getSelect() == null) {
+            return input;
+        }
+        input = (Context) contextMultiFi.getSelect();
+        return input;
+    }
+
+    @Override
+    public ServiceFidelity getContextMultiFi() {
+        return contextMultiFi;
+    }
+
+    public void setContextMultiFi(ServiceFidelity contextMultiFi) {
+        this.contextMultiFi = contextMultiFi;
+    }
+
+    @Override
     public ServiceFidelity getGovernanceMultiFi() {
         return governanceMultiFi;
     }
@@ -141,11 +162,6 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     @Override
     public ServiceFidelity getDispatcherMultiFi() {
         return dispatchMultiFi;
-    }
-
-    @Override
-    public Context getInput() throws ContextException {
-        return input;
     }
 
     public Context setInput(Context input) throws ContextException {

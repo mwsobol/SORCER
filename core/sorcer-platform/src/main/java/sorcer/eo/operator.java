@@ -1016,7 +1016,7 @@ operator extends Operator {
     }
 
     public static Signature sig(String name, String operation, Class serviceType, Object... args) throws SignatureException {
-        ServiceSignature s = (ServiceSignature) sig(operation, serviceType, args);
+        ServiceSignature s = sig(operation, serviceType, args);
         s.setName(name);
         return s;
     }
@@ -1037,10 +1037,12 @@ operator extends Operator {
         Args args = null;
         Strategy.Provision provision = null;
         Deployment deployment = null;
+        ProviderName prvName = null;
         ParameterTypes parTypes = null;
         In inPaths = null;
         Out outPaths = null;
         ServiceContext context = null;
+        ReturnPath returnPath = null;
         for (Object item : items) {
             if (item instanceof String) {
                 selector = (String) item;
@@ -1060,6 +1062,14 @@ operator extends Operator {
                 outPaths = (Out)item;
             } else if (item instanceof Deployment ) {
                 deployment = (Deployment)item;
+            } else if (item instanceof ProviderName ) {
+                prvName = (ProviderName) item;
+                if (!(prvName instanceof ServiceName)) {
+                    prvName.setName(Sorcer.getActualName(prvName.getName()));
+
+                }
+            } else if (item instanceof ReturnPath ) {
+                returnPath = (ReturnPath)item;
             }
         }
         ServiceSignature signature = null;
@@ -1074,6 +1084,9 @@ operator extends Operator {
             signature = sig(operation.getName(), multitype.getProviderType());
             signature.setMultitype(multitype);
             signature.setOperation(operation);
+            if (prvName != null) {
+                signature.setProviderName(prvName);
+            }
         } else if (operation == null && selector == null) {
             signature = sig("?", multitype.providerType, items);
         } else {
@@ -1097,6 +1110,11 @@ operator extends Operator {
                 signature.setReturnPath(new ReturnPath());
             }
             signature.getReturnPath().setDataContext(context);
+        }
+
+        // handle return path
+        if (returnPath != null) {
+            signature.setReturnPath(returnPath);
         }
 
         // handle input output paths
@@ -1228,16 +1246,6 @@ operator extends Operator {
                     connList.add(((MapContext) o));
                 } else if (o instanceof Multitype) {
                     srvType = (Multitype) o;
-                    // check if class can be loaded
-//                    multitype = srvType.providerType;
-//                    try {
-//                        if (multitype == null) {
-//                            multitype = srvType.getProviderType();
-//                        }
-//                    } catch (SignatureException se) {
-//                        logger.warn("failed to load fiType for: {}", srvType.typeName);
-//                        multitype = Object.class;
-//                    }
                 } else if (o instanceof Provider) {
                     provider = (Provider) o;
                 } else if (o instanceof Args) {
@@ -1250,9 +1258,6 @@ operator extends Operator {
         if (providerName == null)
             providerName = new ProviderName();
         Signature sig = null;
-//		if (Modeler.class.isAssignableFrom(multitype)) {
-//			sig = new ModelSignature(operation, multitype, providerName, args);
-//		} else
         if (srvType != null && srvType.providerType == null) {
             sig = new ServiceSignature(operation, srvType, providerName);
         } else if (serviceType != null) {
@@ -1591,8 +1596,14 @@ operator extends Operator {
         return fi;
     }
 
-    public static DisciplineFidelity discFi(Fidelity dsptFi, Fidelity govFi) {
-        DisciplineFidelity fi = new DisciplineFidelity(dsptFi, govFi);
+    public static DisciplineFidelity discFi(Fidelity govFi, Fidelity dsptFi) {
+        DisciplineFidelity fi = new DisciplineFidelity(govFi, dsptFi);
+        fi.fiType = Fi.Type.DISCIPLINE;
+        return fi;
+    }
+
+    public static DisciplineFidelity discFi(Fidelity cxtFi, Fidelity govFi, Fidelity dsptFi) {
+        DisciplineFidelity fi = new DisciplineFidelity(cxtFi, govFi, dsptFi);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
     }
