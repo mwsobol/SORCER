@@ -1596,15 +1596,33 @@ operator extends Operator {
         return fi;
     }
 
-    public static DisciplineFidelity discFi(Fidelity govFi, Fidelity dsptFi) {
-        DisciplineFidelity fi = new DisciplineFidelity(govFi, dsptFi);
+    public static DisciplineFidelity discFi(Fidelity... fidelities) {
+        DisciplineFidelity fi = new DisciplineFidelity(fidelities);
+        fi.fiType = Fi.Type.DISCIPLINE;
+        return fi;
+    }
+    public static DisciplineFidelity discFi(String name, Fidelity... fidelities) {
+        DisciplineFidelity fi = new DisciplineFidelity(name, fidelities);
         fi.fiType = Fi.Type.DISCIPLINE;
         return fi;
     }
 
-    public static DisciplineFidelity discFi(Fidelity cxtFi, Fidelity govFi, Fidelity dsptFi) {
-        DisciplineFidelity fi = new DisciplineFidelity(cxtFi, govFi, dsptFi);
-        fi.fiType = Fi.Type.DISCIPLINE;
+    public static Fidelity cxtFi(String name) {
+        Fidelity fi = new Fidelity(name);
+        fi.fiType = Fi.Type.CONTEXT;
+        return fi;
+    }
+
+    public static Fidelity cxtFi(String name, Object select) {
+        Fidelity fi = new Fidelity(name);
+        fi.setSelect(select);
+        fi.fiType = Fi.Type.CONTEXT;
+        return fi;
+    }
+
+    public static Fidelity dsptFi(String name) {
+        Fidelity fi = new Fidelity(name);
+        fi.fiType = Fi.Type.DISPATCHER;
         return fi;
     }
 
@@ -1612,6 +1630,12 @@ operator extends Operator {
         Fidelity fi = new Fidelity(name);
         fi.setSelect(select);
         fi.fiType = Fi.Type.DISPATCHER;
+        return fi;
+    }
+
+    public static Fidelity govFi(String name) {
+        Fidelity fi = new Fidelity(name);
+        fi.fiType = Fi.Type.GOVERNANCE;
         return fi;
     }
 

@@ -31,6 +31,7 @@ import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *  Implements a service discipline as outGovernance-multiFi-dispatch
@@ -40,6 +41,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     protected Uuid disciplineId;
 
     protected String  name;
+
+    protected Map<String, DisciplineFidelity> disciplineFidelities;
 
     protected ServiceFidelity contextMultiFi;
 
@@ -479,6 +482,10 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         outDispatcher = null;
         output = null;
         return this;
+    }
+
+    public Map<String, DisciplineFidelity> getDisciplineFidelities() {
+        return disciplineFidelities;
     }
 
     @Override

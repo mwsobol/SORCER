@@ -4,17 +4,17 @@ public class DisciplineFidelity extends Fidelity<Fidelity> {
 
     private Fidelity govFi;
 
-
     private Fidelity cxtFi;
 
-    public DisciplineFidelity(Fidelity govFi, Fidelity dsptFi) {
-        this.govFi = govFi;
-        this.select = dsptFi;
+    public DisciplineFidelity(String name, Fidelity... fidelities) {
+        this(fidelities);
+        fiName = name;
     }
 
-    public DisciplineFidelity(Fidelity cxtMultiFi, Fidelity govFi, Fidelity dsptFi) {
-        this.govFi = govFi;
-        this.select = dsptFi;
+    public DisciplineFidelity(Fidelity... fidelities) {
+        for (Fidelity fi : fidelities) {
+            assignFi(fi);
+        }
     }
 
     public Fidelity getContextFi() {
@@ -40,4 +40,15 @@ public class DisciplineFidelity extends Fidelity<Fidelity> {
     public void setDispatcherFi(Fidelity dsptFi) {
         this.select = dsptFi;
     }
+
+    private void assignFi(Fidelity fi) {
+        if (fi.getFiType().equals(Type.DISPATCHER)) {
+            this.select = fi;
+        } else if (fi.getFiType().equals(Fi.Type.GOVERNANCE)) {
+            this.govFi = fi;
+        } else if (fi.getFiType().equals(Type.CONTEXT)) {
+            this.cxtFi = fi;
+        }
+    }
+
 }
