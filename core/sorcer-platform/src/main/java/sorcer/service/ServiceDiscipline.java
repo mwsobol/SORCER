@@ -30,6 +30,7 @@ import sorcer.service.modeling.Getter;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     protected String  name;
 
-    protected Map<String, DisciplineFidelity> disciplineFidelities;
+    protected Map<String, DisciplineFidelity> disciplineFidelities = new HashMap<>();
 
     protected ServiceFidelity contextMultiFi;
 
