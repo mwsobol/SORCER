@@ -701,7 +701,7 @@ public class operator extends Operator {
 		return entry;
 	}
 
-	public static Entry cached(Entry ent) {
+	public static Entry inv(Entry ent) {
 		ent.setCached(true);
 		return ent;
 	}
