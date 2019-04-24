@@ -5,7 +5,7 @@ public class DisciplineFidelity extends Fidelity<Fidelity> {
     private Fidelity govFi;
 
 
-    private Fidelity cxtMultiFi;
+    private Fidelity cxtFi;
 
     public DisciplineFidelity(Fidelity govFi, Fidelity dsptFi) {
         this.govFi = govFi;
@@ -17,27 +17,27 @@ public class DisciplineFidelity extends Fidelity<Fidelity> {
         this.select = dsptFi;
     }
 
-    public Fidelity getContextMultiFi() {
-        return cxtMultiFi;
+    public Fidelity getContextFi() {
+        return cxtFi;
     }
 
-    public void setContextMultiFi(Fidelity contextMultiFi) {
-        this.cxtMultiFi = contextMultiFi;
+    public void setContextFi(Fidelity contextMultiFi) {
+        this.cxtFi = contextMultiFi;
     }
 
-    public Fidelity getGovernanceMultiFi() {
+    public Fidelity getGovernanceFi() {
         return govFi;
     }
 
-    public void setGovernanceMultiFi(Fidelity govFi) {
+    public void setGovernanceFi(Fidelity govFi) {
         this.govFi = govFi;
     }
 
-    public Fidelity getDispatcherMultiFi() {
+    public Fidelity getDispatcherFi() {
         return select;
     }
 
-    public void setDispatcherMultiFi(Fidelity dsptFi) {
+    public void setDispatcherFi(Fidelity dsptFi) {
         this.select = dsptFi;
     }
 }

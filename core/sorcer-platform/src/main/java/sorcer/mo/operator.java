@@ -879,28 +879,28 @@ public class operator {
         return servers;
     }
 
-    public static Discipline disc(Routine consumer, Service server) {
-        return new ServiceDiscipline(consumer, server);
+    public static Discipline disc(Service server, Routine consumer) {
+        return new ServiceDiscipline(server, consumer);
     }
-    public static Discipline disc(Routine[] clients, Service[] servers) {
-        return new ServiceDiscipline(clients, servers);
+    public static Discipline disc(Service[] servers, Routine[] clients) {
+        return new ServiceDiscipline(servers, clients);
     }
 
-    public static Discipline disc(List<Routine> clients, List<Service> servers) {
-        return new ServiceDiscipline(clients, servers);
+    public static Discipline disc(List<Service> servers, List<Routine> clients) {
+        return new ServiceDiscipline(servers, clients);
     }
 
     public static Discipline disc(Multidiscipline multidisc, String name) {
         return multidisc.getDisciplines().get(name);
     }
 
-    public static Discipline add(Discipline disciplne, Routine client, Service server) {
-        disciplne.add(client, server);
+    public static Discipline add(Discipline disciplne, Service server, Routine client) {
+        disciplne.add(server, client);
         return disciplne;
     }
 
-    public static Discipline add(Discipline disciplne, Fidelity clientFi, Fidelity providerFi) {
-        disciplne.add(clientFi, providerFi);
+    public static Discipline add(Discipline disciplne, Fidelity providerFi, Fidelity clientFi) {
+        disciplne.add(providerFi, clientFi);
         return disciplne;
     }
 

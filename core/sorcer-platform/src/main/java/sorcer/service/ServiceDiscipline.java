@@ -81,30 +81,30 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         governanceMultiFi = new ServiceFidelity(dispatchs);
     }
 
-    public ServiceDiscipline(Routine dispatch, Service service) {
-        governanceMultiFi = new ServiceFidelity(new Mogram[] { dispatch });
-        dispatchMultiFi = new ServiceFidelity(new Service[] { service });
+    public ServiceDiscipline(Service service, Routine dispatch) {
+        governanceMultiFi = new ServiceFidelity(new Service[] { service });
+        dispatchMultiFi = new ServiceFidelity(new Service[] { dispatch });
     }
 
-    public ServiceDiscipline(Routine[] dispatchs, Service[] services) {
-        governanceMultiFi = new ServiceFidelity(dispatchs);
-        dispatchMultiFi = new ServiceFidelity(services);
+    public ServiceDiscipline(Service[] services, Routine[] dispatchs) {
+        governanceMultiFi = new ServiceFidelity(services);
+        dispatchMultiFi = new ServiceFidelity(dispatchs);
     }
 
-    public ServiceDiscipline(List<Routine> dispatchs, List<Service> services) {
+    public ServiceDiscipline(List<Service> services, List<Routine> dispatchs) {
         Routine[] cArray = new Routine[dispatchs.size()];
         Service[] pArray = new Routine[services.size()];
-        governanceMultiFi = new ServiceFidelity(dispatchs.toArray(cArray));
-        dispatchMultiFi = new ServiceFidelity(services.toArray(pArray));
+        governanceMultiFi = new ServiceFidelity(services.toArray(cArray));
+        dispatchMultiFi = new ServiceFidelity(dispatchs.toArray(pArray));
     }
 
-    public void add(Routine dispatch, Service service) {
-        governanceMultiFi.getSelects().add(dispatch);
-        dispatchMultiFi.getSelects().add(service);
+    public void add(Service service, Routine dispatch) {
+        governanceMultiFi.getSelects().add(service);
+        dispatchMultiFi.getSelects().add(dispatch);
     }
 
     @Override
-    public void add(Fidelity dispatchFi, Fidelity serviceFi) {
+    public void add(Fidelity serviceFi, Fidelity dispatchFi) {
         Routine dispatch = (Routine) dispatchFi.getSelect();
         dispatch.setName(dispatchFi.getName());
         Object service = serviceFi.getSelect();
@@ -249,8 +249,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     protected void selectFi(Fidelity fi) {
-        dispatchMultiFi.selectSelect(fi.getName());
-        governanceMultiFi.selectSelect(fi.getPath());
+        dispatchMultiFi.selectSelect(fi.getPath());
+        governanceMultiFi.selectSelect(fi.getName());
     }
 
     public Task getPrecondition() {
