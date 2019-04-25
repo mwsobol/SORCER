@@ -97,7 +97,7 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
     }
 
     public T getSelect() {
-		// if a select not set return the firts one option
+		// if a select not set return the firt one
 		if (select == null && selects.size() > 0) {
 			select = selects.get(0);
 		}

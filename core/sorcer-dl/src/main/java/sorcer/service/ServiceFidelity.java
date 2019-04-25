@@ -122,7 +122,9 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 				this.select = item;
 				break;
 			}
+			return select;
 		}
+		select = null;
 		return select;
 	}
 

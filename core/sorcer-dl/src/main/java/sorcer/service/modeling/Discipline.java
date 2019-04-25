@@ -90,12 +90,12 @@ public interface Discipline extends Service, Contexting<Object>, Governance {
      * Adds a dispatcher-governance fidelity of this discipline.
      * Fidelity names are names of dispatcher and service correspondingly.
      */
-    public void add(Service governance, Routine dispatcher);
+    public void add(Service governance, Routine dispatcher, Context context);
 
     /**
      * Adds a dispatcher and governance fidelities to this discipline
      */
-    public void add(Fidelity governanceFi, Fidelity dispatcherFi);
+    public void add(Fidelity governanceFi, Fidelity dispatcherFi, Fidelity contextFi);
 
     /**
      * Returns a builder of this discipline to be used for replication

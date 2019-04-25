@@ -895,12 +895,22 @@ public class operator {
     }
 
     public static Discipline add(Discipline disciplne, Service server, Routine client) {
-        disciplne.add(server, client);
+        disciplne.add(server, client, null);
         return disciplne;
     }
 
     public static Discipline add(Discipline disciplne, Fidelity providerFi, Fidelity clientFi) {
-        disciplne.add(providerFi, clientFi);
+        disciplne.add(providerFi, clientFi, null);
+        return disciplne;
+    }
+
+    public static Discipline add(Discipline disciplne, Service server, Routine client, Context context) {
+        disciplne.add(server, client, context);
+        return disciplne;
+    }
+
+    public static Discipline add(Discipline disciplne, Fidelity providerFi, Fidelity clientFi, Fidelity contextFi) {
+        disciplne.add(providerFi, clientFi, contextFi);
         return disciplne;
     }
 

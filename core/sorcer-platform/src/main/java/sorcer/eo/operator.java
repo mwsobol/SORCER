@@ -1589,9 +1589,14 @@ operator extends Operator {
         return mogram.getSelectedFidelity();
     }
 
-
     public static Fidelity fi(String name, String path) {
         Fidelity fi = new Fidelity(name, path);
+        fi.fiType = Fi.Type.SELECT;
+        return fi;
+    }
+
+    public static Fidelity fi(String name, String path, String select) {
+        Fidelity fi = new Fidelity(name, path, select);
         fi.fiType = Fi.Type.SELECT;
         return fi;
     }
@@ -1917,17 +1922,11 @@ operator extends Operator {
         return fi;
     }
 
-    public static Fidelity<String> fi(String name, String path, String gradient) {
+    public static Fidelity<String> gFi(String name, String path, String gradient) {
         Fidelity<String> fi = new Fidelity(name, path, gradient);
         fi.fiType = Fi.Type.GRADIENT;
         return fi;
     }
-
-//    public static Fidelity fi(String name, String path) {
-//        Fidelity fi = new Fidelity(name, path);
-//        fi.fiType = Fi.Type.SELECT;
-//        return fi;
-//    }
 
     public static Fidelity soaFi(String name, String path) {
         Fidelity fi = new Fidelity(name, path);
@@ -1936,7 +1935,7 @@ operator extends Operator {
     }
 
 
-    public static Fidelity fi(String name, String path, String gradientName, Fidelity subFi) {
+    public static Fidelity gFi(String name, String path, String gradientName, Fidelity subFi) {
         Fidelity fi = new Fidelity(name, path);
         fi.fiType = Fi.Type.GRADIENT;
         fi.selectSelect(gradientName);

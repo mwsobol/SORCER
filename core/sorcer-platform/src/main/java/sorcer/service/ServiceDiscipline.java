@@ -103,15 +103,28 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     public void add(Service service, Routine dispatch) {
-        governanceMultiFi.getSelects().add(service);
-        dispatchMultiFi.getSelects().add(dispatch);
+        add(service, dispatch, null);
     }
 
-    @Override
+    public void add(Service service, Routine dispatch, Context context) {
+        governanceMultiFi.getSelects().add(service);
+        dispatchMultiFi.getSelects().add(dispatch);
+        if (context != null) {
+            contextMultiFi.getSelects().add(context);
+        }
+    }
+
     public void add(Fidelity serviceFi, Fidelity dispatchFi) {
+        add(serviceFi, dispatchFi, null);
+    }
+    @Override
+    public void add(Fidelity serviceFi, Fidelity dispatchFi, Fidelity contextFi) {
         Routine dispatch = (Routine) dispatchFi.getSelect();
         dispatch.setName(dispatchFi.getName());
-        Object service = serviceFi.getSelect();
+        Service service = null;
+        if (serviceFi != null) {
+            service = (Service)serviceFi.getSelect();
+        }
         if (service instanceof Signature) {
             ((ServiceSignature)service).setName(serviceFi.getName());
         } else if (service instanceof Request) {
@@ -119,6 +132,9 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         }
         dispatchMultiFi.getSelects().add(dispatch);
         governanceMultiFi.getSelects().add((Service)service);
+        if (contextFi != null) {
+            contextFi.getSelects().add(contextFi.getSelect());
+        }
     }
 
     @Override
@@ -235,6 +251,13 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                 selectFi(fis.get(0));
             }
             Routine xrt = (Routine) getDispatcher();
+            Context cxt = null;
+            if (contextMultiFi != null) {
+                cxt = (Context) contextMultiFi.getSelect();
+            }
+            if (cxt != null) {
+                xrt.setContext(cxt);
+            }
             if (input != null) {
                 if (inConnector != null) {
                     xrt.setContext(((ServiceContext) input).updateContextWith(inConnector));
@@ -243,7 +266,9 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                 }
             }
             outGovernance = getGovernance();
-            xrt.dispatch(outGovernance);
+            if (outGovernance != null) {
+                xrt.dispatch(outGovernance);
+            }
             outDispatcher = xrt.exert();
 
             return getOutput();
@@ -253,8 +278,24 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     protected void selectFi(Fidelity fi) {
-        dispatchMultiFi.selectSelect(fi.getPath());
-        governanceMultiFi.selectSelect(fi.getName());
+        if (fi.getPath().isEmpty()) {
+            DisciplineFidelity discFi = disciplineFidelities.get(fi.getName());
+            dispatchMultiFi.selectSelect(discFi.getDispatcherFi().getName());
+            if (governanceMultiFi != null && discFi.getGovernanceFi() != null) {
+                governanceMultiFi.selectSelect(discFi.getGovernanceFi().getName());
+            }
+            if (contextMultiFi != null) {
+                contextMultiFi.selectSelect(discFi.getContextFi().getName());
+            }
+        } else {
+            dispatchMultiFi.selectSelect(fi.getPath());
+            if (governanceMultiFi != null) {
+                governanceMultiFi.selectSelect(fi.getName());
+            }
+            if (contextMultiFi != null) {
+                contextMultiFi.selectSelect((String) fi.getSelect());
+            }
+        }
     }
 
     public Task getPrecondition() {
