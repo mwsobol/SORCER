@@ -311,7 +311,7 @@ public class operator extends Operator {
 	    return new Row(entries);
     }
 
-	public static Row row(Context context) {
+	public static Row row(Context context) throws ConfigurationException {
 		Iterator it = ((ServiceContext)context).keyIterator();
 		Row row = new Row();
 		row.setName(context.getName());
@@ -1411,7 +1411,7 @@ public class operator extends Operator {
 //	}
 
 	public static Object rimpl(Context context, String path)
-			throws ContextException {
+			throws ConfigurationException {
 		Object obj = context.get(path);
 		if (obj instanceof Entry) {
 			return ((Entry)context.get(path)).getImpl();
@@ -1421,7 +1421,7 @@ public class operator extends Operator {
 	}
 
 	public static Object impl(Mogram context, String path)
-			throws ContextException {
+		throws ConfigurationException {
 		Object obj = context.get(path);
 		if (obj instanceof MultiFiSlot) {
 			return ((Entry)obj).getImpl();
@@ -1455,7 +1455,7 @@ public class operator extends Operator {
 	}
 
 	public static Object asis(Context context, String path)
-			throws ContextException {
+			throws ConfigurationException {
 		return context.get(path);
 	}
 

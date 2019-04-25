@@ -248,7 +248,11 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         try {
             List<Fidelity> fis = Arg.selectFidelities(args);
             if (fis != null && fis.size() > 0) {
-                selectFi(fis.get(0));
+                try {
+                    selectFi(fis.get(0));
+                } catch (ConfigurationException e) {
+                    throw new ServiceException(e);
+                }
             }
             Routine xrt = (Routine) getDispatcher();
             Context cxt = null;
@@ -277,7 +281,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         }
     }
 
-    protected void selectFi(Fidelity fi) {
+    protected void selectFi(Fidelity fi) throws ConfigurationException {
         if (fi.getPath().isEmpty()) {
             DisciplineFidelity discFi = disciplineFidelities.get(fi.getName());
             dispatchMultiFi.selectSelect(discFi.getDispatcherFi().getName());

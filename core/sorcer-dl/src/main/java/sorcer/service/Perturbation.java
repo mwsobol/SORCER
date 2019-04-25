@@ -28,7 +28,7 @@ public interface  Perturbation <T extends Object> {
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */
-	public T getPerturbedValue(String varName) throws EvaluationException, RemoteException;
+	public T getPerturbedValue(String varName) throws EvaluationException, RemoteException, ConfigurationException;
 	
 	public double getPerturbation();
 }

@@ -173,24 +173,11 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         }
 	}
 	
-	private void postUpdate(Routine exertion) throws ContextException, RemoteException {
+	private void postUpdate(Routine exertion) throws ContextException {
         if (exertion instanceof Job) {
             xrt.getDataContext().append(exertion.getDataContext());
         } else if (exertion instanceof AltTask) {
 			xrt.getContext().append(((AltTask)exertion).getActiveOptExertion().getDataContext());
-            /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(exertion);
-            if (exertion.isMonitorable() && monSession!=null) {
-                try {
-                    monSession.changed(exertion.getContext(), exertion.getStatus());
-                    getLrm().remove(monSession.getLease());
-                } catch (RemoteException re) {
-                    logger.error("Problem initializing Monitor Session for: " + exertion.getName(), re);
-                } catch (MonitorException e) {
-                    logger.error("Problem initializing Monitor Session for: " + exertion.getName(), e);
-                } catch (UnknownLeaseException e) {
-                    logger.error("Problem removing monitoring lease for: " + exertion.getName(), e);
-                }
-            } */
 		} else if (exertion instanceof OptTask) {
 			xrt.getContext().append(exertion.getDataContext());
 		} else if (exertion instanceof LoopTask) {
@@ -198,12 +185,6 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		} else if (exertion instanceof EvaluationTask) {
 			xrt.getContext().append(exertion.getContext());
 		}
-
-//		if (exertion instanceof AltExertion) {
-//			((EntModel)((Block)xrt).getContext()).appendNew(((AltExertion)exertion).getActiveOptExertion().getContext());
-//		} else if (exertion instanceof OptExertion) {
-//			((EntModel)((Block)xrt).getContext()).appendNew(((OptExertion)exertion).getContext());
-//		}
 		
 		ServiceContext cxt = (ServiceContext)xrt.getDataContext();
         SignatureReturnPath rp = exertion.getDataContext().getReturnPath();
@@ -211,23 +192,31 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             Signature.Out outPaths = rp.getOutPaths();
             if (outPaths != null && outPaths.size() > 0) {
                 for (Path path : outPaths) {
-                    Object obj = exertion.getDataContext().get(path.getName());
-                    if (obj != null)
+					Object obj = null;
+					try {
+						obj = exertion.getDataContext().get(path.getName());
+					} catch (ConfigurationException e) {
+						throw new ContextException(e);
+					}
+					if (obj != null)
                         cxt.put(path.getName(), obj);
                 }
             } else {
-                cxt.putValue(((ReturnPath) exertion.getContext().getReturnPath()).path,
-                        exertion.getDataContext().getReturnValue());
-            }
+				try {
+					cxt.putValue(((ReturnPath) exertion.getContext().getReturnPath()).path,
+							exertion.getDataContext().getReturnValue());
+				} catch (RemoteException e) {
+					throw new ContextException(e);
+				}
+			}
 
         } else {
             cxt.updateEntries(exertion.getDataContext());
         }
 
         if (! (exertion instanceof Block))
-		    ((ServiceContext)exertion.getDataContext()).setScope(null);
-//		if (cxt.getReturnPath() != null)
-//			cxt.putValue(cxt.getReturnPath().path, cxt.getReturnValue());
+		    exertion.getDataContext().setScope(null);
+//
 	}
 
     protected List<Mogram> getInputExertions() {

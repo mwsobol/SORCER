@@ -1702,8 +1702,8 @@ operator extends Operator {
         return srvFi;
     }
 
-    public static void selectFi(Mogram mogram, String selection) {
-        ((MultiFiMogram)mogram).selectFidelity(selection);
+    public static void selectFi(Mogram mogram, String selection) throws ConfigurationException {
+        mogram.selectFidelity(selection);
     }
 
     public static MultiFiMogram mogFi(Metafidelity fidelity) {
@@ -1935,7 +1935,7 @@ operator extends Operator {
     }
 
 
-    public static Fidelity gFi(String name, String path, String gradientName, Fidelity subFi) {
+    public static Fidelity gFi(String name, String path, String gradientName, Fidelity subFi) throws ConfigurationException {
         Fidelity fi = new Fidelity(name, path);
         fi.fiType = Fi.Type.GRADIENT;
         fi.selectSelect(gradientName);
@@ -1951,7 +1951,7 @@ operator extends Operator {
     }
 
 
-    public static ServiceFidelity rFi(String name, String path) {
+    public static ServiceFidelity rFi(String name, String path) throws ConfigurationException {
         ServiceFidelity fi = new ServiceFidelity(name, (List<Service>) path(path));
         fi.setPath(path);
         fi.selectSelect(path);

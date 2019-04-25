@@ -358,10 +358,9 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         if (returnPath != null) {
             crp = returnPath.path;
         }
-        if (crp != null) {
-            Object obj = null;
-            try {
-//                obj = outGovernance.getValue(((ReturnPath)sig.getReturnPath()).path);
+        try {
+            if (crp != null) {
+                Object obj = null;
                 obj = out.getValue(crp);
                 if (obj == null)
                     obj = out.getValue(path);
@@ -372,14 +371,15 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     logger.warn("no eval for return path: {} in: {}", ((ReturnPath)sig.getReturnPath()).path, out);
                     return out;
                 }
-            } catch (RemoteException e) {
-                throw new MogramException(e);
+
+            } else {
+                if (sigrp != null) {
+                    // add response for this signature
+                    return out.get(sigrp);
+                }
             }
-        } else {
-            if (sigrp != null) {
-                // add response for this signature
-                return out.get(sigrp);
-            }
+        } catch (ConfigurationException | RemoteException e) {
+            throw new MogramException(e);
         }
         return out;
     }
@@ -469,7 +469,11 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                             continue;
                         } else {
                             // first select the requested fidelity
-                            entry.getMultiFi().selectSelect(((Fidelity) de.annotation()).getName());
+                            try {
+                                entry.getMultiFi().selectSelect(((Fidelity) de.annotation()).getName());
+                            } catch (ConfigurationException e) {
+                                throw new ContextException(e);
+                            }
                         }
                     } else if (de.getType().equals(Functionality.Type.CONDITION)) {
                         Conditional condition = de.getCondition();

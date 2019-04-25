@@ -395,7 +395,7 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
 	}
 
 	@Override
-	public T getPerturbedValue(String varName) throws EvaluationException, RemoteException {
+	public T getPerturbedValue(String varName) throws EvaluationException, RemoteException, ConfigurationException {
 		return null;
 	}
 

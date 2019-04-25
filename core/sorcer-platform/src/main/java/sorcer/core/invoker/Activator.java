@@ -99,7 +99,7 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
         this.weights = weights;
     }
 
-    public Double activate(Arg... entries) throws EvaluationException, RemoteException {
+    public Double activate(Arg... entries) throws EvaluationException {
         for (Arg arg : entries) {
            if (arg instanceof Entry) {
                 if (((Entry) arg).getType() == Functionality.Type.THRESHOLD
@@ -112,13 +112,16 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
                 }
             }
         }
-
         double sum = 0.0;
         for (String name : args.getNames()) {
             double in = 0;
-            in = (double) ((Entry)invokeContext.get(name)).getOut();
-            double wt = (double) weights.get(name);
-            sum = sum + (in * wt);
+            try {
+                in = (double) ((Entry)invokeContext.get(name)).getOut();
+                double wt = (double) weights.get(name);
+                sum = sum + (in * wt);
+            } catch (ConfigurationException e) {
+                throw new EvaluationException(e);
+            }
         }
         sum = sum + bias;
 

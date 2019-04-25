@@ -591,7 +591,11 @@ public class Job extends Transroutine {
 		for (ServiceFidelity fi : fidelities) {
 			if (fi instanceof ServiceFidelity) {
 				se = (ServiceRoutine) getComponentMogram(fi.getPath());
-				se.selectFidelity(fi.getName());
+				try {
+					se.selectFidelity(fi.getName());
+				} catch (ConfigurationException e) {
+					throw new RoutineException(e);
+				}
 			}
 		}
 	}

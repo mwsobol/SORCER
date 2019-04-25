@@ -340,8 +340,8 @@ public class operator extends Operator {
 	}
 
     public static Object activate(Model model, String path, Arg... args) throws InvocationException {
-        Neu ane = (Neu) model.get(path);
         try {
+			Neu ane = (Neu) model.get(path);
             if (ane.getMultiFi() != null) {
                 List<Fidelity> fiList = Arg.selectFidelities(args);
                 ((FidelityManager) model.getFidelityManager()).reconfigure(fiList);
@@ -350,7 +350,7 @@ public class operator extends Operator {
             } else {
                 return invoke((EntModel) model, path, args);
             }
-        } catch (RemoteException | ContextException e) {
+        } catch (RemoteException | ContextException | ConfigurationException e) {
             throw new InvocationException(e);
         }
     }

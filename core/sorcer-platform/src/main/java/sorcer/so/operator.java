@@ -335,7 +335,11 @@ public class operator extends Operator {
             Arg[] args = new Arg[argl.size()];
             argl.toArray(args);
             if (model.getFidelityManager() != null) {
-                ((FidelityManager) model.getFidelityManager()).reconfigure(Arg.selectFidelities(args));
+                try {
+                    ((FidelityManager) model.getFidelityManager()).reconfigure(Arg.selectFidelities(args));
+                } catch (ConfigurationException e) {
+                   throw new ContextException(e);
+                }
             }
             model.substitute(args);
             return (ServiceContext) model.getResponse(args);
@@ -372,7 +376,7 @@ public class operator extends Operator {
                 ((FidelityManager) exertion.getFidelityManager()).reconfigure(Arg.selectFidelities(args));
             }
             return (ServiceContext) exertion.exert(args).getContext();
-        } catch (RemoteException | MogramException e) {
+        } catch (RemoteException | MogramException | ConfigurationException e) {
             throw new ContextException(e);
         }
     }

@@ -117,7 +117,11 @@ public class Neu extends Subroutine<Double> implements Invocation<Double>,
 
 					}
 				} else if (p instanceof Fidelity && multiFi != null) {
-                    multiFi.selectSelect(p.getName());
+					try {
+						multiFi.selectSelect(p.getName());
+					} catch (ConfigurationException e) {
+						throw new SetterException(e);
+					}
 				} else if (p instanceof Context) {
 					if (scope == null)
 						scope = (Context) p;
@@ -319,7 +323,7 @@ public class Neu extends Subroutine<Double> implements Invocation<Double>,
 	}
 
     @Override
-	public Double getPerturbedValue(String varName) throws EvaluationException, RemoteException {
+	public Double getPerturbedValue(String varName) throws ConfigurationException {
         return (Double)(((Activator)impl).getScope().get(varName)) + bias;
     }
 

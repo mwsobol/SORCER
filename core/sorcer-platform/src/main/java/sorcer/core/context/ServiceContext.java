@@ -1585,9 +1585,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			outcxt = task(sig, incxt).exert().getContext();
 			// restore return path
 			sig.setReturnPath(rp);
-		} catch (Exception e) {
-			throw new MogramException(e);
-		}
+
 		resultContext = outcxt;
 		if (ops != null && ops.size() > 0) {
 			Context returnContext = outcxt.getDirectionalSubcontext(ops);
@@ -1601,6 +1599,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 			this.appendInout(outcxt);
 			this.setChanged(true);
+		}
+		} catch (ConfigurationException | RemoteException e) {
+			throw new MogramException(e);
 		}
 		return resultContext;
 	}
@@ -3084,7 +3085,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (morpher != null) {
 			try {
 				morpher.morph(fiManager, multiFi, this);
-			} catch (ServiceException e) {
+			} catch (ConfigurationException | ServiceException e) {
 				throw new ContextException(e);
 			}
 		}

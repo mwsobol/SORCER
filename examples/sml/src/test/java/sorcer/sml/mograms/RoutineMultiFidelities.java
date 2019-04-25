@@ -1,5 +1,6 @@
 package sorcer.sml.mograms;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -74,6 +75,7 @@ public class RoutineMultiFidelities {
         return (Job)tracable(job);
     }
 
+    @Ignore
     @Test
     public void multiFiSigJobTest() throws Exception {
 
@@ -95,7 +97,7 @@ public class RoutineMultiFidelities {
 
         //Local Jobbers with remote Multiplier nad Adder
         job = getMultiFiJob();
-        job = exert(job, fi("object"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net"));
+        job = exert(job, fi("t3", "object"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net"));
         out = result(job);
         logger.info("job context: " + out);
         logger.info("job trace: " + trace(job));

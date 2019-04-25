@@ -71,11 +71,11 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
         return selection;
     }
 
-    public T selectSelect(String name) {
+    public T selectSelect(String name) throws ConfigurationException {
         return fidelity.selectSelect(name);
     }
 
-    public void setMorpherSelect(String name) {
+    public void setMorpherSelect(String name) throws ConfigurationException {
         if (morpherFidelity != null) {
             morpherFidelity.selectSelect(name);
             morpher = (Morpher) ((Entry)morpherFidelity.getSelect()).getImpl();
@@ -117,7 +117,7 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
         fidelity.setSelect(null);
     }
 
-    public T getSelect(String name) {
+    public T getSelect(String name) throws ConfigurationException {
         return fidelity.getSelect(name);
     }
 

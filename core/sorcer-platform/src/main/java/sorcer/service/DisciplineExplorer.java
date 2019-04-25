@@ -53,7 +53,7 @@ public class DisciplineExplorer implements Service, Exploration {
             transdiscipline.outDispatcher = xrt.exert();
             execDependencies(transdiscipline.getName(), args);
             return transdiscipline.getOutput();
-        } catch (RemoteException e) {
+        } catch (ConfigurationException | RemoteException e) {
             throw new ServiceException(e);
         }
     }

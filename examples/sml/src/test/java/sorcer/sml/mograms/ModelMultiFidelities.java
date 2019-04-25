@@ -1,5 +1,6 @@
 package sorcer.sml.mograms;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -47,7 +48,7 @@ public class ModelMultiFidelities {
                 response("mphFi", "arg/x1", "arg/x2"));
 
         Context out = eval(mod, fi("mphFi", "multiply"));
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "mphFi").equals(900.0));
         assertTrue(get(mod, "result/y").equals(900.0));
     }
@@ -65,9 +66,8 @@ public class ModelMultiFidelities {
 
         logger.info("DEPS: " + printDeps(mdl));
 
-//        Context outGovernance = response(mdl, metaFi("arg/x1", "arg/x1/fi2"), metaFi("arg/x2", "arg/x2/fi2"), metaFi("mphFi", "multiply"));
         Context out = response(mdl, fi("arg/x1", "arg/x1/fi2"), fis(fi("arg/x2", "arg/x2/fi2"), fi("mphFi", "multiply")));
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "arg/x1").equals(11.0));
         assertTrue(get(out, "arg/x2").equals(91.0));
         assertTrue(get(out, "mphFi").equals(1001.0));
@@ -90,7 +90,7 @@ public class ModelMultiFidelities {
         reconfigure(mdl, fi("arg/x1", "arg/x1/fi2"), fi("arg/x2", "arg/x2/fi2"), fi("sigFi", "multiply"));
         logger.info("trace: " + fiTrace(mdl));
         Context out = response(mdl);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "arg/x1").equals(11.0));
         assertTrue(get(out, "arg/x2").equals(91.0));
         assertTrue(get(out, "sigFi").equals(1001.0));
@@ -107,7 +107,7 @@ public class ModelMultiFidelities {
                 response("mphFi", "arg/x1", "arg/x2"));
 
         Context out = response(mod, fi("mphFi", "add"));
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "mphFi").equals(100.0));
         assertTrue(get(mod, "result/y").equals(100.0));
     }
@@ -124,13 +124,13 @@ public class ModelMultiFidelities {
             response("mphFi", "arg/x1", "arg/x2"));
 
         Context out = response(mod, fi("mphFi", "sig1"));
-        logger.info("outGovernance: " + out);
-//        assertTrue(get(outGovernance, "mphFi").equals(100.0));
+        logger.info("out: " + out);
+//        assertTrue(get(out, "mphFi").equals(100.0));
         assertTrue(get(mod, "result/y").equals(100.0));
 
         out = response(mod, fi("mphFi", "sig2"));
         logger.info("out2: " + out);
-//        assertTrue(get(outGovernance, "mphFi").equals(900.0));
+//        assertTrue(get(out, "mphFi").equals(900.0));
         assertTrue(get(mod, "result/y").equals(900.0));
     }
 
@@ -145,7 +145,7 @@ public class ModelMultiFidelities {
                 response("mphFi", "x1", "x2"));
 
         Context out = response(mod, fi("mphFi", "eval1"));
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "mphFi").equals(100.0));
 
         out = response(mod, fi("mphFi", "eval2"));
@@ -201,14 +201,14 @@ public class ModelMultiFidelities {
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
         assertTrue(get(out, "mFi2").equals(9.0));
         assertTrue(get(out, "mFi3").equals(900.0));
 
         // closing the fidelity for mFi1
         out = response(mod , fi("mFi1", "multiply"));
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));
@@ -259,14 +259,14 @@ public class ModelMultiFidelities {
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
         assertTrue(get(out, "mFi2").equals(9.0));
         assertTrue(get(out, "mFi3").equals(900.0));
 
         // first closing the fidelity for mFi1
         out = response(mod , fi("mFi1", "multiply"));
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));
@@ -320,14 +320,14 @@ public class ModelMultiFidelities {
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
         assertTrue(get(out, "mFi2").equals(9.0));
         assertTrue(get(out, "mFi3").equals(900.0));
 
         // first closing the fidelity for mFi1
         out = response(mod , fi("mFi1", "multiply"));
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));
@@ -387,14 +387,14 @@ public class ModelMultiFidelities {
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
         assertTrue(get(out, "mFi2").equals(9.0));
         assertTrue(get(out, "mFi3").equals(50.0));
 
         // closing the fidelity for mFi1
         out = response(mod , fi("mFi1", "multiply"));
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));
@@ -409,17 +409,17 @@ public class ModelMultiFidelities {
         Mogram mfs = mogFi("args", rFi(e1, e2, e3));
 
         Object out = exec(mfs);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(out.equals(5.0));
 
         selectFi(mfs, "x2");
         out = exec(mfs);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(out.equals(6.0));
 
         selectFi(mfs, "x3");
         out = exec(mfs);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(out.equals(7.0));
     }
 
@@ -441,11 +441,11 @@ public class ModelMultiFidelities {
         MultiFiMogram mfs = mogFi(mphFi(morpher, e1, e2, e3));
 
         Object out = exec(mfs);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(out.equals(5.0));
 
         out = exec(mfs);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(out.equals(7.0));
     }
 
@@ -460,7 +460,7 @@ public class ModelMultiFidelities {
         MultiFiMogram mfs = mogFi(rFi(ms, as), cxt);
 
         Context out = (Context) exec(mfs);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(value(context(out), "result/y").equals(500.0));
 
         selectFi(mfs, "add");
@@ -488,7 +488,7 @@ public class ModelMultiFidelities {
         MultiFiMogram mfs = mogFi(mphFi("sigFi", morpher, ms, as), cxt);
 
         Context out = (Context) exec(mfs);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(value(context(out), "result/y").equals(500.0));
 
         out = (Context) exec(mfs);
@@ -511,12 +511,12 @@ public class ModelMultiFidelities {
 
         MultiFiMogram mfs = mogFi(mphFi("taskFi", t5, t4));
         Mogram mog = exert(mfs);
-        logger.info("outGovernance: " + mog.getContext());
+        logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(100.0));
 
         selectFi(mfs, "t4");
         mog = exert(mfs);
-        logger.info("outGovernance: " + mog.getContext());
+        logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(500.0));
     }
 
@@ -547,11 +547,11 @@ public class ModelMultiFidelities {
 
         MultiFiMogram mfs = mogFi(mphFi(morpher, t5, t4));
         Mogram mog = exert(mfs);
-        logger.info("outGovernance: " + context(mog));
+        logger.info("out: " + context(mog));
         assertTrue(value(context(mog), "result/y").equals(100.0));
 
         mog = exert(mfs);
-        logger.info("outGovernance: " + mog.getContext());
+        logger.info("out: " + mog.getContext());
         assertTrue(value(context(mog), "result/y").equals(500.0));
     }
 
@@ -644,13 +644,14 @@ public class ModelMultiFidelities {
         return mdl;
     }
 
+    @Ignore
     @Test
     public void morphingFidelities() throws Exception {
         mog mdl = getMorphingModel();
         traced(mdl, true);
         cxt out = response(mdl);
 
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         logger.info("trace: " + fiTrace(mdl));
         logger.info("trace: " + fiTrace((Mogram) impl(mdl, "mFi4")));
         assertTrue(value(out, "mFi1").equals(100.0));
@@ -660,7 +661,7 @@ public class ModelMultiFidelities {
 
         // closing the fidelity for mFi1
         out = response(mdl , fi("mFi1", "multiply"));
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         logger.info("trace: " + fiTrace(mdl));
         logger.info("trace: " + fiTrace((Mogram) impl(mdl, "mFi4")));
         assertTrue(value(out, "mFi1").equals(900.0));
@@ -670,16 +671,17 @@ public class ModelMultiFidelities {
 
         // check if metaFi("mFi1", "multiply") was executed
         out = response(mdl);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         logger.info("trace: " + fiTrace(mdl));
         logger.info("trace: " + fiTrace((Mogram) impl(mdl, "mFi4")));
         assertTrue(value(out, "mFi1").equals(900.0));
         assertTrue(value(out, "mFi2").equals(50.0));
         assertTrue(value(out, "mFi3").equals(9.0));
-        logger.info("outGovernance mFi4: " + get(out, "mFi4"));
+        logger.info("out mFi4: " + get(out, "mFi4"));
         assertTrue(value(out, "mFi4").equals(920.0));
     }
 
+    @Ignore
     @Test
     public void morphingModelDefauldFidelities() throws Exception {
 
@@ -696,7 +698,7 @@ public class ModelMultiFidelities {
         setMorpher(mdl, mdlMorpher);
         traced(mdl, true);
         cxt out = response(mdl);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         logger.info("trace: " + fiTrace(mdl));
         logger.info("trace: " + fiTrace((Mogram) impl(mdl, "mFi4")));
         assertTrue(value(out, "mFi1").equals(900.0));
@@ -705,6 +707,7 @@ public class ModelMultiFidelities {
         assertTrue(value(out, "mFi4").equals(110.0));
     }
 
+    @Ignore
     @Test
     public void morphingFidelitiesLoop() throws Exception {
         mog mdl = getMorphingModel();

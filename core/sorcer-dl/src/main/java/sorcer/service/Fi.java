@@ -66,7 +66,7 @@ public interface Fi<T> extends Identifiable, Service {
 
 	public int size();
 
-    public T selectSelect(String fiName);
+    public T selectSelect(String fiName) throws ConfigurationException;
 
     public List<T> getSelects();
 

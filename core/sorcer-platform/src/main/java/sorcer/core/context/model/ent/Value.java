@@ -135,7 +135,11 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Setter, Comparab
             for (Arg arg : args) {
                 if (arg instanceof Fidelity && multiFi != null) {
                     if (((Fidelity) arg).getPath() == null || ((Fidelity) arg).getPath().equals(key)) {
-                        impl = multiFi.selectSelect(arg.getName());
+                        try {
+                            impl = multiFi.selectSelect(arg.getName());
+                        } catch (ConfigurationException e) {
+                            throw new ContextException(e);
+                        }
                         out = (T) ((Entry) impl).getData(args);
                         multiFi.setChanged(false);
                         isValid = true;

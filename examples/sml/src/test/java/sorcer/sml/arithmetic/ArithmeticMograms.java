@@ -334,7 +334,8 @@ public class ArithmeticMograms {
 		assertTrue(value(context, "j1/t3/result/y").equals(400.0));
 	}
 
-    @Test public void amorphousModel() throws Exception {
+    @Test
+	public void amorphousModel() throws Exception {
 
 		Morpher mFi1Morpher =  (mgr, mFi, value) -> {
 			Fidelity fi =  mFi.getFidelity();
@@ -389,13 +390,6 @@ public class ArithmeticMograms {
 		assertTrue(get(out, "mFi2").equals(9.0));
 		assertTrue(get(out, "mFi3").equals(50.0));
 
-//        // first closing the fidelity for mFi1
-//        outGovernance = response(mod , metaFi("mFi1", "multiply"));
-//        logger.info("outGovernance: " + outGovernance);
-//        assertTrue(get(outGovernance, "mFi1").equals(900.0));
-//        assertTrue(get(outGovernance, "mFi2").equals(50.0));
-
-//        assertTrue(get(outGovernance, "mFi3").equals(9.0));
     }
 }
 	

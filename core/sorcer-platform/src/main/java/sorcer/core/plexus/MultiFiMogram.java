@@ -133,7 +133,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public Fidelity selectFidelity(String selector) {
+    public Fidelity selectFidelity(String selector) throws ConfigurationException {
         if (requestFidelity != null) {
             requestFidelity.selectSelect(selector);
             return requestFidelity;
@@ -233,7 +233,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public Object get(String component) {
+    public Object get(String component) throws ConfigurationException {
         return requestFidelity.getSelect(component);
     }
 
@@ -312,7 +312,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public  Mogram selectSelect(String name) {
+    public  Mogram selectSelect(String name) throws ConfigurationException {
         return (Mogram) getMultifidelity().selectSelect(name);
     }
 

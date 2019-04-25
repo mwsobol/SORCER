@@ -91,7 +91,7 @@ public interface Mogram extends Identifiable, Request, Exertion, Scopable, Subst
      *            the component name
      * @return the componet at the path
      */
-    public Object get(String key);
+    public Object get(String key) throws ConfigurationException;
 
     public Mogram clearScope() throws MogramException;
 
@@ -143,7 +143,7 @@ public interface Mogram extends Identifiable, Request, Exertion, Scopable, Subst
      * @param selection
      *            The service fidelity name.
      */
-    public Fidelity selectFidelity(String selection);
+    public Fidelity selectFidelity(String selection) throws ConfigurationException;
 
     /**
      * Returns a service fidelity of this exertion that consists of process
@@ -321,14 +321,14 @@ public interface Mogram extends Identifiable, Request, Exertion, Scopable, Subst
      *
      * @param fidelities
      */
-    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException;
+    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException, ConfigurationException;
 
     /**
      * Reconfigure this mmogramodel with given names of metafidelities.
      *
      * @param metaFiNames
      */
-    public void morph(String... metaFiNames) throws ContextException, RemoteException;
+    public void morph(String... metaFiNames) throws ContextException, RemoteException, ConfigurationException;
 
     /**
      * Update this mogram with given setup context entries.

@@ -288,7 +288,11 @@ public class Pro<T> extends Subroutine<T> implements Invocation<T>,
                         ((ServiceContext)scope).put(arg.getName(), ((Entry)arg).getData());
 					}
 				} else if (arg instanceof Fidelity && multiFi != null) {
-					multiFi.selectSelect(arg.getName());
+					try {
+						multiFi.selectSelect(arg.getName());
+					} catch (ConfigurationException e) {
+						throw new SetterException(e);
+					}
 					multiFi.setChanged(true);
 					isValid = false;
 				} else if (arg instanceof Context) {

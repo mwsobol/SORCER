@@ -771,12 +771,12 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.profile = profile;
     }
 
-    public Fidelity selectFidelity(Arg... entries) {
+    public Fidelity selectFidelity(Arg... entries) throws ConfigurationException {
         Fidelity fi = null;
         if (entries != null && entries.length > 0) {
             for (Arg a : entries)
                 if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.SELECT) {
-                    fi = (Fidelity) selectFidelity(a.getName());
+                    fi = selectFidelity(a.getName());
                 } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.COMPONENT) {
                     fi = selectComponentFidelity((Fidelity) a);
                 } else if (a instanceof ServiceFidelity && ((ServiceFidelity) a).fiType == ServiceFidelity.Type.META) {
@@ -786,7 +786,10 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return fi;
     }
 
-    public Fidelity selectFidelity(String selector) {
+    public Fidelity selectFidelity(String selector) throws ConfigurationException {
+        if (multiFi.size() == 1) {
+            return (Fidelity) multiFi.getSelect();
+        }
         multiFi.selectSelect(selector);
         return (Fidelity) multiFi.getSelect();
     }
@@ -801,7 +804,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return cf;
     }
 
-    public Fidelity selectCompositeFidelity(Fidelity fidelity) {
+    public Fidelity selectCompositeFidelity(Fidelity fidelity) throws ConfigurationException {
         if (fidelity.fiType == Fi.Type.META) {
             for (Object obj : fidelity.selects) {
                 if (obj instanceof ServiceFidelity) {
@@ -816,25 +819,33 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public void reconfigure(Fidelity... fidelities) throws ContextException, RemoteException {
+    public void reconfigure(Fidelity... fidelities) throws ConfigurationException {
         if (fiManager != null) {
-            if (fidelities.length == 1 && fidelities[0] instanceof ServiceFidelity) {
-                List<Service> fiList = ((ServiceFidelity) fidelities[0]).getSelects();
-                Fidelity[] fiArray = new Fidelity[fiList.size()];
-                fiList.toArray(fiArray);
-                fiManager.reconfigure(fiArray);
+            try {
+                if (fidelities.length == 1 && fidelities[0] instanceof ServiceFidelity) {
+                    List<Service> fiList = ((ServiceFidelity) fidelities[0]).getSelects();
+                    Fidelity[] fiArray = new Fidelity[fiList.size()];
+                    fiList.toArray(fiArray);
+                    fiManager.reconfigure(fiArray);
+                }
+                fiManager.reconfigure(fidelities);
+            } catch (EvaluationException | RemoteException e) {
+                throw new ConfigurationException(e);
             }
-            fiManager.reconfigure(fidelities);
         }
     }
 
     @Override
-    public void morph(String... metaFiNames) throws ContextException, RemoteException {
+    public void morph(String... metaFiNames) throws ConfigurationException {
         if (fiManager != null) {
-            fiManager.morph(metaFiNames);
+            try {
+                fiManager.morph(metaFiNames);
+            } catch (EvaluationException | RemoteException e) {
+                throw new ConfigurationException(e);
+            }
             profile = metaFiNames;
         } else {
-            throw new ContextException("No fiManager available in " + this.getClass().getName());
+            throw new ConfigurationException("No fiManager available in " + this.getClass().getName());
         }
     }
 
@@ -911,7 +922,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         this.couplings = couplings;
     }
 
-    public Fidelity<MdaEntry> setMdaFi(Context context) throws ContextException {
+    public Fidelity<MdaEntry> setMdaFi(Context context) throws ConfigurationException {
        if(mdaFi == null) {
            Object mdaComponent = context.get(Context.MDA_PATH);
            if (mdaComponent != null) {

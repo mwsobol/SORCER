@@ -88,18 +88,21 @@ public class operator {
         while (i.hasNext()) {
             path = (String) i.next();
             obj =  cxt.get(path);
-            v = model.get(path);
-            if (v instanceof Entry) {
-                try {
-                    ((Entry)v).setValue(obj);
-                } catch (RemoteException e1) {
-                    e1.printStackTrace();
+            try {
+                v = model.get(path);
+                if (v instanceof Entry) {
+                    try {
+                        ((Entry)v).setValue(obj);
+                    } catch (RemoteException e1) {
+                        e1.printStackTrace();
+                    }
+                } else {
+                    model.putValue(path, obj);
                 }
-            } else {
-                model.putValue(path, obj);
+                ((ServiceContext)model).setChanged(true);
+            } catch (ConfigurationException e) {
+                throw new ContextException(e);
             }
-            ((ServiceContext)model).setChanged(true);
-
         }
         return model;
     }
@@ -183,7 +186,7 @@ public class operator {
                 }
             }
             return out;
-        } catch (MogramException | IOException e) {
+        } catch (ConfigurationException | MogramException | IOException e) {
             throw new ContextException(e);
         }
     }
@@ -211,8 +214,9 @@ public class operator {
 
     public static Domain setValue(Domain model, String entName, Object value)
         throws ContextException {
-        Object entry = model.get(entName);
         try {
+            Object entry = model.get(entName);
+
             if (entry == null) {
                 model.add(sorcer.ent.operator.ent(entName, value));
             } else if (entry instanceof Entry) {
@@ -222,15 +226,16 @@ public class operator {
             } else {
                 ((ServiceContext)model).put(entName, value);
             }
-        } catch (RemoteException e) {
+
+            if (entry instanceof Pro) {
+                Pro call = (Pro) entry;
+                if (call.getScope() != null)
+                    call.getScope().putValue(call.getName(), value);
+            }
+        } catch (ConfigurationException | RemoteException e) {
             throw new ContextException(e);
         }
 
-        if (entry instanceof Pro) {
-            Pro call = (Pro) entry;
-            if (call.getScope() != null)
-                call.getScope().putValue(call.getName(), value);
-        }
         ((ServiceMogram)model).setChanged(true);
         return model;
     }
@@ -401,7 +406,7 @@ public class operator {
         return null;
     }
 
-    public static Object get(Domain model, String path) throws ContextException {
+    public static Object get(Domain model, String path) throws ConfigurationException {
         return model.get(path);
     }
 
@@ -546,10 +551,9 @@ public class operator {
         return mogram;
     }
 
-    public static Mogram reconfigure(Mogram mogram, Fidelity... fidelities) throws ContextException {
+    public static Mogram reconfigure(Mogram mogram, Fidelity... fidelities) throws ConfigurationException {
         FidelityList fis = new FidelityList();
         List<String> metaFis = new ArrayList<>();
-        try {
             for (Fidelity fi : fidelities) {
                 if (fi instanceof Metafidelity) {
                     metaFis.add(fi.getName());
@@ -558,36 +562,33 @@ public class operator {
                 }
             }
             if (metaFis.size() > 0) {
-                ((FidelityManager)mogram.getFidelityManager()).morph(metaFis);
+                try {
+                    ((FidelityManager)mogram.getFidelityManager()).morph(metaFis);
+                } catch (EvaluationException e) {
+                    throw new ConfigurationException(e);
+                }
             }
             if (fis.size() > 0) {
                 ((FidelityManager)mogram.getFidelityManager()).reconfigure(fis);
             }
-        } catch (RemoteException e) {
-            throw new ContextException(e);
-        }
         return mogram;
     }
 
-    public static Mogram reconfigure(Mogram model, List fiList) throws ContextException {
-        try {
-            if (fiList instanceof FidelityList) {
-                ((FidelityManager) model.getFidelityManager()).reconfigure((FidelityList) fiList);
-            } else {
-                throw new ContextException("A list of fidelities is required for reconfigurartion");
-            }
-        } catch (RemoteException e) {
-            throw new ContextException(e);
+    public static Mogram reconfigure(Mogram model, List fiList) throws  ConfigurationException {
+        if (fiList instanceof FidelityList) {
+            ((FidelityManager) model.getFidelityManager()).reconfigure((FidelityList) fiList);
+        } else {
+            throw new ConfigurationException("A list of fidelities is required for reconfigurartion");
         }
         return model;
     }
 
-    public static Mogram morph(Mogram model, String... fiNames) throws ContextException {
+    public static Mogram morph(Mogram model, String... fiNames) throws ConfigurationException {
 //        ((FidelityManager)model.getFidelityManager()).morph(fiNames);
         try {
             model.morph(fiNames);
-        } catch (RemoteException e) {
-            throw new ContextException(e);
+        } catch (ContextException | RemoteException e) {
+            throw new ConfigurationException(e);
         }
         return model;
     }

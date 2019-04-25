@@ -135,7 +135,7 @@ public class Models {
 						v(model, "multiply") - v(model, "add")),
 				lambda("multiply2", "multiply", (Service entry, Context scope, Arg[] args) -> {
 					double out = (double) exec(entry, scope);
-					// outGovernance is result of multiply
+					// out is result of multiply
 					if (out > 400) {
 						putValue(scope, "multiply/x1", 20.0);
 						putValue(scope, "multiply/x2", 50.0);
@@ -162,16 +162,16 @@ public class Models {
 			    ent("arg/x1", 30.0), ent("arg/x2", 90.0),
 				lambda("add", (Context <Double> model) ->
 								v(model, "add/x1") + v(model, "add/x2"),
-						result("add/outGovernance",
+						result("add/out",
 								inPaths("add/x1", "add/x2"))),
 				lambda("multiply", (Context <Double> model) ->
 								v(model, "multiply/x1") * v(model, "multiply/x2"),
-						result("multiply/outGovernance",
+						result("multiply/out",
 								inPaths("multiply/x1", "multiply/x2"))),
 				lambda("subtract", (Context <Double> model) ->
-								v(model, "multiply/outGovernance") - v(model, "add/outGovernance"),
+								v(model, "multiply/out") - v(model, "add/out"),
 						result("model/response")),
-				response("subtract", "multiply/outGovernance", "add/outGovernance", "model/response"));
+				response("subtract", "multiply/out", "add/out", "model/response"));
 
 		logger.info("DEPS: " + printDeps(mo));
 		dependsOn(mo, dep("subtract", paths("multiply", "add")));
@@ -179,8 +179,8 @@ public class Models {
 		Context out = response(mo);
 		logger.info("model response: " + out);
 		assertTrue(get(out, "model/response").equals(400.0));
-		assertTrue(get(out, "multiply/outGovernance").equals(500.0));
-		assertTrue(get(out, "add/outGovernance").equals(100.0));
+		assertTrue(get(out, "multiply/out").equals(500.0));
+		assertTrue(get(out, "add/out").equals(100.0));
 	}
 
 	@Test
@@ -191,19 +191,19 @@ public class Models {
 		EntryCollable entFunction = (Model mdl) -> {
 			double out = (double) exec(mdl, "multiply");
 			out = out + 1000.0 + delta;
-			return ent("outGovernance", out);
+			return ent("out", out);
 		};
 
 		Model mo = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-				ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", AdderImpl.class, result("add/outGovernance",
+				ent(sig("add", AdderImpl.class, result("add/out",
 						inPaths("add/x1", "add/x2")))),
-				ent(sig("subtract", SubtractorImpl.class, result("subtract/outGovernance",
-						inPaths("multiply/outGovernance", "add/outGovernance")))),
-				response("subtract", "lambda", "outGovernance"));
+				ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+						inPaths("multiply/out", "add/out")))),
+				response("subtract", "lambda", "out"));
 
 	//	dependsOn(mo, dep("subtract", paths("multiply", "add")));
 
@@ -212,7 +212,7 @@ public class Models {
 		Context out = response(mo);
 		logger.info("response: " + out);
 		assertTrue(get(out, "subtract").equals(400.0));
-		assertTrue(get(out, "outGovernance").equals(1500.5));
+		assertTrue(get(out, "out").equals(1500.5));
 		assertTrue(get(out, "lambda").equals(1500.5));
 	}
 
@@ -228,10 +228,10 @@ public class Models {
 			out = context(exert(task));
 			value = (Double)get(out, "multiply/result");
 			// overwrite the original eval with a new task
-			return val("multiply/outGovernance", value);
+			return val("multiply/out", value);
 		};
 
-		// usage of in and outGovernance connectors associated with model
+		// usage of in and out connectors associated with model
 		Task modelTask = task(
 				"task/multiply",
 				sig("multiply", MultiplierImpl.class),
@@ -241,12 +241,12 @@ public class Models {
 		Domain mdl = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-				ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", AdderImpl.class, result("add/outGovernance",
+				ent(sig("add", AdderImpl.class, result("add/out",
 						inPaths("add/x1", "add/x2")))),
-				ent(sig("subtract", SubtractorImpl.class, result("subtract/outGovernance",
-						inPaths("multiply/outGovernance", "add/outGovernance")))),
+				ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+						inPaths("multiply/out", "add/out")))),
 				response("subtract", "multiply"));
 //				response("lambda"));
 
@@ -259,9 +259,9 @@ public class Models {
 
 		Context out = response(mdl);
 		logger.info("response: " + out);
-//		assertTrue(get(outGovernance, "multiply").equals(500.0));
-//		assertTrue(get(outGovernance, "lambda").equals(2000.0));
-//		assertTrue(get(outGovernance, "subtract").equals(1900.0));
+//		assertTrue(get(out, "multiply").equals(500.0));
+//		assertTrue(get(out, "lambda").equals(2000.0));
+//		assertTrue(get(out, "subtract").equals(1900.0));
 	}
 
 
@@ -362,14 +362,14 @@ public class Models {
                 response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
         Context out = response(mod);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(100.0));
         assertTrue(get(out, "mFi2").equals(9.0));
         assertTrue(get(out, "mFi3").equals(50.0));
 
         // first closing the fidelity for mFi1
         out = response(mod , fi("mFi1", "multiply"));
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));
         assertTrue(get(out, "mFi3").equals(9.0));

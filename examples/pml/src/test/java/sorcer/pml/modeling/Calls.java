@@ -1,5 +1,6 @@
 package sorcer.pml.modeling;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -114,6 +115,7 @@ public class Calls {
 		assertEquals(asis(dbp2).getClass(), URL.class);
 	}
 
+	@Ignore
 	@Test
 	public void substitutingValuesWithEntFidelities() throws Exception {
 		

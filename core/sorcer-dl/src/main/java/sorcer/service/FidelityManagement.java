@@ -38,9 +38,9 @@ public interface FidelityManagement<T extends Service> extends RemoteEventListen
 
     public void morph(String... fiNames) throws EvaluationException, RemoteException;
 
-    public void reconfigure(String... fiNames) throws EvaluationException, RemoteException;
+    public void reconfigure(String... fiNames) throws EvaluationException, RemoteException, ConfigurationException;
 
-    public void reconfigure(Fidelity... fidelities) throws EvaluationException, RemoteException;
+    public void reconfigure(Fidelity... fidelities) throws EvaluationException, RemoteException, ConfigurationException;
 
     public List<Fidelity> getDefaultFidelities() throws RemoteException;
 

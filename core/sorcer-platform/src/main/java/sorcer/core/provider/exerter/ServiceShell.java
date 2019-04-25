@@ -210,7 +210,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				((Context)mogram).getResponse();
 				return (T) mogram;
 			}
-		} catch (ContextException e) {
+		} catch (ConfigurationException | ContextException e) {
 			throw new RoutineException(e);
 		}
 	}
@@ -786,7 +786,11 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 					} else {
 						Context cxtOut = ((ServiceContext) acxt).getSubcontext(rPath.outPaths);
 						if (rPath.outPaths.size() == 1) {
-							return cxtOut.get(rPath.outPaths.get(0).getName());
+							try {
+								return cxtOut.get(rPath.outPaths.get(0).getName());
+							} catch (ConfigurationException e) {
+								throw new ContextException(e);
+							}
 						} else {
 							return cxtOut;
 						}

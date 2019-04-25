@@ -1,5 +1,6 @@
 package sorcer.sml.contexts;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -85,6 +86,7 @@ public class SrvModels {
 
     }
 
+    @Ignore
     @Test
     public void evalauteMultiFidelityModel() throws Exception {
 
@@ -96,14 +98,12 @@ public class SrvModels {
 
         logger.info("fidelity: " + asis(mod, "mphFi"));
 
-        Context out = response(mod, fi("mphFi", "add"));
-//        logger.info("outGovernance: " + outGovernance);
-//        assertTrue(valuate(outGovernance, "mphFi").equals(100.0));
-//        assertTrue(eval(mod, "result/y").equals(100.0));
-//
-//        outGovernance = response(mod, metaFi("mphFi", "multiply"));
-//        logger.info("outGovernance: " + outGovernance);
-//        assertTrue(valuate(outGovernance, "mphFi").equals(900.0));
+        Context out = response(mod, fi("add", "mphFi"));
+        logger.info("out: " + out);
+        assertTrue(value(out, "mphFi").equals(100.00));
+        out = response(mod, fi("multiply", "mphFi"));
+        logger.info("out: " + out);
+//        assertTrue(valuate(out, "mphFi").equals(900.0));
 //        assertTrue(eval(mod, "result/y").equals(900.0));
     }
 
@@ -185,12 +185,12 @@ public class SrvModels {
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/outGovernance",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class, result("model/response",
-                        inPaths("multiply/outGovernance", "add/outGovernance")))),
+                        inPaths("multiply/out", "add/out")))),
                 aka("y1", "multiply/x1"),
                 response("subtract"));
 
@@ -208,18 +208,18 @@ public class SrvModels {
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/outGovernance",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                ent(sig("outGovernance", "subtract", SubtractorImpl.class, result("model/response",
-                        inPaths("multiply/outGovernance", "add/outGovernance")))),
-                response("outGovernance"));
+                ent(sig("out", "subtract", SubtractorImpl.class, result("model/response",
+                        inPaths("multiply/out", "add/out")))),
+                response("out"));
 
 //        logger.info("response: " + response(m));
         Context out = response(m);
 
-        assertTrue(get(out, "outGovernance").equals(400.0));
+        assertTrue(get(out, "out").equals(400.0));
 
     }
 
@@ -231,12 +231,12 @@ public class SrvModels {
         Model mdl = srvModel(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/outGovernance",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class, result("model/response",
-                        inPaths("multiply/outGovernance", "add/outGovernance")))),
+                        inPaths("multiply/out", "add/out")))),
                 aka("y1", "multiply/x1"));
 
 
@@ -252,12 +252,12 @@ public class SrvModels {
 //        responseUp(mdl, "add", "multiply", "y1");
         responseUp(mdl, "add", "multiply");
         out = response(mdl);
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertTrue(get(out, "add").equals(100.0));
         assertTrue(get(out, "multiply").equals(500.0));
         assertTrue(get(out, "subtract").equals(400.0));
 
-//        assertTrue(response(outGovernance, "y1").equals(10.0));
+//        assertTrue(response(out, "y1").equals(10.0));
 
         logger.info("model: " + mdl);
     }
@@ -271,12 +271,12 @@ public class SrvModels {
         Model model = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/outGovernance",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class, result("subtract/response",
-                        inPaths("multiply/outGovernance", "add/outGovernance")))),
+                        inPaths("multiply/out", "add/out")))),
                 aka("y1", "multiply/x1"), aka("y2", "add/x2"), aka("y3", "subtract/response"));
 
 //                dep("subtract", paths("multiply", "add")));
@@ -285,8 +285,8 @@ public class SrvModels {
         // specify how model connects to exertion
         outConn(model, outConnector);
 
-//        Context outGovernance = response(model);
-//        logger.info("outGovernance: " + outGovernance);
+//        Context out = response(model);
+//        logger.info("out: " + out);
 
         Block block = block("mogram",
                 model,
@@ -306,7 +306,7 @@ public class SrvModels {
     @Test
     public void exertExertionToModelMogram() throws Exception {
 
-        // usage of in and outGovernance connectors associated with model
+        // usage of in and out connectors associated with model
         Task t4 = task(
                 "t4",
                 sig("multiply", MultiplierImpl.class),
@@ -327,20 +327,20 @@ public class SrvModels {
                 t4, t5, strategy(Flow.PAR),
                 taskOutConnector);
 
-        // outGovernance connector from model
+        // out connector from model
         Context modelOutConnector = outConn(inVal("y1", "add"), inVal("y2", "multiply"), inVal("y3", "subtract"));
 
         Model model = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/outGovernance",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("subtract/outGovernance",
-                        inPaths("multiply/outGovernance", "add/outGovernance")))));
+                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                        inPaths("multiply/out", "add/out")))));
 
-//                call("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/outGovernance"));
+//                call("z1", "multiply/x1"), srv("z2", "add/x2"), srv("z3", "subtract/out"));
 
         responseUp(model, "add", "multiply", "subtract");
         // specify how model connects to exertion
