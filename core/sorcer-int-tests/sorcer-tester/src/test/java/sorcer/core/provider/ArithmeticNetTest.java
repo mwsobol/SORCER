@@ -1,5 +1,6 @@
 package sorcer.core.provider;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -186,6 +187,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		return (Job)tracable(job);
 	}
 
+	@Ignore
 	@Test
 	public void arithmeticMultiFiJobTest() throws Exception {
 

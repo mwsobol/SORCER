@@ -786,11 +786,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 					} else {
 						Context cxtOut = ((ServiceContext) acxt).getSubcontext(rPath.outPaths);
 						if (rPath.outPaths.size() == 1) {
-							try {
-								return cxtOut.get(rPath.outPaths.get(0).getName());
-							} catch (ConfigurationException e) {
-								throw new ContextException(e);
-							}
+							return cxtOut.get(rPath.outPaths.get(0).getName());
 						} else {
 							return cxtOut;
 						}

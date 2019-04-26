@@ -79,7 +79,7 @@ public interface Modeling extends Model {
 			throws ContextException;
 
 	public void reconfigure(Fidelity... fidelities)
-			throws ContextException, RemoteException;
+			throws ConfigurationException, RemoteException;
 
 	public void isolateModel(Context inContext)
 			throws ContextException;

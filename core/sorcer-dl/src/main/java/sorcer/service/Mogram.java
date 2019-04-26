@@ -91,7 +91,7 @@ public interface Mogram extends Identifiable, Request, Exertion, Scopable, Subst
      *            the component name
      * @return the componet at the path
      */
-    public Object get(String key) throws ConfigurationException;
+    public Object get(String key);
 
     public Mogram clearScope() throws MogramException;
 

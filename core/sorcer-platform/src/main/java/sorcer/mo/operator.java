@@ -88,21 +88,17 @@ public class operator {
         while (i.hasNext()) {
             path = (String) i.next();
             obj =  cxt.get(path);
-            try {
-                v = model.get(path);
-                if (v instanceof Entry) {
-                    try {
-                        ((Entry)v).setValue(obj);
-                    } catch (RemoteException e1) {
-                        e1.printStackTrace();
-                    }
-                } else {
-                    model.putValue(path, obj);
+            v = model.get(path);
+            if (v instanceof Entry) {
+                try {
+                    ((Entry)v).setValue(obj);
+                } catch (RemoteException e1) {
+                    e1.printStackTrace();
                 }
-                ((ServiceContext)model).setChanged(true);
-            } catch (ConfigurationException e) {
-                throw new ContextException(e);
+            } else {
+                model.putValue(path, obj);
             }
+            ((ServiceContext)model).setChanged(true);
         }
         return model;
     }
@@ -186,7 +182,7 @@ public class operator {
                 }
             }
             return out;
-        } catch (ConfigurationException | MogramException | IOException e) {
+        } catch (MogramException | IOException e) {
             throw new ContextException(e);
         }
     }
@@ -226,13 +222,12 @@ public class operator {
             } else {
                 ((ServiceContext)model).put(entName, value);
             }
-
             if (entry instanceof Pro) {
                 Pro call = (Pro) entry;
                 if (call.getScope() != null)
                     call.getScope().putValue(call.getName(), value);
             }
-        } catch (ConfigurationException | RemoteException e) {
+        } catch (RemoteException e) {
             throw new ContextException(e);
         }
 

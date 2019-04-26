@@ -101,12 +101,12 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
 
     public Double activate(Arg... entries) throws EvaluationException {
         for (Arg arg : entries) {
-           if (arg instanceof Entry) {
+            if (arg instanceof Entry) {
                 if (((Entry) arg).getType() == Functionality.Type.THRESHOLD
-                        && name.equals(arg.getName())) {
+                    && name.equals(arg.getName())) {
                     threshold = (double) ((Entry) arg).getImpl();
                 } else if (((Entry) arg).getType() == Functionality.Type.BIAS
-                        && name.equals(arg.getName())) {
+                    && name.equals(arg.getName())) {
                     bias = (double) ((Entry) arg).getImpl();
 
                 }
@@ -115,13 +115,9 @@ public class Activator extends ServiceInvoker<Double> implements Activation {
         double sum = 0.0;
         for (String name : args.getNames()) {
             double in = 0;
-            try {
-                in = (double) ((Entry)invokeContext.get(name)).getOut();
-                double wt = (double) weights.get(name);
-                sum = sum + (in * wt);
-            } catch (ConfigurationException e) {
-                throw new EvaluationException(e);
-            }
+            in = (double) ((Entry)invokeContext.get(name)).getOut();
+            double wt = (double) weights.get(name);
+            sum = sum + (in * wt);
         }
         sum = sum + bias;
 

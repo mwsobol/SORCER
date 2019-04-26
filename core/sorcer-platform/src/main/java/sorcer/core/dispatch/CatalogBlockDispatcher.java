@@ -185,38 +185,32 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		} else if (exertion instanceof EvaluationTask) {
 			xrt.getContext().append(exertion.getContext());
 		}
-		
+
 		ServiceContext cxt = (ServiceContext)xrt.getDataContext();
-        SignatureReturnPath rp = exertion.getDataContext().getReturnPath();
+		SignatureReturnPath rp = exertion.getDataContext().getReturnPath();
 		if (rp != null) {
-            Signature.Out outPaths = rp.getOutPaths();
-            if (outPaths != null && outPaths.size() > 0) {
-                for (Path path : outPaths) {
+			Signature.Out outPaths = rp.getOutPaths();
+			if (outPaths != null && outPaths.size() > 0) {
+				for (Path path : outPaths) {
 					Object obj = null;
-					try {
-						obj = exertion.getDataContext().get(path.getName());
-					} catch (ConfigurationException e) {
-						throw new ContextException(e);
-					}
+					obj = exertion.getDataContext().get(path.getName());
 					if (obj != null)
-                        cxt.put(path.getName(), obj);
-                }
-            } else {
+						cxt.put(path.getName(), obj);
+				}
+			} else {
 				try {
 					cxt.putValue(((ReturnPath) exertion.getContext().getReturnPath()).path,
-							exertion.getDataContext().getReturnValue());
+						exertion.getDataContext().getReturnValue());
 				} catch (RemoteException e) {
 					throw new ContextException(e);
 				}
 			}
+		} else {
+			cxt.updateEntries(exertion.getDataContext());
+		}
 
-        } else {
-            cxt.updateEntries(exertion.getDataContext());
-        }
-
-        if (! (exertion instanceof Block))
-		    exertion.getDataContext().setScope(null);
-//
+		if (! (exertion instanceof Block))
+			exertion.getDataContext().setScope(null);
 	}
 
     protected List<Mogram> getInputExertions() {

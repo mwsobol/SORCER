@@ -378,7 +378,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     return out.get(sigrp);
                 }
             }
-        } catch (ConfigurationException | RemoteException e) {
+        } catch (RemoteException e) {
             throw new MogramException(e);
         }
         return out;

@@ -42,6 +42,6 @@ public interface OptimizationModeling extends ParametricModeling, Configurable {
 
 	public void update(Setup... setups) throws ContextException, RemoteException;
 
-	public void morph(String... fidelities) throws ContextException, RemoteException;
+	public void morph(String... fidelities) throws ConfigurationException, RemoteException;
 
 }

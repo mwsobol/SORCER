@@ -233,8 +233,12 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
-    public Object get(String component) throws ConfigurationException {
-        return requestFidelity.getSelect(component);
+    public Object get(String component) {
+        try {
+            return requestFidelity.getSelect(component);
+        } catch (ConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Fi getMultifidelity() {

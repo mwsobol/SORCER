@@ -1455,7 +1455,7 @@ public class operator extends Operator {
 	}
 
 	public static Object asis(Context context, String path)
-			throws ConfigurationException {
+			throws ContextException {
 		return context.get(path);
 	}
 

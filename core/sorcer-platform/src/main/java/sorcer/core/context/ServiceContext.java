@@ -1600,7 +1600,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			this.appendInout(outcxt);
 			this.setChanged(true);
 		}
-		} catch (ConfigurationException | RemoteException e) {
+		} catch (RemoteException e) {
 			throw new MogramException(e);
 		}
 		return resultContext;
