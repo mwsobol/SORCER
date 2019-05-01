@@ -41,6 +41,10 @@ public interface Strategy extends Arg {
 		public String getName() {
 			return toString();
 		}
+
+		public Object execute(Arg... args) {
+			return this;
+		}
 	}
 	
 	/**
@@ -59,6 +63,10 @@ public interface Strategy extends Arg {
 		public String getName() {
 			return toString();
 		}
+
+		public Object execute(Arg... args) {
+			return this;
+		}
 	}
 		
 	/**
@@ -74,6 +82,10 @@ public interface Strategy extends Arg {
 		@Override
 		public String getName() {
 			return toString();
+		}
+
+		public Object execute(Arg... args) {
+			return this;
 		}
 	}
 
@@ -95,6 +107,10 @@ public interface Strategy extends Arg {
 		public String getName() {
 			return toString();
 		}
+
+		public Object execute(Arg... args) {
+			return this;
+		}
 	}
 
 	/**
@@ -109,6 +125,10 @@ public interface Strategy extends Arg {
 		@Override
 		public String getName() {
 			return toString();
+		}
+
+		public Object execute(Arg... args) {
+			return this;
 		}
 	}
 	
@@ -125,6 +145,10 @@ public interface Strategy extends Arg {
 		public String getName() {
 			return toString();
 		}
+
+		public Object execute(Arg... args) {
+			return this;
+		}
 	}
 
 	public enum FidelityManagement implements Arg {
@@ -134,6 +158,10 @@ public interface Strategy extends Arg {
 		public String getName() {
 				return toString();
 			};
+
+		public Object execute(Arg... args) {
+			return this;
+		}
 	}
 
 	public enum Opti implements Arg {
@@ -145,6 +173,10 @@ public interface Strategy extends Arg {
 		@Override
 		public String getName() {
 			return toString();
+		}
+
+		public Object execute(Arg... args) {
+			return this;
 		}
 	}
 	
@@ -165,4 +197,5 @@ public interface Strategy extends Arg {
 			return false;
 		}
 	}
+
 }

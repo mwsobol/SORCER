@@ -58,6 +58,10 @@ public interface Fi<T> extends Identifiable, Service {
         public String getName() {
 			return toString();
 		}
+
+        public Object execute(Arg... args) {
+            return this;
+        }
 	}
 
     public T getSelect();

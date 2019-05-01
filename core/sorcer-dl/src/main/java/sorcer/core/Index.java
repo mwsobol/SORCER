@@ -3,7 +3,7 @@ package sorcer.core;
 import sorcer.service.Arg;
 import java.io.Serializable;
 
-public class Index implements Arg, Serializable, Comparable {
+public class Index implements Serializable, Comparable {
 	public enum Direction { column, row };
 
 	private int index;
@@ -63,8 +63,7 @@ public class Index implements Arg, Serializable, Comparable {
 		this.type = type;
 	}
 
-	@Override
-	public String getName() {
-		return ""+index;
-	}
+//	public String getName() {
+//		return ""+index;
+//	}
 }

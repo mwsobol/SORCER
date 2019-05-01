@@ -29,22 +29,22 @@ import java.util.List;
  * Any named configuration parameter execute in particular a free variable.
  */
 
-public interface Arg extends Serializable {
-	
+public interface Arg extends Serializable, Service {
+
 	public String getName();
 
 	public static Domain selectDomain(Arg[] args) {
-		  for (Arg arg : args) {
-			  if (arg instanceof Domain)
-			   return (Domain)arg;
-		  }
+		for (Arg arg : args) {
+			if (arg instanceof Domain)
+				return (Domain) arg;
+		}
 		return null;
 	}
 
 	public static Context selectContext(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Context)
-				return (Context)arg;
+				return (Context) arg;
 		}
 		return null;
 	}
@@ -52,7 +52,7 @@ public interface Arg extends Serializable {
 	public static Routine selectRoutine(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Routine)
-				return (Routine)arg;
+				return (Routine) arg;
 		}
 		return null;
 	}
@@ -60,7 +60,7 @@ public interface Arg extends Serializable {
 	public static Mogram selectMogram(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Mogram)
-				return (Mogram)arg;
+				return (Mogram) arg;
 		}
 		return null;
 	}
@@ -69,7 +69,7 @@ public interface Arg extends Serializable {
 		List<Fidelity> fiList = new ArrayList<>();
 		for (Arg arg : args) {
 			if (arg instanceof Fidelity)
-				fiList.add((Fidelity)arg);
+				fiList.add((Fidelity) arg);
 		}
 		return fiList;
 	}
@@ -77,7 +77,7 @@ public interface Arg extends Serializable {
 	public static Service selectService(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Service)
-				return (Service)arg;
+				return (Service) arg;
 		}
 		return null;
 	}
@@ -85,7 +85,7 @@ public interface Arg extends Serializable {
 	public static Path selectPath(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Path)
-				return (Path)arg;
+				return (Path) arg;
 		}
 		return null;
 	}
@@ -101,7 +101,7 @@ public interface Arg extends Serializable {
 	public static Integer selectIndexInt(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Index)
-				return ((Index)arg).getIndex();
+				return ((Index) arg).getIndex();
 		}
 		return -1;
 	}
@@ -109,7 +109,7 @@ public interface Arg extends Serializable {
 	public static Paths selectPaths(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Paths)
-				return (Paths)arg;
+				return (Paths) arg;
 		}
 		return null;
 	}
@@ -126,7 +126,7 @@ public interface Arg extends Serializable {
 	public static Object set(Arg[] args, String path, Object value) throws SetterException, RemoteException {
 		for (Arg arg : args) {
 			if (arg instanceof Callable && arg.getName().equals(path))
-				((Setter)arg).setValue(value);
+				((Setter) arg).setValue(value);
 		}
 		return value;
 	}
@@ -134,7 +134,7 @@ public interface Arg extends Serializable {
 	public static Service selectService(Arg[] args, String name) {
 		for (Arg arg : args) {
 			if (arg instanceof Service && arg.getName().equals(name))
-				return (Service)arg;
+				return (Service) arg;
 		}
 		return null;
 	}
@@ -150,7 +150,7 @@ public interface Arg extends Serializable {
 	public static Tag getName(Arg[] args) {
 		for (Arg arg : args) {
 			if (arg instanceof Tag)
-				return (Tag)arg;
+				return (Tag) arg;
 		}
 		return null;
 	}

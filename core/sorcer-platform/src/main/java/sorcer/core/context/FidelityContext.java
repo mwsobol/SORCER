@@ -19,8 +19,10 @@ package sorcer.core.context;
 
 
 import sorcer.service.Arg;
+import sorcer.service.ServiceException;
 import sorcer.service.ServiceFidelity;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 
 /**
@@ -49,4 +51,8 @@ public class FidelityContext extends HashMap<String, ServiceFidelity> implements
 		return name;
 	}
 
+	@Override
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
+		return this;
+	}
 }

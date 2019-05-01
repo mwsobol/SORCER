@@ -16,6 +16,7 @@
  */
 package sorcer.service;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -117,5 +118,10 @@ public class ServiceFidelityList extends ArrayList<ServiceFidelity> implements A
 		}
 		sb.append(")");
 		return sb.toString();
+	}
+
+	@Override
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
+		return this;
 	}
 }

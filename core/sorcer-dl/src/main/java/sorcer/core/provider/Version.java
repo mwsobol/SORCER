@@ -18,6 +18,9 @@
 package sorcer.core.provider;
 
 import sorcer.service.Arg;
+import sorcer.service.ServiceException;
+
+import java.rmi.RemoteException;
 
 public class Version implements Arg {
 
@@ -36,4 +39,8 @@ public class Version implements Arg {
 		return version;
 	}
 
+	@Override
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
+		return this;
+	}
 }

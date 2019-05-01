@@ -19,6 +19,7 @@ package sorcer.service;
 
 import sorcer.service.modeling.Functionality;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 public class Paths extends ArrayList<Path> implements Arg {
@@ -85,6 +86,11 @@ public class Paths extends ArrayList<Path> implements Arg {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
+        return this;
     }
 }
 

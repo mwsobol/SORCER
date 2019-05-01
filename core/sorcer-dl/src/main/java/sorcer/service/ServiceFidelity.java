@@ -116,6 +116,7 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 		this.fiName = name;
 	}
 
+	@Override
 	public Service selectSelect(String fiName) throws ConfigurationException {
 		Object selected = null;
 		for (Service item : selects) {
