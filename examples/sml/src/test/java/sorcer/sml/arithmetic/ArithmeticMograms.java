@@ -46,7 +46,7 @@ public class ArithmeticMograms {
 				lambda("multiply", (Context <Double> model) ->
 						value(model, "multiply/x1") * value(model, "multiply/x2"), args("multiply/x1", "multiply/x2")),
 				lambda("subtract", (Context <Double> model) ->
-						value(model, "multiply") - value(model, "add"), result("add/outGovernance",
+						value(model, "multiply") - value(model, "add"), result("add/out",
                         inPaths("multiply", "add"))),
 				response("subtract", "multiply", "add"));
 
@@ -106,22 +106,22 @@ public class ArithmeticMograms {
 				ent("arg/x1", 30.0), ent("arg/x2", 90.0),
 				lambda("add", (Context <Double> model) ->
 						value(model, "add/x1") + value(model, "add/x2"),
-						result("add/outGovernance",
+						result("add/out",
 								inPaths("add/x1", "add/x2"))),
 				lambda("multiply", (Context <Double> model) ->
 								value(model, "multiply/x1") * value(model, "multiply/x2"),
-						result("multiply/outGovernance",
+						result("multiply/out",
 								inPaths("multiply/x1", "multiply/x2"))),
 				lambda("subtract", (Context <Double> model) ->
-						value(model, "multiply/outGovernance") - value(model, "add/outGovernance"),
-						result("model/response", inPaths("multiply/outGovernance", "add/outGovernance"))),
-				response("subtract", "multiply/outGovernance", "add/outGovernance", "model/response"));
+						value(model, "multiply/out") - value(model, "add/out"),
+						result("model/response", inPaths("multiply/out", "add/out"))),
+				response("subtract", "multiply/out", "add/out", "model/response"));
 
 		Context out = response(mo);
 		logger.info("model response: " + out);
 		assertTrue(get(out, "model/response").equals(400.0));
-		assertTrue(get(out, "multiply/outGovernance").equals(500.0));
-		assertTrue(get(out, "add/outGovernance").equals(100.0));
+		assertTrue(get(out, "multiply/out").equals(500.0));
+		assertTrue(get(out, "add/out").equals(100.0));
 	}
 
 	@Test
@@ -131,12 +131,12 @@ public class ArithmeticMograms {
 		Model m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-				ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", AdderImpl.class, result("add/outGovernance",
+				ent(sig("add", AdderImpl.class, result("add/out",
 						inPaths("add/x1", "add/x2")))),
 				ent(sig("subtract", SubtractorImpl.class, result("model/response",
-						inPaths("multiply/outGovernance", "add/outGovernance")))),
+						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
 		logger.info("dependencies: " + deps(m));
@@ -154,12 +154,12 @@ public class ArithmeticMograms {
 		Model m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-				ent(sig("multiply", Multiplier.class, result("multiply/outGovernance",
+				ent(sig("multiply", Multiplier.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", Adder.class, result("add/outGovernance",
+				ent(sig("add", Adder.class, result("add/out",
 						inPaths("add/x1", "add/x2")))),
 				ent(sig("subtract", Subtractor.class, result("model/response",
-						inPaths("multiply/outGovernance", "add/outGovernance")))),
+						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
 		logger.info("dependencies: " + deps(m));
@@ -176,12 +176,12 @@ public class ArithmeticMograms {
 		Model m = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-				ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
 						inPaths("multiply/x1", "multiply/x2")))),
-				ent(sig("add", AdderImpl.class, result("add/outGovernance",
+				ent(sig("add", AdderImpl.class, result("add/out",
 						inPaths("add/x1", "add/x2")))),
 				ent(sig("subtract", Subtractor.class, result("model/response",
-						inPaths("multiply/outGovernance", "add/outGovernance")))),
+						inPaths("multiply/out", "add/out")))),
 				response("subtract"));
 
 		logger.info("dependencies: " + deps(m));
@@ -385,7 +385,7 @@ public class ArithmeticMograms {
 			response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
 		Context out = response(mod);
-		logger.info("outGovernance: " + out);
+		logger.info("out: " + out);
 		assertTrue(get(out, "mFi1").equals(100.0));
 		assertTrue(get(out, "mFi2").equals(9.0));
 		assertTrue(get(out, "mFi3").equals(50.0));

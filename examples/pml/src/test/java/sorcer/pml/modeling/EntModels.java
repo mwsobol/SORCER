@@ -59,8 +59,21 @@ public class EntModels {
 		// a call is a variable (entry) evaluated in its own scope (context)
 		Pro y = pro("y",
 				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
-		Object val = exec(y, pro("x1", 10.0), pro("x2", 50.0),
-                pro("x3", 20.0), pro("x4", 80.0));
+		Object val = exec(y, val("x1", 10.0), val("x2", 50.0),
+                val("x3", 20.0), val("x4", 80.0));
+		// logger.info("y eval: " + val);
+		assertEquals(val, 400.0);
+
+	}
+
+	@Test
+	public void closingExprScope() throws Exception {
+
+		// a call is a variable (entry) evaluated in its own scope (context)
+		Pro y = pro("y",
+				expr("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
+		Object val = exec(y, val("x1", 10.0), val("x2", 50.0),
+				val("x3", 20.0), val("x4", 80.0));
 		// logger.info("y eval: " + val);
 		assertEquals(val, 400.0);
 
