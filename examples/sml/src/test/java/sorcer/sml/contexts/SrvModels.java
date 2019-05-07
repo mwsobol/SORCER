@@ -86,24 +86,23 @@ public class SrvModels {
 
     }
 
-    @Ignore
     @Test
     public void evalauteMultiFidelityModel() throws Exception {
 
         // three entry model
         Model mod = model(inVal("arg/x1", 10.0), inVal("arg/x2", 90.0),
-                ent("mphFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
+                ent("meFi", sigFi(sig("add", AdderImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))),
                         sig("multiply", MultiplierImpl.class, result("result/y", inPaths("arg/x1", "arg/x2"))))),
-                response("mphFi", "arg/x1", "arg/x2"));
+                response("meFi", "arg/x1", "arg/x2"));
 
-        logger.info("fidelity: " + asis(mod, "mphFi"));
+        logger.info("fidelity: " + asis(mod, "meFi"));
 
-        Context out = response(mod, fi("add", "mphFi"));
+        Context out = response(mod, fi("add", "meFi"));
         logger.info("out: " + out);
-        assertTrue(value(out, "mphFi").equals(100.00));
-        out = response(mod, fi("multiply", "mphFi"));
+        assertTrue(value(out, "meFi").equals(100.00));
+        out = response(mod, fi("multiply", "meFi"));
         logger.info("out: " + out);
-//        assertTrue(valuate(out, "mphFi").equals(900.0));
+//        assertTrue(valuate(out, "meFi").equals(900.0));
 //        assertTrue(eval(mod, "result/y").equals(900.0));
     }
 
