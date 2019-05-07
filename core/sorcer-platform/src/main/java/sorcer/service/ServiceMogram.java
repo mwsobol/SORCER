@@ -776,11 +776,15 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         if (entries != null && entries.length > 0) {
             for (Arg a : entries)
                 if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.SELECT) {
-                    fi = selectFidelity(a.getName());
-                } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.COMPONENT) {
-                    fi = selectComponentFidelity((Fidelity) a);
-                } else if (a instanceof ServiceFidelity && ((ServiceFidelity) a).fiType == ServiceFidelity.Type.META) {
-                    fi = selectCompositeFidelity((ServiceFidelity) a);
+                    Mogram mog = null;
+                    if (((Fidelity) a).getPath() != null && ((Fidelity) a).getPath().length() > 0) {
+                        mog = this.getComponentMogram(((Fidelity) a).getPath());
+                    } else {
+                        mog = this;
+                    }
+                    fi = mog.selectFidelity(a.getName());
+                } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.META) {
+                    fi = selectMetafidelity((Fidelity) a);
                 }
         }
         return fi;
@@ -794,28 +798,27 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return (Fidelity) multiFi.getSelect();
     }
 
-    public Fidelity selectComponentFidelity(Fidelity componentFidelity) {
-        Mogram ext = getComponentMogram(componentFidelity.getPath());
-        String fn = componentFidelity.getName();
-        Fidelity cf = (Fidelity) ((ServiceFidelity)ext.getMultiFi()).getSelect(fn);
-        if (cf == null) {
-            logger.warn("no such fidelity for {}" + componentFidelity);
-        }
-        return cf;
-    }
-
-    public Fidelity selectCompositeFidelity(Fidelity fidelity) throws ConfigurationException {
-        if (fidelity.fiType == Fi.Type.META) {
-            for (Object obj : fidelity.selects) {
-                if (obj instanceof ServiceFidelity) {
-                    if (((ServiceFidelity) obj).fiType == ServiceFidelity.Type.COMPONENT)
-                        selectComponentFidelity((ServiceFidelity) obj);
-                    else
-                        selectFidelity(((Fidelity) obj).getName());
+    public Fidelity selectMetafidelity(Fidelity fidelity) throws ConfigurationException {
+        Metafidelity metaFi = null;
+        Fidelity fi = fidelity;
+        if (fidelity.fiType.equals(Fi.Type.META) && fidelity.getSelect() == null) {
+            if (multiMetaFi != null) {
+                multiMetaFi.selectSelect(fidelity.getName());
+                metaFi = (Metafidelity) multiMetaFi.getSelect();
+            } else {
+                metaFi = (Metafidelity) fidelity;
+            }
+            Mogram mog = null;
+            for (Object obj : metaFi.selects) {
+                if (((Fidelity) obj).getPath() != null && ((Fidelity) obj).getPath().length() > 0) {
+                    mog = this.getComponentMogram(((Fidelity) obj).getPath());
+                } else {
+                    mog = this;
                 }
+                fi = mog.selectFidelity(((Fidelity) obj).getName());
             }
         }
-        return fidelity;
+        return fi;
     }
 
     @Override

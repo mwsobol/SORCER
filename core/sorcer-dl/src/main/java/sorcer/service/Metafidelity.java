@@ -55,10 +55,12 @@ public class Metafidelity extends Fidelity<Fi> implements MetaFi, Dependency, Ar
     }
 
     public Metafidelity(String name, Fidelity[] fis) {
-        for (Fidelity fi : fis) {
-            selects.add(fi);
-        }
-        select = fis[0];
+		if (fis.length > 0) {
+			for (Fidelity fi : fis) {
+				selects.add(fi);
+			}
+			select = fis[0];
+		}
         this.fiName = name;
     }
 

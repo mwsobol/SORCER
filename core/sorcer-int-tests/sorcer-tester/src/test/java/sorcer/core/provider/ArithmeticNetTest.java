@@ -148,46 +148,45 @@ public class ArithmeticNetTest implements SorcerConstants {
 		assertTrue(returnValue(task).equals(100.0));
 	}
 
-	private Job getMultiFiJob() throws Exception {
+    private Job getMultiFiJob() throws Exception {
 
-		Task t3 = task("t3",
-			sigFi("object", sig("subtract", SubtractorImpl.class)),
-			sigFi("net", sig("subtract", Subtractor.class)),
-				context("subtract", inVal("arg/x1"), inVal("arg/x2"),
-						outVal("result/y")));
+        Task t3 = task("t3",
+            sigFi("object", sig("subtract", SubtractorImpl.class)),
+            sigFi("net", sig("subtract", Subtractor.class)),
+            context("subtract", inVal("arg/x1"), inVal("arg/x2"),
+                outVal("result/y")));
 
-		Task t4 = task("t4",
-			sigFi("object", sig("multiply", MultiplierImpl.class)),
-			sigFi("net", sig("multiply", Multiplier.class)),
-				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						outVal("result/y")));
+        Task t4 = task("t4",
+            sigFi("object", sig("multiply", MultiplierImpl.class)),
+            sigFi("net", sig("multiply", Multiplier.class)),
+            context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+                outVal("result/y")));
 
-		Task t5 = task("t5",
-			sigFi("object", sig("add", AdderImpl.class)),
-			sigFi("net", sig("add", Adder.class)),
-				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						outVal("result/y")));
+        Task t5 = task("t5",
+            sigFi("object", sig("add", AdderImpl.class)),
+            sigFi("net", sig("add", Adder.class)),
+            context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+                outVal("result/y")));
 
-		Job job = job("j1",
-			sigFi("object", sig("exert", ServiceJobber.class)),
-			sigFi("net", sig("exert", Jobber.class)),
-				job("j2",
-					sigFi("object", sig("exert", ServiceJobber.class)),
-					sigFi("net", sig("exert", Jobber.class)),
-						t4, t5),
-				t3,
-				pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-				pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-				metaFi("job1", fi("object", "j1/j2/t4"), fi("net", "j1/j2/t5")),
-				metaFi("job2",  fi("net", "j1/j2"),
-						fi("net", "j1/t3"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")),
-				metaFi("job3",  fi("net", "j1"), fi("net", "j1/j2"),
-						fi("net", "j1/t3"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")));
+        Job job = job("j1",
+            sigFi("object", sig("exert", ServiceJobber.class)),
+            sigFi("net", sig("exert", Jobber.class)),
+            job("j2",
+                sigFi("object", sig("exert", ServiceJobber.class)),
+                sigFi("net", sig("exert", Jobber.class)),
+                t4, t5),
+            t3,
+            pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+            pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
+            metaFi("job1", fi("object", "j1/j2/t4"), fi("net", "j1/j2/t5")),
+            metaFi("job2",  fi("net", "j1/j2"),
+                fi("net", "j1/t3"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")),
+            metaFi("job3",  fi("net", "j1"), fi("net", "j1/j2"),
+                fi("net", "j1/t3"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5")));
 
-		return (Job)tracable(job);
-	}
+        return (Job)tracable(job);
+    }
 
-	@Ignore
 	@Test
 	public void arithmeticMultiFiJobTest() throws Exception {
 
@@ -209,7 +208,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 		//Local Jobbers with remote Multiplier nad Adder
 		job = getMultiFiJob();
-		job = exert(job, fi("object"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net"));
+		job = exert(job, fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5"));
 		out = upcontext(exert(job));
 		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));
@@ -217,7 +216,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 		// Local Jobbers, Adder, and Multiplier with remote Subtractor
 		job = getMultiFiJob();
-		job = exert(job, fi("object"), fi("j1/t3", "net"));
+		job = exert(job, fi("net", "j1/t3"));
 		out = upcontext(exert(job));
 		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));
@@ -225,7 +224,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 		// Composite fidelity for local execution with remote Adder
 		job = getMultiFiJob();
-		job = exert(job, fi("job1"));
+		job = exert(job, metaFi("job1"));
 		out = upcontext(exert(job));
 		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));
@@ -234,7 +233,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		// Composite fidelity for j1 local, j2 remote with all
 		// remote component services
 		job = getMultiFiJob();
-		job = exert(job, fi("job2"));
+		job = exert(job, metaFi("job2"));
 		out = upcontext(exert(job));
 		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));
@@ -242,7 +241,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 
 		// Composite fidelity for all remote services
 		job = getMultiFiJob();
-		job = exert(job, fi("job3"));
+		job = exert(job, metaFi("job3"));
 		out = upcontext(exert(job));
 		logger.info("job context: " + out);
 		logger.info("job trace: " + trace(job));

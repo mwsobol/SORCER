@@ -75,7 +75,6 @@ public class RoutineMultiFidelities {
         return (Job)tracable(job);
     }
 
-    @Ignore
     @Test
     public void multiFiSigJobTest() throws Exception {
 
@@ -97,7 +96,7 @@ public class RoutineMultiFidelities {
 
         //Local Jobbers with remote Multiplier nad Adder
         job = getMultiFiJob();
-        job = exert(job, fi("t3", "object"), fi("j1/j2/t4", "net"), fi("j1/j2/t5", "net"));
+        job = exert(job, fi("object", "t3"), fi("net", "j1/j2/t4"), fi("net", "j1/j2/t5"));
         out = result(job);
         logger.info("job context: " + out);
         logger.info("job trace: " + trace(job));
@@ -105,7 +104,7 @@ public class RoutineMultiFidelities {
 
         // Local Jobbers, Adder, and Multiplier with remote Subtractor
         job = getMultiFiJob();
-        job = exert(job, fi("object"), fi("j1/t3", "net"));
+        job = exert(job, fi("object"), fi("net", "j1/t3"));
         out = result(job);
         logger.info("job context: " + out);
         logger.info("job trace: " + trace(job));

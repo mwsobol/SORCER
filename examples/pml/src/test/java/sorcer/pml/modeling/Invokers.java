@@ -153,7 +153,7 @@ public class Invokers {
 		assertEquals(activate(nm, "x4", th("n1", 200.0), fi("n1", "x4")), 1.0);
 
 //      logger.info("activate3 x4: " + activate(em, "x4", th("x4", 0.0), metaFi("x4", "n2")));
-        assertEquals(activate(nm, "x4", th("n2", 0.0), fi("n2", "x4")), 1.0);
+        assertEquals(activate(nm, "x4", th("n2", 0.0), fi("n2", "x4")), 260.0);
 	}
 
 	@Test

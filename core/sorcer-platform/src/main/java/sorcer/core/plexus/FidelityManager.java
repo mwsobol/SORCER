@@ -356,9 +356,9 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
             return;
         }
         for (Fidelity fi : fidelities) {
-            Fidelity sFi = this.fidelities.get(fi.getName());
+            Fidelity sFi = this.fidelities.get(fi.getPath());
             if (sFi != null) {
-                sFi.selectSelect(fi.getPath());
+                sFi.selectSelect(fi.getName());
                 sFi.setChanged(true);
                 if (mogram instanceof Routine) {
                     ((ServiceMogram)mogram).setSelectedFidelity((ServiceFidelity) sFi.getSelect());

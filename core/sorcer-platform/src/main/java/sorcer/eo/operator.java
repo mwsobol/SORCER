@@ -1573,10 +1573,6 @@ operator extends Operator {
         return fi;
     }
 
-//    	public static List<Service>  fis(Mogram exertion) {
-//		return ((ServiceMogram) exertion).getServiceFidelities().get(exertion.getName()).getSelects();
-//	}
-
     public static List<Service>  fis(Mogram mogram) {
         if (mogram.getMultiFi() != null) {
             return mogram.getMultiFi().getSelects();
@@ -1648,13 +1644,6 @@ operator extends Operator {
         Fidelity fi = new Fidelity(name);
         fi.setSelect(select);
         fi.fiType = Fi.Type.GOVERNANCE;
-        return fi;
-    }
-
-    public static Fidelity cmptFi(String name, Object select) {
-        Fidelity fi = new Fidelity(name);
-        fi.setSelect(select);
-        fi.fiType = Fi.Type.COMPONENT;
         return fi;
     }
 
@@ -2428,8 +2417,8 @@ operator extends Operator {
         FidelityManager fiManager = null;
         Strategy.FidelityManagement fm = null;
         List<Service> fis = new ArrayList<>();
-        MorphFidelity mFi = null;
         List<Fidelity> metaFis = new ArrayList();
+        MorphFidelity mFi = null;
         List<MapContext> connList = new ArrayList();
         Out outPaths = null;
         In inPaths = null;
@@ -2456,10 +2445,10 @@ operator extends Operator {
                 fiManager = ((FidelityManager) elems[i]);
             } else if (elems[i] instanceof MorphFidelity) {
                 mFi = (MorphFidelity) elems[i];
-            } else if (elems[i] instanceof ServiceFidelity) {
-                if (((ServiceFidelity) elems[i]).getFiType().equals(ServiceFidelity.Type.META)) {
-                    metaFis.add((ServiceFidelity) elems[i]);
-                } else {
+            } else if (elems[i] instanceof Fidelity) {
+                if (((Fidelity) elems[i]).getFiType().equals(Fidelity.Type.META)) {
+                    metaFis.add((Fidelity) elems[i]);
+                } else if (elems[i] instanceof ServiceFidelity) {
                     fis.add(((ServiceFidelity) elems[i]));
                 }
             } else if (elems[i] instanceof Strategy.FidelityManagement) {
@@ -2499,8 +2488,7 @@ operator extends Operator {
         if (srvFi != null) {
             srvFi.setName(name);
             srvFi.setPath(name);
-//			job.putFidelity(key, srvFi);
-            job.getMultiFi().addSelect(srvFi);
+			job.setMultiFi(srvFi);
             job.setSelectedFidelity((ServiceFidelity)fis.get(0));
             for (Service fi : fis) {
                 ((ServiceFidelity)fi).setPath(job.getName());
@@ -2547,11 +2535,10 @@ operator extends Operator {
             metaFi.setName(job.getName());
             metaFi.setPath(job.getName());
             for (Object fi : metaFis) {
-                ((ServiceFidelity)fi).setPath(name);
+                ((Fidelity)fi).setPath(name);
             }
             metaFi.setSelect(first);
             job.setMultiMetaFi(metaFi);
-//			job.setSelectedMetafidelity((MetaFi) first);
         }
 
         if (fm == Strategy.FidelityManagement.YES && job.getFidelityManager() == null
