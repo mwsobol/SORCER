@@ -33,14 +33,14 @@ public class SrvModelAutoDepsTest {
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 inVal("addfinal/x1", 1000.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/outGovernance",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class,
                         result(path("model/response", Signature.Direction.INOUT),
-                            inPaths("multiply/outGovernance", "add/outGovernance")))),
-                ent(sig("divide", DividerImpl.class, result("divider/outGovernance",
+                            inPaths("multiply/out", "add/out")))),
+                ent(sig("divide", DividerImpl.class, result("divider/out",
                         inPaths("model/response", "multiply/x1")))),
                 response("divide"));
 
@@ -57,17 +57,17 @@ public class SrvModelAutoDepsTest {
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                inVal("addfinal/x1", 1000.0), inVal("divider/outGovernance"),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+                inVal("addfinal/x1", 1000.0), inVal("divider/out"),
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/outGovernance",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class, result("model/response",
-                        inPaths("multiply/outGovernance", "add/outGovernance")))),
-                ent(sig("divide", DividerImpl.class, result("divider/outGovernance",
+                        inPaths("multiply/out", "add/out")))),
+                ent(sig("divide", DividerImpl.class, result("divider/out",
                         inPaths("model/response", "multiply/x1")))),
-                ent("addfinal", sig("add", AdderImpl.class, result("addfinal/outGovernance",
-                        inPaths("addfinal/x1", "divider/outGovernance")))),
+                ent("addfinal", sig("add", AdderImpl.class, result("addfinal/out",
+                        inPaths("addfinal/x1", "divider/out")))),
                 response("addfinal"));
 
         logger.info("Map of dependents: " + deps(m));

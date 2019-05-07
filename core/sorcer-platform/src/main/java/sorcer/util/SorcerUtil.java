@@ -681,7 +681,7 @@ public class SorcerUtil implements SorcerConstants {
 	}
 	
 	/**
-	 * Copy in to outGovernance stream. Do not allow other threads to read from the input
+	 * Copy in to out stream. Do not allow other threads to read from the input
 	 * or write to the output while copying is taking place.
 	 */
 	synchronized public static void copy(InputStream in, OutputStream out)

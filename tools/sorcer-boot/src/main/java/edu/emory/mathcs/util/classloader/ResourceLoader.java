@@ -439,9 +439,9 @@ public class ResourceLoader {
                 }
                 else {
                     // classpath might be null only if it was a dependency of
-                    // an indexed JAR with outGovernance-of-date index (the index brought
+                    // an indexed JAR with out-of-date index (the index brought
                     // us here but resource was not found in the JAR). But this
-                    // (outGovernance-of-sync index) should be captured by
+                    // (out-of-sync index) should be captured by
                     // getJarFileIfPossiblyContains.
                     assert classPath != null;
                     dependencies = classPath;

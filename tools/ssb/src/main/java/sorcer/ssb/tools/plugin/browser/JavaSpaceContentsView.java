@@ -141,7 +141,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 
 	/*
 	 * Poll the JavaSpaceAdmin proxy every <code>refreshRate</code> millis If we
-	 * get an Exception, drop outGovernance of the loop and report it The most likely
+	 * get an Exception, drop out of the loop and report it The most likely
 	 * cause of an Exception occuring will be down to a retrieved entry not
 	 * having a valid codebase set for it
 	 * 
@@ -165,7 +165,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 				_updater = null;
 				return;
 			} catch (Exception ex) {
-				// drop outGovernance here if we get an exception,
+				// drop out here if we get an exception,
 				// likely causes are UnusableEntryExceptions
 				// because the client program that wrote the entry
 				// didn't set a codebase (or set a wrong one) or the HTTPD of
@@ -407,7 +407,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 			final WindowListener wl = new WindowAdapter() {
 				public void windowClosing(WindowEvent evt) {
 					try {
-						// System.outGovernance.println("Closing admin iterator");
+						// System.out.println("Closing admin iterator");
 						try {
 							iter.getLease().cancel();
 						} catch (Throwable t) {

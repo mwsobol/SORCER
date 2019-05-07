@@ -676,8 +676,17 @@ public class operator extends Operator {
         fidelity.getFidelity().setPath(name);
 		fidelity.getFidelity().setName(name);
 		for (Object item : fidelity.getSelects()) {
-			if (item instanceof Fidelity && ((Fidelity)item).getName() == null) {
-				((Fidelity)item).setName(name);
+			if (item instanceof Fidelity) {
+				((Fidelity) item).setPath(name);
+				if (((Fidelity)item).getName() == null) {
+					((Fidelity)item).setName(name);
+				}
+				for (Object obj : ((Fidelity) item).getSelects()) {
+					if (obj instanceof Fi && ((Fidelity) obj).getName() == null) {
+						((Fidelity) obj).setPath(name);
+						((Fidelity) obj).setName(((Identifiable) obj).getName());
+					}
+				}
 			}
 		}
         return srv(name, fidelity);

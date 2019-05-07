@@ -127,7 +127,7 @@ public class MonitorableSession implements MonitoringSession {
 	 * idea who will pick up this exertion. In that case, it doesn't make sense
 	 * for the broker to force leasing. However, it may activate the the session
 	 * with the timeout marked and the lease duration specified so that if no
-	 * provider picks outGovernance and the task gets timed outGovernance, then the Monitor can
+	 * provider picks out and the task gets timed out, then the Monitor can
 	 * clean up the entry from space and notify the broker.
 	 * 
 	 * If the provider picks up before it timesout, then the provider must

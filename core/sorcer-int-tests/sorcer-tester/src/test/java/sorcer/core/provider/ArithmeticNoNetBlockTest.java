@@ -92,8 +92,8 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 
 //		logger.info("block: " + context(block));
 		out = exert(block, ent("block/t5/arg/x1", 200.0), ent("block/t5/arg/x2", 800.0));
-//		logger.info("block context: " + context(outGovernance));
-//		logger.info("result: " + get(context(outGovernance), "block/result"));
+//		logger.info("block context: " + context(out));
+//		logger.info("result: " + get(context(out), "block/result"));
 		assertEquals(value(context(block), "block/result"), 750.00);
 	}
 	
@@ -101,24 +101,24 @@ public class ArithmeticNoNetBlockTest implements SorcerConstants {
 	public void optBlockTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), 
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						result("outGovernance")));
+						result("out")));
 		
 		Task t5 = task("t5", sig("add", AdderImpl.class), 
 				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("outGovernance")));
+						result("out")));
 		
 		Block block = block("block", sig("exert", ServiceConcatenator.class), t4,
-				opt(condition("{ outGovernance -> outGovernance > 600 }", "outGovernance"), t5));
+				opt(condition("{ out -> out > 600 }", "out"), t5));
 		
 		block = exert(block);
 		logger.info("block context: " + context(block));
-		logger.info("result: " + value(context(block), "outGovernance"));
-		assertEquals(value(context(block), "outGovernance"), 500.0);
+		logger.info("result: " + value(context(block), "out"));
+		assertEquals(value(context(block), "out"), 500.0);
 		
 		block = exert(block, ent("block/t4/arg/x1", 200.0), ent("block/t4/arg/x2", 800.0));
 		logger.info("block context: " + context(block));
-		logger.info("result: " + value(context(block), "outGovernance"));
-		assertEquals(value(context(block), "outGovernance"), 100.0);
+		logger.info("result: " + value(context(block), "out"));
+		assertEquals(value(context(block), "out"), 100.0);
 	}
 
 	@Test

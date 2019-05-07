@@ -89,10 +89,10 @@ public class Mograms {
         Model out = exert(model);
         assertEquals(6, size(out));
 
-        logger.info("outGovernance : " + out);
-        logger.info("outGovernance @ arg/x1: " + get(out, "arg/x1"));
-        logger.info("outGovernance @ arg/x2: " + eval(out, "arg/x2"));
-        logger.info("outGovernance @ result/y: " + eval(out, "result/y"));
+        logger.info("out : " + out);
+        logger.info("out @ arg/x1: " + get(out, "arg/x1"));
+        logger.info("out @ arg/x2: " + eval(out, "arg/x2"));
+        logger.info("out @ result/y: " + eval(out, "result/y"));
 
         assertEquals(100.0, exec(out, "result/y"));
 
@@ -104,12 +104,12 @@ public class Mograms {
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/outGovernance",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
                 ent(sig("subtract", SubtractorImpl.class, result("model/response",
-                        inPaths("multiply/outGovernance", "add/outGovernance")))),
+                        inPaths("multiply/out", "add/out")))),
                 aka("y1", "multiply/x1"),
                 response("subtract"));
 
@@ -130,7 +130,7 @@ public class Mograms {
 
         Mogram out = exert(mogram);
         Context cxt = context(out);
-        logger.info("outGovernance context: " + cxt);
+        logger.info("out context: " + cxt);
         logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
         logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
         logger.info("context @ result/y: " + value(cxt, "result/y"));
@@ -148,7 +148,7 @@ public class Mograms {
 
         Mogram out = exert(t5);
         Context cxt = context(out);
-        logger.info("outGovernance context: " + cxt);
+        logger.info("out context: " + cxt);
         logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
         logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
         logger.info("context @ result/y: " + value(cxt, "result/y"));

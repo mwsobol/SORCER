@@ -198,12 +198,12 @@ public class operator extends Operator {
         }
     }
 
-    public static Service outGovernance(Discipline discipline) {
-        return discipline.getOutGovernance();
+    public static Service out(Discipline discipline) {
+        return discipline.getout();
     }
 
     public static Service outGov(Discipline discipline) {
-        return discipline.getOutGovernance();
+        return discipline.getout();
     }
 
     public static Mogram result(Discipline discipline) {

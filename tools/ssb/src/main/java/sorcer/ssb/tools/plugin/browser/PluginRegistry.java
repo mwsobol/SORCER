@@ -102,7 +102,7 @@ public class PluginRegistry implements Runnable {
 
 	public void init(File toolsDir) {
 		_toolsDir = toolsDir;
-		// System.outGovernance.println("### plugins dir="+toolsDir.getAbsolutePath());
+		// System.out.println("### plugins dir="+toolsDir.getAbsolutePath());
 		new Thread(this).start();
 	}
 
@@ -149,7 +149,7 @@ public class PluginRegistry implements Runnable {
 			try {
 				Class c = cl.loadClass(clazzName);
 
-				// System.outGovernance.println("Class="+c.getName());
+				// System.out.println("Class="+c.getName());
 				if (!c.equals(iPlugin) && iPlugin.isAssignableFrom(c)) {
 
 					System.out.println("Plugin found class=" + c.getName());
@@ -181,7 +181,7 @@ public class PluginRegistry implements Runnable {
 	private void addPlugin(Class pluginClass) throws Exception {
 
 		SSBrowserPlugin iPlugin = (SSBrowserPlugin) pluginClass.newInstance();
-		// System.outGovernance.println("Plugin="+iPlugin.getDisplayName());
+		// System.out.println("Plugin="+iPlugin.getDisplayName());
 
 		System.out.println("Initializing plugin: " + iPlugin.getDisplayName());
 		SSBrowserEnvironmentImpl env = new SSBrowserEnvironmentImpl(_frame,

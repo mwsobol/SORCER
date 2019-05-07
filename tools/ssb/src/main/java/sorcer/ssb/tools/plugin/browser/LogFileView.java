@@ -66,7 +66,7 @@ public class LogFileView extends JFrame {
 						sleep(1000);
 						refresh();
 					} catch (InterruptedException ex) {
-						// System.outGovernance.println("Updater thread interrupted, exiting");
+						// System.out.println("Updater thread interrupted, exiting");
 						return;
 					} catch (Exception ex) {
 						JOptionPane.showMessageDialog(LogFileView.this, ex,
@@ -87,7 +87,7 @@ public class LogFileView extends JFrame {
 		long lastModified = f.lastModified();
 		if (lastModified == _lastModifed) {
 			// return;
-			// System.outGovernance.println("Log file not modified");
+			// System.out.println("Log file not modified");
 		}
 		_lastModifed = lastModified;
 		final String txt = loadTextFile(ServiceBrowserConfig.LOG_FILE);

@@ -1,6 +1,5 @@
 package sorcer.pml.modeling;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -27,8 +26,8 @@ import static sorcer.so.operator.*;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @RunWith(SorcerTestRunner.class)
 @ProjectContext("examples/cml")
-public class Calls {
-	private final static Logger logger = LoggerFactory.getLogger(Calls.class.getName());
+public class ProceduralCalls {
+	private final static Logger logger = LoggerFactory.getLogger(ProceduralCalls.class.getName());
 
 	@Test
 	public void proScope() throws Exception {
@@ -56,11 +55,11 @@ public class Calls {
 		assertTrue(exec(mdl, "add").equals(50.0));
 
 	}
-	
+
 	@Test
 	public void closingProcWihEntries() throws Exception {
 		Pro y = pro("y",
-				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
+			invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = exec(y, val("x1", 10.0), val("x2", 50.0), val("x3", 20.0), val("x4", 80.0));
 		// logger.info("y eval: " + val);
 		assertEquals(val, 400.0);
@@ -81,7 +80,7 @@ public class Calls {
 
 	@Test
 	public void dbProcOperator() throws Exception {
-		
+
 		Pro<Double> dbp1 = persistent(pro("design/in", 25.0));
 		Pro<String> dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
 
@@ -90,7 +89,7 @@ public class Calls {
 		assertEquals(dbp1.getOut().getClass(), Double.class);
 		// dbp2 is persisted already
 		assertEquals(impl(dbp2).getClass(), URL.class);
-			
+
 		URL dbp1Url = storeVal(dbp1);
 		URL dbp2Url = (URL) impl(dbp2);
 
@@ -115,19 +114,18 @@ public class Calls {
 		assertEquals(asis(dbp2).getClass(), URL.class);
 	}
 
-	@Ignore
 	@Test
 	public void substitutingValuesWithEntFidelities() throws Exception {
-		
+
 		Pro<Double> dbp = dbEnt("shared/eval", 25.0);
-		
+
 		Pro multi = pro("multi",
-				entFi(val("init/eval"),
-					dbp,
-						pro("invoke", invoker("x + y", args("x", "y")))));
+			entFi(val("init/eval"),
+				dbp,
+				pro("invoke", invoker("x + y", args("x", "y")))));
 
 		Context cxt = context(val("x", 10.0),
-				val("y", 20.0), val("init/eval", 49.0));
+			val("y", 20.0), val("init/eval", 49.0));
 
 		setValue(dbp, 50.0);
 		assertTrue(exec(dbp).equals(50.0));
@@ -138,15 +136,15 @@ public class Calls {
 
 	@Test
 	public void procModelOperator() throws Exception {
-		
+
 		Model mdl = entModel("call-model", val("v1", 1.0), val("v2", 2.0));
 		add(mdl, val("x", 10.0), val("y", 20.0));
 		// add an active pro, no scope
 		add(mdl, call(invoker("add1", "x + y", args("x", "y"))));
 		// add a pro with own scope
 		add(mdl, pro(invoker("add2", "x + y", args("x", "y")),
-				context(val("x", 30.0), val("y", 40.0))));
-		
+			context(val("x", 30.0), val("y", 40.0))));
+
 		assertEquals(exec(mdl, "add1"), 30.0);
 		// change the scope of add1
 		setValue(mdl, "x", 20.0);

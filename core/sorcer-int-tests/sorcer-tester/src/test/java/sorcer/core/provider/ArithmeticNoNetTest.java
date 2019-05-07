@@ -49,10 +49,10 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		
 		// make the result of second task as the first argument of task
 		// three
-		task2.getContext().connect("outGovernance/eval", "arg1/eval", task3.getContext());
+		task2.getContext().connect("out/eval", "arg1/eval", task3.getContext());
 		// make the result of the first task as the second argument of task
 		// three
-		task1.getContext().connect("outGovernance/eval", "arg2/eval", task3.getContext());
+		task1.getContext().connect("out/eval", "arg2/eval", task3.getContext());
 		
 		job = job.exert();
 
@@ -77,10 +77,10 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		
 		// make the result of second task as the first argument of task
 		// three
-		task2.getContext().connect("outGovernance/eval", "arg1/eval", task3.getContext());
+		task2.getContext().connect("out/eval", "arg1/eval", task3.getContext());
 		// make the result of the first task as the second argument of task
 		// three
-		task1.getContext().connect("outGovernance/eval", "arg2/eval", task3.getContext());
+		task1.getContext().connect("out/eval", "arg2/eval", task3.getContext());
 		
 		job = job.exert();
 
@@ -109,10 +109,10 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		
 		// make the result of second task as the first argument of task
 		// three
-		task2.getContext().connect("outGovernance/eval", "arg1/eval", task3.getContext());
+		task2.getContext().connect("out/eval", "arg1/eval", task3.getContext());
 		// make the result of the first task as the second argument of task
 		// three
-		task1.getContext().connect("outGovernance/eval", "arg2/eval", task3.getContext());
+		task1.getContext().connect("out/eval", "arg2/eval", task3.getContext());
 		
 		job = job.exert();
 
@@ -126,7 +126,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		context.putInValue("arg1/eval", 20.0);
 		context.putInValue("arg2/eval", 80.0);
 		// We know that the output is gonna be placed in this path
-		context.putOutValue("outGovernance/eval", 0.0);
+		context.putOutValue("out/eval", 0.0);
 		Signature method = new ObjectSignature("add", AdderImpl.class);
 		Task task = new ObjectTask("add", method);
 		task.setContext(context);
@@ -138,7 +138,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		context.putInValue("arg1/eval", 10.0);
 		context.putInValue("arg2/eval", 50.0);
 		// We know that the output is gonna be placed in this path
-		context.putOutValue("outGovernance/eval", 0.0);
+		context.putOutValue("out/eval", 0.0);
 		Signature method = new ObjectSignature("multiply", MultiplierImpl.class);
 		Task task = new ObjectTask("multiply", method);
 		task.setContext(context);

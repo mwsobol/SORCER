@@ -48,7 +48,7 @@ public class ExchangeTasks {
 		long start = System.nanoTime();
 		int[] out = prv.exchangeInts(intArray());
 		long end = System.nanoTime();
-		logger.info("outGovernance: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		logger.info("Execution time: " + (end - start)/1000 + " us"); 						// 14 us
 		assertEquals(out[0], 2);
 	}
@@ -63,7 +63,7 @@ public class ExchangeTasks {
 			out = prv.exchangeInts(in);
 		}
 		long end = System.nanoTime();
-		logger.info("outGovernance: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		logger.info("Execution time: " + (end - start)/ITERATIONS + " ns");  				// 1 us
 		assertEquals(out[0], 10001);
 	}
@@ -77,7 +77,7 @@ public class ExchangeTasks {
 
 		long start = System.currentTimeMillis();
 		int[] out = (int[]) exec(ex);
-		logger.info("outGovernance: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end - start) + " ms"); 							// 25 ms
 		assertEquals(out[0], 2);
@@ -94,7 +94,7 @@ public class ExchangeTasks {
 
 		long start = System.currentTimeMillis();
 		int[] out = (int[]) exec(ex);
-		logger.info("outGovernance: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		long end = System.currentTimeMillis();
 		logger.info("Execution time: " + (end - start) + " ms"); 							// 25 ms
 		assertEquals(out[0], 2);
@@ -113,7 +113,7 @@ public class ExchangeTasks {
 			out = (int[]) exec(ex);
 		}
 		long end = System.nanoTime();
-		logger.info("outGovernance: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		logger.info("Execution time: " + (end-start)/ITERATIONS/1000 + " us"); 				// 80 us
 		assertEquals(out[0], 10001);
 	}
@@ -141,7 +141,7 @@ public class ExchangeTasks {
 		long start = System.currentTimeMillis();
 		int[] out = ex.exchangeInts(in);
 		long end = System.currentTimeMillis();
-		logger.info("outGovernance: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		logger.info("Execution time: " + (end - start) + " ms");							// 5 ms
 		assertEquals(out[0], 2);
 	}
@@ -155,7 +155,7 @@ public class ExchangeTasks {
 		long start = System.currentTimeMillis();
 		int[] out = (int[]) exec(ex);
 		long end = System.currentTimeMillis();
-		logger.info("outGovernance: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		logger.info("Execution time: " + (end - start) + " ms");							// 702 ms
 		assertEquals(out[0], 2);
 	}
@@ -169,7 +169,7 @@ public class ExchangeTasks {
 		long start = System.currentTimeMillis();
 		int[] out = (int[]) exec(ex);
 		long end = System.currentTimeMillis();
-		logger.info("outGovernance: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		logger.info("Execution time: " + (end - start) + " ms");							// 25 ms
 		assertEquals(out[0], 2);
 	}
@@ -183,7 +183,7 @@ public class ExchangeTasks {
 		long start = System.currentTimeMillis();
 		int[] out = (int[]) exec(ex);
 		long end = System.currentTimeMillis();
-		logger.info("outGovernance: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		logger.info("Execution time: " + (end - start) + " ms");							// 693 ms
 		assertEquals(out[0], 2);
 	}
@@ -200,7 +200,7 @@ public class ExchangeTasks {
 			out = (int[]) exec(ex);
 		}
 		long end = System.currentTimeMillis();
-		logger.info("outGovernance: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		logger.info("Execution time: " + (end-start)/ITERATIONS + " ms");					// 5 ms
 		assertEquals(out[0], 2);
 	}
@@ -218,7 +218,7 @@ public class ExchangeTasks {
 			out = (int[]) exec(ex);
 		}
 		long end = System.nanoTime();
-		logger.info("outGovernance: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		logger.info("Execution time: " + (end-start)/ITERATIONS/1000 + " us");				// 138 us
 		assertEquals(out[0], 10001);
 	}
@@ -238,7 +238,7 @@ public class ExchangeTasks {
 			out = (int[]) exec(ex);
 		}
 		long end = System.nanoTime();
-		logger.info("outGovernance: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		logger.info("Execution time: " + (end-start)/ITERATIONS/1000 + " us");				// 79 us
 		assertEquals(out[0], 10001);
 	}
@@ -258,7 +258,7 @@ public class ExchangeTasks {
 			out = (int[]) exec(ex);
 		}
 		long end = System.currentTimeMillis();
-		logger.info("outGovernance: " + Arrays.toString(out));
+		logger.info("out: " + Arrays.toString(out));
 		logger.info("Execution time: " + (end-start)/ITERATIONS + " ms");   			// 5 ms
 		assertEquals(out[0], 2);
 

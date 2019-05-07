@@ -187,7 +187,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	int loopCount = 0;
 
-	/** The login context, for logging outGovernance */
+	/** The login context, for logging out */
 	private LoginContext loginContext;
 
 	/** The provider's JoinManager. */
@@ -256,7 +256,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
         // inspect class loader tree
         if(logger.isTraceEnabled())
             com.sun.jini.start.ClassLoaderUtil.displayContextClassLoaderTree();
-        // System.outGovernance.println("service provider class loader: " +
+        // System.out.println("service provider class loader: " +
         // serviceClassLoader);
 		String providerProperties =
 				(String) config.getEntry(COMPONENT, "propertiesFile", String.class, "");
@@ -1574,7 +1574,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return out;
 	}
 
-	// TODO in/outGovernance/inout marking as defined in the inConnector
+	// TODO in/out/inout marking as defined in the inConnector
 	private void updateContext(Task task) throws ContextException {
 		Context connector = task.getProcessSignature().getInConnector();
 		if (connector != null){
@@ -2122,7 +2122,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			int beginIndex = 5;
 			if (GenericUtil.isWindows()) beginIndex++;
 
-			String jarPath = dirURL.getPath().substring(beginIndex, dirURL.getPath().indexOf("!")); //strip outGovernance only the JAR file
+			String jarPath = dirURL.getPath().substring(beginIndex, dirURL.getPath().indexOf("!")); //strip out only the JAR file
 			JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
 			Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
 			Set<String> result = new HashSet<String>(); //avoid duplicates in case it is a subdirectory

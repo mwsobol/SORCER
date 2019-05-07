@@ -90,7 +90,7 @@ public class ObjectLogger {
 			if (oos != null)
 				oos.close();
 		}
-		// System.outGovernance.println("Wrote to " + logDir + filename);
+		// System.out.println("Wrote to " + logDir + filename);
 	}
 
 	public static synchronized Object restoreMarshalled(String filename)
@@ -100,7 +100,7 @@ public class ObjectLogger {
 			ois = new ObjectInputStream(new BufferedInputStream(
 					new FileInputStream(filename)));
 			MarshalledObject o = (MarshalledObject) ois.readObject();
-			// System.outGovernance.println("Read MarshalledObject from file " +
+			// System.out.println("Read MarshalledObject from file " +
 			// filename);
 			return o.get();
 		} finally {
@@ -135,7 +135,7 @@ public class ObjectLogger {
 			if (oos != null)
 				oos.close();
 		}
-		// System.outGovernance.println("Wrote to " + logDir + filename);
+		// System.out.println("Wrote to " + logDir + filename);
 	}
 
 	public static synchronized void persistAnnotatedMarshalled(File file,
@@ -151,7 +151,7 @@ public class ObjectLogger {
 			if (oos != null)
 				oos.close();
 		}
-		// System.outGovernance.println("Wrote to " + logDir + filename);
+		// System.out.println("Wrote to " + logDir + filename);
 	}
 	
 	public static synchronized Object restoreAnnotatedMarshalled(String filename)
@@ -162,7 +162,7 @@ public class ObjectLogger {
 					new FileInputStream(filename), null, false, null,
 					new ArrayList());
 			Object o = ois.readObject();
-			// System.outGovernance.println("Read MarshalledObject from file " +
+			// System.out.println("Read MarshalledObject from file " +
 			// filename);
 			return o;
 		} finally {

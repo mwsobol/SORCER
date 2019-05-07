@@ -138,25 +138,25 @@ public class MonitoringTest {
 	public void optBlockTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", Multiplier.class), strategy(Strategy.Monitor.YES),
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						result("outGovernance")));
+						result("out")));
 
 		Task t5 = task("t5", sig("add", Adder.class), strategy(Strategy.Monitor.YES),
 				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("outGovernance")));
+						result("out")));
 
 		Block block = block("block", sig(Concatenator.class), strategy(Strategy.Monitor.YES),
 				t4,
-				opt(condition("{ outGovernance -> outGovernance > 600 }", "outGovernance"), t5));
+				opt(condition("{ out -> out > 600 }", "out"), t5));
 
 		block = exert(block);
 		logger.info("block context 1: " + context(block));
-//		logger.info("result: " + eval(context(block), "outGovernance"));
-		assertEquals(value(context(block), "outGovernance"), 500.0);
+//		logger.info("result: " + eval(context(block), "out"));
+		assertEquals(value(context(block), "out"), 500.0);
 
 		block = exert(block, operator.ent("block/t4/arg/x1", 200.0), operator.ent("block/t4/arg/x2", 800.0));
 		logger.info("block context 2: " + context(block));
-//		logger.info("result: " + eval(context(block), "outGovernance"));
-		assertEquals(value(context(block), "outGovernance"), 100.0);
+//		logger.info("result: " + eval(context(block), "out"));
+		assertEquals(value(context(block), "out"), 100.0);
 
 	}
 

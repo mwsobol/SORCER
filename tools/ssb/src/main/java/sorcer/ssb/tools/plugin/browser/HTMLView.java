@@ -103,7 +103,7 @@ public class HTMLView extends JPanel implements HyperlinkListener {
 		// HTMLDocument doc=(HTMLDocument)_jep.getDocument();
 		// HTMLDocument.Iterator iter=doc.getIterator(HTML.Tag.SCRIPT);
 
-		// System.outGovernance.println(iter.getStartOffset());
+		// System.out.println(iter.getStartOffset());
 
 		_jep.addHyperlinkListener(this);
 
@@ -130,7 +130,7 @@ public class HTMLView extends JPanel implements HyperlinkListener {
 				}
 				_cursor--;
 				URL url = (URL) _history.get(_cursor);
-				// System.outGovernance.println("<< "+_cursor+" "+url);
+				// System.out.println("<< "+_cursor+" "+url);
 				load(url);
 			}
 		};
@@ -142,7 +142,7 @@ public class HTMLView extends JPanel implements HyperlinkListener {
 				}
 				URL url = (URL) _history.get(_cursor);
 				load(url);
-				// System.outGovernance.println(">> "+_cursor+" "+url);
+				// System.out.println(">> "+_cursor+" "+url);
 			}
 		};
 		/*
@@ -190,7 +190,7 @@ public class HTMLView extends JPanel implements HyperlinkListener {
 				try {
 
 					if (_lastUrl == null || !newUrl.equals(_lastUrl)) {
-						// might need to move the line below outGovernance of this
+						// might need to move the line below out of this
 						// condition check
 						pane.setPage(newUrl);
 
@@ -198,11 +198,11 @@ public class HTMLView extends JPanel implements HyperlinkListener {
 						_cursor++;
 						if (_cursor < _history.size()) {
 							_history.add(_cursor, newUrl);
-							// System.outGovernance.println("Inserting page at "+_cursor+" "+newUrl);
+							// System.out.println("Inserting page at "+_cursor+" "+newUrl);
 							// _fwd.setEnabled(true);
 						} else {
 							_history.add(newUrl);
-							// System.outGovernance.println("Added page at "+_cursor+" "+newUrl);
+							// System.out.println("Added page at "+_cursor+" "+newUrl);
 						}
 					}
 
@@ -252,12 +252,12 @@ public class HTMLView extends JPanel implements HyperlinkListener {
 	/*
 	 * private class HyperJump implements Runnable { private URL url;
 	 * 
-	 * public HyperJump(URL file) { //System.outGovernance.println(file); url=file; }
+	 * public HyperJump(URL file) { //System.out.println(file); url=file; }
 	 * public void run() {
 	 * 
 	 * try { String html=parseHTML(url); _jep.setText(html);
 	 * setTitle(url.toString()); //_jep.setPage(url); } catch (Exception ex) {
-	 * System.outGovernance.println(ex); } finally { _jep.invalidate(); validate(); } }
+	 * System.out.println(ex); } finally { _jep.invalidate(); validate(); } }
 	 * 
 	 * }
 	 */

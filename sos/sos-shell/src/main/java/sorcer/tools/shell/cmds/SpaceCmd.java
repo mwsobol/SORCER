@@ -95,7 +95,7 @@ public class SpaceCmd extends ShellCmd {
 		out = NetworkShell.getShellOutputStream();
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();
-//		outGovernance.println("numTokens: " + numTokens);
+//		out.println("numTokens: " + numTokens);
 		int myIdx = 0;
 		String next = null;
 		State xrtType = null;
@@ -333,7 +333,7 @@ public class SpaceCmd extends ShellCmd {
 	}
 	
 	private void printSpaceExertions(State xrtType) throws ContextException {
-//		outGovernance.println("xrtType: " + xrtType);
+//		out.println("xrtType: " + xrtType);
 		instanceList.clear();
 		ExertionEnvelop ee = new ExertionEnvelop();
 		if (xrtType == State.NULL) {

@@ -142,7 +142,7 @@ public class SysCalls {
 								outVal("cylinder/height")));
 
 		Context out = context(exert(callerTask));
-		logger.info("outGovernance:" + out);
+		logger.info("out:" + out);
 		assertTrue(value(out, "cylinder/height").equals("3.0"));
 		assertTrue(value(out, "cylinder/radius").equals("2.0"));
 		assertTrue(value(out, "cylinder/volume").equals("37.69911184307752"));

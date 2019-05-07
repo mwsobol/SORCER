@@ -116,21 +116,30 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 		this.fiName = name;
 	}
 
-	public Service selectSelect(String fiName) throws ConfigurationException {
-		Object selected = null;
-		for (Service item : selects) {
-			if (((Identifiable) item).getName().equals(fiName)) {
-				selected = item;
-				break;
-			}
-		}
-		if (selected != null) {
-			select = (Service) selected;
-			return select;
-		} else {
-			throw new ConfigurationException("no such fidelity: " + fiName);
-		}
-	}
+//	@Override
+//	public Service selectSelect(String fiName) throws ConfigurationException {
+//		Object selected = null;
+//		for (Service item : selects) {
+//			if (item instanceof Fidelity) {
+//				Object fiSelection = ((Fidelity) item).selectSelect(fiName);
+//				if (fiSelection != null) {
+//					return (Service) fiSelection;
+//				}
+//			} else {
+//				if (((Identifiable) item).getName().equals(fiName)) {
+//					selected = item;
+//					changed = true;
+//					break;
+//				}
+//			}
+//		}
+//		if (selected != null) {
+//			select = (Service) selected;
+//			return select;
+//		} else {
+//			throw new ConfigurationException("no such fidelity: " + fiName);
+//		}
+//	}
 
 	public String getPath(String fidelityName) {
 		for (Service select : selects) {

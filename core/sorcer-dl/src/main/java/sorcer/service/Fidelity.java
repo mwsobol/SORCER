@@ -1,5 +1,6 @@
 package sorcer.service;
 
+import net.jini.core.entry.Entry;
 import sorcer.core.Tag;
 import sorcer.service.modeling.Data;
 import sorcer.service.modeling.fi;
@@ -17,7 +18,7 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 
 	protected static int count = 0;
 
-	protected String fiName;
+    protected String fiName;
 
 	protected String path = "";
 
@@ -74,8 +75,9 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 
     public Fidelity(Data... entries) {
         fiType = Type.NAME;
-        for (Data fi : entries)
-            this.selects.add((T) fi);
+        for (Data fi : entries) {
+			this.selects.add((T) fi);
+		}
     }
 
     @Override
@@ -128,21 +130,37 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 		this.select = select;
 	}
 
-	public T selectSelect(String fiName) throws ConfigurationException {
-		Object selection = null;
+    public T selectSelect(String fiName) throws ConfigurationException {
+        Object selected = null;
+        for (T item : selects) {
+            if (((Identifiable) item).getName().equals(fiName)) {
+                selected = item;
+                changed = true;
+                break;
+            }
+        }
+
+        if (selected != null) {
+            select = (T) selected;
+            return select;
+        } else {
+            throw new ConfigurationException("no such select fidelity: " + fiName + "@" + path);
+        }
+    }
+
+	public T findSelect(String fiName) {
+		Object selected = null;
 		for (T item : selects) {
 			if (((Identifiable) item).getName().equals(fiName)) {
-				selection = item;
+				selected = item;
 				changed = true;
 				break;
 			}
 		}
-		if (selection != null) {
-			select = (T) selection;
-			return select;
-		} else {
-			throw new ConfigurationException("no such select fidelity: " + fiName + "@" + path);
+		if (selected != null) {
+			select = (T) selected;
 		}
+		return select;
 	}
 
 	public T getSelect(String name) throws ConfigurationException {

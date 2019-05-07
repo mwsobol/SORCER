@@ -626,10 +626,10 @@ public class ModelMultiFidelities {
             }
         };
 
-        fi fi2 = metaFi("sysFi2", mphFi("mFi2", "ph4"), fi("mFi2", "divide"), fi("mFi3", "multiply"));
-        fi fi3 = metaFi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-        fi fi4 = metaFi("sysFi4", fi("mFi3", "average"));
-        fi fi5 = metaFi("sysFi5", fi("mFi4", "t4"));
+        fi fi2 = metaFi("sysFi2", mphFi("ph4", "mFi2"), fi("divide", "mFi2"), fi("multiply", "mFi3"));
+        fi fi3 = metaFi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3"));
+        fi fi4 = metaFi("sysFi4", fi("average", "mFi3"));
+        fi fi5 = metaFi("sysFi5", fi("t4", "mFi4"));
 
         // four entry multifidelity model with four morphers
         mog mdl = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0),
@@ -644,7 +644,6 @@ public class ModelMultiFidelities {
         return mdl;
     }
 
-    @Ignore
     @Test
     public void morphingFidelities() throws Exception {
         mog mdl = getMorphingModel();
@@ -681,7 +680,6 @@ public class ModelMultiFidelities {
         assertTrue(value(out, "mFi4").equals(920.0));
     }
 
-    @Ignore
     @Test
     public void morphingModelDefauldFidelities() throws Exception {
 
@@ -707,7 +705,6 @@ public class ModelMultiFidelities {
         assertTrue(value(out, "mFi4").equals(110.0));
     }
 
-    @Ignore
     @Test
     public void morphingFidelitiesLoop() throws Exception {
         mog mdl = getMorphingModel();

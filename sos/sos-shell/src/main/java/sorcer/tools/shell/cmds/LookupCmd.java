@@ -311,7 +311,7 @@ public class LookupCmd extends ShellCmd {
 		if (attributeSets != null && attributeSets.length > 0) {
 				NetworkShell.printLookupAttributes(attributeSets);
 				// for (int i = 0; i < attributeSets.length - 1; i++) {
-				// outGovernance.println("  - " + attributeSets[i]);
+				// out.println("  - " + attributeSets[i]);
 				// }
 		}
 	}

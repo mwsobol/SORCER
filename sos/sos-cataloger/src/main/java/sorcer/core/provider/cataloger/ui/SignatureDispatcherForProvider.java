@@ -344,14 +344,14 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 		interfaceName = "interface " + interfaceName;
 		for (int i = 0; i < interfaceList.length; i++) {
 			if (interfaceList[i].toString().equals(interfaceName)) {
-				// System.outGovernance.println("found interface list!");
+				// System.out.println("found interface list!");
 				// logger.info("Found interface" + interfaceName);
 				Method methods[] = interfaceList[i].getMethods();
 				// logger.info("Methods Found: " + methods.length);
 				String meths[] = new String[methods.length];
 				for (int j = 0; j < methods.length; j++) {
 					meths[j] = methods[j].getName();
-					// System.outGovernance.println("new method named "+meths[j]);
+					// System.out.println("new method named "+meths[j]);
 				}
 				Set setTemp = new HashSet(Arrays.asList(meths));
 				String[] array2 = (String[]) (setTemp
@@ -381,7 +381,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 		 * cxt.putValue("balance/amount",0); cxt.putValue("test3/Slacker",new
 		 * ContextNode("master3","eval")); cxt.putValue("test3/HEHE",new
 		 * ContextNode("master5","eval")); }catch (ContextException e) {
-		 * e.printStackTrace();} System.outGovernance.println("context"+cxt); return cxt;
+		 * e.printStackTrace();} System.out.println("context"+cxt); return cxt;
 		 */
 
 		try {
@@ -469,7 +469,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 		 * 
 		 * }catch (RemoteException e) {
 		 * 
-		 * e.printStackTrace(); System.outGovernance.println("failed here"); }
+		 * e.printStackTrace(); System.out.println("failed here"); }
 		 */
 		// }
 		// return new ServiceContext();
@@ -507,7 +507,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.core.provider.cataloger.ui.SignatureDispatchment#getOutGovernance()
+	 * @see sorcer.core.provider.cataloger.ui.SignatureDispatchment#getout()
 	 */
 	@Override
 	public Provider getProvider() {

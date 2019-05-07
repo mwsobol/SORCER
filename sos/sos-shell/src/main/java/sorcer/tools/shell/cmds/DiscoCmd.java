@@ -57,7 +57,7 @@ public class DiscoCmd extends ShellCmd {
 	public void execute(String... args) throws IOException, ClassNotFoundException {
 		// create a clone of list - command may modify it
 		registrars = new ArrayList<ServiceRegistrar>(NetworkShell.getRegistrars());
-		// outGovernance.println("registrars: " + registrars);
+		// out.println("registrars: " + registrars);
 		out = NetworkShell.getShellOutputStream();
 		WhitespaceTokenizer myTk = NetworkShell.getShellTokenizer();
 		int numTokens = myTk.countTokens();

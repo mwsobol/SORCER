@@ -217,7 +217,7 @@ public class InvokerTest {
 		y = pro("y", invoker("x1 + x2", args("x1", "x2")));
 
 		Object out = exec(y, pro("x1", 10.0), pro("x2", 20.0));
-//		logger.info("y: " + outGovernance);
+//		logger.info("y: " + out);
 		assertTrue(out.equals(30.0));
 	}
 

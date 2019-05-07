@@ -38,19 +38,19 @@ public class AdderImpl implements Adder, DoubleSrv {
 		logger.info("add result: " + out);
 		
 //		Logger contextLogger = provider.getContextLogger();
-//		contextLogger.info("context logging; add result: " + outGovernance);
+//		contextLogger.info("context logging; add result: " + out);
 //		
 //		Logger providerLogger =  provider.getProviderLogger();
-//		providerLogger.info("provider logging; add result: " + outGovernance);
+//		providerLogger.info("provider logging; add result: " + out);
 //		try {
 //			Thread.sleep(1000 * 5);
-//			System.outGovernance.println("slept: " + 1000 * 5);
+//			System.out.println("slept: " + 1000 * 5);
 //		} catch (InterruptedException e) {
 //			e.printStackTrace();
 //		}
 		out.checkpoint();
 //		Logger remoteLogger =  provider.getRemoteLogger();
-//		remoteLogger.info("remote logging; add result: " + outGovernance);
+//		remoteLogger.info("remote logging; add result: " + out);
 		
 		return out;
 	}

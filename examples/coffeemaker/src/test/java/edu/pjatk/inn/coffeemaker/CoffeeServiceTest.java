@@ -146,7 +146,7 @@ public class CoffeeServiceTest {
 
 		responseUp(mod, "makeCoffee", "deliver", "change$", "paid$");
 		Context out = response(mod);
-		logger.info("outGovernance: " + out);
+		logger.info("out: " + out);
 		logger.info("result: " + result(mod));
 		assertEquals(value(result(mod), "paid$"), 120);
 		assertEquals(value(result(mod), "change$"), 10);
@@ -175,11 +175,11 @@ public class CoffeeServiceTest {
         //TODO where selfContext is created?
         // should be only when outPaths in thr job are declared
 //        Context selfOut = selfContext(jcd);
-//        Context outGovernance = upcontext(jcd);
+//        Context out = upcontext(jcd);
 
 		Context out = upcontext(exert(jcd));
 
-		logger.info("outGovernance: " + out);
+		logger.info("out: " + out);
         assertEquals(value(out, "jcd/tc/coffee/paid"), 120);
         assertEquals(value(out, "jcd/tc/coffee/price"), 50);
         assertEquals(value(out, "jcd/td/delivery/cost"), 60);
@@ -209,7 +209,7 @@ public class CoffeeServiceTest {
 
         Context out = upcontext(exert(jcd));
 
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertEquals(value(out, "jcd/tc/coffee/paid"), 120);
         assertEquals(value(out, "jcd/tc/coffee/price"), 50);
         assertEquals(value(out, "jcd/td/delivery/cost"), 60);
@@ -234,7 +234,7 @@ public class CoffeeServiceTest {
 
         Context out = context(exert(drinkCoffee));
 
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertEquals(value(out, "coffee/paid"), 120);
         assertEquals(value(out, "coffee/change"), 70);
         assertEquals(value(out, "delivery/cost"), 60);
@@ -259,7 +259,7 @@ public class CoffeeServiceTest {
 
         Context out = context(exert(drinkCoffee));
 
-        logger.info("outGovernance: " + out);
+        logger.info("out: " + out);
         assertEquals(value(out, "coffee/paid"), 120);
         assertEquals(value(out, "coffee/change"), 70);
         assertEquals(value(out, "delivery/cost"), 60);

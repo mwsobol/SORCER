@@ -179,7 +179,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                         val = evalSignature(sig, path, args);
                     }
                 } else if (carrier instanceof ServiceFidelity) {
-                    Object selection = getFi((ServiceFidelity) carrier, args, path);
+                    Object selection = getFiService((ServiceFidelity) carrier, args, path);
                     if (selection instanceof Signature) {
                         val = evalSignature((Signature) selection, path, args);
                     } else if (selection instanceof Evaluation) {
@@ -188,17 +188,17 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                         val = selection;
                     }
                 } else if (carrier instanceof MorphFidelity) {
-                    Object obj = getFi((ServiceFidelity)((MorphFidelity) carrier).getFidelity(), args, path);
+                    Object obj = getFiService((ServiceFidelity)((MorphFidelity) carrier).getFidelity(), args, path);
                     Object out = null;
                     if (obj instanceof Signature)
                         out = evalSignature((Signature)obj, path);
                     else if (obj instanceof Entry) {
-                        ((Subroutine)obj).setScope(this);
-                        out = ((Subroutine) obj).evaluate(args);
+                        ((Entry)obj).setScope(this);
+                        out = ((Entry) obj).evaluate(args);
                     }
                     ((MorphFidelity) carrier).setChanged();
                     ((MorphFidelity) carrier).notifyObservers(out);
-                    val =  out;
+                    val = out;
                 } else if (carrier instanceof MogramEntry) {
                     val = evalMogram((MogramEntry)carrier, path, args);
                 } else if (carrier instanceof ValueCallable && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
@@ -410,8 +410,8 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         return null;
     }
 
-    protected Service getFi(ServiceFidelity fi, Arg[] entries, String path) throws ContextException {
-       Fidelity selected = null;
+    protected Service getFiService(ServiceFidelity fi, Arg[] entries, String path) throws ContextException {
+        Fidelity selected = null;
         List<Fidelity> fiList = Projection.selectFidelities(entries);
         for (Fidelity sfi : fiList) {
             if (sfi.getName().equals(path)) {
@@ -424,9 +424,10 @@ public class SrvModel extends EntModel implements Invocation<Object> {
 
         List<Service> choices = fi.getSelects(this);
         for (Service s : choices) {
-            if (selected == null && fi.getSelect() != null)
-                return fi.getSelect();
-            else {
+            if (selected == null && fi.getSelect() != null) {
+                Service srv = fi.getSelect();
+                return srv;
+            } else {
                 String selectPath = null;
                 if (selected != null) {
                     selectPath = selected.getPath();

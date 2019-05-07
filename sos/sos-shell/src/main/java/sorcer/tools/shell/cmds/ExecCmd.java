@@ -85,10 +85,10 @@ public class ExecCmd extends ShellCmd {
 			out.println(result.getOut());   	
 			out.flush();
 			
-//			outGovernance.println(result.getExitValue());
-//			outGovernance.flush();
-//			outGovernance.println(result.getErr());
-//			outGovernance.flush();
+//			out.println(result.getExitValue());
+//			out.flush();
+//			out.println(result.getErr());
+//			out.flush();
 		} else {
 			out.println(COMMAND_USAGE);
 		}

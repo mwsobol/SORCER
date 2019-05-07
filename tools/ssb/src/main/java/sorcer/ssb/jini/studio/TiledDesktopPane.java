@@ -66,7 +66,7 @@ public class TiledDesktopPane extends JDesktopPane {
             addComponentListener(new ComponentAdapter() {
                 
                 public void componentResized(ComponentEvent evt) {
-                    //System.outGovernance.println(evt);
+                    //System.out.println(evt);
                     if(evt.getID()==ComponentEvent.COMPONENT_RESIZED){
                         tile();
                     }

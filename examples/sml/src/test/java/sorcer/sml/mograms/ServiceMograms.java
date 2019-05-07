@@ -42,7 +42,7 @@ public class ServiceMograms {
     @Test
     public void blockWithExertionAndModel() throws Exception {
 
-        // usage of in and outGovernance connectors associated with model
+        // usage of in and out connectors associated with model
         Task t4 = task(
                 "t4",
                 sig("multiply", MultiplierImpl.class),
@@ -63,18 +63,18 @@ public class ServiceMograms {
                 t4, t5, strategy(Flow.PAR),
                 taskOutConnector);
 
-        // outGovernance connector from model
+        // out connector from model
         Context modelOutConnector = outConn(inVal("y1", "add"), inVal("y2", "multiply"), inVal("y3", "subtract"));
 
         Model model = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/outGovernance",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("subtract/outGovernance",
-                        inPaths("multiply/outGovernance", "add/outGovernance")))));
+                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                        inPaths("multiply/out", "add/out")))));
 
         responseUp(model, "add", "multiply", "subtract");
         //dependsOn(model, call("subtract", paths("multiply", "add")));
@@ -101,18 +101,18 @@ public class ServiceMograms {
 
         Model model = model(
                 inVal("by", 10.0),
-                ent(sig("increment", incrementer, result("outGovernance",
+                ent(sig("increment", incrementer, result("out",
                         inPaths("by")))));
 
-        responseUp(model, "increment", "outGovernance");
+        responseUp(model, "increment", "out");
 
         Model exerted = exert(model);
-        logger.info("outGovernance context: " + exerted);
-        assertTrue(exec(exerted, "outGovernance").equals(110.0));
+        logger.info("out context: " + exerted);
+        assertTrue(exec(exerted, "out").equals(110.0));
 
         exerted = exert(model);
-        logger.info("outGovernance context: " + exerted);
-        assertTrue(exec(exerted, "outGovernance").equals(120.0));
+        logger.info("out context: " + exerted);
+        assertTrue(exec(exerted, "out").equals(120.0));
     }
 
     @Test
@@ -121,16 +121,16 @@ public class ServiceMograms {
         Incrementer incrementer = new IncrementerImpl(100.0);
 
         Model mdl = model(
-                inVal("by", entFi(inVal("by-10", 10.0), inVal("by-20", 20.0))), inVal("outGovernance", 0.0),
-                ent(sig("increment", incrementer, result("outGovernance", inPaths("by", "template")))),
-                ent("multiply", invoker("add * outGovernance", ents("add", "outGovernance"))));
+                inVal("by", entFi(inVal("by-10", 10.0), inVal("by-20", 20.0))), inVal("out", 0.0),
+                ent(sig("increment", incrementer, result("out", inPaths("by", "template")))),
+                ent("multiply", invoker("add * out", ents("add", "out"))));
 
-        responseUp(mdl, "increment", "outGovernance", "multiply", "by");
-//        Context outGovernance = response(mdl, val("add", 100.0));
+        responseUp(mdl, "increment", "out", "multiply", "by");
+//        Context out = response(mdl, val("add", 100.0));
 //        Model exerted = exert(mdl);
-//        logger.info("outGovernance context: " + exerted);
+//        logger.info("out context: " + exerted);
 //        assertTrue(eval(exerted, "multiply").equals(11000));
-//        assertTrue(eval(exerted, "outGovernance").equals(110.0));
+//        assertTrue(eval(exerted, "out").equals(110.0));
 
         logger.info("DEPS: " + printDeps(mdl));
 
@@ -139,17 +139,17 @@ public class ServiceMograms {
                 task(sig("add", AdderImpl.class),
                         context(inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("add"))),
                 loop(condition(cxt ->
-                                (double) value(cxt, "outGovernance") < 1000.0), mdl));
+                                (double) value(cxt, "out") < 1000.0), mdl));
 
         looping = exert(looping, fi("by-20", "by"));
         logger.info("block context: " + context(looping));
-        logger.info("result: " + value(context(looping), "outGovernance"));
-        logger.info("model result: " + value(result(mdl), "outGovernance"));
+        logger.info("result: " + value(context(looping), "out"));
+        logger.info("model result: " + value(result(mdl), "out"));
         logger.info("multiply result: " + value(result(mdl), "multiply"));
-        // outGovernance variable in block
-        assertTrue(value(context(looping), "outGovernance").equals(1000.0));
-        // outGovernance variable in model
-        assertTrue(value(result(mdl), "outGovernance").equals(1000.0));
+        // out variable in block
+        assertTrue(value(context(looping), "out").equals(1000.0));
+        // out variable in model
+        assertTrue(value(result(mdl), "out").equals(1000.0));
         assertTrue(value(result(mdl), "multiply").equals(100000.0));
         assertTrue(value(result(mdl), "by").equals(20.0));
     }
@@ -157,7 +157,7 @@ public class ServiceMograms {
     @Test
     public void modelWithInnerTask() throws Exception {
 
-        // usage of in and outGovernance connectors associated with model
+        // usage of in and out connectors associated with model
         Task innerTask = task(
                 "task/multiply",
                 sig("multiply", MultiplierImpl.class),
@@ -167,15 +167,15 @@ public class ServiceMograms {
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/outGovernance",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("subtract/outGovernance",
-                        inPaths("multiply/outGovernance", "add/outGovernance")))),
-                ent(sig("outGovernance", "average", AveragerImpl.class, result("model/response",
+                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                        inPaths("multiply/out", "add/out")))),
+                ent(sig("out", "average", AveragerImpl.class, result("model/response",
                         inPaths("task/multiply", "subtract")))),
-                response("task/multiply", "subtract", "outGovernance"));
+                response("task/multiply", "subtract", "out"));
 
         // dependsOn(m, call("subtract", paths("multiply", "add")));
 
@@ -185,7 +185,7 @@ public class ServiceMograms {
         logger.info("response: " + out);
         assertTrue(get(out, "task/multiply").equals(500.0));
         assertTrue(get(out, "subtract").equals(400.0));
-        assertTrue(get(out, "outGovernance").equals(450.0));
+        assertTrue(get(out, "out").equals(450.0));
     }
 
     @Test
@@ -193,22 +193,22 @@ public class ServiceMograms {
         // get response from a service model with inner model
 
         Model innerModel = model("inner/multiply",
-                ent(sig("inner/multiply/outGovernance", "multiply", MultiplierImpl.class,
-                        result("multiply/outGovernance", inPaths("arg/x1", "arg/x2")))),
-                response("inner/multiply/outGovernance"));
+                ent(sig("inner/multiply/out", "multiply", MultiplierImpl.class,
+                        result("multiply/out", inPaths("arg/x1", "arg/x2")))),
+                response("inner/multiply/out"));
 
         Model outerModel = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/outGovernance",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("subtract/outGovernance",
-                        inPaths("multiply/outGovernance", "add/outGovernance")))),
-                ent(sig("outGovernance", "average", AveragerImpl.class, result("model/response",
-                        inPaths("inner/multiply/outGovernance", "subtract")))),
-                response("inner/multiply", "subtract", "outGovernance"));
+                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                        inPaths("multiply/out", "add/out")))),
+                ent(sig("out", "average", AveragerImpl.class, result("model/response",
+                        inPaths("inner/multiply/out", "subtract")))),
+                response("inner/multiply", "subtract", "out"));
 
         // dependsOn(outerModel, call("subtract", paths("multiply", "add")));
 
@@ -216,9 +216,9 @@ public class ServiceMograms {
 
         Context out = response(outerModel);
         logger.info("response: " + out);
-        assertTrue(get(out, "inner/multiply/outGovernance").equals(500.0));
+        assertTrue(get(out, "inner/multiply/out").equals(500.0));
         assertTrue(get(out, "subtract").equals(400.0));
-        assertTrue(get(out, "outGovernance").equals(450.0));
+        assertTrue(get(out, "out").equals(450.0));
     }
 
     @Test
@@ -226,35 +226,35 @@ public class ServiceMograms {
         // get response from a service model with inner model
 
         Model innerMdl = model("inner/multiply",
-                ent(sig("inner/multiply/outGovernance", "multiply", MultiplierImpl.class,
-                        result("multiply/outGovernance", inPaths("arg/x1", "arg/x2")))),
-                response("inner/multiply/outGovernance"));
+                ent(sig("inner/multiply/out", "multiply", MultiplierImpl.class,
+                        result("multiply/out", inPaths("arg/x1", "arg/x2")))),
+                response("inner/multiply/out"));
 
         Model outerMdl = model("outer/model",
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                ent(sig("multiply", MultiplierImpl.class, result("multiply/outGovernance",
+                ent(sig("multiply", MultiplierImpl.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(sig("add", AdderImpl.class, result("add/outGovernance",
+                ent(sig("add", AdderImpl.class, result("add/out",
                         inPaths("add/x1", "add/x2")))),
-                ent(sig("subtract", SubtractorImpl.class, result("subtract/outGovernance",
-                        inPaths("multiply/outGovernance", "add/outGovernance")))),
-                ent(sig("outGovernance", "average", AveragerImpl.class, result("model/response",
-                        inPaths("inner/multiply/outGovernance", "subtract")))),
-                response("inner/multiply", "subtract", "outGovernance"));
+                ent(sig("subtract", SubtractorImpl.class, result("subtract/out",
+                        inPaths("multiply/out", "add/out")))),
+                ent(sig("out", "average", AveragerImpl.class, result("model/response",
+                        inPaths("inner/multiply/out", "subtract")))),
+                response("inner/multiply", "subtract", "out"));
 
          dependsOn(outerMdl, dep("subtract", paths("multiply", "add")));
 
         add(outerMdl, innerMdl, inVal("arg/x1", 10.0), inVal("arg/x2", 50.0));
 
         Task mt = task("modelTask", sig("exert", ServiceModeler.class,
-                outPaths("subtract", "outGovernance")), outerMdl);
+                outPaths("subtract", "out")), outerMdl);
 
 
         Context out = context(exert(mt));
         logger.info("response: " + out);
-        assertTrue(get(out, "inner/multiply/outGovernance").equals(500.0));
-        assertTrue(get(out, "subtract/outGovernance").equals(400.0));
+        assertTrue(get(out, "inner/multiply/out").equals(500.0));
+        assertTrue(get(out, "subtract/out").equals(400.0));
         assertTrue(get(out, "model/response").equals(450.0));
     }
 
@@ -263,34 +263,34 @@ public class ServiceMograms {
         // get response from a service model with inner model
 
         Domain innerMdl = model("inner/multiply",
-                ent(sig("inner/multiply/outGovernance", "multiply", Multiplier.class,
-                        result("multiply/outGovernance", inPaths("arg/x1", "arg/x2")))),
-                response("inner/multiply/outGovernance"));
+                ent(sig("inner/multiply/out", "multiply", Multiplier.class,
+                        result("multiply/out", inPaths("arg/x1", "arg/x2")))),
+                response("inner/multiply/out"));
 
         Domain outerMdl = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
-                ent(sig("multiply", Multiplier.class, result("multiply/outGovernance",
+                ent(sig("multiply", Multiplier.class, result("multiply/out",
                         inPaths("multiply/x1", "multiply/x2")))),
-                ent(space(sig("add", Adder.class, result("add/outGovernance",
+                ent(space(sig("add", Adder.class, result("add/out",
                         inPaths("add/x1", "add/x2"))))),
-                ent(sig("subtract", Subtractor.class, result("subtract/outGovernance",
-                        inPaths("multiply/outGovernance", "add/outGovernance")))),
-                ent(sig("outGovernance", "average", Averager.class, result("model/response",
-                        inPaths("inner/multiply/outGovernance", "subtract")))),
-                response("inner/multiply", "subtract", "outGovernance"));
+                ent(sig("subtract", Subtractor.class, result("subtract/out",
+                        inPaths("multiply/out", "add/out")))),
+                ent(sig("out", "average", Averager.class, result("model/response",
+                        inPaths("inner/multiply/out", "subtract")))),
+                response("inner/multiply", "subtract", "out"));
 
          dependsOn(outerMdl, dep("subtract", paths("multiply", "add")));
 
         add(outerMdl, innerMdl, inVal("arg/x1", 10.0), inVal("arg/x2", 50.0));
 
         Task mt = task("modelTask", sig("exert", Modeler.class,
-                outPaths("subtract", "outGovernance")), outerMdl);
+                outPaths("subtract", "out")), outerMdl);
 
         Context out = context(exert(mt));
         logger.info("response: " + out);
-        assertTrue(get(out, "inner/multiply/outGovernance").equals(500.0));
-        assertTrue(get(out, "outGovernance").equals(450.0));
+        assertTrue(get(out, "inner/multiply/out").equals(500.0));
+        assertTrue(get(out, "out").equals(450.0));
         assertTrue(get(out, "subtract").equals(400.0));
     }
 

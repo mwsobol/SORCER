@@ -190,16 +190,16 @@ public class DataStorageCmd extends ShellCmd {
 				Context cxt = null;
 
 				store("test-only");
-//				outGovernance.println("XXXXXXXXXXXXX service impl: " + dataStorers[selectedDataStorer]);
-//				outGovernance.println("XXXXXXXXXXXXX service: " + (DatabaseStorer) dataStorers[selectedDataStorer].service);
-//				outGovernance.println("XXXXXXXXXXXXX interfaces: " + Arrays.toString(dataStorers[selectedDataStorer].service.getClass().getInterfaces()));
-//				outGovernance.println("XXXXXXXXXXXXX key: " + ((Provider) dataStorers[selectedDataStorer].service).getProviderName());
+//				out.println("XXXXXXXXXXXXX service impl: " + dataStorers[selectedDataStorer]);
+//				out.println("XXXXXXXXXXXXX service: " + (DatabaseStorer) dataStorers[selectedDataStorer].service);
+//				out.println("XXXXXXXXXXXXX interfaces: " + Arrays.toString(dataStorers[selectedDataStorer].service.getClass().getInterfaces()));
+//				out.println("XXXXXXXXXXXXX key: " + ((Provider) dataStorers[selectedDataStorer].service).getProviderName());
 				cxt = ((DatabaseStorer) dataStorers[selectedDataStorer].service).contextList(SdbUtil.getListContext(Store.object));
-//				outGovernance.println("XXXXXXXXXXXXX context: " + cxt);
+//				out.println("XXXXXXXXXXXXX context: " + cxt);
 
 				store("test-only");
 				List<String> records = list(Store.object);
-//				outGovernance.println("XXXXXXXXXXXXX records; " + records);
+//				out.println("XXXXXXXXXXXXX records; " + records);
 				out.println(cxt.getValue(DatabaseStorer.store_content_list));
 			} else {
 				Map<Uuid, ObjectInfo> ri = null;
@@ -229,7 +229,7 @@ public class DataStorageCmd extends ShellCmd {
 			throw new MogramException(e);
 		}
 //		if (all.size() == 0) {
-//			outGovernance.println("No monitored mograms at this time.");
+//			out.println("No monitored mograms at this time.");
 //			return;
 //		}
 //		recordInfos = new RecordInfo[all.size()];

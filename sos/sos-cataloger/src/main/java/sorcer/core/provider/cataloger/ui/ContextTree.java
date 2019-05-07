@@ -103,10 +103,10 @@ public class ContextTree extends JPanel {
 			if (selRow != -1) // make sure its valid
 			{
 				if (e.getClickCount() == 1) {
-					// System.outGovernance.println("Single click "+selPath);
+					// System.out.println("Single click "+selPath);
 				} else if (e.getClickCount() == 2) // handle 2 clicks
 				{
-					// System.outGovernance.println("double click "+selPath);
+					// System.out.println("double click "+selPath);
 					ContextEditWindow temp = new ContextEditWindow(thisThat,
 							selPath); // run the edit window
 				}
@@ -230,12 +230,12 @@ public class ContextTree extends JPanel {
 			{
 				Object child = treeModel.getChild(current, i); // get the kid
 				// add is datanode check
-				// System.outGovernance.println("checking child number "+i);
+				// System.out.println("checking child number "+i);
 				if (child instanceof DefaultMutableTreeNode) // make sure the
 				// kid is a tree
 				// node
 				{
-					// System.outGovernance.println("child "+i+" is a tree nody ");
+					// System.out.println("child "+i+" is a tree nody ");
 					if (((DefaultMutableTreeNode) child).getUserObject() instanceof ContextNodeType) // check
 					// if
 					// its
@@ -243,7 +243,7 @@ public class ContextTree extends JPanel {
 					// special
 					// multitype
 					{
-						// System.outGovernance.println("child user object is a context node "
+						// System.out.println("child user object is a context node "
 						// +i);
 						ContextNodeType cnt = (ContextNodeType) ((DefaultMutableTreeNode) child)
 								.getUserObject(); // get the special multitype
@@ -252,7 +252,7 @@ public class ContextTree extends JPanel {
 						// output it, as data nodes can
 						// have no children
 						{
-							// System.outGovernance.println("current is a dataNode "+i+" data "+cnt.toString());
+							// System.out.println("current is a dataNode "+i+" data "+cnt.toString());
 							try {
 								child = ((DefaultMutableTreeNode) current)
 										.getUserObject();
@@ -288,7 +288,7 @@ public class ContextTree extends JPanel {
 							if (currentPath.length() != 0) // currentPath+"/"+((DefaultMutableTreeNode)current).getUserObject().toString();
 								tempPath += "/";
 							tempPath += cnt.getValue(); // update the path
-							// System.outGovernance.println(" not data node "+i+" tp="+tempPath+" curr");
+							// System.out.println(" not data node "+i+" tp="+tempPath+" curr");
 
 							// call on the child node
 							theContext = doRootGenerateContext(theContext,
@@ -304,7 +304,7 @@ public class ContextTree extends JPanel {
 		/*
 		 * String cxt=new String(); StringBuffer buf=new StringBuffer();
 		 * ((ServiceContext)theContext).toStringComplete(cxt, buf);
-		 * System.outGovernance.println("current context is "+cxt);
+		 * System.out.println("current context is "+cxt);
 		 */
 		return theContext;
 	}
@@ -469,17 +469,17 @@ public class ContextTree extends JPanel {
 		for (String indPath : splitPath) // go thru each part of the path
 		{
 			Boolean foundNode = false; // indicate we have not found the node
-			// System.outGovernance.println("working on "+indPath);
+			// System.out.println("working on "+indPath);
 			int count = treeModel.getChildCount(nodes);
-			// System.outGovernance.println(nodes.toString()+" has "+count+" kids");
+			// System.out.println(nodes.toString()+" has "+count+" kids");
 			for (int i = 0; i < count; i++) // go true each child
 			{
 				Object node = treeModel.getChild(nodes, i);
-				// System.outGovernance.println(node.toString()+" is node number "+i);
+				// System.out.println(node.toString()+" is node number "+i);
 				if (indPath.equals(node.toString())) // matched this part, keep
 				// going
 				{
-					// System.outGovernance.println("nodes matched");
+					// System.out.println("nodes matched");
 					nodes = node;
 					foundNode = true;
 					break;
@@ -488,7 +488,7 @@ public class ContextTree extends JPanel {
 			if (!foundNode) // no match kill it off
 				return null;
 
-			// System.outGovernance.println("Children of path"+indPath+" num:"+treeModel.getChildCount(new
+			// System.out.println("Children of path"+indPath+" num:"+treeModel.getChildCount(new
 			// DefaultMutableTreeNode(indPath)));
 		}
 
@@ -502,7 +502,7 @@ public class ContextTree extends JPanel {
 	 * 
 	 * public void treeNodesChanged(TreeModelEvent e) {
 	 */
-	// System.outGovernance.println("editing here");
+	// System.out.println("editing here");
 	// DefaultMutableTreeNode node;
 	// node = (DefaultMutableTreeNode)(e.getTreePath().getLastPathComponent());
 
@@ -519,8 +519,8 @@ public class ContextTree extends JPanel {
 	// int index = e.getChildIndices()[0];
 	// node = (DefaultMutableTreeNode)(node.getChildAt(index));
 
-	// System.outGovernance.println("The user has finished editing the node.");
-	// System.outGovernance.println("New eval: " + node.getUserObject());
+	// System.out.println("The user has finished editing the node.");
+	// System.out.println("New eval: " + node.getUserObject());
 	/*
 	 * } public void treeNodesInserted(TreeModelEvent e) { } public void
 	 * treeNodesRemoved(TreeModelEvent e) { } public void

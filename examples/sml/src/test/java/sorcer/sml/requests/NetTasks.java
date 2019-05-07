@@ -44,7 +44,7 @@ public class NetTasks {
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
-		logger.info("outGovernance context: " + cxt);
+		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ result/y: " + value(cxt, "result/y"));
@@ -66,7 +66,7 @@ public class NetTasks {
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
-		logger.info("outGovernance context: " + cxt);
+		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ result/eval: " + value(cxt, "result/eval"));
@@ -88,7 +88,7 @@ public class NetTasks {
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
-		logger.info("outGovernance context: " + cxt);
+		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ result/y: " + value(cxt, "result/y"));
@@ -110,7 +110,7 @@ public class NetTasks {
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
-		logger.info("outGovernance context: " + cxt);
+		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ result/y: " + value(cxt, "result/y"));
@@ -134,7 +134,7 @@ public class NetTasks {
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
-		logger.info("outGovernance context: " + cxt);
+		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ result/y: " + value(cxt, "result/y"));
@@ -159,7 +159,7 @@ public class NetTasks {
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
-		logger.info("outGovernance context: " + cxt);
+		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ result/y: " + value(cxt, "result/y"));
@@ -333,7 +333,7 @@ public class NetTasks {
 						result("result/y")));
 
 		Context result =  context(exert(t5));
-		logger.info("outGovernance context: " + result);
+		logger.info("out context: " + result);
 		assertEquals(value(result, "arg/x1"), 20.0);
 		assertEquals(value(result, "arg/x2"), 80.0);
 		assertEquals(value(result, "result/y"), 100.0);

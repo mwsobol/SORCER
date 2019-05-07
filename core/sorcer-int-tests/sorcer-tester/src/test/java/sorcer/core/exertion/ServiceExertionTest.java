@@ -116,7 +116,7 @@ public class ServiceExertionTest {
 		
 //		Task task = task("t1", sig("add", Adder.class), 
 //		   context("add", in(path(arg, x1), 20.0), in(path(arg, x2), 80.0),
-//		      outGovernance(path(result, y), null)));
+//		      out(path(result, y), null)));
 
 		Task task = task("t1", sig("add", AdderImpl.class), 
 				   context("add", inVal(attPath(arg, x1), 20.0), inVal(attPath(arg, x2), 80.0),
@@ -130,21 +130,21 @@ public class ServiceExertionTest {
 	
 //		Task t3 = task("t3", sig("subtract", Subtractor.class), 
 //		   context("subtract", in(path(arg, x1), null), in(path(arg, x2), null),
-//		      outGovernance(path(result, y), null)));
+//		      out(path(result, y), null)));
 //		
 //		Task t4 = task("t4", sig("multiply", Multiplier.class), 
 //				   context("multiply", in(path(arg, x1), 10.0), in(path(arg, x2), 50.0),
-//				      outGovernance(path(result, y), null)));
+//				      out(path(result, y), null)));
 //		
 //		Task t5 = task("t5", sig("add", Adder.class), 
 //		   context("add", in(path(arg, x1), 20.0), in(path(arg, x2), 80.0),
-//		      outGovernance(path(result, y), null)));
+//		      out(path(result, y), null)));
 //
 //		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 //		//Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL, Access.PULL)), t3,
 //		Job job = job("j1", job("j2", t4, t5), t3,
-//		   pipe(outGovernance(t4, path(result, y)), in(t3, path(arg, x1))),
-//		   pipe(outGovernance(t5, path(result, y)), in(t3, path(arg, x2))));
+//		   pipe(out(t4, path(result, y)), in(t3, path(arg, x1))),
+//		   pipe(out(t5, path(result, y)), in(t3, path(arg, x2))));
 		
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class), 
 				context("subtract", inVal(attPath(arg, x1)), inVal(attPath(arg, x2)),

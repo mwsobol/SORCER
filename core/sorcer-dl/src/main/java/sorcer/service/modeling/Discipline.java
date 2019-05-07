@@ -42,7 +42,7 @@ public interface Discipline extends Service, Contexting<Object>, Governance {
      *
      * @throws ServiceException
      */
-    public Service getOutGovernance();
+    public Service getout();
 
     /**
      * Returns a dispatcher multifidelity

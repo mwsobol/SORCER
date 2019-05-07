@@ -133,7 +133,7 @@ public class RoutineMultiFidelities {
 
 		t4 = exert(t4);
 		Context out = context(t4);
-		logger.info("outGovernance: " + out);
+		logger.info("out: " + out);
 		assertTrue(value(out, "result/y").equals(300.0));
 	}
 

@@ -161,17 +161,17 @@ public class Projection extends ServiceFidelity {
 	}
 
 //	public static List<Fidelity> selectFidelities(Service[] entries) {
-//		FidelityList outGovernance = new FidelityList();
+//		FidelityList out = new FidelityList();
 //		for (Service s : entries) {
 //			if (s instanceof Projection) {
-//				outGovernance.addAll(((Projection) s).getAllFidelities());
+//				out.addAll(((Projection) s).getAllFidelities());
 //			} else if (s instanceof FidelityList) {
-//				outGovernance.addAll((FidelityList) s);
+//				out.addAll((FidelityList) s);
 //			} else if (s instanceof Fidelity && ((Fidelity)s).fiType == Fidelity.Type.SELECT) {
-//				outGovernance.add((Fidelity)s);
+//				out.add((Fidelity)s);
 //			}
 //		}
-//		return outGovernance;
+//		return out;
 //	}
 
 	public ServiceFidelity[] toFidelityArray() {

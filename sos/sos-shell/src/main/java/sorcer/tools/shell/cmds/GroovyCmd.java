@@ -113,7 +113,7 @@ public class GroovyCmd extends ShellCmd {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			//System.outGovernance.println(">>> executing script: \n" + sb.toString());
+			//System.out.println(">>> executing script: \n" + sb.toString());
 		} else {
 			out.println("Missing script input filename!");
 			return;
@@ -122,7 +122,7 @@ public class GroovyCmd extends ShellCmd {
 		et.start();
 		et.join();
 		Object outObject = et.getResult();
-		// System.outGovernance.println(">>>>>>>>>>> result: " + xrt);
+		// System.out.println(">>>>>>>>>>> result: " + xrt);
 		if (outObject != null) {
 			out.println("\n---> GROOVY OUTPUT --->");
 			out.println(outObject.toString());
@@ -134,7 +134,7 @@ public class GroovyCmd extends ShellCmd {
 					System.err.println(et.getTarget());
 				}
 			}
-			//System.outGovernance.println(">>> executing script: \n" + sb.toString());
+			//System.out.println(">>> executing script: \n" + sb.toString());
 		}
 	}
 

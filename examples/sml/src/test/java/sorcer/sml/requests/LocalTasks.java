@@ -55,7 +55,7 @@ public class LocalTasks {
 
 		Routine out = exert(t5);
 		Context cxt = context(out);
-		logger.info("outGovernance context: " + cxt);
+		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ result/eval: " + value(cxt, "result/eval"));
@@ -77,7 +77,7 @@ public class LocalTasks {
 
 		Routine out = exert(t5, op("t5", "add2"));
 		Context cxt = context(out);
-		logger.info("outGovernance context: " + cxt);
+		logger.info("out context: " + cxt);
 
 		// get a single context argument
 		assertEquals(200.0, value(cxt, "result/eval"));

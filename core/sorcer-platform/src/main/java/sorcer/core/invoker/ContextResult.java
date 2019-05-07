@@ -34,14 +34,14 @@ public class ContextResult<Objec> extends ServiceContext<Object> {
 	
 	public ContextResult(Object result, Routine exertion) throws ContextException {
 		putValue("exit/eval", 0);
-		putOutValue("result/outGovernance", result);
+		putOutValue("result/out", result);
 		putErrValue("result/err", ((ControlContext)exertion.getControlContext()).getExceptions());
 		putValue("invoked/method", exertion.getProcessSignature());
 	}
 	
 	public ContextResult(CmdResult result) throws ContextException {
 		putValue("exit/eval", result.getExitValue());
-		putOutValue("result/outGovernance", result.getOut());
+		putOutValue("result/out", result.getOut());
 		putErrValue("result/err", result.getErr());
 		putValue("invoked/method", result.getErr());
 	}
@@ -56,7 +56,7 @@ public class ContextResult<Objec> extends ServiceContext<Object> {
 	}
 	
 	public void setResult(Object object) throws ContextException {
-		putOutValue("result/outGovernance", object);
+		putOutValue("result/out", object);
 	}
 	
 	public int getExitState() throws ContextException {
@@ -64,7 +64,7 @@ public class ContextResult<Objec> extends ServiceContext<Object> {
 	}
 
 	public Object getExitValue() throws ContextException {
-		return getValue("result/outGovernance");
+		return getValue("result/out");
 	}
 
 	public String getErr() throws ContextException {
@@ -73,7 +73,7 @@ public class ContextResult<Objec> extends ServiceContext<Object> {
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("Context result [outGovernance:\n");
+		StringBuilder sb = new StringBuilder("Context result [out:\n");
 		try {
 			sb.append(getOut()).append("\nerr: ").append(getErr())
 					.append("\nexitValue: ").append(getExitValue()).append("]");

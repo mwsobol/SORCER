@@ -1573,10 +1573,10 @@ operator extends Operator {
         return fi;
     }
 
-    //	public static List<Service>  fis(Mogram exertion) {
+//    	public static List<Service>  fis(Mogram exertion) {
 //		return ((ServiceMogram) exertion).getServiceFidelities().get(exertion.getName()).getSelects();
 //	}
-//
+
     public static List<Service>  fis(Mogram mogram) {
         if (mogram.getMultiFi() != null) {
             return mogram.getMultiFi().getSelects();
@@ -1680,7 +1680,7 @@ operator extends Operator {
     }
 
     public static MorphFidelity mphFi(Service... services) {
-        MorphFidelity morphFi = new MorphFidelity(new ServiceFidelity(services));
+        MorphFidelity morphFi = new MorphFidelity(services);
         return morphFi;
     }
 

@@ -49,7 +49,7 @@ public class DisciplineExplorer implements Service, Exploration {
                     xrt.setContext(transdiscipline.input);
                 }
             }
-            xrt.dispatch(transdiscipline.getOutGovernance());
+            xrt.dispatch(transdiscipline.getout());
             transdiscipline.outDispatcher = xrt.exert();
             execDependencies(transdiscipline.getName(), args);
             return transdiscipline.getOutput();

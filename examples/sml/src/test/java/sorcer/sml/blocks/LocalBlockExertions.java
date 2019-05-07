@@ -135,9 +135,9 @@ public class  LocalBlockExertions implements SorcerConstants {
 		bind(sb, val("y1", 200.0), val("y2", 100.0));
 //		logger.info("block context1: " + context(sb));
 
-//		outGovernance = exert(sb, val("y1", 200.0), val("y2", 100.0));
+//		out = exert(sb, val("y1", 200.0), val("y2", 100.0));
 		out = exert(sb);
-//		logger.info("block context2: " + context(outGovernance));
+//		logger.info("block context2: " + context(out));
 //		logger.info("result: " + eval(context(block), "block/result"));
 		assertEquals(value(context(out), "block/result"), 500.0);
 
@@ -237,25 +237,25 @@ public class  LocalBlockExertions implements SorcerConstants {
 	public void optBlockTest() throws Exception {
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-						result("outGovernance")));
+						result("out")));
 
 		Task t5 = task("t5", sig("add", AdderImpl.class),
                 context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-						result("outGovernance")));
+						result("out")));
 
 		Block block = block("block", t4,
-				opt(condition((Context<Double> cxt) -> value(cxt, "outGovernance") > 600.0), t5));
+				opt(condition((Context<Double> cxt) -> value(cxt, "out") > 600.0), t5));
 
 		block = exert(block);
 //		logger.info("block context: " + context(block));
-//		logger.info("result: " + eval(context(block), "outGovernance"));
+//		logger.info("result: " + eval(context(block), "out"));
 		assertEquals(value(context(block), "condition/eval"), false);
-		assertEquals(value(context(block), "outGovernance"), 500.0);
+		assertEquals(value(context(block), "out"), 500.0);
 
 		block = exert(block, val("block/t4/arg/x1", 200.0), val("block/t4/arg/x2", 800.0));
 //		logger.info("block context: " + context(block));
-//		logger.info("result: " + eval(context(block), "outGovernance"));
-		assertEquals(value(context(block), "outGovernance"), 100.0);
+//		logger.info("result: " + eval(context(block), "out"));
+		assertEquals(value(context(block), "out"), 100.0);
 	}
 
 	@Test

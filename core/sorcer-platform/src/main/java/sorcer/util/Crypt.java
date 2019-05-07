@@ -107,7 +107,7 @@ public class Crypt {
 
 	/*
 	 * Inverse permutation of IP for end Temporary - the true behavior will be
-	 * implemented in a shift outGovernance register (Look at the pattern obvious in an
+	 * implemented in a shift out register (Look at the pattern obvious in an
 	 * 8x8 layout)
 	 */
 	int IPinv_p[] = { 40, 8, 48, 16, 56, 24, 64, 32, 39, 7, 47, 15, 55, 23, 63,
@@ -147,10 +147,10 @@ public class Crypt {
 		}
 
 		// Debug information
-		// System.outGovernance.println("Before SB: ");
+		// System.out.println("Before SB: ");
 		// pr_bits(in,48);
-		// System.outGovernance.println("After SB : ");
-		// pr_bits(outGovernance,32);
+		// System.out.println("After SB : ");
+		// pr_bits(out,32);
 	};
 
 	private int ascii_to_bin(char c) {
@@ -175,7 +175,7 @@ public class Crypt {
 		int tot, i;
 
 		// Debug information
-		// System.outGovernance.println("*"+ascii_to_bin(salt[0])+", "+ascii_to_bin(salt[1])+", "+(int)salt[0]+", "+(int)salt[1]+"Hatjie");
+		// System.out.println("*"+ascii_to_bin(salt[0])+", "+ascii_to_bin(salt[1])+", "+(int)salt[0]+", "+(int)salt[1]+"Hatjie");
 
 		tot = ascii_to_bin(salt[0]) | (ascii_to_bin(salt[1]) << 6);
 		for (i = 0; i < 12; i++)
@@ -208,9 +208,9 @@ public class Crypt {
 		permute(PC1_p, 56, tmp, ikey);
 
 		// Debug information
-		// System.outGovernance.print("Password bits: ");
+		// System.out.print("Password bits: ");
 		// pr_bits(tmp,64);
-		// System.outGovernance.print("Loaded (after PC 1): ");
+		// System.out.print("Loaded (after PC 1): ");
 		// pr_bits(ikey,56);
 
 	};
@@ -265,14 +265,14 @@ public class Crypt {
 		}
 		permute(E_p, 48, tmp32, tmp48);
 		// Debug information
-		// System.outGovernance.print("Expansion: "); pr_bits(tmp48,48);
+		// System.out.print("Expansion: "); pr_bits(tmp48,48);
 		do_salt(tmp48, saltmask);
 
 		// Debug information
-		// System.outGovernance.println("TMP48 --> ");
+		// System.out.println("TMP48 --> ");
 		// pr_bits(tmp48,48);
 		subkey(ikey, iter);
-		// System.outGovernance.println("SUBKEY --> ");
+		// System.out.println("SUBKEY --> ");
 		// print_bits(sub,48);
 		skey = sub;
 		xor(tmp48, skey, 0, 48); // Goed
@@ -297,14 +297,14 @@ public class Crypt {
 		load_salt(saltmask, salt);
 
 		// Debug information
-		// System.outGovernance.print("Key : ");
+		// System.out.print("Key : ");
 		// pr_bits(ikey,56);
-		// System.outGovernance.print("Salt: ");
+		// System.out.print("Salt: ");
 		// pr_bits(saltmask,12);
 
 		for (dess = 0; dess < 25; dess++) {
 			for (iters = 0; iters < 16; iters += 2) { // Debug information
-				// System.outGovernance.print("Mycrypt "+iters+" : ");
+				// System.out.print("Mycrypt "+iters+" : ");
 				// pr_bits(bits,64);
 				do_f(bits, 32, outl, iters, ikey, saltmask);
 				xor(outl, bits, 0, 32);
@@ -324,7 +324,7 @@ public class Crypt {
 				}
 				// Debug information
 				// if(iters==14)
-				// { System.outGovernance.print("End :    ");
+				// { System.out.print("End :    ");
 				// pr_bits(bits,64);
 				// }
 
@@ -333,7 +333,7 @@ public class Crypt {
 		permute(IPinv_p, 64, bits, done);
 
 		// Debug information
-		// System.outGovernance.print("OUT BITS: ");
+		// System.out.print("OUT BITS: ");
 		// pr_bits(done,64);
 
 		answer[0] = (char) salt[0];

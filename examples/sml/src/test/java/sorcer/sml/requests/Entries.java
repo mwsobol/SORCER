@@ -196,7 +196,7 @@ public class Entries {
         CmdResult result = (CmdResult) exec(cmd);
         logger.info("result: " + result);
 
-        logger.info("result outGovernance: " + result.getOut());
+        logger.info("result out: " + result.getOut());
         logger.info("result err: " + result.getErr());
         if (result.getExitValue() != 0)
             throw new RuntimeException();
@@ -210,7 +210,7 @@ public class Entries {
     @Test
     public void signatureEntry() throws Exception {
 
-        Subroutine y1 = srv("y1", sig("add", AdderImpl.class, result("add/outGovernance",
+        Subroutine y1 = srv("y1", sig("add", AdderImpl.class, result("add/out",
                         inPaths("x1", "x2"))),
                     context(inVal("x1", 10.0), inVal("x2", 20.0)));
 
@@ -223,7 +223,7 @@ public class Entries {
         Subroutine y1 = srv("y1", sig("add", AdderImpl.class),
                 context(inVal("x1", 10.0), inVal("x2", 20.0)));
 
-//        logger.info("outGovernance eval: {}", eval(y1, selector("result/eval")));
+//        logger.info("out eval: {}", eval(y1, selector("result/eval")));
         assertEquals(30.0,  exec(y1, selector("result/eval")));
     }
 
@@ -234,7 +234,7 @@ public class Entries {
                 context(inVal("x1", 10.0), inVal("x2", 20.0)),
                 selector("result/eval"));
 
-//        logger.info("outGovernance eval: {}", eval(y1));
+//        logger.info("out eval: {}", eval(y1));
         assertEquals(30.0,  exec(y1));
     }
 
@@ -247,7 +247,7 @@ public class Entries {
                     <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
 			context(val("x1", 10.0), val("x2", 20.0)));
 
-//        logger.info("outGovernance eval: {}", eval(y1));
+//        logger.info("out eval: {}", eval(y1));
 		assertEquals(30.0,  exec(y1));
 	}
 
@@ -260,7 +260,7 @@ public class Entries {
                         <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
                 model(pro("x1", 10.0), pro("x2", 20.0)));
 
-//        logger.info("outGovernance eval: {}", eval(y1));
+//        logger.info("out eval: {}", eval(y1));
         assertEquals(30.0,  exec(y1));
     }
 
@@ -273,7 +273,7 @@ public class Entries {
                     <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))),
 			model(pro("x1", 20.0), pro("x2", 10.0)));
 
-//        logger.info("outGovernance eval: {}", eval(y1));
+//        logger.info("out eval: {}", eval(y1));
 		assertEquals(200.0,  exec(y1));
 	}
 
@@ -285,7 +285,7 @@ public class Entries {
 			opt(30.0)),
 			model(pro("x1", 10.0), pro("x2", 20.0)));
 
-//        logger.info("outGovernance eval: {}", eval(y1));
+//        logger.info("out eval: {}", eval(y1));
 		assertEquals(30.0,  exec(y1));
 	}
 
@@ -299,7 +299,7 @@ public class Entries {
 				opt(condition((Context<Double> cxt)
                         -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
 
-//        logger.info("outGovernance eval: {}", eval(mdl, "y1"));
+//        logger.info("out eval: {}", eval(mdl, "y1"));
 		assertEquals(30.0,  exec(mdl, "y1"));
 	}
 
@@ -312,7 +312,7 @@ public class Entries {
                 opt(condition((Context<Double> cxt)
                         -> v(cxt, "x1") <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))))));
 
-//        logger.info("outGovernance eval: {}", eval(y1));
+//        logger.info("out eval: {}", eval(y1));
         assertEquals(30.0,  exec(y1));
     }
 
@@ -326,7 +326,7 @@ public class Entries {
                     opt(condition((Context<Double> cxt) -> v(cxt, "x1")
                             <= v(cxt, "x2")), expr("x1 + x2", args("x1", "x2")))))));
 
-//        logger.info("outGovernance eval: {}", eval(mdl, "y1"));
+//        logger.info("out eval: {}", eval(mdl, "y1"));
         assertEquals(30.0,  exec(mdl, "y1"));
     }
 
@@ -340,9 +340,9 @@ public class Entries {
 				opt(condition((Context<Double> cxt) -> v(cxt, "x1")
 					<= v(cxt, "x2")), func(expr("x1 + x2", args("x1", "x2")))))));
 
-//        logger.info("outGovernance: {}", exec(mdl, "y1"));
+//        logger.info("out: {}", exec(mdl, "y1"));
         evr ev1 = (evr) exec(mdl, "y1");
-//		logger.info("outGovernance: {}", eval(ev1, mdl));
+//		logger.info("out: {}", eval(ev1, mdl));
 
 		assertEquals(30.0,  eval(ev1, mdl));
 		assertEquals(30.0,  exec(ev1, mdl));
@@ -359,7 +359,7 @@ public class Entries {
 				    context(val("x1", 10.0), val("x2", 20.0), val("x3", 40.0)),
                     args("x1", "x2", "x3"))));
 
-//        logger.info("outGovernance eval: {}", eval(y1));
+//        logger.info("out eval: {}", eval(y1));
 		assertEquals(800.0,  exec(y1));
 	}
 
@@ -375,7 +375,7 @@ public class Entries {
 							return v(cxt, "x1") * v(cxt, "x3"); },
                         args("x1", "x2", "x3")))));
 
-//        logger.info("outGovernance eval: {}", eval(mdl, "y1"));
+//        logger.info("out eval: {}", eval(mdl, "y1"));
 		assertEquals(800.0,  exec(mdl, "y1"));
 	}
 }

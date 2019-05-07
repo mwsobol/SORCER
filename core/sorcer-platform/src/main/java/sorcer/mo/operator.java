@@ -827,7 +827,7 @@ public class operator {
                     mFi.addObserver(fiManager);
                     if (mFi.getMorpherFidelity() != null) {
                         // set the default morpher
-                        mFi.setMorpher((Morpher) ((Subroutine)mFi.getMorpherFidelity().get(0)).getImpl());
+                        mFi.setMorpher((Morpher) ((Entry)mFi.getMorpherFidelity().get(0)).getImpl());
                     }
                 }
             }

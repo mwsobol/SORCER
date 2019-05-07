@@ -22,6 +22,7 @@ import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.Ref;
 import sorcer.core.invoker.Observable;
 import sorcer.service.*;
+import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -45,6 +46,22 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
     public MorphFidelity(Fidelity fi) {
         fidelity = fi;
         path = fi.getPath();
+    }
+
+    public MorphFidelity(Service... services) {
+        this(new ServiceFidelity(services));
+        boolean morpherFisSet = false;
+        for (Object srv : fidelity.getSelects()) {
+            if (srv instanceof Fidelity) {
+                morpherFidelity = (Fidelity) srv;
+                morpher = (Morpher) ((Entry)((Fidelity) srv).getSelects().get(0)).getImpl();
+                morpherFisSet = true;
+            }
+        }
+        if (morpherFisSet) {
+            fidelity.getSelects().remove(morpherFidelity);
+            fidelity.setSelect(fidelity.getSelects().get(0));
+        }
     }
 
     public MorphFidelity(FidelityManager manager) {
@@ -160,6 +177,13 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
     }
 
     public Morpher getMorpher() {
+        if (morpher == null && fidelity.getSelect() instanceof Fidelity) {
+            // the case of selectable morphers
+            Object ent = ((Fidelity)fidelity.getSelect()).getSelect();
+            if (ent instanceof Entry && ((Entry) ent).getType().equals(Functionality.Type.LAMBDA)) {
+                morpher = (Morpher) ((Entry) ent).getImpl();
+            }
+        }
         return morpher;
     }
 

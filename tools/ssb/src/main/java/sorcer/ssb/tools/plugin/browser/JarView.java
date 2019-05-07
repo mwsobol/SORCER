@@ -169,7 +169,7 @@ public class JarView extends JPanel implements Runnable {
 	 * 
 	 * String urls=ln[i].substring(TAG.length());
 	 * 
-	 * System.outGovernance.println(ln[i]);
+	 * System.out.println(ln[i]);
 	 * 
 	 * classpathURLs=urls.split(" "); return; } } }
 	 * 

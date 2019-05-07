@@ -136,7 +136,7 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
 
 	public static String getJiniName(Object proxy, String defaultName) {
 
-		// System.outGovernance.println("defaultName="+defaultName);
+		// System.out.println("defaultName="+defaultName);
 		if (!defaultName.equals(proxy.getClass().getName())) {
 			return defaultName;
 		}
@@ -151,7 +151,7 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
 				// if(defaultName.equals(tidyText)){
 				return tidyText;
 				// }
-				// System.outGovernance.println("returning "+(tidyText+" "+defaultName));
+				// System.out.println("returning "+(tidyText+" "+defaultName));
 				// return tidyText+" "+defaultName;
 			}
 

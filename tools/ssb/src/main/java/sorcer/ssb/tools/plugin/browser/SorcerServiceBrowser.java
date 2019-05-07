@@ -114,7 +114,7 @@ public class SorcerServiceBrowser {
 			/*
 			 * if (sorcer.ssb.tools.plugin.browser.lic.License.OK) { File
 			 * brandingFile = new File(BROWSER_HOME+ "/branding.properties");
-			 * System.outGovernance.println("Branding file=" +
+			 * System.out.println("Branding file=" +
 			 * brandingFile.getAbsolutePath()); if (brandingFile.exists()) {
 			 * isBranded=true; ServiceBrowserUI.IS_BRANDED=true; try {
 			 * Properties props = new Properties();
@@ -354,7 +354,7 @@ public class SorcerServiceBrowser {
 				FiltersView fv = new FiltersView();
 				fv.restoreText(vh.filters);
 
-				// System.outGovernance.println(vh.title+" "+fv);
+				// System.out.println(vh.title+" "+fv);
 
 				BrowserFrame bv = new BrowserFrame(vh.title);
 				try {
@@ -397,7 +397,7 @@ public class SorcerServiceBrowser {
 			oos.flush();
 			oos.close();
 
-			// System.outGovernance.println("Saving object "+obj);
+			// System.out.println("Saving object "+obj);
 
 		} catch (Exception ex) {
 			System.err.println(ex.getMessage());
@@ -409,7 +409,7 @@ public class SorcerServiceBrowser {
 		try {
 			File file = new File(STATE);
 
-			// System.outGovernance.println(file.getAbsolutePath());
+			// System.out.println(file.getAbsolutePath());
 
 			ObjectInputStream oos = new ObjectInputStream(new FileInputStream(
 					file));
@@ -538,7 +538,7 @@ public class SorcerServiceBrowser {
 					// System.setErr(ps);
 					// System.setOut(ps);
 
-					// System.outGovernance.println("New logFile created "+new
+					// System.out.println("New logFile created "+new
 					// java.util.Date());
 					ServiceBrowserUI._logger.info("New logFile created");
 

@@ -47,7 +47,7 @@ public class NotifyImpl implements RemoteEventListener, Remote, Runnable,
 	public void notify(RemoteEvent theEvent) throws UnknownEventException,
 			java.rmi.RemoteException {
 
-		// System.outGovernance.println("QUEUE: "+theEvent);
+		// System.out.println("QUEUE: "+theEvent);
 
 		synchronized (_queue) {
 			_queue.add(theEvent);

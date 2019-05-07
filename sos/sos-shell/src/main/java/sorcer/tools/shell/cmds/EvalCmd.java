@@ -167,7 +167,7 @@ public class EvalCmd extends ShellCmd {
 			return;
 		}
 		Object target = serviceScripter.interpret();
-//		outGovernance.println(">>>>>>>>>>> ServiceScripter.interpret result: " + target);
+//		out.println(">>>>>>>>>>> ServiceScripter.interpret result: " + target);
 		if (target == null) {
 			return;
 		} else if (!(target instanceof Model ||
@@ -198,9 +198,9 @@ public class EvalCmd extends ShellCmd {
 			}
 		}
 
-//		if (NetworkShell.getInstance().isDebug()) outGovernance.println("Starting exert netlet!");
+//		if (NetworkShell.getInstance().isDebug()) out.println("Starting exert netlet!");
 		Object result = serviceScripter.execute();
-//		outGovernance.println(">>>>>>>>>>> ServiceScripter.execute result: " + result);
+//		out.println(">>>>>>>>>>> ServiceScripter.execute result: " + result);
 		if (result != null) {
 			if (ifEvaluation) {
 				out.println("\n---> EVALUATION RESULT --->");
@@ -229,7 +229,7 @@ public class EvalCmd extends ShellCmd {
 				}
 
 				out.println("\n---> OUTPUT MOGRAM --->");
-//				outGovernance.println(mog.describe());
+//				out.println(mog.describe());
 				out.println(mog.getName() + "@" + mog.getClass().getSimpleName());
 				if (mog instanceof Routine) {
 					Routine xrt = (Routine) mog;

@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *  Implements a service discipline as outGovernance-multiFi-dispatch
+ *  Implements a service discipline as out-multiFi-dispatch
  */
 public class ServiceDiscipline implements Discipline, Getter<Service> {
 
@@ -62,7 +62,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     protected Context outConnector;
 
     // the executed governance
-    protected Service outGovernance;
+    protected Service out;
 
     // the executed dispatcher
     protected Routine outDispatcher;
@@ -170,8 +170,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         return governanceMultiFi;
     }
 
-    public Service getOutGovernance() {
-        return outGovernance;
+    public Service getout() {
+        return out;
     }
 
     @Override
@@ -269,9 +269,9 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                     xrt.setContext(input);
                 }
             }
-            outGovernance = getGovernance();
-            if (outGovernance != null) {
-                xrt.dispatch(outGovernance);
+            out = getGovernance();
+            if (out != null) {
+                xrt.dispatch(out);
             }
             outDispatcher = xrt.exert();
 
@@ -320,7 +320,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Service get(Arg... args) throws ContextException {
-        return outGovernance;
+        return out;
     }
 
     @Override
@@ -524,7 +524,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Mogram clear() throws MogramException {
-        outGovernance = null;
+        out = null;
         outDispatcher = null;
         output = null;
         return this;

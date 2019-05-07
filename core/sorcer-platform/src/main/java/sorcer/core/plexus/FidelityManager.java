@@ -244,16 +244,17 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
                     while (i.hasNext()) {
                         Map.Entry<String, Fidelity> fiEnt = i.next();
                         if (fiEnt.getKey().equals(name)) {
-                            if (morphFidelities.get(name) != null) {
+                            if (morphFidelities.get(name) != null && fi.getFiType().equals(Fi.Type.MORPH)) {
                                 morphFidelities.get(name).setMorpherSelect(path);
                             }
                             fiEnt.getValue().selectSelect(path);
                             mogram.applyFidelity(name);
                         } else if (fiEnt.getKey().equals(path)) {
-                            if (morphFidelities.get(path) != null) {
-                                morphFidelities.get(path).setMorpherSelect(path);
+                            if (morphFidelities.get(path) != null && fi.getFiType().equals(Fi.Type.MORPH)) {
+                                morphFidelities.get(path).setMorpherSelect(name);
+                            } else {
+                                fiEnt.getValue().selectSelect(name);
                             }
-                            fiEnt.getValue().selectSelect(name);
                             mogram.applyFidelity(path);
                         }
                     }

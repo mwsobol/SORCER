@@ -512,7 +512,7 @@ public class AdminView {
 
 		public Object getValueAt(int row, int col) {
 			if (row >= _data.size())
-				return "row outGovernance of bounds";
+				return "row out of bounds";
 			Object rowData[] = (Object[]) _data.get(row);
 			if (col >= rowData.length)
 				return "";
@@ -581,7 +581,7 @@ public class AdminView {
 				 * if(atts[j] instanceof Multitype) { Multitype st =
 				 * (Multitype)atts[j]; java.awt.Image image = st.getIcon(1);
 				 * if(image != null){ // _serviceIcon = new ImageIcon(image);
-				 * //System.outGovernance.println("Setting service icon"); } }
+				 * //System.out.println("Setting service icon"); } }
 				 */
 				if (include) {
 					Class eClass = atts[j].getClass();
@@ -650,7 +650,7 @@ public class AdminView {
 	 * public int getRowCount() { return _data.size(); }
 	 * 
 	 * public Object getValueAt(int listing, int col) { if(listing >= _data.size())
-	 * return "listing outGovernance of bounds"; Object rowData[] = (Object[])_data.get(listing);
+	 * return "listing out of bounds"; Object rowData[] = (Object[])_data.get(listing);
 	 * if(col >= rowData.length) return ""; else return rowData[col]; }
 	 * 
 	 * public boolean isCellEditable(int rowIndex, int columnIndex) {

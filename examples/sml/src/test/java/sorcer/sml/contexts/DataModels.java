@@ -64,7 +64,7 @@ public class DataModels {
 
         Context cxt = context("add", inVal("arg/x2", 80.0), slot("arg/x1", 20.0));
 
-        // context slot values correspond to as-is outGovernance values of slots
+        // context slot values correspond to as-is out values of slots
         // no multifidelities (different inheritance hierarchy than Tuples)
         assertEquals(value(cxt, "arg/x1"), 20.0);
         assertEquals(value(cxt, "x1"), null);
@@ -117,9 +117,9 @@ public class DataModels {
                 inVal("arg/x3", 1.3), inVal("arg/x4", 1.4), inVal("arg/x5", 1.5));
 
         add(cxt, ent("arg/x6", 1.6));
-        add(cxt, outVal("outGovernance/y1", 1.7));
-        add(cxt, outVal("outGovernance/y2", 1.8));
-        add(cxt, inoutVal("outGovernance/z", 1.9));
+        add(cxt, outVal("out/y1", 1.7));
+        add(cxt, outVal("out/y2", 1.8));
+        add(cxt, inoutVal("out/z", 1.9));
 
         assertTrue(cxt instanceof Context);
 
@@ -135,9 +135,9 @@ public class DataModels {
         assertEquals(select(cxt, 2, 4, 5), list(1.2, 1.4, 1.5));
 
         // get input and output contexts
-        List<String> allInputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5", "outGovernance/z");
+        List<String> allInputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5", "out/z");
         List<String> inputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5");
-        List<String> outputs = list("outGovernance/y1", "outGovernance/y2", "outGovernance/z");
+        List<String> outputs = list("out/y1", "out/y2", "out/z");
 
         assertTrue(allInputs.equals(paths(allInputs(cxt))));
         assertTrue(inputs.equals(paths(inputs(cxt))));
@@ -153,7 +153,7 @@ public class DataModels {
         assertEquals(outContextValues(cxt), list(1.7, 1.8, 1.9));
 
         // return all paths of outEntries
-        assertEquals(outContextPaths(cxt), list("outGovernance/y1", "outGovernance/y2", "outGovernance/z"));
+        assertEquals(outContextPaths(cxt), list("out/y1", "out/y2", "out/z"));
 
     }
 
@@ -317,12 +317,12 @@ public class DataModels {
         Context cxt = context(inVal("x1", 20.0d), inVal("x2", 40.0d));
         responseUp(cxt, "x1");
         Context out = response(cxt);
-//        logger.info("response1: " + outGovernance);
+//        logger.info("response1: " + out);
         assertTrue(out.size() == 1);
         assertTrue(get(out, "x1").equals(20.0));
         responseUp(cxt, "x2");
         out = response(cxt);
-//        logger.info("response2: " + outGovernance);
+//        logger.info("response2: " + out);
         assertTrue(out.size() == 2);
         assertTrue(get(out, "x1").equals(20.0));
         assertTrue(get(out, "x2").equals(40.0));

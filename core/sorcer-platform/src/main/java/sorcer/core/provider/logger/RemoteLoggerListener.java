@@ -128,7 +128,7 @@ public class RemoteLoggerListener implements RemoteEventListener {
     public void notify(RemoteEvent remoteEvent) throws UnknownEventException, RemoteException {
         LoggerRemoteEvent logEvent = (LoggerRemoteEvent)remoteEvent;
         ILoggingEvent le = logEvent.getLoggingEvent();
-        // Print everything to the outGovernance stream as if it was a local log
+        // Print everything to the out stream as if it was a local log
         String mogId = le.getMDCPropertyMap().get(RemoteLogger.KEY_MOGRAM_ID);
         String prvId = le.getMDCPropertyMap().get(RemoteLogger.KEY_PROVIDER_ID);
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");

@@ -39,7 +39,7 @@ public class ProxyWriter extends FilterWriter {
      */
     public ProxyWriter(Writer proxy) {
         super(proxy);
-        // the proxy is stored in a protected superclass variable named 'outGovernance'
+        // the proxy is stored in a protected superclass variable named 'out'
     }
 
     /**

@@ -46,7 +46,7 @@ public class FilterRegistry implements Runnable {
 
 	public void init(File toolsDir) {
 		_toolsDir = toolsDir;
-		//System.outGovernance.println("### filters dir="+toolsDir.getAbsolutePath());
+		//System.out.println("### filters dir="+toolsDir.getAbsolutePath());
 		// new Thread(this).start();
 		run();
 	}
@@ -98,7 +98,7 @@ public class FilterRegistry implements Runnable {
 			try {
 				Class c = cl.loadClass(clazzName);
 
-				// System.outGovernance.println("Class="+c.getName());
+				// System.out.println("Class="+c.getName());
 				if (!c.equals(iPlugin) && iPlugin.isAssignableFrom(c)) {
 
 					System.out.println("Filter found class=" + c.getName());

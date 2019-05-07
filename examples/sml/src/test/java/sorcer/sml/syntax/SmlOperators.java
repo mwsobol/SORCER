@@ -172,14 +172,14 @@ public class SmlOperators {
 			response("mFi1", "mFi2", "mFi3", "arg/x1", "arg/x2"));
 
 		cxt out = response(mod);
-		logger.info("outGovernance: " + out);
+		logger.info("out: " + out);
 		assertTrue(value(out, "mFi1").equals(100.0));
 		assertTrue(value(out, "mFi2").equals(9.0));
 		assertTrue(value(out, "mFi3").equals(50.0));
 
 		// closing the fidelity for mFi1
 		out = response(mod , fi("mFi1", "multiply"));
-		logger.info("outGovernance: " + out);
+		logger.info("out: " + out);
 		assertTrue(value(out, "mFi1").equals(900.0));
 		assertTrue(value(out, "mFi2").equals(50.0));
 		assertTrue(value(out, "mFi3").equals(9.0));

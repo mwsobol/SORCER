@@ -60,7 +60,7 @@ abstract public class ExertDispatcher implements Dispatcher {
     protected List<Uuid> runningExertionIDs = Collections.synchronizedList(new LinkedList<Uuid>());
 
     // subject for whom this explorer is running.
-    // make sure subject is set before and after any object goes outGovernance and comes
+    // make sure subject is set before and after any object goes out and comes
     // in explorer.
     protected Subject subject;
 

@@ -375,7 +375,7 @@ public class Job extends Transroutine {
 		return dataContext;
 	}
 
-	// TODO in/outGovernance/inout marking as defined in the connector
+	// TODO in/out/inout marking as defined in the connector
 	public Context updateContextWith(Context connector) throws ContextException {
 		if (connector != null) {
 			Context jobContext =  getJobContext();
