@@ -32,6 +32,7 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
+import sorcer.core.provider.Exertion;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
@@ -45,6 +46,8 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 import static sorcer.eo.operator.*;
+import static sorcer.so.operator.exec;
+import static sorcer.so.operator.execMogram;
 
 /**
  * A Domain is a schematic description or representation of something, especially a system,
@@ -195,6 +198,9 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     else if (obj instanceof Entry) {
                         ((Entry)obj).setScope(this);
                         out = ((Entry) obj).evaluate(args);
+                    } else if (obj instanceof Mogram) {
+                        ((Mogram)obj).setScope(this);
+                        out = execMogram((Mogram) obj, args);
                     }
                     ((MorphFidelity) carrier).setChanged();
                     ((MorphFidelity) carrier).notifyObservers(out);

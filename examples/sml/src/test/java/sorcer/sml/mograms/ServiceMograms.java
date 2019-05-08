@@ -141,7 +141,7 @@ public class ServiceMograms {
                 loop(condition(cxt ->
                                 (double) value(cxt, "out") < 1000.0), mdl));
 
-        looping = exert(looping, fi("by-20", "by"));
+        looping = exert(looping, fi("by", "by-20"));
         logger.info("block context: " + context(looping));
         logger.info("result: " + value(context(looping), "out"));
         logger.info("model result: " + value(result(mdl), "out"));
@@ -151,7 +151,7 @@ public class ServiceMograms {
         // out variable in model
         assertTrue(value(result(mdl), "out").equals(1000.0));
         assertTrue(value(result(mdl), "multiply").equals(100000.0));
-        assertTrue(value(result(mdl), "by").equals(20.0));
+        assertTrue(value(result(mdl), "by").equals(10.0));
     }
 
     @Test

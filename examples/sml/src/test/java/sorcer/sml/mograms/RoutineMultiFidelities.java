@@ -142,7 +142,7 @@ public class RoutineMultiFidelities {
 		Morpher t4mrp = (mgr, mFi, context) -> {
 			if (mFi.getPath().equals("t4")) {
 				if (((Double) value((Context)context, "result/y")) >= 200.0) {
-					mgr.reconfigure(fi("t4", "object2"));
+					mgr.reconfigure(fi("object2", "t4"));
 				}
 			}
 		};
@@ -150,7 +150,7 @@ public class RoutineMultiFidelities {
 		Morpher t5mrp = (mgr, mFi, context) -> {
 			if (mFi.getPath().equals("t5")) {
 				if (((Double) value((Context)context, "result/y")) <= 200.0) {
-					mgr.reconfigure(fi("t5", "object2"));
+					mgr.reconfigure(fi("object2", "t5"));
 				}
 			}
 		};
@@ -185,9 +185,9 @@ public class RoutineMultiFidelities {
 			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
 			metaFi("job1", fi("object1", "j1/j2/t4"), fi("object2", "j1/j2/t5")),
 			metaFi("job2", fi("net", "j1/j2"),
-				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5")),
-			metaFi("job3", fi("object2", "j1"), fi("object2", "j1/j2"),
-				fi("object2", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5")));
+				fi("object", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5")),
+			metaFi("job3", fi("object", "j1"), fi("object", "j1/j2"),
+				fi("object", "j1/t3"), fi("object2", "j1/j2/t4"), fi("object2", "j1/j2/t5")));
 
 		return (Job) tracable(job);
 	}

@@ -1,5 +1,6 @@
 package sorcer.service;
 
+import com.sleepycat.collections.TransactionRunner;
 import net.jini.config.*;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
@@ -418,10 +419,14 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     public void trimNotSerializableSignatures() throws SignatureException {
-        if (multiFi != null) {
-            for (Object fi : multiFi.getSelects()) {
-                if (fi instanceof ServiceFidelity)
-                    trimNotSerializableSignatures((Fidelity) fi);
+        List<Mogram> mogs = getAllMograms();
+        for (Mogram mog : mogs) {
+            Fi mFi = mog.getMultiFi();
+            if (mFi != null) {
+                for (Object fi : mFi.getSelects()) {
+                    if (fi instanceof ServiceFidelity)
+                        trimNotSerializableSignatures((Fidelity) fi);
+                }
             }
         }
     }
@@ -782,7 +787,9 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
                     } else {
                         mog = this;
                     }
-                    fi = mog.selectFidelity(a.getName());
+                    if (mog != null) {
+                        fi = mog.selectFidelity(a.getName());
+                    }
                 } else if (a instanceof Fidelity && ((Fidelity) a).fiType == Fidelity.Type.META) {
                     fi = selectMetafidelity((Fidelity) a);
                 }
