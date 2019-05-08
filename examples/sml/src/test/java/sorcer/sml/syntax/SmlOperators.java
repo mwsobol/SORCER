@@ -144,9 +144,9 @@ public class SmlOperators {
 			}
 		};
 
-		fi fi2 = metaFi("sysFi2",fi("mFi2", "divide"), fi("mFi3", "multiply"));
-		fi fi3 = metaFi("sysFi3", fi("mFi2", "average"), fi("mFi3", "divide"));
-		fi fi4 = metaFi("sysFi4", fi("mFi3", "average"));
+		fi fi2 = metaFi("sysFi2",fi("divide", "mFi2"), fi("multiply", "mFi3"));
+		fi fi3 = metaFi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3"));
+		fi fi4 = metaFi("sysFi4", fi("average", "mFi3"));
 
 		sig add = sig("add", AdderImpl.class,
 			result("result/y1", inPaths("arg/x1", "arg/x2")));
