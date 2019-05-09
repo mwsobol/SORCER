@@ -237,8 +237,8 @@ public class ModelMultiFidelities {
             }
         };
 
-        Metafidelity fi2 = metaFi("sysFi2",fi("divide", "mFi2"), fi("multiply", "mFi3"));
-        Metafidelity fi3 = metaFi("sysFi3", fi("average", "mFi2"), fi("divide", "mFi3"));
+        Metafidelity fi2 = metaFi("sysFi2",fi("divide$mFi2"), fi("multiply$mFi3"));
+        Metafidelity fi3 = metaFi("sysFi3", fi("average$mFi2"), fi("divide$mFi3"));
 
         Signature add = sig("add", AdderImpl.class,
                 result("result/y1", inPaths("arg/x1", "arg/x2")));
@@ -266,7 +266,7 @@ public class ModelMultiFidelities {
         assertTrue(get(out, "mFi3").equals(900.0));
 
         // first closing the fidelity for mFi1
-        out = response(mod , fi("mFi1", "multiply"));
+        out = response(mod , fi("mFi1$multiply"));
         logger.info("out: " + out);
         assertTrue(get(out, "mFi1").equals(900.0));
         assertTrue(get(out, "mFi2").equals(50.0));

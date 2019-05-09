@@ -1796,8 +1796,20 @@ operator extends Operator {
         return fi;
     }
 
-    public static Fidelity fi(String name) {
-        Fidelity fi = new Fidelity(name);
+    public static Fidelity fi(String name$path) {
+        Fidelity fi = null;
+        if (name$path.indexOf('$') > 1) {
+            String name = null;
+            String path = null;
+            if (name$path.indexOf('$') > 0) {
+                int ind = name$path.indexOf('$');
+                name = name$path.substring(0, ind);
+                path = name$path.substring(ind + 1);
+                fi = new Fidelity(name, path);
+            } else {
+                fi = new Fidelity(name$path);
+            }
+        }
         fi.fiType = Fi.Type.SELECT;
         return fi;
     }
