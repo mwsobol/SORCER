@@ -130,7 +130,11 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 		this.select = select;
 	}
 
-    public T selectSelect(String fiName) throws ConfigurationException {
+	public T selectSelect(String fiName) throws ConfigurationException {
+		return selectSelect(fiName, null);
+	}
+
+    public T selectSelect(String fiName, String path) throws ConfigurationException {
         Object selected = null;
         for (T item : selects) {
             if (((Identifiable) item).getName().equals(fiName)) {
@@ -144,7 +148,8 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
             select = (T) selected;
             return select;
         } else {
-            throw new ConfigurationException("no such select fidelity: " + fiName + "@" + path);
+            throw new ConfigurationException("no such select fidelity: " + fiName + "@" +
+				(path != null ? path : this.path));
         }
     }
 

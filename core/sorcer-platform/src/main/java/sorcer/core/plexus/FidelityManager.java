@@ -245,7 +245,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
                         if (morphFidelities.get(path) != null && fi.getFiType().equals(Fi.Type.MORPH)) {
                             morphFidelities.get(path).setMorpherSelect(name);
                         } else {
-                            fiEnt.selectSelect(name);
+                            fiEnt.selectSelect(name, path);
                         }
                         mogram.applyFidelity(path);
                     }
