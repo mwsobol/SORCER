@@ -289,7 +289,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                 governanceMultiFi.selectSelect(discFi.getGovernanceFi().getName());
             }
             if (contextMultiFi != null) {
-                contextMultiFi.selectSelect(discFi.getContextFi().getName());
+                contextMultiFi.findSelect(discFi.getContextFi().getName());
             }
         } else {
             dispatchMultiFi.selectSelect(fi.getPath());
