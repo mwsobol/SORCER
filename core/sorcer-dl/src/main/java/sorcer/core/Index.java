@@ -1,9 +1,18 @@
 package sorcer.core;
 
 import sorcer.service.Arg;
-import java.io.Serializable;
+import sorcer.service.ServiceException;
 
-public class Index implements Serializable, Comparable {
+import java.io.Serializable;
+import java.rmi.RemoteException;
+
+public class Index implements Arg, Serializable, Comparable {
+
+	@Override
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
+
 	public enum Direction { column, row };
 
 	private int index;
@@ -63,7 +72,8 @@ public class Index implements Serializable, Comparable {
 		this.type = type;
 	}
 
-//	public String getName() {
-//		return ""+index;
-//	}
+	@Override
+	public String getName() {
+		return ""+index;
+	}
 }
