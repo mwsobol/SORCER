@@ -22,11 +22,14 @@ import org.rioproject.resolver.Artifact;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.provider.ServiceTasker;
+import sorcer.service.Arg;
 import sorcer.service.Deployment;
+import sorcer.service.ServiceException;
 import sorcer.service.Strategy.Provision;
 
 import java.io.File;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.*;
 
 /**
@@ -337,5 +340,10 @@ public class ServiceDeployment implements Serializable, Deployment {
                ", fork=" + fork +
                ", jvmArgs='" + jvmArgs + '\'' +
                '}';
+    }
+
+    @Override
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
+        return this;
     }
 }

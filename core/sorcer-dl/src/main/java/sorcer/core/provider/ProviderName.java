@@ -60,4 +60,8 @@ public class ProviderName implements Identifiable, Arg, Serializable {
         return name;
     }
 
+	public Object execute(Arg... args) {
+		return this;
+	}
+
 }

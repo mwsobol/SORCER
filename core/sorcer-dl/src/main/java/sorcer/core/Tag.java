@@ -18,8 +18,10 @@
 package sorcer.core;
 
 import sorcer.service.Arg;
+import sorcer.service.ServiceException;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 /**
  * Created by Mike Sobolewski
@@ -64,5 +66,10 @@ public class Tag implements Arg, Serializable, Comparable {
             return name.compareTo(((Tag)o).getName());
         else
             return -1;
+    }
+
+    @Override
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
+        return this;
     }
 }

@@ -19,10 +19,7 @@ package sorcer.core.context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.SetterException;
-import sorcer.service.Task;
+import sorcer.service.*;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -223,4 +220,8 @@ public class ContextSelector implements ContextSelection {
         isSelf = self;
     }
 
+	@Override
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
+		return this;
+	}
 }

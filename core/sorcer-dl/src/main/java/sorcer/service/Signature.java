@@ -105,30 +105,30 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	 */
 	public Class getServiceType() throws SignatureException;
 
-    /**
-     * Assigns a service type of this signature.
-     *
-     * @param serviceType
-     *            service serviceType
-     */
-    public void setServiceType(Class serviceType);
+	/**
+	 * Assigns a service type of this signature.
+	 *
+	 * @param serviceType
+	 *            service serviceType
+	 */
+	public void setServiceType(Class serviceType);
 
-    /**
-     * Returns a service multitype of this signature.
-     *
-     * @return service multitype
-     */
-    public Multitype getMultitype() throws SignatureException;
+	/**
+	 * Returns a service multitype of this signature.
+	 *
+	 * @return service multitype
+	 */
+	public Multitype getMultitype() throws SignatureException;
 
-    /**
-     * Assigns a service multi of this signature.
-     *
-     * @param multitype
-     *            service multitype
-     */
-    public void setMultitype(Multitype multitype);
+	/**
+	 * Assigns a service multi of this signature.
+	 *
+	 * @param multitype
+	 *            service multitype
+	 */
+	public void setMultitype(Multitype multitype);
 
-    /**
+	/**
 	 * Returns an array of service types of this signature
 	 * to be matched by its service proxy.
 	 *
@@ -163,7 +163,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	 */
 	public SignatureReturnPath getReturnPath();
 
-    /**
+	/**
 	 * Returns a signature Type of this signature.
 	 *
 	 * @return a Type of this signature
@@ -221,27 +221,31 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	public Strategy.Access getAccessType();
 
 
-		/**
-		 * There are four types of {@link Signature} operations that can be
-		 * associated with signatures: <code>PRE</code> (preprocess),
-		 * <code>PROC</code> (process/service) , <code>POST</code> (postprocess), and
-		 * <code>APD_DATA</code> (append data) and code>APD_CONTROL</code> (append
-		 * control strategy). Only one <code>PROC</code> signature can be associated
-		 * with any exertion. The <code>PROC</code> signature defines an executing
-		 * provider dynamically bounded at runtime. The <code>APD_DATA</code>
-		 * signatures are invoked invoked first to get specified contexts from
-		 * {@link sorcer.service.Contexter}s that are appended to the task's current
-		 * context.
-		 */
+	/**
+	 * There are four types of {@link Signature} operations that can be
+	 * associated with signatures: <code>PRE</code> (preprocess),
+	 * <code>PROC</code> (process/service) , <code>POST</code> (postprocess), and
+	 * <code>APD_DATA</code> (append data) and code>APD_CONTROL</code> (append
+	 * control strategy). Only one <code>PROC</code> signature can be associated
+	 * with any exertion. The <code>PROC</code> signature defines an executing
+	 * provider dynamically bounded at runtime. The <code>APD_DATA</code>
+	 * signatures are invoked invoked first to get specified contexts from
+	 * {@link sorcer.service.Contexter}s that are appended to the task's current
+	 * context.
+	 */
 	public enum Type implements Arg {
 		PROC, PRE, POST, SRV, APD_DATA, APD_CONTROL, BUILDER;
 
 		/* (non-Javadoc)
-		 * @see sorcer.service.Arg#getName()
-		 */
+         * @see sorcer.service.Arg#getName()
+         */
 		@Override
 		public String getName() {
 			return toString();
+		}
+
+		public Object execute(Arg... args) {
+			return this;
 		}
 	}
 
@@ -258,6 +262,10 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		public String getName() {
 			return toString();
 		}
+
+		public Object execute(Arg... args) {
+			return this;
+		}
 	}
 
 	public enum Kind implements Arg {
@@ -269,6 +277,10 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		@Override
 		public String getName() {
 			return toString();
+		}
+
+		public Object execute(Arg... args) {
+			return this;
 		}
 	}
 
@@ -296,6 +308,10 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 				return null;
 			}
 		}
+
+		public Object execute(Arg... args) {
+			return this;
+		}
 	};
 
 	static final String SELF = "_self_";
@@ -308,29 +324,29 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 	public static class Out extends Paths implements SupportComponent {
 
-	    private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 1L;
 
 		public Out() {
 			super();
 		}
 
 
-        public Out(int capacity) {
-		    super(capacity);
-        }
+		public Out(int capacity) {
+			super(capacity);
+		}
 
 		public Out(Name contextName, Path[] paths) {
-		    this.name = contextName.getName();
+			this.name = contextName.getName();
 			for (Path path : paths) {
 				add(path) ;
 			}
 		}
 
-        public Out(Path[] paths) {
-            for (Path path : paths) {
-                add(path) ;
-            }
-        }
+		public Out(Path[] paths) {
+			for (Path path : paths) {
+				add(path) ;
+			}
+		}
 
 		public Out(String[] names) {
 			for (String name : names) {
@@ -338,12 +354,16 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 			}
 		}
 
-        public Out(Name contextName, String[] names) {
-            this.name = contextName.getName();
-            for (String name : names) {
-                add(new Path(name)) ;
-            }
-        }
+		public Out(Name contextName, String[] names) {
+			this.name = contextName.getName();
+			for (String name : names) {
+				add(new Path(name)) ;
+			}
+		}
+
+		public Object execute(Arg... args) {
+			return this;
+		}
 	}
 
 	public static class In extends Paths {
@@ -403,24 +423,24 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		}
 	}
 
-    public static class State extends Paths {
-        private static final long serialVersionUID = 1L;
+	public static class State extends Paths {
+		private static final long serialVersionUID = 1L;
 
-        public State() {
-            super();
-        }
+		public State() {
+			super();
+		}
 
-        public State(Path[] paths) {
-            for (Path path : paths) {
-                add(path) ;
-            }
-        }
-        public State(String[] names) {
-            for (String name : names) {
-                add(new Path(name)) ;
-            }
-        }
-    }
+		public State(Path[] paths) {
+			for (Path path : paths) {
+				add(path) ;
+			}
+		}
+		public State(String[] names) {
+			for (String name : names) {
+				add(new Path(name)) ;
+			}
+		}
+	}
 
 //    public static class Paths extends ArrayList<Path> implements Arg {
 //        private static final long serialVersionUID = 1L;
@@ -497,39 +517,42 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		}
 	}
 
-    public static class SessionPaths extends ArrayList<Paths> implements Arg {
-        private static final long serialVersionUID = 1L;
+	public static class SessionPaths extends ArrayList<Paths> implements Arg {
+		private static final long serialVersionUID = 1L;
 
-        public SessionPaths() {
-            super();
-        }
+		public SessionPaths() {
+			super();
+		}
 
-        public SessionPaths(Paths[] lists) {
-            for (Paths al : lists) {
-                add(al);
-            }
-        }
+		public SessionPaths(Paths[] lists) {
+			for (Paths al : lists) {
+				add(al);
+			}
+		}
 
-        public Paths getPaths(Class<?> clazz) {
-            for(Paths al : this) {
-                if (clazz.isInstance(al)) {
-                    return al;
-                }
-            }
-            return null;
-        }
+		public Paths getPaths(Class<?> clazz) {
+			for(Paths al : this) {
+				if (clazz.isInstance(al)) {
+					return al;
+				}
+			}
+			return null;
+		}
 
-        @Override
-        public String getName() {
-            return toString();
-        }
-    }
+		@Override
+		public String getName() {
+			return toString();
+		}
 
+		public Object execute(Arg... args) {
+			return this;
+		}
+	}
 
-    public static class Operation implements Serializable, Arg {
-        static final long serialVersionUID = 1L;
+	public static class Operation implements Serializable, Arg {
+		static final long serialVersionUID = 1L;
 
-        public String selector;
+		public String selector;
 
 		public String path;
 
@@ -550,9 +573,9 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		public boolean isProvisionable = false;
 
 		@Override
-        public String getName() {
-            return selector;
-        }
+		public String getName() {
+			return selector;
+		}
 
 
 		public List getMatchTokens() {
@@ -561,6 +584,10 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 		public void setMatchTokens(List matchTokens) {
 			this.matchTokens = matchTokens;
+		}
+
+		public Object execute(Arg... args) {
+			return this;
 		}
 	}
 
@@ -572,8 +599,8 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		// default prvType
 		public Class providerType;
 
-        // service types implemented by the service provider
-        public Class[] matchTypes;
+		// service types implemented by the service provider
+		public Class[] matchTypes;
 
 		public Multitype() {
 			// do nothing
@@ -596,30 +623,34 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 			}
 		}
 
-        public Class getProviderType() throws SignatureException {
-            return getProviderType(null);
-        }
+		public Class getProviderType() throws SignatureException {
+			return getProviderType(null);
+		}
 
-        public Class getProviderType(ClassLoader loader) throws SignatureException {
-            if (providerType != null) {
-                return providerType;
-            } else if (typeName != null) {
-                try {
-                    if (loader == null)
-                        providerType = Class.forName(typeName);
-                    else
-                        providerType = Class.forName(typeName, true, loader);
-                } catch (ClassNotFoundException e) {
-                    throw new SignatureException(e);
-                }
-            }
-            return providerType;
-        }
+		public Class getProviderType(ClassLoader loader) throws SignatureException {
+			if (providerType != null) {
+				return providerType;
+			} else if (typeName != null) {
+				try {
+					if (loader == null)
+						providerType = Class.forName(typeName);
+					else
+						providerType = Class.forName(typeName, true, loader);
+				} catch (ClassNotFoundException e) {
+					throw new SignatureException(e);
+				}
+			}
+			return providerType;
+		}
 
 		@Override
 		public String toString() {
 			return (providerType != null ? providerType.getSimpleName() : "null")
 					+ (matchTypes != null ? ":" + Arrays.toString(matchTypes) : "");
+		}
+
+		public Object execute(Arg... args) {
+			return this;
 		}
 	}
 
@@ -628,10 +659,10 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		public String path;
 		public Direction direction;
 		public Out outPaths;
-        public Path[] inPaths;
-        public Class<T> type;
+		public Path[] inPaths;
+		public Class<T> type;
 		private Context dataContext;
-        public SessionPaths sessionPaths;
+		public SessionPaths sessionPaths;
 		public Map<String, Out> evalOutPaths;
 
 		public ReturnPath() {
@@ -662,11 +693,11 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		}
 
 		public void setInputPaths(In argPaths) {
-            if (argPaths != null && argPaths.size() > 0) {
-                Path[] ps = new Path[argPaths.size()];
-                this.inPaths = argPaths.toArray(ps);
-            }
-        }
+			if (argPaths != null && argPaths.size() > 0) {
+				Path[] ps = new Path[argPaths.size()];
+				this.inPaths = argPaths.toArray(ps);
+			}
+		}
 
 		public ReturnPath(String path, In argPaths) {
 			this.path = path;
@@ -701,10 +732,10 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 			direction = Direction.INOUT;
 		}
 
-        public ReturnPath(String path, In inPaths, Out outPaths, SessionPaths sessionPaths) {
-		    this(path, inPaths, outPaths);
-            this.sessionPaths = sessionPaths;
-        }
+		public ReturnPath(String path, In inPaths, Out outPaths, SessionPaths sessionPaths) {
+			this(path, inPaths, outPaths);
+			this.sessionPaths = sessionPaths;
+		}
 
 		public ReturnPath(String path, SessionPaths sessionPaths, Path... argPaths) {
 			this(path, argPaths);
@@ -822,5 +853,8 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 				return null;
 		}
 
+		public Object execute(Arg... args) {
+			return this;
+		}
 	}
 }

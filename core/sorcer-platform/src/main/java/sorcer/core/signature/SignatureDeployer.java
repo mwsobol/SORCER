@@ -20,6 +20,7 @@ package sorcer.core.signature;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
+import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -78,5 +79,8 @@ public class SignatureDeployer implements Deployee {
         }
     }
 
-
+    @Override
+    public Object execute(Arg... args) throws ServiceException, RemoteException {
+        return this;
+    }
 }

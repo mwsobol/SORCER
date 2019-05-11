@@ -694,6 +694,11 @@ public class operator extends Operator {
             }
             return Functionality.Type.NONE;
         }
+
+		@Override
+		public Object execute(Arg... args) throws ServiceException, RemoteException {
+			return this;
+		}
 	}
 
 	public static Paths mado(String... disciplines) {
@@ -1792,6 +1797,10 @@ public class operator extends Operator {
 		@Override
 		public String getName() {
 			return type;
+		}
+
+		public Object execute(Arg... args) {
+			return this;
 		}
 	}
 

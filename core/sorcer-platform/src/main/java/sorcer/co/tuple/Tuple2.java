@@ -20,6 +20,7 @@ package sorcer.co.tuple;
 import sorcer.service.*;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 @SuppressWarnings("unchecked")
 public class Tuple2<T1, T2>  implements Serializable,  Arg {
@@ -71,4 +72,8 @@ public class Tuple2<T1, T2>  implements Serializable,  Arg {
 		return false;
 	}
 
+	@Override
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
+		return this;
+	}
 }
