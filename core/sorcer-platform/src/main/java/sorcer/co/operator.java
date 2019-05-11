@@ -1374,10 +1374,10 @@ public class operator extends Operator {
 		return map;
 	}
 
-	public static <K, V> Map<K, V> map(MultiFiSlot<K, V>... entries) throws ContextException {
+	public static <K, V> Map<K, V> map(Slot<K, V>... entries) throws ContextException {
 		Map<K, V> map = new HashMap<K, V>();
 		if (entries != null) {
-			for (MultiFiSlot<K, V> entry : entries) {
+			for (Slot<K, V> entry : entries) {
 				map.put(entry.getKey(), entry.getData());
 			}
 		}
