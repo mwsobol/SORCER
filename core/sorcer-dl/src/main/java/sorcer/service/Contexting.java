@@ -21,11 +21,41 @@ package sorcer.service;
 import java.rmi.RemoteException;
 
 /**
- * Contexting associates attribute-based paths with values or evaluations.
- * 
+ * A service interface related to {@link sorcer.service.Context}
+ * evaluation/invocation and accessing context structures services.
+ * Service providers - contexters - that federate in the network
+ * exchange input/output data via contexting.
+ *
  * @author Mike Sobolewski
  */
-public interface Contexting<T> extends Identifiable, FederatedRequest, Mogram {
+public interface Contexting<T> extends Mogram, FederatedRequest, Identifiable {
+
+	public Context<T> appendContext(Context<T> context)
+			throws ContextException, RemoteException;
+
+	public Context<T> getContext(Context<T> contextTemplate)
+			throws RemoteException, ContextException;
+
+	/**
+	 * Appends an argument context to this context for a given path.
+	 * @param context a context to be appended
+	 * @param path an offset path of the argument context
+	 * @return an appended context
+	 * @throws ContextException
+	 * @throws RemoteException
+	 */
+	public Context<T> appendContext(Context<T> context, String path)
+			throws ContextException, RemoteException;
+
+	/**
+	 * Returns a subcontext at a given path.
+	 * @param path a path in this context
+	 * @return a subcontext of this context at <code>path</code>
+	 * @throws ContextException
+	 * @throws RemoteException
+	 */
+	public Context<T> getContext(String path) throws ContextException,
+			RemoteException;
 
 	/**
 	 * Returns the output context.

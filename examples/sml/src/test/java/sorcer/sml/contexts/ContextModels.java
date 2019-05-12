@@ -92,16 +92,16 @@ public class ContextModels {
 
 		Model mdl1 = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
-		add(mdl1, ent("y1", invoker("x1 + x3", operator.ents("x1", "x3"))));
-		add(mdl1, ent("y2", invoker("x4 * x5", operator.ents("x1", "x3"))));
+		add(mdl1, ent("y1", invoker("x1 + x3", 	ents("x1", "x3"))));
+		add(mdl1, ent("y2", invoker("x4 * x5", ents("x1", "x3"))));
 
 		// mdl2 depends on values y1 and y2 calculated in cxt1
 		Model mdl2 = entModel(ent("arg/y3", 8.0), ent("arg/y4", 9.0), ent("arg/y5", 10.0));
-		add(mdl2, ent("invoke", invoker("y1 + y2 + y4 + y5", operator.ents("y1", "y2", "y4", "y5"))));
+		add(mdl2, ent("invoke", invoker("y1 + y2 + y4 + y5", ents("y1", "y2", "y4", "y5"))));
 		responseUp(mdl2, "invoke");
 
 		// created dependency of mdl2 on mdl1 via a context copier
-		Copier cp = copier(mdl1, operator.ents("arg/x1", "arg/x2"), mdl2, operator.ents("y1", "y2"));
+		Copier cp = copier(mdl1, ents("arg/x1", "arg/x2"), mdl2, ents("y1", "y2"));
 		dependsOn(mdl2, cp);
 
 		Double result = (Double) exec(mdl2);
@@ -115,9 +115,9 @@ public class ContextModels {
 		Model mdl = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
-		add(mdl, ent("add", invoker("x1 + x3", operator.ents("x1", "x3"))));
+		add(mdl, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
 
-		add(mdl, ent("multiply", invoker("x4 * x5", operator.ents("x4", "x5"))));
+		add(mdl, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
 
 		// two respnse paths declared for the result
 		responseUp(mdl, "add", "multiply");
@@ -135,9 +135,9 @@ public class ContextModels {
 		Model mdl = entModel(ent("arg/x1", 1.0), ent("arg/x2", 2.0),
 				ent("arg/x3", 3.0), ent("arg/x4", 4.0), ent("arg/x5", 5.0));
 
-		add(mdl, ent("add", invoker("x1 + x3", operator.ents("x1", "x3"))));
+		add(mdl, ent("add", invoker("x1 + x3", ents("x1", "x3"))));
 
-		add(mdl, ent("multiply", invoker("x4 * x5", operator.ents("x4", "x5"))));
+		add(mdl, ent("multiply", invoker("x4 * x5", ents("x4", "x5"))));
 
 		// two response paths declared
 		responseUp(mdl, "add", "multiply");
@@ -168,7 +168,7 @@ public class ContextModels {
 				inVal("x2", 80.0),
 				result("result/y"));
 
-		Entry ie = ent("multiply", invoker("x1 * x2", operator.ents("x1", "x2")));
+		Entry ie = ent("multiply", invoker("x1 * x2", ents("x1", "x2")));
 		Object result = exec(ie, em);
 		assertEquals(1600.0, result);
 	}

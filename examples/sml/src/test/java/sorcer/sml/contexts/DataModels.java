@@ -287,7 +287,7 @@ public class DataModels {
         assertTrue(exec(ac, "arg3/eval").equals(100.0));
         assertTrue(exec(mc, "arg3/eval").equals(200.0));
         URL a3vURL = storeVal(mc, "arg3/eval");
-        add(ac, operator.pro("arg3/eval", a3vURL));
+        add(ac, pro("arg3/eval", a3vURL));
 
         setValues(mc, val("arg1/eval", 300.0));
         assertTrue(exec(ac, "arg1/eval").equals(300.0));
@@ -380,7 +380,7 @@ public class DataModels {
 //        logger.info("row3: " + row3);
         assertTrue(row3.getRow(0).equals(list(2.0, 2.0, 4.0, 1.0, 8.0)));
 //        logger.info("row3/2: " + get(row3, 2));
-        assertTrue(sorcer.co.operator.get(row3, 2).equals(4.0));
+        assertTrue(get(row3, 2).equals(4.0));
 
 //        logger.info("area/2: " + get(data, "area", ind(3)));
         // default syntax for columnInd

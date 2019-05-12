@@ -64,7 +64,7 @@ import static sorcer.mo.operator.value;
  * Implements the base-level service context interface {@link Context}.
  */
 public class ServiceContext<T> extends ServiceMogram implements
-		Context<T>, AssociativeContext<T>, Contexter<T>, cxt<T>, SorcerConstants {
+		Context<T>, AssociativeContext<T>, cxt<T>, SorcerConstants {
 
 	private static final long serialVersionUID = 3311956866023311727L;
 	protected Map<String, T> data = new ConcurrentHashMap<String, T>();

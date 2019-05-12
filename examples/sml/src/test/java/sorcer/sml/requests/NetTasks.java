@@ -23,6 +23,7 @@ import sorcer.service.Strategy.Wait;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.ent.operator.ent;
 import static sorcer.mo.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
@@ -53,7 +54,7 @@ public class NetTasks {
 		assertEquals(100.0, value(cxt, "result/y"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/y", 100.0)).equals(
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
 				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
@@ -75,7 +76,7 @@ public class NetTasks {
 		assertEquals(100.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("result/eval", 100.0), operator.ent("arg/x1", 20.0)).equals(
+		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
 			value(cxt, outPaths("result/eval", "arg/x1"))));
 	}
 
@@ -97,7 +98,7 @@ public class NetTasks {
 		assertEquals(100.0, value(cxt, "result/y"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/y", 100.0)).equals(
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
 				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
@@ -119,7 +120,7 @@ public class NetTasks {
 		assertEquals(100.0, value(cxt, "result/y"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/y", 100.0)).equals(
+		assertTrue(context(val("arg/x1", 20.0), val("result/y", 100.0)).equals(
 				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
@@ -143,7 +144,7 @@ public class NetTasks {
 		assertEquals(100.0, value(cxt, "result/y"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/y", 100.0)).equals(
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
 				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
@@ -168,7 +169,7 @@ public class NetTasks {
 		assertEquals(100.0, value(cxt, "result/y"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/y", 100.0)).equals(
+		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
 				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
 
@@ -182,7 +183,7 @@ public class NetTasks {
 		assertTrue(exec(t5).equals(100.0));
 
 		// get the subcontext output from the exertion
-		assertTrue(context(operator.ent("arg/x1", 20.0), operator.ent("result/y", 100.0)).equals(
+		assertTrue(context(val("arg/x1", 20.0), val("result/y", 100.0)).equals(
 				exec(t5, outPaths("arg/x1", "result/y"))));
 
 	}
@@ -328,7 +329,7 @@ public class NetTasks {
 	public void netContexterTaskTest() throws Exception {
 
 		Task t5 = task("t5", sig("add", Adder.class),
-				sig("getContext", Contexter.class, prvName("Add Contexter"), Signature.APD),
+				sig("getContext", Contexting.class, prvName("Add Contexter"), Signature.APD),
 				context("add", inVal("arg/x1"), inVal("arg/x2"),
 						result("result/y")));
 

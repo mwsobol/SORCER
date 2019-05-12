@@ -1100,4 +1100,19 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
         return info.toString();
     }
 
+    @Override
+    public Context appendContext(Context context) throws ContextException, RemoteException {
+        return null;
+    }
+
+    @Override
+    public Context getContext(Context contextTemplate) throws RemoteException, ContextException {
+        return null;
+    }
+
+    @Override
+    public Context appendContext(Context context, String path) throws ContextException, RemoteException {
+        return null;
+    }
+
 }

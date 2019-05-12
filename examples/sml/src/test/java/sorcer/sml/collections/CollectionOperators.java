@@ -32,7 +32,6 @@ import static sorcer.co.operator.path;
 import static sorcer.co.operator.persistent;
 import static sorcer.co.operator.set;
 import static sorcer.eo.operator.*;
-import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.print;
 import static sorcer.eo.operator.put;
 import static sorcer.mo.operator.*;
@@ -100,7 +99,7 @@ public class CollectionOperators {
 	public void valuesAndSubroutines() throws Exception {
 
 		val v1 = val("x", 30.0);
-		assertEquals(operator.get(v1), 30.0);
+		assertEquals(get(v1), 30.0);
 
 		func p2 = pro("x", 20.0);
 		assertEquals(exec(p2), 20.0);
@@ -176,8 +175,8 @@ public class CollectionOperators {
 		assertEquals(columnNames(t), list("x1", "x2", "x3", "x4", "x5"));
 		assertEquals(rowMap(t, "f2"), map(x("x1", 2.1), x("x2", 2.2),
 				x("x3", 2.3), x("x4", 2.4), x("x5",2.5)));
-		assertEquals(operator.get(t, "f2", "x2"), 2.2);
-		assertEquals(operator.get(t, 1, 1), 2.2);
+		assertEquals(get(t, "f2", "x2"), 2.2);
+		assertEquals(get(t, 1, 1), 2.2);
 
 	}
 

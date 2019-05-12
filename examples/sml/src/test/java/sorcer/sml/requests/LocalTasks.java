@@ -15,6 +15,7 @@ import sorcer.service.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.ent.operator.ent;
 import static sorcer.mo.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
@@ -42,7 +43,7 @@ public class LocalTasks {
 		assertEquals(100.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("result/eval", 100.0), operator.ent("arg/x1", 20.0)).equals(
+		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
 				value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
@@ -64,7 +65,7 @@ public class LocalTasks {
 		assertEquals(100.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("result/eval", 100.0), operator.ent("arg/x1", 20.0)).equals(
+		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
 				value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
@@ -83,7 +84,7 @@ public class LocalTasks {
 		assertEquals(200.0, value(cxt, "result/eval"));
 
 		// get the subcontext output from the context
-		assertTrue(context(operator.ent("result/eval", 200.0), operator.ent("arg/x1", 20.0)).equals(
+		assertTrue(context(ent("result/eval", 200.0), ent("arg/x1", 20.0)).equals(
 				value(cxt, outPaths("result/eval", "arg/x1"))));
 
 	}
@@ -101,7 +102,7 @@ public class LocalTasks {
 		assertEquals(50.0, returnValue(t6));
 
 		// get the subcontext output from the exertion
-		assertTrue(context(operator.ent("result/y", 50.0), operator.ent("arg/x1", 20.0)).equals(
+		assertTrue(context(ent("result/y", 50.0), ent("arg/x1", 20.0)).equals(
 				exec(t6, outPaths("result/y", "arg/x1"))));
 
 	}

@@ -502,6 +502,11 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
+    public Context<Object> getContext(String path) throws ContextException, RemoteException {
+        return ((Mogram)governanceMultiFi.getSelect(path)).getContext();
+    }
+
+    @Override
     public Context getContext() throws ContextException {
         return output;
     }
@@ -728,4 +733,20 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     public Context govern(Context context, Arg... args) throws ServiceException {
         return (Context) execute(args);
     }
+
+    @Override
+    public Context appendContext(Context context) throws ContextException, RemoteException {
+        return null;
+    }
+
+    @Override
+    public Context getContext(Context contextTemplate) throws RemoteException, ContextException {
+        return null;
+    }
+
+    @Override
+    public Context appendContext(Context context, String path) throws ContextException, RemoteException {
+        return null;
+    }
+
 }
