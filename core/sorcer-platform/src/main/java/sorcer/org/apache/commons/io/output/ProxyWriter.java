@@ -227,7 +227,7 @@ public class ProxyWriter extends FilterWriter {
     }
 
     /**
-     * Invoked by the write methods before the call is proxied. The number
+     * Invoked by the write methods before the pro is proxied. The number
      * of chars to be written (1 for the {@link #write(int)} method, buffer
      * length for {@link #write(char[])}, etc.) is given as an argument.
      * <p>
@@ -243,7 +243,7 @@ public class ProxyWriter extends FilterWriter {
     }
 
     /**
-     * Invoked by the write methods after the proxied call has returned
+     * Invoked by the write methods after the proxied pro has returned
      * successfully. The number of chars written (1 for the
      * {@link #write(int)} method, buffer length for {@link #write(char[])},
      * etc.) is given as an argument.

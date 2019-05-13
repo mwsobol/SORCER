@@ -17,7 +17,7 @@
 
 package sorcer.core.provider.cataloger.ui;
 
-//function call to model to get context.
+//function pro to model to get context.
 //also add buttons to bottom for tree and list view. 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

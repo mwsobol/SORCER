@@ -597,6 +597,7 @@ public class operator {
         boolean hasExertion = false;
         boolean hasSignature = false;
         boolean isFidelity = false;
+        Fidelity responsePaths = null;
         boolean autoDeps = true;
         for (Object i : items) {
             if (i instanceof String) {
@@ -619,11 +620,13 @@ public class operator {
             } else if (i.equals(Strategy.Flow.EXPLICIT)) {
                 autoDeps = false;
             } else if (i instanceof Fidelity) {
-
+                if (((Fidelity)i).getFiType() == Fi.Type.RESPONSE){
+                    responsePaths = (Fidelity<Path>) i;
+                }
             }
         }
 
-        if ((hasEntry|| hasSignature && hasEntry) && !hasExertion) {
+        if ((hasEntry || hasSignature && hasEntry) && !hasExertion) {
             Model mo = null;
             if (srvType) {
                 mo = srvModel(items);
@@ -645,6 +648,9 @@ public class operator {
                 } catch (SortingException e) {
                     throw new ContextException(e);
                 }
+            }
+            if (responsePaths != null) {
+                mo.getMogramStrategy().setResponsePaths(responsePaths.getSelects());
             }
             ((ModelStrategy)mo.getMogramStrategy()).setOutcome(new ServiceContext(name + "-Output)"));
             return mo;

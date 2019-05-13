@@ -46,7 +46,7 @@ import java.rmi.RemoteException;
 
 /**
  * A proxy for controlling the session in the server. The session is activated
- * in server by lazy mechanism. ie, The broker should call on this session
+ * in server by lazy mechanism. ie, The broker should pro on this session
  * init(monitorable, duration, timeout). From this moment, the Manager will
  * require that the monitorable renew the leases for the specified duration. If
  * the task is not complete for the specified duration, the monitor will send
@@ -57,11 +57,11 @@ import java.rmi.RemoteException;
  * broker calls init(space, timeout, duration). This means that the monitor is
  * going to tag the timeout and duration of this session. Note that from this
  * moment, the session is not activated. It waits till the timeout period for
- * some monitorable provider to pick up and call init(monitorable). From this
+ * some monitorable provider to pick up and pro init(monitorable). From this
  * moment on, the session is activated and leases have to be renewed.
  * 
  * Once providers revieves the session (which is normally sent inside the
- * exertion) They may call update() stop() getLease() or getState(). The
+ * exertion) They may pro update() stop() getLease() or getState(). The
  * getState is actually delegated to the SessionManager remotely.
  * 
  **/
@@ -96,7 +96,7 @@ public class MonitorableSession implements MonitoringSession {
 
 	/**
 	 * Makes this an active session. The rendezvous decides the lease duration and
-	 * the timeout after which the monitor will call on monitorables that the
+	 * the timeout after which the monitor will pro on monitorables that the
 	 * job is failed and report back to the Listener that the exertion of this
 	 * session has failed.
 	 * 

@@ -40,7 +40,7 @@ public class CatalogerUI extends JFrame {
 	/** the current service impl */
 	private ServiceItem item;
 
-	/** the cataloger service, which we can call to perform remote operations */
+	/** the cataloger service, which we can pro to perform remote operations */
 	private static Cataloger cataloger;
 
 	/** Creates new CatalogerUI */

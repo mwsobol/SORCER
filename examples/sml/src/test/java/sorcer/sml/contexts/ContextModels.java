@@ -49,7 +49,7 @@ public class ContextModels {
 		setValues(mdl, val("arg/x6", 6.0));
 		assertTrue(exec(mdl, "arg/x6").equals(6.0));
 
-		// call is of the Evaluation multitype
+		// pro is of the Evaluation multitype
 		// args in models are evaluated
 		setValues(mdl, val("arg/x6", val("overwrite", 20.0)));
 		assertTrue(exec(mdl, "arg/x6").equals(20.0));

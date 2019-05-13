@@ -49,7 +49,7 @@ import java.util.jar.Manifest;
  * Jini&trade; technology ServiceStarter framework, and will start a service
  * using the {@link sorcer.provider.boot.CommonClassLoader} as a shared,
  * non-activatable, in-compute service. Clients construct this object with the
- * details of the service to be launched, then call <code>create</code> to
+ * details of the service to be launched, then pro <code>create</code> to
  * launch the service in invoking object's VM.
  * <p/>
  * This class provides separation of the import codebase (where the server

@@ -1,6 +1,5 @@
 package sorcer.pml.modeling;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -13,6 +12,7 @@ import sorcer.core.context.model.ent.SysCall;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.provider.SysCaller;
 import sorcer.core.provider.caller.SysCallerProvider;
+import sorcer.ent.operator;
 import sorcer.pml.provider.impl.Volume;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -57,7 +57,7 @@ public class SysCalls {
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 
-		EntModel pm = entModel(call(cmd),
+		EntModel pm = entModel(operator.pro(cmd),
 				val("x", 10.0), val("y"),
 				pro("multiply", invoker("x * y", args("x", "y"))),
 				pro("add", invoker("x + y", args("x", "y"))));
@@ -223,7 +223,7 @@ public class SysCalls {
 		assertTrue(exec(sm, "cylinder/radius").equals(2.0));
 		assertTrue(exec(sm, "cylinder/volume").equals(37.69911184307752));
 
-		// use values fro system call in the model sm
+		// use values fro system pro in the model sm
 		setValue(sm, "y", volume);
 		logger.info("multiply eval:" + eval(sm, "add"));
 		assertTrue(exec(sm, "add").equals(47.69911184307752));

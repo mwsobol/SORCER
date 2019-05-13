@@ -374,7 +374,7 @@ public class Crypt {
 	}
 
 	/**
-	 * main method allows you to call crypt function from command line usage :
+	 * main method allows you to pro crypt function from command line usage :
 	 * java Crypt <password> <salt>
 	 */
 	public static void main(String argv[]) {

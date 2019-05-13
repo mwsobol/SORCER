@@ -2057,7 +2057,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			// }
 			try {
 				if (val instanceof Pro)
-					val = "call: " + ((Pro)val).getName();
+					val = "pro: " + ((Pro)val).getName();
 				else
 //					val = execute(path);
 					val = asis(path);
@@ -3336,7 +3336,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Context#addCall(sorcer.core.context.model.call.Pro)
+	 * @see sorcer.service.Context#addCall(sorcer.core.context.model.pro.Pro)
 	 */
 	@Override
 	public Arg addCall(Arg arg) throws ContextException {

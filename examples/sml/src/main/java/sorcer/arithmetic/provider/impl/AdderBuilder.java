@@ -20,7 +20,7 @@ public class AdderBuilder {
 	public static EntModel getAdderModel() throws EvaluationException,
 			RemoteException, ContextException {
 
-		EntModel pm = entModel("call-model");
+		EntModel pm = entModel("pro-model");
 		add(pm, pro("x", 10.0), pro("y", 20.0));
 		add(pm, invoker("add", "x + y", args("x", "y")));
 		return pm;

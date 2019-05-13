@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.context.model.ent.Pro;
+import sorcer.ent.operator;
 import sorcer.service.Context;
 import sorcer.service.modeling.*;
 
@@ -31,12 +32,12 @@ public class ProceduralCalls {
 
 	@Test
 	public void proScope() throws Exception {
-		// a call is a variable (entry) evaluated with its own scope (context)
+		// a pro is a variable (entry) evaluated with its own scope (context)
 		Context<Double> cxt = context(val("x", 20.0), val("y", 30.0));
 
-		// call with its context scope
+		// pro with its context scope
 		Pro add = pro("add", invoker("x + y", args("x", "y")), cxt);
-		logger.info("call eval: " + exec(add));
+		logger.info("pro eval: " + exec(add));
 		assertTrue(exec(add).equals(50.0));
 	}
 
@@ -47,7 +48,7 @@ public class ProceduralCalls {
 		Model mdl = model(pro("x", 20.0), pro("y", 30.0));
 		Pro add = pro("add", invoker("x + y", args("x", "y")), mdl);
 
-		// adding a call to the model updates call's scope
+		// adding a pro to the model updates pro's scope
 		add(mdl, add);
 
 		// evaluate entry of the context
@@ -72,8 +73,8 @@ public class ProceduralCalls {
 		Pro add = pro("add", invoker("x + y", args("x", "y")));
 
 		Context<Double> cxt = context(val("x", 10.0), val("y", 20.0));
-		logger.info("call eval: " + exec(add, cxt));
-		// compute a call
+		logger.info("pro eval: " + exec(add, cxt));
+		// compute a pro
 		assertTrue(exec(add, cxt).equals(30.0));
 
 	}
@@ -137,10 +138,10 @@ public class ProceduralCalls {
 	@Test
 	public void procModelOperator() throws Exception {
 
-		Model mdl = entModel("call-model", val("v1", 1.0), val("v2", 2.0));
+		Model mdl = entModel("pro-model", val("v1", 1.0), val("v2", 2.0));
 		add(mdl, val("x", 10.0), val("y", 20.0));
 		// add an active pro, no scope
-		add(mdl, call(invoker("add1", "x + y", args("x", "y"))));
+		add(mdl, operator.pro(invoker("add1", "x + y", args("x", "y"))));
 		// add a pro with own scope
 		add(mdl, pro(invoker("add2", "x + y", args("x", "y")),
 			context(val("x", 30.0), val("y", 40.0))));

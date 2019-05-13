@@ -597,18 +597,18 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 
 	/**
 	 * This method spawns a separate thread to destroy this provider after 1
-	 * sec, should make a reasonable attempt to let this remote call return
+	 * sec, should make a reasonable attempt to let this remote pro return
 	 * successfully.
 	 */
 	private class Destroyer implements Runnable {
 		public void run() {
 			try {
 				// allow for remaining cleanup
-				logger.info("going to call System.exit() real soon...");
+				logger.info("going to pro System.exit() real soon...");
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 			} finally {
-				logger.info("going to call System.exit() NOW...");
+				logger.info("going to pro System.exit() NOW...");
 				System.exit(0);
 			}
 		}
@@ -1298,7 +1298,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		String msg = "host = " + host + " "
 				   + "\ntotal service op calls = " + numCalls + " "
 				   + "\nnumber of service op calls running = "	+ numThreads + " "
-				   + "\nservice op call ids running = " + threadIds + " "
+				   + "\nservice op pro ids running = " + threadIds + " "
 		           + "\naverage execEnt time [s]       = " + avgExecTime;
         return msg;
 	}
@@ -1308,18 +1308,18 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		if (serviceIdString == null) {
 			numCalls++;
 			numThreads++;
-			prefix = "adding service op call";
+			prefix = "adding service op pro";
 			serviceIdString = Integer.toString(numCalls);
 			threadIds.add(serviceIdString);
 		} else {
 			numThreads--;
-			prefix = "subtracting service op call";
+			prefix = "subtracting service op pro";
 			threadIds.remove(serviceIdString);
 		}
 		logger.info("\n\n***provider class = " + this.getClass()
 				+ "\n***" + prefix + ": total service op calls = " + numCalls
 				+ "\n***" + prefix + ": number of service op calls running = "
-				+ numThreads + "\n***" + prefix + ": service op call ids running = "
+				+ numThreads + "\n***" + prefix + ": service op pro ids running = "
 				+ threadIds + "\n");
 
 		return serviceIdString;
@@ -1452,7 +1452,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 */
     public Routine doExertion(final Routine exertion, Transaction txn) throws RoutineException {
         logger.debug("service: {}", exertion.getName());
-        // create an instance of the ControlFlowManager and call on the
+        // create an instance of the ControlFlowManager and pro on the
         // compute method, returns an Routine
         Routine out;
         try {
@@ -1727,7 +1727,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	/**
-	 * MonitorManagers call suspend a MonitorableService. Once suspend is
+	 * MonitorManagers pro suspend a MonitorableService. Once suspend is
 	 * called, the monitorables must suspend immediatly and return the suspended
 	 * state of the context.
 	 *

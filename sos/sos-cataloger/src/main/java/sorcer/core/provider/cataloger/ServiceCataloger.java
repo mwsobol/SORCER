@@ -280,7 +280,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	@Override
 	public Provider lookup(String providerName, Class... serviceTypes)
 			throws RemoteException {
-        // TODO RemoteLoggerAppender may call Cataloger to look for RemoteLogger which introduces recursion; make RLA not use Cataloger
+        // TODO RemoteLoggerAppender may pro Cataloger to look for RemoteLogger which introduces recursion; make RLA not use Cataloger
         String mdcRemoteCall = MDC.get(MDC_SORCER_REMOTE_CALL);
         MDC.remove(MDC_SORCER_REMOTE_CALL);
         // another workaround: disable warning on ConnectionException in ProviderProxy

@@ -56,7 +56,7 @@ public class EntModels {
 	@Test
 	public void closingEntScope() throws Exception {
 
-		// a call is a variable (entry) evaluated in its own scope (context)
+		// a pro is a variable (entry) evaluated in its own scope (context)
 		Pro y = pro("y",
 				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = exec(y, val("x1", 10.0), val("x2", 50.0),
@@ -69,7 +69,7 @@ public class EntModels {
 	@Test
 	public void closingExprScope() throws Exception {
 
-		// a call is a variable (entry) evaluated in its own scope (context)
+		// a pro is a variable (entry) evaluated in its own scope (context)
 		Pro y = pro("y",
 				expr("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = exec(y, val("x1", 10.0), val("x2", 50.0),
@@ -133,7 +133,7 @@ public class EntModels {
     @Test
 	public void callInvoker() throws Exception {
 
-		EntModel pm = new EntModel("call-model");
+		EntModel pm = new EntModel("pro-model");
 		add(pm, pro("x", 10.0));
 		add(pm, pro("y", 20.0));
 		add(pm, pro("add", invoker("x + y", args("x", "y"))));
@@ -178,7 +178,7 @@ public class EntModels {
 				pro("add", invoker("x + y", args("x", "y"))));
 
 		Pro x = pro(pm, "x");
-		logger.info("call x: " + x);
+		logger.info("pro x: " + x);
 		setValue(x, 20.0);
 		logger.info("val x: " + exec(x));
 		logger.info("val x: " + eval(pm, "x"));
@@ -262,7 +262,7 @@ public class EntModels {
 	public void argVsEntPersistence() throws Exception {
 
 		// persistable just indicates that argument is persistent,
-		// for example when eval(call) is invoked
+		// for example when eval(pro) is invoked
 		Pro dbp1 = persistent(pro("design/in", 25.0));
 		Pro dbp2 = dbEnt("url", "myUrl1");
 
@@ -275,7 +275,7 @@ public class EntModels {
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 
-		// store call args in the data store
+		// store pro args in the data store
 		URL sUrl = new URL("http://sorcersoft.org");
 		Pro p1 = pro("design/in", 30.0);
 		Pro p2 = pro("url", sUrl);
@@ -308,7 +308,7 @@ public class EntModels {
 	@Test
 	public void entModelConditions() throws Exception {
 
-		final EntModel pm = new EntModel("call-model");
+		final EntModel pm = new EntModel("pro-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
 
@@ -330,7 +330,7 @@ public class EntModels {
 	@Test
 	public void closingConditions() throws Exception {
 
-		EntModel pm = new EntModel("call-model");
+		EntModel pm = new EntModel("pro-model");
 		pm.putValue(Condition._closure_, new ServiceInvoker(pm));
 		// free variables, no args for the invoker
 		((ServiceInvoker) pm.get(Condition._closure_))
@@ -377,7 +377,7 @@ public class EntModels {
 	@Test
 	public void invokerLoopTest() throws Exception {
 
-		EntModel pm = entModel("call-model");
+		EntModel pm = entModel("pro-model");
 		add(pm, pro("x", 1));
 		add(pm, pro("y", invoker("x + 1", args("x"))));
 		add(pm, pro("z", inc(invoker(pm, "y"), 2)));
@@ -411,8 +411,8 @@ public class EntModels {
 			}
 		};
 
-		add(pm, callableInvoker("call", update));
-		assertEquals(invoke(pm, "call"), 260.0);
+		add(pm, callableInvoker("pro", update));
+		assertEquals(invoke(pm, "pro"), 260.0);
 
 	}
 
@@ -437,8 +437,8 @@ public class EntModels {
 			}
 		};
 
-		add(pm, callableInvoker("call", update));
-		assertEquals(invoke(pm, "call", context(pro("limit", 100.0))), 420.0);
+		add(pm, callableInvoker("pro", update));
+		assertEquals(invoke(pm, "pro", context(pro("limit", 100.0))), 420.0);
 	}
 
 
@@ -463,11 +463,11 @@ public class EntModels {
 	public void attachMethodInvokerWithContext() throws Exception {
 
 		Pro z = pro("z", invoker("x + y", x, y));
-		add(em, x, y, z, pro("limit", 60.0));
+		add(em, x, y, z, val("limit", 60.0));
 
 		add(em, methodInvoker("call", new Config()));
-//		logger.info("call eval:" + invoke(em, "call"));
-		assertEquals(invoke(em, "call", context(pro("limit", 100.0))), 420.0);
+//		logger.info("pro eval:" + invoke(em, "pro"));
+		assertEquals(invoke(em, "call", context(val("limit", 100.0))), 420.0);
 
 	}
 
@@ -479,7 +479,7 @@ public class EntModels {
 
 		// set the sphere/radius in the model
 		put(em, "sphere/radius", 20.0);
-		// attach the agent to the call-model and invoke
+		// attach the agent to the pro-model and invoke
         add(em, agent("getSphereVolume",
                 Volume.class.getName(), new URL(Sorcer
                         .getWebsterUrl() + "/pml-" + sorcerVersion+".jar")));

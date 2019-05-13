@@ -60,7 +60,7 @@ import java.util.List;
  * object referenced by its path or returned by a context invoker referenced by
  * its path inside the context. An ordered list of parameters is usually
  * included in the definition of an invoker, so that, each time the invoker is
- * called, the context arguments for that call can be assigned to the
+ * called, the context arguments for that pro can be assigned to the
  * corresponding parameters of the invoker. The context values for all paths
  * inside the context are defined explicitly by corresponding objects or
  * calculated by corresponding invokers. Thus, requesting a eval for a path in
@@ -118,7 +118,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			this.name = defaultName + count++;
 		else
 			this.name = name;
-		invokeContext = new EntModel("model/call");
+		invokeContext = new EntModel("model/pro");
 	}
 
 	public ServiceInvoker(ValueCallable lambda) throws InvocationException {
@@ -145,7 +145,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		this.name = name;
 		invokeContext = context;
 //		if (context == null)
-//			invokeContext = new EntModel("model/call");
+//			invokeContext = new EntModel("model/pro");
 //		else {
 //			if (context instanceof ServiceContext) {
 //				invokeContext = context;
@@ -258,8 +258,8 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	}
 	
 	/**
-	 * Adds a new call to the invoker. This must be done before calling
-	 * {@link #invoke} so the invoker is aware that the new call may be added to
+	 * Adds a new pro to the invoker. This must be done before calling
+	 * {@link #invoke} so the invoker is aware that the new pro may be added to
 	 * the model.
 	 * 
 	 * @param call
@@ -353,7 +353,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			if (args != null && args.length > 0) {
 				isValid = false;
 				if (invokeContext == null) {
-					invokeContext = new EntModel("model/call");
+					invokeContext = new EntModel("model/pro");
 				}
 				((ServiceContext)invokeContext).substitute(args);
 			}
@@ -521,7 +521,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.call.EntrySet)
+	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.pro.EntrySet)
 	 */
 	@Override
 	public void addArgs(ArgSet set) throws EvaluationException {

@@ -73,7 +73,7 @@ import static sorcer.util.StringUtils.tName;
 
 /**
  * @author Mike Sobolewski
- * call the 'help' command at the nsh prompt
+ * pro the 'help' command at the nsh prompt
  */
 @SuppressWarnings("unchecked")
 public class NetworkShell implements DiscoveryListener, INetworkShell {

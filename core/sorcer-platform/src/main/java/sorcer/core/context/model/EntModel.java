@@ -59,7 +59,7 @@ import static sorcer.so.operator.exec;
  * key and its get (argument). The association <key, argument> is the definition
  * of an independent or a dependent argument. Arguments that dependent on other
  * arguments are subroutines (evaluators, invokers), so that, each time the
- * subroutine is called, its arguments for that call can be assigned to
+ * subroutine is called, its arguments for that pro can be assigned to
  * the corresponding parameters of evaluators and invokers.
  *
  * @author Mike Sobolewski
@@ -79,7 +79,7 @@ public class EntModel extends PositionalContext<Object> implements Contexting<Ob
 		super();
 		key = PROC_MODEL;
 		out = new Date();
-		setSubject("call/model", new Date());
+		setSubject("pro/model", new Date());
 		isRevaluable = true;
 	}
 
@@ -96,7 +96,7 @@ public class EntModel extends PositionalContext<Object> implements Contexting<Ob
     public EntModel(Context context) throws RemoteException, ContextException {
         super(context);
         key = PROC_MODEL;
-        setSubject("call/model", new Date());
+        setSubject("pro/model", new Date());
 		isRevaluable = true;
 	}
 

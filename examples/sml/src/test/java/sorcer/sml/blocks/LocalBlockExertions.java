@@ -111,7 +111,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 	@Test
 	public void altServceTest() throws Exception {
 
-//		Context scope = context(call("y1", 100), call("y2", 200));
+//		Context scope = context(pro("y1", 100), pro("y2", 200));
 
 		Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
                 context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),

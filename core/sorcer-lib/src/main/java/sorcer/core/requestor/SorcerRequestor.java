@@ -47,7 +47,7 @@ import java.util.StringTokenizer;
  * new instance of the consumer as service runner if it fails the Virtual
  * Machine exits with a code of 2. Next the code determines if an internal 
  * Webster is running. If one is running it attempts to get the webster 
- * roots paths. Finally the method call the {@code run} function. 
+ * roots paths. Finally the method pro the {@code run} function.
  *  
  * @author M. W. Sobolewski
  * @see SorcerConstants

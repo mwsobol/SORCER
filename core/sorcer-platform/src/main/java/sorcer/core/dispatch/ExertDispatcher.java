@@ -158,7 +158,7 @@ abstract public class ExertDispatcher implements Dispatcher {
                             ? provider.getProviderName() + " " : "")
                     + "exertion: " + exertion.getName() + " dispatched: " + getClass().getName());
         } catch (RemoteException e) {
-            logger.warn("Exception on local call", e);
+            logger.warn("Exception on local pro", e);
         }
         ((ServiceRoutine) exertion).startExecTime();
         exertion.setStatus(Exec.RUNNING);

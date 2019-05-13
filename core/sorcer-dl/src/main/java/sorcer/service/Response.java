@@ -20,7 +20,7 @@ package sorcer.service;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-public interface Response extends Identifiable, Serializable {
+public interface Response<T> extends Identifiable, Serializable {
 
-	public Object getValue(String path, Arg... args) throws ContextException, RemoteException;
+	public T getValue(String path, Arg... args) throws ContextException, RemoteException;
 }

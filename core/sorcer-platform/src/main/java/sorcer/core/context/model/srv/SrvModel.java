@@ -128,7 +128,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         return getSrvValue(path, args);
     }
 
-    // calls from VarModels to call Srv args of Vars
+    // calls from VarModels to pro Srv args of Vars
     public Object getSrvValue(String path, Srv srv, Arg... args) throws ContextException {
         try {
             putValue(path, srv);

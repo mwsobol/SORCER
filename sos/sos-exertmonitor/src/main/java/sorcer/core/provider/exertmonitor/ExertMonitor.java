@@ -108,7 +108,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 
 	/**
 	 * Makes this an active session. The jobber decides the lease duration and
-	 * the timeout after which the monitor will call on monitorables that the
+	 * the timeout after which the monitor will pro on monitorables that the
 	 * job is failed and report back to the Listener that the exertion of this
 	 * session has failed.
 	 * 

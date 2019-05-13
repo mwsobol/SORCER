@@ -77,7 +77,7 @@ public class ServiceMograms {
                         inPaths("multiply/out", "add/out")))));
 
         responseUp(model, "add", "multiply", "subtract");
-        //dependsOn(model, call("subtract", paths("multiply", "add")));
+        //dependsOn(model, pro("subtract", paths("multiply", "add")));
         // specify how model connects to exertion
         outConn(model, modelOutConnector);
 
@@ -177,7 +177,7 @@ public class ServiceMograms {
                         inPaths("task/multiply", "subtract")))),
                 response("task/multiply", "subtract", "out"));
 
-        // dependsOn(m, call("subtract", paths("multiply", "add")));
+        // dependsOn(m, pro("subtract", paths("multiply", "add")));
 
         add(m, innerTask);
 
@@ -210,7 +210,7 @@ public class ServiceMograms {
                         inPaths("inner/multiply/out", "subtract")))),
                 response("inner/multiply", "subtract", "out"));
 
-        // dependsOn(outerModel, call("subtract", paths("multiply", "add")));
+        // dependsOn(outerModel, pro("subtract", paths("multiply", "add")));
 
         add(outerModel, innerModel, inVal("arg/x1", 10.0), inVal("arg/x2", 50.0));
 

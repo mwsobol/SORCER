@@ -1,5 +1,6 @@
 package sorcer.sml.arithmetic;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -35,7 +36,54 @@ public class ArithmeticMograms {
 	private final static Logger logger = LoggerFactory.getLogger(ArithmeticMograms.class);
 	private Morpher mFi1Morpher;
 
-	@Test
+    @Test
+    public void evaluatorEntryModel() throws Exception {
+
+        Model mdl = model(
+                val("x1", 10.0d), val("x2", 50.0d),
+                val("x3", 20.0d), val("x4", 80.0d),
+                ent("y1", expr("x1 * x2", args("x1", "x2"))),
+                ent("y2", expr("x3 + x4", args("x3", "x4"))),
+                ent("y3", expr("y1 - y2", args("y1", "y2"))),
+                response("y1", "y2", "y3"));
+
+        Context out = response(mdl);
+        logger.info("out: " + out);
+        logger.info("model response: " + out);
+        assertTrue(get(out, "y3").equals(400.0));
+        assertTrue(get(out, "y1").equals(500.0));
+        assertTrue(get(out, "y2").equals(100.0));
+    }
+
+    @Ignore
+    @Test
+    public void arithmeticStructuredBlock() throws Exception {
+
+        Task t3 = task("t3", sig("subtract", SubtractorImpl.class),
+                context("subtract", inVal("arg/t4"), inVal("arg/t5"),
+                        result("block/result", Signature.Direction.OUT)));
+
+        Task t4 = task("t4", sig("multiply", MultiplierImpl.class),
+                context("multiply", inVal("arg/x1"), inVal("arg/x2"),
+                        result("arg/t4", Signature.Direction.IN)));
+
+        Task t5 = task("t5", sig("add", AdderImpl.class),
+                context("add", inVal("arg/x3"), inVal("arg/x4"),
+                        result("arg/t5", Signature.Direction.IN)));
+
+        Block block = block("block", block(t4, t5), t3,
+                context(inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+                        inVal("arg/x3", 20.0), inVal("arg/x4", 80.0)));
+
+//        Block result = exert(block, context(
+//                inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
+//                inVal("arg/x3", 20.0), inVal("arg/x4", 80.0)));
+
+        Block result = exert(block);
+        assertEquals(value(context(result), "block/result"), 400.00);
+    }
+
+    @Test
 	public void lambdaEntryModel() throws Exception {
 		// all model args as functions - Java lambda expressions
 

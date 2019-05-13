@@ -117,7 +117,7 @@ public class Agent<T> extends Pro<T> implements Serializable {
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(
-					"Unable to instantiate call agent :"
+					"Unable to instantiate pro agent :"
 							+ e.getClass().getName() + ": "
 							+ e.getLocalizedMessage());
 		}

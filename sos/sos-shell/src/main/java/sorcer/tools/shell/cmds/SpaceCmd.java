@@ -44,7 +44,7 @@ import sorcer.tools.shell.WhitespaceTokenizer;
 
 /**
  * @author Mike Sobolewski
- * call the 'help sp' command at the nsh prompt
+ * pro the 'help sp' command at the nsh prompt
  */
 public class SpaceCmd extends ShellCmd {
 

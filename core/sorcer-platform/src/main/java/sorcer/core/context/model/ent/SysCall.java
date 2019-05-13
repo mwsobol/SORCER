@@ -113,7 +113,7 @@ public class SysCall extends Pro<Context> implements Serializable {
                     }
                 }
             } else {
-                out.putValue("call/out", result.getOut());
+                out.putValue("pro/out", result.getOut());
             }
         } catch (Exception e) {
             throw new InvocationException(e);

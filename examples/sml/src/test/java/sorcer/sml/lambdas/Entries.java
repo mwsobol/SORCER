@@ -7,6 +7,7 @@ import org.sorcer.test.ProjectContext;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.context.model.ent.Subroutine;
+import sorcer.ent.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ent;
@@ -107,7 +108,7 @@ public class Entries {
     public void entryAsLambdaInvoker() throws Exception {
 
         Model mo = model(val("x", 10.0), val("y", 20.0),
-                call(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
+                operator.pro(invoker("lambda", (Context<Double> cxt) -> value(cxt, "x")
                         + value(cxt, "y")
                         + 30, args("x", "y"))));
         logger.info("invoke eval: " + eval(mo, "lambda"));

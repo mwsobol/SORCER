@@ -63,7 +63,7 @@ public class Observable implements EvaluationModel, Serializable {
 	
 	/**
 	 * If this object has changed, as indicated by the <code>isChanged</code>
-	 * method, then notify all of its observers and then call the
+	 * method, then notify all of its observers and then pro the
 	 * <code>clearChanged</code> method to indicate that this object has no
 	 * longer changed.
 	 * <p>
@@ -84,7 +84,7 @@ public class Observable implements EvaluationModel, Serializable {
 
 	/**
 	 * If this object has changed, as indicated by the <code>isChanged</code>
-	 * method, then notify all of its observers and then call the
+	 * method, then notify all of its observers and then pro the
 	 * <code>clearChanged</code> method to indicate that this object has no
 	 * longer changed.
 	 * <p>

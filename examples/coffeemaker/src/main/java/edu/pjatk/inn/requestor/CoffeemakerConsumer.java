@@ -124,7 +124,7 @@ public class CoffeemakerConsumer extends ServiceConsumer {
                         result("coffee$", inPaths("recipe/key")))),
                 srv(sig("deliver", Delivery.class,
                         result("delivery$", inPaths("location", "room")))));
-//				call("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
+//				pro("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
 
         add(mdl, pro("change$", invoker("paid$ - (coffee$ + delivery$)", ents("paid$", "coffee$", "delivery$"))));
         dependsOn(mdl, dep("change$", paths("makeCoffee")), dep("change$", paths("deliver")));

@@ -263,7 +263,7 @@ public class operator extends Operator {
 //	public static Proc put(EntModel entModel, String name, Object get) throws ContextException, RemoteException {
 //		entModel.putValue(name, get);
 //		entModel.setContextChanged(true);
-//		return call(entModel, name);
+//		return pro(entModel, name);
 //	}
 //
 //	public static EntModel put(EntModel entModel, Entry... entries) throws ContextException {
@@ -288,7 +288,7 @@ public class operator extends Operator {
 		return add(callEntry, to);
 	}
 
-	public static Pro call(Object object) throws EvaluationException, RemoteException {
+	public static Pro pro(Object object) throws EvaluationException, RemoteException {
 		if (object instanceof String)
 			return new Pro((String)object);
 		else if (object instanceof Identifiable)
@@ -296,7 +296,7 @@ public class operator extends Operator {
 		return null;
 	}
 
-	public static Pro call() {
+	public static Pro pro() {
 		GroovyInvoker gi = new GroovyInvoker();
 		return new Pro(gi.getName(), gi);
 	}
@@ -842,7 +842,7 @@ public class operator extends Operator {
 		return assoc;
 	}
 
-	public static Subroutine call(String path) {
+	public static Subroutine pro(String path) {
 		return new Subroutine(path, null);
 	}
 

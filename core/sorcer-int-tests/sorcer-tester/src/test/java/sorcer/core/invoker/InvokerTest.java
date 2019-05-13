@@ -15,6 +15,7 @@ import sorcer.arithmetic.tester.volume.Volume;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.Pro;
 import sorcer.core.provider.rendezvous.ServiceJobber;
+import sorcer.ent.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.util.Sorcer;
@@ -103,13 +104,13 @@ public class InvokerTest {
 		Context in = context(val("x", 20.0), val("y", 30.0));
 		Context arg = context(val("x", 200.0), val("y", 300.0));
 		add(pm, methodInvoker("update", new ContextUpdater(in), arg));
-		logger.info("call eval:" + invoke(pm, "update"));
+		logger.info("pro eval:" + invoke(pm, "update"));
 		assertEquals(exec(pm, "update"), 400.0);
 	}
 
 	@Test
 	public void groovyInvokerTest() throws RemoteException, ContextException {
-		EntModel pm = entModel("call-model");
+		EntModel pm = entModel("pro-model");
 		add(pm, pro("x", 10.0), pro("y", 20.0));
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
 		logger.info("invoke eval: " + invoke(pm, "expr"));
@@ -133,7 +134,7 @@ public class InvokerTest {
 	public void lambdaInvokerTest2() throws Exception {
 
 		Model mo = model(pro("x", 10.0), pro("y", 20.0),
-				call(invoker("lambda", cxt -> (double) value(cxt, "x")
+				operator.pro(invoker("lambda", cxt -> (double) value(cxt, "x")
 									+ (double) value(cxt, "y")
 									+ 30)));
 		logger.info("invoke eval: " + eval(mo, "lambda"));
@@ -147,7 +148,7 @@ public class InvokerTest {
 		Context scope = context(pro("x1", 20.0), pro("y1", 40.0));
 
 		Model mo = model(pro("x", 10.0), pro("y", 20.0),
-			call(invoker("lambda", (cxt) -> {
+			operator.pro(invoker("lambda", (cxt) -> {
 						return (double) value(cxt, "x")
 								+ (double) value(cxt, "y")
 								+ (double) value(cxt, "y1")
@@ -242,7 +243,7 @@ public class InvokerTest {
 		ServiceInvoker cmd = cmdInvoker("volume",
 				"java -cp  " + cp + Volume.class.getName() + " cylinder");
 
-		EntModel pm = entModel(call(cmd),
+		EntModel pm = entModel(operator.pro(cmd),
 				ent("x", 10.0), ent("y"),
 				ent("multiply", invoker("x * y", args("x", "y"))),
 				ent("add", invoker("x + y", args("x", "y"))));
@@ -263,7 +264,7 @@ public class InvokerTest {
 
 	@Test
 	public void conditionalInvoker() throws RemoteException, ContextException {
-		final EntModel pm = new EntModel("call-model");
+		final EntModel pm = new EntModel("pro-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
         pm.putValue("condition", invoker("x > y", args("x", "y")));
@@ -312,7 +313,7 @@ public class InvokerTest {
 
 	@Test
 	public void optInvokerTest1() throws RemoteException, ContextException {
-		EntModel pm = new EntModel("call-model");
+		EntModel pm = new EntModel("pro-model");
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
 				"{ x, y -> x > y }", "x", "y"), invoker("x + y",
@@ -333,7 +334,7 @@ public class InvokerTest {
 	@Test
 	public void optInvokerTest2() throws RemoteException, ContextException {
 		// Java 8 lambdas style
-		EntModel pm = new EntModel("call-model");
+		EntModel pm = new EntModel("pro-model");
 
 		OptInvoker opt = new OptInvoker("opt", new Condition(pm,
 				cxt -> (double)v(cxt, "x") > (double)v(cxt, "y")), invoker("x + y",
@@ -353,7 +354,7 @@ public class InvokerTest {
 
 	@Test
 	public void smlOptInvokerTest() throws RemoteException, ContextException {
-		EntModel pm = entModel("call-model");
+		EntModel pm = entModel("pro-model");
 		add(pm,
 				val("x", 10.0),
 				val("y", 20.0),
@@ -370,7 +371,7 @@ public class InvokerTest {
 
 	@Test
 	public void altInvokerTest() throws RemoteException, ContextException {
-		EntModel pm = new EntModel("call-model");
+		EntModel pm = new EntModel("pro-model");
 		pm.putValue("x", 30.0);
 		pm.putValue("y", 20.0);
 		pm.putValue("x2", 50.0);
@@ -430,9 +431,9 @@ public class InvokerTest {
 
 	@Test
 	public void multiOptAltInvokerTest() throws RemoteException, ContextException {
-		EntModel pm = entModel("call-model");
-		// add(pm, entry("x", 10.0), entry("y", 20.0), call("x2", 50.0),
-		// call("y2", 40.0), call("x3", 50.0), call("y3", 60.0));
+		EntModel pm = entModel("pro-model");
+		// add(pm, entry("x", 10.0), entry("y", 20.0), pro("x2", 50.0),
+		// pro("y2", 40.0), pro("x3", 50.0), pro("y3", 60.0));
 		add(pm, val("x", 10.0), val("y", 20.0), val("x2", 50.0),
 				val("y2", 40.0), val("x3", 50.0), val("y3", 60.0));
 
@@ -472,7 +473,7 @@ public class InvokerTest {
 	@Test
 	public void invokerLoopTest() throws Exception {
 
-		EntModel pm = entModel("call-model");
+		EntModel pm = entModel("pro-model");
 		add(pm, pro("x", 1));
 		add(pm, pro("y", invoker("x + 1", args("x"))));
 		add(pm, pro("z", inc(invoker(pm, "y"), 2)));
@@ -486,7 +487,7 @@ public class InvokerTest {
 
 	@Test
 	public void incrementorBy1Test() throws Exception {
-		EntModel pm = entModel("call-model");
+		EntModel pm = entModel("pro-model");
 		add(pm, pro("x", 1));
 		add(pm, pro("y", invoker("x + 1", args("x"))));
 		add(pm, pro("z", inc(invoker(pm, "y"))));
@@ -499,7 +500,7 @@ public class InvokerTest {
 
 	@Test
 	public void incrementorBy2Test() throws Exception {
-		EntModel pm = entModel("call-model");
+		EntModel pm = entModel("pro-model");
 		add(pm, pro("x", 1));
 		add(pm, pro("y", invoker("x + 1", args("x"))));
 		add(pm, pro("z", inc(invoker(pm, "y"), 2)));

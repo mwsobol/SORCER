@@ -37,7 +37,7 @@ public class ConditionalTaskTest {
 	@Test
 	public void arithmeticTaskTest() throws Exception {
 		// to test tracing of execution enable ServiceRoutine.debug
-		EntModel pm = new EntModel("call-model");
+		EntModel pm = new EntModel("pro-model");
 
 		Task task = task(
 				"add",
@@ -68,7 +68,7 @@ public class ConditionalTaskTest {
 
 	@Test
 	public void altExertionTest() throws Exception {
-		EntModel pm = entModel("call-model");
+		EntModel pm = entModel("pro-model");
 		pm.putValue("x1", 30.0);
 		pm.putValue("y1", 20.0);
 		pm.putValue("x2", 50.0);
@@ -123,7 +123,7 @@ public class ConditionalTaskTest {
 
 	@Test
 	public void loopExertionTest() throws RemoteException, ContextException {
-//		final EntModel pm = model("call-model");
+//		final EntModel pm = model("pro-model");
 //		final Var<Double> x = var("x", 1.0);
 //		Var y = var("y", groovy("x + 1", x));
 //		add(pm, x);

@@ -41,7 +41,7 @@ import static sorcer.so.operator.eval;
 import static sorcer.so.operator.exec;
 
 /**
- * In service-based modeling, a parameter (for short a call) is a special kind of
+ * In service-based modeling, a parameter (for short a pro) is a special kind of
  * variable, used in a service context {@link EntModel} to refer to one of the
  * pieces of data provided as input to the invokers (subroutines of the
  * context). These pieces of data are called arguments.
@@ -58,7 +58,7 @@ public class Pro<T> extends Subroutine<T> implements Invocation<T>,
 	
 	private Principal principal;
 
-	// data store URL for this call
+	// data store URL for this pro
 	private URL dbURL;
 
 	public Pro(String name) {
@@ -201,7 +201,7 @@ public class Pro<T> extends Subroutine<T> implements Invocation<T>,
 				val = out;
 			}
 			if (val instanceof Pro && ((Pro)val).asis() == null && out == null) {
-				logger.warn("undefined call: " + val);
+				logger.warn("undefined pro: " + val);
 				return null;
 			}
 			// direct scope
@@ -348,7 +348,7 @@ public class Pro<T> extends Subroutine<T> implements Invocation<T>,
             ps = "" + out;
         }
 
-        return "call [key: " + name + ", eval: " + ps + ", path: " + key + "]";
+        return "pro [key: " + name + ", eval: " + ps + ", path: " + key + "]";
     }
 
 	/* (non-Javadoc)

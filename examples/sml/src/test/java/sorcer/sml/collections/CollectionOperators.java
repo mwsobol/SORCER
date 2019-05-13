@@ -223,7 +223,7 @@ public class CollectionOperators {
 
 		cxt = context(ent("x", 20.0), ent("y", 30.0));
 		add = ent("add", invoker("x + y", args("x", "y")), cxt);
-//		logger.info("call eval: " + eval(add));
+//		logger.info("pro eval: " + eval(add));
 		assertTrue(exec(add).equals(50.0));
 
 	}
@@ -238,7 +238,7 @@ public class CollectionOperators {
 
 		cxt = context(ent("x", 20.0), ent("y", 30.0));
 		add = pro("add", invoker("x + y", args("x", "y")), cxt);
-		logger.info("call eval: " + exec(add));
+		logger.info("pro eval: " + exec(add));
 		assertTrue(exec(add).equals(50.0));
 
 	}
@@ -384,7 +384,7 @@ public class CollectionOperators {
 	@Test
 	public void procModeling() throws Exception {
 
-		Model pm = model("call-model", pro("John/weight", 180.0));
+		Model pm = model("pro-model", pro("John/weight", 180.0));
 		add(pm, ent("x", 10.0), ent("y", 20.0));
 		add(pm, invoker("add", "x + y", args("x", "y")));
 
