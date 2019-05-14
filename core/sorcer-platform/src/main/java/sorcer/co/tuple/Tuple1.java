@@ -16,9 +16,13 @@
  */
 package sorcer.co.tuple;
 
-import java.io.Serializable;
+import sorcer.service.Arg;
+import sorcer.service.ServiceException;
 
-public class Tuple1<T1> implements Serializable {
+import java.io.Serializable;
+import java.rmi.RemoteException;
+
+public class Tuple1<T1> implements Serializable, Tuple,  Arg {
 	private static final long serialVersionUID = -5484669816928328247L;
 	public T1 _1 = null;
 
@@ -44,5 +48,15 @@ public class Tuple1<T1> implements Serializable {
 	@Override
 	public int hashCode() {
 		return 1 * 31 + _1.hashCode();
+	}
+
+	@Override
+	public String getName() {
+		return toString();
+	}
+
+	@Override
+	public Object execute(Arg... args) throws ServiceException, RemoteException {
+		return _1;
 	}
 }

@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 @SuppressWarnings("unchecked")
-public class Tuple2<T1, T2>  implements Serializable,  Arg {
+public class Tuple2<T1, T2>  implements Serializable, Tuple, Arg {
 
 	private  static final long serialVersionUID = -6519678282532888568L;
 

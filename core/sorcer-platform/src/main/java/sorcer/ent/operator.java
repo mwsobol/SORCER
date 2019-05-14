@@ -776,7 +776,10 @@ public class operator extends Operator {
 		} else if (value instanceof ServiceMogram) {
 			entry = new MogramEntry(path, (Mogram) value);
 			entry.setType(Functionality.Type.MOGRAM);
-		} else if (value instanceof Service) {
+		} else if (value instanceof Tuple) {
+			entry = new Value(path, value);
+			entry.setType(Functionality.Type.VAL);
+		}else if (value instanceof Service) {
 			entry = new Pro(path, value);
 			entry.setType(Functionality.Type.PROC);
 		} else {
