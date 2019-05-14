@@ -139,9 +139,9 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Service getGovernance() {
-        // if no service then dispatch is standalone
-        if (governanceMultiFi == null || governanceMultiFi.getSelect() == null) {
-            return dispatchMultiFi.getSelect();
+        // if no governance then dispatch is standalone
+        if (governanceMultiFi == null || governanceMultiFi.returnSelect() == null) {
+            return null;
         }
         return governanceMultiFi.getSelect();
     }
@@ -246,6 +246,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     @Override
     public Object execute(Arg... args) throws ServiceException {
         try {
+            clear();
             List<Fidelity> fis = Arg.selectFidelities(args);
             if (fis != null && fis.size() > 0) {
                 try {
@@ -286,10 +287,16 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
             DisciplineFidelity discFi = disciplineFidelities.get(fi.getName());
             dispatchMultiFi.selectSelect(discFi.getDispatcherFi().getName());
             if (governanceMultiFi != null && discFi.getGovernanceFi() != null) {
-                governanceMultiFi.selectSelect(discFi.getGovernanceFi().getName());
+                governanceMultiFi.findSelect(discFi.getGovernanceFi().getName());
+            } else {
+                governanceMultiFi.setSelect(null);
             }
             if (contextMultiFi != null) {
-                contextMultiFi.findSelect(discFi.getContextFi().getName());
+                if (discFi.getContextFi() != null) {
+                    contextMultiFi.findSelect(discFi.getContextFi().getName());
+                } else {
+                    contextMultiFi.setSelect(null);
+                }
             }
         } else {
             dispatchMultiFi.selectSelect(fi.getPath());

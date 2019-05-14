@@ -106,6 +106,10 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 		return select;
 	}
 
+	public T returnSelect() {
+		return select;
+	}
+
     public String getSelectName() {
         return ((Identifiable)select).getName();
     }
