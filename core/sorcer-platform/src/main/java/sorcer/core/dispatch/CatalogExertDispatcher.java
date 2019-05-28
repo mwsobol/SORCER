@@ -184,7 +184,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                          * try{ // //cs =
                          * (ClientSubject)ServerContext.getServerContextElement
                          * (ClientSubject.class); }catch (Exception ex){
-                         * Util.debug(this, ">>>No Subject in the server pro");
+                         * Util.debug(this, ">>>No Subject in the server prc");
                          * cs=null; } Subject client = null; if(cs!=null){
                          * client=cs.getClientSubject(); Util.debug(this,
                          * "Abhijit::>>>>> CS was not null"); if(client!=null){

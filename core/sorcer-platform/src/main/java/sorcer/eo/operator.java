@@ -690,8 +690,8 @@ operator extends Operator {
                     }
                 }
             } else if (ent instanceof Entry) {
-                if (ent instanceof Pro && ((Pro)ent).getImpl() instanceof Invocation) {
-                    ((ServiceInvoker)((Pro)ent).getImpl()).setScope(pcxt);
+                if (ent instanceof Prc && ((Prc)ent).getImpl() instanceof Invocation) {
+                    ((ServiceInvoker)((Prc)ent).getImpl()).setScope(pcxt);
                 }
                 if (ent.isPersistent()) {
                     setProc(pcxt, entryList.get(i), i);
@@ -766,8 +766,8 @@ operator extends Operator {
         throws ContextException {
         try {
             Object val = context.get(path);
-            if (val instanceof Pro && ((Pro)val).isPersistent())
-                val = ((Pro)val).asis();
+            if (val instanceof Prc && ((Prc)val).isPersistent())
+                val = ((Prc)val).asis();
             if (SdbUtil.isSosURL(val)) {
                 SdbUtil.update((URL) val, value);
             } else {
@@ -836,7 +836,7 @@ operator extends Operator {
 
     protected static void setProc(PositionalContext pcxt, Entry entry, int i)
         throws ContextException {
-        Pro p = new Pro(entry.getName(), entry.getImpl());
+        Prc p = new Prc(entry.getName(), entry.getImpl());
         p.setPersistent(true);
         if (entry instanceof InputValue)
             pcxt.putInValueAt(entry.getName(), p, i + 1);
@@ -850,7 +850,7 @@ operator extends Operator {
 
     protected static void setProc(Context cxt, Entry entry)
         throws ContextException {
-        Pro p = new Pro(entry.getName(), entry.getImpl());
+        Prc p = new Prc(entry.getName(), entry.getImpl());
         p.setPersistent(true);
         if (entry instanceof InputValue)
             cxt.putInValue(entry.getName(), p);
@@ -1516,7 +1516,7 @@ operator extends Operator {
                                           ReturnPath returnPath) throws SignatureException {
         EvaluationSignature sig = null;
         if (evaluator instanceof Scopable) {
-            sig = new EvaluationSignature(new Pro((Identifiable) evaluator));
+            sig = new EvaluationSignature(new Prc((Identifiable) evaluator));
         } else {
             sig = new EvaluationSignature(evaluator);
         }
@@ -3232,7 +3232,7 @@ operator extends Operator {
         String outComponentPath;
         String inComponentPath;
 
-        Pro callEntry;
+        Prc callEntry;
 
         Pipe(Routine out, String outPath, Contexting in, String inPath) {
             this.out = out;
@@ -3241,7 +3241,7 @@ operator extends Operator {
             this.inPath = inPath;
             if ((in instanceof Routine) && (out instanceof Routine)) {
                 try {
-                    callEntry = new Pro(outPath, inPath, in);
+                    callEntry = new Prc(outPath, inPath, in);
                 } catch (ContextException e) {
                     e.printStackTrace();
                 }
@@ -3259,7 +3259,7 @@ operator extends Operator {
 
             if ((in instanceof Routine) && (out instanceof Routine)) {
                 try {
-                    callEntry = new Pro(outPath, inPath, in);
+                    callEntry = new Prc(outPath, inPath, in);
                 } catch (ContextException e) {
                     e.printStackTrace();
                 }
@@ -3272,7 +3272,7 @@ operator extends Operator {
         }
     }
 
-    public static Pro persistent(Pipe pipe) {
+    public static Prc persistent(Pipe pipe) {
         pipe.callEntry.setPersistent(true);
         return pipe.callEntry;
     }
@@ -3501,7 +3501,7 @@ operator extends Operator {
     public static Routine xrt(Contexting mappable, String path)
         throws ContextException {
         Object obj = ((ServiceContext) mappable).asis(path);
-        while (obj instanceof Contexting || obj instanceof Pro) {
+        while (obj instanceof Contexting || obj instanceof Prc) {
             try {
                 obj = ((Evaluation) obj).asis();
             } catch (RemoteException e) {
@@ -3638,8 +3638,8 @@ operator extends Operator {
                     if (((LoopTask)e).getCondition() != null)
                         ((LoopTask)e).getCondition().setConditionalContext(pm);
                     Mogram target = ((LoopTask)e).getTarget();
-                    if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Pro) {
-                        Pro p = (Pro)((EvaluationTask)target).getEvaluation();
+                    if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Prc) {
+                        Prc p = (Prc)((EvaluationTask)target).getEvaluation();
                         p.setScope(pm);
                         if (target instanceof Routine && ((Routine)target).getContext().getReturnPath() == null)
                             ((ServiceContext)((Routine)target).getContext()).setReturnPath(p.getName());
@@ -3648,8 +3648,8 @@ operator extends Operator {
 //					pm.append(((VarSignature)e.getProcessSignature()).getVariability());
                 } else if (e instanceof EvaluationTask) {
                     e.setScope(pm.getScope());
-                    if (((EvaluationTask)e).getEvaluation() instanceof Pro) {
-                        Pro p = (Pro)((EvaluationTask)e).getEvaluation();
+                    if (((EvaluationTask)e).getEvaluation() instanceof Prc) {
+                        Prc p = (Prc)((EvaluationTask)e).getEvaluation();
                         ((EntModel)pm.getScope()).addCall(p);
 //						pm.addCall(p);
 

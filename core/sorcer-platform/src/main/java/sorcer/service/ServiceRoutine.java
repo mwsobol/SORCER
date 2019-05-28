@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.*;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Pro;
+import sorcer.core.context.model.ent.Prc;
 import sorcer.core.deploy.DeploymentIdFactory;
 import sorcer.core.deploy.ServiceDeployment;
 import sorcer.core.invoker.ExertInvoker;
@@ -544,8 +544,8 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
         return controlContext.isExecTimeRequested();
     }
 
-    public Pro getPar(String path) throws EvaluationException, RemoteException {
-        return new Pro(path, this);
+    public Prc getPar(String path) throws EvaluationException, RemoteException {
+        return new Prc(path, this);
     }
 
     abstract public Context linkContext(Context context, String path)

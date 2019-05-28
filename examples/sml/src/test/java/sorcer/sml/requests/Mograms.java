@@ -38,7 +38,7 @@ public class Mograms {
     public void evaluateModel() throws Exception  {
 
         Model context = model(val("x1", 20.0), val("x2", 80.0),
-                pro("result/y", invoker("x1 + x2", args("x1", "x2"))));
+                prc("result/y", invoker("x1 + x2", args("x1", "x2"))));
 
         // declare response paths
         responseUp(context, "result/y");

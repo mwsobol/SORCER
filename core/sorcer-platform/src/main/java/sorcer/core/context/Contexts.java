@@ -120,7 +120,7 @@ public class Contexts implements SorcerConstants {
 	 * <li>a/bb/d
 	 * </ul>
 	 * 
-	 * a pro to this method with path="a/b" will return both "a/b/c" and
+	 * a prc to this method with path="a/b" will return both "a/b/c" and
 	 * "a/bb/d" and only the first is a subpath.
 	 * 
 	 * @param context

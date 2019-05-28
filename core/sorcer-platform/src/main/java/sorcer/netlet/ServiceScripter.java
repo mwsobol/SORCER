@@ -114,7 +114,7 @@ public class ServiceScripter {
             result = scripterThread.getResult();
             return result;
         }
-        throw new ScriptExertException("You must first pro compute() before calling exert() ");
+        throw new ScriptExertException("You must first prc compute() before calling exert() ");
     }
 
     public Object interpret() throws Throwable {

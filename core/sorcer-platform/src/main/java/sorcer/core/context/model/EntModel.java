@@ -59,7 +59,7 @@ import static sorcer.so.operator.exec;
  * key and its get (argument). The association <key, argument> is the definition
  * of an independent or a dependent argument. Arguments that dependent on other
  * arguments are subroutines (evaluators, invokers), so that, each time the
- * subroutine is called, its arguments for that pro can be assigned to
+ * subroutine is called, its arguments for that prc can be assigned to
  * the corresponding parameters of evaluators and invokers.
  *
  * @author Mike Sobolewski
@@ -79,7 +79,7 @@ public class EntModel extends PositionalContext<Object> implements Contexting<Ob
 		super();
 		key = PROC_MODEL;
 		out = new Date();
-		setSubject("pro/model", new Date());
+		setSubject("prc/model", new Date());
 		isRevaluable = true;
 	}
 
@@ -96,7 +96,7 @@ public class EntModel extends PositionalContext<Object> implements Contexting<Ob
     public EntModel(Context context) throws RemoteException, ContextException {
         super(context);
         key = PROC_MODEL;
-        setSubject("pro/model", new Date());
+        setSubject("prc/model", new Date());
 		isRevaluable = true;
 	}
 
@@ -134,13 +134,13 @@ public class EntModel extends PositionalContext<Object> implements Contexting<Ob
 					val = ((UuidObject) val).getObject();
 				}
 				return val;
-			} else if (val instanceof Pro) {
-				if (((Pro) val).isCached()) {
-					return ((Pro) val).getOut();
-				} else if (((Pro) val).isPersistent()) {
-					return ((Pro) val).evaluate();
-				} else if ((((Pro) val).asis() instanceof Subroutine)) {
-					bindEntry((Subroutine) ((Pro) val).asis());
+			} else if (val instanceof Prc) {
+				if (((Prc) val).isCached()) {
+					return ((Prc) val).getOut();
+				} else if (((Prc) val).isPersistent()) {
+					return ((Prc) val).evaluate();
+				} else if ((((Prc) val).asis() instanceof Subroutine)) {
+					bindEntry((Subroutine) ((Prc) val).asis());
 				}
 			}
 
@@ -149,12 +149,12 @@ public class EntModel extends PositionalContext<Object> implements Contexting<Ob
 			} else if (val instanceof Entry && (((Entry)val).asis() instanceof Scopable)) {
 				((Scopable) ((Entry)val).asis()).setScope(this);
 			}
-			if (val != null && val instanceof Pro) {
+			if (val != null && val instanceof Prc) {
 				Context inCxt = (Context) Arg.selectDomain(args);
 				if (inCxt != null) {
 					isChanged = true;
 				}
-				Object impl = ((Pro)val).getImpl();
+				Object impl = ((Prc)val).getImpl();
 				if (impl instanceof Mogram) {
 					return exec((Service)impl, args);
 				} else if (impl instanceof Invocation) {
@@ -175,7 +175,7 @@ public class EntModel extends PositionalContext<Object> implements Contexting<Ob
 				} else if (impl instanceof Evaluation) {
 					return ((Evaluation) impl).evaluate(args);
 				} else {
-					return ((Pro)val).getValue(args);
+					return ((Prc)val).getValue(args);
 				}
 			} else if (val instanceof Evaluation) {
 				return ((Evaluation) val).evaluate(args);
@@ -235,8 +235,8 @@ public class EntModel extends PositionalContext<Object> implements Contexting<Ob
 	public Object putValue(String path, Object value) throws ContextException {
 		isChanged = true;
 		Object obj = get(path);
-		if (obj instanceof Pro) {
-			((Pro) obj).setValue(value);
+		if (obj instanceof Prc) {
+			((Prc) obj).setValue(value);
 			return value;
 		} else {
 			if (value instanceof Scopable) {
@@ -251,12 +251,12 @@ public class EntModel extends PositionalContext<Object> implements Contexting<Ob
 		return super.put(path, value);
 	}
 
-	public Pro getCall(String name) throws ContextException {
+	public Prc getCall(String name) throws ContextException {
 		Object obj = get(name);
-		if (obj instanceof Pro)
-			return (Pro) obj;
+		if (obj instanceof Prc)
+			return (Prc) obj;
 		else
-			return new Pro(name, asis(name), this);
+			return new Prc(name, asis(name), this);
 	}
 
 	public Subroutine bindEntry(Subroutine ent) throws ContextException, RemoteException {
@@ -278,13 +278,13 @@ public class EntModel extends PositionalContext<Object> implements Contexting<Ob
 	}
 
 	public EntModel append(Arg... objects) throws ContextException {
-		Pro p = null;
+		Prc p = null;
 		boolean changed = false;
 		for (Arg obj : objects) {
 			if (obj instanceof Fi) {
 				continue;
-			} else if (obj instanceof Pro) {
-				p = (Pro) obj;
+			} else if (obj instanceof Prc) {
+				p = (Prc) obj;
 			} else if (obj instanceof Entry) {
 				putValue((String) ((Entry) obj).key(),
 						((Entry) obj).getOut());
@@ -310,12 +310,12 @@ public class EntModel extends PositionalContext<Object> implements Contexting<Ob
 
 	@Override
 	public Domain add(Identifiable... objects) throws ContextException, RemoteException {
-		Pro p = null;
+		Prc p = null;
 		boolean changed = false;
 		for (Identifiable obj : objects) {
 			String pn = obj.getName();
-			if (obj instanceof Pro) {
-				p = (Pro) obj;
+			if (obj instanceof Prc) {
+				p = (Prc) obj;
 			} else if (obj instanceof Functionality || obj instanceof Setup) {
 				putValue(pn, obj);
 			} else if (obj instanceof Entry) {
@@ -382,7 +382,7 @@ public class EntModel extends PositionalContext<Object> implements Contexting<Ob
 				if (((ServiceContext) context).getExecPath() != null) {
 					Object o = get(((ServiceContext) context).getExecPath()
 							.path());
-					if (o instanceof Pro) {
+					if (o instanceof Prc) {
 						if (o instanceof Agent) {
 							if (((Agent) o).getScope() == null)
 								((Agent) o).setScope(this);
@@ -390,7 +390,7 @@ public class EntModel extends PositionalContext<Object> implements Contexting<Ob
 								((Agent) o).getScope().append(this);
 							result = ((Agent) o).evaluate(entries);
 						} else {
-							Object i = ((Pro) get(((ServiceContext) context)
+							Object i = ((Prc) get(((ServiceContext) context)
 									.getExecPath().path())).asis();
 							if (i instanceof ServiceInvoker) {
 								result = ((ServiceInvoker) i).compute(entries);
@@ -464,10 +464,10 @@ public class EntModel extends PositionalContext<Object> implements Contexting<Ob
 		throw new ContextException("No such variability in context: " + name);
 	}
 
-	private Pro putVar(String path, Functionality value) throws ContextException {
+	private Prc putVar(String path, Functionality value) throws ContextException {
 		putValue(path, value);
 		markVar(this, path, value);
-		return new Pro(path, value, this);
+		return new Prc(path, value, this);
 	}
 
 	private void realizeDependencies(Arg... entries) throws RemoteException,

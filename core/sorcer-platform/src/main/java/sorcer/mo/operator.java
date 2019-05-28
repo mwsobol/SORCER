@@ -159,8 +159,8 @@ public class operator {
                     out = (T) obj;
                 } else if (obj instanceof Valuation) {
                     out = (T)  ((Valuation)obj).valuate(args);
-                } else if (obj instanceof Pro) {
-                    out = (T) ((Pro) obj).evaluate(args);
+                } else if (obj instanceof Prc) {
+                    out = (T) ((Prc) obj).evaluate(args);
                 } else if (SdbUtil.isSosURL(obj)) {
                     out = (T) ((URL) obj).getContent();
                 } else if (obj instanceof Entry) {
@@ -222,8 +222,8 @@ public class operator {
             } else {
                 ((ServiceContext)model).put(entName, value);
             }
-            if (entry instanceof Pro) {
-                Pro call = (Pro) entry;
+            if (entry instanceof Prc) {
+                Prc call = (Prc) entry;
                 if (call.getScope() != null)
                     call.getScope().putValue(call.getName(), value);
             }
@@ -609,9 +609,9 @@ public class operator {
             } else if (i instanceof Entry) {
                 try {
                     hasEntry = true;
-                    if (i instanceof Pro)
+                    if (i instanceof Prc)
                         procType = true;
-                    else if (i instanceof Srv || i instanceof Neu) {
+                    else if (i instanceof Srv || i instanceof Snr) {
                         srvType = true;
                     }
                 } catch (Exception e) {
@@ -746,9 +746,9 @@ public class operator {
                 }
             }
 
-            if (i instanceof Pro && ((Pro)i).getImpl() instanceof Invocation) {
-                ((Pro)i).setScope(context);
-                ((ServiceInvoker)((Pro)i).getImpl()).setScope(context);
+            if (i instanceof Prc && ((Prc)i).getImpl() instanceof Invocation) {
+                ((Prc)i).setScope(context);
+                ((ServiceInvoker)((Prc)i).getImpl()).setScope(context);
             }
         }
         context.isChanged();
@@ -773,8 +773,8 @@ public class operator {
     public static Object get(EntModel pm, String parname, Arg... parametrs)
             throws ContextException, RemoteException {
         Object obj = pm.asis(parname);
-        if (obj instanceof Pro)
-            obj = ((Pro)obj).evaluate(parametrs);
+        if (obj instanceof Prc)
+            obj = ((Prc)obj).evaluate(parametrs);
         return obj;
     }
 

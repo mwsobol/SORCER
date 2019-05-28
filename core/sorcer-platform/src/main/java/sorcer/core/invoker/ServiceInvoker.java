@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Pro;
+import sorcer.core.context.model.ent.Prc;
 import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Data;
@@ -60,7 +60,7 @@ import java.util.List;
  * object referenced by its path or returned by a context invoker referenced by
  * its path inside the context. An ordered list of parameters is usually
  * included in the definition of an invoker, so that, each time the invoker is
- * called, the context arguments for that pro can be assigned to the
+ * called, the context arguments for that prc can be assigned to the
  * corresponding parameters of the invoker. The context values for all paths
  * inside the context are defined explicitly by corresponding objects or
  * calculated by corresponding invokers. Thus, requesting a eval for a path in
@@ -118,7 +118,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			this.name = defaultName + count++;
 		else
 			this.name = name;
-		invokeContext = new EntModel("model/pro");
+		invokeContext = new EntModel("model/prc");
 	}
 
 	public ServiceInvoker(ValueCallable lambda) throws InvocationException {
@@ -145,7 +145,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		this.name = name;
 		invokeContext = context;
 //		if (context == null)
-//			invokeContext = new EntModel("model/pro");
+//			invokeContext = new EntModel("model/prc");
 //		else {
 //			if (context instanceof ServiceContext) {
 //				invokeContext = context;
@@ -166,7 +166,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		invokeContext = context;
 	}
 	
-	public ServiceInvoker(EntModel context, Evaluator evaluator, Pro... callEntries) {
+	public ServiceInvoker(EntModel context, Evaluator evaluator, Prc... callEntries) {
 		this(context);
 		this.evaluator = evaluator;
 		this.args = new ArgSet(callEntries);
@@ -184,7 +184,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		this.args = args;
 	}
 	
-	public ServiceInvoker(Evaluator evaluator, Pro... callEntries) {
+	public ServiceInvoker(Evaluator evaluator, Prc... callEntries) {
 		this(((Identifiable)evaluator).getName());
 		this.evaluator = evaluator;
 		this.args = new ArgSet(callEntries);
@@ -258,8 +258,8 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	}
 	
 	/**
-	 * Adds a new pro to the invoker. This must be done before calling
-	 * {@link #invoke} so the invoker is aware that the new pro may be added to
+	 * Adds a new prc to the invoker. This must be done before calling
+	 * {@link #invoke} so the invoker is aware that the new prc may be added to
 	 * the model.
 	 * 
 	 * @param call
@@ -270,12 +270,12 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	 * @throws RemoteException
 	 */
 	public ServiceInvoker addCall(Object call) throws EvaluationException {
-		if (call instanceof Pro) {
-			((ServiceContext)invokeContext).put(((Pro) call).getName(), call);
-			if (((Pro) call).asis() instanceof ServiceInvoker) {
+		if (call instanceof Prc) {
+			((ServiceContext)invokeContext).put(((Prc) call).getName(), call);
+			if (((Prc) call).asis() instanceof ServiceInvoker) {
 				try {
-					((ServiceInvoker) ((Pro) call).evaluate()).addObserver(this);
-					args.add((Pro) call);
+					((ServiceInvoker) ((Prc) call).evaluate()).addObserver(this);
+					args.add((Prc) call);
 					value = null;
 					setChanged();
 					notifyObservers(this);
@@ -286,7 +286,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			}
 		} else if (call instanceof Identifiable) {
 			try {
-				Pro p = new Pro(((Identifiable) call).getName(), call, invokeContext);
+				Prc p = new Prc(((Identifiable) call).getName(), call, invokeContext);
 				invokeContext.putValue(p.getName(), p);
 			} catch (ContextException e) {
 				throw new EvaluationException(e);
@@ -301,16 +301,16 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		}
 	}
 	
-	synchronized public void addPars(List<Pro> callEntryList)
+	synchronized public void addPars(List<Prc> callEntryList)
 			throws EvaluationException, RemoteException {
-		for (Pro p : callEntryList) {
+		for (Prc p : callEntryList) {
 			addCall(p);
 		}
 	}
 	
-	synchronized public void addPars(Pro... callEntries) throws EvaluationException,
+	synchronized public void addPars(Prc... callEntries) throws EvaluationException,
 			RemoteException {
-		for (Pro p : callEntries) {
+		for (Prc p : callEntries) {
 			addCall(p);
 		}
 	}
@@ -353,7 +353,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 			if (args != null && args.length > 0) {
 				isValid = false;
 				if (invokeContext == null) {
-					invokeContext = new EntModel("model/pro");
+					invokeContext = new EntModel("model/prc");
 				}
 				((ServiceContext)invokeContext).substitute(args);
 			}
@@ -401,8 +401,8 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	private void init(ArgSet set){
 		if (set != null) {
 			for (Arg p : set) {
-				if (p instanceof Pro && ((Pro) p).getScope() == null)
-					((Pro) p).setScope(invokeContext);
+				if (p instanceof Prc && ((Prc) p).getScope() == null)
+					((Prc) p).setScope(invokeContext);
 			}
 		}
 	}
@@ -478,7 +478,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	public void clearPars() throws EvaluationException {
 		for (Arg p : args) {
 			try {
-				((Pro) p).setValue(null);
+				((Prc) p).setValue(null);
 			} catch (Exception e) {
 				throw new EvaluationException(e);
 			}
@@ -521,7 +521,7 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.pro.EntrySet)
+	 * @see sorcer.service.Evaluator#addArgs(sorcer.core.context.model.prc.EntrySet)
 	 */
 	@Override
 	public void addArgs(ArgSet set) throws EvaluationException {

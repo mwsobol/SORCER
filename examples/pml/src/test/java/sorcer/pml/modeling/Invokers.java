@@ -74,8 +74,8 @@ public class Invokers {
 	public void initEntModel() throws Exception {
 		em = new EntModel();
 		//force for x and y procedural entries
-		x = pro("x", 10.0);
-		y = pro("y", 20.0);
+		x = prc("x", 10.0);
+		y = prc("y", 20.0);
 		z = ent("z", invoker("x - y", args("x", "y")));
 	}
 
@@ -121,8 +121,8 @@ public class Invokers {
 	@Test
 	public void serviceNeurons() throws Exception {
 		Model nm = aneModel("neural-model");
-		add(nm, neu("x1", 10.0), neu("x2", 20.0));
-		add(nm, neu("x3", weights(val("x1", 2.0), val("x2", 10.0)), signals("x1", "x2")));
+		add(nm, snr("x1", 10.0), snr("x2", 20.0));
+		add(nm, snr("x3", weights(val("x1", 2.0), val("x2", 10.0)), signals("x1", "x2")));
 
 //        logger.info("activate x1: " + activate(em, "x1"));
         assertEquals(activate(nm, "x1"), 10.0);
@@ -140,9 +140,9 @@ public class Invokers {
 	@Test
 	public void serviceNeuronFidelities() throws Exception {
 		Model nm = model("neural-model",
-			neu("x1", 10.0), neu("x2", 20.0),
-			neu("x3", weights(val("x1", 2.0), val("x2", 5.0)), signals("x1", "x2")),
-			neu("x4", mnFi(
+			snr("x1", 10.0), snr("x2", 20.0),
+			snr("x3", weights(val("x1", 2.0), val("x2", 5.0)), signals("x1", "x2")),
+			snr("x4", mnFi(
 					nFi("n1", signals("x1", "x2"), weights(val("x1", 1.5), val("x2", 10.0))),
 					nFi("n2", signals("x1", "x2"), weights(val("x1", 2.0), val("x2", 12.0))))));
 

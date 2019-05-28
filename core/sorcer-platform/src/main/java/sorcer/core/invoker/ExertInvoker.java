@@ -18,8 +18,8 @@ package sorcer.core.invoker;
 
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
+import sorcer.core.context.model.ent.Prc;
 import sorcer.core.context.model.ent.Subroutine;
-import sorcer.core.context.model.ent.Pro;
 import sorcer.service.*;
 import sorcer.service.Signature.ReturnPath;
 
@@ -42,18 +42,18 @@ public class ExertInvoker extends ServiceInvoker implements Invocation {
 		defaultName = "xrtInvoker-";
 	}
 	
-	public ExertInvoker(String name, Routine exertion, String path, Pro... callEntries) {
+	public ExertInvoker(String name, Routine exertion, String path, Prc... callEntries) {
 		super(name);
 		this.path = path;
 		this.exertion = exertion;
 		this.args = new ArgSet(callEntries);
 	}
 
-	public ExertInvoker(Routine exertion, String path, Pro... callEntries) {
+	public ExertInvoker(Routine exertion, String path, Prc... callEntries) {
 		this(exertion.getName(), exertion, path, callEntries);
 	}
 	
-	public ExertInvoker(Routine exertion, Pro... callEntries) {
+	public ExertInvoker(Routine exertion, Prc... callEntries) {
 		this(null, exertion, null, callEntries);
 	}
 

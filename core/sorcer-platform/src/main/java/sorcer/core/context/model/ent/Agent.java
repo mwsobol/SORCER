@@ -36,7 +36,7 @@ import sorcer.service.EvaluationException;
  * @author Mike Sobolewski
  *
  */
-public class Agent<T> extends Pro<T> implements Serializable {
+public class Agent<T> extends Prc<T> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -117,7 +117,7 @@ public class Agent<T> extends Pro<T> implements Serializable {
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(
-					"Unable to instantiate pro agent :"
+					"Unable to instantiate prc agent :"
 							+ e.getClass().getName() + ": "
 							+ e.getLocalizedMessage());
 		}
@@ -146,11 +146,11 @@ public class Agent<T> extends Pro<T> implements Serializable {
 		return (T) invoker;
 	}
 	
-	private Pro[] getPars(Arg... entries) {
-		Pro[] pa = new Pro[entries.length];
+	private Prc[] getPars(Arg... entries) {
+		Prc[] pa = new Prc[entries.length];
 		if (entries != null && entries.length > 0) {
 			for (int i = 0; i < entries.length; i++)
-				pa[i] = (Pro) entries[i];
+				pa[i] = (Prc) entries[i];
 		}
 		return pa;
 	}

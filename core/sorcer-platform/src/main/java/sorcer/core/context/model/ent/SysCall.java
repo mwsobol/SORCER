@@ -31,7 +31,7 @@ import java.util.Properties;
 /**
  * Created by Mike Sobolewski on 4/14/16.
  */
-public class SysCall extends Pro<Context> implements Serializable {
+public class SysCall extends Prc<Context> implements Serializable {
 
     private CmdInvoker invoker;
     private ServiceContext dataContext;
@@ -113,7 +113,7 @@ public class SysCall extends Pro<Context> implements Serializable {
                     }
                 }
             } else {
-                out.putValue("pro/out", result.getOut());
+                out.putValue("prc/out", result.getOut());
             }
         } catch (Exception e) {
             throw new InvocationException(e);

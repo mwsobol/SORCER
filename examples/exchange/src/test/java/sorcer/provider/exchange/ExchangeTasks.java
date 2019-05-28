@@ -280,7 +280,7 @@ public class ExchangeTasks {
 		long start = System.nanoTime();
 		int[] out = null;
 		for (int i = 0; i < ITERATIONS; i++) {
-			// the local ipc this test pro
+			// the local ipc this test prc
 			out = ipcIntArray(in);
 		}
 		long end = System.nanoTime();

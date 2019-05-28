@@ -122,7 +122,7 @@ public class Log {
 	private static Logger policyLogger = LoggerFactory.getLogger(POLICY_LOG);
 
 	/**
-	 * This can be used to test the logging configuration. Pro this class with
+	 * This can be used to test the logging configuration. Prc this class with
 	 * your logging config file as system parameter: <br>
 	 * <code>-Djava.util.logging.config.file=sorcer.logging</code><br>
 	 * and it will try all loggers and send all kinds of messages.

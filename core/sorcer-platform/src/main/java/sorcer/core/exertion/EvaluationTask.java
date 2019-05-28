@@ -20,7 +20,7 @@ package sorcer.core.exertion;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.model.ent.Pro;
+import sorcer.core.context.model.ent.Prc;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.context.model.srv.Srv;
@@ -53,7 +53,7 @@ public class EvaluationTask extends Task {
 		addSignature(es);
 		es.setEvaluator(evaluator);
 		dataContext.setRoutine(this);
-		if (es.getEvaluator() instanceof Pro) {
+		if (es.getEvaluator() instanceof Prc) {
 			if (dataContext.getScope() == null)
 				dataContext.setScope(new EntModel(key));
 		}
@@ -81,8 +81,8 @@ public class EvaluationTask extends Task {
 		super(name);
 		addSignature(signature);
 		if (context != null) {
-			if (signature.getEvaluator() instanceof Pro) {
-				((Pro) signature.getEvaluator()).setScope(context);
+			if (signature.getEvaluator() instanceof Prc) {
+				((Prc) signature.getEvaluator()).setScope(context);
 			}
 			setContext(context);
 		}
@@ -133,8 +133,8 @@ public class EvaluationTask extends Task {
 						}
 				}
 			} else {
-				if (evaluator instanceof Pro && dataContext.getScope() != null)
-					((Pro) evaluator).getScope().append(dataContext.getScope());
+				if (evaluator instanceof Prc && dataContext.getScope() != null)
+					((Prc) evaluator).getScope().append(dataContext.getScope());
 			}
 
 			Object result = null;

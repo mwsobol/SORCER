@@ -258,7 +258,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 
 		if (!isRunning() && !isUpdated()) {
 		//if (!isRunning()) {
-			logger.error("Trying to pro done on a non running resource" + this + " state: " + Exec.State.name(getState()));
+			logger.error("Trying to prc done on a non running resource" + this + " state: " + Exec.State.name(getState()));
 			throw new MonitorException("Routine " + runtimeExertion.getName() + " not running, state = "
 					+ Exec.State.name(getState()));
 		}
@@ -283,7 +283,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 
 		if (!isRunning() && !isInSpace()  && !isProvision()) {
 			logger.error(
-					"Trying to pro failed on a non running resource" + this);
+					"Trying to prc failed on a non running resource" + this);
 			throw new MonitorException("Routine " + runtimeExertion.getName() + " not running. state = "
 					+ Exec.State.name(getState()));
 		}

@@ -41,7 +41,7 @@ import static sorcer.so.operator.eval;
 import static sorcer.so.operator.exec;
 
 /**
- * In service-based modeling, a parameter (for short a pro) is a special kind of
+ * In service-based modeling, a parameter (for short a prc) is a special kind of
  * variable, used in a service context {@link EntModel} to refer to one of the
  * pieces of data provided as input to the invokers (subroutines of the
  * context). These pieces of data are called arguments.
@@ -49,30 +49,30 @@ import static sorcer.so.operator.exec;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Pro<T> extends Subroutine<T> implements Invocation<T>,
+public class Prc<T> extends Subroutine<T> implements Invocation<T>,
 	Setter, Scopable, Comparable<T>, Reactive<T>, func<T> {
 
 	private static final long serialVersionUID = 7495489980319169695L;
 	 
-	private static Logger logger = LoggerFactory.getLogger(Pro.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(Prc.class.getName());
 	
 	private Principal principal;
 
-	// data store URL for this pro
+	// data store URL for this prc
 	private URL dbURL;
 
-	public Pro(String name) {
+	public Prc(String name) {
 		super(name);
 		this.name = name;
 		type = Functionality.Type.PROC;
 	}
 	
-	public Pro(Identifiable identifiable) {
+	public Prc(Identifiable identifiable) {
 		this(identifiable.getName());
 		impl = (T)identifiable;
 	}
 
-	public Pro(String path, Object entity) {
+	public Prc(String path, Object entity) {
 		super(path);
 		name = path;
 		if (entity instanceof  Number || entity instanceof  String || entity instanceof  Date
@@ -100,7 +100,7 @@ public class Pro<T> extends Subroutine<T> implements Invocation<T>,
 		isValid = true;
 	}
 
-	public Pro(String path, Object entity, Object scope)
+	public Prc(String path, Object entity, Object scope)
 			throws ContextException {
 		this(path);
         if (entity instanceof  Number || entity instanceof  String || entity instanceof  Date
@@ -122,7 +122,7 @@ public class Pro<T> extends Subroutine<T> implements Invocation<T>,
 		isValid = true;
 	}
 	
-	public Pro(Contexting map, String name, String path) {
+	public Prc(Contexting map, String name, String path) {
 		this(name);
 		impl =  path;
 	}
@@ -200,8 +200,8 @@ public class Pro<T> extends Subroutine<T> implements Invocation<T>,
 			} else {
 				val = out;
 			}
-			if (val instanceof Pro && ((Pro)val).asis() == null && out == null) {
-				logger.warn("undefined pro: " + val);
+			if (val instanceof Prc && ((Prc)val).asis() == null && out == null) {
+				logger.warn("undefined prc: " + val);
 				return null;
 			}
 			// direct scope
@@ -327,8 +327,8 @@ public class Pro<T> extends Subroutine<T> implements Invocation<T>,
 	public int compareTo(T o) {
 		if (o == null)
 			throw new NullPointerException();
-		if (o instanceof Pro<?>)
-			return name.compareTo(((Pro<?>) o).getName());
+		if (o instanceof Prc<?>)
+			return name.compareTo(((Prc<?>) o).getName());
 		else
 			return -1;
 	}
@@ -348,7 +348,7 @@ public class Pro<T> extends Subroutine<T> implements Invocation<T>,
             ps = "" + out;
         }
 
-        return "pro [key: " + name + ", eval: " + ps + ", path: " + key + "]";
+        return "prc [key: " + name + ", eval: " + ps + ", path: " + key + "]";
     }
 
 	/* (non-Javadoc)
@@ -516,7 +516,7 @@ public class Pro<T> extends Subroutine<T> implements Invocation<T>,
 	public void addArgs(ArgSet set) throws EvaluationException {
 		Iterator<Arg> i = set.iterator();
 		while (i.hasNext()) {
-			Pro callEntry = (Pro)i.next();
+			Prc callEntry = (Prc)i.next();
 			try {
 				putValue(callEntry.getName(), callEntry.asis());
 			} catch (Exception e) {
@@ -534,8 +534,8 @@ public class Pro<T> extends Subroutine<T> implements Invocation<T>,
 	
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof Pro
-				&& ((Pro) object).name.equals(name))
+		if (object instanceof Prc
+				&& ((Prc) object).name.equals(name))
 			return true;
 		else
 			return false;

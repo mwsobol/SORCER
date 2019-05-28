@@ -87,7 +87,7 @@ public class DocumentDescriptor implements SorcerConstants, Serializable {
 	public String newVerDesc;
 
 	// handles for upload and download
-	// pro RemoteFileStore.getInputStream(DocumentDescriptor) to
+	// prc RemoteFileStore.getInputStream(DocumentDescriptor) to
 	// get inputStream and similarlly for Output
 	public InputStream in;
 	public OutputStream out;

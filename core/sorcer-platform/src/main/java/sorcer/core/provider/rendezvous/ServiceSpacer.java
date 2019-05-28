@@ -110,7 +110,7 @@ public class ServiceSpacer extends SystemServiceBean implements Spacer {
                             +(provider != null ? provider.getProviderName() + " " : "")
                             + dispatcher.getClass().getName());
                 } catch (RemoteException e) {
-                    //ignore it, local pro
+                    //ignore it, local prc
                 }
                 dispatcher.exec();
                 DispatchResult dispatchResult = dispatcher.getResult();

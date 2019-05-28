@@ -40,24 +40,24 @@ public class EntModels {
 	private final static Logger logger = LoggerFactory.getLogger(EntModels.class.getName());
 
 	private EntModel em;
-	private Pro<Double> x;
-	private Pro<Double> y;
+	private Prc<Double> x;
+	private Prc<Double> y;
 
 
 	@Before
 	public void initEntModel() throws Exception {
 
 		em = new EntModel();
-		x = pro("x", 10.0);
-		y = pro("y", 20.0);
+		x = prc("x", 10.0);
+		y = prc("y", 20.0);
 
 	}
 
 	@Test
 	public void closingEntScope() throws Exception {
 
-		// a pro is a variable (entry) evaluated in its own scope (context)
-		Pro y = pro("y",
+		// a prc is a variable (entry) evaluated in its own scope (context)
+		Prc y = prc("y",
 				invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = exec(y, val("x1", 10.0), val("x2", 50.0),
                 val("x3", 20.0), val("x4", 80.0));
@@ -69,8 +69,8 @@ public class EntModels {
 	@Test
 	public void closingExprScope() throws Exception {
 
-		// a pro is a variable (entry) evaluated in its own scope (context)
-		Pro y = pro("y",
+		// a prc is a variable (entry) evaluated in its own scope (context)
+		Prc y = prc("y",
 				expr("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = exec(y, val("x1", 10.0), val("x2", 50.0),
 				val("x3", 20.0), val("x4", 80.0));
@@ -88,22 +88,22 @@ public class EntModels {
 				val("x1"), val("x2"), val("x3", 20.0),
 				val("x4", 80.0),
 				// outputs
-				pro("t4", invoker("x1 * x2", args("x1", "x2"))),
-				pro("t5", invoker("x3 + x4", args("x3", "x4"))),
-				pro("j1", invoker("t4 - t5", args("t4", "t5"))));
+				prc("t4", invoker("x1 * x2", args("x1", "x2"))),
+				prc("t5", invoker("x3 + x4", args("x3", "x4"))),
+				prc("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		assertTrue(exec(model, "t5").equals(100.0));
 
 		assertEquals(exec(model, "j1"), null);
 
-		eval(model, "j1", pro("x1", 10.0), pro("x2", 50.0)).equals(400.0);
+		eval(model, "j1", prc("x1", 10.0), prc("x2", 50.0)).equals(400.0);
 
 		assertTrue(exec(model, "j1", val("x1", 10.0), val("x2", 50.0)).equals(400.0));
 
 		assertTrue(exec(model, "j1").equals(400.0));
 
 		// get model response
-		Row mr = (Row) query(model, //pro("x1", 10.0), pro("x2", 50.0),
+		Row mr = (Row) query(model, //prc("x1", 10.0), prc("x2", 50.0),
 				result("y", outPaths("t4", "t5", "j1")));
 		assertTrue(names(mr).equals(list("t4", "t5", "j1")));
 		assertTrue(values(mr).equals(list(500.0, 100.0, 400.0)));
@@ -117,12 +117,12 @@ public class EntModels {
 			// inputs
 			val("x1"), val("x2"), val("x3", 20.0), val("x4"),
 			// outputs
-			pro("t4", invoker("x1 * x2", args("x1", "x2"))),
-			pro("t5",
+			prc("t4", invoker("x1 * x2", args("x1", "x2"))),
+			prc("t5",
 				task(sig("add", AdderImpl.class),
 					cxt("add", inVal("x3"), inVal("x4"),
 						result("result/y")))),
-			pro("j1", invoker("t4 - t5", args("t4", "t5"))));
+			prc("j1", invoker("t4 - t5", args("t4", "t5"))));
 
 		setValues(vm, val("x1", 10.0), val("x2", 50.0),
 			val("x4", 80.0));
@@ -133,10 +133,10 @@ public class EntModels {
     @Test
 	public void callInvoker() throws Exception {
 
-		EntModel pm = new EntModel("pro-model");
-		add(pm, pro("x", 10.0));
-		add(pm, pro("y", 20.0));
-		add(pm, pro("add", invoker("x + y", args("x", "y"))));
+		EntModel pm = new EntModel("prc-model");
+		add(pm, prc("x", 10.0));
+		add(pm, prc("y", 20.0));
+		add(pm, prc("add", invoker("x + y", args("x", "y"))));
 
 		assertTrue(exec(pm, "x").equals(10.0));
 		assertTrue(exec(pm, "y").equals(20.0));
@@ -159,8 +159,8 @@ public class EntModels {
 
 	@Test
 	public void callModelTest() throws Exception {
-		EntModel pm = entModel(pro("x", 10.0), pro("y", 20.0),
-				pro("add", invoker("x + y", args("x", "y"))));
+		EntModel pm = entModel(prc("x", 10.0), prc("y", 20.0),
+				prc("add", invoker("x + y", args("x", "y"))));
 
 		assertTrue(exec(pm, "x").equals(10.0));
 		assertTrue(exec(pm, "y").equals(20.0));
@@ -174,11 +174,11 @@ public class EntModels {
 
 	@Test
 	public void expendingCallModelTest() throws Exception {
-		EntModel pm = entModel(pro("x", 10.0), pro("y", 20.0),
-				pro("add", invoker("x + y", args("x", "y"))));
+		EntModel pm = entModel(prc("x", 10.0), prc("y", 20.0),
+				prc("add", invoker("x + y", args("x", "y"))));
 
-		Pro x = pro(pm, "x");
-		logger.info("pro x: " + x);
+		Prc x = prc(pm, "x");
+		logger.info("prc x: " + x);
 		setValue(x, 20.0);
 		logger.info("val x: " + exec(x));
 		logger.info("val x: " + eval(pm, "x"));
@@ -192,7 +192,7 @@ public class EntModels {
         responseUp(pm, "add");
 		assertEquals(value(eval(pm), "add"), 60.0);
 
-		add(pm, pro("x", 10.0), pro("y", 20.0));
+		add(pm, prc("x", 10.0), prc("y", 20.0));
 		assertTrue(exec(pm, "x").equals(10.0));
 		assertTrue(exec(pm, "y").equals(20.0));
 
@@ -203,9 +203,9 @@ public class EntModels {
 		assertTrue(value(eval(pm), "add").equals(30.0));
 
 		// with new arguments, closure
-		assertTrue(value(eval(pm, pro("x", 20.0), pro("y", 30.0)), "add").equals(50.0));
+		assertTrue(value(eval(pm, prc("x", 20.0), prc("y", 30.0)), "add").equals(50.0));
 
-		add(pm, pro("z", invoker("(x * y) + add", args("x", "y", "add"))));
+		add(pm, prc("z", invoker("(x * y) + add", args("x", "y", "add"))));
 		logger.info("z eval: " + eval(pm, "z"));
 		assertTrue(exec(pm, "z").equals(650.0));
 
@@ -216,9 +216,9 @@ public class EntModels {
 	public void callInvokers() throws Exception {
 
 		// all var parameters (x1, y1, y2) are not initialized
-		Pro y3 = pro("y3", invoker("x + y2", args("x", "y2")));
-		Pro y2 = pro("y2", invoker("x * y1", args("x", "y1")));
-		Pro y1 = pro("y1", invoker("x1 * 5", args("x1")));
+		Prc y3 = prc("y3", invoker("x + y2", args("x", "y2")));
+		Prc y2 = prc("y2", invoker("x * y1", args("x", "y1")));
+		Prc y1 = prc("y1", invoker("x1 * 5", args("x1")));
 
 		EntModel pc = entModel(y1, y2, y3);
 		// any dependent values or args can be updated or added any time
@@ -240,9 +240,9 @@ public class EntModels {
         assertEquals(value(cxt, "arg/x1"), 10.0);
         assertEquals(value(cxt, "arg/x2"), 50.0);
 
-        assertTrue(asis(cxt, "arg/x0") instanceof Pro);
-        assertTrue(asis(cxt, "arg/x1") instanceof Pro);
-        assertTrue(asis(cxt, "arg/x2") instanceof Pro);
+        assertTrue(asis(cxt, "arg/x0") instanceof Prc);
+        assertTrue(asis(cxt, "arg/x1") instanceof Prc);
+        assertTrue(asis(cxt, "arg/x2") instanceof Prc);
 
         put(cxt, "arg/x0", 11.0);
         put(cxt, "arg/x1", 110.0);
@@ -252,9 +252,9 @@ public class EntModels {
         assertEquals(value(cxt, "arg/x1"), 110.0);
         assertEquals(value(cxt, "arg/x2"), 150.0);
 
-        assertTrue(asis(cxt, "arg/x0") instanceof Pro);
-        assertTrue(asis(cxt, "arg/x1") instanceof Pro);
-        assertTrue(asis(cxt, "arg/x2") instanceof Pro);
+        assertTrue(asis(cxt, "arg/x0") instanceof Prc);
+        assertTrue(asis(cxt, "arg/x1") instanceof Prc);
+        assertTrue(asis(cxt, "arg/x2") instanceof Prc);
     }
 
 
@@ -262,9 +262,9 @@ public class EntModels {
 	public void argVsEntPersistence() throws Exception {
 
 		// persistable just indicates that argument is persistent,
-		// for example when eval(pro) is invoked
-		Pro dbp1 = persistent(pro("design/in", 25.0));
-		Pro dbp2 = dbEnt("url", "myUrl1");
+		// for example when eval(prc) is invoked
+		Prc dbp1 = persistent(prc("design/in", 25.0));
+		Prc dbp2 = dbEnt("url", "myUrl1");
 
 		assertFalse(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
@@ -275,10 +275,10 @@ public class EntModels {
 		assertTrue(asis(dbp1) instanceof URL);
 		assertTrue(asis(dbp2) instanceof URL);
 
-		// store pro args in the data store
+		// store prc args in the data store
 		URL sUrl = new URL("http://sorcersoft.org");
-		Pro p1 = pro("design/in", 30.0);
-		Pro p2 = pro("url", sUrl);
+		Prc p1 = prc("design/in", 30.0);
+		Prc p2 = prc("url", sUrl);
 		URL url1 = storeVal(p1);
 		URL url2 = storeVal(p2);
 
@@ -291,8 +291,8 @@ public class EntModels {
 		assertEquals(exec(p2), sUrl);
 
 		// store args in the data store
-		p1 = pro("design/in", 30.0);
-		p2 = pro("url", sUrl);
+		p1 = prc("design/in", 30.0);
+		p2 = prc("url", sUrl);
 		store(p1);
 		store(p2);
 
@@ -308,7 +308,7 @@ public class EntModels {
 	@Test
 	public void entModelConditions() throws Exception {
 
-		final EntModel pm = new EntModel("pro-model");
+		final EntModel pm = new EntModel("prc-model");
 		pm.putValue("x", 10.0);
 		pm.putValue("y", 20.0);
 
@@ -330,7 +330,7 @@ public class EntModels {
 	@Test
 	public void closingConditions() throws Exception {
 
-		EntModel pm = new EntModel("pro-model");
+		EntModel pm = new EntModel("prc-model");
 		pm.putValue(Condition._closure_, new ServiceInvoker(pm));
 		// free variables, no args for the invoker
 		((ServiceInvoker) pm.get(Condition._closure_))
@@ -377,10 +377,10 @@ public class EntModels {
 	@Test
 	public void invokerLoopTest() throws Exception {
 
-		EntModel pm = entModel("pro-model");
-		add(pm, pro("x", 1));
-		add(pm, pro("y", invoker("x + 1", args("x"))));
-		add(pm, pro("z", inc(invoker(pm, "y"), 2)));
+		EntModel pm = entModel("prc-model");
+		add(pm, prc("x", 1));
+		add(pm, prc("y", invoker("x + 1", args("x"))));
+		add(pm, prc("z", inc(invoker(pm, "y"), 2)));
 		Invocation z2 = invoker(pm, "z");
 
 		ServiceInvoker iloop = loop("iloop", condition(pm, "{ z -> z < 50 }", "z"), z2);
@@ -394,9 +394,9 @@ public class EntModels {
 	public void callableAttachment() throws Exception {
 
 		final EntModel pm = entModel();
-		final Pro<Double> x = pro("x", 10.0);
-		final Pro<Double> y = pro("y", 20.0);
-		Pro z = pro("z", invoker("x + y", x, y));
+		final Prc<Double> x = prc("x", 10.0);
+		final Prc<Double> y = prc("y", 20.0);
+		Prc z = prc("z", invoker("x + y", x, y));
 		add(pm, x, y, z);
 
 		// update vars x and y that loop condition (var z) depends on
@@ -411,8 +411,8 @@ public class EntModels {
 			}
 		};
 
-		add(pm, callableInvoker("pro", update));
-		assertEquals(invoke(pm, "pro"), 260.0);
+		add(pm, callableInvoker("prc", update));
+		assertEquals(invoke(pm, "prc"), 260.0);
 
 	}
 
@@ -421,10 +421,10 @@ public class EntModels {
 	public void callableAttachmentWithArgs() throws Exception {
 
 		final EntModel pm = entModel();
-		final Pro<Double> x = pro("x", 10.0);
-		final Pro<Double> y = pro("y", 20.0);
-		Pro z = pro("z", invoker("x + y", x, y));
-		add(pm, x, y, z, pro("limit", 60.0));
+		final Prc<Double> x = prc("x", 10.0);
+		final Prc<Double> y = prc("y", 20.0);
+		Prc z = prc("z", invoker("x + y", x, y));
+		add(pm, x, y, z, prc("limit", 60.0));
 
 		// anonymous local class implementing Callable interface
 		Callable update = new Callable() {
@@ -437,8 +437,8 @@ public class EntModels {
 			}
 		};
 
-		add(pm, callableInvoker("pro", update));
-		assertEquals(invoke(pm, "pro", context(pro("limit", 100.0))), 420.0);
+		add(pm, callableInvoker("prc", update));
+		assertEquals(invoke(pm, "prc", context(prc("limit", 100.0))), 420.0);
 	}
 
 
@@ -462,11 +462,11 @@ public class EntModels {
 	@Test
 	public void attachMethodInvokerWithContext() throws Exception {
 
-		Pro z = pro("z", invoker("x + y", x, y));
+		Prc z = prc("z", invoker("x + y", x, y));
 		add(em, x, y, z, val("limit", 60.0));
 
 		add(em, methodInvoker("call", new Config()));
-//		logger.info("pro eval:" + invoke(em, "pro"));
+//		logger.info("prc eval:" + invoke(em, "prc"));
 		assertEquals(invoke(em, "call", context(val("limit", 100.0))), 420.0);
 
 	}
@@ -479,7 +479,7 @@ public class EntModels {
 
 		// set the sphere/radius in the model
 		put(em, "sphere/radius", 20.0);
-		// attach the agent to the pro-model and invoke
+		// attach the agent to the prc-model and invoke
         add(em, agent("getSphereVolume",
                 Volume.class.getName(), new URL(Sorcer
                         .getWebsterUrl() + "/pml-" + sorcerVersion+".jar")));

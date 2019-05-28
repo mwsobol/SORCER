@@ -11,9 +11,8 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.EntModel;
-import sorcer.core.context.model.ent.Pro;
+import sorcer.core.context.model.ent.Prc;
 import sorcer.core.context.model.ent.Subroutine;
-import sorcer.ent.operator;
 import sorcer.service.Arg;
 import sorcer.service.Context;
 import sorcer.service.Domain;
@@ -49,17 +48,17 @@ public class ContextModels {
 		setValues(mdl, val("arg/x6", 6.0));
 		assertTrue(exec(mdl, "arg/x6").equals(6.0));
 
-		// pro is of the Evaluation multitype
+		// prc is of the Evaluation multitype
 		// args in models are evaluated
 		setValues(mdl, val("arg/x6", val("overwrite", 20.0)));
 		assertTrue(exec(mdl, "arg/x6").equals(20.0));
 
 		// invoker is of the Invocation multitype
-		put(mdl, pro("arg/x7", invoker("x1 + x3", args("x1", "x3"))));
+		put(mdl, prc("arg/x7", invoker("x1 + x3", args("x1", "x3"))));
 
 		assertTrue(exec(mdl, "arg/x7").equals(4.0));
 		assertTrue(get(mdl, "arg/x7") instanceof Subroutine);
-		assertTrue(get(mdl, "arg/x7") instanceof Pro);
+		assertTrue(get(mdl, "arg/x7") instanceof Prc);
 		assertTrue(get(mdl, "arg/x7") instanceof Invocation);
 	}
 
@@ -69,7 +68,7 @@ public class ContextModels {
 		Model mdl = entModel(val("arg/x1", 1.0), val("arg/x2", 2.0),
 				val("arg/x3", 3.0), val("arg/x4", 4.0), val("arg/x5", 5.0));
 
-		add(mdl, pro("invoke", invoker("x1 + x3", args("x1", "x3"))));
+		add(mdl, prc("invoke", invoker("x1 + x3", args("x1", "x3"))));
 
 		// declare the modeling responses
 		responseUp(mdl, "invoke");
@@ -82,7 +81,7 @@ public class ContextModels {
 		assertTrue(result.equals(5.0));
 
 		// compute the model with new inputs
-		add(mdl, pro("invoke", invoker("x6 * x7 + x1", args("x1", "x6", "x7"))));
+		add(mdl, prc("invoke", invoker("x6 * x7 + x1", args("x1", "x6", "x7"))));
 		result = (Double) value(eval(mdl, ent("arg/x6", 6.0), ent("arg/x7", 7.0)), "invoke");
 		assertTrue(result.equals(44.0));
 	}

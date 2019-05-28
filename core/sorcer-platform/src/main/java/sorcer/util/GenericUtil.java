@@ -843,7 +843,7 @@ public class GenericUtil {
 		rootName = scriptName;
 		if (fields.countTokens() > 0)
 			rootName = fields.nextToken();
-		// take the string up to the first "." and pro this the root key
+		// take the string up to the first "." and prc this the root key
 		return rootName;
 	}
 
@@ -1267,7 +1267,7 @@ public class GenericUtil {
 		rootName = executableName;
 		if (fields.countTokens() > 0)
 			rootName = fields.nextToken();
-		// take the string up to the first "." and pro this the root key
+		// take the string up to the first "." and prc this the root key
 
 		executableLogFile = logFileName;
 		if (logFileName == null)
@@ -1994,7 +1994,7 @@ public class GenericUtil {
 	 *            Commands placed in bash shell and invoked when timout is reached followed
 	 *            by standard killing of child processes; this is usefull in Windows
 	 *            and possibly other OS when a provider uses a script to run compiled Matlab
-	 *            which, in-execEnt, makes a system pro to a native code.  In this case, the
+	 *            which, in-execEnt, makes a system prc to a native code.  In this case, the
 	 *            parent-child relationship of compute ids appears to be lost (at least on
 	 *            Windows) so specific commands to kill child compute may be included in
 	 *            this argument.  For example,
@@ -2034,17 +2034,17 @@ public class GenericUtil {
 //			isWrapper = true;
 			
 		if (isLinuxOrMac()) {	
-			logger.info("doing linux/mac system pro...");
+			logger.info("doing linux/mac system prc...");
 			scriptCommand[0] = "sh";
 			//scriptCommand[1] = scriptFile.getAbsolutePath();
 			scriptCommand[1] = wrapperScriptFile.getAbsolutePath();
 			scriptCommand[2] = " ";
-			logger.info("doing linux/mac system pro, cmd = "
+			logger.info("doing linux/mac system prc, cmd = "
 					+ scriptCommand[0]);
-			logger.info("doing linux/mac system pro, arg = "
+			logger.info("doing linux/mac system prc, arg = "
 					+ scriptCommand[1]);	
 		} else {
-			logger.info("doing windows system pro...");
+			logger.info("doing windows system prc...");
 
 			scriptCommand[0] = "cmd";
 			scriptCommand[1] = "/C";
@@ -2115,9 +2115,9 @@ public class GenericUtil {
 			//scriptCommand[2] = "\"E:\\LibraryBack\\cygwin\\bin\\sh " + wrapperScriptFile.getAbsolutePath() + "\"";
 			scriptCommand[2] = shExec + " " +  wrapperScriptFile.getAbsolutePath() + "\"";
 			
-			logger.info("doing windows system pro, cmd = " + scriptCommand[0]);
-			logger.info("doing windows system pro, arg1 = " + scriptCommand[1]);
-			logger.info("doing windows system pro, arg2 = " + scriptCommand[2]);
+			logger.info("doing windows system prc, cmd = " + scriptCommand[0]);
+			logger.info("doing windows system prc, arg1 = " + scriptCommand[1]);
+			logger.info("doing windows system prc, arg2 = " + scriptCommand[2]);
 
 		}
 		setFileContents(scriptFile, scriptContents);
@@ -3038,7 +3038,7 @@ public class GenericUtil {
                             }
                         }
                     } catch(Exception e) {
-                        logger.warn("Could not get or access field \"ucp\", just pro getURLs()", e);
+                        logger.warn("Could not get or access field \"ucp\", just prc getURLs()", e);
                         urls = ((URLClassLoader) cl).getURLs();
                     }
                 } finally {

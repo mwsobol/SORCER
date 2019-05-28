@@ -61,7 +61,7 @@ public class MogramThread implements Runnable {
 						"run: " + job.getName() + " explorer: " + dispatcher.getClass().getName());
 			} catch (RemoteException e) {
                 logger.error("exception in explorer: " + e);
-				// ignore it, locall pro
+				// ignore it, locall prc
 			}
 /*			 int COUNT = 1000;
 			 int count = COUNT;

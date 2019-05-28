@@ -20,7 +20,7 @@ package sorcer.core.invoker;
 import java.rmi.RemoteException;
 
 import sorcer.core.context.model.EntModel;
-import sorcer.core.context.model.ent.Pro;
+import sorcer.core.context.model.ent.Prc;
 import sorcer.service.Arg;
 import sorcer.service.ArgSet;
 import sorcer.service.Context;
@@ -45,13 +45,13 @@ public class RunnableInvoker<T> extends ServiceInvoker<T> {
 		super(context);
 	}
 	
-	public RunnableInvoker(EntModel context, Runnable runnable, Pro... callEntries) {
+	public RunnableInvoker(EntModel context, Runnable runnable, Prc... callEntries) {
 		super(context);
 		this.runnable = runnable;
 		this.args = new ArgSet(callEntries);
 	}
 
-	public RunnableInvoker(String name, Runnable runnable, Pro... callEntries) {
+	public RunnableInvoker(String name, Runnable runnable, Prc... callEntries) {
 		super(name);
 		this.runnable = runnable;
 		this.args = new ArgSet(callEntries);

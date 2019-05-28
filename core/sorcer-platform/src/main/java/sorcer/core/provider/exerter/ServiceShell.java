@@ -615,7 +615,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 					List<Setter> ps = ((ServiceRoutine) mogram).getPersisters();
 					if (ps != null) {
 						for (Setter p : ps) {
-							if (p != null && p instanceof Pro) {
+							if (p != null && p instanceof Prc) {
 								String from = p.getName();
 								Object obj;
 								if (mogram instanceof Job)
@@ -666,7 +666,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see java.util.concurrent.Callable#pro()
+	 * @see java.util.concurrent.Callable#prc()
 	 */
 	@Override
 	public Object call() throws Exception {
@@ -879,10 +879,10 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
                     && ((Signature) service).getServiceType() == RemoteServiceShell.class) {
                 Provider prv = (Provider) Accessor.get().getService((Signature) service);
                 return (T) prv.exert(mogram, txn).getContext();
-            } else if (service instanceof Pro) {
-                ((Pro)service).setScope(mogram);
-                Object val =((Pro)service).evaluate();
-                ((Context)mogram).putValue(((Pro)service).getName(), val);
+            } else if (service instanceof Prc) {
+                ((Prc)service).setScope(mogram);
+                Object val =((Prc)service).evaluate();
+                ((Context)mogram).putValue(((Prc)service).getName(), val);
                 return (T) mogram;
             }
 		} catch (SignatureException e) {

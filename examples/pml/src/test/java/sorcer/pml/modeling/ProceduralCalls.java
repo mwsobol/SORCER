@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.context.model.ent.Pro;
+import sorcer.core.context.model.ent.Prc;
 import sorcer.ent.operator;
 import sorcer.service.Context;
 import sorcer.service.modeling.*;
@@ -32,12 +32,12 @@ public class ProceduralCalls {
 
 	@Test
 	public void proScope() throws Exception {
-		// a pro is a variable (entry) evaluated with its own scope (context)
+		// a prc is a variable (entry) evaluated with its own scope (context)
 		Context<Double> cxt = context(val("x", 20.0), val("y", 30.0));
 
-		// pro with its context scope
-		Pro add = pro("add", invoker("x + y", args("x", "y")), cxt);
-		logger.info("pro eval: " + exec(add));
+		// prc with its context scope
+		Prc add = prc("add", invoker("x + y", args("x", "y")), cxt);
+		logger.info("prc eval: " + exec(add));
 		assertTrue(exec(add).equals(50.0));
 	}
 
@@ -45,10 +45,10 @@ public class ProceduralCalls {
 	@Test
 	public void modelScope() throws Exception {
 
-		Model mdl = model(pro("x", 20.0), pro("y", 30.0));
-		Pro add = pro("add", invoker("x + y", args("x", "y")), mdl);
+		Model mdl = model(prc("x", 20.0), prc("y", 30.0));
+		Prc add = prc("add", invoker("x + y", args("x", "y")), mdl);
 
-		// adding a pro to the model updates pro's scope
+		// adding a prc to the model updates prc's scope
 		add(mdl, add);
 
 		// evaluate entry of the context
@@ -59,7 +59,7 @@ public class ProceduralCalls {
 
 	@Test
 	public void closingProcWihEntries() throws Exception {
-		Pro y = pro("y",
+		Prc y = prc("y",
 			invoker("(x1 * x2) - (x3 + x4)", args("x1", "x2", "x3", "x4")));
 		Object val = exec(y, val("x1", 10.0), val("x2", 50.0), val("x3", 20.0), val("x4", 80.0));
 		// logger.info("y eval: " + val);
@@ -70,11 +70,11 @@ public class ProceduralCalls {
 	public void closingProcWitScope() throws Exception {
 
 		// invokers use contextual scope of args
-		Pro add = pro("add", invoker("x + y", args("x", "y")));
+		Prc add = prc("add", invoker("x + y", args("x", "y")));
 
 		Context<Double> cxt = context(val("x", 10.0), val("y", 20.0));
-		logger.info("pro eval: " + exec(add, cxt));
-		// compute a pro
+		logger.info("prc eval: " + exec(add, cxt));
+		// compute a prc
 		assertTrue(exec(add, cxt).equals(30.0));
 
 	}
@@ -82,8 +82,8 @@ public class ProceduralCalls {
 	@Test
 	public void dbProcOperator() throws Exception {
 
-		Pro<Double> dbp1 = persistent(pro("design/in", 25.0));
-		Pro<String> dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
+		Prc<Double> dbp1 = persistent(prc("design/in", 25.0));
+		Prc<String> dbp2 = dbEnt("url/sobol", "http://sorcersoft.org/sobol");
 
 		// dbp1 is declared to be persisted
 		assertTrue(dbp1.getOut().equals(25.0));
@@ -118,12 +118,12 @@ public class ProceduralCalls {
 	@Test
 	public void substitutingValuesWithEntFidelities() throws Exception {
 
-		Pro<Double> dbp = dbEnt("shared/eval", 25.0);
+		Prc<Double> dbp = dbEnt("shared/eval", 25.0);
 
-		Pro multi = pro("multi",
+		Prc multi = prc("multi",
 			entFi(val("init/eval"),
 				dbp,
-				pro("invoke", invoker("x + y", args("x", "y")))));
+				prc("invoke", invoker("x + y", args("x", "y")))));
 
 		Context cxt = context(val("x", 10.0),
 			val("y", 20.0), val("init/eval", 49.0));
@@ -138,12 +138,12 @@ public class ProceduralCalls {
 	@Test
 	public void procModelOperator() throws Exception {
 
-		Model mdl = entModel("pro-model", val("v1", 1.0), val("v2", 2.0));
+		Model mdl = entModel("prc-model", val("v1", 1.0), val("v2", 2.0));
 		add(mdl, val("x", 10.0), val("y", 20.0));
-		// add an active pro, no scope
-		add(mdl, operator.pro(invoker("add1", "x + y", args("x", "y"))));
-		// add a pro with own scope
-		add(mdl, pro(invoker("add2", "x + y", args("x", "y")),
+		// add an active prc, no scope
+		add(mdl, operator.prc(invoker("add1", "x + y", args("x", "y"))));
+		// add a prc with own scope
+		add(mdl, prc(invoker("add2", "x + y", args("x", "y")),
 			context(val("x", 30.0), val("y", 40.0))));
 
 		assertEquals(exec(mdl, "add1"), 30.0);

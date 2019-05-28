@@ -107,7 +107,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 		} else {
 			logger.info("Empty or invalid line. Unable to compute.");
 		}
-		// no need to pro scanner.close(), since the source is a String
+		// no need to prc scanner.close(), since the source is a String
 	}
 
 }
