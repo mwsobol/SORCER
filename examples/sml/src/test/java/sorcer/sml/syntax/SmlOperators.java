@@ -51,7 +51,7 @@ public class SmlOperators {
 		val v1 = val("x2", 10.6);
 		func p1 = prc("x3", ev1);
 		func s1 = srv(op1);
-		func f1 = lmbd("s1", args("v1", "f1"));
+		func f1 = lmb("s1", args("v1", "f1"));
 		func f2 = snr("x6", 1.0);
 
 		// ent - generic operator for all entries
