@@ -57,7 +57,7 @@ public class Tuple2<T1, T2>  implements Serializable, Tuple, Arg {
         return 2 * 31 + _1.hashCode() + _2.hashCode();
     }
 
-    @Override
+	@Override
     public String getName() {
         return _1.toString();
     }

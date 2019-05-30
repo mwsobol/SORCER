@@ -360,8 +360,8 @@ public class ObjectSignature extends ServiceSignature implements sig {
 				((Modeling)obj).setContext(inContext);
 				((Modeling)obj).initializeBuilder();
 			} catch (ContextException e) {
-				logger.error("Isolation failed", e);
-				throw new SignatureException(e);
+				logger.error("Build isolation failed", e);
+				throw new SignatureException("Build isolation failed", this, e);
 			}
 		}
 		return obj;

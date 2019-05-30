@@ -894,13 +894,13 @@ public class operator extends Operator {
 		return ie;
 	}
 
-    public static Srv lmbd(String path, Args args) {
+    public static Srv lmb(String path, Args args) {
         Srv srv = new Srv(path, path);
         srv.setType(Functionality.Type.LAMBDA);
         return srv;
     }
 
-    public static Srv lmbd(String path, Service service, Args args) {
+    public static Srv lmb(String path, Service service, Args args) {
         Srv srv = new Srv(path, path, service, args.getNameArray());
         srv.setType(Functionality.Type.LAMBDA);
         return srv;

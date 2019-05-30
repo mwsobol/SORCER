@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.InputValue;
 import sorcer.co.tuple.OutputValue;
+import sorcer.co.tuple.Tuple2;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
@@ -2666,7 +2667,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Object initValue = null;
 		T newVal = null;
 		Object id = null;
-		if (value instanceof Entry) {
+		if (value instanceof Tuple2) {
+			initValue = ((Tuple2) value).key();
+			newVal = (T) ((Tuple2)value).value();
+			updateValue(initValue, newVal, id);
+		} if (value instanceof Entry) {
 			initValue = ((Entry) value).key();
 			newVal = (T) ((Entry)value).get();
 			updateValue(initValue, newVal, id);
