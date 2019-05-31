@@ -105,7 +105,7 @@ public class operator extends Operator {
 		return p;
 	}
 
-	public static Prc prc(Contexting argument, String name, String path) {
+	public static Prc prc(Contextation argument, String name, String path) {
 		Prc p = new Prc(argument, name, path);
 		return p;
 	}
@@ -211,7 +211,7 @@ public class operator extends Operator {
 		return p;
 	}
 
-	public static Prc pipe(Contexting in, String name, String path, Service out) throws ContextException {
+	public static Prc pipe(Contextation in, String name, String path, Service out) throws ContextException {
 		Prc p = new Prc(name, path, out);
 		add(p, in);
 		return p;
@@ -228,10 +228,10 @@ public class operator extends Operator {
 		return parameter;
 	}
 
-	public static Invocation invoker(Contexting mappable, String path)
+	public static Invocation invoker(Contextation mappable, String path)
 			throws ContextException {
 		Object obj = mappable.asis(path);
-		while (obj instanceof Contexting || obj instanceof Prc) {
+		while (obj instanceof Contextation || obj instanceof Prc) {
 			try {
 				obj = ((Evaluation) obj).asis();
 			} catch (RemoteException e) {

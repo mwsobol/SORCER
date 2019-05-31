@@ -2686,8 +2686,8 @@ operator extends Operator {
         Object obj = null;
         if (service instanceof Context) {
             obj = ((ServiceContext) service).get(path);
-            if (obj != null && obj instanceof Contexting) {
-                while (obj instanceof Contexting ||
+            if (obj != null && obj instanceof Contextation) {
+                while (obj instanceof Contextation ||
                     (obj instanceof Reactive && ((Reactive) obj).isReactive())) {
                     try {
                         obj = ((Evaluation) obj).asis();
@@ -2724,7 +2724,7 @@ operator extends Operator {
         return map.get(path);
     }
 
-    public static <V> V pathValue(Contexting<V> map, String path, Arg... args) throws ContextException {
+    public static <V> V pathValue(Contextation<V> map, String path, Arg... args) throws ContextException {
         try {
             return map.getValue(path, args);
         } catch (RemoteException e) {
@@ -3227,14 +3227,14 @@ operator extends Operator {
     public static class Pipe {
         String inPath;
         String outPath;
-        Contexting in;
-        Contexting out;
+        Contextation in;
+        Contextation out;
         String outComponentPath;
         String inComponentPath;
 
         Prc callEntry;
 
-        Pipe(Routine out, String outPath, Contexting in, String inPath) {
+        Pipe(Routine out, String outPath, Contextation in, String inPath) {
             this.out = out;
             this.outPath = outPath;
             this.in = in;
@@ -3279,10 +3279,10 @@ operator extends Operator {
 
     private static class InEndPoint {
         String inPath;
-        Contexting in;
+        Contextation in;
         String inComponentPath;
 
-        InEndPoint(Contexting in, String inDataPath) {
+        InEndPoint(Contextation in, String inDataPath) {
             this.inPath = inDataPath;
             this.in = in;
         }
@@ -3295,10 +3295,10 @@ operator extends Operator {
 
     private static class OutEndPoint {
         public String outPath;
-        public Contexting out;
+        public Contextation out;
         public String outComponentPath;
 
-        OutEndPoint(Contexting out, String outDataPath) {
+        OutEndPoint(Contextation out, String outDataPath) {
             this.outPath = outDataPath;
             this.out = out;
         }
@@ -3498,10 +3498,10 @@ operator extends Operator {
         return new LoopTask(name, condition, target);
     }
 
-    public static Routine xrt(Contexting mappable, String path)
+    public static Routine xrt(Contextation mappable, String path)
         throws ContextException {
         Object obj = ((ServiceContext) mappable).asis(path);
-        while (obj instanceof Contexting || obj instanceof Prc) {
+        while (obj instanceof Contextation || obj instanceof Prc) {
             try {
                 obj = ((Evaluation) obj).asis();
             } catch (RemoteException e) {

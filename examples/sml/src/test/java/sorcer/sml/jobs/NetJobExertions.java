@@ -234,7 +234,7 @@ public class NetJobExertions implements SorcerConstants {
 	@Test
 	public void contexterTest() throws Exception {
 
-		Task cxtt = task("getAddContext", sig("getContext", Contexting.class, prvName("Add Contexter")),
+		Task cxtt = task("getAddContext", sig("getContext", Contextation.class, prvName("Add Contexter")),
 			context("add", input("arg/x1"), input("arg/x2")));
 
 		Context result = context(exert(cxtt));
@@ -243,13 +243,13 @@ public class NetJobExertions implements SorcerConstants {
 		assertEquals(value(result, "arg/x1"), 20.0);
 		assertEquals(value(result, "arg/x2"), 80.0);
 
-		cxtt = task("appendContext", sig("appendContext", Contexting.class, prvName("Add Contexter")),
+		cxtt = task("appendContext", sig("appendContext", Contextation.class, prvName("Add Contexter")),
 			context("add", inVal("arg/x1", 200.0), inVal("arg/x2", 800.0)));
 
 		result = context(exert(cxtt));
 //		logger.info("contexter context 2: " + result);
 
-		cxtt = task("getAddContext", sig("getContext", Contexting.class, prvName("Add Contexter")),
+		cxtt = task("getAddContext", sig("getContext", Contextation.class, prvName("Add Contexter")),
 			context("add", input("arg/x1"), input("arg/x2")));
 
 		result = context(exert(cxtt));
@@ -259,7 +259,7 @@ public class NetJobExertions implements SorcerConstants {
 		assertEquals(value(result, "arg/x2"), 800.0);
 
 		// reset the contexter
-		cxtt = task("appendContext", sig("appendContext", Contexting.class, prvName("Add Contexter")),
+		cxtt = task("appendContext", sig("appendContext", Contextation.class, prvName("Add Contexter")),
 			context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		result = context(exert(cxtt));

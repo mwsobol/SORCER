@@ -65,7 +65,7 @@ import static sorcer.so.operator.exec;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes"  })
-public class EntModel extends PositionalContext<Object> implements Contexting<Object>, Model, Invocation<Object> {
+public class EntModel extends PositionalContext<Object> implements Contextation<Object>, Model, Invocation<Object> {
 
     private static final long serialVersionUID = -6932730998474298653L;
 

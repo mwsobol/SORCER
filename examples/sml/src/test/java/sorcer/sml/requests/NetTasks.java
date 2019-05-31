@@ -14,7 +14,6 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.provider.Provider;
 import sorcer.core.provider.RemoteServiceShell;
-import sorcer.ent.operator;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Monitor;
@@ -329,7 +328,7 @@ public class NetTasks {
 	public void netContexterTaskTest() throws Exception {
 
 		Task t5 = task("t5", sig("add", Adder.class),
-				sig("getContext", Contexting.class, prvName("Add Contexter"), Signature.APD),
+				sig("getContext", Contextation.class, prvName("Add Contexter"), Signature.APD),
 				context("add", inVal("arg/x1"), inVal("arg/x2"),
 						result("result/y")));
 

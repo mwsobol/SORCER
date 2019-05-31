@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Contexting<T> extends Mogram, FederatedRequest, Identifiable {
+public interface Contextation<T> extends Mogram, FederatedRequest, Identifiable {
 
 	/**
 	 * Returns the output context.

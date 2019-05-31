@@ -1,6 +1,5 @@
 package sorcer.core.provider;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -499,7 +498,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 			
 	@Test
 	public void contexterTest() throws Exception {
-		Task cxtt = task("addContext", sig("getContext", Contexting.class, prvName("Add Contexter")),
+		Task cxtt = task("addContext", sig("getContext", Contextation.class, prvName("Add Contexter")),
 				context("add", input("arg/x1"), input("arg/x2")));
 		 
 		Context result = context(exert(cxtt));
@@ -508,13 +507,13 @@ public class ArithmeticNetTest implements SorcerConstants {
 		assertTrue(get(result, "arg/x1").equals(20.0));
 		assertTrue(get(result, "arg/x2").equals(80.0));
 	
-		cxtt = task("appendContext", sig("appendContext", Contexting.class, prvName("Add Contexter")),
+		cxtt = task("appendContext", sig("appendContext", Contextation.class, prvName("Add Contexter")),
 				context("add", inVal("arg/x1", 200.0), inVal("arg/x2", 800.0)));
 
 		result = context(exert(cxtt));
 //		logger.info("contexter context 2: " + result);
 
-		cxtt = task("addContext", sig("getContext", Contexting.class, prvName("Add Contexter")),
+		cxtt = task("addContext", sig("getContext", Contextation.class, prvName("Add Contexter")),
 				context("add", input("arg/x1"), input("arg/x2")));
 
 		result = context(exert(cxtt));
@@ -524,7 +523,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		assertTrue(get(result, "arg/x2").equals(800.0));
 		
 		// reset the contexter
-		cxtt = task("appendContext", sig("appendContext", Contexting.class, prvName("Add Contexter")),
+		cxtt = task("appendContext", sig("appendContext", Contextation.class, prvName("Add Contexter")),
 				context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		result = context(exert(cxtt));
@@ -535,7 +534,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	
 	public void netContexterTaskTest() throws Exception {
 		Task t5 = task("t5", sig("add", Adder.class),
-					sig("getContext", Contexting.class, prvName("Add Contexter"), Signature.APD),
+					sig("getContext", Contextation.class, prvName("Add Contexter"), Signature.APD),
 					context("add", inVal("arg/x1"), inVal("arg/x2"),
 						result("result/y")));
 

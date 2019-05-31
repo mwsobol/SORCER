@@ -396,7 +396,7 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 	}
 
 	/* (non-Javadoc)
-         * @see sorcer.service.Contexting#execute(java.lang.String, sorcer.service.Arg[])
+         * @see sorcer.service.Contextation#execute(java.lang.String, sorcer.service.Arg[])
          */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
