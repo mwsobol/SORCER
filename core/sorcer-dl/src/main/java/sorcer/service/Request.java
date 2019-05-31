@@ -31,10 +31,10 @@ import java.rmi.RemoteException;
  */
 public interface Request extends Service, Identifiable {
 
+    public void setName(String name);
+
     public Fi getMultiFi();
 
     public Morpher getMorpher();
-
-    public void setName(String name);
 
 }

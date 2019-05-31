@@ -1030,7 +1030,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public boolean equals(Object object) {
         if (object instanceof Mogram && mogramId.equals(((Mogram) object).getId())) {
-                return true;
+            return true;
         } else {
             return false;
         }

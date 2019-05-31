@@ -30,33 +30,6 @@ import java.rmi.RemoteException;
  */
 public interface Contexting<T> extends Mogram, FederatedRequest, Identifiable {
 
-	public Context<T> appendContext(Context<T> context)
-			throws ContextException, RemoteException;
-
-	public Context<T> getContext(Context<T> contextTemplate)
-			throws RemoteException, ContextException;
-
-	/**
-	 * Appends an argument context to this context for a given path.
-	 * @param context a context to be appended
-	 * @param path an offset path of the argument context
-	 * @return an appended context
-	 * @throws ContextException
-	 * @throws RemoteException
-	 */
-	public Context<T> appendContext(Context<T> context, String path)
-			throws ContextException, RemoteException;
-
-	/**
-	 * Returns a subcontext at a given path.
-	 * @param path a path in this context
-	 * @return a subcontext of this context at <code>path</code>
-	 * @throws ContextException
-	 * @throws RemoteException
-	 */
-	public Context<T> getContext(String path) throws ContextException,
-			RemoteException;
-
 	/**
 	 * Returns the output context.
 	 *
@@ -83,6 +56,8 @@ public interface Contexting<T> extends Mogram, FederatedRequest, Identifiable {
 	public T getValue(String path, Arg... args)
 			throws ContextException, RemoteException;
 
+	public T getValue(Path path, Arg... args)
+		throws ContextException, RemoteException;
 	/**
 	 * Returns a value at the path as-is with no execution of the service at the path.
 	 * 
@@ -108,5 +83,32 @@ public interface Contexting<T> extends Mogram, FederatedRequest, Identifiable {
 	public T putValue(String path, T value) throws ContextException;
 
 	public T putValue(Path path, T value) throws ContextException;
+
+	public Context<T> appendContext(Context<T> context)
+		throws ContextException, RemoteException;
+
+	public Context<T> getContext(Context<T> contextTemplate)
+		throws RemoteException, ContextException;
+
+	/**
+	 * Appends an argument context to this context for a given path.
+	 * @param context a context to be appended
+	 * @param path an offset path of the argument context
+	 * @return an appended context
+	 * @throws ContextException
+	 * @throws RemoteException
+	 */
+	public Context<T> appendContext(Context<T> context, String path)
+		throws ContextException, RemoteException;
+
+	/**
+	 * Returns a subcontext at a given path.
+	 * @param path a path in this context
+	 * @return a subcontext of this context at <code>path</code>
+	 * @throws ContextException
+	 * @throws RemoteException
+	 */
+	public Context<T> getContext(String path) throws ContextException,
+		RemoteException;
 
 }

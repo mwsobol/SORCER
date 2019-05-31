@@ -693,7 +693,12 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public Object getValue(String path, Arg... args) throws ContextException, RemoteException {
-        return null;
+        return getContext().getValue(path, args);
+    }
+
+    @Override
+    public Object getValue(Path path, Arg... args) throws ContextException, RemoteException {
+        return getValue(path.path, args);
     }
 
     @Override
