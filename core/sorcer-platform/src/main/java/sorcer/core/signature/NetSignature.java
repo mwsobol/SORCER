@@ -403,7 +403,7 @@ public class NetSignature extends ObjectSignature implements sig {
 		try {
 			if (mog != null && cxt == null) {
 				if (multitype.providerType == RemoteServiceShell.class) {
-					Exertion prv = (Exertion) Accessor.get().getService(sig(RemoteServiceShell.class));
+					Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
 					result = prv.exert(mog, null, new Arg[] {});
 				} else {
 					if (mog.getProcessSignature() != null

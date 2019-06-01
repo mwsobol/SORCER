@@ -49,19 +49,6 @@ public interface Exertion extends Service {
 	 *             if processing this exertion causes an error
 	 */
 	public <T extends Mogram> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException;
+
 	public <T extends Mogram> T exert(Arg... args) throws MogramException, RemoteException;
-
-	/**
-	 * A generic federated execution.
-	 *
-	 * @param mogram an input mogram
-	 * @param txn The transaction (if any) under which to provide service.
-	 * @return a resulting mogram
-	 * @throws TransactionException if a transaction error occurs
-	 * @throws MogramException    if an mogram exerting failed for any reason
-	 * @throws RemoteException
-	 */
-	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args)
-			throws MogramException, RemoteException;
-
 }

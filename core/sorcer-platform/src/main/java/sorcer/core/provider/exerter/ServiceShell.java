@@ -147,7 +147,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 						&& ((ServiceSignature) mogram.getProcessSignature()).isShellRemote())
 						|| (exertion.getControlContext() != null
 						&& ((ControlContext) exertion.getControlContext()).isShellRemote())) {
-					Exertion prv = (Exertion) Accessor.get().getService(sig(RemoteServiceShell.class));
+					Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
 					result = prv.exert(mogram, transaction, entries);
 				} else {
 					mogram.substitute(entries);
@@ -886,7 +886,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 		} catch (SignatureException e) {
 			throw new MogramException(e);
 		}
-		return (T) ((Exertion)service).exert(mogram, txn);
+		return (T) ((Exerter)service).exert(mogram, txn);
 	}
 
 	public Object exec(Service service, Arg... args)
