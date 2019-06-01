@@ -24,7 +24,7 @@ import java.rmi.RemoteException;
  * A service interface related to {@link sorcer.service.Context}
  * evaluation/invocation and accessing context structures services.
  * Service providers - contexters - that federate in the network
- * exchange input/output data via contexting.
+ * exchange input/output data via Contextation.
  *
  * @author Mike Sobolewski
  */

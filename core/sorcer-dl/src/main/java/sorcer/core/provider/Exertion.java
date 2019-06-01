@@ -33,8 +33,25 @@ import java.rmi.RemoteException;
  * @author Mike Sobolewski
  */
 public interface Exertion extends Service {
+
 	/**
+	 * Exerts this mogram by the assigned service provider if it is set. If a service
+	 * provider is not set then at runtime it bounds to any available provider
+	 * that matches this mogram's signature of the <code>PROCESS</code> fiType.
+	 * Service exertions and models are instances of mograms.
 	 *
+	 * @param txn
+	 *            The transaction (if any) under which to exert.
+	 * @return a resulting exertion
+	 * @throws net.jini.core.transaction.TransactionException
+	 *             if a transaction error occurs
+	 * @throws RoutineException
+	 *             if processing this exertion causes an error
+	 */
+	public <T extends Mogram> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException;
+	public <T extends Mogram> T exert(Arg... args) throws MogramException, RemoteException;
+
+	/**
 	 * A generic federated execution.
 	 *
 	 * @param mogram an input mogram
@@ -44,7 +61,7 @@ public interface Exertion extends Service {
 	 * @throws MogramException    if an mogram exerting failed for any reason
 	 * @throws RemoteException
 	 */
-	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... entries)
+	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args)
 			throws MogramException, RemoteException;
 
 }

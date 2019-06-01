@@ -24,10 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.Dispatcher;
 import sorcer.core.exertion.NetTask;
-import sorcer.core.provider.Concatenator;
-import sorcer.core.provider.Exertion;
-import sorcer.core.provider.Provider;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.*;
 
@@ -201,7 +198,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                          * (RemoteServiceTask)provider.service(task); }
                          */
                         logger.debug("getting result from provider...");
-                        result = ((Exertion)service).exert(task, null);
+                        result = ((Exerter)service).exert(task, null);
 
                     } catch (Exception re) {
                         if (tried >= maxTries) {

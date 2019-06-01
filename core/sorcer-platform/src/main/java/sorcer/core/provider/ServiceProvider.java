@@ -1513,7 +1513,8 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	}
 
 	@Override
-	public Mogram exert(Mogram mogram, Transaction txn, Arg... args) throws RoutineException, RemoteException {
+	public Mogram exert(Mogram mogram, Transaction txn, Arg... args)
+			throws MogramException, RemoteException {
 		if (mogram instanceof Task) {
 			ServiceContext cxt;
 			try {

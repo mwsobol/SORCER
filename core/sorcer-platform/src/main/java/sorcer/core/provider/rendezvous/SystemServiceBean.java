@@ -41,7 +41,7 @@ import java.util.Vector;
  * 
  * @author Mike Sobolewski
  */
-abstract public class SystemServiceBean implements Exertion, ServiceBean {
+abstract public class SystemServiceBean implements Exerter, ServiceBean {
 	private Logger logger = LoggerFactory.getLogger(SystemServiceBean.class.getName());
 
 	protected ServiceProvider provider;
@@ -175,7 +175,7 @@ abstract public class SystemServiceBean implements Exertion, ServiceBean {
 		return out;
 	}
 
-    protected ControlFlowManager getControlFlownManager(Mogram exertion) throws RoutineException {
+	protected ControlFlowManager getControlFlownManager(Mogram exertion) throws RoutineException {
         try {
             if (exertion instanceof Routine) {
                 if (exertion.isMonitorable())

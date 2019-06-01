@@ -410,7 +410,7 @@ public class NetSignature extends ObjectSignature implements sig {
 							&& ((ServiceSignature) mog.getProcessSignature()).isShellRemote()) {
 						Exertion prv = null;
 						prv = (Exertion) Accessor.get().getService(sig(RemoteServiceShell.class));
-						result = prv.exert(mog, null);
+						result = prv.exert(mog);
 					} else {
 						result = (exert(mog));
 					}

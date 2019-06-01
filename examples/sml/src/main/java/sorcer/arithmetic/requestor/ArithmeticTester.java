@@ -360,7 +360,7 @@ private Routine f1SEQpull() throws Exception {
 		Exertion exerter = Accessor.get().getService(null, Exertion.class);
 		logger.info("got exerter: " + exerter);
 
-		out = exerter.exert(f5, null);
+		out = exerter.exert(f5);
 		long end = System.currentTimeMillis();
 		
 		if (out.getExceptions().size() > 0) {

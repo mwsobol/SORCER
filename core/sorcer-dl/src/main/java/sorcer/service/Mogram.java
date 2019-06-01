@@ -20,6 +20,7 @@ package sorcer.service;
 import net.jini.core.transaction.Transaction;
 import net.jini.id.Uuid;
 import sorcer.core.context.ThrowableTrace;
+import sorcer.core.provider.Exerter;
 import sorcer.core.provider.Exertion;
 import sorcer.core.provider.Provider;
 
@@ -33,25 +34,7 @@ import java.util.List;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Identifiable, Request, Exertion, Scopable, Substitutable, Arg {
-
-    /**
-     * Exerts this mogram by the assigned service provider if it is set. If a service
-     * provider is not set then at runtime it bounds to any available provider
-     * that matches this mogram's signature of the <code>PROCESS</code> fiType.
-     * Service exertions and models are instances of mograms.
-     *
-     * @param txn
-     *            The transaction (if any) under which to exert.
-     * @return a resulting exertion
-     * @throws net.jini.core.transaction.TransactionException
-     *             if a transaction error occurs
-     * @throws RoutineException
-     *             if processing this exertion causes an error
-     */
-    public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws MogramException, RemoteException;
-
-    public <T extends Mogram> T exert(Arg... entries) throws  MogramException, RemoteException;
+public interface Mogram extends Identifiable, Request, Exertion, Exerter, Scopable, Substitutable, Arg {
 
     /**
      * Returns an ID of this mogram.

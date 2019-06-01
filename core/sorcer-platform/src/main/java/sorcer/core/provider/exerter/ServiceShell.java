@@ -74,7 +74,7 @@ import static sorcer.so.operator.eval;
 /**
  * @author Mike Sobolewski
  */
-public class ServiceShell implements Service, Activity, Exertion, Client, Callable, RemoteServiceShell {
+public class ServiceShell implements Service, Activity, Exerter, Client, Callable, RemoteServiceShell {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
 	private Service service;
 	private Mogram mogram;
@@ -82,7 +82,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 	private Transaction transaction;
 	private static MutualExclusion locker;
 	// a reference to a provider running this mogram
-	private Exertion provider;
+	private Exerter provider;
 	private static LoadingCache<Signature, Object> proxies;
 
 	public ServiceShell() {
@@ -136,9 +136,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		return exert(xrt, null, (String) null);
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.service.Exertion#exert(sorcer.service.Routine, net.jini.core.transaction.Transaction, sorcer.service.Parameter[])
-	 */
+
 	@Override
 	public  <T extends Mogram> T exert(T mogram, Transaction transaction, Arg... entries) throws RoutineException {
 		Mogram result = null;

@@ -453,8 +453,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 			Task task = new NetTask(model.getSelectedInterfaceName()
 					+ model.getSelectedMethod(), method);
 			task.setContext(theContext);
-			NetTask task2 = (NetTask) provider.exert(task,
-					null);
+			NetTask task2 = (NetTask) provider.exert(task, null);
 			return task2.getContext();
 		} catch (Exception e) {
 			System.out.println("failed to exert!");

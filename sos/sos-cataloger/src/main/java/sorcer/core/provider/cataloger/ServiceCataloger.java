@@ -1041,8 +1041,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 								Task task = new NetTask(serviceType
 										+ methodName, method);
 								task.setContext(theContext);
-								NetTask task2 = (NetTask) temp.exert(task,
-										null);
+								NetTask task2 = (NetTask) temp.exert(task, null);
 								return task2.getContext();
 							} catch (Exception e) {
 								logger.info("error converting to provider"
