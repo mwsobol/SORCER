@@ -514,6 +514,16 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
+    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
+        try {
+            input.substitute(context);
+            return ((ServiceDiscipline)exert(args)).getOutput();
+        } catch (MogramException e) {
+            throw new EvaluationException(e);
+        }
+    }
+
+    @Override
     public Context getContext() throws ContextException {
         return output;
     }

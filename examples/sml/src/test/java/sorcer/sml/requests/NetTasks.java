@@ -328,7 +328,7 @@ public class NetTasks {
 	public void netContexterTaskTest() throws Exception {
 
 		Task t5 = task("t5", sig("add", Adder.class),
-				sig("getContext", Contextation.class, prvName("Add Contexter"), Signature.APD),
+				sig("getContext", Contextion.class, prvName("Add Contexter"), Signature.APD),
 				context("add", inVal("arg/x1"), inVal("arg/x2"),
 						result("result/y")));
 

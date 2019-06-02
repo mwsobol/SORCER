@@ -1469,7 +1469,7 @@ public class operator extends Operator {
 		return  model.asis(path);
 	}
 
-    public static Object asis(Contextation mappable, String path)
+    public static Object asis(Contextion mappable, String path)
             throws ContextException {
         return  mappable.asis(path);
     }

@@ -1101,6 +1101,16 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
     }
 
     @Override
+    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
+        try {
+            substitute(context);
+            return exert(args).getContext();
+        } catch (MogramException e) {
+            throw new EvaluationException(e);
+        }
+    }
+
+    @Override
     public Object getValue(Path path, Arg... args) throws ContextException, RemoteException {
         return getContext().getValue(path.path, args);
     }

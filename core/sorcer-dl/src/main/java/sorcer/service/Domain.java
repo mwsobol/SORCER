@@ -22,19 +22,11 @@ import sorcer.service.modeling.mog;
 import java.rmi.RemoteException;
 
 /**
+ * Common functionality of Context and Model types.
+ *
  * Created by Mike Sobolewski on 7/26/16.
  */
 public interface Domain extends Mogram, Dependency, mog {
-
-    /**
-     * Returns a requested evaluation context with a provided input context and arguments.
-     *
-     * @param inputContext a context for this evaluation
-     * @return the result context of this evaluation
-     * @throws ContextException
-     * @throws RemoteException
-     */
-    public Context evaluate(Context inputContext, Arg... args) throws ContextException, RemoteException;
 
     /**
      * Returns a execute of the object at the path as is
@@ -48,7 +40,7 @@ public interface Domain extends Mogram, Dependency, mog {
     public Object asis(String path);
 
     /**
-	 * Returns the context of all responses of this domain with a provided configuration.
+	 * Returns the context of all responses of this domain a given configuration.
 	 *
 	 * @param args optional configuration arguments
 	 * @return

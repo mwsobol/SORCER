@@ -21,16 +21,26 @@ package sorcer.service;
 import java.rmi.RemoteException;
 
 /**
- * A service interface related to {@link sorcer.service.Context}
- * evaluation/invocation and accessing context structures services.
- * Service providers - contexters - that federate in the network
- * exchange input/output data via Contextation.
+ * An interface related to {@link sorcer.service.Context}
+ * evaluation/invocation and accessing contextion services.
+ * Service providers that federate in the network
+ * exchange input/output data via Contextion.
  *
  * @author Mike Sobolewski
  */
-public interface Contextation<T> extends Mogram, FederatedRequest, Identifiable {
+public interface Contextion<T> extends Mogram, FederatedRequest, Identifiable {
 
-	/**
+    /**
+     * Returns the current context of this evaluation. The current context can be
+     * exiting context with no need to evaluate it if it's still valid.
+     *
+     * @return the current execute of this evaluation
+     * @throws EvaluationException
+     * @throws RemoteException
+     */
+    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException;
+
+    /**
 	 * Returns the output context.
 	 *
 	 * @return the output context
