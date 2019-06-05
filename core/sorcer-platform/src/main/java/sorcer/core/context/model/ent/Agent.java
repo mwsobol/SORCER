@@ -63,7 +63,7 @@ public class Agent<T> extends Prc<T> implements Serializable {
 	public T process(Arg... entries) throws EvaluationException {
 		try {
 			if (invoker != null) {
-				return (T) invoker.compute(getPars(entries));
+				return (T) invoker.evaluate(getPars(entries));
 			}
 		} catch (RemoteException e) {
 			throw new EvaluationException(e);
@@ -122,7 +122,7 @@ public class Agent<T> extends Prc<T> implements Serializable {
 							+ e.getLocalizedMessage());
 		}
 		try {
-			out = (T)invoker.compute(entries);
+			out = (T)invoker.evaluate(entries);
 		} catch (RemoteException e) {
 			throw new EvaluationException();
 		}

@@ -79,7 +79,7 @@ public class ObjectJob extends Job {
 			}
 			evaluator.setParameterTypes(new Class[] { Mogram.class });
 			evaluator.setParameters(new Object[] { this });
-			result = (Job)evaluator.compute();
+			result = (Job)evaluator.evaluate();
 			getControlContext().appendTrace("job by: " + evaluator.getClass().getName());
 		} catch (Exception e) {
 			e.printStackTrace();

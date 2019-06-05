@@ -98,7 +98,7 @@ public class SysCall extends Prc<Context> implements Serializable {
                 invoker.setCmd(cmd.toString());
             }
 
-            ExecUtils.CmdResult result = (ExecUtils.CmdResult) invoker.compute(args);
+            ExecUtils.CmdResult result = (ExecUtils.CmdResult) invoker.evaluate(args);
             // get from the result the volume of cylinder and assign to y parameter
 
             Properties props = new Properties();

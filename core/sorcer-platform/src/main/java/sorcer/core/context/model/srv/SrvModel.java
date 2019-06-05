@@ -262,7 +262,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                         putValue(entry.getName(), entry.get());
                     val = entry;
                 } else if (carrier instanceof ServiceInvoker) {
-                    val =  ((ServiceInvoker)carrier).compute(args);
+                    val =  ((ServiceInvoker)carrier).evaluate(args);
                 } else if (carrier instanceof Service && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
                     String[] paths = ((Srv)val).getPaths();
                     Arg[] nargs = null;

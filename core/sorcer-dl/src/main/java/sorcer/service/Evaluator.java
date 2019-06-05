@@ -29,16 +29,6 @@ import java.rmi.RemoteException;
  */
 public interface  Evaluator <T> extends Evaluation<T>, Activity, Identifiable {
 
-	
-	/**
-	 * Returns the current eval of this evaluation.
-	 * 
-	 * @return the current eval of this evaluation
-	 * @throws EvaluationException
-	 * @throws RemoteException
-	 */
-	public T compute(Arg... entries) throws EvaluationException, RemoteException;
-
 	public void addArgs(ArgSet set) throws EvaluationException, RemoteException;
 	
 	public ArgSet getArgs();

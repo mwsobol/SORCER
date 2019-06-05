@@ -68,7 +68,7 @@ import java.util.List;
  * of the context.
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ServiceInvoker<T> extends Observable implements Invocation<T>, Identifiable, Scopable, Evaluator<T>, Reactive<T>, Observer, evr<T>, Serializable {
+public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invocation<T>, Identifiable, Scopable, Reactive<T>, Observer, evr<T>, Serializable {
 
 	private static final long serialVersionUID = -2007501128660915681L;
 	
@@ -352,8 +352,15 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 		try {
 			if (args != null && args.length > 0) {
 				isValid = false;
+				Context cxt = (Context) Arg.selectDomain(args);
 				if (invokeContext == null) {
-					invokeContext = new EntModel("model/prc");
+					if (cxt != null) {
+						invokeContext = cxt;
+					} else {
+						invokeContext = new EntModel("model/prc");
+					}
+				} else if (cxt != null) {
+					invokeContext.appendContext(cxt);
 				}
 				((ServiceContext)invokeContext).substitute(args);
 			}
@@ -510,14 +517,6 @@ public class ServiceInvoker<T> extends Observable implements Invocation<T>, Iden
 	public ServiceInvoker setName(String name) {
 		this.name = name;
 		return this;
-	}
-
-	/* (non-Javadoc)
-	 * @see sorcer.service.Evaluator#compute(sorcer.service.Arg[])
-	 */
-	@Override
-	public T compute(Arg... entries) throws EvaluationException, RemoteException {
-		return invoke((Context)Arg.selectDomain(entries), entries);
 	}
 
 	/* (non-Javadoc)

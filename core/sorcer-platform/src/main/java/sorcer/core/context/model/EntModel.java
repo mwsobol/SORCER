@@ -393,7 +393,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 							Object i = ((Prc) get(((ServiceContext) context)
 									.getExecPath().path())).asis();
 							if (i instanceof ServiceInvoker) {
-								result = ((ServiceInvoker) i).compute(entries);
+								result = ((ServiceInvoker) i).evaluate(entries);
 							} else
 								throw new InvocationException(
 										"No such invoker at: "

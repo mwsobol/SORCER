@@ -350,12 +350,12 @@ public class Invokers {
 		pm.putValue("y2", 50.0);
 		pm.putValue("x3", 50.0);
 		pm.putValue("y3", 60.0);
-		logger.info("opt exec: " + alt.compute());
+		logger.info("opt exec: " + alt.evaluate());
 		assertEquals(exec(alt), 70.0);
 
 		pm.putValue("x2", 50.0);
 		pm.putValue("y2", 40.0);
-		logger.info("opt exec: " + alt.compute());
+		logger.info("opt exec: " + alt.evaluate());
 		assertEquals(exec(alt), 50.0);
 	}
 

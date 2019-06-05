@@ -96,7 +96,7 @@ public class OptInvoker<T> extends ServiceInvoker<T> implements ConditionalInvoc
 		try {
 			checkInvokeContext();
 			if (condition.isTrue())
-				return target.compute(entries);
+				return target.evaluate(entries);
 			else 
 				return null;
 		} catch (ContextException e) {

@@ -31,6 +31,16 @@ import java.rmi.RemoteException;
 public interface  Evaluation <T> extends Substitutable, Scopable, EvaluationComponent, SupportComponent {
 
 	/**
+	 * Returns the current execute of this evaluation. The current execute can be
+	 * exiting execute with no need to evaluate it if it's still valid.
+	 *
+	 * @return the current execute of this evaluation
+	 * @throws EvaluationException
+	 * @throws RemoteException
+	 */
+	public T evaluate(Arg... args) throws EvaluationException, RemoteException;
+
+	/**
 	 * Returns the execute of the existing execute of this evaluation that might be invalid.
 	 * 
 	 * @return the execute as is
@@ -38,17 +48,6 @@ public interface  Evaluation <T> extends Substitutable, Scopable, EvaluationComp
 	 * @throws RemoteException
 	 */
 	public T asis() throws EvaluationException, RemoteException;
-		
-	/**
-	 * Returns the current execute of this evaluation. The current execute can be
-	 * exiting execute with no need to evaluate it if it's still valid.
-	 * 
-	 * @return the current execute of this evaluation
-	 * @throws EvaluationException
-	 * @throws RemoteException
-	 */
-	public T evaluate(Arg... args) throws EvaluationException, RemoteException;
-
 
 	public void setNegative(boolean negative);
 

@@ -167,7 +167,7 @@ public class ObjectTask extends Task {
 				} else if (dataContext.getArgsPath() != null) {
 					evaluator.setArgs(getParameterTypes(), (Object[]) getArgs());
 				}
-				result = evaluator.compute(args);
+				result = evaluator.evaluate(args);
 			}
 
 			if (result instanceof Context) {
