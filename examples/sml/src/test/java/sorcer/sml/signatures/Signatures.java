@@ -61,7 +61,7 @@ public class Signatures {
 		Object obj = new Date();
 		Signature s = sig("getTime", obj);
 
-		// get service provider - a given object
+		// getValue service provider - a given object
 		Object prv = provider(s);
 		logger.info("provider of s: " + prv);
 		assertTrue(prv instanceof Date);
@@ -77,7 +77,7 @@ public class Signatures {
 //		Signature s = sig("getTime", sig("new", Date.class));
 		Signature s = sig("getTime", sig(Date.class));
 
-		// get service provider - a given object
+		// getValue service provider - a given object
 		Object prv = provider(s);
 		logger.info("provider of s: " + prv);
 		assertTrue(prv instanceof Date);
@@ -92,7 +92,7 @@ public class Signatures {
 
 		Signature s = sig("getTime", Date.class);
 
-		// get service provider for signature
+		// getValue service provider for signature
 		Object prv = provider(s);
 		logger.info("provider of s: " + prv);
 		logger.info("selector of s: " + selector(s));
@@ -168,7 +168,7 @@ public class Signatures {
 				types(new Class[]{int.class}),
 				args(new Object[]{Calendar.MONTH}));
 
-		// get service provider for signature
+		// getValue service provider for signature
 		Object prv = provider(ps);
 		logger.info("prv: " + prv);
 		assertTrue(prv instanceof Calendar);

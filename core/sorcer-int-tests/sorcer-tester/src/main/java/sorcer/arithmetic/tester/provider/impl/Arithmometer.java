@@ -140,7 +140,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			throws RemoteException, ContextException {
 		ArrayContext cxt = (ArrayContext) context;
 		try {
-			// get sorted list of input values
+			// getValue sorted list of input values
 			List<Double> inputs = (List<Double>)cxt.getInValues();
 //			logger.info("inputs: \n" + inputs);
 			List<String> outpaths = cxt.getOutPaths();
@@ -221,7 +221,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 		try {
 			logger.info("arithmometer context: " + context);
 			//logger.info("selector: " + ((ServiceContext)context).getCurrentSelector());
-			// get sorted list of input values
+			// getValue sorted list of input values
 			List<Double> inputs = determineInputs(context);
 			List<String> outpaths = context.getOutPaths();
 			//logger.info("outpaths: \n" + outpaths);

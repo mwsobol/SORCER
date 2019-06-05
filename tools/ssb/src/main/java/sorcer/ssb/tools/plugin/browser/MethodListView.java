@@ -95,7 +95,7 @@ class MethodListView extends JPanel {
 					PropertiesNode node = (PropertiesNode) table.getValueAt(
 							selected, NODE_COLUMN);
 					Method method = (Method) node.getAdditionalData();
-					// if(method.getName().startsWith("get")){
+					// if(method.getName().startsWith("getValue")){
 					Class[] params = method.getParameterTypes();
 					if (params.length == 0) {
 						exec.setEnabled(!method.getReturnType().getName()
@@ -129,7 +129,7 @@ class MethodListView extends JPanel {
 						Object proxy = node.getProxy();
 
 						Method method = (Method) node.getAdditionalData();
-						// if(method.getName().startsWith("get")){
+						// if(method.getName().startsWith("getValue")){
 						Class[] params = method.getParameterTypes();
 						if (params.length == 0) {
 

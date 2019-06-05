@@ -243,7 +243,7 @@ public class PlatformLoader {
     /**
      * Get the text eval for a node
      *
-     * @param node The Node to get the text eval for
+     * @param node The Node to getValue the text eval for
      * @return The text eval for the Node, or a zero-length String if
      * the Node is not recognized
      */

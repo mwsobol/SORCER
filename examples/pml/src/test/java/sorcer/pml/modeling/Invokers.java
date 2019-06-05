@@ -114,7 +114,7 @@ public class Invokers {
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
 		logger.info("invoke eval: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
-		logger.info("get eval: " + eval(pm, "expr"));
+		logger.info("getValue eval: " + eval(pm, "expr"));
 		assertTrue(exec(pm, "expr").equals(60.0));
 	}
 

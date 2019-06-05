@@ -281,7 +281,7 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 	 * Gets the list of interfaces for the given provider
 	 * 
 	 * @param providerName
-	 *            String representing the provider to get the interface list for
+	 *            String representing the provider to getValue the interface list for
 	 * @return String array of the interface names
 	 */
 	public String[] getInterfaces(String providerName) {
@@ -331,7 +331,7 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 
 		try {
 
-			// System.out.println("before get methods");
+			// System.out.println("before getValue methods");
 			String[] methods = catalog.getMethodsList(model
 					.getSelectedProvider(), "interface " + interfaceName); // ((Provider)
 			// catalog).getProxy();

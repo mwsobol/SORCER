@@ -133,7 +133,7 @@ public class DataModels {
         // return selected values at given positions in cxt
         assertEquals(select(cxt, 2, 4, 5), list(1.2, 1.4, 1.5));
 
-        // get input and output contexts
+        // getValue input and output contexts
         List<String> allInputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5", "out/z");
         List<String> inputs = list("arg/x2", "arg/x3", "arg/x4", "arg/x5");
         List<String> outputs = list("out/y1", "out/y2", "out/z");
@@ -378,16 +378,16 @@ public class DataModels {
         Row row3 = row(data, 3);
 //        logger.info("row3: " + row3);
         assertTrue(row3.getRow(0).equals(list(2.0, 2.0, 4.0, 1.0, 8.0)));
-//        logger.info("row3/2: " + get(row3, 2));
+//        logger.info("row3/2: " + getValue(row3, 2));
         assertTrue(get(row3, 2).equals(4.0));
 
-//        logger.info("area/2: " + get(data, "area", ind(3)));
+//        logger.info("area/2: " + getValue(data, "area", ind(3)));
         // default syntax for columnInd
         assertTrue(get(data, "area", ind(3)).equals(4.0));
 
         assertTrue(get(data, "area", columnInd(3)).equals(4.0));
 
-//        logger.info("3/3 row: " + get(data, "3", rowInd(3)));
+//        logger.info("3/3 row: " + getValue(data, "3", rowInd(3)));
         //the forth element at the forth index
         assertTrue(get(data, "3", rowInd(3)).equals(1.0));
     }

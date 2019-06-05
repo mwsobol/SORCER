@@ -17,6 +17,7 @@
 
 package sorcer.service;
 
+import sorcer.service.modeling.Getter;
 import sorcer.service.modeling.evr;
 
 import java.rmi.RemoteException;
@@ -27,7 +28,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public interface  Evaluator <T> extends Evaluation<T>, Activity, Identifiable {
+public interface  Evaluator <T> extends Evaluation<T>, Getter<T>, Activity, Identifiable {
 
 	public void addArgs(ArgSet set) throws EvaluationException, RemoteException;
 	

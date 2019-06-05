@@ -19,7 +19,6 @@ package sorcer.util;
 import net.jini.id.Uuid;
 import sorcer.core.context.model.ent.Config;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Subroutine;
 import sorcer.service.*;
 
 import java.util.*;
@@ -116,7 +115,7 @@ public class Pools {
 		while (i.hasNext()) {
 			entry = i.next();
 			config = entry.getValue();
-			for (Setup s : config.get()) {
+			for (Setup s : config.getValue()) {
 				if (s.getContext() == null) {
 					removedKeys.add(s.getName());
 					expandedKeys.add(entry.getKey());
@@ -124,7 +123,7 @@ public class Pools {
 			}
 		}
 		for (int j = 0; j < removedKeys.size(); j++) {
-			pool.get(expandedKeys.get(j)).addAll(pool.get(removedKeys.get(j)).get());
+			pool.get(expandedKeys.get(j)).addAll(pool.get(removedKeys.get(j)).getValue());
 			pool.get(expandedKeys.get(j)).remove(removedKeys.get(j));
 		}
 		return pool;

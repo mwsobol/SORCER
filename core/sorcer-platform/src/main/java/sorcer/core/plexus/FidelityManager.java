@@ -322,7 +322,7 @@ public class FidelityManager<T extends Service> implements Service, FidelityMana
     private Fidelity getFidelity(String name) {
         Fidelity fi = fidelities.get(name);
         if (fi == null) {
-            // get unknown fidelity
+            // getValue unknown fidelity
             Set<String> keys = fidelities.keySet();
             Iterator<String> i = keys.iterator();
             String key = i.next();

@@ -56,8 +56,8 @@ public class ServiceExertionTest {
 	public void exertTaskTest() throws Exception {
 		eTask = exert(eTask);
 
-		// exert and them get the eval from task's context
-		//logger.info("eTask eval @ result/y = " + get(exert(eTask), path(result, y)));
+		// exert and them getValue the eval from task's context
+		//logger.info("eTask eval @ result/y = " + getValue(exert(eTask), path(result, y)));
 		assertTrue("Wrong eTask eval for 100.0", get(eTask, attPath(result, y)).equals(100.0));
 		
 		//logger.info("eTask eval @ arg/x1 = " + exert(eTask, path("arg/x1")));
@@ -69,14 +69,14 @@ public class ServiceExertionTest {
 	
 	@Test
 	public void exertJobTest() throws Exception {
-		// get eval from job's exerted context
+		// getValue eval from job's exerted context
 		assertTrue(eval(eJob, "j1/t3/arg/x2").equals(100.0));
 		
-		// exert and then get the job's context (upcotext - a kind of supercontext)
+		// exert and then getValue the job's context (upcotext - a kind of supercontext)
 		Context out = upcontext(exert(eJob));
 		logger.info("job context: " + out);
 
-		//logger.info("eJob eval @  j2/t5/arg/x1 = " + get(eJob, "j2/t5/arg/x1"));
+		//logger.info("eJob eval @  j2/t5/arg/x1 = " + getValue(eJob, "j2/t5/arg/x1"));
 		assertTrue(value(out, "j1/j2/t5/arg/x1").equals(20.0));
 			
 		//logger.info("eJob eval @ j2/t4/arg/x1 = " + exert(eJob, path("j1/j2/t4/arg/x1")));
@@ -179,7 +179,7 @@ public class ServiceExertionTest {
 		logger.info("xrt eval @  t3/arg/x2 = " + get(xrt, "t3/arg/x2"));
 		logger.info("xrt eval @  t3/result/y = " + get(xrt, "t3/result/y"));
 
-		//assertTrue("Wrong xrt eval for " + Context.Value.NULL, get(srv, "t3/arg/x2").equals(Context.Value.NULL));
+		//assertTrue("Wrong xrt eval for " + Context.Value.NULL, getValue(srv, "t3/arg/x2").equals(Context.Value.NULL));
 	}
 	
 	// two level job composition

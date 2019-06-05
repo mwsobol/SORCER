@@ -10,7 +10,6 @@ import sorcer.util.url.sos.SdbUtil;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.List;
 
 /**
  * @author Mike Sobolewski
@@ -68,7 +67,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Setter, Comparab
                 return out;
             }
         } else {
-            out = get(args);
+            out = getValue(args);
             isValid = true;
         }
         return out;
@@ -126,10 +125,10 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Setter, Comparab
 
     @Override
     public T valuate(Arg... args) throws ContextException {
-        return get(args);
+        return getValue(args);
     }
 
-    public T get(Arg... args) throws ContextException {
+    public T getValue(Arg... args) throws ContextException {
 //        substitute(args);
         if (args != null && args.length > 0) {
             for (Arg arg : args) {
@@ -173,7 +172,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Setter, Comparab
                 throw new ContextException(e);
             }
         } else if (impl instanceof Entry) {
-            out = (T) ((Entry) impl).get(args);
+            out = (T) ((Entry) impl).getValue(args);
             isValid = true;
             isChanged = true;
         } else {

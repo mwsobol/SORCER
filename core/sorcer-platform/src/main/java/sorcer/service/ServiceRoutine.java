@@ -591,7 +591,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
             for (Arg arg : args) {
                 if (arg instanceof Entry) {
                     try {
-                        putValue(arg.getName(), ((Entry) arg).get());
+                        putValue(arg.getName(), ((Entry) arg).getValue());
                     } catch (ContextException ex) {
                         ex.printStackTrace();
                         throw new SetterException(ex);

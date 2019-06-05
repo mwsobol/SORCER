@@ -159,7 +159,7 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
                 else
                     this.codebase = Booter.getCodebase(jars, address, "" + Booter.getPort());
             } catch (UnknownHostException e) {
-                logger.error("Cannot get hostname for: " + codebase);
+                logger.error("Cannot getValue hostname for: " + codebase);
             }
         } else
             this.codebase = descCodebase;
@@ -374,7 +374,7 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
             Class implClass;
             implClass = Class.forName(getImplClassName(), false, jsbCL);
             if (logger.isTraceEnabled())
-                logger.trace("Attempting to get implementation constructor");
+                logger.trace("Attempting to getValue implementation constructor");
             Constructor constructor = implClass
                                           .getDeclaredConstructor(actTypes);
             if (logger.isTraceEnabled())

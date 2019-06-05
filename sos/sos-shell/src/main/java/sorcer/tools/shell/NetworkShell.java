@@ -90,7 +90,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
              "\t-version \t\t- show NSH version info";
 
 
-    //public static final String CONFIG_EXT_PATH = Sorcer.get + "/configs/shell/configs/nsh-start-ext.config";
+    //public static final String CONFIG_EXT_PATH = Sorcer.getValue + "/configs/shell/configs/nsh-start-ext.config";
     public static final String CONFIG_PATH = SorcerEnv.getHome() + "/bin/shell/configs/nsh-start.config";
 
 	static private boolean debug = false;
@@ -513,7 +513,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 			Thread.sleep(200);
 			i++;
 		}
-		// Needs 2 seconds to get the Rio resolver settled
+		// Needs 2 seconds to getValue the Rio resolver settled
 		//if (i<11)
 		//		Thread.sleep(3000-i*200);
 	}
@@ -1592,7 +1592,7 @@ public class NetworkShell implements DiscoveryListener, INetworkShell {
 				return DefaultGroovyMethods.getText(new URL(urlOrFilename));
 			} catch (Exception e) {
 				throw new GroovyRuntimeException(
-						"Unable to get script from URL: ", e);
+						"Unable to getValue script from URL: ", e);
 			}
 		}
 		return DefaultGroovyMethods

@@ -44,7 +44,7 @@ import java.util.List;
  * (values). The requested invocation is specified by the own invoke context and
  * eventual context of parameters (Proc).
  * 
- * The semantics for how parameters can be declared and how the arguments get
+ * The semantics for how parameters can be declared and how the arguments getValue
  * passed to the parameters of callable unit are defined by the language, but
  * the details of how this is represented in any particular computing system
  * depend on the calling conventions of that system. A context-driven computing
@@ -435,7 +435,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 		for (Arg e : args) {
 			if (e instanceof Entry) {
 				try {
-					invokeContext.putValue(e.getName(), ((Entry) e).get());
+					invokeContext.putValue(e.getName(), ((Entry) e).getValue());
 				} catch (ContextException ex) {
 					throw new SetterException(ex);
 				}
@@ -585,11 +585,15 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	}
 
 	@Override
-	public Object execute(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws EvaluationException {
 		Context cxt = (Context)Arg.selectDomain(args);
 		if (cxt !=null) {
 			invokeContext = cxt;
-			return evaluate(args);
+			try {
+				return evaluate(args);
+			} catch (RemoteException e) {
+				throw new EvaluationException(e);
+			}
 		}
 		return null;
 	}
@@ -609,6 +613,20 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 
 	@Override
 	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
+
+	@Override
+	public T getValue(Arg... args) throws ContextException {
+		Context cxt = (Context)Arg.selectDomain(args);
+		if (cxt !=null) {
+			invokeContext = cxt;
+			try {
+				return evaluate(args);
+			} catch (RemoteException e) {
+				throw new EvaluationException(e);
+			}
+		}
 		return null;
 	}
 }

@@ -43,10 +43,10 @@ public class NetMograms {
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ result/y: " + value(cxt, "result/y"));
 
-		// get a single context argument
+		// getValue a single context argument
 		assertEquals(100.0, value(cxt, "result/y"));
 
-		// get the subcontext output from the context
+		// getValue the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
 				value(cxt, result("result/context", outPaths("arg/x1", "result/y")))));
 	}
@@ -57,10 +57,10 @@ public class NetMograms {
 		Task t5 = task("t5", sig("add", Adder.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		// get the result eval
+		// getValue the result eval
 		assertTrue(exec(t5).equals(100.0));
 
-		// get the subcontext output from the exertion
+		// getValue the subcontext output from the exertion
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
 				exec(t5, outPaths("arg/x1", "result/y"))));
 

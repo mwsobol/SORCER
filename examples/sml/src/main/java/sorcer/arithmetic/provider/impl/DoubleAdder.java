@@ -14,7 +14,7 @@ public class DoubleAdder implements Adder, DoubleSrv {
 
     @Override
     public Context add(Context context) throws RemoteException, ContextException, MonitorException {
-        // get list of input values
+        // getValue list of input values
         List<Double> inputs = (List<Double>) context.getValue("inputs/double/list");
         Object outpath = context.getValue("outpath");
 

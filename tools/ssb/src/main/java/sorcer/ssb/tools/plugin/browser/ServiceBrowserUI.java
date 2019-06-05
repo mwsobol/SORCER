@@ -1361,7 +1361,7 @@ public class ServiceBrowserUI extends Thread implements RemoteEventListener,
 		// _logger.info("getGraphics");
 		GlyphView gv = new GlyphView(this);
 		_glyphView = gv;
-		// get the services
+		// getValue the services
 		ServiceNode sn = (ServiceNode) selectedNode.getUserObject();
 		// IX04.01
 		String label = sn.toString();// TreeRenderer.getJiniName(sn.getServiceItem().service,sn.toString());

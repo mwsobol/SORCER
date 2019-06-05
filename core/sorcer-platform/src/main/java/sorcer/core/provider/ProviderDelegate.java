@@ -440,7 +440,7 @@ public class ProviderDelegate {
 					logger.warn("Shutting down, abort space discovery");
 					break;
 				}
-				logger.warn("could not get space, trying again... try number = "+ ctr);
+				logger.warn("could not getValue space, trying again... try number = "+ ctr);
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
@@ -452,7 +452,7 @@ public class ProviderDelegate {
 			if (space != null) {
 				logger.info("got space = " + space);
 			} else {
-				logger.warn("*** Warn: could not get space...moving on.");
+				logger.warn("*** Warn: could not getValue space...moving on.");
 			}
 		}
 		if(!shuttingDown) {
@@ -665,7 +665,7 @@ public class ProviderDelegate {
 			publishedServiceTypes = toPublish.toArray(new Class<?>[toPublish.size()]);
 			logger.info("*** published services: {}", Arrays.toString(publishedServiceTypes));
 		}
-		// get exporters for outer and inner proxy
+		// getValue exporters for outer and inner proxy
 		getExporters(jconfig);
 		logger.debug("exporting provider: {}", provider);
 		logger.info("outerExporter = {}", outerExporter);
@@ -1286,7 +1286,7 @@ public class ProviderDelegate {
 
 		if (visited.contains(serviceID)) {
 			visited.remove(serviceID);
-			throw new RoutineException("Not able to get relevant multitype: "+ prvType + ", key: " + prvName);
+			throw new RoutineException("Not able to getValue relevant multitype: "+ prvType + ", key: " + prvName);
 		}
 		visited.add(serviceID);
 		if (serviceComponents != null) {
@@ -1310,7 +1310,7 @@ public class ProviderDelegate {
 		if (recipient == null) {
 			visited.remove(serviceID);
 			RoutineException re = new RoutineException(
-				"Not able to get provider multitype: " + prvType + ", key: "
+				"Not able to getValue provider multitype: " + prvType + ", key: "
 					+ prvName);
 			notifyException(task, "", re);
 			throw re;
@@ -1330,7 +1330,7 @@ public class ProviderDelegate {
 			} else {
 				visited.remove(serviceID);
 				throw new RoutineException(
-					"Not able to get relevant multitype: " + prvType
+					"Not able to getValue relevant multitype: " + prvType
 						+ ", key: " + prvName);
 			}
 		}
@@ -3083,14 +3083,14 @@ public class ProviderDelegate {
 	 */
 	private Remote getPartner(String partnerName, Class partnerType)
 		throws ExportException {
-		// get the partner and its proxy
+		// getValue the partner and its proxy
 		// if it is exportable, export it, otherwise discover one
 		Remote pp;
 		if (partner == null) {
 			if (partnerType != null) {
 				// Class clazz = null;
 				// if (partnerExporter != null) {
-				// // get the partner instance
+				// // getValue the partner instance
 				// try {
 				// clazz = Class.forName(partnerType);
 				// } catch (ClassNotFoundException e) {

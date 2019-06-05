@@ -334,7 +334,7 @@ public class Glyph{
                 int h=10;
                 
                 for(int i=0;i<nPoints;i+=inc){
-                	Point p=(Point)points.get(i);
+                	Point p=(Point)points.getValue(i);
                 	int xp=p.x-(w/2);
                 	int yp=p.y-(h/2);
                 	g.drawRect(xp,yp,w,h);

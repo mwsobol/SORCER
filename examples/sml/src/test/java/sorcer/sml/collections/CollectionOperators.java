@@ -76,7 +76,7 @@ public class CollectionOperators {
 		String first = (String)t5._1;
 
 		assertEquals(s1.key(), "Mike");
-		assertEquals(s2.get(), "Sobolewski");
+		assertEquals(s2.getValue(), "Sobolewski");
 
 		assertEquals(t2._1, t2._1);
 		assertEquals(t2._2, t3._2);

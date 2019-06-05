@@ -145,7 +145,7 @@ public class ListContext<T extends Object> extends ServiceContext<T> implements 
 	}
 
 	/* (non-Javadoc)
-	 * @see java.util.List#get(int)
+	 * @see java.util.List#getValue(int)
 	 */
 	public Object get(int index) {
 		return elements.get(index);

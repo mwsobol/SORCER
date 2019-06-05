@@ -54,7 +54,7 @@ import java.util.List;
  * ReferentUuid. If not it implements the semantics of ReferentUuid.
  * 
  * Functionality of Jini2.0 Security implemented by this ProxyWrapper Ability to
- * set and get client constraints Ability to getProxyTrustIterator
+ * set and getValue client constraints Ability to getProxyTrustIterator
  * 
  * Functionality of ReferentUuid The unique identifier assigned to the current
  * instance of this proxy class by the lookup discovery service. This ID is used

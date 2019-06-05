@@ -79,7 +79,7 @@ public class SelectableTaker extends SpaceTaker {
 						if (isTransactional) {
 							txnCreated = TX.createTransaction(transactionLeaseTimeout);
 							if (txnCreated == null) {
-								logger.warn("SpaceTaker did not get TRANSACTION thread: {}", threadId);
+								logger.warn("SpaceTaker did not getValue TRANSACTION thread: {}", threadId);
 								Thread.sleep(spaceTimeout / 6);
 								continue;
 							}
@@ -96,7 +96,7 @@ public class SelectableTaker extends SpaceTaker {
 					if (isTransactional) {
 						txnCreated = TX.createTransaction(transactionLeaseTimeout);
 						if (txnCreated == null) {
-//							doLog("\t***warning: space taker did not get TRANSACTION.",
+//							doLog("\t***warning: space taker did not getValue TRANSACTION.",
 //								threadId, null);
 							Thread.sleep(spaceTimeout / 6);
 							continue;

@@ -97,7 +97,7 @@ public class MonitorLandlord implements Landlord, Runnable, ReferentUuid, Remote
     }
 
     // Apply the policy to a requested duration
-    // to get an actual expiration time.
+    // to getValue an actual expiration time.
     public long getExpiration(long request) {
         if (request > maxLease || request == Lease.ANY)
             return System.currentTimeMillis() + maxLease;

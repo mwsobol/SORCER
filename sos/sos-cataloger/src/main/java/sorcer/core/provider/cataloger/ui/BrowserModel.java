@@ -252,7 +252,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Used to get the list of providers in the model
+	 * Used to getValue the list of providers in the model
 	 * 
 	 * @return - A string array of all providers available
 	 */
@@ -261,7 +261,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Used to get the backup list of providers from the model
+	 * Used to getValue the backup list of providers from the model
 	 * 
 	 * @return - A string array with the backup list of providers, can be used
 	 *         to reload view after clearing search
@@ -271,7 +271,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Used to get the selected provider from the model
+	 * Used to getValue the selected provider from the model
 	 * 
 	 * @return - a string with the selected providers key
 	 */
@@ -280,7 +280,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Used to get the list of interfaces from the model
+	 * Used to getValue the list of interfaces from the model
 	 * 
 	 * @return - A string array of all the interfaces available for the selected
 	 *         provider
@@ -290,7 +290,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Used to get the backup list of interfaces from the model.
+	 * Used to getValue the backup list of interfaces from the model.
 	 * 
 	 * @return - A string array of the backup interface listed, used to revert
 	 *         search back to default
@@ -300,7 +300,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Used to get the selected interface key from the model
+	 * Used to getValue the selected interface key from the model
 	 * 
 	 * @return - A string with the selected interface key
 	 */
@@ -313,7 +313,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 	
 	/**
-	 * Used to get the list of methods from the model
+	 * Used to getValue the list of methods from the model
 	 * 
 	 * @return - A string array of all the methods for the selected interface
 	 */
@@ -322,7 +322,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Used to get the backup list of methods from the model
+	 * Used to getValue the backup list of methods from the model
 	 * 
 	 * @return - A string array of the backup list of methods, used for
 	 *         searching
@@ -332,7 +332,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Used to get the selected method from the model
+	 * Used to getValue the selected method from the model
 	 * 
 	 * @return - A string with the key of the currently selected provider
 	 */
@@ -341,7 +341,7 @@ public class BrowserModel extends Observable implements Serializable, EditorView
 	}
 
 	/**
-	 * Used to get the current @link Context from the model.
+	 * Used to getValue the current @link Context from the model.
 	 * 
 	 * @return - A @link Context that is currently selected.
 	 */

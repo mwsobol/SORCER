@@ -307,7 +307,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 	 */
 	public Map<Uuid, ExertionInfo> getMonitorableExertionInfo(Exec.State state,
 															  Principal principal) throws MonitorException {
-        logger.debug("Trying to get exertionInfos for: {} for: {}", (state==null?"null":state.toString()), principal);
+        logger.debug("Trying to getValue exertionInfos for: {} for: {}", (state==null?"null":state.toString()), principal);
 		Map<Uuid, ExertionInfo> table = new HashMap<>();
 		try {
 			if (resources==null) return table;
@@ -328,7 +328,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
 
     private Map<Uuid, ExertionInfo> getMonitorableExertionInfo(MonitorSession monitorSession, UuidKey key, Exec.State state, Principal principal) throws RemoteException,MonitorException {
         Map<Uuid, ExertionInfo> table = new HashMap<>();
-        logger.debug("Trying to get exertionInfos for: {} state: {} for: {}", monitorSession, (state==null?"null":state.toString()), principal);
+        logger.debug("Trying to getValue exertionInfos for: {} state: {} for: {}", monitorSession, (state==null?"null":state.toString()), principal);
         ServiceRoutine xrt = (ServiceRoutine) (monitorSession).getRuntimeExertion();
         if (xrt.getPrincipal().getId()
                 .equals(((SorcerPrincipal) principal).getId())) {
@@ -352,7 +352,7 @@ public class ExertMonitor extends ServiceProvider implements MonitoringManagemen
     }
 
     /**
-     * For this reference ID, which references a exertion in a monitor, get the
+     * For this reference ID, which references a exertion in a monitor, getValue the
 	 * exertion if the client has enough credentials.
 	 */
 	public Routine getMonitorableExertion(UEID cookie, Principal principal) throws MonitorException {

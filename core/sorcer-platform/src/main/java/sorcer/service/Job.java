@@ -27,7 +27,6 @@ import sorcer.core.context.FidelityContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.ObjectJob;
 import sorcer.core.provider.Jobber;
@@ -608,10 +607,10 @@ public class Job extends Transroutine {
 				for (Arg e : entries) {
 					if (e instanceof Entry)
 						if (e.getName().indexOf(key) >= 0)
-							putJobValue(e.getName(), ((Subroutine) e).get());
+							putJobValue(e.getName(), this.getValue());
 
 						else
-							super.putValue(e.getName(), ((Entry) e).get());
+							super.putValue(e.getName(), ((Entry) e).getValue());
 
 					// check for control strategy
 					else if (e instanceof ControlContext) {

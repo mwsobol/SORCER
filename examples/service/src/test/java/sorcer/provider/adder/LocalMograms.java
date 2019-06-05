@@ -47,10 +47,10 @@ public class LocalMograms {
 		// same as "eval/result"
 		logger.info("context @ result/eval: " + value(cxt, Adder.RESULT_PATH));
 
-		// get a single context argument
+		// getValue a single context argument
 		assertEquals(100.0, value(cxt, "eval/result"));
 
-		// get the subcontext output from the context
+		// getValue the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("eval/result", 100.0)).equals(
 				value(cxt, outPaths("arg/x1", "eval/result"))));
 	}
@@ -72,10 +72,10 @@ public class LocalMograms {
 		// same as "eval/result"
 		logger.info("context @ result/eval: " + value(cxt, Adder.RESULT_PATH));
 
-		// get a single context argument
+		// getValue a single context argument
 		assertEquals(100.0, value(cxt, "eval/result"));
 
-		// get the subcontext output from the context
+		// getValue the subcontext output from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("eval/result", 100.0)).equals(
 				value(cxt, outPaths("arg/x1", "eval/result"))));
 	}
@@ -142,10 +142,10 @@ public class LocalMograms {
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		// get the result eval
+		// getValue the result eval
 		assertEquals(100.0, exec(t5));
 
-		// get the output subcontext from the context
+		// getValue the output subcontext from the context
 		assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
 				exec(t5, result(outPaths("arg/x1", "result/y")))));
 	}
@@ -157,7 +157,7 @@ public class LocalMograms {
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), outVal("out/val"),
 						outPaths("out/val", "calculated/provider")));
 
-		// get the subcontext output from the exertion
+		// getValue the subcontext output from the exertion
 		assertTrue(context(ent("calculated/provider", AdderImpl.class.getName()),
 				ent("out/val", 100.0)).equals(exec(t5)));
 	}
@@ -169,7 +169,7 @@ public class LocalMograms {
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), outVal("out/val"),
 						outPaths("out/val")));
 
-		// get the result eval
+		// getValue the result eval
 		assertEquals(100.0, exec(t5));
 	}
 

@@ -26,7 +26,7 @@ public class WorkerTaskApplication {
 		// initialize system properties
 		Sorcer.getEnvProperties();
 
-		// get the queried provider key from the command line
+		// getValue the queried provider key from the command line
 		String pn = null;
 		if (args.length == 1)
 			pn = args[0];

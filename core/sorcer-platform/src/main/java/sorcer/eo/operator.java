@@ -118,7 +118,7 @@ operator extends Operator {
                                  Arg... entries) throws ContextException {
         Object obj = null;
         if (object instanceof Entry) {
-            obj = ((Entry) object).get(entries);
+            obj = ((Entry) object).getValue(entries);
         } else if (object instanceof Context) {
             obj = sorcer.mo.operator.value((Context) object, path, entries);
             obj = sorcer.mo.operator.value((Context) obj, entries);
@@ -133,7 +133,7 @@ operator extends Operator {
         Object obj = null;
         try {
             if (object instanceof Entry) {
-                obj =  ((Entry) object).get(entries);
+                obj =  ((Entry) object).getValue(entries);
             } else if (object instanceof Context) {
                 obj = sorcer.mo.operator.value((Context) object, entries);
             }
@@ -573,7 +573,7 @@ operator extends Operator {
     public static Context contextFromList(List<Entry> entries) throws ContextException {
         ServiceContext cxt = new ServiceContext();
         for (Object i : entries) {
-            cxt.put(((Entry)i).getName().toString(), ((Entry)i).get());
+            cxt.put(((Entry)i).getName().toString(), ((Entry)i).getValue());
         }
         return cxt;
     }
@@ -2308,7 +2308,7 @@ operator extends Operator {
                 if (mFi.getMorpherFidelity() != null) {
                     // set the default morpher
                     try {
-                        mFi.setMorpher((Morpher) ((Entry) mFi.getMorpherFidelity().get(0)).get());
+                        mFi.setMorpher((Morpher) ((Entry) mFi.getMorpherFidelity().get(0)).getValue());
                     } catch (ContextException e) {
                         throw new EvaluationException(e);
                     }
@@ -2573,7 +2573,7 @@ operator extends Operator {
                 mFi.addObserver(fiManager);
                 if (mFi.getMorpherFidelity() != null) {
                     // set the default morpher
-                    mFi.setMorpher((Morpher) ((Entry) mFi.getMorpherFidelity().get(0)).get());
+                    mFi.setMorpher((Morpher) ((Entry) mFi.getMorpherFidelity().get(0)).getValue());
                 }
             }
         }
@@ -2982,7 +2982,7 @@ operator extends Operator {
             } else if (o instanceof Exec.State) {
                 cc.setExecState((Exec.State) o);
             } else if (o instanceof Entry) {
-                cc.put(((Entry)o).getName(), ((Entry)o).get());
+                cc.put(((Entry)o).getName(), ((Entry)o).getValue());
             }
         }
         cc.setSignatures(sl);

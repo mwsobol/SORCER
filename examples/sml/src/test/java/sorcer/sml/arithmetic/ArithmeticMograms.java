@@ -133,8 +133,8 @@ public class ArithmeticMograms {
 		Object val = asis(mo, "subtract");
 		if (val instanceof Srv) {
 			Srv srv = ((Srv)val);
-			if (srv.get() instanceof ContextCallable) {
-				ContextCallable ctx = (ContextCallable) srv.get();
+			if (srv.getValue() instanceof ContextCallable) {
+				ContextCallable ctx = (ContextCallable) srv.getValue();
 				logger.info("class: " + ctx.getClass());
 			}
 		}
@@ -174,7 +174,7 @@ public class ArithmeticMograms {
 
 	@Test
 	public void sigLocalModel() throws Exception {
-		// get response from a local service model and resolve dependencies
+		// getValue response from a local service model and resolve dependencies
 
 		Model m = model(
 			inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
@@ -197,7 +197,7 @@ public class ArithmeticMograms {
 
 	@Test
 	public void sigRemoteModel() throws Exception {
-		// get response from a remote service model and resolve dependencies
+		// getValue response from a remote service model and resolve dependencies
 
 		Model m = model(
 			inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
@@ -218,7 +218,7 @@ public class ArithmeticMograms {
 
 	@Test
 	public void sigMixedModel() throws Exception {
-		// get response from a remote service model and resolve dependencies
+		// getValue response from a remote service model and resolve dependencies
 
 		Model m = model(
 			inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
@@ -255,7 +255,7 @@ public class ArithmeticMograms {
 		logger.info("task getSelects:" + fi(batch3));
 
 		batch3 = exert(batch3);
-		//logger.info("task result/y: " + get(batch3, "result/y"));
+		//logger.info("task result/y: " + getValue(batch3, "result/y"));
 		assertEquals(get(batch3, "result/y"), 400.0);
 	}
 

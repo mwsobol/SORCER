@@ -14,7 +14,7 @@ public class FloatAdder implements Adder, FloatSrv {
 
     @Override
     public Context add(Context context) throws RemoteException, ContextException, MonitorException {
-        // get list of input values
+        // getValue list of input values
         List<Float> inputs = (List<Float>) context.getValue("inputs/float/list");
         Object outpath = context.getValue("outpath");
 

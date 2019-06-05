@@ -260,10 +260,10 @@ abstract public class ExertDispatcher implements Dispatcher {
         }
 
 //      for (int i = 0; i < contexts.size(); i++) {
-//			if (!sharedContexts.contains(contexts.get(i)))
-//				sharedContexts.add(contexts.get(i));
-//            if (((ServiceContext)contexts.get(i)).isShared())
-//                sharedContexts.add(contexts.get(i));
+//			if (!sharedContexts.contains(contexts.getValue(i)))
+//				sharedContexts.add(contexts.getValue(i));
+//            if (((ServiceContext)contexts.getValue(i)).isShared())
+//                sharedContexts.add(contexts.getValue(i));
 //        }
     }
 
@@ -346,7 +346,7 @@ abstract public class ExertDispatcher implements Dispatcher {
     }
 
     protected ServiceContext getSharedContext(String path, String id) {
-		// try to get the dataContext with particular id.
+		// try to getValue the dataContext with particular id.
 		// If not found, then find a dataContext with particular path.
 		if (Context.EMPTY_LEAF.equals(path) || "".equals(path))
             return null;

@@ -154,7 +154,7 @@ public class SrvModels {
     @Test
     public void exertServiceModel() throws Exception {
 
-        // get a context from a subject provider
+        // getValue a context from a subject provider
         // exerting a model with the subject provider as its service context
 
         Model m = model(sig("add", AdderImpl.class),
@@ -181,7 +181,7 @@ public class SrvModels {
 
     @Test
     public void serviceResponses() throws Exception {
-        // get response from a service model
+        // getValue response from a service model
 
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
@@ -204,7 +204,7 @@ public class SrvModels {
 
     @Test
     public void serviceResponses2() throws Exception {
-        // get response from a service model
+        // getValue response from a service model
 
         Model m = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
@@ -227,7 +227,7 @@ public class SrvModels {
     @Test
     public void evaluateServiceModel() throws Exception {
 
-        // get response from a service model
+        // getValue response from a service model
 
         Model mdl = srvModel(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
@@ -242,7 +242,7 @@ public class SrvModels {
 
 
         logger.info("DEPS: " + printDeps(mdl));
-        // get a scalar response
+        // getValue a scalar response
         responseUp(mdl, "subtract");
         logger.info("response: " + response(mdl));
         Context out = response(mdl);

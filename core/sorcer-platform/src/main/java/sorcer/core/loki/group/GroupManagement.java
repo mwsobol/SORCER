@@ -19,7 +19,7 @@ public interface GroupManagement extends RemotePartner
 	//------------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * get the provider identification information
+	 * getValue the provider identification information
 	 * 
 	 * @param context		information context
 	 * @return				results context
@@ -91,35 +91,35 @@ public interface GroupManagement extends RemotePartner
 	//------------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * get all groups
+	 * getValue all groups
 	 * 
 	 * @param context		information context
 	 * @return				results context
 	 */
 	public Context getGroups(Context context) throws RemoteException;
 	/**
-	 * get group mograms
+	 * getValue group mograms
 	 * 
 	 * @param context		information context
 	 * @return				results context
 	 */
 	public Context getGroupExertions(Context context) throws RemoteException;
 	/**
-	 * get group members
+	 * getValue group members
 	 * 
 	 * @param context		information context
 	 * @return				results context
 	 */
 	public Context getGroupMembers(Context context) throws RemoteException;
 	/**
-	 * get group action
+	 * getValue group action
 	 * 
 	 * @param context		information context
 	 * @return				results context
 	 */
 	public Context getGroupAction(Context context) throws RemoteException;
 	/**
-	 * get action info
+	 * getValue action info
 	 * 
 	 * @param context		information context
 	 * @return				results context
@@ -129,28 +129,28 @@ public interface GroupManagement extends RemotePartner
 	//------------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * get activity entry
+	 * getValue activity entry
 	 * 
 	 * @param context		information context
 	 * @return				results context
 	 */
 	public Context getActivityEntry(Context context) throws RemoteException;
 	/**
-	 * get exertion entry
+	 * getValue exertion entry
 	 * 
 	 * @param context		information context
 	 * @return				results context
 	 */
 	public Context getExertionEntry(Context context) throws RemoteException;
 	/**
-	 * get group entry
+	 * getValue group entry
 	 * 
 	 * @param context		information context
 	 * @return				results context
 	 */
 	public Context getGroupEntry(Context context) throws RemoteException;
 	/**
-	 * get member entry
+	 * getValue member entry
 	 * 
 	 * @param context		information context
 	 * @return				results context
@@ -160,35 +160,35 @@ public interface GroupManagement extends RemotePartner
 	//------------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * get all activities
+	 * getValue all activities
 	 * 
 	 * @param context		information context
 	 * @return				results context
 	 */
 	public Context getActivities(Context context) throws RemoteException;
 	/**
-	 * get all executions
+	 * getValue all executions
 	 * 
 	 * @param context		information context
 	 * @return				results context
 	 */
 	public Context getExecutions(Context context) throws RemoteException;
 	/**
-	 * get all mograms
+	 * getValue all mograms
 	 * 
 	 * @param context		information context
 	 * @return				results context
 	 */
 	public Context getExertions(Context context) throws RemoteException;
 	/**
-	 * get all members
+	 * getValue all members
 	 * 
 	 * @param context		information context
 	 * @return				results context
 	 */
 	public Context getMembers(Context context) throws RemoteException;
 	/**
-	 * get all memberships
+	 * getValue all memberships
 	 * 
 	 * @param context		information context
 	 * @return				results context

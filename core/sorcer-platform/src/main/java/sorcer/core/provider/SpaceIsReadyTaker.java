@@ -73,7 +73,7 @@ public class SpaceIsReadyTaker extends SpaceTaker {
 				if (isTransactional) {
 					txnCreated = createTransaction();
 					if (txnCreated == null)
-						logger.error("########### SpaceIsReady Worker DID NOT get transaction ...");
+						logger.error("########### SpaceIsReady Worker DID NOT getValue transaction ...");
 				}
 
 				ee = (ExertionEnvelop) space

@@ -252,7 +252,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 	 * Gets the list of interfaces for the given provider
 	 * 
 	 * @param providerName
-	 *            String representing the provider to get the interface list for
+	 *            String representing the provider to getValue the interface list for
 	 * @return String array of the interface names
 	 */
 	public String[] getInterfaces(String providerName) {
@@ -389,7 +389,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 					methodName);
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("failed to get context for: " + model.getSelectedInterfaceName() + ":" +  methodName);
+			System.out.println("failed to getValue context for: " + model.getSelectedInterfaceName() + ":" +  methodName);
 		}
 		return new ServiceContext("Failed");
 

@@ -238,7 +238,7 @@ public class ServiceAccessor implements DynamicAccessor {
 
 		int tryNo = 0;
 		while (tryNo < LUS_REPEAT) {
-			logger.info("trying to get service: {}: {}; attempt: {}...", serviceType, name, tryNo);
+			logger.info("trying to getValue service: {}: {}; attempt: {}...", serviceType, name, tryNo);
 			try {
 				tryNo++;
 				proxy = getService(serviceType, new Entry[] { new Name(name) }, null);
@@ -247,7 +247,7 @@ public class ServiceAccessor implements DynamicAccessor {
 
 				Thread.sleep(WAIT_FOR);
 			} catch (Exception e) {
-				logger.error("Failed trying to get {} {}", name, serviceType.getName(), e);
+				logger.error("Failed trying to getValue {} {}", name, serviceType.getName(), e);
 			}
 		}
 		logger.info("got LUS service [fiType={} key={}]: {}", serviceType.getName(), name, proxy);

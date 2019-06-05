@@ -35,5 +35,5 @@ import java.rmi.RemoteException;
  */
 public interface Getter<T>  {
 
-    public T get(Arg... args) throws ContextException;
+    public T getValue(Arg... args) throws ContextException;
 }

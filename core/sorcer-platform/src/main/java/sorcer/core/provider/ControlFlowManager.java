@@ -375,7 +375,7 @@ public class ControlFlowManager {
 			String path;
             while (e.hasMoreElements()) {
 				path = (String) e.nextElement();
-				mapBackUp.put(path, context.get(path));
+				mapBackUp.put(path, context.getValue(path));
             }
         } catch (ContextException ce) {
             logger.info("problem saving state of the ServiceContext " + ce);
@@ -480,7 +480,7 @@ public class ControlFlowManager {
             ((Task) exertion).setStatus(Exec.INITIAL);
 		} else if (exertion.isJob()) {
             for (int i = 0; i < ((Job) exertion).size(); i++) {
-                this.resetExertionStatus(((Job) exertion).get(i));
+                this.resetExertionStatus(((Job) exertion).getValue(i));
             }
         }
     }

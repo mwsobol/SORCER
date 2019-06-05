@@ -24,7 +24,7 @@ public class AdderImpl implements Adder {
 
     @Override
 	public Context add(Context context) throws RemoteException, ContextException {
-		// get inputs and outputs from the service context
+		// getValue inputs and outputs from the service context
 		PositionalContext cxt = (PositionalContext) context;
 		List<Double> inputs = cxt.getInValues();
 		logger.info("inputs: " + inputs);
@@ -52,7 +52,7 @@ public class AdderImpl implements Adder {
 			cxt.putValue(RESULT_PATH, result);
 		}
 
-		// get a custom provider property
+		// getValue a custom provider property
 		if (provider != null) {
 			try {
 				int st = new Integer(provider.getProperty("provider.sleep.time"));
@@ -75,12 +75,12 @@ public class AdderImpl implements Adder {
         // add request values
         Context cxt = add(context);
         
-        // get previous 'add' eval
+        // getValue previous 'add' eval
         Double previous = 0.0;
         if (ss.getAttribute("sum") != null)
             previous = (Double)ss.getAttribute("sum");
 
-        // get 'sum' eval
+        // getValue 'sum' eval
         Double result = (Double)cxt.getReturnValue() + previous;
         
         // save it in the session

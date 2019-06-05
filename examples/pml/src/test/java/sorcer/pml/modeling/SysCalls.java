@@ -63,7 +63,7 @@ public class SysCalls {
 				prc("add", invoker("x + y", args("x", "y"))));
 
 		CmdResult result = (CmdResult) invoke(pm, "volume");
-		// get from the result the volume of cylinder and assign to y parameter
+		// getValue from the result the volume of cylinder and assign to y parameter
 		assertTrue("EXPECTED '0' return eval, GOT: "+result.getExitValue(), result.getExitValue() == 0);
 		Properties props = new Properties();
 		props.load(new StringReader(result.getOut()));
@@ -106,7 +106,7 @@ public class SysCalls {
 
 		Context result = (Context) eval(pm, "volume");
 //		Context result = (Context) invoke(pm, "volume");
-        // get from the result the volume of cylinder and assign to y parameter
+        // getValue from the result the volume of cylinder and assign to y parameter
         assertTrue("EXPECTED '0' return eval, GOT: "+value(result, "exit/eval"),
                 value(result, "exit/eval").equals(0));
 

@@ -65,7 +65,7 @@ public class ContextNode implements Serializable {
 	// current eval for this context node
 
 	private Object value;
-	// variables used to get values from the corresponding dependent variables
+	// variables used to getValue values from the corresponding dependent variables
 	protected Map<String, Functionality> variables;
 
 	public ContextNode() {
@@ -560,7 +560,7 @@ public class ContextNode implements Serializable {
 					// create an instance of the class for this argument
 					try {
 						Class argVcl = Class.forName(type);
-						// get the right constrcutor assuming there is a
+						// getValue the right constrcutor assuming there is a
 						// constructor with a single string
 						Class[] paramTypes = { argV.getClass() };
 						Object[] objA = { obj };
@@ -729,7 +729,7 @@ public class ContextNode implements Serializable {
 				obj = obj.toString();
 		} else if (itemDataVect.elementAt(0).equals("Keyword Filter3")) {
 			String keyword = (String) itemDataVect.elementAt(2);
-			// this filter does not have the ability to get once the string is
+			// this filter does not have the ability to getValue once the string is
 			// replaced
 			obj = this.getFileItemValue(keyword);
 		} else if (itemDataVect.elementAt(0).equals("Keyword Filter4")) {
@@ -796,7 +796,7 @@ public class ContextNode implements Serializable {
 					// create an instance of the class for this argument
 					try {
 						// Class cl = Class.forName(multitype);
-						// get the right constrcutor assuming there is a
+						// getValue the right constrcutor assuming there is a
 						// constructor with a single string
 						// Class[] paramTypes = {argV.getClass()};
 						Object[] argVals = { argV };
@@ -911,7 +911,7 @@ public class ContextNode implements Serializable {
 		// int keyLine = -1;
 		//
 		// for (int l = 0; l < fC.size(); l++) {
-		// if (((String) fC.get(l)).trim().startsWith(key))
+		// if (((String) fC.getValue(l)).trim().startsWith(key))
 		// keyLine = l + 1;
 		// }
 		//

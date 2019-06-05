@@ -42,7 +42,7 @@ import java.util.jar.Manifest;
  * of {@link java.net.URLClassLoader}, with JAR dependencies (Class-Path)
  * properly resolved and with JAR indexes properly handled.
  * <p>
- * This class provides two set of methods: <i>get</i> methods that return
+ * This class provides two set of methods: <i>getValue</i> methods that return
  * {@link edu.emory.mathcs.util.classloader.ResourceHandle}s (or their enumerations) and <i>find</i> methods that
  * return URLs (or their enumerations). If the resource is not found,
  * null (or empty enumeration) is returned. Resource handles represent a
@@ -50,7 +50,7 @@ import java.util.jar.Manifest;
  * processing, just like input streams. In contrast, find methods return
  * URLs that can be used to open multiple connections to the resource. In
  * typical class loader applications, when a single retrieval is sufficient,
- * it is preferable to use <i>get</i> methods since they pose slightly smaller
+ * it is preferable to use <i>getValue</i> methods since they pose slightly smaller
  * communication overhead.
  *
  * @author Dawid Kurzyniec

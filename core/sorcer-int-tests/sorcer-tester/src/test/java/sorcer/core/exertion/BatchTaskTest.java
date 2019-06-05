@@ -44,8 +44,8 @@ public class BatchTaskTest {
 		logger.info("task getSelects:" + fi(batch3));
 				
 		batch3 = exert(batch3);
-//		//logger.info("task result/y: " + get(batch3, "result/y"));
-//		assertEquals("Wrong eval for 400.0", get(batch3, "result/y"), 400.0);
+//		//logger.info("task result/y: " + getValue(batch3, "result/y"));
+//		assertEquals("Wrong eval for 400.0", getValue(batch3, "result/y"), 400.0);
 	}
 	
 	
@@ -61,7 +61,7 @@ public class BatchTaskTest {
 						operator.inVal("op2/x1", 20.0), operator.inVal("op2/x2", 80.0)));
 		
 		batch3 = exert(batch3);
-		//logger.info("task result/y: " + get(batch3, "result/y"));
+		//logger.info("task result/y: " + getValue(batch3, "result/y"));
 		assertEquals("Wrong eval for 400.0", get(batch3, "result/y"), 400.0);
 	}
 }

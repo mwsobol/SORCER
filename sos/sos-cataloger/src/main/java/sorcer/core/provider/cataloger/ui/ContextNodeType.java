@@ -100,7 +100,7 @@ public class ContextNodeType {
 	}
 
 	/**
-	 * Overloading the toString operator to get the eval of the data.
+	 * Overloading the toString operator to getValue the eval of the data.
 	 * 
 	 * @return String representation of the current eval of the inner data
 	 */
@@ -119,7 +119,7 @@ public class ContextNodeType {
 	}
 
 	/**
-	 * Used to get the internal data currently being stored, this returns it in
+	 * Used to getValue the internal data currently being stored, this returns it in
 	 * the original form.
 	 * 
 	 * @return Object of the original data.

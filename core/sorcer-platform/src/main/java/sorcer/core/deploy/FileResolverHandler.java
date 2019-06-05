@@ -55,7 +55,7 @@ public class FileResolverHandler {
                 file = resolverFutureTask.call();
                 return file;
             } catch (InterruptedException | ClassNotFoundException | IOException e) {
-                throw new ResolverException("Failed to get artifact location", e);
+                throw new ResolverException("Failed to getValue artifact location", e);
             }
         } else {
             return file;
@@ -122,7 +122,7 @@ public class FileResolverHandler {
                     }
                 }
             } catch(ResolverException e) {
-                logger.error("Unable to get Resolver", e);
+                logger.error("Unable to getValue Resolver", e);
             }
 
         }

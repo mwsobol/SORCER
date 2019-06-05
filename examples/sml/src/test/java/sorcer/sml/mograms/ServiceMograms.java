@@ -190,7 +190,7 @@ public class ServiceMograms {
 
     @Test
     public void modelWithInnerModel() throws Exception {
-        // get response from a service model with inner model
+        // getValue response from a service model with inner model
 
         Model innerModel = model("inner/multiply",
                 ent(sig("inner/multiply/out", "multiply", MultiplierImpl.class,
@@ -223,7 +223,7 @@ public class ServiceMograms {
 
     @Test
     public void localModeler() throws Exception {
-        // get response from a service model with inner model
+        // getValue response from a service model with inner model
 
         Model innerMdl = model("inner/multiply",
                 ent(sig("inner/multiply/out", "multiply", MultiplierImpl.class,
@@ -260,7 +260,7 @@ public class ServiceMograms {
 
     @Test
     public void remoteModeler() throws Exception {
-        // get response from a service model with inner model
+        // getValue response from a service model with inner model
 
         Domain innerMdl = model("inner/multiply",
                 ent(sig("inner/multiply/out", "multiply", Multiplier.class,

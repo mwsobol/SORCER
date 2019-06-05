@@ -38,13 +38,13 @@ public class TaskTest {
 				context(inVal("arg/x1"), inVal("arg/x2"),
 						result("result/y")));
 		
-		logger.info("get task: " + task);
-		logger.info("get context: " + context(task));
+		logger.info("getValue task: " + task);
+		logger.info("getValue context: " + context(task));
 		
 		Object val = exec(task, inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
 				strategy(sig("add", AdderImpl.class), Access.PUSH, Wait.YES));
 		
-		logger.info("get eval: " + val);
+		logger.info("getValue eval: " + val);
 		assertEquals("Wrong eval for 100", val, 100.0);
 	}
 	
@@ -71,7 +71,7 @@ public class TaskTest {
 		print(task);
 		
 		double val = (Double) exec(task);
-		//logger.info("get eval: " + val);
+		//logger.info("getValue eval: " + val);
 		assertTrue("Wrong eval for 100.0", val == 100.0);
 	}
 

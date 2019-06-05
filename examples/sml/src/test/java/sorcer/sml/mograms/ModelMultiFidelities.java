@@ -126,12 +126,12 @@ public class ModelMultiFidelities {
 
         Context out = response(mod, fi("sig1", "mphFi"));
         logger.info("out: " + out);
-//        assertTrue(get(out, "mphFi").equals(100.0));
+//        assertTrue(getValue(out, "mphFi").equals(100.0));
         assertTrue(get(mod, "result/y").equals(100.0));
 
         out = response(mod, fi("sig2", "mphFi"));
         logger.info("out2: " + out);
-//        assertTrue(get(out, "mphFi").equals(900.0));
+//        assertTrue(getValue(out, "mphFi").equals(900.0));
         assertTrue(get(mod, "result/y").equals(900.0));
     }
 
@@ -714,7 +714,7 @@ public class ModelMultiFidelities {
 //        logger.info("DEPS: " + printDeps(mdl));
         mdlBlock = exert(mdlBlock, fi("multiply", "mFi1"));
 //        logger.info("block context: " + context(mdlBlock));
-//        logger.info("result: " + get(context(mdlBlock), "mFi4"));
+//        logger.info("result: " + getValue(context(mdlBlock), "mFi4"));
 
         assertTrue(value(context(mdlBlock), "morpher3").equals(920.0));
     }

@@ -81,7 +81,7 @@ public class MorphFidelity<T> extends Observable implements Identifiable, MorphF
         T selection = null;
 
         if (obj instanceof Ref) {
-            selection = (T) ((Ref) obj).get();
+            selection = (T) ((Ref) obj).getValue();
         } else{
             selection = (T) obj;
         }

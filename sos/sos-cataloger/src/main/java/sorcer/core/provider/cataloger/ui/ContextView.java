@@ -17,7 +17,7 @@
 
 package sorcer.core.provider.cataloger.ui;
 
-//function prc to model to get context.
+//function prc to model to getValue context.
 //also add buttons to bottom for tree and list view. 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -386,7 +386,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 				String splitPath[] = path.split("/");
 				DefaultMutableTreeNode parentNode = null;
 				String currentPath = "";
-				for (String indPath : splitPath) // add or get the current path
+				for (String indPath : splitPath) // add or getValue the current path
 				// element
 				{
 					if (currentPath.length() != 0)
@@ -519,7 +519,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 			// load from other confirm
 			loadOtherPanel.dispose();
 			theContext = signatureDispatcher.getContext(loadOtherBox
-				.getSelectedItem().toString()); // get the requested context
+				.getSelectedItem().toString()); // getValue the requested context
 			treePanelInput.clear();
 			try {
 				buildTreeFromContext(treePanelInput, theContext);
@@ -595,7 +595,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 			ServiceContext result = new ServiceContext("FAILED"); // start off
 			// with
 			// failure,
-			// will get
+			// will getValue
 			// replaced
 			// if it
 			// works

@@ -160,7 +160,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 
 		int tries = 0;
 		while (uuidObjectMap == null && tries < 100) {
-			logger.info("Didn't get UuidObjectMap, trying: " + tries);
+			logger.info("Didn't getValue UuidObjectMap, trying: " + tries);
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException ie) {

@@ -134,7 +134,7 @@ import static sorcer.util.StringUtils.tName;
  * exporter is defined then server proxy becomes the inner proxy of this
  * provider's proxy (outer proxy). Thus, exported servers use outer proxies
  * while not exported user inner proxies of this provider. In this context, a
- * smart proxy implementing {@link sorcer.core.proxy.Outer} interface can get the outer proxy and
+ * smart proxy implementing {@link sorcer.core.proxy.Outer} interface can getValue the outer proxy and
  * its inner proxy composed in either direction provider/server proxy
  * relationship.
  * <p>
@@ -2071,7 +2071,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		// strip last '/' if included
 		int l0 = resourceDirRef.length();
 		if (resourceDirRef.substring(l0,l0).equals("/"))resourceDirRef = resourceDirRef.substring(0,l0 - 1);
-		// get resource directory key to copy
+		// getValue resource directory key to copy
 		String resourceDirectoryName = resourceDirRef;
 		l0 = resourceDirectoryName.lastIndexOf("/");
 		if (l0 != -1) resourceDirectoryName = resourceDirectoryName.substring(l0 + 1);

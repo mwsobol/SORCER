@@ -102,7 +102,7 @@ public class EntModels {
 
 		assertTrue(exec(model, "j1").equals(400.0));
 
-		// get model response
+		// getValue model response
 		Row mr = (Row) query(model, //prc("x1", 10.0), prc("x2", 50.0),
 				result("y", outPaths("t4", "t5", "j1")));
 		assertTrue(names(mr).equals(list("t4", "t5", "j1")));
@@ -347,7 +347,7 @@ public class EntModels {
 		logger.info("closure condition 2: " + c.call(args));
 		assertEquals(c.call(args), true);
 
-		// provided conditional context to get the closure only
+		// provided conditional context to getValue the closure only
 		Condition eval = new Condition(pm) {
 			@Override
 			public boolean isTrue() throws ContextException {
@@ -498,7 +498,7 @@ public class EntModels {
 //                                + "/sorcer-tester-" + sorcerVersion+".jar")));
 //
 ////		logger.info("val: " + eval(em, "sphere/volume"));
-//		assertTrue(get(em, "sphere/volume").equals(33510.32163829113));
+//		assertTrue(getValue(em, "sphere/volume").equals(33510.32163829113));
 
 	}
 

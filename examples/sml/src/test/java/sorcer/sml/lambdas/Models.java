@@ -259,9 +259,9 @@ public class Models {
 
 		Context out = response(mdl);
 		logger.info("response: " + out);
-//		assertTrue(get(out, "multiply").equals(500.0));
-//		assertTrue(get(out, "lambda").equals(2000.0));
-//		assertTrue(get(out, "subtract").equals(1900.0));
+//		assertTrue(getValue(out, "multiply").equals(500.0));
+//		assertTrue(getValue(out, "lambda").equals(2000.0));
+//		assertTrue(getValue(out, "subtract").equals(1900.0));
 	}
 
 

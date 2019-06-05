@@ -144,7 +144,7 @@ public class GlyphView extends JComponent{
 				Object service=si.getServiceItem().service;
 				
 				if(service!=null && service instanceof ServiceRegistrar){
-					//then get the member groups
+					//then getValue the member groups
 					ServiceRegistrar reggie=(ServiceRegistrar)service;
 					try{
 						String [] grps=reggie.getGroups();

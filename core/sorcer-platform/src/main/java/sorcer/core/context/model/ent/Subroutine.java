@@ -139,7 +139,7 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
 						}
 					}
 				}
-				out = (T) ((Entry)((ServiceFidelity) val).getSelect()).get(args);
+				out = (T) ((Entry)((ServiceFidelity) val).getSelect()).getValue(args);
 			} else if (val instanceof Callable) {
 				out = (T) ((Callable)val).call(args);
 			} else if (val instanceof Service) {

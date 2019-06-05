@@ -151,20 +151,19 @@ public class Prc<T> extends Subroutine<T> implements Invocation<T>,
 		}
 	}
 
-	@Override
-	public T get(Arg... args) {
-		try {
-			Domain context = Arg.selectDomain(args);
-			if (context != null) {
-				return invoke((ServiceContext) context, args);
-			} else {
-				return evaluate(args);
-			}
-		} catch (EvaluationException | RemoteException e) {
-			logger.warn("Proc evaluation failed", e);
-		}
-		return null;
-	}
+//	public T get(Arg... args) {
+//		try {
+//			Domain context = Arg.selectDomain(args);
+//			if (context != null) {
+//				return invoke((ServiceContext) context, args);
+//			} else {
+//				return evaluate(args);
+//			}
+//		} catch (EvaluationException | RemoteException e) {
+//			logger.warn("Proc evaluation failed", e);
+//		}
+//		return null;
+//	}
 	
 	/* (non-Javadoc)
 	 * @see sorcer.service.Evaluation#execute(sorcer.co.tuple.Parameter[])

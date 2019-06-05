@@ -141,7 +141,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 
 	/*
 	 * Poll the JavaSpaceAdmin proxy every <code>refreshRate</code> millis If we
-	 * get an Exception, drop out of the loop and report it The most likely
+	 * getValue an Exception, drop out of the loop and report it The most likely
 	 * cause of an Exception occuring will be down to a retrieved entry not
 	 * having a valid codebase set for it
 	 * 
@@ -165,7 +165,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 				_updater = null;
 				return;
 			} catch (Exception ex) {
-				// drop out here if we get an exception,
+				// drop out here if we getValue an exception,
 				// likely causes are UnusableEntryExceptions
 				// because the client program that wrote the entry
 				// didn't set a codebase (or set a wrong one) or the HTTPD of
@@ -268,7 +268,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 			entryMap.put(UNUSABLE_ENTRY, new Object[] { UNUSABLE_ENTRY,
 					new Integer(ueCount), null });
 		}
-		// get the object counts
+		// getValue the object counts
 		Collection col = entryMap.values();
 		List counterList = new ArrayList();
 		counterList.addAll(col);
@@ -277,7 +277,7 @@ public class JavaSpaceContentsView extends JPanel implements Runnable {
 	}
 
 	/*
-	 * Create the buttons that get displayed at the bottom of the GUI
+	 * Create the buttons that getValue displayed at the bottom of the GUI
 	 */
 	private JComponent createControls() {
 		final JPanel panel = new JPanel();

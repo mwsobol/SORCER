@@ -635,7 +635,7 @@ public class ServiceBrowser {
 //							+ e + ")");
 //		} catch (ClassNotFoundException e) {
 //			// This shouldn't be reached; if there's a problem with the
-//			// OSXAdapter we should get the
+//			// OSXAdapter we should getValue the
 //			// above NoClassDefFoundError first.
 //			System.err
 //					.println("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled ("

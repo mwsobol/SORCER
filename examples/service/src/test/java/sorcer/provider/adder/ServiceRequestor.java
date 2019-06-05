@@ -41,7 +41,7 @@ public class ServiceRequestor {
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ out/y: " + value(cxt, "out/y"));
 
-		// get a single context argument
+		// getValue a single context argument
 		assertEquals(300.0, value(cxt, "out/y"));
 	}
 

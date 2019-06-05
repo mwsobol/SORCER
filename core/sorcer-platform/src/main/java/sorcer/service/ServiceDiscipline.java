@@ -326,7 +326,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public Service get(Arg... args) throws ContextException {
+    public Service getValue(Arg... args) throws ContextException {
         return out;
     }
 

@@ -222,7 +222,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this("generated from object array");
         if (objects.length > 0 && objects[0] instanceof Entry) {
             for (int i = 0; i < objects.length; i++) {
-                putValue(((Entry)objects[i]).getName(), (T)((Entry)objects[i]).get());
+                putValue(((Entry)objects[i]).getName(), (T)((Entry)objects[i]).getValue());
             }
         } else {
             setArgsPath(Context.PARAMETER_VALUES);
@@ -253,10 +253,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * <p>
 	 * The usage of metacontext is illustrated as follows:
 	 * a single attribute - 'tag'; cxt.tag("arg/x1", "tag|stress");
-	 * and get tagged eval at arg/x1: cxt.getMarkedValues("tag|stress"));
+	 * and getValue tagged eval at arg/x1: cxt.getMarkedValues("tag|stress"));
 	 * relation - 'triplet|path|info|_3', 'triplet' is a relation key and path, _3, and _3
 	 * are component attributes; cxt.tag("arg/x3", "triplet|mike|w|sobol");
-	 * and get tagged eval at arg/x3: cxt.getMarkedValues("triplet|mike|w|sobol"));
+	 * and getValue tagged eval at arg/x3: cxt.getMarkedValues("triplet|mike|w|sobol"));
 	 */
     protected void initContext() {
 		super.init();
@@ -1509,7 +1509,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (get(key) instanceof ContextLink) {
 				keys.addElement(key);
 				link = (ContextLink) get(key);
-				// get subcontext for recursion
+				// getValue subcontext for recursion
 				try {
 					subcntxt = getLinkedContext(link)
 							.getContext(link.getOffset());
@@ -1834,7 +1834,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public Context<T> appendContext(Context<T> context) throws ContextException,
 			RemoteException {
-		// get the whole context, with the context root key as the
+		// getValue the whole context, with the context root key as the
 		// path prefix
 		String key;
 		List<String> paths = new ArrayList<String>();
@@ -2528,7 +2528,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		List<String> attrs = new ArrayList<String>();
 		String attr;
 
-		// get local singleton attributes
+		// getValue local singleton attributes
 		attrs.addAll(localSimpleAttributes());
 		while (e.hasMoreElements()) {
 			link = (ContextLink) e.nextElement();
@@ -2568,7 +2568,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Vector attrs = new Vector();
 		String attr;
 
-		// get local meta attributes
+		// getValue local meta attributes
 		e0 = localCompositeAttributes();
 		attrs.addAll(e0);
 
@@ -2673,7 +2673,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			updateValue(initValue, newVal, id);
 		} if (value instanceof Entry) {
 			initValue = ((Entry) value).key();
-			newVal = (T) ((Entry)value).get();
+			newVal = (T) ((Entry)value).getValue();
 			updateValue(initValue, newVal, id);
 		} else if (value instanceof Identifiable) {
 			id = ((Identifiable) value).getId();
@@ -2811,10 +2811,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 			for (Arg e : entries) {
 				if (e instanceof Entry) {
 					Object val = null;
-					if (((Entry) e).get() instanceof Evaluation) {
-						val = ((Evaluation) ((Entry) e).get()).evaluate();
+					if (((Entry) e).getValue() instanceof Evaluation) {
+						val = ((Evaluation) ((Entry) e).getValue()).evaluate();
 					} else  {
-						val = ((Entry) e).get();
+						val = ((Entry) e).getValue();
 					}
 					putValue(e.getName(), (T) val);
 				}
@@ -2957,7 +2957,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return new Prc(path, this);
 	}
 
-	public T getValue(Arg... args) throws EvaluationException, RemoteException {
+	@Override
+	public T getValue(Arg... args) throws ContextException {
 		try {
 			if (args.length > 0) {
 				if (args[0] instanceof Signature.ReturnPath) {
@@ -2967,8 +2968,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 				}
 			}
             return (T) this;
-		} catch (ContextException e) {
-			throw new EvaluationException(e);
+		} catch (RemoteException e) {
+			throw new ContextException(e);
 		}
 	}
 
@@ -3048,7 +3049,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 							((Scopable)obj).getScope().append(this);
 						}
 					} else if (obj instanceof Entry
-							&& ((Entry)obj).get() instanceof Scopable) {
+							&& ((Entry)obj).getValue() instanceof Scopable) {
 						((Scopable)((Entry)obj).asis()).setScope(this);
 					}
 					obj = ((Evaluation<T>)obj).evaluate(args);
@@ -3058,9 +3059,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 				}
 			}
 			if (obj instanceof Reactive && ((Reactive)obj).isReactive()) {
-				if (obj instanceof Entry && ((Entry)obj).get() instanceof Scopable)
-					((Scopable)((Entry)obj).get()).setScope(this);
-				obj = (T) ((Entry) obj).get(args);
+				if (obj instanceof Entry && ((Entry)obj).getValue() instanceof Scopable)
+					((Scopable)((Entry)obj).getValue()).setScope(this);
+				obj = (T) ((Entry) obj).getValue(args);
 			}
 			if (scope != null && (obj == Context.none || obj == null ))
 				obj = (T ) scope.getValue(path, args);
@@ -3284,7 +3285,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public Object addValue(Identifiable value) throws ContextException {
 		if (value instanceof Entry && !((Entry)value).isPersistent()) {
-			return putValue(value.getName(), (T) ((Entry)value).get());
+			return putValue(value.getName(), (T) ((Entry)value).getValue());
 		}
 		return putValue(value.getName(), (T)value);
 	}
@@ -3567,8 +3568,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return data.containsKey(path);
 	}
 
-//	public T get(Object key) {
-//		return data.get(key);
+//	public T getValue(Object key) {
+//		return data.getValue(key);
 //	}
 
 	public Set<String> keySet() {

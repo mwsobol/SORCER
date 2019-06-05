@@ -229,7 +229,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	 * control strategy). Only one <code>PROC</code> signature can be associated
 	 * with any exertion. The <code>PROC</code> signature defines an executing
 	 * provider dynamically bounded at runtime. The <code>APD_DATA</code>
-	 * signatures are invoked invoked first to get specified contexts from
+	 * signatures are invoked invoked first to getValue specified contexts from
 	 * {@link sorcer.service.Contexter}s that are appended to the task's current
 	 * context.
 	 */
@@ -469,7 +469,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 //        public String[] toStringArray() {
 //            String[] paths = new String[size()];
 //            for (int i = 0; i < size(); i++)
-//                paths[i] = get(i).path;
+//                paths[i] = getValue(i).path;
 //
 //            return paths;
 //        }

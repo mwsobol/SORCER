@@ -201,7 +201,7 @@ public class Srv extends Subroutine<Object> implements Serviceableness,
                 }
                 throw new EvaluationException("No model available for entry: " + this);
             } else if (impl instanceof MogramEntry) {
-                Context cxt = ((MogramEntry) impl).get().exert(args).getContext();
+                Context cxt = ((MogramEntry) impl).getValue().exert(args).getContext();
                 Object val = cxt.getValue(Context.RETURN);
                 if (val != null) {
                     return val;

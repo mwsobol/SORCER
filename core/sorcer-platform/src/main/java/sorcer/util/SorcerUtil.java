@@ -417,7 +417,7 @@ public class SorcerUtil implements SorcerConstants {
 	public static String doubleToString(double inValue, int precision,
 			boolean useComma) {
 		boolean trailingZero;
-		double absval = Math.abs(inValue); // get positive portion
+		double absval = Math.abs(inValue); // getValue positive portion
 		if (precision < 0) {
 			precision = -precision;
 			trailingZero = false;
@@ -426,7 +426,7 @@ public class SorcerUtil implements SorcerConstants {
 		String signStr = "";
 		if (inValue < 0)
 			signStr = "-";
-		long intDigit = (long) Math.floor(absval); // get integer part
+		long intDigit = (long) Math.floor(absval); // getValue integer part
 		String intDigitStr = String.valueOf(intDigit);
 
 		if (useComma) {

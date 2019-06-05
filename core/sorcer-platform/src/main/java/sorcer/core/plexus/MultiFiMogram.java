@@ -293,7 +293,7 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
         Mogram req = null;
         Object select = getMultifidelity().getSelect();
         if (select instanceof Ref) {
-            req =  (Mogram) ((Ref) getMultifidelity().getSelect()).get();
+            req =  (Mogram) ((Ref) getMultifidelity().getSelect()).getValue();
         } else{
             req = (Mogram) getMultifidelity().getSelect();
         }

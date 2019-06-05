@@ -445,7 +445,7 @@ public final class ServiceElementFactory  {
 
         public ServiceElement prc() throws InterruptedException, IOException, ClassNotFoundException {
             counter.await();
-            return new MarshalledObject<>(serviceElement).get();
+            return new MarshalledObject<>(serviceElement).getValue();
         }
     }
 
@@ -457,7 +457,7 @@ public final class ServiceElementFactory  {
                 while (true) {
                     try {
                         ResolveRequest resolveRequest = resolverQueue.take();
-                        ServiceElement serviceElement = serviceElementsCreated.get(resolveRequest.artifactConfig);
+                        ServiceElement serviceElement = serviceElementsCreated.getValue(resolveRequest.artifactConfig);
                         if(serviceElement==null) {
                             logger.debug("Resolve {}", resolveRequest.artifactConfig);
                             Artifact artifact = new Artifact(resolveRequest.artifactConfig);
@@ -472,7 +472,7 @@ public final class ServiceElementFactory  {
                     }
                 }
             } catch(ResolverException e) {
-                logger.error("Unable to get Resolver", e);
+                logger.error("Unable to getValue Resolver", e);
             }
 
         }

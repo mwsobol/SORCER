@@ -202,7 +202,7 @@ public class NetSignature extends ObjectSignature implements sig {
             // ping provider to see if alive
             provider.getProviderName();
         } catch (RemoteException e) {
-            // provider is dead; get new one
+            // provider is dead; getValue new one
             //e.printStackTrace();
             provider = null;
             provider = (Provider)Accessor.get().getService(this);

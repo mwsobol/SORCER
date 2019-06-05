@@ -122,7 +122,7 @@ public class ServiceScripter {
             if (out!=null && debug) out.println("creating scripterThread..."+ (System.currentTimeMillis()-startTime)+"ms");
             scripterThread = new ScripterThread(script, classLoader, isExertable);
             scripterThread.evalScript();
-            if (out!=null && debug) out.println("get target..." + (System.currentTimeMillis()-startTime)+"ms");
+            if (out!=null && debug) out.println("getValue target..." + (System.currentTimeMillis()-startTime)+"ms");
             this.target = scripterThread.getTarget();
             if (target instanceof Routine) {
                 isExertable = true;

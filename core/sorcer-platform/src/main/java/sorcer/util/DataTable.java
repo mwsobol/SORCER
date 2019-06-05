@@ -246,11 +246,11 @@ public class DataTable implements ModelTable, Response, rsp {
 	/**
 	 * Returns the <code>List</code> of <code>Lists</code> that contains the
 	 * dataTable's data values. The lists contained in the outer list are each a
-	 * single listing of values. In other words, to get to the cell at listing 1, column
+	 * single listing of values. In other words, to getValue to the cell at listing 1, column
 	 * 5:
 	 * <p>
 	 * 
-	 * <code>((List)getDataList().get(1)).get(5);</code>
+	 * <code>((List)getDataList().getValue(1)).getValue(5);</code>
 	 * <p>
 	 * 
 	 * @return the List of list containing the tables data values
@@ -790,8 +790,8 @@ public class DataTable implements ModelTable, Response, rsp {
 
 		for (int i=0; i<getRowCount(); i++) {
 			List<?>cRow = getRow(i);
-//			logger.info("cRow.get(col1Idx).toString() >"+cRow.get(col1Idx).toString()+"< val1 >"+col1Value+"< "+cRow.get(col1Idx).toString().equals(col1Value));
-//			logger.info("cRow.get(col2Idx).toString() >"+cRow.get(col2Idx).toString()+"< val2 >"+col2Value+"< "+cRow.get(col2Idx).toString().equals(col2Value));
+//			logger.info("cRow.getValue(col1Idx).toString() >"+cRow.getValue(col1Idx).toString()+"< val1 >"+col1Value+"< "+cRow.getValue(col1Idx).toString().equals(col1Value));
+//			logger.info("cRow.getValue(col2Idx).toString() >"+cRow.getValue(col2Idx).toString()+"< val2 >"+col2Value+"< "+cRow.getValue(col2Idx).toString().equals(col2Value));
 			if (cRow.get(col1Idx).toString().equals(col1Value) &&
 					cRow.get(col2Idx).toString().equals(col2Value)){
 //				logger.info("found match "+col1Value+" "+col2Value);
@@ -823,10 +823,10 @@ public class DataTable implements ModelTable, Response, rsp {
 		if (columnIdentifiers != null)qTable.setColumnIdentifiers(columnIdentifiers);
 		if (rowIdentifiers != null) qTable.setRowIdentifiers(rowIdentifiers);
 		//		logger.info("col1Idx = "+col1Idx+" for colName = "+colName1);
-		//		logger.info("multitype of colIdx = "+getRow(0).get(col1Idx).getClass().getName());
+		//		logger.info("multitype of colIdx = "+getRow(0).getValue(col1Idx).getClass().getName());
 		for (int i=0; i<getRowCount(); i++) {
 			List<?>cRow = getRow(i);
-			//			logger.info("cRow Value = "+cRow.get(col1Idx)+" inValue = >"+col1Value+"< is Mathch "+cRow.get(col1Idx).equals(col1Value) );
+			//			logger.info("cRow Value = "+cRow.getValue(col1Idx)+" inValue = >"+col1Value+"< is Mathch "+cRow.getValue(col1Idx).equals(col1Value) );
 			if (cRow.get(col1Idx).equals(col1Value) ){
 				qTable.addRow(cRow);
 			}
@@ -852,8 +852,8 @@ public class DataTable implements ModelTable, Response, rsp {
 //	public Object execute(Object rowName, String columnName) {
 //		int listing = rowIndexOf(rowName);
 //		int column = columnIndexOf(columnName);
-//		List rowList = (List) dataList.get(listing);
-//		return rowList.get(column);
+//		List rowList = (List) dataList.getValue(listing);
+//		return rowList.getValue(column);
 //	}
 
 	public int rowIndexOf(Object variableName) {
@@ -959,7 +959,7 @@ public class DataTable implements ModelTable, Response, rsp {
 				for (int i = 0; i < names.size() - 1; i++) {
 					pw.print(names.get(i));
 					pw.print(outputTableDelimiter);
-					//logger.info("writeToFile(): names.get(i) = " + names.get(i));
+					//logger.info("writeToFile(): names.getValue(i) = " + names.getValue(i));
 
 				}
 				pw.print(names.get(names.size() - 1));

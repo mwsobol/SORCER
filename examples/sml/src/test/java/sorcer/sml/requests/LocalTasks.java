@@ -39,10 +39,10 @@ public class LocalTasks {
 		Routine out = exert(t5);
 		Context cxt = context(out);
 
-		// get a single context argument
+		// getValue a single context argument
 		assertEquals(100.0, value(cxt, "result/eval"));
 
-		// get the subcontext output from the context
+		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
 				value(cxt, outPaths("result/eval", "arg/x1"))));
 
@@ -61,10 +61,10 @@ public class LocalTasks {
 		logger.info("context @ arg/x2: " + value(cxt, "arg/x2"));
 		logger.info("context @ result/eval: " + value(cxt, "result/eval"));
 
-		// get a single context argument
+		// getValue a single context argument
 		assertEquals(100.0, value(cxt, "result/eval"));
 
-		// get the subcontext output from the context
+		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 100.0), ent("arg/x1", 20.0)).equals(
 				value(cxt, outPaths("result/eval", "arg/x1"))));
 
@@ -80,10 +80,10 @@ public class LocalTasks {
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 
-		// get a single context argument
+		// getValue a single context argument
 		assertEquals(200.0, value(cxt, "result/eval"));
 
-		// get the subcontext output from the context
+		// getValue the subcontext output from the context
 		assertTrue(context(ent("result/eval", 200.0), ent("arg/x1", 20.0)).equals(
 				value(cxt, outPaths("result/eval", "arg/x1"))));
 
@@ -95,13 +95,13 @@ public class LocalTasks {
 		Task t6 = task("t6", sig("average", AveragerImpl.class),
 				cxt("average", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		// get the result of task evaluation
+		// getValue the result of task evaluation
 		assertEquals(50.0, exec(t6));
 
-		// get the returned result
+		// getValue the returned result
 		assertEquals(50.0, returnValue(t6));
 
-		// get the subcontext output from the exertion
+		// getValue the subcontext output from the exertion
 		assertTrue(context(ent("result/y", 50.0), ent("arg/x1", 20.0)).equals(
 				exec(t6, outPaths("result/y", "arg/x1"))));
 
@@ -135,7 +135,7 @@ public class LocalTasks {
 //        logger.info("task getSelects:" + batch3.getSelectedFidelity());
 
         batch3 = exert(batch3);
-		//logger.info("task result/y: " + get(batch3, "result/y"));
+		//logger.info("task result/y: " + getValue(batch3, "result/y"));
 		assertEquals(value(context(batch3), "result/y"), 400.0);
     }
 

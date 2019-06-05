@@ -79,7 +79,7 @@ public interface SignatureDispatchment extends ActionListener {
 	 * Gets the list of interfaces for the given provider
 	 * 
 	 * @param providerName
-	 *            String representing the provider to get the interface list for
+	 *            String representing the provider to getValue the interface list for
 	 * @return String array of the interface names
 	 */
 	String[] getInterfaces(String providerName);

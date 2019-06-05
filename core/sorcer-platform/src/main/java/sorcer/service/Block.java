@@ -307,9 +307,9 @@ public abstract class Block extends Transroutine {
 			for (Arg e : entries) {
 				if (e instanceof Entry) {
 					if (e.getName().indexOf(key) >= 0) {
-						putBlockValue(e.getName(), ((Entry) e).get());
+						putBlockValue(e.getName(), ((Entry) e).getValue());
 					} else {
-						super.putValue(e.getName(), ((Entry) e).get());
+						super.putValue(e.getName(), ((Entry) e).getValue());
 					}
 				}
 			}

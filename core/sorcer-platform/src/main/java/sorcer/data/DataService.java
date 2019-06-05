@@ -135,8 +135,8 @@ public class DataService implements FileURLHandler {
                 try {
                     address = HostUtil.getInetAddressFromProperty(JavaSystemProperties.RMI_SERVER_HOSTNAME).getHostAddress();
                 } catch (UnknownHostException e1) {
-                    logger.error("Can not get host address", e1);
-                    throw new RuntimeException("Can not get host address", e1);
+                    logger.error("Can not getValue host address", e1);
+                    throw new RuntimeException("Can not getValue host address", e1);
                 }
                 if(!websterRoots.equals(getDefaultDataDir())) {
                     String derivedRoots = getRoots(port);

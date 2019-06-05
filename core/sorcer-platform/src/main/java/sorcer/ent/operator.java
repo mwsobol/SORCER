@@ -260,8 +260,8 @@ public class operator extends Operator {
 		return parContext;
 	}
 
-//	public static Proc put(EntModel entModel, String name, Object get) throws ContextException, RemoteException {
-//		entModel.putValue(name, get);
+//	public static Proc put(EntModel entModel, String name, Object getValue) throws ContextException, RemoteException {
+//		entModel.putValue(name, getValue);
 //		entModel.setContextChanged(true);
 //		return prc(entModel, name);
 //	}

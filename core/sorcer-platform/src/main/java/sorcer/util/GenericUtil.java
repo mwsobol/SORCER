@@ -682,7 +682,7 @@ public class GenericUtil {
 			//e.printStackTrace();
 			return null;
 		}
-		//return envMap.get(envName);
+		//return envMap.getValue(envName);
 	}
 	public static File[] getFilesWithExtension(File dir, String extension){
 		List<File> fileList = new ArrayList<File>();
@@ -1376,7 +1376,7 @@ public class GenericUtil {
 			String[] shellScript, String tildePath)
 			throws InterruptedException, IOException {
 
-		// get absolute path from tildePath on current file system
+		// getValue absolute path from tildePath on current file system
 		StringTokenizer sT = new StringTokenizer(tildePath, "/");
 		String lastName = sT.nextToken();
 		lastName = lastName.substring(1);
@@ -1831,8 +1831,8 @@ public class GenericUtil {
 //		script.add("\t# need to capture background compute exit code");
 //		script.add("\t#");
 //		script.add("\tEXIT_CODE=0");
-//		script.add("\techo \"calling wait to get exit code\"");
-//		script.add("\techo \"calling wait to get exit code\" >> " + wrapperLog);
+//		script.add("\techo \"calling wait to getValue exit code\"");
+//		script.add("\techo \"calling wait to getValue exit code\" >> " + wrapperLog);
 		
 		// drop kill.txt just in case background compute didn't die and is checking for kill.txt
 		script.add("echo \"dropping kill.txt for good measure...\"");
@@ -3001,7 +3001,7 @@ public class GenericUtil {
 			currentLoader = currentLoader.getParent();
 		}
 		Collections.reverse(loaderList);
-		// get system loader class paths
+		// getValue system loader class paths
         if (loaderList.size() == 0) {
             loaderList.add(Thread.currentThread()
                 .getContextClassLoader());
@@ -3022,8 +3022,8 @@ public class GenericUtil {
 				ClassLoader cCL = Thread.currentThread().getContextClassLoader();
 				Thread.currentThread().setContextClassLoader(cl);
                 /* Subclasses of URLClassLoader may override getURLs(), in order to
-                 * return the URLs of the provided export codebase. This is a workaround to get
-                 * the search path (not the codebase) of the URLClassLoader. We get the ucp property from the
+                 * return the URLs of the provided export codebase. This is a workaround to getValue
+                 * the search path (not the codebase) of the URLClassLoader. We getValue the ucp property from the
                  * URLCLassLoader (of fiType sun.misc.URLClassPath), and invoke the sun.misc.URLClassPath.getURLs()
                  * method */
 				try {
@@ -3038,7 +3038,7 @@ public class GenericUtil {
                             }
                         }
                     } catch(Exception e) {
-                        logger.warn("Could not get or access field \"ucp\", just prc getURLs()", e);
+                        logger.warn("Could not getValue or access field \"ucp\", just prc getURLs()", e);
                         urls = ((URLClassLoader) cl).getURLs();
                     }
                 } finally {
@@ -3207,7 +3207,7 @@ public class GenericUtil {
 		// Looping over the file contents array
 		for (int i = 0; i < fileContents.size(); i++) {
 			// Writing line string to file
-			//fout.println(fileContents.get(i));
+			//fout.println(fileContents.getValue(i));
 			//fout.println(object); // this will put \n\r in windows screwing up cygwin
 			fout.print(fileContents.get(i).toString() + "\n");
 		}
@@ -3224,7 +3224,7 @@ public class GenericUtil {
 		// Looping over the file contents array
 		for (int i = 0; i < fileContents.size(); i++) {
 			// Writing line string to file
-			//fout.println(fileContents.get(i));
+			//fout.println(fileContents.getValue(i));
 			//fout.println(object); // this will put \n\r in windows screwing up cygwin
 			String line = fileContents.get(i).replace("\r", "");
 			fout.print(line + "\n");
@@ -4010,7 +4010,7 @@ public class GenericUtil {
 
 		// while (attempts <= maxattempts && clocktime < minfailedtime) {
 		// while (true) {
-		// get the information used during the running of the App
+		// getValue the information used during the running of the App
 		// System.out.println(" >>>>>>>> Running " + appName+
 		// " by Queue in Directory " + scratchDir);
 		logger.info(" >>>>>>>> Running " + appName + " by Queue in Directory "
@@ -4087,7 +4087,7 @@ public class GenericUtil {
 				}
 			}
 
-			// open the log file and get the queue Job ID
+			// open the log file and getValue the queue Job ID
 			// File scriptLogFile = new File(scratchDir, scriptLogName);
 			// boolean logExists = false;
 			// int tries2 = 0;
@@ -4098,7 +4098,7 @@ public class GenericUtil {
 			// Thread.sleep(100);
 			// }
 
-			// get jobId
+			// getValue jobId
 			Vector<String> srunCmdLogContents = GenericUtil
 					.getFileContents(srunCmdLog);
 			String jobID = srunCmdLogContents.get(0);
@@ -4206,7 +4206,7 @@ public class GenericUtil {
 				+ " -o \"%20j %7i %9P %8u %2t %9M %6D %N\"");
 
 		// Loop until the job completes or max wait time is exceeded.
-		// get the time constants from the property file
+		// getValue the time constants from the property file
 		Long maxWaitTime = new Long((servProps.getProperty(
 				"provider.app.maxWaitTimeinSeconds", "600")).trim());
 		Long qstatIntervalTime = new Long((servProps.getProperty(
@@ -4263,7 +4263,7 @@ public class GenericUtil {
 				// System.out.println("qstatStatus = " + qstatStatus);
 				// if (qstatStatus.exitValue() == 0) {
 				if (exitValue == 0) {
-					// open the log file and get the queue Job ID
+					// open the log file and getValue the queue Job ID
 					File qstatLogFile = new File(scratchDir, qstatLogName);
 					Vector<String> qstatlogFileContents = GenericUtil
 							.getFileContents(qstatLogFile);

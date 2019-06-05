@@ -1025,7 +1025,7 @@ public class operator extends Operator {
 			} else if (context.asis(path) instanceof Entry) {
 				Entry dbe = new Entry(path, context.asis(path));
 				dbe.setPersistent(true);
-				dbe.get();
+				dbe.getValue();
 				((Context)context).putValue(path, dbe);
 				dburl = (URL) dbe.asis();
 			} else {
@@ -1217,7 +1217,7 @@ public class operator extends Operator {
 
     public static Setup setValue(Setup entry, Value... entries) throws ContextException {
         for (Value e :  entries) {
-            entry.setEntry(e.getName(), e.get());
+            entry.setEntry(e.getName(), e.getValue());
         }
         return entry;
     }
@@ -1687,9 +1687,9 @@ public class operator extends Operator {
 //			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
 //			for (Evaluation e : dependers) {
 //				path = ((Identifiable)e).getName();
-//				if (dm.get(path) != null) {
-//                    if (!dm.get(path).contains(e)) {
-//                        ((List) dm.get(path)).add(e);
+//				if (dm.getValue(path) != null) {
+//                    if (!dm.getValue(path).contains(e)) {
+//                        ((List) dm.getValue(path)).add(e);
 //                    }
 //				} else {
 //					List<ExecDependency> del = new ArrayList();

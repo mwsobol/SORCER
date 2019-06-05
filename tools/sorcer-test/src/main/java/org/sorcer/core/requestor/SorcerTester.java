@@ -32,7 +32,7 @@ import java.util.*;
 /**
  * This class defines the JUnit consumer's scaffolding. The init method of the
  * class initializes system properties; if required an internal Webster is
- * started. If one is running it attempts to get the webster roots paths.
+ * started. If one is running it attempts to getValue the webster roots paths.
  * 
  * @author M. W. Sobolewski
  */

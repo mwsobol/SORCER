@@ -80,7 +80,7 @@ public class NetJobExertions implements SorcerConstants {
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
 		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
+		//logger.info("job j1 eval @ j1/t3/result/y = " + getValue(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 
 	}
@@ -95,7 +95,7 @@ public class NetJobExertions implements SorcerConstants {
 		logger.info("job j1: " + job.describe());
 //		logger.info("job j1 job context: " + context(job, "j1/t3));
 //		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
+		//logger.info("job j1 eval @ j1/t3/result/y = " + getValue(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 
 	}
@@ -108,7 +108,7 @@ public class NetJobExertions implements SorcerConstants {
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
 		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
+		//logger.info("job j1 eval @ j1/t3/result/y = " + getValue(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 
 	}
@@ -121,7 +121,7 @@ public class NetJobExertions implements SorcerConstants {
 		//logger.info("job j1: " + job);
 		//logger.info("job j1 job context: " + context(job));
 		logger.info("job j1 job context: " + upcontext(job));
-		//logger.info("job j1 eval @ j1/t3/result/y = " + get(job, "j1/t3/result/y"));
+		//logger.info("job j1 eval @ j1/t3/result/y = " + getValue(job, "j1/t3/result/y"));
 		assertEquals(get(job, "j1/t3/result/y"), 400.00);
 
 	}
@@ -272,7 +272,7 @@ public class NetJobExertions implements SorcerConstants {
 	@Test
 	public void arithmeticJobNetExerter() throws Exception {
 
-		// get the current eval of the exertlet
+		// getValue the current eval of the exertlet
 		Exerter exertion = task("exert", sig("exert", Exerter.class, prvName("Arithmetic Exerter")));
 		Context out = exert(exertion, context());
 		logger.info("out: " + out);

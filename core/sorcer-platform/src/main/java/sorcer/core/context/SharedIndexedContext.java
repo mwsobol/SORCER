@@ -153,7 +153,7 @@ public class SharedIndexedContext<T extends Object> extends ServiceContext imple
 	}
 
 	/* (non-Javadoc)
-	 * @see java.util.List#get(int)
+	 * @see java.util.List#getValue(int)
 	 */
 	public Object get(int index) {
 		return elements.get(index);

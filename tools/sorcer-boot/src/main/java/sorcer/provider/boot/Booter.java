@@ -98,7 +98,7 @@ public class Booter implements SorcerConstants {
 
 	/**
 	 * Return the codebase for the provided JAR key and port. This method will
-	 * first get the IP Address of the machine using
+	 * first getValue the IP Address of the machine using
 	 * <code>java.net.InetAddress.getLocalHost().getHostAddress()</code>, then
 	 * construct the codebase using the host address and the port for the
 	 * provided jar.
@@ -118,7 +118,7 @@ public class Booter implements SorcerConstants {
 
 	/**
 	 * Return the codebase for the provided JAR names and port. This method will
-	 * first get the IP Address of the machine using
+	 * first getValue the IP Address of the machine using
 	 * <code>java.net.InetAddress.getLocalHost().getHostAddress()</code>, then
 	 * construct the codebase using the host address and the port for each jar
 	 * in the array of jars.

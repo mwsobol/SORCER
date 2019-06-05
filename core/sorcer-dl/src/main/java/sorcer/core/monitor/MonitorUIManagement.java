@@ -63,7 +63,7 @@ public interface MonitorUIManagement {
 		throws RemoteException, MonitorException;
 
 	/**
-	 * For this reference ID, which references a exertion in a monitor, get the
+	 * For this reference ID, which references a exertion in a monitor, getValue the
 	 * exertion if the principal has enough credentials.
 	 * 
 	 * @throws MonitorException
@@ -77,7 +77,7 @@ public interface MonitorUIManagement {
         throws RemoteException, MonitorException;
 
 	/**
-	 * For this reference ID, which references a exertion in a datastore, get the
+	 * For this reference ID, which references a exertion in a datastore, getValue the
 	 * exertion if the client has enough credentials.
 	 * 
 	 * @throws MonitorException

@@ -27,16 +27,6 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public interface Reference<T>  extends Scopable {
-		
-	/**
-	 * Returns the current execute of this evaluation. The current execute can be
-	 * exiting execute with no need to evaluate it if it's still valid.
-	 * 
-	 * @return the current execute of this evaluation
-	 * @throws EvaluationException
-	 * @throws RemoteException
-	 */
-	public T get(Arg... entries) throws EvaluationException, RemoteException;
+public interface Reference<T>  extends Getter<T>, Scopable {
 	
 }

@@ -85,7 +85,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 	public final static String EXERTION_FEEDBACK = "exertion" + CPS
 			+ "feedback";
 
-	public final static String GET_EXEC_TIME = "get" + CPS + "execEnt/time";
+	public final static String GET_EXEC_TIME = "getValue" + CPS + "execEnt/time";
 
 	public final static String EXERTION_REVIEW = "exertion" + CPS + "review";
 

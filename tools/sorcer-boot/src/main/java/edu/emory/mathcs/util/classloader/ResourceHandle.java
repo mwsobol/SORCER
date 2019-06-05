@@ -13,7 +13,7 @@ import java.util.jar.*;
 /**
  * This class represents a handle (a connection) to some resource, which may
  * be a class, native library, text file, image, etc. Handles are returned
- * by {@link edu.emory.mathcs.util.classloader.ResourceLoader}'s <i>get</i> methods.
+ * by {@link edu.emory.mathcs.util.classloader.ResourceLoader}'s <i>getValue</i> methods.
  * Having the resource handle, in addition to accessing the resource data
  * (using methods {@link #getInputStream} or {@link #getBytes}) as well as
  * access resource metadata, such as attributes, certificates, etc.

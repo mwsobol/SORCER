@@ -29,7 +29,7 @@ import net.jini.core.lookup.ServiceItem;
  * SignatureModel - Resposible for storing the interfaces and methods that the
  * user had entered. The signature model would update the method list model when
  * a new interface is selected. This SignatureModel was implemented and used but
- * could not get the observable part to work to create dynamic lists.
+ * could not getValue the observable part to work to create dynamic lists.
  */
 public class SignatureModel extends Observable {
 

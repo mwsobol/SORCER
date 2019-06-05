@@ -124,7 +124,7 @@ public class SorcerTestRunner extends BlockJUnit4ClassRunner {
             }
         }
 
-        /* Prime the Accessor, get it setup */
+        /* Prime the Accessor, getValue it setup */
         Accessor.create();
 
         super.run(notifier);

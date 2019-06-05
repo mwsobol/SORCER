@@ -32,7 +32,6 @@ import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
-import sorcer.core.provider.Exertion;
 import sorcer.core.provider.rendezvous.ServiceModeler;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.ServiceSignature;
@@ -240,26 +239,26 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     }
                     val = out;
                 } else if (carrier instanceof Client && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
-                    // get target entry for this cal
+                    // getValue target entry for this cal
                     String entryPath = ((Srv)val).getPath();
                     Object out = ((Client)carrier).exec((Service) get(entryPath), this, args);
                     ((Srv) get(path)).setOut(out);
                     val = out;
                 } else if (carrier instanceof EntryCollable && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
                     Entry entry = ((EntryCollable)carrier).call(this);
-                    ((Srv) get(path)).setOut(entry.get());
+                    ((Srv) get(path)).setOut(entry.getValue());
                     if (path != entry.getName())
-                        putValue(entry.getName(), entry.get());
+                        putValue(entry.getName(), entry.getValue());
                     else if (asis(entry.getName()) instanceof Srv) {
-                        ((Srv)asis(entry.getName())).setOut(entry.get());
+                        ((Srv)asis(entry.getName())).setOut(entry.getValue());
                     }
                     val = entry;
                 } else if (carrier instanceof Closure) {
                     Subroutine entry = (Subroutine) ((Closure)carrier).call(this);
-                    ((Srv) get(path)).setOut(entry.get());
-                    putValue(path, entry.get());
+                    ((Srv) get(path)).setOut(this.getValue());
+                    putValue(path, this.getValue());
                     if (path != entry.getName())
-                        putValue(entry.getName(), entry.get());
+                        putValue(entry.getName(), this.getValue());
                     val = entry;
                 } else if (carrier instanceof ServiceInvoker) {
                     val =  ((ServiceInvoker)carrier).evaluate(args);
@@ -284,7 +283,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     // dereferencing Ref and executing
                     Ref ref = ((Ref) ((Entry) val).getImpl());
                     ref.setScope(this);
-                    Object deref = ref.get();
+                    Object deref = ref.getValue();
                     if (deref instanceof Evaluation) {
                         if (deref instanceof Scopable) {
                             ((Scopable) deref).setScope(this);
@@ -294,7 +293,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                         val = execSignature((Signature) deref, args);
                     } else {
                         // assume default dereference of Entry is inner Entry
-                        val = ((Entry) deref).get(args);
+                        val = ((Entry) deref).getValue(args);
                     }
                 } else {
                     if (carrier == Context.none) {
@@ -311,7 +310,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     // dereferencing Ref and executing
                     Ref ref = ((Ref)((Entry)val).getImpl());
                     ref.setScope(this);
-                    Object deref = ref.get();
+                    Object deref = ref.getValue();
                     if (deref instanceof Evaluation) {
                         if (deref instanceof Scopable) {
                             ((Scopable)deref).setScope(this);
@@ -319,15 +318,15 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                         val = ((Evaluation) deref).evaluate(args);
                     } else {
                         // assume default dereference of Entry is inner Entry
-                        val = ((Entry) deref).get(args);
+                        val = ((Entry) deref).getValue(args);
                     }
                 } else if (val instanceof Subroutine){
                     val = ((Subroutine)val).getValue(args);
                 } else {
-                    val = ((Entry)val).get(args);
+                    val = ((Entry)val).getValue(args);
                 }
             } else if (val instanceof ServiceFidelity) {
-                return ((Entry)((ServiceFidelity)val).getSelect()).get(args);
+                return ((Entry)((ServiceFidelity)val).getSelect()).getValue(args);
             } else if (val instanceof Model) {
                 Context response = (Context) ((Model)val).getResponse(args);
                 append(response);

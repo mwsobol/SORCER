@@ -173,7 +173,7 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 			for (Object s : selects) {
 				try {
 					((Reference)s).setScope(scope);
-					ss.add(((Reference)s).get());
+					ss.add(((Reference)s).getValue());
 				} catch (Exception e) {
 					throw new ContextException(e);
 				}

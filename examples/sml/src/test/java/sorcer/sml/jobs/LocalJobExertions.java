@@ -236,7 +236,7 @@ public class LocalJobExertions implements SorcerConstants {
 
 		Context outerContext = upcontext(out);
 //		logger.info("job j1 upcontext: " + outerContext);
-//		logger.info("task t3 context: " + context(get(job, "j1/t3")));
+//		logger.info("task t3 context: " + context(getValue(job, "j1/t3")));
 
 		assertTrue(value(outerContext, "j1/j2/t4/arg/x1").equals(10.0));
 		assertTrue(value(outerContext, "j1/j2/t4/arg/x2").equals(50.0));
@@ -289,7 +289,7 @@ public class LocalJobExertions implements SorcerConstants {
 	@Test
 	public void contexterService() throws Exception {
 
-		// get a context for the template context in the task
+		// getValue a context for the template context in the task
 		Task cxtt = task("addContext", sig("getContext", NetJobExertions.createContext()),
 				context("add", input("arg/x1"), input("arg/x2")));
 

@@ -88,7 +88,7 @@ public class DocumentDescriptor implements SorcerConstants, Serializable {
 
 	// handles for upload and download
 	// prc RemoteFileStore.getInputStream(DocumentDescriptor) to
-	// get inputStream and similarlly for Output
+	// getValue inputStream and similarlly for Output
 	public InputStream in;
 	public OutputStream out;
 
@@ -175,7 +175,7 @@ public class DocumentDescriptor implements SorcerConstants, Serializable {
 		return overWriteVersion;
 	}
 
-	// get and sets
+	// getValue and sets
 	// fwang ------start--------------
 	public boolean isFolder() {
 		return isdir;

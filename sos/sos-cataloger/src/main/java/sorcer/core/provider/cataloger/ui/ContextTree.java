@@ -96,7 +96,7 @@ public class ContextTree extends JPanel {
 		 * Callable called when the user presses the mouse
 		 */
 		public void mousePressed(MouseEvent e) {
-			int selRow = tree.getRowForLocation(e.getX(), e.getY()); // get the
+			int selRow = tree.getRowForLocation(e.getX(), e.getY()); // getValue the
 			// current row
 			TreePath selPath = tree.getPathForLocation(e.getX(), e.getY()); // find
 			// that spot in the tree
@@ -122,7 +122,7 @@ public class ContextTree extends JPanel {
 	public ContextTree() {
 		super(new GridLayout(1, 0));
 
-		thisThat = this; // get a reference to our current object
+		thisThat = this; // getValue a reference to our current object
 
 		// make a new root node
 		rootNode = new DefaultMutableTreeNode(new ContextNodeType(new String(
@@ -191,7 +191,7 @@ public class ContextTree extends JPanel {
 	public Context doRootGenerateContext(Context theContext, Object current,
 			String currentPath) {
 
-		int childcount = treeModel.getChildCount(current); // get the number of
+		int childcount = treeModel.getChildCount(current); // getValue the number of
 		// kids
 
 		if (childcount == 0 && current != treeModel.getRoot()) // make sure we
@@ -228,7 +228,7 @@ public class ContextTree extends JPanel {
 		{
 			for (int i = 0; i < childcount; i++) // go thru each kid
 			{
-				Object child = treeModel.getChild(current, i); // get the kid
+				Object child = treeModel.getChild(current, i); // getValue the kid
 				// add is datanode check
 				// System.out.println("checking child number "+i);
 				if (child instanceof DefaultMutableTreeNode) // make sure the
@@ -246,7 +246,7 @@ public class ContextTree extends JPanel {
 						// System.out.println("child user object is a context node "
 						// +i);
 						ContextNodeType cnt = (ContextNodeType) ((DefaultMutableTreeNode) child)
-								.getUserObject(); // get the special multitype
+								.getUserObject(); // getValue the special multitype
 
 						if (cnt.isDataNode()) // if its a datanode we need to
 						// output it, as data nodes can
@@ -418,7 +418,7 @@ public class ContextTree extends JPanel {
 		// special multitype
 		{
 			ContextNodeType parentObject = (ContextNodeType) parent
-					.getUserObject(); // get the parent
+					.getUserObject(); // getValue the parent
 
 			if (parentObject.isDataNode()) // can't add to datanode object multitype
 				return null;
@@ -464,7 +464,7 @@ public class ContextTree extends JPanel {
 	 *         the path was not found
 	 */
 	public DefaultMutableTreeNode nodeExists(String path) {
-		String splitPath[] = path.split("/"); // get each part of the path
+		String splitPath[] = path.split("/"); // getValue each part of the path
 		Object nodes = treeModel.getRoot();
 		for (String indPath : splitPath) // go thru each part of the path
 		{
@@ -554,11 +554,11 @@ public class ContextTree extends JPanel {
 				boolean hasFocus) {
 
 			Object userObject = ((DefaultMutableTreeNode) value)
-					.getUserObject(); // get the inner object
+					.getUserObject(); // getValue the inner object
 			if (userObject instanceof ContextNodeType) // validate its our multitype
 			{
 
-				Component c; // get the original component by calling super
+				Component c; // getValue the original component by calling super
 
 				if (((ContextNodeType) userObject).getObject() instanceof ContextNode) // handle
 					// context

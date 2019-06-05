@@ -173,7 +173,7 @@ public class operator {
                     context.getMogramStrategy().getOutcome().putValue(path, out);
                 } else {
                     if (obj instanceof Getter) {
-                    out = (T) ((Getter) obj).get(args);
+                    out = (T) ((Getter) obj).getValue(args);
                     }
                     // linked contexts and other special case of ServiceContext
                     if (out == null) {
@@ -252,7 +252,7 @@ public class operator {
         if (entry != null) {
             if (entry instanceof Setup) {
                 for (Subroutine e : entries) {
-                    ((Setup) entry).getContext().putValue(e.getName(), e.get());
+                    ((Setup) entry).getContext().putValue(e.getName(), e.getValue());
                 }
             }
             ((Setup)entry).isValid(false);
@@ -263,14 +263,14 @@ public class operator {
 
     public static Model setValue(Model model, Slot... entries) throws ContextException {
         for(Slot slot :entries) {
-            setValue(model, slot.getName(), slot.get());
+            setValue(model, slot.getName(), slot.getValue());
         }
         return model;
     }
 
     public static Model setValue(Model model, Entry... entries) throws ContextException {
         for(Entry ent :entries) {
-            setValue(model, ent.getName(), ent.get());
+            setValue(model, ent.getName(), ent.getValue());
         }
         return model;
     }

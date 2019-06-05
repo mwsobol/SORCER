@@ -103,7 +103,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		runtimeExertion.setStatus(Exec.INITIAL);
 
 		// Set the expiration for the root Resource
-		// get the lease and stick it
+		// getValue the lease and stick it
 		//setTimeout(Long.MAX_VALUE);
 		setTimeout(INITIAL_TIMEOUT);
 		if (mLandlord != null) {

@@ -48,7 +48,7 @@ public class Providers implements SorcerConstants {
 	public static ServiceRoutine[] getServiceTasks(Job fJ) {
 		ServiceRoutine[] fTA = new ServiceRoutine[fJ.size()];
 		for (int i = 0; i < fJ.size(); i++) {
-			fTA[i] = (ServiceRoutine) fJ.get(i);
+			fTA[i] = (ServiceRoutine) fJ.getValue(i);
 		}
 		return fTA;
 	}

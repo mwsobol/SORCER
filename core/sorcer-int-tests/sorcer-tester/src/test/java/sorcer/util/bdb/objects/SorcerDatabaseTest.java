@@ -62,7 +62,7 @@ public class SorcerDatabaseTest implements SorcerConstants {
 	
 	@Test
 	public void storedcContextSetTest() throws Exception {
-        // get from the database three contexts persisted   
+        // getValue from the database three contexts persisted
 		List<String> names = runner.returnContextNames();
         List<String> ln = list("c1", "c2", "c3");
 		Collections.sort(names);
@@ -95,7 +95,7 @@ public class SorcerDatabaseTest implements SorcerConstants {
 	
 	@Test
 	public void storedTableSetTest() throws Exception {
-        // get from the database three tables persisted twice
+        // getValue from the database three tables persisted twice
 		List<String> names = runner.returnTableNames();
 		List<String> ln = list("undefined0", "undefined1", "undefined2");
 		Collections.sort(names);
@@ -128,7 +128,7 @@ public class SorcerDatabaseTest implements SorcerConstants {
 	
 	@Test
 	public void storedExertionSetTest() throws Exception {
-        // get from the database two mograms persisted twice
+        // getValue from the database two mograms persisted twice
 		List<String> names = runner.returnExertionNames();
         List<String> ln = list("f1", "f4");
 		Collections.sort(names);
@@ -161,7 +161,7 @@ public class SorcerDatabaseTest implements SorcerConstants {
 	
 	@Test
 	public void storedUuidObjectSetTest() throws Exception {
-        // get from the database three sessions persisted with three tasks
+        // getValue from the database three sessions persisted with three tasks
 		List<String> names = runner.returnUuidObjectNames();
 		List<String> ln = list("Mike", "Sobolewski");
 		Collections.sort(names);

@@ -49,7 +49,7 @@ public class SpaceAccessor {
     public static JavaSpace05 doGetSpace(String spaceName) {
         // first test if our cached JavaSpace is alive
         // and if it's the case then return it,
-        // otherwise get a new JavSpace proxy
+        // otherwise getValue a new JavSpace proxy
         JavaSpace05 javaSpace = cache;
         if (javaSpace != null) {
             try {

@@ -53,7 +53,7 @@ public class Mandate implements Serializable {
 		args = params;
 	}
 
-	// get any args to pass to the command
+	// getValue any args to pass to the command
 	public Serializable[] getArgs() {
 		return args;
 	}
@@ -62,7 +62,7 @@ public class Mandate implements Serializable {
 		return args.length;
 	}
 
-	// get result returned from DB transaction
+	// getValue result returned from DB transaction
 	public Result getResult() {
 		return results;
 	}

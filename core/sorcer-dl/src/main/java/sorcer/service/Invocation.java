@@ -24,7 +24,7 @@ import java.rmi.RemoteException;
  * containing its parameters (paths) and arguments (values). The requested
  * invocation is specified by the array of contexts.
  * 
- * The semantics for how parameters can be declared and how the arguments get
+ * The semantics for how parameters can be declared and how the arguments getValue
  * passed to the parameters of callable unit are defined by the language, but
  * the details of how this is represented in any particular computing system
  * depend on the calling conventions of that system. A context-driven computing

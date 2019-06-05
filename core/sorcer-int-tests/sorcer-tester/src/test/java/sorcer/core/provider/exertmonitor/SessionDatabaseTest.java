@@ -70,7 +70,7 @@ public class SessionDatabaseTest implements SorcerConstants {
 	@Test
 	public void sessionDatabaseTest() throws Exception {
         runner.run();
-        // get from the database three sessions transactionally persisted with three tasks
+        // getValue from the database three sessions transactionally persisted with three tasks
 		List<String> names = runner.returnExertionNames();
 		List<String> ln = list("t1", "t2");
 		Collections.sort(names);

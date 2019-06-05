@@ -81,7 +81,7 @@ import java.util.concurrent.ConcurrentMap;
  * overridden such that for <code>(interfaceList1.equals(interfaceList2)</code>
  * returns <code>true</code> if all elements contained in
  * <code>interfaceList2</code> are contained in <code>interfaceList1</code>.
- * <li><code>get</code> and <code>put</code> method of {@link CatalogerInfo} are
+ * <li><code>getValue</code> and <code>put</code> method of {@link CatalogerInfo} are
  * overridden to do nothing.
  * </ul>
  * <p>
@@ -402,7 +402,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	 * semantics: <code>arrayList1.equals(arrayList2</code> iff all interfaces
 	 * of arrayList2 are contained in arrayList1.<br>
 	 * The key eval in <code>InterfaceList</code> is the list of service items
-	 * implementing its key interfaces. Methods <code>get</code> and
+	 * implementing its key interfaces. Methods <code>getValue</code> and
 	 * <code>put</code> are overridden to do nothing.
 	 * <p>
 	 * The method <code>addServiceItem(SeviceItem)</code> adds an entry to this
@@ -684,7 +684,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 		// there's no other better way of doing this because of the structure we
 		// maintain.
-		// we need to iterate through each and every one of the list and get the
+		// we need to iterate through each and every one of the list and getValue the
 		// service
 		public ServiceItem getServiceItem(ServiceID serviceID) {
 			Collection<List<ServiceItem>> c = interfaceListMap.values();
@@ -716,7 +716,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 		public ServiceItem[] getServiceItems(Class[] interfaces,
 				String providerName, int maxItems) {
-			// if maxItems is less or 0 then get all possible ServiceItems
+			// if maxItems is less or 0 then getValue all possible ServiceItems
 			if (maxItems <= 0)
 				maxItems = Integer.MAX_VALUE;
 			if (providerName != null && providerName.equals(ANY))
@@ -784,9 +784,9 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 			String serviceName = null;
 			net.jini.core.entry.Entry[] attributes;
 			for (List<ServiceItem> sItems : c) {
-				// get the first service proxy
+				// getValue the first service proxy
 				service = sItems.get(0).service;
-				// get proxy interfaces
+				// getValue proxy interfaces
 				clazz = service.getClass().getInterfaces();
 				attributes = sItems.get(0).attributeSets;
 				for (int i = 0; i < attributes.length; i++) {
@@ -823,9 +823,9 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 			String serviceName = null;
 			net.jini.core.entry.Entry[] attributes;
 			for (List<ServiceItem> sItems : c) {
-				// get the first service proxy
+				// getValue the first service proxy
 				service = sItems.get(0).service;
-				// get proxy interfaces
+				// getValue proxy interfaces
 
 				attributes = sItems.get(0).attributeSets;
 				for (int i = 0; i < attributes.length; i++) {
@@ -948,7 +948,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		}
 
 		/**
-		 * Get provider list is a method to get a hashmap with the list of
+		 * Get provider list is a method to getValue a hashmap with the list of
 		 * providers and their service id.
 		 * 
 		 * @return

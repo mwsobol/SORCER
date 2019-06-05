@@ -125,14 +125,14 @@ public class Entry<V> extends MultiFiSlot<String, V>
                 return out;
             }
         } else {
-            out = get(args);
+            out = getValue(args);
             isValid = true;
         }
         return out;
     }
 
     @Override
-    public V get(Arg... args) throws ContextException {
+    public V getValue(Arg... args) throws ContextException {
         if (multiFi != null && multiFi.isChanged()) {
             impl = multiFi.getSelect();
             multiFi.setChanged(false);
@@ -168,21 +168,21 @@ public class Entry<V> extends MultiFiSlot<String, V>
                 out = (V) ((Invocation) val).invoke(cxt, args);
             } else if (val instanceof Evaluation) {
                 if (val instanceof Entry && ((Entry)val).getName().equals(key)) {
-                    out = (V) ((Entry)val).get(args);
+                    out = (V) ((Entry)val).getValue(args);
                 } else {
                     out = ((Evaluation<V>) val).evaluate(args);
                 }
             } else if (val instanceof Valuation) {
                 out = (V) ((Valuation) val).valuate();
             } else if (val instanceof Ref) {
-                Object deref = ((Ref)val).get();
+                Object deref = ((Ref)val).getValue();
                 if (deref instanceof  Evaluation) {
                     if (deref instanceof Scopable) {
                         ((Scopable)deref).setScope(((Ref)val).getScope());
                     }
                     out = (V) ((Evaluation)deref).evaluate(args);
                 } else {
-                    out = (V) ((Entry)deref).get(args);
+                    out = (V) ((Entry)deref).getValue(args);
                 }
             } else if (val instanceof ServiceFidelity) {
                 // return the selected fidelity of this entry
@@ -194,7 +194,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
                         }
                     }
                 }
-                out = (V) ((Entry)((ServiceFidelity) val).getSelect()).get(args);
+                out = (V) ((Entry)((ServiceFidelity) val).getSelect()).getValue(args);
             } else if (val instanceof Callable) {
                 out = (V) ((Callable)val).call(args);
             } else if (val instanceof Service) {
@@ -400,7 +400,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
             } else if (this instanceof Valuation){
                 result =  (V) this.valuate(args);
             } else {
-                result = this.get(args);
+                result = this.getValue(args);
             }
 
             if (result instanceof Routine) {

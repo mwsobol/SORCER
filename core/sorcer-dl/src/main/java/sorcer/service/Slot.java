@@ -8,7 +8,7 @@ import sorcer.service.modeling.val;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-public class Slot<K, O> implements Identifiable, Getter, Data<O>, Arg, slot<O>, net.jini.core.entry.Entry, Serializable {
+public class Slot<K, O> implements Identifiable, Getter<O>, Data<O>, Arg, slot<O>, net.jini.core.entry.Entry, Serializable {
 
     protected K key;
 
@@ -54,7 +54,7 @@ public class Slot<K, O> implements Identifiable, Getter, Data<O>, Arg, slot<O>, 
         this.key = key;
     }
 
-    public O get(Arg... args) throws ContextException {
+    public O getValue(Arg... args) throws ContextException {
         return out;
     }
 

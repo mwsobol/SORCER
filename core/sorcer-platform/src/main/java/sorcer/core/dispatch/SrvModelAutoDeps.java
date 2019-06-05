@@ -93,7 +93,7 @@ public class SrvModelAutoDeps {
     public String printDeps() {
         DirectedGraphRenderer<String> graphRenderer = new DirectedGraphRenderer<String>(new GraphNodeRenderer<String>() {
             public void renderTo(String node, StringBuilder output) {
-                //output.append(entryToResultMap.get(node));
+                //output.append(entryToResultMap.getValue(node));
                 output.append(node);
             }
         }, new DirectedGraph<String, Object>() {

@@ -74,7 +74,7 @@ public class FiltersView extends JPanel{
 		ArrayList filterClasses=_reg.getFilters();
 		int n=filterClasses.size();
 		for(int i=0;i<n;i++){
-			//System.out.println("----- "+filterClasses.get(i));
+			//System.out.println("----- "+filterClasses.getValue(i));
 			SSBrowserFilter bf=(SSBrowserFilter)filterClasses.get(i);
 			model.addElement(bf.getDisplayName());
 		}

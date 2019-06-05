@@ -142,7 +142,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 
 	public void collectResults() throws RoutineException, SignatureException, RemoteException {
 		int count = 0;
-		// get all children of the underlying parent job
+		// getValue all children of the underlying parent job
         List<ExertionEnvelop> templates = Arrays.asList(getTemplate(DONE), getTemplate(FAILED), getTemplate(ERROR));
         while(count < inputXrts.size() && state != FAILED) {
             Collection<ExertionEnvelop> results;

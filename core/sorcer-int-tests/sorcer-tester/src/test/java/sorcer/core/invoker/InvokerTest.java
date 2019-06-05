@@ -115,7 +115,7 @@ public class InvokerTest {
 		add(pm, invoker("expr", "x + y + 30", args("x", "y")));
 		logger.info("invoke eval: " + invoke(pm, "expr"));
 		assertEquals(invoke(pm, "expr"), 60.0);
-		logger.info("get eval: " + exec(pm, "expr"));
+		logger.info("getValue eval: " + exec(pm, "expr"));
 		assertEquals(exec(pm, "expr"), 60.0);
 	}
 
@@ -126,7 +126,7 @@ public class InvokerTest {
 		add(pm, invoker("lambda", cxt -> (double)value(cxt, "x") + (double)value(cxt, "y") + 30));
 		logger.info("invoke eval: " + invoke(pm, "lambda"));
 		assertEquals(invoke(pm, "lambda"), 60.0);
-		logger.info("get eval: " + value(pm, "lambda"));
+		logger.info("getValue eval: " + value(pm, "lambda"));
 		assertEquals(exec(pm, "lambda"), 60.0);
 	}
 
@@ -249,7 +249,7 @@ public class InvokerTest {
 				ent("add", invoker("x + y", args("x", "y"))));
 
 		CmdResult result = (CmdResult) invoke(pm, "volume");
-		// get from the result the volume of cylinder and assign to y parameter
+		// getValue from the result the volume of cylinder and assign to y parameter
 		assertTrue("EXPECTED '0' return eval, GOT: "+result.getExitValue(), result.getExitValue() == 0);
 		Properties props = new Properties();
 		props.load(new StringReader(result.getOut()));
@@ -271,7 +271,7 @@ public class InvokerTest {
 
 		//pm.putValue("condition", new ServiceInvoker(pm));
 		
-		//((ServiceInvoker) pm.get("condition")).setArgs(args("x", "y")).setEvaluator(
+		//((ServiceInvoker) pm.getValue("condition")).setArgs(args("x", "y")).setEvaluator(
 		//		invoker("x > y"));
 
 		

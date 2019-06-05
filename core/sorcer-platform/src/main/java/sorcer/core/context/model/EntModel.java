@@ -56,7 +56,7 @@ import static sorcer.so.operator.exec;
 
 /**
  * The EntModel is an active shared service context as a map of associations,
- * key and its get (argument). The association <key, argument> is the definition
+ * key and its getValue (argument). The association <key, argument> is the definition
  * of an independent or a dependent argument. Arguments that dependent on other
  * arguments are subroutines (evaluators, invokers), so that, each time the
  * subroutine is called, its arguments for that prc can be assigned to

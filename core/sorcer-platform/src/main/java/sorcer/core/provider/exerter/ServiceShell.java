@@ -444,7 +444,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				// lookup proxy
 				/*if (provider == null) {
 					long t0 = System.currentTimeMillis();
-					provider = Accessor.get().selectService(signature);
+					provider = Accessor.getValue().selectService(signature);
 					if (logger.isDebugEnabled())
 					 logger.info("Return from Accessor.selectService(), round trip: {} millis",
 							 (System.currentTimeMillis() - t0));
@@ -548,7 +548,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			txn.commit();
 			return xrt;
 		} else {
-			// try continue to get lock, if failed abort the transaction txn
+			// try continue to getValue lock, if failed abort the transaction txn
 			txn.abort();
 		}
 		exertion.getControlContext().addException(
@@ -736,7 +736,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				outputs = (Signature.Out)arg;
 			}
 		}
-		// get the compound service context
+		// getValue the compound service context
 		Context acxt = xrt.getContext();
 
 		if (rPath != null && xrt.isCompound()) {

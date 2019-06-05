@@ -994,7 +994,7 @@ public class SorcerEnv extends SOS {
 	/**
 	 * Gets the eval of a certain property.
 	 * 
-	 * @param property the property to get
+	 * @param property the property to getValue
 	 * @return the string eval of that property
 	 */
 	public static String getProperty(String property) {

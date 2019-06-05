@@ -30,7 +30,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public class Ref<T> extends Entry<T> implements Reference, SupportComponent {
+public class Ref<T> extends Entry<T> implements Reference<T>, SupportComponent {
 
 	private static final long serialVersionUID = 1L;
 
@@ -57,7 +57,7 @@ public class Ref<T> extends Entry<T> implements Reference, SupportComponent {
 	}
 
 	@Override
-	public T get(Arg... args) {
+	public T getValue(Arg... args) {
 		if (out == null) {
 			// resolve reference
 			out = (T) scope.asis(key);
@@ -67,6 +67,6 @@ public class Ref<T> extends Entry<T> implements Reference, SupportComponent {
 
 	@Override
 	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
-		return get(args);
+		return getValue(args);
 	}
 }

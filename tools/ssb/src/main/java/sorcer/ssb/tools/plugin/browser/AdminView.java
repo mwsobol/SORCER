@@ -523,7 +523,7 @@ public class AdminView {
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
 			/*
 			 * if(columnIndex==0){ return false; } Object []
-			 * info=(Object[])_fields.get(rowIndex); Boolean
+			 * info=(Object[])_fields.getValue(rowIndex); Boolean
 			 * isEditable=(Boolean)info[2]; return isEditable.booleanValue();
 			 */
 			return false;
@@ -650,7 +650,7 @@ public class AdminView {
 	 * public int getRowCount() { return _data.size(); }
 	 * 
 	 * public Object getValueAt(int listing, int col) { if(listing >= _data.size())
-	 * return "listing out of bounds"; Object rowData[] = (Object[])_data.get(listing);
+	 * return "listing out of bounds"; Object rowData[] = (Object[])_data.getValue(listing);
 	 * if(col >= rowData.length) return ""; else return rowData[col]; }
 	 * 
 	 * public boolean isCellEditable(int rowIndex, int columnIndex) {

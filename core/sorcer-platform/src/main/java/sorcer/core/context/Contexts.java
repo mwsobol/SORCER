@@ -68,7 +68,7 @@ public class Contexts implements SorcerConstants {
 
 	final static String JOB_FEEDBACK = "job" + CPS + "feedback";
 
-	final static String GET_EXEC_TIME = "get" + CPS + "execEnt/time";
+	final static String GET_EXEC_TIME = "getValue" + CPS + "execEnt/time";
 
 	final static String TASK_REVIEW = "task" + CPS + "review";
 
@@ -764,7 +764,7 @@ public class Contexts implements SorcerConstants {
 	 * @throws ContextException
 	 */
 	public static List<String> getInPaths(Context cntxt) throws ContextException {
-		// get all the in and in paths
+		// getValue all the in and in paths
 		String inAssoc = Context.DIRECTION + APS + Context.DA_IN;
 		String[] inPaths = getMarkedPaths(cntxt, inAssoc);
 		List<String> list = new ArrayList<String>(inPaths.length);
@@ -776,7 +776,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	public static List<String> getInoutPaths(Context cntxt) throws ContextException {
-		// get all the in and inout paths
+		// getValue all the in and inout paths
 		String inAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
 		String[] inPaths = getMarkedPaths(cntxt, inAssoc);
 		List<String> list = new ArrayList<String>(inPaths.length);
@@ -796,7 +796,7 @@ public class Contexts implements SorcerConstants {
 	 * @throws ContextException
 	 */
 	public static List<String> getAllInPaths(Context cntxt) throws ContextException {
-		// get all the in and inout paths
+		// getValue all the in and inout paths
 		String inAssoc = Context.DIRECTION + APS + Context.DA_IN;
 		String inoutAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
 		String[] inPaths = getMarkedPaths(cntxt, inAssoc);
@@ -812,7 +812,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	public static List getNamedInPaths(Context cntxt) throws ContextException {
-		// get all the in and inout paths
+		// getValue all the in and inout paths
 		String cs = ((ServiceContext)cntxt).getMogramStrategy().getCurrentSelector();
 		if (cs != null)
 			return getPrefixedInPaths(cntxt, cs);
@@ -821,7 +821,7 @@ public class Contexts implements SorcerConstants {
 	}
 	
 	public static List getPrefixedInPaths(Context cntxt) throws ContextException {
-		// get all the in and inout paths
+		// getValue all the in and inout paths
 		String cp = ((ServiceContext)cntxt).getCurrentPrefix();
 		if (cp != null)
 			return getPrefixedInPaths(cntxt, cp);
@@ -830,7 +830,7 @@ public class Contexts implements SorcerConstants {
 	}
 	
 	public static List getPrefixedInPaths(Context cntxt, String prefixPath) throws ContextException {
-		// get all the in and inout paths
+		// getValue all the in and inout paths
 		String inAssoc = Context.DIRECTION + APS + Context.DA_IN;
 		String inoutAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
 		String[] inPaths = Contexts.getMarkedPaths(cntxt, inAssoc);
@@ -859,7 +859,7 @@ public class Contexts implements SorcerConstants {
 	 * @throws ContextException
 	 */
 	public static List<String> getOutPaths(Context cntxt) throws ContextException {
-		// get all the in and inout paths
+		// getValue all the in and inout paths
 		String outAssoc = Context.DIRECTION + APS + Context.DA_OUT;
 		String inoutAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
 		String[] outPaths = getMarkedPaths(cntxt, outAssoc);
@@ -875,17 +875,17 @@ public class Contexts implements SorcerConstants {
 	}
 
 	public static List getNamedOutPaths(Context cntxt) throws ContextException {
-		// get all the in and out paths
+		// getValue all the in and out paths
 		return getPrefixedOutPaths(cntxt, ((ServiceContext)cntxt).getMogramStrategy().getCurrentSelector());
 	}
 	
 	public static List getPrefixedOutPaths(Context cntxt) throws ContextException {
-		// get all the in and out paths
+		// getValue all the in and out paths
 		return getPrefixedOutPaths(cntxt, ((ServiceContext)cntxt).getCurrentPrefix());
 	}
 	
 	public static List getPrefixedOutPaths(Context cntxt, String prefix) throws ContextException {
-		// get all the in and out paths
+		// getValue all the in and out paths
 		String outAssoc = Context.DIRECTION + APS + Context.DA_OUT;
 		String inoutAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
 		String[] outPaths = Contexts.getMarkedPaths(cntxt, outAssoc);
@@ -914,7 +914,7 @@ public class Contexts implements SorcerConstants {
 	 */
 	public static Map<String, String> getInPathsMap(Context cntxt)
 			throws ContextException {
-		// get all the in and inout paths
+		// getValue all the in and inout paths
 		String inAssoc = Context.DIRECTION + APS + Context.DA_IN;
 		String inoutAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
 		String[] inPaths = Contexts.getMarkedPaths(cntxt, inAssoc);
@@ -943,7 +943,7 @@ public class Contexts implements SorcerConstants {
 	 */
 	public static Hashtable getOutPathsMap(Context cntxt)
 			throws ContextException {
-		// get all the out and inout paths
+		// getValue all the out and inout paths
 		String outAssoc = Context.DIRECTION + APS + Context.DA_OUT;
 		String inoutAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
 		String[] outPaths = Contexts.getMarkedPaths(cntxt, outAssoc);
@@ -971,7 +971,7 @@ public class Contexts implements SorcerConstants {
      */
     public static Hashtable getInoutPathsMap(Context cntxt)
             throws ContextException {
-        // get all the inout paths
+        // getValue all the inout paths
         String inoutAssoc = Context.DIRECTION + APS + Context.DA_INOUT;
         String[] inoutPaths = Contexts.getMarkedPaths(cntxt, inoutAssoc);
         Hashtable inpaths = new Hashtable();
@@ -1094,7 +1094,7 @@ public class Contexts implements SorcerConstants {
 				if ((contextTree.getValue(key1) instanceof ContextLink)) {
 					link = (ContextLink) contextTree.getValue(key1);
 					if (!linkStop) {
-						// get subcontext for recursion
+						// getValue subcontext for recursion
 						try {
 							subcntxt = link.getContext().getContext(
 									link.getOffset().trim());
@@ -1274,7 +1274,7 @@ public class Contexts implements SorcerConstants {
 					key = (String) e.next();
 					/*
 					 * java 1.4.0 regex p = Pattern.compile(eval); m =
-					 * p.matcher((String)values.get(key)); if (m.find())
+					 * p.matcher((String)values.getValue(key)); if (m.find())
 					 * keys.addElement(key);
 					 */
 					if (values.get(key).equals(value))

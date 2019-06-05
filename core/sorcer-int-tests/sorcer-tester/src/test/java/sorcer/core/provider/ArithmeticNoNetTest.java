@@ -178,7 +178,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 
 	@Test
 	public void contexterTest() throws Exception {
-		// get a context for the template context in the task
+		// getValue a context for the template context in the task
 		Task cxtt = task("addContext", sig("getContext", ArithmeticNetTest.createContext()),
 				context("add", input("arg/x1"), input("arg/x2")));
 
@@ -211,7 +211,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		srv = exert(srv);
 		logger.info("srv job context: " + upcontext(srv));
 
-		// logger.info("srv eval @  t3/arg/x2 = " + get(srv, "j1/t3/arg/x2"));
+		// logger.info("srv eval @  t3/arg/x2 = " + getValue(srv, "j1/t3/arg/x2"));
 		assertEquals(get(srv, "j1/t3/arg/x2"), 100.0);
 	}
 

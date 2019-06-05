@@ -296,9 +296,9 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 				}
 				// execEnt of changing children on update, child coloring allows
 				// all elements under a node
-				// to get the same direction color, code works but can lead to
+				// to getValue the same direction color, code works but can lead to
 				// really annoying results
-				// ex: change the root and all directions below it get
+				// ex: change the root and all directions below it getValue
 				// removed....
 				// SetChildDirection(currentNode,
 				// direction.getSelectedItem().toString());

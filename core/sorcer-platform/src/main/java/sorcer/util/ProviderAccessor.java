@@ -272,7 +272,7 @@ public class ProviderAccessor extends ServiceAccessor {
     /**
 	 * Returns a SORCER service using a cached Cataloger instance by this
 	 * ProviderAccessor. However if it not possible uses a ServiceAccessor to
-	 * get a requested service form Jini lookup services directly. This approach
+	 * getValue a requested service form Jini lookup services directly. This approach
 	 * allows for SORCER requestors and providers to avoid continuous usage of
 	 * lookup discovery for each needed service that is delegated to a SORCER
 	 * Cataloger service.
@@ -290,13 +290,13 @@ public class ProviderAccessor extends ServiceAccessor {
 			if (Accessor.isAlive((Provider) cataloger))
 				return cataloger.lookup(providerName, primaryInterface);
 			else {
-				// try to get a new cataloger and lookup again
+				// try to getValue a new cataloger and lookup again
 				cataloger = getService(providerNameUtil.getName(Cataloger.class), Cataloger.class);
 				if (cataloger != null) {
 					logger.debug("Got service provider from Cataloger");
 					return cataloger.lookup(providerName, primaryInterface);
 				} else {
-					// just get a provider without a Cataloger, use directly
+					// just getValue a provider without a Cataloger, use directly
 					// LUSs
 					logger.error("No SORCER cataloger available");
 					return getService(providerName, primaryInterface);

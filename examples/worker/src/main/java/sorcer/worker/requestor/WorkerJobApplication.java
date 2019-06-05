@@ -29,7 +29,7 @@ public class WorkerJobApplication {
 		// initialize system properties
 		Sorcer.getEnvProperties();
 		
-		// get the queried provider key from the command line
+		// getValue the queried provider key from the command line
 		String pn1 = args[0];
 		String pn2 = args[1];
 		String pn3 = args[2];
@@ -40,7 +40,7 @@ public class WorkerJobApplication {
 
 		Routine result = new WorkerJobApplication()
 			.getExertion(pn1, pn2, pn3).exert();
-		// get contexts of component mograms - in this case tasks
+		// getValue contexts of component mograms - in this case tasks
 		logger.info("Output context1: \n" + result.getContext("work1"));
 		logger.info("Output context2: \n" + result.getContext("work2"));
 		logger.info("Output context3: \n" + result.getContext("work3"));

@@ -107,7 +107,7 @@ public class CollectionOperatorsTest {
 	@Test
 	public void listContextOperatorTest() throws ContextException {
 		ListContext<Double> context = listContext(1.1, 1.2, 1.3, 1.4, 1.5);
-		//logger.info(" index 1: " + context.get(1));
+		//logger.info(" index 1: " + context.getValue(1));
 		assertEquals(context.get(1), 1.2);
 		context.putValue(1, 5.0);
 		assertEquals(context.get(1), 5.0);
