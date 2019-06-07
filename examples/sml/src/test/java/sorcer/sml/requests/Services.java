@@ -21,22 +21,13 @@ import java.rmi.RemoteException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
-import static sorcer.co.operator.setValue;
-import static sorcer.ent.operator.alt;
-import static sorcer.ent.operator.*;
-import static sorcer.ent.operator.loop;
-import static sorcer.ent.operator.opt;
+import static sorcer.mo.operator.*;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.args;
-import static sorcer.eo.operator.fi;
-import static sorcer.eo.operator.result;
-import static sorcer.mo.operator.model;
-import static sorcer.mo.operator.*;
-import static sorcer.mo.operator.v;
-import static sorcer.mo.operator.value;
+import static sorcer.ent.operator.*;
+import static sorcer.ent.operator.loop;
+import static sorcer.so.operator.*;
 import static sorcer.service.Signature.Direction;
-import static sorcer.so.operator.eval;
-import static sorcer.so.operator.exec;
 import static sorcer.util.exec.ExecUtils.CmdResult;
 
 /**
@@ -49,42 +40,30 @@ public class Services {
 
 
 	@Test
-	public void serviceEntries() throws Exception {
+	public void directionalEntries() throws Exception {
 
-        assertTrue(exec(prc("arg/x1", 100.0)).equals(100.0));
+        Entry x0 = ent("arg/x0", 10.0);
+        assertEquals(10.0, exec(x0));
+        assertTrue(direction(x0) == null);
 
-		assertTrue(exec(inVal("arg/x2", 20.0)).equals(20.0));
+        Subroutine x1 = prc("arg/x1", 100.0);
+        assertEquals(100.0, exec(x1));
+        assertTrue(direction(x1) == null);
 
-		assertTrue(exec(outVal("arg/x3", 80.0)).equals(80.0));
+		Value x2 = inVal("arg/x2", 20.0);
+		assertEquals(20.0, exec(x2));
+        assertTrue(direction(x2) == Direction.IN);
 
-		assertTrue(exec(inoutVal("arg/x4", 60.0)).equals(60.0));
-    }
+		Entry x3 = outVal("arg/x3", 80.0);
+		assertEquals(80.0, exec(x3));
+        assertTrue(direction(x3) == Direction.OUT);
 
-    @Test
-    public void setup1() throws Exception {
-        Setup cxtEnt = setup("context/execute", context(val("arg/x1", 100.0), val("arg/x2", 20.0)));
-        assertEquals(100.0, val(cxtEnt, "arg/x1"));
-    }
-
-    @Test
-    public void setup2() throws Exception {
-        Setup cxtEnt = setup("context/execute", val("arg/x1", 100.0), val("arg/x2", 20.0));
-        assertEquals(100.0, val(cxtEnt, "arg/x1"));
-    }
-
-    @Test
-    public void setValueOfSetup1() throws Exception {
-        Setup cxtEnt = setup("context/execute", val("arg/x1", 100.0), val("arg/x2", 20.0));
-        setValue(cxtEnt, "arg/x1", 80.0);
-        assertEquals(80.0, val(cxtEnt, "arg/x1"));
-    }
-
-    @Test
-    public void setValueOfSetup2() throws Exception {
-        Setup cxtEnt = setup("context/execute", val("arg/x1", 100.0), val("arg/x2", 20.0));
-        setValue(cxtEnt, val("arg/x1", 80.0), val("arg/x2", 10.0));
-        assertEquals(80.0, val(cxtEnt, "arg/x1"));
-        assertEquals(10.0, val(cxtEnt, "arg/x2"));
+        // entry of entry
+		Entry x4 = inoutVal("arg/x4", x3);
+		assertEquals(exec(x3), exec(x4));
+        assertTrue(direction(x4) == Direction.INOUT);
+		assertEquals(name(impl(x4)), "arg/x3");
+        assertTrue(direction(x4) == Direction.INOUT);
     }
 
     @Test
@@ -132,16 +111,6 @@ public class Services {
         public Object execute(Arg... args) throws ServiceException, RemoteException {
             return invoke(null, args);
         }
-
-//        @Override
-//        public Data execEnt(Arg... args) throws ServiceException, RemoteException {
-//            return ent(getClass().getSimpleName(), invoke(null, args));
-//        }
-//
-//        @Override
-//        public Data execEnt(String entryName, Arg... args) throws ServiceException, RemoteException {
-//            return ent(entryName, invoke(null, args));
-//        }
 
     }
 
@@ -372,4 +341,5 @@ public class Services {
 //        logger.info("out eval: {}", eval(mdl, "y1"));
 		assertEquals(800.0,  exec(mdl, "y1"));
 	}
+
 }

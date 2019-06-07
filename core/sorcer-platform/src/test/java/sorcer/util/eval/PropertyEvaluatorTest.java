@@ -19,12 +19,17 @@ package sorcer.util.eval;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import sorcer.service.Setup;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static sorcer.co.operator.setValue;
+import static sorcer.co.operator.setup;
+import static sorcer.co.operator.val;
+import static sorcer.eo.operator.context;
 
 /**
  * @author Rafał Krupiński
@@ -76,4 +81,33 @@ public class PropertyEvaluatorTest {
         assertEquals("${invalid", data.get("invalid"));
 
     }
+
+    // setups via provided context with a path for the aspect of setup
+    @Test
+    public void setup1() throws Exception {
+        Setup cxtEnt = setup("context/execute", context(val("arg/x1", 100.0), val("arg/x2", 20.0)));
+        assertEquals(100.0, val(cxtEnt, "arg/x1"));
+    }
+
+    @Test
+    public void setup2() throws Exception {
+        Setup cxtEnt = setup("context/execute", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        assertEquals(100.0, val(cxtEnt, "arg/x1"));
+    }
+
+    @Test
+    public void setValueOfSetup1() throws Exception {
+        Setup cxtEnt = setup("context/execute", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        setValue(cxtEnt, "arg/x1", 80.0);
+        assertEquals(80.0, val(cxtEnt, "arg/x1"));
+    }
+
+    @Test
+    public void setValueOfSetup2() throws Exception {
+        Setup cxtEnt = setup("context/execute", val("arg/x1", 100.0), val("arg/x2", 20.0));
+        setValue(cxtEnt, val("arg/x1", 80.0), val("arg/x2", 10.0));
+        assertEquals(80.0, val(cxtEnt, "arg/x1"));
+        assertEquals(10.0, val(cxtEnt, "arg/x2"));
+    }
+
 }
