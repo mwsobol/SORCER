@@ -634,6 +634,40 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
             controlContext.setMonitorable(startegy.isMonitorable());
     }
 
+    public Context getEvaluatedContext() throws ContextException {
+        return getContext();
+    }
+
+    public Object getOutValue(Signature.Out outPaths ) throws ContextException {
+        Object val = null;
+        Context out = getEvaluatedContext();
+        try {
+            if (outPaths.size() == 1) {
+                Path p = outPaths.get(0);
+                if (p.getType().equals(Path.Type.MAP)) {
+                    val = out.getValue("" + outPaths.get(0).dirPath.path);
+                } else {
+                    val = out.getValue(outPaths.get(0).path);
+                }
+            } else {
+                Context cxt = new ServiceContext(getName());
+                for (int j = 0; j < outPaths.size(); j++) {
+                    if (outPaths.get(j).getType().equals(Path.Type.MAP)) {
+                        scope.putValue("" + outPaths.get(j).dirPath.path, out.getValue(outPaths.get(j).path));
+                        cxt.putValue("" + outPaths.get(j).dirPath.path, out.getValue(outPaths.get(j).path));
+                    } else {
+                        scope.putValue(outPaths.get(j).path, out.getValue(outPaths.get(j).path));
+                        cxt.putValue(outPaths.get(j).path, out.getValue(outPaths.get(j).path));
+                    }
+                }
+                val = cxt;
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return val;
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -641,15 +675,30 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
      */
     public Object getReturnValue(Arg... entries) throws ContextException,
             RemoteException {
-        ReturnPath returnPath = (ReturnPath)getDataContext().getReturnPath();
-        if (returnPath != null) {
-            if (returnPath.path == null || returnPath.path.equals(Signature.SELF))
-                return getContext();
-            else
-                return getContext().getValue(returnPath.path, entries);
-        } else {
-            return getContext();
+        ReturnPath returnPath = (Signature.ReturnPath)getProcessSignature().getReturnPath();
+        if (returnPath == null) {
+            returnPath = (ReturnPath) getDataContext().getReturnPath();
         }
+        ServiceContext cxt = (ServiceContext)getEvaluatedContext();
+        Object val = null;
+        if (returnPath != null) {
+            if ((returnPath.path == null || returnPath.path.equals(Signature.SELF))
+                && returnPath.outPaths == null) {
+                val = getEvaluatedContext();
+            } else if (returnPath.path != null && ! returnPath.path.equals(Context.RETURN)) {
+                val = cxt.getValue(returnPath.path, entries);
+                cxt.putValue(returnPath.path, val);
+            } else if (returnPath.outPaths != null) {
+                cxt.setFinalized(true);
+                val = getOutValue(returnPath.outPaths);
+                if (returnPath.path != null) {
+                    cxt.putValue(returnPath.path, val);
+                }
+            }
+        } else {
+            val = getContext();
+        }
+        return val;
     }
 
     public List<Setter> getPersisters() {
