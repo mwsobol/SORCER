@@ -2074,21 +2074,22 @@ public class ServiceContext<T> extends ServiceMogram implements
 				if (val.getClass().isArray())
 					sb.append(SorcerUtil.arrayToString(val));
 				else if (val instanceof ContextNode
-						&& ((ContextNode) val).isURL()) {
+					&& ((ContextNode) val).isURL()) {
 					URL url;
 					try {
 						url = ((ContextNode) val).getURL();
 						sb.append("<a href=").append(url).append(">")
-								.append(url).append("</a>");
+							.append(url).append("</a>");
 					} catch (MalformedURLException e2) {
 						e2.printStackTrace();
 					} catch (ContextNodeException e2) {
 						e2.printStackTrace();
 					}
-				} else if (val instanceof Routine) {
-					sb.append(((ServiceRoutine) val).info());
-				} else
+				} else if (val instanceof Mogram) {
+					sb.append(((Identifiable) val).getId() + ":" + ((Identifiable) val).getName() );
+				} else {
 					sb.append(val.toString());
+				}
 			}
 			count++;
 		}
