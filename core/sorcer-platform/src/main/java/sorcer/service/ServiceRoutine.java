@@ -694,6 +694,8 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
                 if (returnPath.path != null) {
                     cxt.putValue(returnPath.path, val);
                 }
+            } else {
+                val = cxt.get(returnPath.path);
             }
         } else {
             val = getContext();
