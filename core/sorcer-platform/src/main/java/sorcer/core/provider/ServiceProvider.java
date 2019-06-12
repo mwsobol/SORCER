@@ -1177,7 +1177,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 		return true;
 	}
 
-	private Context<?> providerGetMethodContext(String interfaceName,
+	private Context providerGetMethodContext(String interfaceName,
 												String methodName) {
 		logger.info("user directory is " + System.getProperty("user.dir"));
 		boolean contextLoaded = false;
