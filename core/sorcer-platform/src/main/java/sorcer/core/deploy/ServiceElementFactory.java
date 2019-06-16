@@ -462,7 +462,7 @@ public final class ServiceElementFactory  {
                             logger.debug("Resolve {}", resolveRequest.artifactConfig);
                             Artifact artifact = new Artifact(resolveRequest.artifactConfig);
                             URL configLocation = resolver.getLocation(artifact.getGAV(), artifact.getType());
-                            String configurationFilePath = new File(configLocation.toURI()).getPath();
+                            String configurationFilePath = new File(configLocation.toURI()).getRequestPath();
                             serviceElement = create(resolveRequest.deployment, configurationFilePath);
                             serviceElementsCreated.put(resolveRequest.artifactConfig, serviceElement);
                         }

@@ -29,8 +29,7 @@ import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MultiFiMogram;
-import sorcer.core.provider.Exerter;
-import sorcer.core.provider.Exertion;
+import sorcer.service.Exerter;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
@@ -385,8 +384,8 @@ public class operator extends Operator {
     public static Object eval(Routine exertion, String selector,
                               Arg... args) throws EvaluationException {
         try {
-            exertion.getDataContext().setReturnPath(new Signature.ReturnPath(selector));
-            return exec((Service)exertion, args);
+            exertion.getDataContext().setRequestPath(new Routine.RequestPath(selector));
+            return exec(exertion, args);
         } catch (Exception e) {
             e.printStackTrace();
             throw new EvaluationException(e);

@@ -21,7 +21,7 @@ import net.jini.core.lookup.ServiceItem;
 import net.jini.id.Uuid;
 import sorcer.core.monitor.MonitorUIManagement;
 import sorcer.core.monitor.MonitoringManagement;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.jini.lookup.AttributesUtil;
 import sorcer.service.*;
 import sorcer.service.Exec.State;

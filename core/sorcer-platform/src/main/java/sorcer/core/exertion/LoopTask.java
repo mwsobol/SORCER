@@ -22,7 +22,6 @@ import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -115,12 +114,12 @@ public class LoopTask extends ConditionalTask {
 				target.getScope().append(scope);
 			}
 
-			ReturnPath rp = (ReturnPath)target.getContext().getReturnPath();
+			RequestPath rp = (RequestPath)target.getContext().getRequestPath();
 
 			if (condition == null) {
 				for (int i = 0; i < max - min; i++) {
 					target = target.exert(txn, args);
-					if (rp != null && rp.path != null) {
+					if (rp != null && rp.returnPath != null) {
 						scope.putValue(target.getName(), target.getContext().getReturnValue());
 					}
 				}

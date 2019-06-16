@@ -18,7 +18,7 @@
 package sorcer.tools.shell.cmds;
 
 import sorcer.core.provider.Cataloger;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.service.Accessor;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
@@ -205,7 +205,7 @@ public class DirCmd extends ShellCmd {
 		}
 		/* See if the passed in property is a complete directory */
 		File dir = new File(dirName);
-		/* If its not, it may be a relative path */
+		/* If its not, it may be a relative requestPath */
 		if (!dir.exists()) {
 			dir = new File(NetworkShell.getInstance().getCurrentDir()
 					.getAbsolutePath()
@@ -270,7 +270,7 @@ public class DirCmd extends ShellCmd {
             case "dir":
                 return "Synonymous with the ls command.";
             case "pwd":
-                return "Returns working directory path.";
+                return "Returns working directory requestPath.";
             case "cd":
                 return "Changes the current working directory. The \"~\" character can be used, this will change back to the nsh's home directory";
             default:

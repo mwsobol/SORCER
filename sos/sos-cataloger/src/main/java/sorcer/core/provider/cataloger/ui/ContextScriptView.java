@@ -23,7 +23,7 @@ import java.rmi.RMISecurityManager;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.ui.exertlet.EditorView;
 
 /**

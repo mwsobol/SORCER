@@ -204,7 +204,7 @@ public class  LocalBlockExertions implements SorcerConstants {
 
 //		TODO the state after execution changes to reuse the block for another execution?
 // 		problem with clearScope() that is commented due to conflict with
-// 		return eval path when being as input path
+// 		return eval requestPath when being as input requestPath
 //		result = exert(block, val("block/t5/arg/x1", 200.0), val("block/t5/arg/x2", 800.0));
 //		logger.info("block context: " + context(result));
 //		logger.info("result: " + eval(context(result), "block/result"));

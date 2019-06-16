@@ -30,7 +30,7 @@ import static java.io.File.pathSeparator;
 import static sorcer.util.JavaSystemProperties.LIBRARY_PATH;
 
 /**
- * LibraryPathHelper implements a Set&lt;String> synchronized with system property java.library.path. each change is immediately reflected in the Java runtime. All Set operations are synchronized.
+ * LibraryPathHelper implements a Set&lt;String> synchronized with system property java.library.requestPath. each change is immediately reflected in the Java runtime. All Set operations are synchronized.
  *
  * @author Rafał Krupiński
  */
@@ -56,7 +56,7 @@ public class LibraryPathHelper extends AbstractSet<String> {
             fieldSysPath.setAccessible(true);
             return fieldSysPath;
         } catch (Exception e) {
-            throw new RuntimeException("Could not update java.library.path system property", e);
+            throw new RuntimeException("Could not update java.library.requestPath system property", e);
         }
     }
 
@@ -74,7 +74,7 @@ public class LibraryPathHelper extends AbstractSet<String> {
         try {
             fieldSysPath.set(null, null);
         } catch (Exception e) {
-            throw new RuntimeException("Could not update java.library.path system property", e);
+            throw new RuntimeException("Could not update java.library.requestPath system property", e);
         }
     }
 
@@ -206,9 +206,9 @@ public class LibraryPathHelper extends AbstractSet<String> {
                 }
             }
         } catch (IOException io) {
-            log.debug("Could not locate native library path: " + io.getMessage());
+            log.debug("Could not locate native library requestPath: " + io.getMessage());
         } catch (InterruptedException io) {
-            log.debug("Could not locate native library path: " + io.getMessage());
+            log.debug("Could not locate native library requestPath: " + io.getMessage());
         }
         return null;
     }

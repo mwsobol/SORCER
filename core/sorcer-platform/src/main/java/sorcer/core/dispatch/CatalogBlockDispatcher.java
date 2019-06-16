@@ -31,11 +31,10 @@ import sorcer.core.exertion.OptTask;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -187,7 +186,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		}
 
 		ServiceContext cxt = (ServiceContext)xrt.getDataContext();
-		SignatureReturnPath rp = exertion.getDataContext().getReturnPath();
+		Routine.RequestPath rp = exertion.getDataContext().getRequestPath();
 		if (rp != null) {
 			Signature.Out outPaths = rp.getOutPaths();
 			if (outPaths != null && outPaths.size() > 0) {
@@ -199,7 +198,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 				}
 			} else {
 				try {
-					cxt.putValue(((ReturnPath) exertion.getContext().getReturnPath()).path,
+					cxt.putValue(((Routine.RequestPath) exertion.getContext().getRequestPath()).returnPath,
 						exertion.getDataContext().getReturnValue());
 				} catch (RemoteException e) {
 					throw new ContextException(e);

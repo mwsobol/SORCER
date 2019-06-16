@@ -16,8 +16,6 @@
  */
 package sorcer.service;
 
-import sorcer.core.provider.Provider;
-
 import java.util.List;
 
 /**

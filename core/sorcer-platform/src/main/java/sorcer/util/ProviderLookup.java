@@ -20,7 +20,7 @@ package sorcer.util;
 
 import net.jini.config.Configuration;
 import net.jini.config.EmptyConfiguration;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.service.Service;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;

@@ -32,23 +32,23 @@ import sorcer.service.IndexedContext;
  * output) as follows:
  * <ol>
  * <li>the eval of the i-th element: by v(i) and the setter v(i, obj);<br>
- * implicit path: array/[i]/eval<br>
+ * implicit requestPath: array/[i]/eval<br>
  * <li>the comment of the i-th element: by vc(i) and the setter vc(i, comment);<br>
- * implicit path: array/[i]/comment<br>
+ * implicit requestPath: array/[i]/comment<br>
  * <li>the description of the i-th element: by vd(i) and the setter vd(i, description);<br>
- * implicit path: array/[i]/description
+ * implicit requestPath: array/[i]/description
  * <li>the input eval of the i-th element: by iv(i) and the setter iv(i, obj);<br>
- * implicit path: array/in/[i]/eval<br>
+ * implicit requestPath: array/in/[i]/eval<br>
  * <li>the comment of the i-th element: by ivc(i) and the setter  ivc(i, comment);<br>
- * implicit path: array/in/[i]/comment<br>
+ * implicit requestPath: array/in/[i]/comment<br>
  * <li>the description of the i-th element: by ivd(i) and the setter ivd(i, description);<br>
- * implicit path: array/in/[i]/description
+ * implicit requestPath: array/in/[i]/description
  * <li>the output eval of the i-th element: by ov(i) and the setter ov(i, obj);<br>
- * implicit path: array/out/[i]/eval<br>
+ * implicit requestPath: array/out/[i]/eval<br>
  *<li>the comment of the i-th element: by ovc(i) and the setter ovc(i, comment);<br>
- * implicit path: array/out/[i]/comment<br>
+ * implicit requestPath: array/out/[i]/comment<br>
  *<li>the description of the i-th element: by ovd(i) and the setter ovd(i, description);<br>
- * implicit path: array/out/[i]/description
+ * implicit requestPath: array/out/[i]/description
  */
 public class ArrayContext extends ServiceContext implements IndexedContext,
 		SorcerConstants {
@@ -410,7 +410,7 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 
 	// Returns a list of input values sorted by index using insertion sort
 	public String[] getSortedInPaths() throws ContextException {
-		// find all input path
+		// find all input requestPath
 		String inAssoc = DIRECTION + SorcerConstants.APS + DA_IN;
 		String inoutAssoc = DIRECTION + SorcerConstants.APS + DA_INOUT;
 		String[] inPaths = Contexts.getMarkedPaths(this, inAssoc);
@@ -502,11 +502,11 @@ public class ArrayContext extends ServiceContext implements IndexedContext,
 	}
 
 	/**
-	 * Return an index of this indexed context path.
+	 * Return an index of this indexed context requestPath.
 	 * 
 	 * @param path
-	 *            IndexedContext context path
-	 * @return an index of the given service context path
+	 *            IndexedContext context requestPath
+	 * @return an index of the given service context requestPath
 	 */
 	public int getIndex(String path) {
 		int i1 = path.indexOf('[');

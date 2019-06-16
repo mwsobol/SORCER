@@ -21,7 +21,7 @@ package sorcer.service.jobber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.provider.Jobber;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.service.Accessor;
 import sorcer.util.AccessorException;
 import sorcer.util.ProviderNameUtil;

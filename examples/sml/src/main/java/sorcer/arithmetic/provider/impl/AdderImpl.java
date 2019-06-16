@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.DoubleSrv;
 import sorcer.arithmetic.provider.ui.CalculatorUI;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.MonitorException;

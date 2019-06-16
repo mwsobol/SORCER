@@ -32,20 +32,20 @@ import org.slf4j.LoggerFactory;
  * <pre>
  * # comment
  * main is classname
- * load path
+ * load returnPath
  * load file
  * load pathWith${property}
  * load pathWith!{required.property}
- * load path/*.jar
- * load path/&#42;&#42;/&#42;.jar
+ * load returnPath/*.jar
+ * load returnPath/&#42;&#42;/&#42;.jar
  * </pre>
  * <ul>
  * <li>All lines starting with "#" are ignored.</li>
  * <li>The "main is" part may only be once in the file. The String
  * afterwards is the key of a class with a main method. </li>
- * <li>The "load" command will add the given file or path to the
- * classpath in this configuration object. If the path does not
- * exist, the path will be ignored.
+ * <li>The "load" command will add the given file or returnPath to the
+ * classpath in this configuration object. If the returnPath does not
+ * exist, the returnPath will be ignored.
  * </li>
  * <li>properties referenced using !{x} are required.</li>
  * <li>properties referenced using ${x} are not required. If the
@@ -58,11 +58,11 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Defining the main class is required unless setRequireMain(boolean) is
  * called with false, before reading the configuration.
- * You can use the wildcard "*" to filter the path, but only for files, not
+ * You can use the wildcard "*" to filter the returnPath, but only for files, not
  * directories. To match directories use "**". The ${propertyname} is replaced by the eval of the system's
  * property key. You can use user.home here for example. If the property does
- * not exist, an empty string will be used. If the path or file after the load
- * command does not exist, the path will be ignored.
+ * not exist, an empty string will be used. If the returnPath or file after the load
+ * command does not exist, the returnPath will be ignored.
  *
  * @author Jochen Theodorou
  * @version $Revision$
@@ -133,7 +133,7 @@ public class LoaderConfiguration {
     }
 
     /**
-     * Load a possibly filtered path. Filters are defined
+     * Load a possibly filtered returnPath. Filters are defined
      * by using the * wildcard like in any shell.
      */
     private void loadUrls(List<URL> urls) {
@@ -144,7 +144,7 @@ public class LoaderConfiguration {
 
 
     /**
-     * Load a possibly filtered path. Filters are defined
+     * Load a possibly filtered returnPath. Filters are defined
      * by using the * wildcard like in any shell.
      */
     private void loadFilteredPath(String filter) {
@@ -155,7 +155,7 @@ public class LoaderConfiguration {
 
 
     /*
-     * return true if the parent of the path inside the given
+     * return true if the parent of the returnPath inside the given
      * string does exist
      */
     private boolean parentPathDoesExist(String path) {
@@ -164,7 +164,7 @@ public class LoaderConfiguration {
     }
 
     /*
-     * separates the given path at the last '/'
+     * separates the given returnPath at the last '/'
      */
     private String getParentPath(String filter) {
         int index = filter.lastIndexOf('/');
@@ -233,10 +233,10 @@ public class LoaderConfiguration {
 
     /**
      * Adds a classpath to this configuration. It expects a string with
-     * multiple paths, separated by the system dependent path separator.
+     * multiple paths, separated by the system dependent returnPath separator.
      * Expands wildcards, e.g. dir/* into all the jars in dir.
      *
-     * @param path the path as a path separator delimited string
+     * @param path the requestPath as a requestPath separator delimited string
      * @see java.io.File#pathSeparator
      */
     public void addClassPath(String path) {

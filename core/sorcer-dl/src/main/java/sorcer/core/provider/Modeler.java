@@ -17,6 +17,7 @@
 
 package sorcer.core.provider;
 
+import sorcer.service.Exerter;
 import sorcer.service.modeling.Model;
 
 import java.rmi.Remote;

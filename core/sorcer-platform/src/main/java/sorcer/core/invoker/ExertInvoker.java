@@ -21,7 +21,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Prc;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.service.*;
-import sorcer.service.Signature.ReturnPath;
+import sorcer.service.Routine.RequestPath;
 
 import java.rmi.RemoteException;
 
@@ -66,8 +66,8 @@ public class ExertInvoker extends ServiceInvoker implements Invocation {
 		Context cxt = null;
 		try {
 			evaluatedExertion = exertion.exert(txn);
-			ReturnPath returnPath = ((ServiceContext)evaluatedExertion.getDataContext())
-					.getReturnPath();
+			RequestPath returnPath = ((ServiceContext)evaluatedExertion.getDataContext())
+					.getRequestPath();
 			if (evaluatedExertion instanceof Job) {
 				cxt = ((Job) evaluatedExertion).getJobContext();
 			} else {
@@ -75,9 +75,9 @@ public class ExertInvoker extends ServiceInvoker implements Invocation {
 			}
 
 			if (returnPath != null) {
-				if (returnPath.path == null)
+				if (returnPath.returnPath == null)
 					return cxt;
-				else if (returnPath.path.equals(Signature.SELF))
+				else if (returnPath.returnPath.equals(Signature.SELF))
 					return this;
 				else
 					return cxt.getReturnValue();

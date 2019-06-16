@@ -42,13 +42,13 @@ public class ContextTest {
 		
 //		logger.info("invoke context: " + invokeContext);
 
-//		logger.info("path arg1/eval: " + addLink.getContext().execute("arg1/eval"));
+//		logger.info("returnPath arg1/eval: " + addLink.getContext().execute("arg1/eval"));
 		assertEquals(addLink.getContext().getValue("arg1/eval"), 90.0);
-//		logger.info("path arg2/eval: " + multiplyLink.getContext().execute("arg2/eval"));
+//		logger.info("returnPath arg2/eval: " + multiplyLink.getContext().execute("arg2/eval"));
 		assertEquals(multiplyLink.getContext().getValue("arg2/eval"), 70.0);
-//		logger.info("path add/arg1/eval: " + invokeContext.execute("add/arg1/eval"));
+//		logger.info("returnPath add/arg1/eval: " + invokeContext.execute("add/arg1/eval"));
 		assertEquals(invokeContext.getValue("add/arg1/eval"), 90.0);
-//		logger.info("path multiply/arg2/eval: " + invokeContext.execute("multiply/arg2/eval"));
+//		logger.info("returnPath multiply/arg2/eval: " + invokeContext.execute("multiply/arg2/eval"));
 		assertEquals(invokeContext.getValue("multiply/arg2/eval"), 70.0);
 
 	}

@@ -73,7 +73,7 @@ public interface FileStorer {
 	 * <p>
 	 * The format is:
 	 * <ul>
-	 * <li># is the path separator</li>
+	 * <li># is the returnPath separator</li>
 	 * <li>/ is the separator between args</li>
 	 * </ul>
 	 * <p>

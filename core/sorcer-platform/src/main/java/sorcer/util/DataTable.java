@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.Index;
 import sorcer.core.provider.DatabaseStorer;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.provider.StorageManagement;
 import sorcer.service.*;
 import sorcer.service.modeling.rsp;

@@ -20,7 +20,6 @@ package sorcer.service;
 
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.Selfable;
-import sorcer.core.provider.Provider;
 import sorcer.service.modeling.mog;
 import sorcer.service.modeling.rsp;
 
@@ -43,9 +42,9 @@ import java.util.*;
  * A service context is a tree-like structure with two types of nodes. Leaf
  * nodes are called data (execute) nodes and the remaining nodes are called
  * context attribute nodes. Context attributes define a namespace for the data
- * in a uniform way for use by all related services. A path of context
+ * in a uniform way for use by all related services. A returnPath of context
  * attributes leading from the root of the context to any leaf node along with
- * its data node is called a context element (path/data). Thus a path is a
+ * its data node is called a context element (returnPath/data). Thus a returnPath is a
  * hierarchical attribute of data contained in the leaf node. A data node can
  * contain any Java object; in particular a generic {@see ContextNode} is
  * available.
@@ -62,7 +61,7 @@ import java.util.*;
  * service-oriented APIs. However, there are some similarities with XML
  * terminology. The root element in XML contains all other XML elements.
  * Similarly, in each service context, the root extends to all data nodes. A
- * path with its data node (context element) is conceptually similar to an XML
+ * returnPath with its data node (context element) is conceptually similar to an XML
  * element. XML tags (markup) correspond to context attributes. A context data
  * node can be considered the analog of data in XML, however a service context
  * data node has rich OO semantics. Finally, data attributes in service contexts
@@ -98,7 +97,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	/** index attribute (i) */
 	final static String INDEX = "i";
 
-	final static String PATH = "path";
+	final static String PATH = "returnPath";
 
 	/** context nameID (cid) */
 	final static String CONTEXT_ID = "cid";
@@ -207,11 +206,11 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	final public static Object none = new none();
 
 	/**
-	 * Returns a execute at the path if exists, otherwise a execute of the path that
-	 * ends with the last attribute of the given path.
+	 * Returns a execute at the returnPath if exists, otherwise a execute of the returnPath that
+	 * ends with the last attribute of the given returnPath.
 	 *
 	 * @param path
-	 *            The path of a context execute.
+	 *            The returnPath of a context execute.
 	 */
 	public T getSoftValue(String path) throws ContextException;
 
@@ -265,7 +264,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	 *
 	 * @param entries data for closing free variables
 	 *
-	 * @return The context path
+	 * @return The context returnPath
 	 */
 	public T getReturnValue(Arg... entries) throws ContextException,
 			RemoteException;
@@ -277,19 +276,19 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	public void setRoutine(Routine task);
 
 	/**
-	 * Returns the subject path in this context. A subject is a path/execute
+	 * Returns the subject returnPath in this context. A subject is a returnPath/execute
 	 * association and is interpreted as the context constituent about which
-	 * something is predicated. Other path/execute associations of this context
+	 * something is predicated. Other returnPath/execute associations of this context
 	 * are interpreted as complements of the context subject.
 	 *
-	 * @return the subject path
+	 * @return the subject returnPath
 	 */
 	public String getSubjectPath();
 
 	/**
-	 * Returns the subject execute in this context. A subject is a path/execute
+	 * Returns the subject execute in this context. A subject is a returnPath/execute
 	 * association and is interpreted as the context constituent about which
-	 * something is predicated. Other path/execute associations of this context
+	 * something is predicated. Other returnPath/execute associations of this context
 	 * are interpreted as complements of the context subject.
 	 *
 	 * @return the subject execute
@@ -297,14 +296,14 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	public Object getSubjectValue();
 
 	/**
-	 * Assigns the subject <code>execute</code> at <code>path</code> in this
-	 * context. A subject is a path/execute association and is interpreted as the
-	 * context constituent about which something is predicated. Other path/execute
+	 * Assigns the subject <code>execute</code> at <code>returnPath</code> in this
+	 * context. A subject is a returnPath/execute association and is interpreted as the
+	 * context constituent about which something is predicated. Other returnPath/execute
 	 * associations of this context are interpreted as complements of the
 	 * context subject.
 	 *
 	 * @param path
-	 *            the subject path
+	 *            the subject returnPath
 	 * @param value
 	 *            the subject execute
 	 */
@@ -384,7 +383,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 			throws ContextException;
 
 	/**
-	 * Removes the <code>ContextLink</code> object pointed to by path. If object is
+	 * Removes the <code>ContextLink</code> object pointed to by returnPath. If object is
 	 * not a context link, a ContextException will be thrown.
 	 *
 	 * @throws ContextException
@@ -394,16 +393,16 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 
 	/**
 	 * Returns an <code>Object</code> array containing the ServiceContext in
-	 * which path belongs and the absolute path in that context.
+	 * which returnPath belongs and the absolute returnPath in that context.
 	 *
 	 * @param path
 	 *            the location in the context
 	 * @return <code>Object</code> array of length two. The first element is the
-	 *         ServiceContext; the second element is the path in the
+	 *         ServiceContext; the second element is the returnPath in the
 	 *         ServiceContext. Note, a context node is not required at the
-	 *         returned path in the returned context--the results merely
+	 *         returned returnPath in the returned context--the results merely
 	 *         indicate the mapping (execute on the resulting context at the
-	 *         resulting path will yield the contents)
+	 *         resulting returnPath will yield the contents)
 	 *
 	 * @throws ContextException
 	 * @see #getValue
@@ -416,7 +415,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	public void checkpoint() throws ContextException;
 
 	/**
-	 * Annotates the path with the tuple (execute sequence) specified by a
+	 * Annotates the returnPath with the tuple (execute sequence) specified by a
 	 * relation in the domain of attribute product related to the context data
 	 * nodes.The relation can be either a single search attribute (property) or
 	 * attribute product. The search attribute-execute sequence must be separated
@@ -461,7 +460,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	public List<T> getMarkedValues(String association) throws ContextException;
 
 	/**
-	 * Returns the List of tagged path with the given association.
+	 * Returns the List of tagged returnPath with the given association.
 	 *
 	 * @param association
 	 *            the association of this context to be matched
@@ -589,7 +588,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	/**
 	 * Returns the execute part of the specified metaattribute that has been
 	 * assigned to this context node. The attribute execute is a concatenation of
-	 * the individual attribute values, separated by the context meta-path
+	 * the individual attribute values, separated by the context meta-returnPath
 	 * separator character (CMPS).
 	 *
 	 * @param path
@@ -703,8 +702,8 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	public List<Link> localLinks() throws ContextException;
 
 	/**
-	 * Links the argument <code>context</code> to this context at a given path
-	 * with its offset path. The last attribute of the path is the root of the
+	 * Links the argument <code>context</code> to this context at a given returnPath
+	 * with its offset returnPath. The last attribute of the returnPath is the root of the
 	 * linked subcontext of the <code>context</code>.
 	 *
 	 * @param context
@@ -716,14 +715,14 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 			throws ContextException;
 
 	/**
-	 * Returns the object that resides at path in the
+	 * Returns the object that resides at returnPath in the
 	 * context. This method is necessary since ContextLink objects are otherwise
-	 * transparent. For example, execute(path) returns a execute in the linked
+	 * transparent. For example, execute(returnPath) returns a execute in the linked
 	 * context, not the LinkedContext object.
 	 *
 	 * @param path
 	 *            the location in the context
-	 * @return <code>ContextLink</code> if a ContextLink object resides at path;
+	 * @return <code>ContextLink</code> if a ContextLink object resides at returnPath;
 	 *         <code>null</code> otherwise.
 	 * @throws ContextException
 	 */
@@ -786,7 +785,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	public Context setInout(String path) throws ContextException;
 
 	/**
-	 * Removes a context node from the context. If the designated path points to
+	 * Removes a context node from the context. If the designated returnPath points to
 	 * a object, a {@link ContextException} will be thrown.
 	 * Use {@link #removeLink} to remove link contexts.
 	 *
@@ -803,12 +802,12 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	public String toString();
 
 	/**
-	 * Returns path of first occurrence of object in the context. Returns null
+	 * Returns returnPath of first occurrence of object in the context. Returns null
 	 * if not found. This method is useful for orphaned objects, but should be
 	 * used with caution, since the same object can appear in the context in
 	 * multiple places, and the location may have relevance to interpretation.
 	 * If an object is orphaned, it is best to re-think how the object was
-	 * obtained. It is best to refer to the object with the unique path.
+	 * obtained. It is best to refer to the object with the unique returnPath.
 	 */
 	public String getPath(Object obj) throws ContextException;
 
@@ -887,7 +886,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	public List<String> getAttributes() throws ContextException;
 
 	/**
-	 * Returns all attributes (simple and composite) at path in the context.
+	 * Returns all attributes (simple and composite) at returnPath in the context.
 	 *
 	 * @param path
 	 *            the location in the context
@@ -900,13 +899,13 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 
 	Mogram getDomain(String name) throws ContextException;
 
-	SignatureReturnPath getReturnPath();
+	Routine.RequestPath getRequestPath();
 
 	public boolean compareTo(Object context);
 
 	public boolean compareTo(Object context, double delta);
 
-	Context setReturnPath(SignatureReturnPath returnPath);
+	Context setRequestPath(Routine.RequestPath returnPath);
 
 	public enum Type {
 		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY

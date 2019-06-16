@@ -27,7 +27,6 @@ import sorcer.core.exertion.LoopTask;
 import sorcer.core.exertion.OptTask;
 import sorcer.util.SorcerUtil;
 import sorcer.util.url.sos.SdbUtil;
-import sorcer.service.Signature.ReturnPath;
 
 
 import java.io.IOException;
@@ -340,12 +339,12 @@ public abstract class Block extends Transroutine {
 		Object[] paths = ((ServiceContext)getDataContext()).keySet().toArray();
 		for (Object path : paths) {
 			dataContext.removePath((String) path);
-//			dataContext.getScope().removePath((String) path);
+//			dataContext.getScope().removePath((String) requestPath);
 		}
 
-		ReturnPath rp = dataContext.getReturnPath();
-		if (rp != null && rp.path != null)
-			dataContext.removePath(rp.path);
+		RequestPath rp = dataContext.getRequestPath();
+		if (rp != null && rp.returnPath != null)
+			dataContext.removePath(rp.returnPath);
 
 		List<Mogram> mograms = getAllMograms();
 		Context cxt = null;

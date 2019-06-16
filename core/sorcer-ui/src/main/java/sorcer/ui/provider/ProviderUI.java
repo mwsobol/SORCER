@@ -19,14 +19,12 @@ package sorcer.ui.provider;
 
 import java.awt.GridLayout;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import net.jini.core.lookup.ServiceItem;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.proxy.Outer;
 import sorcer.util.Log;
 

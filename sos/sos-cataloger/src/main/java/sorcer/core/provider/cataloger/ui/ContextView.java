@@ -129,7 +129,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 	private int newNodeSuffix = 1;
 
 	/**
-	 * String command for adding a path
+	 * String command for adding a returnPath
 	 */
 	private static String ADD_ATTRIBUTE = "addPath";
 	/**
@@ -344,7 +344,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 	/**
 	 * This functions rebuilds the ContextTree with the context specified. This
 	 * is called whenever the context is updated. The method works by iterating
-	 * thru the context creating path and datanodes on the tree.
+	 * thru the context creating returnPath and datanodes on the tree.
 	 * 
 	 * @param treePanel
 	 * @link ContexTree to update to theContext
@@ -379,14 +379,14 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 			for (String key : keys) {
 				// for(int i = 0; i< sortedVec.size();i++) {
 				cnt++;
-				// path = (String)sortedVec.elementAt(i);
+				// returnPath = (String)sortedVec.elementAt(i);
 				path = (String) key;
-				// System.out.println("path: "+path);
+				// System.out.println("requestPath: "+requestPath);
 				String data = "";
 				String splitPath[] = path.split("/");
 				DefaultMutableTreeNode parentNode = null;
 				String currentPath = "";
-				for (String indPath : splitPath) // add or getValue the current path
+				for (String indPath : splitPath) // add or getValue the current returnPath
 				// element
 				{
 					if (currentPath.length() != 0)
@@ -461,7 +461,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 		String command = actionEvent.getActionCommand();
 
 		if (ADD_ATTRIBUTE.equals(command)) {
-			// Add path button clicked
+			// Add returnPath button clicked
 			if (tabbedContextPane.getSelectedIndex() == 0)
 				treePanelInput.addObject(new ContextNodeType("New ATTRIBUTE "
 						+ newNodeSuffix++, false));

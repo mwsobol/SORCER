@@ -29,12 +29,12 @@ import java.rmi.RemoteException;
 public interface Domain extends Mogram, Dependency, mog {
 
     /**
-     * Returns a execute of the object at the path as is
+     * Returns a execute of the object at the returnPath as is
      * (no evaluation or invocation on this object).
      *
      * @param path
      *            the variable name
-     * @return this model execute at the path
+     * @return this model execute at the returnPath
      * @throws ModelException
      */
     public Object asis(String path);
@@ -100,12 +100,12 @@ public interface Domain extends Mogram, Dependency, mog {
 	public Context getOutConnector(Arg... args) throws ContextException, RemoteException;
 
 	/**
-	 * Returns a execute of the object at the path od this domain
+	 * Returns a execute of the object at the returnPath od this domain
 	 * (evaluation or invocation on this object if needed).
 	 *
 	 * @param path
 	 *            the variable name
-	 * @return this domain execute at the path
+	 * @return this domain execute at the returnPath
 	 * @throws ContextException, RemoteException
 	 */
 	public Object getValue(String path, Arg... args) throws ContextException, RemoteException;
@@ -115,7 +115,7 @@ public interface Domain extends Mogram, Dependency, mog {
 	public Path getPath(String path) throws ContextException;
 
 	/**
-	 * Returns a execute of the object at the path od this domain
+	 * Returns a execute of the object at the returnPath od this domain
 	 * (evaluation or invocation on this object if needed).
 	 *
 	 * @param objects

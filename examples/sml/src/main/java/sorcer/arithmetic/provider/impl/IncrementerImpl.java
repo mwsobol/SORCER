@@ -3,7 +3,7 @@ package sorcer.arithmetic.provider.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.arithmetic.provider.Incrementer;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 

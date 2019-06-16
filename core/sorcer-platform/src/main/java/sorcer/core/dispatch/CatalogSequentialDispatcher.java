@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.exertion.Mograms;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 

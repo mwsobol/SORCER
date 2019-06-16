@@ -20,7 +20,7 @@ package sorcer.core;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 
 import net.jini.core.event.RemoteEvent;
 import net.jini.core.event.RemoteEventListener;

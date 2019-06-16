@@ -15,15 +15,13 @@
  * limitations under the License.
  */
 
-package sorcer.core.provider;
+package sorcer.service;
 
 import net.jini.admin.Administrable;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceID;
 import org.slf4j.Logger;
 import sorcer.core.analytics.AnalyticsProducer;
-import sorcer.service.Monitorable;
-import sorcer.service.Service;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -66,7 +64,7 @@ public interface Provider extends Exerter, Monitorable, AnalyticsProducer, Admin
 	/**
 	 * Destroy the service, if possible, including its persistent storage.
 	 * 
-	 * @see sorcer.core.provider.Provider#destroy()
+	 * @see Provider#destroy()
 	 */
 	public void destroy() throws RemoteException;
 
@@ -74,7 +72,7 @@ public interface Provider extends Exerter, Monitorable, AnalyticsProducer, Admin
 	 * Destroy all services in this node (virtual machine) by calling each
 	 * destroy().
 	 * 
-	 * @see sorcer.core.provider.Provider#destroy()
+	 * @see Provider#destroy()
 	 */
 	public void destroyNode() throws RemoteException;
 	

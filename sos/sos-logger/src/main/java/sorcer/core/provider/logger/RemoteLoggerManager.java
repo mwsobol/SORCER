@@ -36,7 +36,7 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 import sorcer.core.provider.RemoteLogger;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.provider.logger.ui.LoggerFrameUI;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.serviceui.UIFrameFactory;

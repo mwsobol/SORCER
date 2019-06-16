@@ -210,7 +210,7 @@ public class ProviderDelegate {
 	/** lease manager also used by provider workers. */
 	protected static LeaseRenewalManager leaseManager = new LeaseRenewalManager();
 
-	protected sorcer.core.provider.Provider provider;
+	protected Provider provider;
 
 	protected boolean mutualExclusion = false;
 
@@ -364,11 +364,11 @@ public class ProviderDelegate {
 	public ProviderDelegate() {
 	}
 
-	public void init(sorcer.core.provider.Provider provider) throws ConfigurationException {
+	public void init(Provider provider) throws ConfigurationException {
 		init(provider, null);
 	}
 
-	public void init(sorcer.core.provider.Provider provider, String configFilename) throws ConfigurationException {
+	public void init(Provider provider, String configFilename) throws ConfigurationException {
 		this.provider = provider;
 		String providerProperties = configFilename;
 		// Initialize remote logging
@@ -923,11 +923,11 @@ public class ProviderDelegate {
 						.getProcessSignature();
 
 					tsig.setProvider(provider);
-					// reset path prefix and return path
+					// reset requestPath prefix and return requestPath
 					if (tsig.getPrefix() != null)
 						((ServiceContext)task.getContext()).setPrefix(tsig.getPrefix());
-					if (tsig.getReturnPath() != null)
-						((ServiceContext) task.getContext()).setReturnPath(tsig.getReturnPath());
+					if (tsig.getRequestPath() != null)
+						((ServiceContext) task.getContext()).setRequestPath(tsig.getRequestPath());
 
 					if (isBeanable(task)) {
 						task = useServiceComponents(task, transaction, args);
@@ -1058,9 +1058,9 @@ public class ProviderDelegate {
 		}
 		return exertBeanTask(task, impl, args);
 //        if (impl != null) {
-//			if (task.getProcessSignature().getReturnPath() != null) {
+//			if (task.getProcessSignature().getRequestPath() != null) {
 //				((ServiceContext) task.getContext()).setReturnPath(task
-//						.getProcessSignature().getReturnPath());
+//						.getProcessSignature().getRequestPath());
 //			}
 //			// determine args and parameterTpes from the context
 //			Class[] argTypes = new Class[] { Context.class };
@@ -1123,9 +1123,9 @@ public class ProviderDelegate {
 	Task exertBeanTask(Task task, Object bean, Arg... args) throws ContextException {
 		String selector = task.getProcessSignature().getSelector();
 		if (bean != null) {
-			if (task.getProcessSignature().getReturnPath() != null) {
-				((ServiceContext) task.getContext()).setReturnPath(task
-					.getProcessSignature().getReturnPath());
+			if (task.getProcessSignature().getRequestPath() != null) {
+				((ServiceContext) task.getContext()).setRequestPath(task
+					.getProcessSignature().getRequestPath());
 			}
 			// determine args and parameterTpes from the context
 			Class[] argTypes = new Class[] { Context.class };
@@ -1389,8 +1389,8 @@ public class ProviderDelegate {
 		try {
 			if (cxt.isValid(task.getProcessSignature())) {
 				Signature sig = task.getProcessSignature();
-				if (sig.getReturnPath() != null)
-					cxt.setReturnPath(sig.getReturnPath());
+				if (sig.getRequestPath() != null)
+					cxt.setRequestPath(sig.getRequestPath());
 
 				cxt.getMogramStrategy().setCurrentSelector(sig.getSelector());
 				cxt.setCurrentPrefix(sig.getPrefix());
@@ -1408,8 +1408,8 @@ public class ProviderDelegate {
 					+ provider.getProviderName());
 				task.setContext(cxt);
 				task.setStatus(Exec.DONE);
-				if (cxt.getReturnPath() != null) {
-					cxt.setReturnValue(cxt.getValue(cxt.getReturnPath().path));
+				if (cxt.getRequestPath() != null) {
+					cxt.setReturnValue(cxt.getValue(cxt.getRequestPath().returnPath));
 				} else if (task.getDataContext().getScope() != null) {
 					task.getDataContext().getScope().append(cxt);
 				}
@@ -1471,8 +1471,8 @@ public class ProviderDelegate {
 				if (isContextual) {
 					result = (ServiceContext) execMethod.invoke(provider, args);
 					// Setting Return Values
-					if (result.getReturnPath() != null) {
-						Object resultValue = result.getValue(((ServiceContext) result).getReturnPath().path);
+					if (result.getRequestPath() != null) {
+						Object resultValue = result.getValue(((ServiceContext) result).getRequestPath().returnPath);
 						result.setReturnValue(resultValue);
 					}
 				} else {

@@ -36,7 +36,6 @@ import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.security.util.Auth;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.util.SorcerUtil;
 
@@ -526,24 +525,24 @@ public class Job extends Transroutine {
 		return value;
 	}
 	
-	public ReturnPath getReturnPath() {
-		return dataContext.getReturnPath();
+	public RequestPath getReturnPath() {
+		return dataContext.getRequestPath();
 	}
 	
 	@Override
 	public Object getReturnValue(Arg... entries) throws ContextException,
 			RemoteException {
-		//TODO for getReturnJobPath
-		//ReturnPath rp = ((ServiceContext) dataContext).getReturnJobPath();
-		ReturnPath rp = ((ServiceContext) dataContext).getReturnPath();
+		//TODO for getRequestJobPath
+		//RequestPath rp = ((ServiceContext) dataContext).getRequestJobPath();
+		RequestPath rp = ((ServiceContext) dataContext).getRequestPath();
 		Object obj = null;
 		if (rp != null) {
-			if (rp.path == null || rp.path.equals(Signature.SELF)) {
+			if (rp.returnPath == null || rp.returnPath.equals(Signature.SELF)) {
 				return this;
 			} else if (rp.type != null) {
-				obj = rp.type.cast(getContext().getValue(rp.path));
+				obj = rp.type.cast(getContext().getValue(rp.returnPath));
 			} else {
-				obj = getContext().getValue(rp.path);
+				obj = getContext().getValue(rp.returnPath);
 			}
 		} else {
 			obj = getJobContext();

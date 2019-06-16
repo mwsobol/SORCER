@@ -21,10 +21,10 @@ package sorcer.service;
 import java.io.Serializable;
 
 /**
- * The <code>Link</code> interface allows path values of service contexts to be
+ * The <code>Link</code> interface allows returnPath values of service contexts to be
  * linked to other service contexts using instances implementing this interface.
  * The interface provides for linking service contexts to persisted subcontexts.
- * Context links are references to an offset (path) in a context, which allows
+ * Context links are references to an offset (returnPath) in a context, which allows
  * the reuse of other existing service context objects.
  * 
  * @author Mike Sobolewski
@@ -48,7 +48,7 @@ public interface Link extends Serializable {
 	public void setName(String name);
 
 	/**
-	 * Returns the path offset into this linked context.
+	 * Returns the returnPath offset into this linked context.
 	 * 
 	 * @return an offset of this link
 	 */

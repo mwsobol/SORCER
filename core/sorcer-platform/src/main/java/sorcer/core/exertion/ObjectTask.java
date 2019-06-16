@@ -21,14 +21,12 @@ package sorcer.core.exertion;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
-import sorcer.service.Signature.ReturnPath;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.rmi.RemoteException;
 
 import static sorcer.eo.operator.provider;
 
@@ -97,7 +95,7 @@ public class ObjectTask extends Task {
 		dataContext.getMogramStrategy().setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
-			ReturnPath rt = (ReturnPath) getProcessSignature().getReturnPath();
+			RequestPath rt = (RequestPath) getProcessSignature().getRequestPath();
 			dataContext.updateContextWith(os.getInConnector());
 			boolean setScope = false;
 			if (scope != null && dataContext.getScope() == null) {
@@ -155,8 +153,8 @@ public class ObjectTask extends Task {
 					evaluator.setParameterTypes(new Class[]{Context.class});
 				}
 			}
-			if (os.getReturnPath() != null)
-				dataContext.setReturnPath(os.getReturnPath());
+			if (os.getRequestPath() != null)
+				dataContext.setRequestPath(os.getRequestPath());
 
 			if (result == null) {
 				if (getArgs() == null) {
@@ -171,10 +169,10 @@ public class ObjectTask extends Task {
 			}
 
 			if (result instanceof Context) {
-				ReturnPath rp = dataContext.getReturnPath();
+				RequestPath rp = dataContext.getRequestPath();
 				if (rp != null) {
-					if (rp.path!= null && ((Context) result).getValue(rp.path) != null) {
-						dataContext.setReturnValue(((Context) result).getValue(rp.path));
+					if (rp.returnPath != null && ((Context) result).getValue(rp.returnPath) != null) {
+						dataContext.setReturnValue(((Context) result).getValue(rp.returnPath));
 					} else if (rp.outPaths != null && rp.outPaths.size() > 0) {
 						Context out = ((Context)result).getDirectionalSubcontext(rp.outPaths);
 						if (rp.outPaths.size() == 1) {

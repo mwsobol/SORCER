@@ -83,7 +83,7 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
                     logger.info("using session: {}", id);
                 }
                 Paths paths;
-                Signature.SessionPaths sessionPaths = cxt.getReturnPath().sessionPaths;
+                Signature.SessionPaths sessionPaths = cxt.getRequestPath().sessionPaths;
                 if (sessionPaths != null) {
                     paths = sessionPaths.getPaths(Signature.Append.class);
                     if (paths != null && paths.size() > 0) {

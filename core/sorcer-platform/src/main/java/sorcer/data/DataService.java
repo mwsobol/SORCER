@@ -151,9 +151,9 @@ public class DataService implements FileURLHandler {
     }
 
     /**
-     * Get a {@link URL} for a file path.
+     * Get a {@link URL} for a file requestPath.
      *
-     * @param path The file path to obtain a URL for.
+     * @param path The file requestPath to obtain a URL for.
      *
      * @return A URL that can be used to access the file.
      *
@@ -209,7 +209,7 @@ public class DataService implements FileURLHandler {
             }
         }
         if(relativePath==null)
-            throw new IllegalArgumentException("The provided path ["+path+"], is not navigable " +
+            throw new IllegalArgumentException("The provided requestPath ["+path+"], is not navigable " +
                     "from existing roots "+ Arrays.toString(roots));
 
         if (!relativePath.startsWith("/")) relativePath = "/" + relativePath;

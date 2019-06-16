@@ -17,12 +17,9 @@
 
 package sorcer.service;
 
-import net.jini.core.transaction.Transaction;
 import net.jini.id.Uuid;
 import sorcer.core.context.ThrowableTrace;
-import sorcer.core.provider.Exerter;
 import sorcer.core.provider.Exertion;
-import sorcer.core.provider.Provider;
 
 import java.rmi.RemoteException;
 import java.security.Principal;
@@ -72,7 +69,7 @@ public interface Mogram extends Identifiable, Request, Exertion, Exerter, Scopab
      *
      * @param key
      *            the component name
-     * @return the componet at the path
+     * @return the componet at the returnPath
      */
     public Object get(String key);
 
@@ -217,7 +214,7 @@ public interface Mogram extends Identifiable, Request, Exertion, Exerter, Scopab
 
 
     /**
-     * Returns a ebalated value at teh path
+     * Returns a ebalated value at teh returnPath
      */
     public Object getEvaluatedValue(String path) throws ContextException;
 

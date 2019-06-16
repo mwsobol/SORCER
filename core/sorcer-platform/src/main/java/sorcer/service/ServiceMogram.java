@@ -1,6 +1,5 @@
 package sorcer.service;
 
-import com.sleepycat.collections.TransactionRunner;
 import net.jini.config.*;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
@@ -15,7 +14,6 @@ import sorcer.core.context.model.ent.MdaEntry;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
-import sorcer.core.provider.Provider;
 import sorcer.core.provider.ServiceBean;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.service.Projection;

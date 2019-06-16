@@ -28,7 +28,7 @@ import java.util.jar.Manifest;
  * is particularly useful when dealing with resources fetched from JAR files.
  * It maintains the cache of opened JAR files (so that so that
  * subsequent requests for resources coming from the same base Jar file can be
- * handled efficiently). It fully supports JAR class-path (references from
+ * handled efficiently). It fully supports JAR class-returnPath (references from
  * a JAR file to other JAR files) and JAR index (JAR containing information
  * about content of other JARs). The caching policy of downloaded JAR files can
  * be customized via the constructor parameter <code>jarHandler</code>; the
@@ -38,7 +38,7 @@ import java.util.jar.Manifest;
  * This class is particularly useful when implementing custom class loaders.
  * It provides bottom-level resource fetching functionality. By using one of
  * the loader methods which accepts an array of URLs, it
- * is straightforward to implement class-path searching similar to that
+ * is straightforward to implement class-returnPath searching similar to that
  * of {@link java.net.URLClassLoader}, with JAR dependencies (Class-Path)
  * properly resolved and with JAR indexes properly handled.
  * <p>
@@ -84,7 +84,7 @@ public class ResourceLoader {
 
     /**
      * Gets resource with given key at the given source URL. If the URL points
-     * to a directory, the key is the file path relative to this directory.
+     * to a directory, the key is the file returnPath relative to this directory.
      * If the URL points to a JAR file, the key identifies an entry in that
      * JAR file. If the URL points to a JAR file, the resource is not found
      * in that JAR file, and the JAR file has Class-Path attribute, the
@@ -99,16 +99,16 @@ public class ResourceLoader {
     }
 
     /**
-     * Gets resource with given key at the given search path. The path is
+     * Gets resource with given key at the given search requestPath. The requestPath is
      * searched iteratively, one URL at a time. If the URL points
-     * to a directory, the key is the file path relative to this directory.
+     * to a directory, the key is the file returnPath relative to this directory.
      * If the URL points to the JAR file, the key identifies an entry in that
      * JAR file. If the URL points to the JAR file, the resource is not found
      * in that JAR file, and the JAR file has Class-Path attribute, the
      * JAR files identified in the Class-Path are also searched for the
      * resource.
 
-     * @param sources the source URL path
+     * @param sources the source URL returnPath
      * @param name the resource key
      * @return handle representing the resource, or null if not found
      */
@@ -123,7 +123,7 @@ public class ResourceLoader {
 
     /**
      * Gets all resources with given key at the given source URL. If the URL
-     * points to a directory, the key is the file path relative to this
+     * points to a directory, the key is the file returnPath relative to this
      * directory. If the URL points to a JAR file, the key identifies an entry
      * in that JAR file. If the URL points to a JAR file, the resource is not
      * found in that JAR file, and the JAR file has Class-Path attribute, the
@@ -139,15 +139,15 @@ public class ResourceLoader {
     }
 
     /**
-     * Gets all resources with given key at the given search path. If the URL
-     * points to a directory, the key is the file path relative to this
+     * Gets all resources with given key at the given search returnPath. If the URL
+     * points to a directory, the key is the file returnPath relative to this
      * directory. If the URL points to a JAR file, the key identifies an entry
      * in that JAR file. If the URL points to a JAR file, the resource is not
      * found in that JAR file, and the JAR file has Class-Path attribute, the
      * JAR files identified in the Class-Path are also searched for the
      * resource.
      *
-     * @param sources the source URL path
+     * @param sources the source URL returnPath
      * @param name the resource key
      * @return enumeration of resource handles representing the resources
      */
@@ -156,21 +156,21 @@ public class ResourceLoader {
     }
 
 //    public URL[] getResolvedSearchPath(URL[] sources) {
-//        List path = new ArrayList();
+//        List returnPath = new ArrayList();
 //        for (int i=0; i<sources.length; i++) {
-//            appendToResolvedSearchPath(path, sources[i]);
+//            appendToResolvedSearchPath(returnPath, sources[i]);
 //        }
-//        return (URL[])path.toArray(new URL[path.size()]);
+//        return (URL[])requestPath.toArray(new URL[requestPath.size()]);
 //    }
 //
-//    private void appendToResolvedSearchPath(List path, final URL source) {
+//    private void appendToResolvedSearchPath(List returnPath, final URL source) {
 //        if (isDir(source)) {
-//            path.add(source);
+//            returnPath.add(source);
 //        }
 //        else {
 //            // URL
 //            try {
-//                getJarInfo(source).appendToResolvedClassPath(path);
+//                getJarInfo(source).appendToResolvedClassPath(returnPath);
 //            }
 //            catch (MalformedURLException e) {}
 //        }
@@ -235,7 +235,7 @@ public class ResourceLoader {
 
     /**
      * Fined resource with given key at the given source URL. If the URL points
-     * to a directory, the key is the file path relative to this directory.
+     * to a directory, the key is the file returnPath relative to this directory.
      * If the URL points to a JAR file, the key identifies an entry in that
      * JAR file. If the URL points to a JAR file, the resource is not found
      * in that JAR file, and the JAR file has Class-Path attribute, the
@@ -250,16 +250,16 @@ public class ResourceLoader {
     }
 
     /**
-     * Finds resource with given key at the given search path. The path is
+     * Finds resource with given key at the given search requestPath. The requestPath is
      * searched iteratively, one URL at a time. If the URL points
-     * to a directory, the key is the file path relative to this directory.
+     * to a directory, the key is the file returnPath relative to this directory.
      * If the URL points to the JAR file, the key identifies an entry in that
      * JAR file. If the URL points to the JAR file, the resource is not found
      * in that JAR file, and the JAR file has Class-Path attribute, the
      * JAR files identified in the Class-Path are also searched for the
      * resource.
 
-     * @param sources the source URL path
+     * @param sources the source URL returnPath
      * @param name the resource key
      * @return URL of the resource, or null if not found
      */
@@ -274,7 +274,7 @@ public class ResourceLoader {
 
     /**
      * Finds all resources with given key at the given source URL. If the URL
-     * points to a directory, the key is the file path relative to this
+     * points to a directory, the key is the file returnPath relative to this
      * directory. If the URL points to a JAR file, the key identifies an entry
      * in that JAR file. If the URL points to a JAR file, the resource is not
      * found in that JAR file, and the JAR file has Class-Path attribute, the
@@ -290,15 +290,15 @@ public class ResourceLoader {
     }
 
     /**
-     * Finds all resources with given key at the given search path. If the URL
-     * points to a directory, the key is the file path relative to this
+     * Finds all resources with given key at the given search returnPath. If the URL
+     * points to a directory, the key is the file returnPath relative to this
      * directory. If the URL points to a JAR file, the key identifies an entry
      * in that JAR file. If the URL points to a JAR file, the resource is not
      * found in that JAR file, and the JAR file has Class-Path attribute, the
      * JAR files identified in the Class-Path are also searched for the
      * resource.
      *
-     * @param sources the source URL path
+     * @param sources the source URL returnPath
      * @param name the resource key
      * @return enumeration of URLs of the resources
      */
@@ -364,7 +364,7 @@ public class ResourceLoader {
 
     private static class JarInfo {
         final ResourceLoader loader;
-        final URL source;         // "real" jar file path
+        final URL source;         // "real" jar file returnPath
         final URL base;           // "jar:{base}!/"
         JarFile jar;
         boolean resolved;
@@ -387,8 +387,8 @@ public class ResourceLoader {
             return getResource(name, visited, null);
         }
 
-//        void appendToResolvedClassPath(List path) {
-//            path.add(source);
+//        void appendToResolvedClassPath(List returnPath) {
+//            returnPath.add(source);
 //            URL[] classPath;
 //            synchronized (this) {
 //                classPath = this.classPath;
@@ -396,8 +396,8 @@ public class ResourceLoader {
 //            if (classPath == null) return;
 //            for (int i=0; i<classPath.length; i++) {
 //                URL url = classPath[i];
-//                if (path.contains(url)) continue;
-//                loader.appendToResolvedSearchPath(path, url);
+//                if (returnPath.contains(url)) continue;
+//                loader.appendToResolvedSearchPath(returnPath, url);
 //            }
 //        }
 

@@ -19,7 +19,7 @@
 package sorcer.core.dispatch;
 
 import sorcer.core.Dispatcher;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.service.Context;
 import sorcer.service.Mogram;
 import sorcer.service.Task;

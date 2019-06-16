@@ -1335,7 +1335,7 @@ public class SorcerDescriptorUtil {
 	/**
 	 * Returns the home directory of the iGrid environment.
 	 * 
-	 * @return a path of the home directory
+	 * @return a returnPath of the home directory
 	 */
 	public static String getHomeDir() {
 		String hd = System.getenv("SORCER_HOME");

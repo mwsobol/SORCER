@@ -51,7 +51,7 @@ import sorcer.jini.lookup.ProviderID;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.Exec.State;
-import sorcer.service.Signature.ReturnPath;
+import sorcer.service.Routine.RequestPath;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Data;
 import sorcer.service.modeling.Model;
@@ -706,15 +706,15 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 	}
 
 	private static Routine initialize(Routine xrt, Arg... args) throws ContextException {
-		ReturnPath rPath = null;
+		RequestPath rPath = null;
 		for (Arg a : args) {
-			if (a instanceof ReturnPath) {
-				rPath = (ReturnPath) a;
+			if (a instanceof RequestPath) {
+				rPath = (RequestPath) a;
 				break;
 			}
 		}
 		if (rPath != null)
-			((ServiceContext)xrt.getDataContext()).setReturnPath(rPath);
+			((ServiceContext)xrt.getDataContext()).setRequestPath(rPath);
 		return xrt;
 	}
 
@@ -724,10 +724,10 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			return xrt.getExceptions();
 		}
 		Context dcxt = xrt.getDataContext();
-		ReturnPath rPath = (ReturnPath)dcxt.getReturnPath();
+		RequestPath rPath = (RequestPath)dcxt.getRequestPath();
 		// check if it was already finalized
 		if (((ServiceContext) dcxt).isFinalized()) {
-			return dcxt.getValue(rPath.path);
+			return dcxt.getValue(rPath.returnPath);
 		}
 		// lookup arguments to consider here
 		Signature.Out outputs = null;
@@ -743,15 +743,15 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			// if Path.outPaths.length > 1 return subcontext
 			if (rPath.outPaths != null && rPath.outPaths.size() == 1) {
 				Object val = acxt.getValue(rPath.outPaths.get(0).path);
-				dcxt.putValue(rPath.path, val);
+				dcxt.putValue(rPath.returnPath, val);
 				return val;
 			} else {
-				ReturnPath rp = ((ServiceContext) dcxt).getReturnPath();
-				if (rp != null && rPath.path != null) {
-					Object result = acxt.getValue(rp.path);
+				RequestPath rp = ((ServiceContext) dcxt).getRequestPath();
+				if (rp != null && rPath.returnPath != null) {
+					Object result = acxt.getValue(rp.returnPath);
 					if (result instanceof Context)
-						return ((Context) acxt.getValue(rp.path))
-								.getValue(rPath.path);
+						return ((Context) acxt.getValue(rp.returnPath))
+								.getValue(rPath.returnPath);
 					else if (result == null) {
 						Context out = new ServiceContext();
 						logger.debug("\nselected paths: " + rPath.outPaths
@@ -764,20 +764,20 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 					}
 					return result;
 				} else {
-					return xrt.getContext().getValue(rPath.path);
+					return xrt.getContext().getValue(rPath.returnPath);
 				}
 			}
 		} else if (rPath != null) {
 			if (rPath.outPaths != null) {
 				if (rPath.outPaths.size() == 1) {
 					Object val = acxt.getValue(rPath.outPaths.get(0).path);
-					if (rPath.path != null) {
-						acxt.putValue(rPath.path, val);
+					if (rPath.returnPath != null) {
+						acxt.putValue(rPath.returnPath, val);
 					}
 					return val;
 				} else if (rPath.outPaths.size() > 1) {
-					if (rPath.path != null) {
-						Object result = acxt.getValue(rPath.path);
+					if (rPath.returnPath != null) {
+						Object result = acxt.getValue(rPath.returnPath);
 						if (result instanceof Context) {
 							return result;
 						}
@@ -800,8 +800,8 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			} else {
 				return xrt.getContext();
 			}
-		} else if (obj instanceof Context && rPath != null && rPath.path != null) {
-			return (((Context)obj).getValue(rPath.path));
+		} else if (obj instanceof Context && rPath != null && rPath.returnPath != null) {
+			return (((Context)obj).getValue(rPath.returnPath));
 		}
 		if (outputs != null) {
 			obj = ((ServiceContext) acxt).getSubcontext(Path.toArray(outputs));
@@ -908,13 +908,13 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			} else if (service instanceof Context) {
 				ServiceContext cxt = (ServiceContext)service;
 				cxt.substitute(args);
-				ReturnPath returnPath = cxt.getReturnPath();
+				RequestPath returnPath = cxt.getRequestPath();
 				if (cxt instanceof EntModel) {
 					return ((Model)service).getResponse(args);
 				} else if (returnPath != null){
-					return cxt.getValue(returnPath.path, args);
+					return cxt.getValue(returnPath.returnPath, args);
 				} else {
-					throw new RoutineException("No return path in the context: "
+					throw new RoutineException("No return requestPath in the context: "
 							+ cxt.getName());
 				}
 			} else if (service instanceof MultiFiMogram) {

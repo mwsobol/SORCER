@@ -38,9 +38,9 @@ public interface FileURLHandler {
 
 
         /**
-         * Get a {@link URL} for a file path.
+         * Get a {@link URL} for a file returnPath.
          *
-         * @param path The file path to obtain a URL for.
+         * @param path The file returnPath to obtain a URL for.
          *
          * @return A URL that can be used to access the file.
          *

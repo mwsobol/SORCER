@@ -23,7 +23,6 @@ import net.jini.config.EmptyConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
-import sorcer.core.provider.Provider;
 import sorcer.util.Sorcer;
 
 import java.lang.reflect.Constructor;

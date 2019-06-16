@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.Cataloger;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.provider.cataloger.ServiceCataloger.CatalogerInfo.InterfaceList;
 import sorcer.core.provider.cataloger.ui.CatalogerUI;
@@ -443,7 +443,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 		public CatalogerInfo() {
 			super();
 			interfaceIgnoreList = new String[8];
-			interfaceIgnoreList[0] = "sorcer.core.provider.Provider";
+			interfaceIgnoreList[0] = "sorcer.service.Provider";
 			interfaceIgnoreList[1] = "sorcer.core.provider.AdministratableProvider";
 			interfaceIgnoreList[2] = "java.rmi.Remote";
 			interfaceIgnoreList[3] = "net.jini.core.constraint.RemoteMethodControl";
@@ -1032,10 +1032,10 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 							serviceName = service.getClass().getName();
 					}
 					if (serviceName.equals(providerName)) {
-						if (service instanceof sorcer.core.provider.Provider) {
+						if (service instanceof Provider) {
 							logger.info("service is a provider!");
 							try {
-								sorcer.core.provider.Provider temp = (sorcer.core.provider.Provider) service;
+								Provider temp = (Provider) service;
 								NetSignature method = new NetSignature(
 										methodName, serviceType);
 								Task task = new NetTask(serviceType

@@ -23,6 +23,7 @@ import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceMatches;
 import net.jini.core.lookup.ServiceTemplate;
 import sorcer.service.Context;
+import sorcer.service.Provider;
 import sorcer.service.Service;
 
 import java.net.URL;

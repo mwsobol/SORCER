@@ -97,7 +97,7 @@ public class Path implements Arg, Service {
     }
 
 	public String getDomainName() {
-	    // procedural paths ins args bind to a path's domain
+	    // procedural paths ins args bind to a returnPath's domain
 	    if (type.equals(Type.PROC)) {
 	        return path + "$" + domain;
         } else {

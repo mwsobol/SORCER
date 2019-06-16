@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;

@@ -27,7 +27,7 @@ import sorcer.space.array.DistribArray05;
 
 /**
  * SpaceContext persists its context nodes in a distributed array in JavaSpace with 
- * the key provided in the constructor. In the data context path values correspond
+ * the key provided in the constructor. In the data context requestPath values correspond
  * to indices of elements in the distributed array. 
  */
 

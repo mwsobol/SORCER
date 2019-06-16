@@ -32,7 +32,7 @@ import net.jini.core.lookup.ServiceMatches;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.entry.Name;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.jini.lookup.AttributesUtil;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;

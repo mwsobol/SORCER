@@ -19,11 +19,11 @@ package sorcer.service;
 /**
  * Created by Mike Sobolewski on 12/22/15.
  */
-public interface SignatureReturnPath {
+public interface RoutineRequestPath {
 
-    String getPath();
+    String getReturnPath();
 
-    void setPath(String path);
+    void setReturnPath(String path);
 
     String[] getInPaths();
 

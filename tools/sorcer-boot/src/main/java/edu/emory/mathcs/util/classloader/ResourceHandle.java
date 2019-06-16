@@ -27,7 +27,7 @@ import java.util.jar.*;
 public abstract class ResourceHandle {
 
     /**
-     * Return the key of the resource. The key is a "/"-separated path
+     * Return the key of the resource. The key is a "/"-separated returnPath
      * key that identifies the resource.
      */
     public abstract String getName();

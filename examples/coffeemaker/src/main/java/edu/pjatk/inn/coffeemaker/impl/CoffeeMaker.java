@@ -259,7 +259,7 @@ public class CoffeeMaker implements CoffeeMaking, CoffeeService {
 		}
 		context.putValue("coffee/price", r.getPrice());
 
-		if (context.getReturnPath() != null) {
+		if (context.getRequestPath() != null) {
 			context.setReturnValue(r.getPrice());
 		}
 

@@ -30,7 +30,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.Mograms;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -303,8 +303,8 @@ abstract public class ExertDispatcher implements Dispatcher {
 				fromContext = getSharedContext(fromPath, ctxId);
 				logger.debug("fromContext = {}", fromContext);
 				logger.debug("before updating toContext: {}", toContext
-                        + "\n>>> TO path: " + toPath + "\nfromContext: "
-                        + fromContext + "\n>>> FROM path: " + fromPath);
+                        + "\n>>> TO requestPath: " + toPath + "\nfromContext: "
+                        + fromContext + "\n>>> FROM requestPath: " + fromPath);
                 if (fromContext != null) {
                     // make parametric substitution if needed
                     if (argIndex >=0 ) {
@@ -347,7 +347,7 @@ abstract public class ExertDispatcher implements Dispatcher {
 
     protected ServiceContext getSharedContext(String path, String id) {
 		// try to getValue the dataContext with particular id.
-		// If not found, then find a dataContext with particular path.
+		// If not found, then find a dataContext with particular requestPath.
 		if (Context.EMPTY_LEAF.equals(path) || "".equals(path))
             return null;
         synchronized (sharedContexts) {

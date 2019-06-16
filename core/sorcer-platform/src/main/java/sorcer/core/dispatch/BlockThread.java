@@ -20,7 +20,7 @@ package sorcer.core.dispatch;
 import net.jini.config.ConfigurationException;
 import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.service.Arg;
 import sorcer.service.Block;

@@ -56,6 +56,7 @@ import sorcer.core.proxy.Partnership;
 import sorcer.scratch.ScratchManager;
 import sorcer.scratch.ScratchManagerSupport;
 import sorcer.service.*;
+import sorcer.service.Provider;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
 import sorcer.serviceui.UIComponentFactory;
@@ -147,7 +148,7 @@ import static sorcer.util.StringUtils.tName;
  * lookup services. Multiple SORCER servers can be deployed within a single
  * {@link sorcer.core.provider.ServiceProvider} as its own service beans.
  *
- * @see sorcer.core.provider.Provider
+ * @see Provider
  * @see net.jini.lookup.ServiceIDListener
  * @see ReferentUuid
  * @see sorcer.core.provider.AdministratableProvider
@@ -2106,7 +2107,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	protected String[] getResourceListing(Class clazz, String path) throws URISyntaxException, IOException {
 		URL dirURL = clazz.getClassLoader().getResource(path);
 		if (dirURL != null && dirURL.getProtocol().equals("file")) {
-                /* A file path: easy enough */
+                /* A file returnPath: easy enough */
 			return new File(dirURL.toURI()).list();
 		}
 
@@ -2129,10 +2130,10 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			Set<String> result = new HashSet<String>(); //avoid duplicates in case it is a subdirectory
 			while (entries.hasMoreElements()) {
 				String name = entries.nextElement().getName();
-				if (name.startsWith(path)) { //filter according to the path
+				if (name.startsWith(path)) { //filter according to the returnPath
 					if (name.endsWith("/")) continue;
 					String entry = name;
-//                    String entry = key.substring(path.length());
+//                    String entry = key.substring(returnPath.length());
 //                    doLog("entry = " + entry);
 //                    int checkSubdir = entry.indexOf("/");
 //                    if (checkSubdir >= 0) {

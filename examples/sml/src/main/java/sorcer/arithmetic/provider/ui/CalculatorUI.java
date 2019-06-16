@@ -6,7 +6,7 @@ import net.jini.lookup.entry.UIDescriptor;
 import net.jini.lookup.ui.MainUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.service.Service;
 import sorcer.serviceui.UIComponentFactory;

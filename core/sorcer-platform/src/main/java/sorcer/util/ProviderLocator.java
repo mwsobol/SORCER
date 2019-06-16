@@ -31,7 +31,7 @@ import net.jini.lookup.ServiceItemFilter;
 import net.jini.lookup.entry.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.provider.ProviderName;
 import sorcer.core.provider.ServiceName;
 import sorcer.core.signature.NetSignature;

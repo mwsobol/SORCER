@@ -1410,9 +1410,9 @@ public class operator extends Operator {
 		 return entry;
 	}
 
-//	public static Object impl(Model context, String path)
+//	public static Object impl(Model context, String requestPath)
 //			throws ContextException {
-//		return impl((ServiceContext) context,  path);
+//		return impl((ServiceContext) context,  requestPath);
 //	}
 
 	public static Object rimpl(Context context, String path)
@@ -1670,10 +1670,10 @@ public class operator extends Operator {
 	}
 
 //	public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
-//        String path = null;
+//        String requestPath = null;
 //		for (Evaluation d : dependers) {
-//            path = ((Identifiable)d).getName();
-//            if (path != null && path.equals("self")) {
+//            requestPath = ((Identifiable)d).getName();
+//            if (requestPath != null && requestPath.equals("self")) {
 //                ((Entry)d).setKey(((Domain) dependee).getName());
 //            }
 //            if (d instanceof ExecDependency && ((ExecDependency)d).getFiType().equals(Type.CONDITION)) {
@@ -1686,15 +1686,15 @@ public class operator extends Operator {
 //		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
 //			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
 //			for (Evaluation e : dependers) {
-//				path = ((Identifiable)e).getName();
-//				if (dm.getValue(path) != null) {
-//                    if (!dm.getValue(path).contains(e)) {
-//                        ((List) dm.getValue(path)).add(e);
+//				requestPath = ((Identifiable)e).getName();
+//				if (dm.getValue(requestPath) != null) {
+//                    if (!dm.getValue(requestPath).contains(e)) {
+//                        ((List) dm.getValue(requestPath)).add(e);
 //                    }
 //				} else {
 //					List<ExecDependency> del = new ArrayList();
 //					del.add((ExecDependency)e);
-//					dm.put(path, del);
+//					dm.put(requestPath, del);
 //				}
 //			}
 //		}

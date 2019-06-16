@@ -17,6 +17,7 @@
 
 package sorcer.core.provider;
 
+import sorcer.service.Provider;
 import sorcer.service.Service;
 
 public interface ServiceBean extends Service {

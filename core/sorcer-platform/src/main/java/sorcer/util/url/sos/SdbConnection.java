@@ -18,7 +18,7 @@ package sorcer.util.url.sos;
 
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.DatabaseStorer.Store;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.provider.StorageManagement;
 import sorcer.service.Accessor;
 import sorcer.service.Context;

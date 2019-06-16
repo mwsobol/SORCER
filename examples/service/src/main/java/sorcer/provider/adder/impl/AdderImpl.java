@@ -3,7 +3,7 @@ package sorcer.provider.adder.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.PositionalContext;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.provider.adder.Adder;
 import sorcer.service.Context;
@@ -43,10 +43,10 @@ public class AdderImpl implements Adder {
 		else
 			cxt.putValue("calculated/provider", getClass().getName());
 
-		if (context.getReturnPath() != null && context.getReturnPath().getPath() != null) {
+		if (context.getRequestPath() != null && context.getRequestPath().getReturnPath() != null) {
 			context.setReturnValue(result);
 		} else if (outpaths.size() == 1) {
-			// put the result in the existing output path
+			// put the result in the existing output returnPath
 			cxt.putValue(outpaths.get(0), result);
 		} else {
 			cxt.putValue(RESULT_PATH, result);

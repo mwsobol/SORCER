@@ -57,10 +57,10 @@ public class ServiceExertionTest {
 		eTask = exert(eTask);
 
 		// exert and them getValue the eval from task's context
-		//logger.info("eTask eval @ result/y = " + getValue(exert(eTask), path(result, y)));
+		//logger.info("eTask eval @ result/y = " + getValue(exert(eTask), returnPath(result, y)));
 		assertTrue("Wrong eTask eval for 100.0", get(eTask, attPath(result, y)).equals(100.0));
 		
-		//logger.info("eTask eval @ arg/x1 = " + exert(eTask, path("arg/x1")));
+		//logger.info("eTask eval @ arg/x1 = " + exert(eTask, returnPath("arg/x1")));
 		assertTrue("Wrong eTask eval for 20.0", get(eTask, attPath("arg/x1")).equals(20.0));
 
 		//logger.info("eTask eval @  arg/x2 = " + exert(eTask, "arg/x2"));
@@ -79,7 +79,7 @@ public class ServiceExertionTest {
 		//logger.info("eJob eval @  j2/t5/arg/x1 = " + getValue(eJob, "j2/t5/arg/x1"));
 		assertTrue(value(out, "j1/j2/t5/arg/x1").equals(20.0));
 			
-		//logger.info("eJob eval @ j2/t4/arg/x1 = " + exert(eJob, path("j1/j2/t4/arg/x1")));
+		//logger.info("eJob eval @ j2/t4/arg/x1 = " + exert(eJob, returnPath("j1/j2/t4/arg/x1")));
 		assertTrue(value(out, "j1/j2/t4/arg/x1").equals(10.0));
 
 		//logger.info("eJob eval @  j1/j2/t5/arg/x2 = " + exert(eJob, "j1/j2/t5/arg/x2"));
@@ -115,8 +115,8 @@ public class ServiceExertionTest {
 	private Routine createTask() throws Exception {
 		
 //		Task task = task("t1", sig("add", Adder.class), 
-//		   context("add", in(path(arg, x1), 20.0), in(path(arg, x2), 80.0),
-//		      out(path(result, y), null)));
+//		   context("add", in(requestPath(arg, x1), 20.0), in(requestPath(arg, x2), 80.0),
+//		      out(returnPath(result, y), null)));
 
 		Task task = task("t1", sig("add", AdderImpl.class), 
 				   context("add", inVal(attPath(arg, x1), 20.0), inVal(attPath(arg, x2), 80.0),
@@ -129,22 +129,22 @@ public class ServiceExertionTest {
 	private Routine createJob() throws Exception {
 	
 //		Task t3 = task("t3", sig("subtract", Subtractor.class), 
-//		   context("subtract", in(path(arg, x1), null), in(path(arg, x2), null),
-//		      out(path(result, y), null)));
+//		   context("subtract", in(requestPath(arg, x1), null), in(requestPath(arg, x2), null),
+//		      out(returnPath(result, y), null)));
 //		
 //		Task t4 = task("t4", sig("multiply", Multiplier.class), 
-//				   context("multiply", in(path(arg, x1), 10.0), in(path(arg, x2), 50.0),
-//				      out(path(result, y), null)));
+//				   context("multiply", in(requestPath(arg, x1), 10.0), in(requestPath(arg, x2), 50.0),
+//				      out(returnPath(result, y), null)));
 //		
 //		Task t5 = task("t5", sig("add", Adder.class), 
-//		   context("add", in(path(arg, x1), 20.0), in(path(arg, x2), 80.0),
-//		      out(path(result, y), null)));
+//		   context("add", in(requestPath(arg, x1), 20.0), in(requestPath(arg, x2), 80.0),
+//		      out(returnPath(result, y), null)));
 //
 //		// Service Composition j1(j2(t4(x1, x2), t5(x1, x2)), t3(x1, x2))
 //		//Job j1= job("j1", job("j2", t4, t5, strategy(Flow.PARALLEL, Access.PULL)), t3,
 //		Job job = job("j1", job("j2", t4, t5), t3,
-//		   pipe(out(t4, path(result, y)), in(t3, path(arg, x1))),
-//		   pipe(out(t5, path(result, y)), in(t3, path(arg, x2))));
+//		   pipe(out(t4, requestPath(result, y)), in(t3, requestPath(arg, x1))),
+//		   pipe(out(t5, requestPath(result, y)), in(t3, requestPath(arg, x2))));
 		
 		Task t3 = task("t3", sig("subtract", SubtractorImpl.class), 
 				context("subtract", inVal(attPath(arg, x1)), inVal(attPath(arg, x2)),

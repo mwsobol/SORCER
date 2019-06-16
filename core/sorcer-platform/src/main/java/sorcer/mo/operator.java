@@ -40,7 +40,7 @@ import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.Domain;
 import sorcer.service.modeling.*;
-import sorcer.service.Signature.ReturnPath;
+import sorcer.service.Routine.RequestPath;
 import sorcer.util.DataTable;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -520,8 +520,8 @@ public class operator {
         return map;
     }
 
-    public static ReturnPath returnPath(String path) {
-        return  new ReturnPath<>(path);
+    public static RequestPath returnPath(String path) {
+        return  new RequestPath<>(path);
     }
 
     public static Paradigmatic modeling(Paradigmatic paradigm) {

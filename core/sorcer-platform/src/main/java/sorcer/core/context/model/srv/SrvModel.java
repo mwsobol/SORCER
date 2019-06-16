@@ -39,7 +39,6 @@ import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -51,7 +50,7 @@ import static sorcer.so.operator.execMogram;
 /**
  * A Domain is a schematic description or representation of something, especially a system,
  * phenomenon, or service, that accounts for its properties and is used to study its characteristics.
- * Properties of a service model are represented by path of Context with values that depend
+ * Properties of a service model are represented by requestPath of Context with values that depend
  * on other properties and can be evaluated as specified by ths model. Evaluations of the service 
  * model args of the Srv multitype results in exerting a dynamic federation of services as specified by
  * these args. A rendezvous service provider orchestrating a choreography of the model
@@ -149,7 +148,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                 execDependencies(path, args);
                 val = get(path);
             } else {
-                ReturnPath rp = Arg.getReturnPath(args);
+                Routine.RequestPath rp = Arg.getReturnPath(args);
                 if (rp != null)
                     val = getReturnValue(rp);
                 else
@@ -207,7 +206,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                 } else if (carrier instanceof MogramEntry) {
                     val = evalMogram((MogramEntry)carrier, path, args);
                 } else if (carrier instanceof ValueCallable && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
-                    ReturnPath rp = ((Srv) val).getReturnPath();
+                    Routine.RequestPath rp = ((Srv) val).getReturnPath();
                     Object obj = null;
                     if (rp != null && rp.inPaths != null) {
                         Context cxt = getEvaluatedSubcontext(rp.inPaths, args);
@@ -216,8 +215,8 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                         obj = ((ValueCallable) carrier).call(this);
                     }
                     ((Srv) get(path)).setOut(obj);
-                    if (rp != null && rp.path != null)
-                        putValue(((Srv) val).getReturnPath().path, obj);
+                    if (rp != null && rp.returnPath != null)
+                        putValue(((Srv) val).getReturnPath().returnPath, obj);
                     val = obj;
                 }  else if (carrier instanceof MultiFiMogram) {
                     ((MultiFiMogram) carrier).setScope(this);
@@ -225,10 +224,10 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     Context cxt = null;
                     if (out instanceof Routine) {
                         cxt = ((Routine) out).getContext();
-                        SignatureReturnPath rt = ((Routine) out).getProcessSignature().getReturnPath();
-                        if (rt != null && rt.getPath() != null) {
+                        Routine.RequestPath rt = ((Routine) out).getProcessSignature().getRequestPath();
+                        if (rt != null && rt.getReturnPath() != null) {
                             Object obj = cxt.getReturnValue();
-                            putInoutValue(rt.getPath(), obj);
+                            putInoutValue(rt.getReturnPath(), obj);
                             ((Srv) get(path)).setOut(obj);
                             ((Routine) out).getContext().putValue(path, obj);
                             out = obj;
@@ -346,9 +345,9 @@ public class SrvModel extends EntModel implements Invocation<Object> {
     }
 
     private Object setSigResult(Signature signature, Object value) {
-        ReturnPath rp = (ReturnPath) signature.getReturnPath();
-        if (rp != null && rp.path != null) {
-            put(rp.path, value);
+        Routine.RequestPath rp = (Routine.RequestPath) signature.getRequestPath();
+        if (rp != null && rp.returnPath != null) {
+            put(rp.returnPath, value);
         }
         return value;
     }
@@ -357,11 +356,11 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         Context out = execSignature(sig, args);
         String sigrp = null;
         String  crp = null;
-        if (sig.getReturnPath() != null) {
-            sigrp = sig.getReturnPath().getPath();
+        if (sig.getRequestPath() != null) {
+            sigrp = sig.getRequestPath().getReturnPath();
         }
-        if (returnPath != null) {
-            crp = returnPath.path;
+        if (requestPath != null) {
+            crp = requestPath.returnPath;
         }
         try {
             if (crp != null) {
@@ -373,7 +372,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     ((Srv)get(path)).setOut(obj);
                     return obj;
                 } else {
-                    logger.warn("no eval for return path: {} in: {}", ((ReturnPath)sig.getReturnPath()).path, out);
+                    logger.warn("no eval for return requestPath: {} in: {}", ((Routine.RequestPath)sig.getRequestPath()).returnPath, out);
                     return out;
                 }
 
@@ -396,7 +395,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         Mogram out = mogram.exert(entries);
         if (out instanceof Routine){
             Context outCxt = out.getContext();
-            if (outCxt.getReturnPath() != null) {
+            if (outCxt.getRequestPath() != null) {
                 Object obj = outCxt.getReturnValue();
                 ((Srv)get(path)).setOut(obj);
                 return obj;

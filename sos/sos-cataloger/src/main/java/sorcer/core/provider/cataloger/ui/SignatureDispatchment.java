@@ -22,7 +22,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.event.ListSelectionListener;
 
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.service.Context;
 
 /**

@@ -32,7 +32,7 @@ import sorcer.core.exertion.NetJob;
 import sorcer.core.loki.member.LokiMemberUtil;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.provider.SpaceTaker;
 import sorcer.service.*;
 import sorcer.service.space.SpaceAccessor;

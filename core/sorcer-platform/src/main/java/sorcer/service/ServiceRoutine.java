@@ -33,7 +33,6 @@ import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.security.util.SorcerPrincipal;
-import sorcer.service.Signature.ReturnPath;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
 
@@ -166,16 +165,16 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
         if (result instanceof Context)
             dataContext.updateEntries((Context)result);
 
-        ReturnPath rp = dataContext.getReturnPath();
+        RequestPath rp = dataContext.getRequestPath();
         if (rp == null)
-            rp = (ReturnPath)exertion.getProcessSignature().getReturnPath();
+            rp = exertion.getProcessSignature().getRequestPath();
         else
-            exertion.getProcessSignature().setReturnPath(rp);
+            exertion.getProcessSignature().setRequestPath(rp);
 
         if (rp != null) {
             try {
-                if (((Context) result).getValue(rp.path) != null) {
-					dataContext.setReturnValue(((Context) result).getValue(rp.path));
+                if (((Context) result).getValue(rp.returnPath) != null) {
+					dataContext.setReturnValue(((Context) result).getValue(rp.returnPath));
 					dataContext.setFinalized(true);
 				}
             } catch (RemoteException e) {
@@ -203,10 +202,10 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
      * @see sorcer.service.Invoker#invoke(sorcer.service.Arg[])
      */
     public Object invoke(Arg[] entries) throws InvocationException {
-        ReturnPath rp = null;
+        RequestPath rp = null;
         for (Arg a : entries) {
-            if (a instanceof ReturnPath) {
-                rp = (ReturnPath) a;
+            if (a instanceof RequestPath) {
+                rp = (RequestPath) a;
                 break;
             }
         }
@@ -217,14 +216,14 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
                 obj =  xrt.getReturnValue();
             } else {
                 Context cxt = xrt.getContext();
-                if (rp.path == null)
+                if (rp.returnPath == null)
                     obj = cxt;
-                else if (rp.path.equals(Signature.SELF))
+                else if (rp.returnPath.equals(Signature.SELF))
                     obj = xrt;
                 else  if (rp.outPaths != null) {
                     obj = ((ServiceContext)cxt).getDirectionalSubcontext(rp.outPaths);
                 } else {
-                    obj = cxt.getValue(rp.path);
+                    obj = cxt.getValue(rp.returnPath);
                 }
             }
             return obj;
@@ -666,35 +665,35 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
      */
     public Object getReturnValue(Arg... entries) throws ContextException,
             RemoteException {
-        ReturnPath returnPath = null;
-        if (getProcessSignature() != null && getProcessSignature().getReturnPath() == null) {
-            returnPath = (Signature.ReturnPath)getProcessSignature().getReturnPath();
+        RequestPath reqPath = null;
+        if (getProcessSignature() != null && getProcessSignature().getRequestPath() == null) {
+            reqPath = getProcessSignature().getRequestPath();
         }
-        // check for returnPath in dataContext
-        if (returnPath == null) {
-            returnPath = dataContext.getReturnPath();
+        // check for requestPath in dataContext
+        if (reqPath == null) {
+            reqPath = dataContext.getRequestPath();
         }
         Object val = null;
-        if (returnPath != null) {
+        if (reqPath != null) {
             // check if the return value is finalized already
             if (dataContext.isFinalized()) {
-                return dataContext.get(returnPath.path);
+                return dataContext.get(reqPath.returnPath);
             }
-            if (returnPath.outPaths != null) {
-                val = getOutValue(returnPath.outPaths);
-                if (returnPath.path != null) {
-                    dataContext.putValue(returnPath.path, val);
+            if (reqPath.outPaths != null) {
+                val = getOutValue(reqPath.outPaths);
+                if (reqPath.returnPath != null) {
+                    dataContext.putValue(reqPath.returnPath, val);
                 }
                 dataContext.setFinalized(true);
                 return val;
-            } else if ((returnPath.path == null || returnPath.path.equals(Signature.SELF))
-                && returnPath.outPaths == null) {
+            } else if ((reqPath.returnPath == null || reqPath.returnPath.equals(Signature.SELF))
+                && reqPath.outPaths == null) {
                 val = dataContext;
-            } else if (returnPath.path != null && ! returnPath.path.equals(Context.RETURN)) {
-                val = dataContext.get(returnPath.path);
-                dataContext.putValue(returnPath.path, val);
+            } else if (reqPath.returnPath != null && ! reqPath.returnPath.equals(Context.RETURN)) {
+                val = dataContext.get(reqPath.returnPath);
+                dataContext.putValue(reqPath.returnPath, val);
             } else {
-                val = dataContext.get(returnPath.path);
+                val = dataContext.get(reqPath.returnPath);
             }
         } else {
             val = getContext();
@@ -906,8 +905,8 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
         try {
             substitute(entries);
             Routine evaluatedExertion = exert(entries);
-            ReturnPath rp = (ReturnPath)evaluatedExertion.getDataContext()
-                    .getReturnPath();
+            RequestPath rp = (RequestPath)evaluatedExertion.getDataContext()
+                    .getRequestPath();
             if (evaluatedExertion instanceof Job) {
                 cxt = ((Job) evaluatedExertion).getJobContext();
             } else {
@@ -916,12 +915,12 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
             ((ServiceMogram)cxt).provider = null;
 
             if (rp != null) {
-                if (rp.path == null)
+                if (rp.returnPath == null)
                     return cxt;
-                else if (rp.path.equals(Signature.SELF))
+                else if (rp.returnPath.equals(Signature.SELF))
                     return this;
-                else if (rp.path != null) {
-                    cxt.setReturnValue(cxt.getValue(rp.path));
+                else if (rp.returnPath != null) {
+                    cxt.setReturnValue(cxt.getValue(rp.returnPath));
                     Context out = null;
                     if (rp.outPaths != null && rp.outPaths.size() > 0) {
                         out = ((ServiceContext)cxt).getDirectionalSubcontext(rp.outPaths);

@@ -111,7 +111,7 @@ public class CollectionOperatorsTest {
 		assertEquals(context.get(1), 1.2);
 		context.putValue(1, 5.0);
 		assertEquals(context.get(1), 5.0);
-		//logger.info("context path 1: " + context.pathFor(1));
+		//logger.info("context returnPath 1: " + context.pathFor(1));
 		assertEquals(context.pathFor(1), "element[1]");
 		//logger.info("list context: " + context);
 		//logger.info("elements: " + context.getElements());

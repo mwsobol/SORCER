@@ -16,10 +16,7 @@
 package sorcer.core.signature;
 
 import sorcer.core.provider.ProviderName;
-import sorcer.service.Arg;
-import sorcer.service.Fidelity;
-import sorcer.service.ServiceFidelity;
-import sorcer.service.Signature;
+import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.sig;
@@ -44,8 +41,8 @@ public class ModelSignature extends ServiceSignature implements sig {
 		else
 			this.providerName = new ProviderName(providerName);
 		for (Arg p : parameters) {
-			if (p instanceof ReturnPath) {
-				this.returnPath = (ReturnPath)p;
+			if (p instanceof Routine.RequestPath) {
+				this.returnPath = (Routine.RequestPath)p;
 			}
 		}
 	}
@@ -65,8 +62,8 @@ public class ModelSignature extends ServiceSignature implements sig {
 		if (innerSignature instanceof NetSignature)
 			providerName = innerSignature.getProviderName();
 		for (Arg p : paramters) {
-			if (p instanceof ReturnPath) {
-				this.returnPath = (ReturnPath)p;
+			if (p instanceof Routine.RequestPath) {
+				this.returnPath = (Routine.RequestPath)p;
 			}
 		}
 	}
@@ -76,8 +73,8 @@ public class ModelSignature extends ServiceSignature implements sig {
 		this(selector, targetSignature);
 		this.fidelity = fidelity;
 		for (Arg p : paramters) {
-			if (p instanceof ReturnPath) {
-				this.returnPath = (ReturnPath)p;
+			if (p instanceof Routine.RequestPath) {
+				this.returnPath = (Routine.RequestPath)p;
 			}
 		}
 	}

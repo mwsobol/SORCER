@@ -24,7 +24,7 @@ import sorcer.core.DispatchResult;
 import sorcer.core.dispatch.*;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.loki.member.LokiMemberUtil;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.provider.Spacer;
 import sorcer.service.*;
 

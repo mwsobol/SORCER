@@ -29,7 +29,7 @@ import sorcer.core.monitor.MonitorEvent;
 import sorcer.core.monitor.MonitorableSession;
 import sorcer.core.monitor.MonitoringManagement;
 import sorcer.core.provider.MonitorManagementSession;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.provider.exertmonitor.lease.MonitorLandlord;
 import sorcer.core.provider.exertmonitor.lease.MonitorLeasedResource;
 import sorcer.service.*;

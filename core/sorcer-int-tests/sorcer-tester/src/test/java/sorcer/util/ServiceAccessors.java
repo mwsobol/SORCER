@@ -12,6 +12,7 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.provider.*;
 import sorcer.service.Accessor;
 import sorcer.service.DynamicAccessor;
+import sorcer.service.Provider;
 import sorcer.service.Service;
 
 import static org.junit.Assert.assertNotNull;

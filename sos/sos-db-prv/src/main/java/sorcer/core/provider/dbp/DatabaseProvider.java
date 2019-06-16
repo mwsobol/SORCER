@@ -30,10 +30,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.provider.StorageManagement;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.Routine;
-import sorcer.service.Identifiable;
+import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Variability;
 import sorcer.util.ModelTable;
@@ -329,8 +326,8 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		Uuid uuid = store(object);
 		Store type = getStoreType(object);
 		URL sdbUrl = getDatabaseURL(type, uuid);
-		if (((ServiceContext)context).getReturnPath() != null)
-			context.putOutValue(((ServiceContext)context).getReturnPath().path, sdbUrl);
+		if (((ServiceContext)context).getRequestPath() != null)
+			context.putOutValue(((ServiceContext)context).getRequestPath().returnPath, sdbUrl);
 
 		context.putOutValue(object_url, sdbUrl);
 		context.putOutValue(store_size, getStoreSize(type));
@@ -415,10 +412,10 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 //		TODO
 //		Object obj = retrieve(uuid, storeType);
 		Object obj = retrieve(uuid, Store.object);
-		if (((ServiceContext)context).getReturnPath() != null)
-			context.putOutValue(((ServiceContext)context).getReturnPath().path, obj);
+		if (((ServiceContext)context).getRequestPath() != null)
+			context.putOutValue(((ServiceContext)context).getRequestPath().returnPath, obj);
 		
-		// default returned path
+		// default returned reqestPath
 		context.putOutValue(object_retrieved, obj);
 		return context;
 	}
@@ -447,8 +444,8 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		} catch (Exception e) {
 			throw new ContextException(e);
 		}
-		if (((ServiceContext)context).getReturnPath() != null)
-			context.putOutValue(((ServiceContext)context).getReturnPath().path, sdbUrl);
+		if (((ServiceContext)context).getRequestPath() != null)
+			context.putOutValue(((ServiceContext)context).getRequestPath().returnPath, sdbUrl);
 
 		context.putOutValue(object_url, sdbUrl);
 		context.remove(object_updated);
@@ -536,7 +533,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	/**
 	 * Destroy the service, if possible, including its persistent storage.
 	 * 
-	 * @see sorcer.core.provider.Provider#destroy()
+	 * @see Provider#destroy()
 	 */
 	public void destroy() {
 		try {
@@ -673,8 +670,8 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	public Context contextSize(Context context) throws RemoteException,
 			ContextException, MalformedURLException {
 		Store type = (Store)context.getValue(StorageManagement.store_type);
-		if (((ServiceContext)context).getReturnPath() != null)
-			context.putOutValue(((ServiceContext)context).getReturnPath().path, getStoreSize(type));
+		if (((ServiceContext)context).getRequestPath() != null)
+			context.putOutValue(((ServiceContext)context).getRequestPath().returnPath, getStoreSize(type));
 		context.putOutValue(store_size, getStoreSize(type));
 		return context;
 	}

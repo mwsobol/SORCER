@@ -52,7 +52,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import net.jini.core.entry.Entry;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 
 public class AttributePanel extends JPanel {
 	private Provider provider;

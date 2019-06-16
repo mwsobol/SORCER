@@ -21,7 +21,7 @@ package sorcer.ui.exertlet;
 
 import net.jini.core.lookup.ServiceItem;
 import org.slf4j.Logger;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.proxy.Outer;
 import sorcer.ui.util.WindowUtilities;
 import sorcer.util.Log;

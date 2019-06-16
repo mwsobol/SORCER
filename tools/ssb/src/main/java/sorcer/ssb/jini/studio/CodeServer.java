@@ -99,7 +99,7 @@ public class CodeServer implements Runnable {
 
 	// picks a port between STARTPORT-ENDPORT
 	public void start() {
-		// setValue the class to use the path for, this alls the CodeServer to be in
+		// setValue the class to use the returnPath for, this alls the CodeServer to be in
 		// a separate JAR
 		if (_rootClass == null) {
 			_rootClass = getClass();

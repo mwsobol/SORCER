@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package sorcer.core.provider;
+package sorcer.service;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;

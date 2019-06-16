@@ -1,7 +1,7 @@
 package sorcer.worker.provider.impl;
 
 import sorcer.core.context.ServiceContext;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.worker.provider.InvalidWork;
@@ -63,9 +63,9 @@ public class WorkerBean implements Worker {
 		if (workToDo != null && (workToDo instanceof Work)) {
 			// consumer's work to be done
 			Context out = ((Work) workToDo).exec(context);
-			context.putValue(((ServiceContext) out).getReturnPath().path, out.getReturnValue());
+			context.putValue(((ServiceContext) out).getRequestPath().returnPath, out.getReturnValue());
 		} else {
-			throw new InvalidWork("No Work found to do at path consumer/work'!");
+			throw new InvalidWork("No Work found to do at requestPath consumer/work'!");
 		}
 
 		String reply = "Done work by: "

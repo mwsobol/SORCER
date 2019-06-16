@@ -26,7 +26,7 @@ import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
 import sorcer.util.Row;
-import sorcer.service.Signature.ReturnPath;
+import sorcer.service.Routine.RequestPath;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -113,7 +113,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 			if (path != null) {
 				val = get(path);
 			} else {
-				ReturnPath rp = Arg.getReturnPath(args);
+				RequestPath rp = Arg.getReturnPath(args);
 				if (rp != null)
 					val = getReturnValue(rp);
 				else if (mogramStrategy.getResponsePaths() != null
@@ -362,7 +362,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 		Object result = null;
 		try {
 			if (context != null) {
-				ReturnPath rp = ((ServiceContext)context).getReturnPath();
+				RequestPath rp = ((ServiceContext)context).getRequestPath();
 				this.append(context);
 				// check for multiple response of this model
 				if (rp != null && rp.outPaths.size() > 0) {
@@ -398,7 +398,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 								throw new InvocationException(
 										"No such invoker at: "
 												+ ((ServiceContext) context)
-												.getReturnPath().path);
+												.getRequestPath().returnPath);
 						}
 					}
 				} else {
@@ -413,7 +413,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 		}
 	}
 
-	private Object getReturnValue(ReturnPath rp) throws ContextException {
+	private Object getReturnValue(RequestPath rp) throws ContextException {
 		Object val = null;
 		// check for multiple response of this model
 		if (rp != null && rp.outPaths.size() > 0) {
@@ -426,8 +426,8 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 				}
 				val = new Row(Path.getPathList(rp.outPaths), vals);
 			}
-		} else if (rp != null && rp.path != null) {
-			val = getValue(rp.path);
+		} else if (rp != null && rp.returnPath != null) {
+			val = getValue(rp.returnPath);
 		}
 		return val;
 	}
@@ -489,7 +489,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 	}
 
 	/**
-	 * Returns an enumeration of all path marking variable nodes.
+	 * Returns an enumeration of all requestPath marking variable nodes.
 	 *
 	 * @return enumeration of marked variable nodes.
 	 * @throws ContextException

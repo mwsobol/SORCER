@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Used by LoaderConfiguration and ScripterThread to load jars from path
+ * Used by LoaderConfiguration and ScripterThread to load jars from returnPath
  * User: Pawel.Rubach
  * Date: 06.06.13
  * Time: 01:56
@@ -192,7 +192,7 @@ public class LoaderConfigurationHelper {
 
 
     /**
-     * Get files to load a possibly filtered path. Filters are defined
+     * Get files to load a possibly filtered returnPath. Filters are defined
      * by using the * wildcard like in any shell.
      */
     public static List<URL> getFilesFromFilteredPath(String filter) {
@@ -224,8 +224,8 @@ public class LoaderConfigurationHelper {
         return propertyValue;
     }
 
-    // change path representation to something more system independent.
-    // This solution is based on an absolute path
+    // change returnPath representation to something more system independent.
+    // This solution is based on an absolute returnPath
     private static String getSlashyPath(final String path) {
         String changedPath = path;
         if (File.separatorChar != '/')

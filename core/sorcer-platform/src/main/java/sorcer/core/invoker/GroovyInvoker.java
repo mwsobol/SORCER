@@ -137,7 +137,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 				for (Arg p : args) {
 					Object obj = invokeContext.getValue(p.getName());
 					if (obj == null || obj == Context.none) {
-						// try extended path
+						// try extended returnPath
 						obj = ((ServiceContext)invokeContext).getValueEndsWith(p.getName());
 					}
 					if (obj != null && obj != Context.none) {

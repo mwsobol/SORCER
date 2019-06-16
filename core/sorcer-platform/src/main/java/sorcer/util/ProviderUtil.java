@@ -17,7 +17,7 @@
 
 package sorcer.util;
 
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.service.Accessor;
 

@@ -19,7 +19,7 @@ package sorcer.util;
 
 import net.jini.config.ConfigurationException;
 import net.jini.config.EmptyConfiguration;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.service.Accessor;
 
 import java.rmi.RemoteException;

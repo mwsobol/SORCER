@@ -137,31 +137,31 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	public Class[] getMatchTypes();
 
 	/**
-	 * Assigns a path to the return execute by this signature.
+	 * Assigns a returnPath to the return execute by this signature.
 	 *
 	 * @param path
 	 *            to the return execute
 	 */
-	public void setReturnPath(SignatureReturnPath path);
+	public void setRequestPath(Routine.RequestPath path);
 
 	public void setReturnPath(String path);
 
 	/**
-	 * Assigns a path to the return execute with a path and directional attribute.
+	 * Assigns a returnPath to the return execute with a returnPath and directional attribute.
 	 *
 	 * @param path
 	 *            to the return execute
 	 * @param direction
-	 *            the path directional attribute
+	 *            the returnPath directional attribute
 	 */
 	public void setReturnPath(String path, Direction direction);
 
 	/**
-	 * Returns a path to the return execute by this signature.
+	 * Returns a returnPath to the return execute by this signature.
 	 *
-	 * @return path to the return execute
+	 * @return returnPath to the return execute
 	 */
-	public SignatureReturnPath getReturnPath();
+	public Routine.RequestPath getRequestPath();
 
 	/**
 	 * Returns a signature Type of this signature.
@@ -174,7 +174,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	 * Returns a inConnector specifying output paths for existing
 	 * paths in returned context for this signature.
 	 *
-	 * @return a context mapping output paths to existing path
+	 * @return a context mapping output paths to existing returnPath
 	 */
 	public Context getInConnector();
 
@@ -456,8 +456,8 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 //        }
 //
 //        public Paths(Path[] paths) {
-//            for (Path path : paths) {
-//                add(path) ;
+//            for (Path returnPath : paths) {
+//                add(returnPath) ;
 //            }
 //        }
 //        public Paths(String[] names) {
@@ -469,7 +469,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 //        public String[] toStringArray() {
 //            String[] paths = new String[size()];
 //            for (int i = 0; i < size(); i++)
-//                paths[i] = getValue(i).path;
+//                paths[i] = getValue(i).returnPath;
 //
 //            return paths;
 //        }
@@ -479,9 +479,9 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 //            return this.toArray(paths);
 //        }
 //
-//		public boolean containsPath(String path) {
+//		public boolean containsPath(String returnPath) {
 //			for (Path p : this) {
-//				if (p.getName().equals(path)) {
+//				if (p.getName().equals(returnPath)) {
 //					return true;
 //				}
 //			}
@@ -654,207 +654,4 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 		}
 	}
 
-	public static class ReturnPath<T> implements SignatureReturnPath, Serializable, Arg {
-		static final long serialVersionUID = 6158097800741638834L;
-		public String path;
-		public Direction direction;
-		public Out outPaths;
-		public Path[] inPaths;
-		public Class<T> type;
-		private Context dataContext;
-		public SessionPaths sessionPaths;
-		public Map<String, Out> evalOutPaths;
-
-		public ReturnPath() {
-			// return the context
-			path = Signature.SELF;
-		}
-
-		public ReturnPath(String path, Out argPaths) {
-			this.path = path;
-			if (argPaths != null && argPaths.size() > 0) {
-				Path[] ps = new Path[argPaths.size()];
-				this.outPaths = argPaths;
-				direction = Direction.OUT;
-			}
-		}
-
-		public ReturnPath(Path path, In argPaths) {
-			this.path = path.getName();
-			if (argPaths != null && argPaths.size() > 0) {
-				Path[] ps = new Path[argPaths.size()];
-				this.inPaths = argPaths.toArray(ps);
-				if (path.direction != null) {
-					direction = path.direction;
-				} else {
-					direction = Direction.IN;
-				}
-			}
-		}
-
-		public void setInputPaths(In argPaths) {
-			if (argPaths != null && argPaths.size() > 0) {
-				Path[] ps = new Path[argPaths.size()];
-				this.inPaths = argPaths.toArray(ps);
-			}
-		}
-
-		public ReturnPath(String path, In argPaths) {
-			this.path = path;
-			if (argPaths != null && argPaths.size() > 0) {
-				Path[] ps = new Path[argPaths.size()];
-				this.inPaths = argPaths.toArray(ps);
-				direction = Direction.IN;
-			}
-		}
-
-		public ReturnPath(Out outPaths) {
-			this(null, null, outPaths);
-		}
-
-		public ReturnPath(In inPaths) {
-			this(null, inPaths, null);
-		}
-
-		public ReturnPath(Path[] paths) {
-			inPaths = paths;
-		}
-
-		public ReturnPath(String path, In inPaths, Out outPaths) {
-			this.path = path;
-			if (outPaths != null && outPaths.size() > 0) {
-				this.outPaths = outPaths;
-			}
-			if (inPaths != null && inPaths.size() > 0) {
-				Path[] ps = new Path[inPaths.size()];
-				this.inPaths = inPaths.toArray(ps);
-			}
-			direction = Direction.INOUT;
-		}
-
-		public ReturnPath(String path, In inPaths, Out outPaths, SessionPaths sessionPaths) {
-			this(path, inPaths, outPaths);
-			this.sessionPaths = sessionPaths;
-		}
-
-		public ReturnPath(String path, SessionPaths sessionPaths, Path... argPaths) {
-			this(path, argPaths);
-			this.sessionPaths = sessionPaths;
-		}
-
-		public ReturnPath(String path, Path... argPaths) {
-			this.path = path;
-			if (argPaths != null && argPaths.length > 0) {
-				this.outPaths = new Out(argPaths);
-				direction = Direction.OUT;
-			}
-		}
-
-		public ReturnPath(String path, Direction direction, Path... argPaths) {
-			this.path = path;
-			this.outPaths = new Out(argPaths);
-			this.direction = direction;
-		}
-
-		public ReturnPath(String path, Direction direction,
-						  Class<T> returnType, Path... argPaths) {
-			this.path = path;
-			this.direction = direction;
-			this.outPaths = new Out(argPaths);
-			type = returnType;
-		}
-
-		public String getName() {
-			return path;
-		}
-
-		public String toString() {
-			StringBuffer sb = new StringBuffer(path != null ? path : "no path");
-			if (outPaths != null)
-				sb.append("\noutPaths: " + outPaths);
-			if (inPaths != null)
-				sb.append("\ninPaths: " + inPaths);
-			return sb.toString();
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-
-			ReturnPath that = (ReturnPath) o;
-
-			if (!outPaths.equals(that.outPaths)) return false;
-			if (direction != that.direction) return false;
-			if (!path.equals(that.path)) return false;
-			if (type != null ? !type.equals(that.type) : that.type != null) return false;
-
-			return true;
-		}
-
-		public Context getDataContext() {
-			return dataContext;
-		}
-
-		public void setDataContext(Context dataContext) {
-			this.dataContext = dataContext;
-		}
-
-		@Override
-		public int hashCode() {
-			int result = path.hashCode();
-			result = 31 * result + (direction != null ? direction.hashCode() : 0);
-			result = 31 * result + (outPaths != null ? outPaths.hashCode() : 0);
-			result = 31 * result + (inPaths != null ? outPaths.hashCode() : 0);
-			result = 31 * result + (type != null ? type.hashCode() : 0);
-			return result;
-		}
-
-		public static String[] getPaths(Path[] paths) {
-			String[] ps = new String[paths.length];
-			for (int i = 0; i < paths.length; i++) {
-				ps[i] = paths[i].path;
-			}
-			return ps;
-		}
-
-		public Path[] getInSigPaths() {
-			return inPaths;
-		}
-
-
-		public Out getOutSigPaths() {
-			return outPaths;
-		}
-
-		@Override
-		public String getPath() {
-			return path;
-		}
-
-		@Override
-		public void setPath(String path) {
-			this.path = path;
-		}
-
-		@Override
-		public String[] getInPaths() {
-			if (inPaths != null)
-				return getPaths(inPaths);
-			else
-				return null;
-		}
-
-		@Override
-		public Out getOutPaths() {
-			if (outPaths != null)
-				return outPaths;
-			else
-				return null;
-		}
-
-		public Object execute(Arg... args) {
-			return this;
-		}
-	}
 }

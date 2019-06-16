@@ -15,7 +15,7 @@
  */
 package sorcer.core.monitoring;
 
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

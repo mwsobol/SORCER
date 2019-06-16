@@ -22,7 +22,6 @@ import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
-import sorcer.core.provider.Provider;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.modeling.Discipline;
 import sorcer.service.modeling.Getter;

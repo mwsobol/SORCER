@@ -46,7 +46,7 @@ public class ResourceUtils {
     }
 
     /**
-     * Returns the path converted to the canonic form. Examples:
+     * Returns the returnPath converted to the canonic form. Examples:
      * <pre>
      *  "/aaa/b/"                                      ->  "/aaa/b/"
      *  "/aaa/b/c/../.."                               ->  "/aaa/"

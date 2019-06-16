@@ -175,7 +175,7 @@ public class ContextTree extends JPanel {
 
 	/**
 	 * This function recursively goes thru the tree adding items to the context
-	 * using the tree path as the path for the context and the datanode as the
+	 * using the tree requestPath as the requestPath for the context and the datanode as the
 	 * data. The function also marks the node for the multitype of data it is
 	 * (input/output).
 	 * 
@@ -184,8 +184,8 @@ public class ContextTree extends JPanel {
 	 * @param current
 	 *            Object representing were we currently are in the tree
 	 * @param currentPath
-	 *            String representing the current path we are in the tree, added
-	 *            to with the context path separator of /
+	 *            String representing the current returnPath we are in the tree, added
+	 *            to with the context returnPath separator of /
 	 * @return Context we added to.
 	 */
 	public Context doRootGenerateContext(Context theContext, Object current,
@@ -199,9 +199,9 @@ public class ContextTree extends JPanel {
 		// that we are
 		// not at root
 		{ // dont want root because it is technically the key of the context
-			// and not a valid path
+			// and not a valid returnPath
 
-			// we have no kids so we just output the path.
+			// we have no kids so we just output the returnPath.
 			try {
 				Object child = ((DefaultMutableTreeNode) current)
 						.getUserObject();
@@ -210,7 +210,7 @@ public class ContextTree extends JPanel {
 				{
 					ContextNodeType cnt = (ContextNodeType) child;
 
-					// output the path with the correct multitype
+					// output the returnPath with the correct multitype
 					if (cnt.getDirection().equals(ContextNodeType.INPUTTYPE))
 						theContext.putInValue(currentPath, "");
 					if (cnt.getDirection().equals(ContextNodeType.OUTPUTTYPE))
@@ -280,14 +280,14 @@ public class ContextTree extends JPanel {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-						} else // child is another path node, recursivly prc
+						} else // child is another returnPath node, recursivly prc
 						// this function on that node
 						{
 
 							String tempPath = currentPath;
 							if (currentPath.length() != 0) // currentPath+"/"+((DefaultMutableTreeNode)current).getUserObject().toString();
 								tempPath += "/";
-							tempPath += cnt.getValue(); // update the path
+							tempPath += cnt.getValue(); // update the returnPath
 							// System.out.println(" not data node "+i+" tp="+tempPath+" curr");
 
 							// prc on the child node
@@ -392,7 +392,7 @@ public class ContextTree extends JPanel {
 	 * Add child to the tree under parent, and setValue the visibility of it. If
 	 * parent is incorrect the child will be added under the root. This method
 	 * enforces rules prevents any impl from appears as a child to a datanode,
-	 * also only allows one data node for path.
+	 * also only allows one data node for returnPath.
 	 * 
 	 * 
 	 * @param parent
@@ -429,7 +429,7 @@ public class ContextTree extends JPanel {
 						return null; // prevent datanode children on the root
 					for (int i = 0; i < parent.getChildCount(); i++) // only one
 					// datanode
-					// per-path
+					// per-returnPath
 					{
 						DefaultMutableTreeNode cNode = (DefaultMutableTreeNode) treeModel
 								.getChild(parent, i);
@@ -437,7 +437,7 @@ public class ContextTree extends JPanel {
 							if (((ContextNodeType) cNode.getUserObject())
 									.isDataNode())
 								return null; // enforce only one datanode per
-							// path
+							// returnPath
 						}
 					}
 				}
@@ -456,17 +456,17 @@ public class ContextTree extends JPanel {
 	}
 
 	/**
-	 * Returns the DefaultMutableTreeNode represented by the path specified.
+	 * Returns the DefaultMutableTreeNode represented by the returnPath specified.
 	 * 
 	 * @param path
-	 *            String representing the path to find
-	 * @return DefaultMutableTreeNode for the path requested, returns null if
-	 *         the path was not found
+	 *            String representing the returnPath to find
+	 * @return DefaultMutableTreeNode for the returnPath requested, returns null if
+	 *         the returnPath was not found
 	 */
 	public DefaultMutableTreeNode nodeExists(String path) {
-		String splitPath[] = path.split("/"); // getValue each part of the path
+		String splitPath[] = path.split("/"); // getValue each part of the returnPath
 		Object nodes = treeModel.getRoot();
-		for (String indPath : splitPath) // go thru each part of the path
+		for (String indPath : splitPath) // go thru each part of the returnPath
 		{
 			Boolean foundNode = false; // indicate we have not found the node
 			// System.out.println("working on "+indPath);
@@ -488,7 +488,7 @@ public class ContextTree extends JPanel {
 			if (!foundNode) // no match kill it off
 				return null;
 
-			// System.out.println("Children of path"+indPath+" num:"+treeModel.getChildCount(new
+			// System.out.println("Children of returnPath"+indPath+" num:"+treeModel.getChildCount(new
 			// DefaultMutableTreeNode(indPath)));
 		}
 

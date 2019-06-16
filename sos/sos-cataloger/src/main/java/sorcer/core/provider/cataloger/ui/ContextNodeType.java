@@ -20,7 +20,7 @@ package sorcer.core.provider.cataloger.ui;
 /**
  * This class represents a ContextNode and is used in the formation of the
  * ContextTree for the UI. This class stores the current data object, a boolean
- * indicating if it is a dataNode or path and optionally the direction
+ * indicating if it is a dataNode or returnPath and optionally the direction
  * (input/output). This data is used when the tree is converted back to a
  * context.
  * 
@@ -35,28 +35,28 @@ public class ContextNodeType {
 	private Object value;
 
 	/**
-	 * boolean indicating if this represents a datanode=true or path=false
+	 * boolean indicating if this represents a datanode=true or returnPath=false
 	 */
 	private boolean dataNode;
 
 	/**
-	 * String representing the direction (input/output marking on the path),
+	 * String representing the direction (input/output marking on the returnPath),
 	 * only used for paths.
 	 */
 	private String direction;
 
 	/**
-	 * String for the INPUT path
+	 * String for the INPUT returnPath
 	 */
 	public static String INPUTTYPE = "Input";
 
 	/**
-	 * String for the OUTPUT path
+	 * String for the OUTPUT returnPath
 	 */
 	public static String OUTPUTTYPE = "Output";
 
 	/**
-	 * String for the INPUT and OUTPUT path
+	 * String for the INPUT and OUTPUT returnPath
 	 */
 	public static String INOUTPUTTYPE = "InOutput";
 
@@ -67,8 +67,8 @@ public class ContextNodeType {
 
 	/**
 	 * Constructor for new nodes, accepts the original data from the context and
-	 * a boolean indicating if it is a data node. If it is a path then its a
-	 * string with the path key
+	 * a boolean indicating if it is a data node. If it is a returnPath then its a
+	 * string with the returnPath key
 	 * 
 	 * @param v
 	 *            Object representing the data to be stored

@@ -33,7 +33,7 @@ import groovy.lang.GroovyShell;
  * 
  * Providers that utilize the execute methods of this object must add:
  * 
- *  ${path.separator}${iGrid.home}/common/groovy.jar to the sorcer-jars section of their run.xml
+ *  ${requestPath.separator}${iGrid.home}/common/groovy.jar to the sorcer-jars section of their run.xml
  *  
  *  See groovy.doc under the notes section for more information.
  * 
@@ -101,9 +101,9 @@ public class ContextGroovyObject implements Serializable
 			}
 			else //issue with the shell it self.
 			{
-				message="Groovy support missing-add ${path.separator}${iGrid.home}/common/groovy.jar to sorcer-jars in your run.xml";
+				message="Groovy support missing-add ${requestPath.separator}${iGrid.home}/common/groovy.jar to sorcer-jars in your run.xml";
 				System.out.println("***ERROR-Current provider was not run with Groovy support ***");
-				System.out.println("This can be fixed by adding ${path.separator}${iGrid.home}/common/groovy.jar to sorcer-jars in your run.xml");
+				System.out.println("This can be fixed by adding ${requestPath.separator}${iGrid.home}/common/groovy.jar to sorcer-jars in your run.xml");
 				System.out.println("More information on Groovy support is available under notes/groovy.doc");
 			}
 			throw new Exception(message);
@@ -161,9 +161,9 @@ public class ContextGroovyObject implements Serializable
 			}
 			else //issue with the shell it self.
 			{
-				message="Groovy support missing-add ${path.separator}${iGrid.home}/common/groovy.jar to sorcer-jars in your run.xml";
+				message="Groovy support missing-add ${requestPath.separator}${iGrid.home}/common/groovy.jar to sorcer-jars in your run.xml";
 				System.out.println("***ERROR-Current provider was not run with Groovy support ***");
-				System.out.println("This can be fixed by adding ${path.separator}${iGrid.home}/common/groovy.jar to sorcer-jars in your run.xml");
+				System.out.println("This can be fixed by adding ${requestPath.separator}${iGrid.home}/common/groovy.jar to sorcer-jars in your run.xml");
 				System.out.println("More information on Groovy support is available under notes/groovy.doc");
 			}
 			throw new Exception(message);

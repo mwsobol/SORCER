@@ -29,7 +29,7 @@ import sorcer.core.loki.member.LokiMemberUtil;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Cataloger;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;

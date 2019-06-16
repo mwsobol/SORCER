@@ -267,7 +267,7 @@ public class CollectionOperators {
 
 		Entry<Double> e = dbEnt("arg/x1", 10.0);
 		assertEquals("arg/x1", key(e));
-		// a path is a String - usually a sequence of attributes
+		// a returnPath is a String - usually a sequence of attributes
 		assertEquals("arg/x1", path(e));
 
 		assertTrue(exec(e).equals(10.0));
@@ -310,7 +310,7 @@ public class CollectionOperators {
 		// keys and values of args
 		assertEquals(key(x("key", "Mike")), "key");
 		assertEquals(val(x("key", "Mike")), "Mike");
-		// when using namespaces use path for the key of context (map) variables
+		// when using namespaces use returnPath for the key of context (map) variables
 		assertEquals(path(x("screen/height", 12.0)), "screen/height");
 
 		assertEquals(keyValue(map1, "key"), "Mike");

@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import sorcer.core.provider.AdministratableProvider;
-import sorcer.core.provider.Provider;
+import sorcer.service.Provider;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;

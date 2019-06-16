@@ -27,7 +27,6 @@ import sorcer.core.context.model.srv.Srv;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
-import sorcer.service.Signature.ReturnPath;
 
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -58,8 +57,8 @@ public class EvaluationTask extends Task {
 				dataContext.setScope(new EntModel(key));
 		}
 		if (evaluator instanceof Srv) {
-			if (dataContext.getReturnPath() == null)
-				dataContext.setReturnPath(Signature.SELF_VALUE);
+			if (dataContext.getRequestPath() == null)
+				dataContext.setRequestPath(Signature.SELF_VALUE);
 		}
 	}
 
@@ -144,11 +143,11 @@ public class EvaluationTask extends Task {
 				result = evaluator.evaluate(args);
 			}
 
-			if (getProcessSignature().getReturnPath() != null)
-				dataContext.setReturnPath(getProcessSignature().getReturnPath());
+			if (getProcessSignature().getRequestPath() != null)
+				dataContext.setRequestPath(getProcessSignature().getRequestPath());
 			dataContext.setReturnValue(result);
 			if (evaluator instanceof Scopable && evaluator.getScope() != null) {
-				((evaluator).getScope()).putValue(dataContext.getReturnPath().path, result);
+				((evaluator).getScope()).putValue(dataContext.getRequestPath().returnPath, result);
 			}
 			if (evaluator instanceof Srv && dataContext.getScope() != null)
 				dataContext.getScope().putValue(((Identifiable)evaluator).getName(), result);
@@ -171,15 +170,15 @@ public class EvaluationTask extends Task {
 		}
 
 		if (val instanceof ValueCallable && evaluator.getType() == Functionality.Type.LAMBDA) {
-			ReturnPath rp = evaluator.getReturnPath();
+			RequestPath rp = evaluator.getReturnPath();
 			if (rp != null && rp.inPaths != null) {
 				Context cxt = ((ServiceContext)getScope()).getDirectionalSubcontext(rp.inPaths);
 				out = ((ValueCallable)val).call(cxt);
 			} else {
 				out = ((ValueCallable) val).call(getScope());
 			}
-			if (rp != null && rp.path != null)
-				putValue((evaluator).getReturnPath().path, out);
+			if (rp != null && rp.returnPath != null)
+				putValue((evaluator).getReturnPath().returnPath, out);
 		}
 		return out;
 	}
