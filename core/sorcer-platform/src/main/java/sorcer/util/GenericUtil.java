@@ -154,7 +154,7 @@ public class GenericUtil {
 	 * @param fileObj
 	 *            File or directory
 	 * @param parentPath
-	 *            Relative parent requestPath of fileObj to be stored in the archive
+	 *            Relative parent path of fileObj to be stored in the archive
 	 * @param jarOut
 	 *            Output stream connected to an open archive
 	 */
@@ -234,7 +234,7 @@ public class GenericUtil {
 
 	/**
 	 * This method append the contents of the string array sA to file at the
-	 * requestPath dataFile
+	 * path dataFile
 	 * 
 	 * @param dataFile
 	 *            File where the string array contents is to be appended
@@ -305,7 +305,7 @@ public class GenericUtil {
 		// the .replace("\\", "/") is for windows-cygwin safety
 		scriptVect.add("export MCR_CACHE_ROOT=" + mcrCacheRoot.getAbsolutePath().replace("\\", "/"));
 		
-		// shorten the mcrcache requestPath for windows...hit a limit on some installations
+		// shorten the mcrcache path for windows...hit a limit on some installations
 		scriptVect.add("export IS_CYGWIN=`uname -s | awk 'BEGIN{flag=0} {if ($0~/CYGWIN/) {flag=1}} END{print flag}'`");
 		scriptVect.add("if [ $IS_CYGWIN -eq 1 ]; then");
 //		scriptVect.add("\texport MCR_CACHE_ROOT=`cygpath -ds $MCR_CACHE_ROOT`");
@@ -338,7 +338,7 @@ public class GenericUtil {
 	}
 
 	/**
-	 * This method given a URL sourceURL and file requestPath destinationFile writes
+	 * This method given a URL sourceURL and file path destinationFile writes
 	 * the contents of the URL to file.
 	 * 
 	 * @param sourceUrl
@@ -374,7 +374,7 @@ public class GenericUtil {
 	}
 
 	/**
-	 * Appends the contents of Vector afc to file at requestPath dataFile
+	 * Appends the contents of Vector afc to file at path dataFile
 	 * 
 	 * @param dataFile
 	 *            Path to a file where contents are to be appended
@@ -425,7 +425,7 @@ public class GenericUtil {
 	}
 
 	/**
-	 * A method that creates a copy of file at new file requestPath
+	 * A method that creates a copy of file at new file path
 	 * @param sourceFile Source file 
 	 * @param destinationFile Destination file 
 	 * @throws IOException
@@ -437,7 +437,7 @@ public class GenericUtil {
 		//  Creating a new input file stream that is connected to the source file
 		InputStream is = new FileInputStream(sourceFile);
 		try {
-			// Attempting to redirect the input file stream of the source file to the destination file requestPath
+			// Attempting to redirect the input file stream of the source file to the destination file path
 			redirectInputStream2File(is, destinationFile);
 		} catch (IOException e) {
 			// Caught an IOException 
@@ -495,7 +495,7 @@ public class GenericUtil {
 	 * Given a list of File objects. This function constructs a
 	 * jar archive. the list of File objects can be files and or directories
 	 * @param fileList List of files and directories
-	 * @param jarArchive File requestPath of the jar archive
+	 * @param jarArchive File path of the jar archive
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
@@ -696,13 +696,13 @@ public class GenericUtil {
 	/**
 	 * This method was originally implemented by S. A. Burton, but has been
 	 * rewritten by E. D. Thompson in a a cleaner more efficient syntax. The
-	 * function gets the requestPath to a file with the requestPath file as an argument and
+	 * function gets the path to a file with the path file as an argument and
 	 * returns the file's contents in a vector of strings where each element of
 	 * the vector corresponds to a line in the file.
 	 * 
 	 * @param file
 	 *            Path to the file
-	 * @return Vector containing the file at the requestPath file contents
+	 * @return Vector containing the file at the path file contents
 	 * 
 	 * @author E. D. Thompson, S. A. Burton
 	 * @throws FileNotFoundException
@@ -1376,7 +1376,7 @@ public class GenericUtil {
 			String[] shellScript, String tildePath)
 			throws InterruptedException, IOException {
 
-		// getValue absolute requestPath from tildePath on current file system
+		// getValue absolute path from tildePath on current file system
 		StringTokenizer sT = new StringTokenizer(tildePath, "/");
 		String lastName = sT.nextToken();
 		lastName = lastName.substring(1);
@@ -1496,7 +1496,7 @@ public class GenericUtil {
 	 * 
 	 * @author R. M. Kolonay, S. A. Burton
 	 * @param shellScriptFile
-	 *            Shell script file requestPath
+	 *            Shell script file path
 	 * @param execLog
 	 *            Log file
 	 * @param scriptInputRecords
@@ -1977,11 +1977,11 @@ public class GenericUtil {
 	 * 
 	 * @author S. A. Burton
 	 * @param scriptFile
-	 *            Script file requestPath
+	 *            Script file path
 	 * @param scriptContents
 	 *            Vector of strings containing the script file contents
 	 * @param logFile
-	 *            Log file requestPath
+	 *            Log file path
 	 * @param timeout
 	 *            Time out period
 	 * @param printStdOut
@@ -2095,7 +2095,7 @@ public class GenericUtil {
 //					cygwinHome = cygwinHomeTest;
 //				} else {
 //					String msg = "***error: the environment variable CYGWIN_HOME is not set correctly."
-//							+ "(Check env and make sure to use DOS file requestPath format.)";
+//							+ "(Check env and make sure to use DOS file path format.)";
 //					logger.error(msg);
 //					throw new Exception(msg);
 //				}
@@ -2140,13 +2140,13 @@ public class GenericUtil {
 	 * 
 	 * @author E. D. Thompson and S. A. Burton
 	 * @param scriptFile
-	 *            Script file requestPath
+	 *            Script file path
 	 * @param scriptContents
 	 *            List of strings containing the script file contents
 	 * @param outFile
-	 *            Standard out file requestPath
+	 *            Standard out file path
 	 * @param errFile
-	 *            Standard error file requestPath
+	 *            Standard error file path
 	 * @param jobCheckInterval
 	 *            Time to wait between job status checks
 	 * @return Exit eval of exert command with worker method
@@ -2477,7 +2477,7 @@ public class GenericUtil {
 
 	/**
 	 * setFileContents writes the contents of a vector of a string to a file.
-	 * The function receives as arguments an output file requestPath and a vector. This
+	 * The function receives as arguments an output file path and a vector. This
 	 * function is written by S. A. Burton and modified by E. D. Thompson
 	 * 
 	 * @author S. A. Burton
@@ -2565,12 +2565,12 @@ public class GenericUtil {
 	}
 
 	/**
-	 * unpackArchive - Unpacks a JAR archive to the destination file requestPath
+	 * unpackArchive - Unpacks a JAR archive to the destination file path
 	 * 
 	 * @param jarArchive
-	 *            JAR archive file requestPath
+	 *            JAR archive file path
 	 * @param destinationPath
-	 *            Destination file requestPath
+	 *            Destination file path
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
@@ -2720,13 +2720,13 @@ public class GenericUtil {
 	}
 
 	/**
-	 * Method that writes the content of URL inputURL to file requestPath
+	 * Method that writes the content of URL inputURL to file path
 	 * locatlInputFile
 	 * 
 	 * @param inputUrl
 	 *            Input URL
 	 * @param localInputFile
-	 *            File requestPath
+	 *            File path
 	 * @throws IOException
 	 */
 	public static void writeUrlToFile(URL inputUrl, File localInputFile)
@@ -3023,7 +3023,7 @@ public class GenericUtil {
 				Thread.currentThread().setContextClassLoader(cl);
                 /* Subclasses of URLClassLoader may override getURLs(), in order to
                  * return the URLs of the provided export codebase. This is a workaround to getValue
-                 * the search requestPath (not the codebase) of the URLClassLoader. We getValue the ucp property from the
+                 * the search path (not the codebase) of the URLClassLoader. We getValue the ucp property from the
                  * URLCLassLoader (of fiType sun.misc.URLClassPath), and invoke the sun.misc.URLClassPath.getURLs()
                  * method */
 				try {
@@ -3086,7 +3086,7 @@ public class GenericUtil {
 		 */
 		if (fileUrlBuilder.length() > 0) {
 			fileUrlBuilder.insert(0, File.pathSeparator);
-			fileUrlBuilder.insert(0, System.getProperty("java.class.requestPath"));
+			fileUrlBuilder.insert(0, System.getProperty("java.class.path"));
 			jarMap.put(LOCAL_JARS, fileUrlBuilder.toString());
 
 			if (httpUrlBuilder.length() > 0) {
@@ -3189,7 +3189,7 @@ public class GenericUtil {
 	 * writeVectorToFile was originally implemented by S. A. Burton, but has
 	 * been rewritten by E. D. Thompson in a a cleaner more efficient syntax. 
 	 * (<==says Earnest! SAB)
-	 * The function receives as arguments an output file requestPath and a vector. It
+	 * The function receives as arguments an output file path and a vector. It
 	 * then creates an ASCII file that has the contents of vector.
 	 * 
 	 * @author E. D. Thompson, S. A. Burton
