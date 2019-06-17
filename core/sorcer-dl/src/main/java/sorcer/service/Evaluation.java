@@ -51,4 +51,6 @@ public interface  Evaluation <T> extends Substitutable, Scopable, EvaluationComp
 
 	public void setNegative(boolean negative);
 
+	public void setName(String name);
+
 }

@@ -18,6 +18,8 @@
 package sorcer.core.signature;
 
 import sorcer.service.Evaluation;
+import sorcer.service.Evaluator;
+import sorcer.service.Identifiable;
 import sorcer.service.modeling.sig;
 
 public class EvaluationSignature extends ServiceSignature implements sig {
@@ -29,7 +31,12 @@ public class EvaluationSignature extends ServiceSignature implements sig {
 	public EvaluationSignature(Evaluation evaluator) {
 		this.evaluator = evaluator;
 	}
-		
+
+	public EvaluationSignature(String name, Evaluation evaluator) {
+		this.evaluator = evaluator;
+		evaluator.setName(name);
+	}
+
 	/**
 	    <p> Returns the evaluator for this signature. </p>
 	   

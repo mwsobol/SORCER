@@ -514,9 +514,8 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	}
 
 	@Override
-	public ServiceInvoker setName(String name) {
+	public void setName(String name) {
 		this.name = name;
-		return this;
 	}
 
 	/* (non-Javadoc)

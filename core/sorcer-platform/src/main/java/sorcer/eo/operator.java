@@ -1514,13 +1514,6 @@ operator extends Operator {
 
     public static EvaluationSignature sig(String name, Evaluator evaluator,
                                           Routine.RequestPath requestPath) throws SignatureException {
-        EvaluationSignature sig = sig(evaluator, requestPath);
-        sig.setName(name);
-        return sig;
-    }
-
-    public static EvaluationSignature sig(Evaluator evaluator,
-                                          Routine.RequestPath requestPath) throws SignatureException {
         EvaluationSignature sig = null;
         if (evaluator instanceof Scopable) {
             sig = new EvaluationSignature(new Prc(evaluator));
@@ -1528,11 +1521,23 @@ operator extends Operator {
             sig = new EvaluationSignature(evaluator);
         }
         sig.setRequestPath(requestPath);
+        if (name != null) {
+            sig.setName(name);
+        }
         return sig;
+    }
+
+    public static EvaluationSignature sig(Evaluator evaluator,
+                                          Routine.RequestPath requestPath) throws SignatureException {
+        return sig(null, evaluator, requestPath);
     }
 
     public static EvaluationSignature sig(Evaluator evaluator) throws SignatureException {
         return new EvaluationSignature(evaluator);
+    }
+
+    public static EvaluationSignature sig(String name, Evaluator evaluator) throws SignatureException {
+        return new EvaluationSignature(name, evaluator);
     }
 
     public static Signature sig(Routine exertion, String componentExertionName) {

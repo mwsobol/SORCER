@@ -40,7 +40,5 @@ public interface  Evaluator <T> extends Evaluation<T>, Getter<T>, Activity, Iden
 
 	public void update(Setup... entries) throws ContextException;
 
-	public Evaluator setName(String name);
-
 	public void setNegative(boolean negative);
 }

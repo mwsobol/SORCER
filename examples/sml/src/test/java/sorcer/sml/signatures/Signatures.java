@@ -14,6 +14,7 @@ import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 import sorcer.service.Strategy.Shell;
+import sorcer.service.modeling.Model;
 
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
@@ -21,6 +22,8 @@ import java.util.Date;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
+import static sorcer.ent.operator.ent;
+import static sorcer.ent.operator.invoker;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
 import static sorcer.eo.operator.result;
@@ -412,6 +415,20 @@ public class Signatures {
 
 		Context result = (Context) exec(sig("add", AdderImpl.class), cxt);
 		assertTrue(value(result, "result/eval").equals(100.0));
+	}
+
+	@Test
+	public void execEvalutionSignature() throws Exception {
+
+		Context<Double> in = context(
+				inVal("x", 10.0),
+				inVal("y", 20.0));
+
+		Object out = exec(task(sig("add", invoker("lambda",
+						(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
+						args("x", "y")))), in);
+		logger.info("result: " + out);
+		assertTrue(out.equals(60.0));
 	}
 
 	@Test
