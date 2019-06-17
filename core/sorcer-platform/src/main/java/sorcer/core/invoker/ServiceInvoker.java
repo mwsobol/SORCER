@@ -73,7 +73,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	private static final long serialVersionUID = -2007501128660915681L;
 	
 	protected String name;
-	
+
 	protected String defaultName = "invoke   r-";
 	
 	// counter for unnamed instances
@@ -515,7 +515,11 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 
 	@Override
 	public void setName(String name) {
-		this.name = name;
+		if (name != null) {
+			this.name = name;
+		} else {
+			this.name = defaultName + count++;
+		}
 	}
 
 	/* (non-Javadoc)

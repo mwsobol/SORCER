@@ -365,7 +365,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		link(invokeContext, "t4", multiplyContext);
 		link(invokeContext, "t5", addContext);
 		Task task = task("invoke", sig("invoke", Invocation.class, prvName("Arithmetic Exerter")), invokeContext);
-		logger.info("j1/t3/result/y: " + value(out, "j1/t3/result/y"));
+		logger.info("j1/t3/result/y: " + eval(task, "j1/t3/result/y"));
 		assertEquals(eval(task, "j1/t3/result/y"), 500.0);
 
 		// change partially the contexts

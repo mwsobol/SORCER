@@ -691,7 +691,12 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
                 val = dataContext;
             } else if (reqPath.returnPath != null && ! reqPath.returnPath.equals(Context.RETURN)) {
                 val = dataContext.get(reqPath.returnPath);
-                dataContext.putValue(reqPath.returnPath, val);
+                if (val != null) {
+                    dataContext.putValue(reqPath.returnPath, val);
+                } else {
+                    // the case when finalization is not confirmed
+                    val = dataContext.getValue(reqPath.returnPath);
+                }
             } else {
                 val = dataContext.get(reqPath.returnPath);
             }

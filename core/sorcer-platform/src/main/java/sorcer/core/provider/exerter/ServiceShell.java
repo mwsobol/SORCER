@@ -724,7 +724,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			return xrt.getExceptions();
 		}
 		Context dcxt = xrt.getDataContext();
-		RequestPath rPath = (RequestPath)dcxt.getRequestPath();
+		RequestPath rPath = dcxt.getRequestPath();
 		// check if it was already finalized
 		if (((ServiceContext) dcxt).isFinalized()) {
 			return dcxt.getValue(rPath.returnPath);
