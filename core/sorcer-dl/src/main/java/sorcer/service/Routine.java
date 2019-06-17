@@ -116,21 +116,21 @@ public interface Routine extends Dependency, Invocation<Object>,
     public void setContext(Context data);
 
     /**
-	 * Returns a component exertion at a given returnPath.
+	 * Returns a component exertion at a given path.
 	 */
 	public Mogram getComponentMogram(String path);
 	
 	/**
-	 * Returns a execute associated with a returnPath (key) in this exertion's context.
+	 * Returns a execute associated with a path (key) in this exertion's context.
 	 * 
-	 * @return a referenced by a returnPath object
+	 * @return a referenced by a path object
 	 */
 	public Object getValue(String path, Arg... args) throws ContextException;
 		
 	/**
-	 * Returns a return execute associated with a return returnPath in this exertion's context.
+	 * Returns a return execute associated with a return path in this exertion's context.
 	 * 
-	 * @return a referenced by a return returnPath object
+	 * @return a referenced by a return path object
 	 */
 	public Object getReturnValue(Arg... entries) throws ContextException,
 			RemoteException;

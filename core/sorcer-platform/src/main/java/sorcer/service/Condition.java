@@ -37,7 +37,7 @@ import java.util.Map;
 
 /**
  * A Condition specifies a conditional eval in a given service context for its free variables
- * in the form of returnPath/eval pairs with paths being guard parameters of a closure expression.
+ * in the form of path/eval pairs with paths being guard parameters of a closure expression.
  * 
  * @see LoopTask
  * @see OptTask

@@ -2107,7 +2107,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	protected String[] getResourceListing(Class clazz, String path) throws URISyntaxException, IOException {
 		URL dirURL = clazz.getClassLoader().getResource(path);
 		if (dirURL != null && dirURL.getProtocol().equals("file")) {
-                /* A file returnPath: easy enough */
+                /* A file path: easy enough */
 			return new File(dirURL.toURI()).list();
 		}
 
@@ -2130,10 +2130,10 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 			Set<String> result = new HashSet<String>(); //avoid duplicates in case it is a subdirectory
 			while (entries.hasMoreElements()) {
 				String name = entries.nextElement().getName();
-				if (name.startsWith(path)) { //filter according to the returnPath
+				if (name.startsWith(path)) { //filter according to the path
 					if (name.endsWith("/")) continue;
 					String entry = name;
-//                    String entry = key.substring(returnPath.length());
+//                    String entry = key.substring(path.length());
 //                    doLog("entry = " + entry);
 //                    int checkSubdir = entry.indexOf("/");
 //                    if (checkSubdir >= 0) {

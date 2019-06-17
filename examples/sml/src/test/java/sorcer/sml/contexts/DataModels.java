@@ -77,7 +77,7 @@ public class DataModels {
         Context cxt = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0));
 
         // context soft values correspond to a subpath, e.g. "x1"
-        // if no match for the exact returnPath. e.g."arg1/x1"
+        // if no match for the exact path. e.g."arg1/x1"
         assertEquals(value(cxt, "arg/x1"), 20.0);
         assertEquals(value(cxt, "x1"), null);
         assertEquals(softValue(cxt, "arg/var/x1"), 20.0);
@@ -90,7 +90,7 @@ public class DataModels {
 
         Value<Double> e = val("arg/x1", 10.0);
         assertEquals("arg/x1", key(e));
-        // a returnPath is a String - usually a sequence of attributes
+        // a path is a String - usually a sequence of attributes
         assertEquals(path(e), "arg/x1");
 
         Value<Double> in = inVal("arg/x2", 10.0);
@@ -199,7 +199,7 @@ public class DataModels {
         tag(cxt, "arg/x4", "tag|set2");
         assertEquals(valuesAt(cxt, "tag|set2"), list(1.2, 1.4));
 
-        // now the returnPath "arg/x2" is overwritten, so excluded
+        // now the path "arg/x2" is overwritten, so excluded
         assertEquals(valuesAt(cxt, "tag|set1"), list(1.1));
 
         // the default relation 'triplet', the association:  "triplet|_1|_2|_3"
@@ -305,7 +305,7 @@ public class DataModels {
     @Test
     public void contextModelService() throws Exception {
         Context cxt = context(inVal("x1", 20.0d), inVal("x2", 40.0d),
-                returnPath("x2"));
+                requestPath("x2"));
 //        logger.info("service: " + exec(cxt));
         assertEquals(exec(cxt), 40.0);
     }

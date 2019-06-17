@@ -56,11 +56,11 @@ public interface Contextion<T> extends Mogram, FederatedRequest, Identifiable {
 	public void setContext(Context input) throws ContextException;
 
 	/**
-	 * Returns the value at a given returnPath.
+	 * Returns the value at a given path.
 	 * 
 	 * @param path
-	 *            an attribute-based returnPath
-	 * @return the value at the returnPath
+	 *            an attribute-based path
+	 * @return the value at the path
 	 * @throws ContextException
 	 */
 	public T getValue(String path, Arg... args)
@@ -69,11 +69,11 @@ public interface Contextion<T> extends Mogram, FederatedRequest, Identifiable {
 	public T getValue(Path path, Arg... args)
 		throws ContextException, RemoteException;
 	/**
-	 * Returns a value at the returnPath as-is with no execution of the service at the returnPath.
+	 * Returns a value at the path as-is with no execution of the service at the path.
 	 * 
 	 * @param path
-	 *            the attribute-based returnPath
-	 * @return the value as-is at the returnPath
+	 *            the attribute-based path
+	 * @return the value as-is at the path
 	 * @throws ContextException
 	 */
 	public T asis(String path) throws ContextException;
@@ -81,12 +81,12 @@ public interface Contextion<T> extends Mogram, FederatedRequest, Identifiable {
 	public T asis(Path path) throws ContextException;
 
 	/**
-	 * Associated a given value with a given returnPath
+	 * Associated a given value with a given path
 	 *
-	 * @param path the attribute-based returnPath
-	 * @param value the value to be associated with a given returnPath
+	 * @param path the attribute-based path
+	 * @param value the value to be associated with a given path
 	 * 
-	 * @return the previous value at the returnPath
+	 * @return the previous value at the path
 	 * 
 	 * @throws ContextException
 	 */
@@ -101,9 +101,9 @@ public interface Contextion<T> extends Mogram, FederatedRequest, Identifiable {
 		throws RemoteException, ContextException;
 
 	/**
-	 * Appends an argument context to this context for a given returnPath.
+	 * Appends an argument context to this context for a given path.
 	 * @param context a context to be appended
-	 * @param path an offset returnPath of the argument context
+	 * @param path an offset path of the argument context
 	 * @return an appended context
 	 * @throws ContextException
 	 * @throws RemoteException
@@ -112,9 +112,9 @@ public interface Contextion<T> extends Mogram, FederatedRequest, Identifiable {
 		throws ContextException, RemoteException;
 
 	/**
-	 * Returns a subcontext at a given returnPath.
-	 * @param path a returnPath in this context
-	 * @return a subcontext of this context at <code>returnPath</code>
+	 * Returns a subcontext at a given path.
+	 * @param path a path in this context
+	 * @return a subcontext of this context at <code>path</code>
 	 * @throws ContextException
 	 * @throws RemoteException
 	 */

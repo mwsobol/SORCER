@@ -53,10 +53,10 @@ public interface Modeling extends Model {
 			throws EvaluationException, RemoteException;
 
 	/**
-	 * Returns a execute at the returnPath.
+	 * Returns a execute at the path.
 	 *
 	 * @param path
-	 *            the attribute-based returnPath
+	 *            the attribute-based path
 	 * @return this model execute
 	 * @throws ContextException
 	 */

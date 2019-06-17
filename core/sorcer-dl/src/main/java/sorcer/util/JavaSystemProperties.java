@@ -10,8 +10,8 @@ import java.util.Properties;
  * @author Rafał Krupiński
  */
 public class JavaSystemProperties {
-    public static final String CLASS_PATH = "java.class.returnPath";
-    public static final String LIBRARY_PATH = "java.library.returnPath";
+    public static final String CLASS_PATH = "java.class.path";
+    public static final String LIBRARY_PATH = "java.library.path";
     public static final String NET_PREFER_IPV4_STACK = "java.net.preferIPv4Stack";
     public static final String PROTOCOL_HANDLER_PKGS = "java.protocol.handler.pkgs";
     public static final String RMI_SERVER_CODEBASE = "java.rmi.server.codebase";

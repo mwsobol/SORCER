@@ -137,7 +137,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	public Class[] getMatchTypes();
 
 	/**
-	 * Assigns a returnPath to the return execute by this signature.
+	 * Assigns a return path to the request path of this signature.
 	 *
 	 * @param path
 	 *            to the return execute

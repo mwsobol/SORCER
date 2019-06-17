@@ -165,10 +165,10 @@ public class Mograms {
                 cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
                         result("result/y")));
 
-        // getValue a single context argument at the result returnPath
+        // getValue a single context argument at the result path
         assertEquals(100.0, exec(t5));
 
-        // getValue the subcontext output from the the result returnPath
+        // getValue the subcontext output from the the result path
         assertTrue(context(ent("arg/x1", 20.0), ent("result/y", 100.0)).equals(
                 exec(t5, outPaths("arg/x1", "result/y"))));
     }

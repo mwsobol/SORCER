@@ -21,22 +21,22 @@ import java.util.jar.Manifest;
  * the URI syntax, according to the RFC 2396.
  * As a workaround to this problem, Java escapes and un-escapes URLs in various
  * arbitrary places; however, this is inconsistent and leads to numerous
- * problems with URLs referring to local files with spaces in the returnPath. SUN
+ * problems with URLs referring to local files with spaces in the path. SUN
  * acknowledges the problem, but refuses to modify the behavior for
  * compatibility reasons; see Java Bug Parade 4273532, 4466485.
  * <p>
  * Additionally, the JAR caching policy used by
  * URLClassLoader is system-wide and inflexible: once downloaded JAR files are
  * never re-downloaded, even if one creates a fresh instance of the class
- * loader that happens to have the same URL in its search returnPath. In fact, that
+ * loader that happens to have the same URL in its search path. In fact, that
  * policy is a security vulnerability: it is possible to crash any URL class
  * loader, thus affecting potentially separate part of the system, by creating
- * URL connection to one of the URLs of that class loader search returnPath and
+ * URL connection to one of the URLs of that class loader search path and
  * closing the associated JAR file.
  * See Java Bug Parade 4405789, 4388666, 4639900.
  * <p>
  * This class avoids these problems by 1) using URIs instead of URLs for the
- * search returnPath (thus enforcing strict syntax conformance and defining precise
+ * search path (thus enforcing strict syntax conformance and defining precise
  * escaping semantics), and 2) using custom URLStreamHandler which ensures
  * per-classloader JAR caching policy.
  *
@@ -53,16 +53,16 @@ public class URIClassLoader extends URLClassLoader {
     final AccessControlContext acc;
 
     /**
-     * Creates URIClassLoader with the specified search returnPath.
-     * @param uris the search returnPath
+     * Creates URIClassLoader with the specified search path.
+     * @param uris the search path
      */
     public URIClassLoader(URI[] uris) {
         this(uris, (URLStreamHandler)null);
     }
 
     /**
-     * Creates URIClassLoader with the specified search returnPath.
-     * @param uris the search returnPath
+     * Creates URIClassLoader with the specified search path.
+     * @param uris the search path
      * @param jarHandler stream handler for JAR files; implements caching policy
      */
     public URIClassLoader(URI[] uris, URLStreamHandler jarHandler) {
@@ -72,9 +72,9 @@ public class URIClassLoader extends URLClassLoader {
     }
 
     /**
-     * Creates URIClassLoader with the specified search returnPath and parent class
+     * Creates URIClassLoader with the specified search path and parent class
      * loader.
-     * @param uris the search returnPath
+     * @param uris the search path
      * @param parent the parent class loader.
      */
     public URIClassLoader(URI[] uris, ClassLoader parent) {
@@ -82,9 +82,9 @@ public class URIClassLoader extends URLClassLoader {
     }
 
     /**
-     * Creates URIClassLoader with the specified search returnPath and parent class
+     * Creates URIClassLoader with the specified search path and parent class
      * loader.
-     * @param uris the search returnPath
+     * @param uris the search path
      * @param parent the parent class loader.
      * @param jarHandler stream handler for JAR files; implements caching policy
      */
@@ -95,7 +95,7 @@ public class URIClassLoader extends URLClassLoader {
     }
 
     /**
-     * Add specified URI at the end of the search returnPath.
+     * Add specified URI at the end of the search path.
      * @param uri the URI to add
      */
     protected void addURI(URI uri) {
@@ -103,7 +103,7 @@ public class URIClassLoader extends URLClassLoader {
     }
 
     /**
-     * Add specified URL at the end of the search returnPath.
+     * Add specified URL at the end of the search path.
      * @param url the URL to add
      * @deprecated use addURI
      */
@@ -242,21 +242,21 @@ public class URIClassLoader extends URLClassLoader {
     }
 
     /**
-     * Returns the absolute returnPath key of a native library. The VM
+     * Returns the absolute path key of a native library. The VM
      * invokes this method to locate the native libraries that belong
      * to classes loaded with this class loader. If this method returns
-     * <code>null</code>, the VM searches the library along the returnPath
-     * specified as the <code>java.library.returnPath</code> property.
+     * <code>null</code>, the VM searches the library along the path
+     * specified as the <code>java.library.path</code> property.
      * This method invoke {@link #getLibraryHandle} method to find handle
      * of this library. If the handle is found and its URL protocol is "file",
-     * the system-dependent absolute library file returnPath is returned.
+     * the system-dependent absolute library file path is returned.
      * Otherwise this method returns null. <p>
      *
      * Subclasses can override this method to provide specific approaches
      * in library searching.
      *
      * @param      libname   the library key
-     * @return     the absolute returnPath of the native library
+     * @return     the absolute path of the native library
      * @see        System#loadLibrary(String)
      * @see        System#mapLibraryName(String)
      */
@@ -310,8 +310,8 @@ public class URIClassLoader extends URLClassLoader {
     /**
      * Finds the ResourceHandle object for the native library with the specified
      * key.
-     * The library key must be '/'-separated returnPath. The last part of this
-     * returnPath is substituted by its system-dependent mapping (using
+     * The library key must be '/'-separated path. The last part of this
+     * path is substituted by its system-dependent mapping (using
      * {@link System#mapLibraryName(String)} method). Next, the
      * <code>ResourceFinder</code> is used to look for the library as it
      * was ordinary resource. <p>

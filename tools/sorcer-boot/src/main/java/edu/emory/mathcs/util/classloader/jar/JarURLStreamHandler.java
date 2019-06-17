@@ -28,7 +28,7 @@ import edu.emory.mathcs.util.classloader.*;
  */
 public class JarURLStreamHandler extends URLStreamHandler {
 
-    // "jar:" + url + "!" + /<returnPath>/ + <file>? + "#"<anchor>?
+    // "jar:" + url + "!" + /<path>/ + <file>? + "#"<anchor>?
     private static final Pattern ABSOLUTE_JAR_URL_PATTERN =
         Pattern.compile("jar:(.*)!(/(?:.*/)?)((?:[^/#]+)?)((?:#.*)?)");
 

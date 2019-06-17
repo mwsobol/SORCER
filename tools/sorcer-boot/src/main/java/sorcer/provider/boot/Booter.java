@@ -84,7 +84,7 @@ public class Booter implements SorcerConstants {
 	 * 
 	 * @param jars
 	 *            Array of JAR names
-	 * @return The classpath with system dependent returnPath delimiters
+	 * @return The classpath with system dependent path delimiters
 	 */
 	public static String getClasspath(String[] jars) {
 		StringBuffer buffer = new StringBuffer();
@@ -248,10 +248,10 @@ public class Booter implements SorcerConstants {
 	}
 
 	/**
-	 * Get an URL from a fully qualified file returnPath
+	 * Get an URL from a fully qualified file path
 	 * 
 	 * @param filePath
-	 *            A fully qualified file returnPath
+	 *            A fully qualified file path
 	 * 
 	 * @return The URL from the file if the file exists
 	 * @throws MalformedURLException
@@ -264,13 +264,13 @@ public class Booter implements SorcerConstants {
 
 	/**
 	 * Will return an array of URLs based on the input String array. If the
-	 * array element is a file, the fully qualified file returnPath must be provided.
-	 * If the array element is a directory, a fully qualified directory returnPath
+	 * array element is a file, the fully qualified file path must be provided.
+	 * If the array element is a directory, a fully qualified directory path
 	 * must be provided, and the directory will be searched for all .jar and
 	 * .zip files
 	 * 
 	 * @param elements
-	 *            A String array of fully qualified directory returnPath
+	 *            A String array of fully qualified directory path
 	 * 
 	 * @return An URL[] elements
 	 * 
@@ -298,7 +298,7 @@ public class Booter implements SorcerConstants {
 	 * directory, including the directory itself
 	 * 
 	 * @param dirPath
-	 *            A fully qualified directory returnPath
+	 *            A fully qualified directory path
 	 * 
 	 * @return A URL[] for all .jar and .zip files in the directory, including
 	 *         the directory itself

@@ -168,7 +168,7 @@ public class CommonClassLoader extends URLClassLoader {
 				exists = true;
 		}		
 		if(!exists) {					
-			/* Although not registered, it may be in our search returnPath,
+			/* Although not registered, it may be in our search path, 
 			 * so try and load the class */
 			try {
 				loadClass(name);

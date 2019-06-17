@@ -69,7 +69,7 @@ public interface Mogram extends Identifiable, Request, Exertion, Exerter, Scopab
      *
      * @param key
      *            the component name
-     * @return the componet at the returnPath
+     * @return the componet at the path
      */
     public Object get(String key);
 
@@ -214,7 +214,7 @@ public interface Mogram extends Identifiable, Request, Exertion, Exerter, Scopab
 
 
     /**
-     * Returns a ebalated value at teh returnPath
+     * Returns a ebalated value at teh path
      */
     public Object getEvaluatedValue(String path) throws ContextException;
 

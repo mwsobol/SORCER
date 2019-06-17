@@ -520,7 +520,7 @@ public class operator {
         return map;
     }
 
-    public static RequestPath returnPath(String path) {
+    public static RequestPath requestPath(String path) {
         return  new RequestPath<>(path);
     }
 

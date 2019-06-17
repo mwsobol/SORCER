@@ -57,7 +57,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		job = job.exert();
 
 		logger.info("job context: " + ((Job)job).getJobContext());
-		// result at the provider's default returnPath"
+		// result at the provider's default path"
 		assertEquals(((Job)job).getJobValue("3tasks/subtract/result/eval"), 400.0);
 	}
 
@@ -85,7 +85,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		job = job.exert();
 
 		logger.info("job context: " + ((Job) job).getJobContext());
-		// result at the provider's default returnPath"
+		// result at the provider's default path"
 		assertEquals(((Job) job).getJobValue("1job1task/subtract/result/eval"), 400.0);
 	}
 	
@@ -117,7 +117,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		job = job.exert();
 
 		logger.info("job context: " + ((Job)job).getJobContext());
-		// result at the provider's default returnPath"
+		// result at the provider's default path"
 		assertEquals(((Job)job).getJobValue("1job1task/subtract/result/eval"), 400.0);
 	}
 	
@@ -125,7 +125,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		Context context = new PositionalContext("add");
 		context.putInValue("arg1/eval", 20.0);
 		context.putInValue("arg2/eval", 80.0);
-		// We know that the output is gonna be placed in this returnPath
+		// We know that the output is gonna be placed in this path
 		context.putOutValue("out/eval", 0.0);
 		Signature method = new ObjectSignature("add", AdderImpl.class);
 		Task task = new ObjectTask("add", method);
@@ -137,7 +137,7 @@ public class ArithmeticNoNetTest implements SorcerConstants {
 		Context context = new PositionalContext("multiply");
 		context.putInValue("arg1/eval", 10.0);
 		context.putInValue("arg2/eval", 50.0);
-		// We know that the output is gonna be placed in this returnPath
+		// We know that the output is gonna be placed in this path
 		context.putOutValue("out/eval", 0.0);
 		Signature method = new ObjectSignature("multiply", MultiplierImpl.class);
 		Task task = new ObjectTask("multiply", method);

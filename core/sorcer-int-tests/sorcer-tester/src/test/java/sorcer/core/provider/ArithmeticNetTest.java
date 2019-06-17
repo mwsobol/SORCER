@@ -80,7 +80,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Context context = new PositionalContext("add");
 		context.putInValue("arg1/eval", 20.0);
 		context.putInValue("arg2/eval", 80.0);
-		// We know that the output is gonna be placed in this returnPath
+		// We know that the output is gonna be placed in this path
 		context.putOutValue("out/eval", 0);
 		Signature method = new NetSignature("add", Adder.class);
 		Task task = new NetTask("add", method);
@@ -92,7 +92,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		Context context = new PositionalContext("multiply");
 		context.putInValue("arg1/eval", 10.0);
 		context.putInValue("arg2/eval", 50.0);
-		// We know that the output is gonna be placed in this returnPath
+		// We know that the output is gonna be placed in this path
 		context.putOutValue("out/eval", 0);
 		Signature method = new NetSignature("multiply", Multiplier.class);
 		Task task = new NetTask("multiply", method);
@@ -396,7 +396,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 				Sorcer.getActualName("Arithmetic Exerter"));
 		Task task = new NetTask("eval", signature);
 		Task result = task.exert();
-		// no return returnPath setValue so we getValue context (defualt behavior)
+		// no return path setValue so we getValue context (defualt behavior)
 		Context out = (Context) result.getReturnValue();
 		logger.info("result: " + out);
 		assertEquals(out.getValue("j1/t3/result/y"), 400.0);

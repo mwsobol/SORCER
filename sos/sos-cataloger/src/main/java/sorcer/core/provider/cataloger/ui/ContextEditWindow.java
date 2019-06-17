@@ -39,9 +39,9 @@ import javax.swing.tree.TreePath;
 import sorcer.core.context.node.ContextNode;
 
 /**
- * This class is used for the edit window displayed when a returnPath or data node is
+ * This class is used for the edit window displayed when a path or data node is
  * modified. The view is rendered differently depending on if the currently
- * selected impl is a returnPath or if it is a data node.
+ * selected impl is a path or if it is a data node.
  * 
  * <li>For paths user can specify the pathname and direction. <li>For data nodes
  * the user can select the data multitype and execEnt the types eval
@@ -95,7 +95,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 	 * @param theRootTree
 	 *            the tree the node belongs to
 	 * @param currentPath
-	 *            the current returnPath the user selected to modify, this is the data
+	 *            the current path the user selected to modify, this is the data
 	 *            the window will display/update
 	 */
 	public ContextEditWindow(ContextTree theRootTree, TreePath currentPath) {
@@ -178,7 +178,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 			listPane.add(scrollingArea);
 			listPane.add(Box.createRigidArea(new Dimension(0, 5)));
 
-			if (!theNodeType.isDataNode()) // output direction if its a returnPath
+			if (!theNodeType.isDataNode()) // output direction if its a path
 			{
 				dataType.setEnabled(false);
 				JPanel dataLabelPanel = new JPanel();
@@ -223,7 +223,7 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 	/**
 	 * ActionPerformed is called when the save button is pressed. This method
 	 * takes the data and the selected multitype or direction (depending on if its a
-	 * returnPath or node) and saves it back in the @link ContextNodeType.
+	 * path or node) and saves it back in the @link ContextNodeType.
 	 * 
 	 * @param actionEvent
 	 *            ActionEvent specifying what action occurred.
@@ -275,9 +275,9 @@ public class ContextEditWindow extends JFrame implements ActionListener {
 				for (int i = 1; i < length; i++) // ignore root and current
 				// element!
 				{
-					// if(returnPath.length()!=0)
-					// /returnPath+="/";
-					// returnPath+=pathTo[i].toString();
+					// if(path.length()!=0)
+					// /path+="/";
+					// path+=pathTo[i].toString();
 					if (((DefaultMutableTreeNode) pathTo[length - i - 1])
 							.getUserObject() instanceof ContextNodeType) {
 						if (((DefaultMutableTreeNode) pathTo[length - i - 1])

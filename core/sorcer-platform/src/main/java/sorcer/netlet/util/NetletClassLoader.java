@@ -112,10 +112,10 @@ public class NetletClassLoader extends URIClassLoader implements ClassAnnotation
     }
 
     /**
-     * Get the search returnPath of URLs for loading classes and resources
+     * Get the search path of URLs for loading classes and resources
      *
      * @return The array of <code>URL[]</code> which corresponds to the search
-     * returnPath for the class loader; that is, the array elements are the locations
+     * path for the class loader; that is, the array elements are the locations
      * from which the class loader will load requested classes.
      * @throws MalformedURLException If any of the URis cannot be transformed
      *                               to URLs

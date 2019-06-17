@@ -82,7 +82,7 @@ public class PropertyEvaluatorTest {
 
     }
 
-    // setups via provided context with a returnPath for the aspect of setup
+    // setups via provided context with a path for the aspect of setup
     @Test
     public void setup1() throws Exception {
         Setup cxtEnt = setup("context/execute", context(val("arg/x1", 100.0), val("arg/x2", 20.0)));

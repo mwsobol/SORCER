@@ -407,14 +407,14 @@ public interface SorcerConstants {
 	// SorcerContext Ontology
 	final static String CONTEXT_ATTRIBUTE_VALUES = "values";
 
-	/** context returnPath separator */
+	/** context path separator */
 	final static String CPS = "/";
 
 	/**
-	 * context association returnPath separator, for attribute descriptors:
+	 * context association path separator, for attribute descriptors:
 	 * "result|operation|arg1|arg2", where result is a composite attribute and
 	 * their associations "result|add|3|5" telling that the result is associated
-	 * with the returnPath that references 'add" operation of arguments 3 and 5 in a
+	 * with the path that references 'add" operation of arguments 3 and 5 in a
 	 * given service context.
 	 */
 	final static String APS = "|";
@@ -441,23 +441,23 @@ public interface SorcerConstants {
 	final static String EXCEPTION_ST = EXCEPTIONS + CPS + "stack trace" + IND
 			+ CPS;
 
-	final static String OUT_PATH = "out/returnPath";
+	final static String OUT_PATH = "out/path";
 
 	final static String OUT_FILE = "out/filename";
 
-	final static String OUT_SCRIPT = "out/returnPath/script";
+	final static String OUT_SCRIPT = "out/path/script";
 
 	final static String VALUE = "value";
 
 	final static String IN_VALUE = "in" + CPS + "value";
 
-	final static String IN_PATH = "in" + CPS + "returnPath";
+	final static String IN_PATH = "in" + CPS + "path";
 
 	final static String IN_FILE = "in" + CPS + "filename";
 
 	final static String SCRIPT = "script";
 
-	final static String IN_SCRIPT = "in" + CPS + "returnPath" + CPS + "script";
+	final static String IN_SCRIPT = "in" + CPS + "path" + CPS + "script";
 
 	final static String JOB_TASK = "job" + CPS + "task";
 
