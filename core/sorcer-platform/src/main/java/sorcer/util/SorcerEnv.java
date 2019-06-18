@@ -48,7 +48,7 @@ import static sorcer.core.SorcerConstants.*;
  * properties file, and JVM system properties.
  * <p/>
  * A sorcer.env file is searched for in the <code>SorcerEnv.class</code>
- * directory (sorcer/util/sorcer.env), or in the requestPath given by the JVM system
+ * directory (sorcer/util/sorcer.env), or in the requestReturn given by the JVM system
  * property <code>sorcer.env.file</code>. In development the last option is
  * recommended.
  * <p/>
@@ -126,7 +126,7 @@ public class SorcerEnv extends SOS {
 	/**
 	 * Returns the home directory of the iGrid environment.
 	 * 
-	 * @return a requestPath of the home directory
+	 * @return a requestReturn of the home directory
 	 */
 	public static File getHomeDir() {
         try {
@@ -302,7 +302,7 @@ public class SorcerEnv extends SOS {
 	 * @throws ConfigurationException
 	 */
 	protected static void loadEnvironment() throws ConfigurationException {
-		// Try and load from requestPath given in system properties
+		// Try and load from requestReturn given in system properties
 		props = new Properties();
 		String envFile = System.getProperty("sorcer.env.file");
 		if (envFile != null) {

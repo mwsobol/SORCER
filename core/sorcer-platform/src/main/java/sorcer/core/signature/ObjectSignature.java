@@ -404,12 +404,12 @@ public class ObjectSignature extends ServiceSignature implements sig {
 					out = context(shell.exert(args));
 				} else if (mog instanceof Context) {
 					argTypes = new Class[]{Context.class};
-					Routine.RequestPath rp = returnPath;
+					Context.RequestReturn rp = returnPath;
 					if (rp == null) {
-						rp = (Routine.RequestPath) ((Context) mog).getRequestPath();
+						rp = (Context.RequestReturn) ((Context) mog).getRequestReturn();
 					}
 					if (rp != null && rp.returnPath != null) {
-						((Context) mog).setRequestPath(rp);
+						((Context) mog).setRequestReturn(rp);
 						out = exert(task(this, mog));
 						return out.getValue(rp.returnPath);
 					}

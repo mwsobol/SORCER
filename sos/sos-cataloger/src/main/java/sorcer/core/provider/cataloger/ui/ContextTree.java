@@ -175,7 +175,7 @@ public class ContextTree extends JPanel {
 
 	/**
 	 * This function recursively goes thru the tree adding items to the context
-	 * using the tree requestPath as the requestPath for the context and the datanode as the
+	 * using the tree requestReturn as the requestReturn for the context and the datanode as the
 	 * data. The function also marks the node for the multitype of data it is
 	 * (input/output).
 	 * 

@@ -381,7 +381,7 @@ public class ContextView extends JPanel implements Observer, ActionListener,
 				cnt++;
 				// returnPath = (String)sortedVec.elementAt(i);
 				path = (String) key;
-				// System.out.println("requestPath: "+requestPath);
+				// System.out.println("requestReturn: "+requestReturn);
 				String data = "";
 				String splitPath[] = path.split("/");
 				DefaultMutableTreeNode parentNode = null;

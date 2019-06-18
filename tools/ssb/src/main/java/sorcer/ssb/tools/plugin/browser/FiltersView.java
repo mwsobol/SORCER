@@ -81,15 +81,15 @@ public class FiltersView extends JPanel{
 		/*
 		try{
 		URL url=getClass().getProtectionDomain().getCodeSource().getLocation();
-		String requestPath=url.getRequestPath();
-		if(requestPath.endsWith(".jar")){
-		requestPath=requestPath.substring(0,requestPath.lastIndexOf("/")+1);
+		String requestReturn=url.getRequestReturn();
+		if(requestReturn.endsWith(".jar")){
+		requestReturn=requestReturn.substring(0,requestReturn.lastIndexOf("/")+1);
 		}else{
-		requestPath+="/";
+		requestReturn+="/";
 		}
-		_browserHome=requestPath;
+		_browserHome=requestReturn;
 		
-		//FNAME=requestPath+FNAME;
+		//FNAME=requestReturn+FNAME;
 		
 		//System.out.println("Filter store="+FNAME);
 		

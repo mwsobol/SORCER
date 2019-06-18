@@ -29,7 +29,7 @@ import sorcer.core.context.model.srv.SrvModel;
 import sorcer.core.dispatch.graph.DirectedGraph;
 import sorcer.core.dispatch.graph.DirectedGraphRenderer;
 import sorcer.core.dispatch.graph.GraphNodeRenderer;
-import sorcer.service.Routine.RequestPath;
+import sorcer.service.Context.RequestReturn;
 import sorcer.service.*;
 
 import java.util.*;
@@ -182,10 +182,10 @@ public class SrvModelAutoDeps {
             Object entry = srvModel.getData().get(entryName);
             if (entry instanceof Entry) {
                 Object entryVal = ((Entry)entry).getImpl();
-                RequestPath rp = null;
+                RequestReturn rp = null;
                 if (entryVal instanceof SignatureEntry) {
                     Signature signature = (Signature) ((SignatureEntry)entryVal).getImpl();
-                    if (signature!=null) rp = (RequestPath)signature.getRequestPath();
+                    if (signature!=null) rp = (RequestReturn)signature.getRequestReturn();
                 } else if (entry instanceof Srv) {
                     rp = ((Srv) entry).getReturnPath();
                 }
@@ -213,11 +213,11 @@ public class SrvModelAutoDeps {
         for (String entryName : srvModel.getData().keySet()) {
             Object entry = srvModel.getData().get(entryName);
             if (entry instanceof Subroutine) {
-                RequestPath rp = null;
+                RequestReturn rp = null;
                 Object entryVal = ((Entry)entry).getImpl();
                 if (entryVal instanceof SignatureEntry) {
                     Signature signature = (Signature) ((SignatureEntry)entryVal).getImpl();
-                    rp =  (RequestPath)signature.getRequestPath();
+                    rp =  (RequestReturn)signature.getRequestReturn();
                 } else if (entry instanceof Srv) {
                     rp = ((Srv)entry).getReturnPath();
                 }

@@ -899,13 +899,13 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 
 	Mogram getDomain(String name) throws ContextException;
 
-	Routine.RequestPath getRequestPath();
+	RequestReturn getRequestReturn();
 
 	public boolean compareTo(Object context);
 
 	public boolean compareTo(Object context, double delta);
 
-	Context setRequestPath(Routine.RequestPath requestPath);
+	Context setRequestReturn(RequestReturn requestPath);
 
 	public enum Type {
 		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY
@@ -916,4 +916,209 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	final static String TARGET = "context/target";
 	final static String RETURN = "context/result";
 
+	class RequestReturn<T> implements RoutineRequestPath, Serializable, Arg {
+		static final long serialVersionUID = 6158097800741638834L;
+		public String returnPath;
+		public Signature.Direction direction;
+		public Signature.Out outPaths;
+		public Path[] inPaths;
+		// return value type
+		public Class<T> type;
+		private Context dataContext;
+		public Signature.SessionPaths sessionPaths;
+		// out paths used for shared evaluators with RoutineEvaluator
+		public Map<String, Signature.Out> evalOutPaths;
+
+		public RequestReturn() {
+			// return the context
+			returnPath = Signature.SELF;
+		}
+
+		public RequestReturn(String path, Signature.Out argPaths) {
+			this.returnPath = path;
+			if (argPaths != null && argPaths.size() > 0) {
+				Path[] ps = new Path[argPaths.size()];
+				this.outPaths = argPaths;
+				direction = Signature.Direction.OUT;
+			}
+		}
+
+		public RequestReturn(Path path, Signature.In argPaths) {
+			this.returnPath = path.getName();
+			if (argPaths != null && argPaths.size() > 0) {
+				Path[] ps = new Path[argPaths.size()];
+				this.inPaths = argPaths.toArray(ps);
+				if (path.direction != null) {
+					direction = path.direction;
+				} else {
+					direction = Signature.Direction.IN;
+				}
+			}
+		}
+
+		public void setInputPaths(Signature.In argPaths) {
+			if (argPaths != null && argPaths.size() > 0) {
+				Path[] ps = new Path[argPaths.size()];
+				this.inPaths = argPaths.toArray(ps);
+			}
+		}
+
+		public RequestReturn(String path, Signature.In argPaths) {
+			this.returnPath = path;
+			if (argPaths != null && argPaths.size() > 0) {
+				Path[] ps = new Path[argPaths.size()];
+				this.inPaths = argPaths.toArray(ps);
+				direction = Signature.Direction.IN;
+			}
+		}
+
+		public RequestReturn(Signature.Out outPaths) {
+			this(null, null, outPaths);
+		}
+
+		public RequestReturn(Signature.In inPaths) {
+			this(null, inPaths, null);
+		}
+
+		public RequestReturn(Path[] paths) {
+			inPaths = paths;
+		}
+
+		public RequestReturn(String path, Signature.In inPaths, Signature.Out outPaths) {
+			this.returnPath = path;
+			if (outPaths != null && outPaths.size() > 0) {
+				this.outPaths = outPaths;
+			}
+			if (inPaths != null && inPaths.size() > 0) {
+				Path[] ps = new Path[inPaths.size()];
+				this.inPaths = inPaths.toArray(ps);
+			}
+			direction = Signature.Direction.INOUT;
+		}
+
+		public RequestReturn(String path, Signature.In inPaths, Signature.Out outPaths, Signature.SessionPaths sessionPaths) {
+			this(path, inPaths, outPaths);
+			this.sessionPaths = sessionPaths;
+		}
+
+		public RequestReturn(String path, Signature.SessionPaths sessionPaths, Path... argPaths) {
+			this(path, argPaths);
+			this.sessionPaths = sessionPaths;
+		}
+
+		public RequestReturn(String path, Path... argPaths) {
+			this.returnPath = path;
+			if (argPaths != null && argPaths.length > 0) {
+				this.outPaths = new Signature.Out(argPaths);
+				direction = Signature.Direction.OUT;
+			}
+		}
+
+		public RequestReturn(String path, Signature.Direction direction, Path... argPaths) {
+			this.returnPath = path;
+			this.outPaths = new Signature.Out(argPaths);
+			this.direction = direction;
+		}
+
+		public RequestReturn(String path, Signature.Direction direction,
+							 Class<T> returnType, Path... argPaths) {
+			this.returnPath = path;
+			this.direction = direction;
+			this.outPaths = new Signature.Out(argPaths);
+			type = returnType;
+		}
+
+		public String getName() {
+			return returnPath;
+		}
+
+		public String toString() {
+			StringBuffer sb = new StringBuffer(returnPath != null ? returnPath : "no returnPath");
+			if (outPaths != null)
+				sb.append("\noutPaths: " + outPaths);
+			if (inPaths != null)
+				sb.append("\ninPaths: " + inPaths);
+			return sb.toString();
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			RequestReturn that = (RequestReturn) o;
+
+			if (!outPaths.equals(that.outPaths)) return false;
+			if (direction != that.direction) return false;
+			if (!returnPath.equals(that.returnPath)) return false;
+			if (type != null ? !type.equals(that.type) : that.type != null) return false;
+
+			return true;
+		}
+
+		public Context getDataContext() {
+			return dataContext;
+		}
+
+		public void setDataContext(Context dataContext) {
+			this.dataContext = dataContext;
+		}
+
+		@Override
+		public int hashCode() {
+			int result = returnPath.hashCode();
+			result = 31 * result + (direction != null ? direction.hashCode() : 0);
+			result = 31 * result + (outPaths != null ? outPaths.hashCode() : 0);
+			result = 31 * result + (inPaths != null ? outPaths.hashCode() : 0);
+			result = 31 * result + (type != null ? type.hashCode() : 0);
+			return result;
+		}
+
+		public static String[] getPaths(Path[] paths) {
+			String[] ps = new String[paths.length];
+			for (int i = 0; i < paths.length; i++) {
+				ps[i] = paths[i].path;
+			}
+			return ps;
+		}
+
+		public Path[] getInSigPaths() {
+			return inPaths;
+		}
+
+
+		public Signature.Out getOutSigPaths() {
+			return outPaths;
+		}
+
+		@Override
+		public String getReturnPath() {
+			return returnPath;
+		}
+
+		@Override
+		public void setReturnPath(String path) {
+			this.returnPath = path;
+		}
+
+		@Override
+		public String[] getInPaths() {
+			if (inPaths != null)
+				return getPaths(inPaths);
+			else
+				return null;
+		}
+
+		@Override
+		public Signature.Out getOutPaths() {
+			if (outPaths != null)
+				return outPaths;
+			else
+				return null;
+		}
+
+		public Object execute(Arg... args) {
+			return this;
+		}
+	}
 }

@@ -137,7 +137,7 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
      *                         is in <code>URL</code> format.
      * @param policy           server policy filename or URL
      * @param classpath        location where server implementation classes can be found.
-     *                         Classpath components must be separated by requestPath separators.
+     *                         Classpath components must be separated by requestReturn separators.
      * @param implClassName    key of server implementation class
      * @param address          code server address used for the codebase
      * @param lifeCycle        <code>LifeCycle</code> reference for hosting environment
@@ -188,7 +188,7 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
      *                         is in <code>URL</code> format.
      * @param policy           server policy filename or URL
      * @param classpath        location where server implementation classes can be found.
-     *                         Classpath components must be separated by requestPath separators.
+     *                         Classpath components must be separated by requestReturn separators.
      * @param implClassName    key of server implementation class
      * @param serverConfigArgs service configuration arguments
      */
@@ -419,7 +419,7 @@ public class SorcerServiceDescriptor implements ServiceDescriptor {
                     jarPath = jarPath + File.separator;
                 }
                 if (logger.isDebugEnabled())
-                    logger.debug("Creating jar file requestPath from ["
+                    logger.debug("Creating jar file requestReturn from ["
                                 + f.getCanonicalPath() + "]");
                 JarFile jar = new JarFile(f);
                 Manifest man = jar.getManifest();

@@ -316,7 +316,7 @@ operator extends Operator {
         List<EntryList> entryLists = new ArrayList();
         List<ExecDependency> depList = new ArrayList();
         Complement subject = null;
-        Routine.RequestPath returnPath = null;
+        Context.RequestReturn returnPath = null;
         ExecPath execPath = null;
         Args cxtArgs = null;
         ParameterTypes parTypes = null;
@@ -337,8 +337,8 @@ operator extends Operator {
                 parTypes = (ParameterTypes) o;
             } else if (o instanceof PathResponse) {
                 response = (PathResponse) o;
-            } else if (o instanceof Routine.RequestPath) {
-                returnPath = (Routine.RequestPath) o;
+            } else if (o instanceof Context.RequestReturn) {
+                returnPath = (Context.RequestReturn) o;
             } else if (o instanceof ExecPath) {
                 execPath = (ExecPath) o;
             } else if (o instanceof Subroutine) {
@@ -465,7 +465,7 @@ operator extends Operator {
             }
         }
         if (returnPath != null)
-            cxt.setRequestPath(returnPath);
+            cxt.setRequestReturn(returnPath);
         if (execPath != null)
             cxt.setExecPath(execPath);
         if (cxtArgs != null) {
@@ -519,25 +519,25 @@ operator extends Operator {
             }
         }
         if (outPaths instanceof Out) {
-            if (cxt.getRequestPath() == null) {
-                cxt.setRequestPath(new Routine.RequestPath(outPaths));
+            if (cxt.getRequestReturn() == null) {
+                cxt.setRequestReturn(new Context.RequestReturn(outPaths));
             } else {
-                cxt.getRequestPath().outPaths = outPaths;
+                cxt.getRequestReturn().outPaths = outPaths;
             }
         }
         if (inPaths instanceof In) {
-            if (cxt.getRequestPath() == null) {
-                cxt.setRequestPath(new Routine.RequestPath(inPaths));
+            if (cxt.getRequestReturn() == null) {
+                cxt.setRequestReturn(new Context.RequestReturn(inPaths));
             } else {
-                cxt.getRequestPath().inPaths = inPaths.toPathArray();
+                cxt.getRequestReturn().inPaths = inPaths.toPathArray();
             }
         }
 
         if (paths != null) {
-            if (cxt.getRequestPath() == null) {
-                cxt.setRequestPath(new Routine.RequestPath(paths.toPathArray()));
+            if (cxt.getRequestReturn() == null) {
+                cxt.setRequestReturn(new Context.RequestReturn(paths.toPathArray()));
             } else {
-                cxt.getRequestPath().inPaths = paths.toPathArray();
+                cxt.getRequestReturn().inPaths = paths.toPathArray();
             }
         }
 
@@ -1004,8 +1004,8 @@ operator extends Operator {
                     sig.setActive((Operating) o);
                 } else if (o instanceof Strategy.Shell) {
                     sig.setShellRemote((Strategy.Shell) o);
-                } else if (o instanceof Routine.RequestPath) {
-                    sig.setRequestPath((Routine.RequestPath) o);
+                } else if (o instanceof Context.RequestReturn) {
+                    sig.setRequestReturn((Context.RequestReturn) o);
                 } else if (o instanceof ServiceDeployment) {
                     sig.setProvisionable(true);
                     sig.setDeployment((ServiceDeployment) o);
@@ -1042,7 +1042,7 @@ operator extends Operator {
         In inPaths = null;
         Out outPaths = null;
         ServiceContext context = null;
-        Routine.RequestPath returnPath = null;
+        Context.RequestReturn returnPath = null;
         for (Object item : items) {
             if (item instanceof String) {
                 selector = (String) item;
@@ -1068,8 +1068,8 @@ operator extends Operator {
                     prvName.setName(Sorcer.getActualName(prvName.getName()));
 
                 }
-            } else if (item instanceof Routine.RequestPath) {
-                returnPath = (Routine.RequestPath)item;
+            } else if (item instanceof Context.RequestReturn) {
+                returnPath = (Context.RequestReturn)item;
             }
         }
         ServiceSignature signature = null;
@@ -1106,30 +1106,30 @@ operator extends Operator {
         if (context instanceof ServiceContext
             // not applied to connectors in Signatures
             && context.getClass() != MapContext.class) {
-            if (signature.getRequestPath() == null) {
-                signature.setRequestPath(new Routine.RequestPath());
+            if (signature.getRequestReturn() == null) {
+                signature.setRequestReturn(new Context.RequestReturn());
             }
-            signature.getRequestPath().setDataContext(context);
+            signature.getRequestReturn().setDataContext(context);
         }
 
-        // handle return requestPath
+        // handle return requestReturn
         if (returnPath != null) {
-            signature.setRequestPath(returnPath);
+            signature.setRequestReturn(returnPath);
         }
 
         // handle input output paths
         if (inPaths != null) {
-            if (signature.getRequestPath() == null) {
-                signature.setRequestPath(new Routine.RequestPath(inPaths));
+            if (signature.getRequestReturn() == null) {
+                signature.setRequestReturn(new Context.RequestReturn(inPaths));
             } else {
-                signature.getRequestPath().inPaths = inPaths.toPathArray();
+                signature.getRequestReturn().inPaths = inPaths.toPathArray();
             }
         }
         if (outPaths != null) {
-            if (signature.getRequestPath() == null) {
-                signature.setRequestPath(new Routine.RequestPath(outPaths));
+            if (signature.getRequestReturn() == null) {
+                signature.setRequestReturn(new Context.RequestReturn(outPaths));
             } else {
-                signature.getRequestPath().outPaths = outPaths;
+                signature.getRequestReturn().outPaths = outPaths;
             }
         }
 
@@ -1183,25 +1183,25 @@ operator extends Operator {
         if (context instanceof ServiceContext
             // not applied to connectors in Signatures
             && context.getClass() != MapContext.class) {
-            if (newSig.getRequestPath() == null) {
-                newSig.setRequestPath(new Routine.RequestPath());
+            if (newSig.getRequestReturn() == null) {
+                newSig.setRequestReturn(new Context.RequestReturn());
             }
-            newSig.getRequestPath().setDataContext(context);
+            newSig.getRequestReturn().setDataContext(context);
         }
 
         // handle input output paths
         if (inPaths != null) {
-            if (newSig.getRequestPath() == null) {
-                newSig.setRequestPath(new Routine.RequestPath(inPaths));
+            if (newSig.getRequestReturn() == null) {
+                newSig.setRequestReturn(new Context.RequestReturn(inPaths));
             } else {
-                newSig.getRequestPath().inPaths = inPaths.toPathArray();
+                newSig.getRequestReturn().inPaths = inPaths.toPathArray();
             }
         }
         if (outPaths != null) {
-            if (newSig.getRequestPath() == null) {
-                newSig.setRequestPath(new Routine.RequestPath(outPaths));
+            if (newSig.getRequestReturn() == null) {
+                newSig.setRequestReturn(new Context.RequestReturn(outPaths));
             } else {
-                newSig.getRequestPath().outPaths = outPaths;
+                newSig.getRequestReturn().outPaths = outPaths;
             }
         }
         return newSig;
@@ -1308,21 +1308,21 @@ operator extends Operator {
                     ((ServiceSignature) sig).setProvisionable((Provision) o);
                 } else if (o instanceof Strategy.Shell) {
                     ((ServiceSignature) sig).setShellRemote((Strategy.Shell) o);
-                } else if (o instanceof Routine.RequestPath) {
-                    sig.setRequestPath((Routine.RequestPath) o);
+                } else if (o instanceof Context.RequestReturn) {
+                    sig.setRequestReturn((Context.RequestReturn) o);
                 } else if (o instanceof ParameterTypes) {
                     ((ServiceSignature)sig).setMatchTypes(((ParameterTypes) o).parameterTypes);
                 } else if (o instanceof In ) {
-                    if (sig.getRequestPath() == null) {
-                        sig.setRequestPath(new Routine.RequestPath((In) o));
+                    if (sig.getRequestReturn() == null) {
+                        sig.setRequestReturn(new Context.RequestReturn((In) o));
                     } else {
-                        ((Routine.RequestPath)sig.getRequestPath()).inPaths = ((In) o).toPathArray();
+                        ((Context.RequestReturn)sig.getRequestReturn()).inPaths = ((In) o).toPathArray();
                     }
                 } else if (o instanceof Out) {
-                    if (sig.getRequestPath() == null) {
-                        sig.setRequestPath(new Routine.RequestPath((Out) o));
+                    if (sig.getRequestReturn() == null) {
+                        sig.setRequestReturn(new Context.RequestReturn((Out) o));
                     } else {
-                        ((Routine.RequestPath)sig.getRequestPath()).outPaths = (Out) o;
+                        ((Context.RequestReturn)sig.getRequestReturn()).outPaths = (Out) o;
                     }
                 } else if (o instanceof ServiceDeployment) {
                     ((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
@@ -1333,10 +1333,10 @@ operator extends Operator {
                 } else if (o instanceof ServiceContext
                     // not applied to connectors in Signatures
                     && o.getClass() != MapContext.class) {
-                    if (sig.getRequestPath() == null) {
-                        sig.setRequestPath(new Routine.RequestPath());
+                    if (sig.getRequestReturn() == null) {
+                        sig.setRequestReturn(new Context.RequestReturn());
                     }
-                    ((Routine.RequestPath) sig.getRequestPath()).setDataContext((Context) o);
+                    ((Context.RequestReturn) sig.getRequestReturn()).setDataContext((Context) o);
                 }
             }
         }
@@ -1485,11 +1485,11 @@ operator extends Operator {
         } else if (Service.class.isAssignableFrom(serviceType)) {
             return sig("exert", serviceType);
         } else {
-            return sig(serviceType, (Routine.RequestPath) null);
+            return sig(serviceType, (Context.RequestReturn) null);
         }
     }
 
-    public static Signature sig(Class<?> serviceType, Routine.RequestPath returnPath, ServiceDeployment deployment)
+    public static Signature sig(Class<?> serviceType, Context.RequestReturn returnPath, ServiceDeployment deployment)
         throws SignatureException {
         Signature signature = sig(serviceType, returnPath);
         ((ServiceSignature) signature).setDeployment(deployment);
@@ -1497,7 +1497,7 @@ operator extends Operator {
         return signature;
     }
 
-    public static Signature sig(Class<?> serviceType, Routine.RequestPath returnPath)
+    public static Signature sig(Class<?> serviceType, Context.RequestReturn returnPath)
         throws SignatureException {
         Signature sig = null;
         if (serviceType.isInterface()) {
@@ -1508,19 +1508,19 @@ operator extends Operator {
             sig = new ObjectSignature(serviceType);
         }
         if (returnPath != null)
-            sig.setRequestPath(returnPath);
+            sig.setRequestReturn(returnPath);
         return sig;
     }
 
     public static EvaluationSignature sig(String name, Evaluator evaluator,
-                                          Routine.RequestPath requestPath) throws SignatureException {
+                                          Context.RequestReturn requestPath) throws SignatureException {
         EvaluationSignature sig = null;
         if (evaluator instanceof Scopable) {
             sig = new EvaluationSignature(new Prc(evaluator));
         } else {
             sig = new EvaluationSignature(evaluator);
         }
-        sig.setRequestPath(requestPath);
+        sig.setRequestReturn(requestPath);
         if (name != null) {
             sig.setName(name);
         }
@@ -1528,7 +1528,7 @@ operator extends Operator {
     }
 
     public static EvaluationSignature sig(Evaluator evaluator,
-                                          Routine.RequestPath requestPath) throws SignatureException {
+                                          Context.RequestReturn requestPath) throws SignatureException {
         return sig(null, evaluator, requestPath);
     }
 
@@ -2440,7 +2440,7 @@ operator extends Operator {
         Signature signature = null;
         ControlContext controlStrategy = null;
         Context data = null;
-        Routine.RequestPath rp = null;
+        Context.RequestReturn rp = null;
         List<Routine> exertions = new ArrayList();
         List<Pipe> pipes = new ArrayList();
         FidelityManager fiManager = null;
@@ -2468,8 +2468,8 @@ operator extends Operator {
                 pipes.add((Pipe) elems[i]);
             } else if (elems[i] instanceof Signature) {
                 signature = ((Signature) elems[i]);
-            } else if (elems[i] instanceof Routine.RequestPath) {
-                rp = ((Routine.RequestPath) elems[i]);
+            } else if (elems[i] instanceof Context.RequestReturn) {
+                rp = ((Context.RequestReturn) elems[i]);
             } else if (elems[i] instanceof FidelityManager) {
                 fiManager = ((FidelityManager) elems[i]);
             } else if (elems[i] instanceof MorphFidelity) {
@@ -2500,14 +2500,14 @@ operator extends Operator {
                 job = new NetJob(name);
             }
         }
-        if ((inPaths != null || outPaths != null) && signature.getRequestPath() == null) {
-            signature.setRequestPath(new Routine.RequestPath(name));
+        if ((inPaths != null || outPaths != null) && signature.getRequestReturn() == null) {
+            signature.setRequestReturn(new Context.RequestReturn(name));
         }
         if (inPaths != null) {
-            ((Routine.RequestPath)signature.getRequestPath()).setInputPaths(inPaths);
+            ((Context.RequestReturn)signature.getRequestReturn()).setInputPaths(inPaths);
         }
         if (outPaths != null) {
-            ((Routine.RequestPath)signature.getRequestPath()).outPaths = outPaths;
+            ((Context.RequestReturn)signature.getRequestReturn()).outPaths = outPaths;
         }
 
         ServiceFidelity srvFi = null;
@@ -2528,7 +2528,7 @@ operator extends Operator {
             job.setContext(data);
 
         if (rp != null) {
-            ((ServiceContext) job.getDataContext()).setRequestPath(rp);
+            ((ServiceContext) job.getDataContext()).setRequestReturn(rp);
         }
 
         if (controlStrategy != null) {
@@ -2606,10 +2606,10 @@ operator extends Operator {
             for (Pipe p : pipes) {
 //				logger.debug("from context: "
 //						+ ((Routine) p.in).getDataContext().getName()
-//						+ " requestPath: " + p.inPath);
+//						+ " requestReturn: " + p.inPath);
 //				logger.debug("to context: "
 //						+ ((Routine) p.out).getDataContext().getName()
-//						+ " requestPath: " + p.outPath);
+//						+ " requestReturn: " + p.outPath);
                 // find component mograms for thir paths
                 if (!p.isExertional()) {
                     p.out = (Routine)job.getComponentMogram(p.outComponentPath);
@@ -2757,7 +2757,7 @@ operator extends Operator {
     }
 
     /**
-     * Associates a given requestPath in this context with a tag
+     * Associates a given requestReturn in this context with a tag
      * defined for this context. If a tag, for example, is
      * "triplet|one|two|three" then its tuple can be "triplet|mike|w|sobol" where
      * 'triplet' is the key of relation and its proper tuple is 'mike|w|sobol'.
@@ -2850,64 +2850,64 @@ operator extends Operator {
         return signature;
     }
 
-    public static Routine.RequestPath result(String path) {
-        return new Routine.RequestPath(path);
+    public static Context.RequestReturn result(String path) {
+        return new Context.RequestReturn(path);
     }
 
-    public static Routine.RequestPath result(Out paths) {
-        return new Routine.RequestPath(null, paths);
+    public static Context.RequestReturn result(Out paths) {
+        return new Context.RequestReturn(null, paths);
     }
 
-    public static Routine.RequestPath result(SessionPaths sessionPaths) {
-        return new Routine.RequestPath(null, sessionPaths);
+    public static Context.RequestReturn result(SessionPaths sessionPaths) {
+        return new Context.RequestReturn(null, sessionPaths);
     }
 
-    public static Routine.RequestPath result(String path, SessionPaths sessionPaths) {
-        return new Routine.RequestPath(path, sessionPaths);
+    public static Context.RequestReturn result(String path, SessionPaths sessionPaths) {
+        return new Context.RequestReturn(path, sessionPaths);
     }
 
     public static SessionPaths session(Paths... pathsArray) {
         return new SessionPaths(pathsArray);
     }
 
-    public static Routine.RequestPath self() {
-        return new Routine.RequestPath();
+    public static Context.RequestReturn self() {
+        return new Context.RequestReturn();
     }
 
-    public static Routine.RequestPath result(String path, Out outPaths) {
-        return new Routine.RequestPath(path, outPaths);
+    public static Context.RequestReturn result(String path, Out outPaths) {
+        return new Context.RequestReturn(path, outPaths);
     }
 
-    public static Routine.RequestPath result(String path, In inPaths) {
-        return new Routine.RequestPath(path, inPaths);
+    public static Context.RequestReturn result(String path, In inPaths) {
+        return new Context.RequestReturn(path, inPaths);
     }
 
-    public static Routine.RequestPath result(Path path, In inPaths) {
-        return new Routine.RequestPath(path, inPaths);
+    public static Context.RequestReturn result(Path path, In inPaths) {
+        return new Context.RequestReturn(path, inPaths);
     }
-    public static Routine.RequestPath result(In inPaths) {
-        return new Routine.RequestPath(Signature.SELF, inPaths);
-    }
-
-    public static Routine.RequestPath result(String path, In inPaths, Out outPaths) {
-        return new Routine.RequestPath(path, inPaths, outPaths);
+    public static Context.RequestReturn result(In inPaths) {
+        return new Context.RequestReturn(Signature.SELF, inPaths);
     }
 
-    public static Routine.RequestPath result(String path, In inPaths, Out outPaths, SessionPaths sessionPaths) {
-        return new Routine.RequestPath(path, inPaths, outPaths, sessionPaths);
+    public static Context.RequestReturn result(String path, In inPaths, Out outPaths) {
+        return new Context.RequestReturn(path, inPaths, outPaths);
     }
 
-    public static Routine.RequestPath result(String path, Direction direction) {
-        return new Routine.RequestPath(path, direction);
+    public static Context.RequestReturn result(String path, In inPaths, Out outPaths, SessionPaths sessionPaths) {
+        return new Context.RequestReturn(path, inPaths, outPaths, sessionPaths);
     }
 
-    public static Routine.RequestPath result(String path, Direction direction,
-                                             Path[] paths) {
-        return new Routine.RequestPath(path, direction, paths);
+    public static Context.RequestReturn result(String path, Direction direction) {
+        return new Context.RequestReturn(path, direction);
     }
 
-    public static Routine.RequestPath result(String path, Class type, Path[] paths) {
-        return new Routine.RequestPath(path, Direction.OUT, type, paths);
+    public static Context.RequestReturn result(String path, Direction direction,
+                                               Path[] paths) {
+        return new Context.RequestReturn(path, direction, paths);
+    }
+
+    public static Context.RequestReturn result(String path, Class type, Path[] paths) {
+        return new Context.RequestReturn(path, Direction.OUT, type, paths);
     }
 
     public static String getUnknown() {
@@ -2948,7 +2948,7 @@ operator extends Operator {
         }
     }
 
-    // putLink(String key, String requestPath, Context linkedContext, String offset)
+    // putLink(String key, String requestReturn, Context linkedContext, String offset)
     public static Object link(Context context, String path,
                               Context linkedContext, String offset) throws ContextException {
         context.putLink(null, path, linkedContext, offset);
@@ -3077,7 +3077,7 @@ operator extends Operator {
 
         @Override
         public String toString() {
-            return "return requestPath: " + impl;
+            return "return requestReturn: " + impl;
         }
     }
 
@@ -3128,8 +3128,8 @@ operator extends Operator {
             if (o instanceof Paths) {
                 paths = (Paths) o;
             } else {
-                // a requestPath in args is used as dependent entry
-                // and also as a  requestPath in context
+                // a requestReturn in args is used as dependent entry
+                // and also as a  requestReturn in context
                 // as all args are appended to context defined by a Paths
                 if (o instanceof Path) {
                     ps.add((Path) o);
@@ -3653,8 +3653,8 @@ operator extends Operator {
                     if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Prc) {
                         Prc p = (Prc)((EvaluationTask)target).getEvaluation();
                         p.setScope(pm);
-                        if (target instanceof Routine && ((Routine)target).getContext().getRequestPath() == null)
-                            ((ServiceContext)((Routine)target).getContext()).setRequestPath(p.getName());
+                        if (target instanceof Routine && ((Routine)target).getContext().getRequestReturn() == null)
+                            ((ServiceContext)((Routine)target).getContext()).setRequestReturn(p.getName());
                     }
 //				} else if (e instanceof VarTask) {
 //					pm.append(((VarSignature)e.getProcessSignature()).getVariability());

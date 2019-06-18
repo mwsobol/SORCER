@@ -28,7 +28,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A service <code>Signature</code> is an indirect behavioral feature of
@@ -137,31 +136,31 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	public Class[] getMatchTypes();
 
 	/**
-	 * Assigns a return path to the request path of this signature.
+	 * Assigns a request return of this signature with a given return path.
 	 *
 	 * @param path
 	 *            to the return execute
 	 */
-	public void setRequestPath(Routine.RequestPath path);
+	public void setRequestReturn(Context.RequestReturn path);
 
-	public void setReturnPath(String path);
+	public void setReturnRequest(String path);
 
 	/**
-	 * Assigns a returnPath to the return execute with a returnPath and directional attribute.
+	 * Assigns a request return to the return execute with a return path and directional attribute.
 	 *
 	 * @param path
-	 *            to the return execute
+	 *            the return path of the request return
 	 * @param direction
-	 *            the returnPath directional attribute
+	 *            the request return directional attribute
 	 */
-	public void setReturnPath(String path, Direction direction);
+	public void setReturnRequest(String path, Direction direction);
 
 	/**
-	 * Returns a returnPath to the return execute by this signature.
+	 * Returns a requestReturn to the return execute by this signature.
 	 *
-	 * @return returnPath to the return execute
+	 * @return requestReturn to the return execute
 	 */
-	public Routine.RequestPath getRequestPath();
+	public Context.RequestReturn getRequestReturn();
 
 	/**
 	 * Returns a signature Type of this signature.

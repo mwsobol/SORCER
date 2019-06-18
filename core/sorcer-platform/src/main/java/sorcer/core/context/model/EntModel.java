@@ -26,7 +26,6 @@ import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
 import sorcer.util.Row;
-import sorcer.service.Routine.RequestPath;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
@@ -113,7 +112,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 			if (path != null) {
 				val = get(path);
 			} else {
-				RequestPath rp = Arg.getReturnPath(args);
+				RequestReturn rp = Arg.getReturnPath(args);
 				if (rp != null)
 					val = getReturnValue(rp);
 				else if (mogramStrategy.getResponsePaths() != null
@@ -362,7 +361,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 		Object result = null;
 		try {
 			if (context != null) {
-				RequestPath rp = ((ServiceContext)context).getRequestPath();
+				RequestReturn rp = ((ServiceContext)context).getRequestReturn();
 				this.append(context);
 				// check for multiple response of this model
 				if (rp != null && rp.outPaths.size() > 0) {
@@ -398,7 +397,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 								throw new InvocationException(
 										"No such invoker at: "
 												+ ((ServiceContext) context)
-												.getRequestPath().returnPath);
+												.getRequestReturn().returnPath);
 						}
 					}
 				} else {
@@ -413,7 +412,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 		}
 	}
 
-	private Object getReturnValue(RequestPath rp) throws ContextException {
+	private Object getReturnValue(RequestReturn rp) throws ContextException {
 		Object val = null;
 		// check for multiple response of this model
 		if (rp != null && rp.outPaths.size() > 0) {
@@ -489,7 +488,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 	}
 
 	/**
-	 * Returns an enumeration of all requestPath marking variable nodes.
+	 * Returns an enumeration of all requestReturn marking variable nodes.
 	 *
 	 * @return enumeration of marked variable nodes.
 	 * @throws ContextException

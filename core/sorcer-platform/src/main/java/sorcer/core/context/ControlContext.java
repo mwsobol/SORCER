@@ -205,7 +205,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 	public ControlContext(Routine exertion) {
 		this();
 		subjectValue = exertion.getName();
-		// make it visible via the requestPath EXERTION
+		// make it visible via the requestReturn EXERTION
 		try {
 			Routine erxt = (Routine) getValue(EXERTION);
 			if (exertion != null) {

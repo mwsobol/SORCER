@@ -43,7 +43,7 @@ public class AdderImpl implements Adder {
 		else
 			cxt.putValue("calculated/provider", getClass().getName());
 
-		if (context.getRequestPath() != null && context.getRequestPath().getReturnPath() != null) {
+		if (context.getRequestReturn() != null && context.getRequestReturn().getReturnPath() != null) {
 			context.setReturnValue(result);
 		} else if (outpaths.size() == 1) {
 			// put the result in the existing output path

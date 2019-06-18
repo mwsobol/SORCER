@@ -822,7 +822,7 @@ public class operator extends Operator {
 			}
 
 			if (fi.getFiType().equals(Fi.Type.GRADIENT)) {
-				// if no requestPath set use its key - no multifidelities
+				// if no requestReturn set use its key - no multifidelities
 				if (selectFi.getPath().equals("")) {
 					selectFi.setPath(selectFi.getName());
 				}
@@ -955,7 +955,7 @@ public class operator extends Operator {
 		return srv;
 	}
 
-	public static <T> Srv lambda(String path, ValueCallable<T> call, Routine.RequestPath returnPath) {
+	public static <T> Srv lambda(String path, ValueCallable<T> call, Context.RequestReturn returnPath) {
 		Srv srv = new Srv(path, call, returnPath);
 		srv.setType(Functionality.Type.LAMBDA);
 		return srv;

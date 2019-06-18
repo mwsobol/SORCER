@@ -51,7 +51,7 @@ import sorcer.jini.lookup.ProviderID;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.Exec.State;
-import sorcer.service.Routine.RequestPath;
+import sorcer.service.Context.RequestReturn;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Data;
 import sorcer.service.modeling.Model;
@@ -706,15 +706,15 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 	}
 
 	private static Routine initialize(Routine xrt, Arg... args) throws ContextException {
-		RequestPath rPath = null;
+		RequestReturn rPath = null;
 		for (Arg a : args) {
-			if (a instanceof RequestPath) {
-				rPath = (RequestPath) a;
+			if (a instanceof RequestReturn) {
+				rPath = (RequestReturn) a;
 				break;
 			}
 		}
 		if (rPath != null)
-			((ServiceContext)xrt.getDataContext()).setRequestPath(rPath);
+			((ServiceContext)xrt.getDataContext()).setRequestReturn(rPath);
 		return xrt;
 	}
 
@@ -724,7 +724,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			return xrt.getExceptions();
 		}
 		Context dcxt = xrt.getDataContext();
-		RequestPath rPath = dcxt.getRequestPath();
+		RequestReturn rPath = dcxt.getRequestReturn();
 		// check if it was already finalized
 		if (((ServiceContext) dcxt).isFinalized()) {
 			return dcxt.getValue(rPath.returnPath);
@@ -746,7 +746,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				dcxt.putValue(rPath.returnPath, val);
 				return val;
 			} else {
-				RequestPath rp = ((ServiceContext) dcxt).getRequestPath();
+				RequestReturn rp = ((ServiceContext) dcxt).getRequestReturn();
 				if (rp != null && rPath.returnPath != null) {
 					Object result = acxt.getValue(rp.returnPath);
 					if (result instanceof Context)
@@ -908,13 +908,13 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			} else if (service instanceof Context) {
 				ServiceContext cxt = (ServiceContext)service;
 				cxt.substitute(args);
-				RequestPath returnPath = cxt.getRequestPath();
+				RequestReturn returnPath = cxt.getRequestReturn();
 				if (cxt instanceof EntModel) {
 					return ((Model)service).getResponse(args);
 				} else if (returnPath != null){
 					return cxt.getValue(returnPath.returnPath, args);
 				} else {
-					throw new RoutineException("No return requestPath in the context: "
+					throw new RoutineException("No return requestReturn in the context: "
 							+ cxt.getName());
 				}
 			} else if (service instanceof MultiFiMogram) {

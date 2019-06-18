@@ -11,7 +11,7 @@ import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.Subroutine;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.service.*;
-import sorcer.service.Routine.RequestPath;
+import sorcer.service.Context.RequestReturn;
 import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
@@ -38,7 +38,7 @@ public class Srv extends Subroutine<Object> implements Serviceableness,
 
     protected String[] paths;
 
-    protected RequestPath returnPath;
+    protected RequestReturn returnPath;
 
     public Srv(String name) {
         super(name);
@@ -83,12 +83,12 @@ public class Srv extends Subroutine<Object> implements Serviceableness,
         type = Functionality.Type.SRV;
     }
 
-    public Srv(String name, Object value, RequestPath returnPath) {
+    public Srv(String name, Object value, RequestReturn returnPath) {
         this(name, value);
         this.returnPath = returnPath;
     }
 
-    public Srv(String name, String path, Object value, RequestPath returnPath) {
+    public Srv(String name, String path, Object value, RequestReturn returnPath) {
         super(path, value);
         this.returnPath = returnPath;
         type = Functionality.Type.SRV;
@@ -247,21 +247,21 @@ public class Srv extends Subroutine<Object> implements Serviceableness,
     }
 
     public Object execSignature(Signature sig, Context scope) throws MogramException {
-        RequestPath rp = (RequestPath) sig.getRequestPath();
+        RequestReturn rp = (RequestReturn) sig.getRequestReturn();
         Signature.Out ops = null;
         if (rp != null) {
-            ops = ((RequestPath) sig.getRequestPath()).outPaths;
+            ops = ((RequestReturn) sig.getRequestReturn()).outPaths;
         }
         Context incxt = scope;
-        if (sig.getRequestPath() != null) {
-            incxt.setRequestPath(sig.getRequestPath());
+        if (sig.getRequestReturn() != null) {
+            incxt.setRequestReturn(sig.getRequestReturn());
         }
         Context outcxt = null;
         try {
             outcxt = task(sig, incxt).exert().getContext();
             if (ops != null && ops.size() > 0) {
                 return outcxt.getDirectionalSubcontext(ops);
-            } else if (sig.getRequestPath() != null) {
+            } else if (sig.getRequestReturn() != null) {
                 return outcxt.getReturnValue();
             }
         } catch (Exception e) {
@@ -294,11 +294,11 @@ public class Srv extends Subroutine<Object> implements Serviceableness,
         }
     }
     
-    public RequestPath getReturnPath() {
+    public RequestReturn getReturnPath() {
         return returnPath;
     }
 
-    public void setReturnPath(RequestPath returnPath) {
+    public void setReturnPath(RequestReturn returnPath) {
         this.returnPath = returnPath;
     }
 

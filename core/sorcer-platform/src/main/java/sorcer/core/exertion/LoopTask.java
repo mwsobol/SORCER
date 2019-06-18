@@ -114,7 +114,7 @@ public class LoopTask extends ConditionalTask {
 				target.getScope().append(scope);
 			}
 
-			RequestPath rp = (RequestPath)target.getContext().getRequestPath();
+			Context.RequestReturn rp = (Context.RequestReturn)target.getContext().getRequestReturn();
 
 			if (condition == null) {
 				for (int i = 0; i < max - min; i++) {

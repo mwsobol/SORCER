@@ -326,8 +326,8 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		Uuid uuid = store(object);
 		Store type = getStoreType(object);
 		URL sdbUrl = getDatabaseURL(type, uuid);
-		if (((ServiceContext)context).getRequestPath() != null)
-			context.putOutValue(((ServiceContext)context).getRequestPath().returnPath, sdbUrl);
+		if (((ServiceContext)context).getRequestReturn() != null)
+			context.putOutValue(((ServiceContext)context).getRequestReturn().returnPath, sdbUrl);
 
 		context.putOutValue(object_url, sdbUrl);
 		context.putOutValue(store_size, getStoreSize(type));
@@ -412,8 +412,8 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 //		TODO
 //		Object obj = retrieve(uuid, storeType);
 		Object obj = retrieve(uuid, Store.object);
-		if (((ServiceContext)context).getRequestPath() != null)
-			context.putOutValue(((ServiceContext)context).getRequestPath().returnPath, obj);
+		if (((ServiceContext)context).getRequestReturn() != null)
+			context.putOutValue(((ServiceContext)context).getRequestReturn().returnPath, obj);
 		
 		// default returned reqestPath
 		context.putOutValue(object_retrieved, obj);
@@ -444,8 +444,8 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		} catch (Exception e) {
 			throw new ContextException(e);
 		}
-		if (((ServiceContext)context).getRequestPath() != null)
-			context.putOutValue(((ServiceContext)context).getRequestPath().returnPath, sdbUrl);
+		if (((ServiceContext)context).getRequestReturn() != null)
+			context.putOutValue(((ServiceContext)context).getRequestReturn().returnPath, sdbUrl);
 
 		context.putOutValue(object_url, sdbUrl);
 		context.remove(object_updated);
@@ -670,8 +670,8 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	public Context contextSize(Context context) throws RemoteException,
 			ContextException, MalformedURLException {
 		Store type = (Store)context.getValue(StorageManagement.store_type);
-		if (((ServiceContext)context).getRequestPath() != null)
-			context.putOutValue(((ServiceContext)context).getRequestPath().returnPath, getStoreSize(type));
+		if (((ServiceContext)context).getRequestReturn() != null)
+			context.putOutValue(((ServiceContext)context).getRequestReturn().returnPath, getStoreSize(type));
 		context.putOutValue(store_size, getStoreSize(type));
 		return context;
 	}

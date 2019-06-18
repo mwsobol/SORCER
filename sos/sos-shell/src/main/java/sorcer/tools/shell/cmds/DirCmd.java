@@ -205,7 +205,7 @@ public class DirCmd extends ShellCmd {
 		}
 		/* See if the passed in property is a complete directory */
 		File dir = new File(dirName);
-		/* If its not, it may be a relative requestPath */
+		/* If its not, it may be a relative requestReturn */
 		if (!dir.exists()) {
 			dir = new File(NetworkShell.getInstance().getCurrentDir()
 					.getAbsolutePath()
@@ -270,7 +270,7 @@ public class DirCmd extends ShellCmd {
             case "dir":
                 return "Synonymous with the ls command.";
             case "pwd":
-                return "Returns working directory requestPath.";
+                return "Returns working directory requestReturn.";
             case "cd":
                 return "Changes the current working directory. The \"~\" character can be used, this will change back to the nsh's home directory";
             default:

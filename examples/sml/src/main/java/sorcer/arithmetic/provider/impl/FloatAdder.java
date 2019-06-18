@@ -23,7 +23,7 @@ public class FloatAdder implements Adder, FloatSrv {
             result += value;
         }
 
-        if (((ServiceContext) context).getRequestPath() != null) {
+        if (((ServiceContext) context).getRequestReturn() != null) {
             context.setReturnValue(result);
         } else if (outpath != null) {
             context.putValue(outpath.toString(), result);

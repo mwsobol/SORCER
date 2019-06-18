@@ -100,7 +100,7 @@ public class SdbUtil {
 		cxt.putInValue(StorageManagement.object_stored, object);
 		cxt.putInValue(StorageManagement.object_uuid,
 				((Identifiable) object).getId());
-		cxt.setRequestPath(StorageManagement.object_url);
+		cxt.setRequestReturn(StorageManagement.object_url);
 		return cxt;
 	}
 
@@ -119,7 +119,7 @@ public class SdbUtil {
 		ServiceContext cxt = new ServiceContext("retrieve context");
 		cxt.putInValue(StorageManagement.object_type, type);
 		cxt.putInValue(StorageManagement.object_uuid, uuid);
-		cxt.setRequestPath(StorageManagement.object_retrieved);
+		cxt.setRequestReturn(StorageManagement.object_retrieved);
 		return cxt;
 	}
 
@@ -144,7 +144,7 @@ public class SdbUtil {
 		ServiceContext cxt = new ServiceContext("update context");
 		cxt.putInValue(StorageManagement.object_uuid, uuid);
 		cxt.putInValue(StorageManagement.object_updated, object);
-		cxt.setRequestPath(StorageManagement.object_url);
+		cxt.setRequestReturn(StorageManagement.object_url);
 		return cxt;
 	}
 
@@ -152,7 +152,7 @@ public class SdbUtil {
 			throws ContextException {
 		ServiceContext cxt = new ServiceContext("storage list context");
 		cxt.putInValue(StorageManagement.store_type, storeType);
-		cxt.setRequestPath(StorageManagement.store_content_list);
+		cxt.setRequestReturn(StorageManagement.store_content_list);
 		return cxt;
 	}
 

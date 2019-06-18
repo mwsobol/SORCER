@@ -1410,9 +1410,9 @@ public class operator extends Operator {
 		 return entry;
 	}
 
-//	public static Object impl(Model context, String requestPath)
+//	public static Object impl(Model context, String requestReturn)
 //			throws ContextException {
-//		return impl((ServiceContext) context,  requestPath);
+//		return impl((ServiceContext) context,  requestReturn);
 //	}
 
 	public static Object rimpl(Context context, String path)
@@ -1670,10 +1670,10 @@ public class operator extends Operator {
 	}
 
 //	public static Dependency dependsOn(Dependency dependee,  Evaluation... dependers) throws ContextException {
-//        String requestPath = null;
+//        String requestReturn = null;
 //		for (Evaluation d : dependers) {
-//            requestPath = ((Identifiable)d).getName();
-//            if (requestPath != null && requestPath.equals("self")) {
+//            requestReturn = ((Identifiable)d).getName();
+//            if (requestReturn != null && requestReturn.equals("self")) {
 //                ((Entry)d).setKey(((Domain) dependee).getName());
 //            }
 //            if (d instanceof ExecDependency && ((ExecDependency)d).getFiType().equals(Type.CONDITION)) {
@@ -1686,15 +1686,15 @@ public class operator extends Operator {
 //		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
 //			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
 //			for (Evaluation e : dependers) {
-//				requestPath = ((Identifiable)e).getName();
-//				if (dm.getValue(requestPath) != null) {
-//                    if (!dm.getValue(requestPath).contains(e)) {
-//                        ((List) dm.getValue(requestPath)).add(e);
+//				requestReturn = ((Identifiable)e).getName();
+//				if (dm.getValue(requestReturn) != null) {
+//                    if (!dm.getValue(requestReturn).contains(e)) {
+//                        ((List) dm.getValue(requestReturn)).add(e);
 //                    }
 //				} else {
 //					List<ExecDependency> del = new ArrayList();
 //					del.add((ExecDependency)e);
-//					dm.put(requestPath, del);
+//					dm.put(requestReturn, del);
 //				}
 //			}
 //		}

@@ -165,11 +165,11 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
         if (result instanceof Context)
             dataContext.updateEntries((Context)result);
 
-        RequestPath rp = dataContext.getRequestPath();
+        Context.RequestReturn rp = dataContext.getRequestReturn();
         if (rp == null)
-            rp = exertion.getProcessSignature().getRequestPath();
+            rp = exertion.getProcessSignature().getRequestReturn();
         else
-            exertion.getProcessSignature().setRequestPath(rp);
+            exertion.getProcessSignature().setRequestReturn(rp);
 
         if (rp != null) {
             try {
@@ -202,10 +202,10 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
      * @see sorcer.service.Invoker#invoke(sorcer.service.Arg[])
      */
     public Object invoke(Arg[] entries) throws InvocationException {
-        RequestPath rp = null;
+        Context.RequestReturn rp = null;
         for (Arg a : entries) {
-            if (a instanceof RequestPath) {
-                rp = (RequestPath) a;
+            if (a instanceof Context.RequestReturn) {
+                rp = (Context.RequestReturn) a;
                 break;
             }
         }
@@ -665,13 +665,13 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
      */
     public Object getReturnValue(Arg... entries) throws ContextException,
             RemoteException {
-        RequestPath reqPath = null;
-        if (getProcessSignature() != null && getProcessSignature().getRequestPath() == null) {
-            reqPath = getProcessSignature().getRequestPath();
+        Context.RequestReturn reqPath = null;
+        if (getProcessSignature() != null && getProcessSignature().getRequestReturn() == null) {
+            reqPath = getProcessSignature().getRequestReturn();
         }
-        // check for requestPath in dataContext
+        // check for requestReturn in dataContext
         if (reqPath == null) {
-            reqPath = dataContext.getRequestPath();
+            reqPath = dataContext.getRequestReturn();
         }
         Object val = null;
         if (reqPath != null) {
@@ -910,8 +910,8 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
         try {
             substitute(entries);
             Routine evaluatedExertion = exert(entries);
-            RequestPath rp = (RequestPath)evaluatedExertion.getDataContext()
-                    .getRequestPath();
+            Context.RequestReturn rp = (Context.RequestReturn)evaluatedExertion.getDataContext()
+                    .getRequestReturn();
             if (evaluatedExertion instanceof Job) {
                 cxt = ((Job) evaluatedExertion).getJobContext();
             } else {

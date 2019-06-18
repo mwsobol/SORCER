@@ -139,10 +139,10 @@ public interface Arg extends Serializable, Service {
 		return null;
 	}
 
-	public static Routine.RequestPath getReturnPath(Arg... args) {
+	public static Context.RequestReturn getReturnPath(Arg... args) {
 		for (Arg a : args) {
-			if (a instanceof Routine.RequestPath)
-				return (Routine.RequestPath) a;
+			if (a instanceof Context.RequestReturn)
+				return (Context.RequestReturn) a;
 		}
 		return null;
 	}

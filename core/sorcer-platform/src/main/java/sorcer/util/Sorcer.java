@@ -46,7 +46,7 @@ import java.util.Hashtable;
  * properties file, and JVM system properties.
  * <p>
  * A sorcer.env file is searched for in the <code>Sorcer.class</code> directory
- * (sorcer/util/sorcer.env), or in the requestPath given by the JVM system property
+ * (sorcer/util/sorcer.env), or in the requestReturn given by the JVM system property
  * <code>sorcer.env.file</code>. In development the last option is recommended.
  * <p>
  * The priorities for loading properties are as follows:

@@ -303,8 +303,8 @@ abstract public class ExertDispatcher implements Dispatcher {
 				fromContext = getSharedContext(fromPath, ctxId);
 				logger.debug("fromContext = {}", fromContext);
 				logger.debug("before updating toContext: {}", toContext
-                        + "\n>>> TO requestPath: " + toPath + "\nfromContext: "
-                        + fromContext + "\n>>> FROM requestPath: " + fromPath);
+                        + "\n>>> TO requestReturn: " + toPath + "\nfromContext: "
+                        + fromContext + "\n>>> FROM requestReturn: " + fromPath);
                 if (fromContext != null) {
                     // make parametric substitution if needed
                     if (argIndex >=0 ) {
@@ -347,7 +347,7 @@ abstract public class ExertDispatcher implements Dispatcher {
 
     protected ServiceContext getSharedContext(String path, String id) {
 		// try to getValue the dataContext with particular id.
-		// If not found, then find a dataContext with particular requestPath.
+		// If not found, then find a dataContext with particular requestReturn.
 		if (Context.EMPTY_LEAF.equals(path) || "".equals(path))
             return null;
         synchronized (sharedContexts) {

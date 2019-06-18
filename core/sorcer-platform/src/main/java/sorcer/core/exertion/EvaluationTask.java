@@ -57,8 +57,8 @@ public class EvaluationTask extends Task {
 				dataContext.setScope(new EntModel(key));
 		}
 		if (evaluator instanceof Srv) {
-			if (dataContext.getRequestPath() == null)
-				dataContext.setRequestPath(Signature.SELF_VALUE);
+			if (dataContext.getRequestReturn() == null)
+				dataContext.setRequestReturn(Signature.SELF_VALUE);
 		}
 	}
 
@@ -143,11 +143,11 @@ public class EvaluationTask extends Task {
 				result = evaluator.evaluate(args);
 			}
 
-			if (getProcessSignature().getRequestPath() != null)
-				dataContext.setRequestPath(getProcessSignature().getRequestPath());
+			if (getProcessSignature().getRequestReturn() != null)
+				dataContext.setRequestReturn(getProcessSignature().getRequestReturn());
 			dataContext.setReturnValue(result);
 			if (evaluator instanceof Scopable && evaluator.getScope() != null) {
-				((evaluator).getScope()).putValue(dataContext.getRequestPath().returnPath, result);
+				((evaluator).getScope()).putValue(dataContext.getRequestReturn().returnPath, result);
 			}
 			if (evaluator instanceof Srv && dataContext.getScope() != null)
 				dataContext.getScope().putValue(((Identifiable)evaluator).getName(), result);
@@ -170,7 +170,7 @@ public class EvaluationTask extends Task {
 		}
 
 		if (val instanceof ValueCallable && evaluator.getType() == Functionality.Type.LAMBDA) {
-			RequestPath rp = evaluator.getReturnPath();
+			Context.RequestReturn rp = evaluator.getReturnPath();
 			if (rp != null && rp.inPaths != null) {
 				Context cxt = ((ServiceContext)getScope()).getDirectionalSubcontext(rp.inPaths);
 				out = ((ValueCallable)val).call(cxt);
