@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.System.out;
+import static sorcer.co.operator.val;
+import static sorcer.ent.operator.ent;
 import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.*;
 
@@ -35,13 +37,13 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	public Context getSphereSurface(Context context) throws RemoteException, ContextException {
 		double radius = (Double) value(context, "sphere/radius");
 		add(context,
-			operator.ent("sphere/surface", 4.0 * Math.PI * Math.pow(radius, 3)));
+			ent("sphere/surface", 4.0 * Math.PI * Math.pow(radius, 3)));
 		return context;
 	}
 
 	public Context getSphereVolume(Context context) throws ContextException, RemoteException {
 		double radius = (Double) value(context, "sphere/radius");
-		add(context, operator.ent("sphere/volume",
+		add(context, ent("sphere/volume",
 			(4.0 / 3.0) * Math.PI * Math.pow(radius, 3)));
 		return context;
 	}
@@ -49,7 +51,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	public Context getCylinderSurface(Context context) throws ContextException, RemoteException {
 		double radius = (Double) value(context, "cylinder/radius");
 		double height = (Double) value(context, "cylinder/height");
-		add(context, operator.ent("cylinder/surface",
+		add(context, ent("cylinder/surface",
 				(2 * Math.PI * Math.pow(radius, 2))
 						+ (2 * Math.PI * radius * height)));
 		return context;
@@ -58,7 +60,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 	public Context getCylinderVolume(Context context) throws ContextException, RemoteException {
 		double radius = (Double) value(context, "cylinder/radius");
 		double height = (Double) value(context, "cylinder/height");
-		add(context, operator.ent("cylinder/volume",
+		add(context, ent("cylinder/volume",
 				Math.PI * Math.pow(radius, 2) * height));
 		return context;
 	}
@@ -77,16 +79,16 @@ public class Volume implements Sphere, Cylinder, Serializable {
 			} finally {
 				scanner.close();
 			}
-			Context context = context(operator.ent("cylinder/radius", radius),
-					operator.ent("cylinder/height", height));
+			Context context = context(val("cylinder/radius", radius),
+					val("cylinder/height", height));
 			out.println("cylinder volume: " + v.getCylinderVolume(context));
 		} else {
 			if (args[0].equals("cylinder")) {
-				Context context = context(operator.ent("cylinder/radius", 2.0),
-						operator.ent("cylinder/height", 3.0));
+				Context context = context(val("cylinder/radius", 2.0),
+						val("cylinder/height", 3.0));
 				out.println("cylinder volume: " + v.getCylinderVolume(context));
 			} else if (args[0].equals("sphere")) {
-				Context context = context(operator.ent("sphere/radius", 2.0));
+				Context context = context(val("sphere/radius", 2.0));
 				out.println("sphere volume: " + v.getSphereVolume(context));
 			}
 		}
@@ -107,7 +109,7 @@ public class Volume implements Sphere, Cylinder, Serializable {
 		} else {
 			logger.info("Empty or invalid line. Unable to compute.");
 		}
-		// no need to prc scanner.close(), since the source is a String
+		// no need to call scanner.close(), since the source is a String
 	}
 
 }

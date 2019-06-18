@@ -804,7 +804,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			return (((Context)obj).getValue(rPath.returnPath));
 		}
 		if (outputs != null) {
-			obj = ((ServiceContext) acxt).getSubcontext(Path.toArray(outputs));
+			obj = ((ServiceContext) acxt).getSubcontext(outputs);
 		}
 		return obj;
 	}

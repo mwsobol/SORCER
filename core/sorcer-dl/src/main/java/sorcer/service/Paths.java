@@ -21,6 +21,7 @@ import sorcer.service.modeling.Functionality;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Paths extends ArrayList<Path> implements Arg {
     private static final long serialVersionUID = 1L;
@@ -48,10 +49,20 @@ public class Paths extends ArrayList<Path> implements Arg {
         }
     }
 
+    public List<String> toStringList() {
+        List<String> paths = new ArrayList<>();
+        for (int i = 0; i < size(); i++) {
+            paths.add(get(i).path);
+        }
+
+        return paths;
+    }
+
     public String[] toStringArray() {
         String[] paths = new String[size()];
-        for (int i = 0; i < size(); i++)
+        for (int i = 0; i < size(); i++) {
             paths[i] = get(i).path;
+        }
 
         return paths;
     }

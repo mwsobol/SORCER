@@ -628,9 +628,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	public String getLocalMetapath(String metaattributeName)
 			throws ContextException;
 
-	public Context getDirectionalSubcontext(Path... paths) throws ContextException;
-
-	public Context getDirectionalSubcontext(Signature.Out paths) throws ContextException;
+	public Context getDirectionalSubcontext(List<Path> paths) throws ContextException;
 
 	public boolean isValid(Signature method) throws ContextException;
 
@@ -899,13 +897,13 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 
 	Mogram getDomain(String name) throws ContextException;
 
-	RequestReturn getRequestReturn();
+	public RequestReturn getRequestReturn();
 
 	public boolean compareTo(Object context);
 
 	public boolean compareTo(Object context, double delta);
 
-	Context setRequestReturn(RequestReturn requestPath);
+	public void setRequestReturn(RequestReturn requestPath);
 
 	public enum Type {
 		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY
@@ -921,7 +919,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 		public String returnPath;
 		public Signature.Direction direction;
 		public Signature.Out outPaths;
-		public Path[] inPaths;
+		public Signature.In inPaths;
 		// return value type
 		public Class<T> type;
 		private Context dataContext;
@@ -946,8 +944,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 		public RequestReturn(Path path, Signature.In argPaths) {
 			this.returnPath = path.getName();
 			if (argPaths != null && argPaths.size() > 0) {
-				Path[] ps = new Path[argPaths.size()];
-				this.inPaths = argPaths.toArray(ps);
+				this.inPaths = argPaths;
 				if (path.direction != null) {
 					direction = path.direction;
 				} else {
@@ -958,16 +955,14 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 
 		public void setInputPaths(Signature.In argPaths) {
 			if (argPaths != null && argPaths.size() > 0) {
-				Path[] ps = new Path[argPaths.size()];
-				this.inPaths = argPaths.toArray(ps);
+				this.inPaths = argPaths;
 			}
 		}
 
 		public RequestReturn(String path, Signature.In argPaths) {
 			this.returnPath = path;
 			if (argPaths != null && argPaths.size() > 0) {
-				Path[] ps = new Path[argPaths.size()];
-				this.inPaths = argPaths.toArray(ps);
+				this.inPaths = argPaths;
 				direction = Signature.Direction.IN;
 			}
 		}
@@ -981,7 +976,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 		}
 
 		public RequestReturn(Path[] paths) {
-			inPaths = paths;
+			inPaths = new Signature.In(paths);
 		}
 
 		public RequestReturn(String path, Signature.In inPaths, Signature.Out outPaths) {
@@ -990,8 +985,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 				this.outPaths = outPaths;
 			}
 			if (inPaths != null && inPaths.size() > 0) {
-				Path[] ps = new Path[inPaths.size()];
-				this.inPaths = inPaths.toArray(ps);
+				this.inPaths = inPaths;
 			}
 			direction = Signature.Direction.INOUT;
 		}
@@ -1082,11 +1076,6 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 			return ps;
 		}
 
-		public Path[] getInSigPaths() {
-			return inPaths;
-		}
-
-
 		public Signature.Out getOutSigPaths() {
 			return outPaths;
 		}
@@ -1102,9 +1091,9 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 		}
 
 		@Override
-		public String[] getInPaths() {
+		public Signature.In getInPaths() {
 			if (inPaths != null)
-				return getPaths(inPaths);
+				return inPaths;
 			else
 				return null;
 		}

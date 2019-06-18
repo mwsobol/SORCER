@@ -320,7 +320,6 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	static final Type POST = Type.POST;
 	static final Type APD = Type.APD_DATA;
 
-
 	public static class Out extends Paths implements SupportComponent {
 
 		private static final long serialVersionUID = 1L;
@@ -329,9 +328,12 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 			super();
 		}
 
-
 		public Out(int capacity) {
 			super(capacity);
+		}
+
+		public Out(List paths) {
+			addAll(paths);
 		}
 
 		public Out(Name contextName, Path[] paths) {
@@ -370,6 +372,10 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 
 		public In() {
 			super();
+		}
+
+		public In(List paths) {
+			addAll(paths);
 		}
 
 		public In(Path[] paths) {

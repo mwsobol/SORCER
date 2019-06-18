@@ -95,7 +95,7 @@ public class ObjectTask extends Task {
 		dataContext.getMogramStrategy().setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
-			Context.RequestReturn rt = (Context.RequestReturn) getProcessSignature().getRequestReturn();
+			Context.RequestReturn rt = getProcessSignature().getRequestReturn();
 			dataContext.updateContextWith(os.getInConnector());
 			boolean setScope = false;
 			if (scope != null && dataContext.getScope() == null) {

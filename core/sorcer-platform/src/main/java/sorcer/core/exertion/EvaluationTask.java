@@ -172,7 +172,7 @@ public class EvaluationTask extends Task {
 		if (val instanceof ValueCallable && evaluator.getType() == Functionality.Type.LAMBDA) {
 			Context.RequestReturn rp = evaluator.getReturnPath();
 			if (rp != null && rp.inPaths != null) {
-				Context cxt = ((ServiceContext)getScope()).getDirectionalSubcontext(rp.inPaths);
+				Context cxt = getScope().getDirectionalSubcontext(rp.inPaths);
 				out = ((ValueCallable)val).call(cxt);
 			} else {
 				out = ((ValueCallable) val).call(getScope());

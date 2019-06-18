@@ -176,7 +176,7 @@ public class operator {
                     }
                     // linked contexts and other special case of ServiceContext
                     if (out == null) {
-                        out = context.getValue(path, args);
+                        out = (T) context.getValue(path, args);
                     }
                 }
             }

@@ -231,9 +231,9 @@ public class Arithmometer implements SorcerConstants, Serializable {
 					result += (Double)revalue(inputs.get(i));
 			} else if (selector.equals(SUBTRACT)) {
 				Context.RequestReturn<?> rp = ((ServiceContext<?>) context).getRequestReturn();
-				if (rp != null && rp.inPaths != null && rp.inPaths.length > 0) {
-					result = (Double) revalue(cxt.getValue(rp.inPaths[0].path));
-					result -= (Double) revalue(cxt.getValue(rp.inPaths[1].path));
+				if (rp != null && rp.inPaths != null && rp.inPaths.size() > 0) {
+					result = (Double) revalue(cxt.getValue(rp.inPaths.get(0).path));
+					result -= (Double) revalue(cxt.getValue(rp.inPaths.get(1).path));
 				} else {
 					if (inputs.size() > 2 || inputs.size() < 2) {
 						throw new ContextException("two arguments needed for subtraction");
