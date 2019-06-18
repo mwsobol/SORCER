@@ -319,8 +319,8 @@ operator extends Operator {
         QueueStrategy modelStrategy = null;
         Signature sig = null;
         Class customContextClass = null;
-        Out outPaths = null;
-        In inPaths = null;
+        Context.Out outPaths = null;
+        Context.In inPaths = null;
         Paths paths = null;
         boolean autoDeps = true;
         for (Object o : entries) {
@@ -368,10 +368,10 @@ operator extends Operator {
                 projection = ((Projection)o);
             } else if (Strategy.Flow.EXPLICIT.equals(o)) {
                 autoDeps = false;
-            } else if (o instanceof Out) {
-                outPaths = (Out)o;
-            } else if (o instanceof In) {
-                inPaths = (In)o;
+            } else if (o instanceof Context.Out) {
+                outPaths = (Context.Out)o;
+            } else if (o instanceof Context.In) {
+                inPaths = (Context.In)o;
             } else if (o instanceof Paths) {
                 paths = (Paths)o;
             } else if (o instanceof Context) {
@@ -513,18 +513,18 @@ operator extends Operator {
                 }
             }
         }
-        if (outPaths instanceof Out) {
+        if (outPaths instanceof Context.Out) {
             if (cxt.getRequestReturn() == null) {
                 cxt.setRequestReturn(new Context.RequestReturn(outPaths));
             } else {
                 cxt.getRequestReturn().outPaths = outPaths;
             }
         }
-        if (inPaths instanceof In) {
+        if (inPaths instanceof Context.In) {
             if (cxt.getRequestReturn() == null) {
                 cxt.setRequestReturn(new Context.RequestReturn(inPaths));
             } else {
-                cxt.getRequestReturn().inPaths = new Signature.In(paths);
+                cxt.getRequestReturn().inPaths = new Context.In(paths);
             }
         }
 
@@ -532,7 +532,7 @@ operator extends Operator {
             if (cxt.getRequestReturn() == null) {
                 cxt.setRequestReturn(new Context.RequestReturn(paths.toPathArray()));
             } else {
-                cxt.getRequestReturn().inPaths = new Signature.In(paths);
+                cxt.getRequestReturn().inPaths = new Context.In(paths);
             }
         }
 
@@ -1034,8 +1034,8 @@ operator extends Operator {
         Deployment deployment = null;
         ProviderName prvName = null;
         ParameterTypes parTypes = null;
-        In inPaths = null;
-        Out outPaths = null;
+        Context.In inPaths = null;
+        Context.Out outPaths = null;
         ServiceContext context = null;
         Context.RequestReturn returnPath = null;
         for (Object item : items) {
@@ -1051,10 +1051,10 @@ operator extends Operator {
                 provision = (Provision)item;
             } else if (item instanceof ServiceContext) {
                 context = (ServiceContext)item;
-            } else if (item instanceof In ) {
-                inPaths = (In)item;
-            } else if (item instanceof Out ) {
-                outPaths = (Out)item;
+            } else if (item instanceof Context.In) {
+                inPaths = (Context.In)item;
+            } else if (item instanceof Context.Out) {
+                outPaths = (Context.Out)item;
             } else if (item instanceof Deployment ) {
                 deployment = (Deployment)item;
             } else if (item instanceof ProviderName ) {
@@ -1137,8 +1137,8 @@ operator extends Operator {
         Args args = null;
         Strategy.Provision provision = Provision.NO;
         ParameterTypes parTypes = null;
-        In inPaths = null;
-        Out outPaths = null;
+        Context.In inPaths = null;
+        Context.Out outPaths = null;
         ServiceContext context = null;
         for (Object item : items) {
             if (item instanceof Args) {
@@ -1149,10 +1149,10 @@ operator extends Operator {
                 provision = (Provision) item;
             } else if (item instanceof ServiceContext) {
                 context = (ServiceContext) item;
-            } else if (item instanceof In) {
-                inPaths = (In) item;
-            } else if (item instanceof Out) {
-                outPaths = (Out) item;
+            } else if (item instanceof Context.In) {
+                inPaths = (Context.In) item;
+            } else if (item instanceof Context.Out) {
+                outPaths = (Context.Out) item;
             }
         }
         ServiceSignature newSig = null;
@@ -1307,17 +1307,17 @@ operator extends Operator {
                     sig.setRequestReturn((Context.RequestReturn) o);
                 } else if (o instanceof ParameterTypes) {
                     ((ServiceSignature)sig).setMatchTypes(((ParameterTypes) o).parameterTypes);
-                } else if (o instanceof In ) {
+                } else if (o instanceof Context.In) {
                     if (sig.getRequestReturn() == null) {
-                        sig.setRequestReturn(new Context.RequestReturn((In) o));
+                        sig.setRequestReturn(new Context.RequestReturn((Context.In) o));
                     } else {
-                        sig.getRequestReturn().inPaths = (In) o;
+                        sig.getRequestReturn().inPaths = (Context.In) o;
                     }
-                } else if (o instanceof Out) {
+                } else if (o instanceof Context.Out) {
                     if (sig.getRequestReturn() == null) {
-                        sig.setRequestReturn(new Context.RequestReturn((Out) o));
+                        sig.setRequestReturn(new Context.RequestReturn((Context.Out) o));
                     } else {
-                        sig.getRequestReturn().outPaths = (Out) o;
+                        sig.getRequestReturn().outPaths = (Context.Out) o;
                     }
                 } else if (o instanceof ServiceDeployment) {
                     ((ServiceSignature) sig).setDeployment((ServiceDeployment) o);
@@ -2444,8 +2444,8 @@ operator extends Operator {
         List<Fidelity> metaFis = new ArrayList();
         MorphFidelity mFi = null;
         List<MapContext> connList = new ArrayList();
-        Out outPaths = null;
-        In inPaths = null;
+        Context.Out outPaths = null;
+        Context.In inPaths = null;
 
 
         for (int i = 0; i < elems.length; i++) {
@@ -2477,10 +2477,10 @@ operator extends Operator {
                 }
             } else if (elems[i] instanceof Strategy.FidelityManagement) {
                 fm = (Strategy.FidelityManagement) elems[i];
-            } else if (elems[i] instanceof Out) {
-                outPaths = (Out) elems[i];
-            } else if (elems[i] instanceof In) {
-                inPaths = (In) elems[i];
+            } else if (elems[i] instanceof Context.Out) {
+                outPaths = (Context.Out) elems[i];
+            } else if (elems[i] instanceof Context.In) {
+                inPaths = (Context.In) elems[i];
             }
         }
         Job job = null;
@@ -2849,7 +2849,7 @@ operator extends Operator {
         return new Context.RequestReturn(path);
     }
 
-    public static Context.RequestReturn result(Out paths) {
+    public static Context.RequestReturn result(Context.Out paths) {
         return new Context.RequestReturn(null, paths);
     }
 
@@ -2869,26 +2869,26 @@ operator extends Operator {
         return new Context.RequestReturn();
     }
 
-    public static Context.RequestReturn result(String path, Out outPaths) {
+    public static Context.RequestReturn result(String path, Context.Out outPaths) {
         return new Context.RequestReturn(path, outPaths);
     }
 
-    public static Context.RequestReturn result(String path, In inPaths) {
+    public static Context.RequestReturn result(String path, Context.In inPaths) {
         return new Context.RequestReturn(path, inPaths);
     }
 
-    public static Context.RequestReturn result(Path path, In inPaths) {
+    public static Context.RequestReturn result(Path path, Context.In inPaths) {
         return new Context.RequestReturn(path, inPaths);
     }
-    public static Context.RequestReturn result(In inPaths) {
+    public static Context.RequestReturn result(Context.In inPaths) {
         return new Context.RequestReturn(Signature.SELF, inPaths);
     }
 
-    public static Context.RequestReturn result(String path, In inPaths, Out outPaths) {
+    public static Context.RequestReturn result(String path, Context.In inPaths, Context.Out outPaths) {
         return new Context.RequestReturn(path, inPaths, outPaths);
     }
 
-    public static Context.RequestReturn result(String path, In inPaths, Out outPaths, SessionPaths sessionPaths) {
+    public static Context.RequestReturn result(String path, Context.In inPaths, Context.Out outPaths, SessionPaths sessionPaths) {
         return new Context.RequestReturn(path, inPaths, outPaths, sessionPaths);
     }
 

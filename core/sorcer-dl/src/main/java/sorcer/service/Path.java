@@ -17,8 +17,6 @@
 
 package sorcer.service;
 
-import sorcer.service.modeling.Data;
-
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +137,7 @@ public class Path implements Arg, Service {
 		return sl;
 	}
 
-	public static List<String> getPathList(Signature.Out paths) {
+	public static List<String> getPathList(Context.Out paths) {
 		List<String> sl = new ArrayList(paths.size());
 		for (int i = 0; i < paths.size(); i++)
 			sl.add(paths.get(i).path);

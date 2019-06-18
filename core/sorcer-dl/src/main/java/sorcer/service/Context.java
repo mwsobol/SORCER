@@ -20,6 +20,7 @@ package sorcer.service;
 
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.Selfable;
+import sorcer.service.modeling.SupportComponent;
 import sorcer.service.modeling.mog;
 import sorcer.service.modeling.rsp;
 
@@ -918,21 +919,21 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 		static final long serialVersionUID = 6158097800741638834L;
 		public String returnPath;
 		public Signature.Direction direction;
-		public Signature.Out outPaths;
-		public Signature.In inPaths;
+		public Out outPaths;
+		public In inPaths;
 		// return value type
 		public Class<T> type;
 		private Context dataContext;
 		public Signature.SessionPaths sessionPaths;
 		// out paths used for shared evaluators with RoutineEvaluator
-		public Map<String, Signature.Out> evalOutPaths;
+		public Map<String, Out> evalOutPaths;
 
 		public RequestReturn() {
 			// return the context
 			returnPath = Signature.SELF;
 		}
 
-		public RequestReturn(String path, Signature.Out argPaths) {
+		public RequestReturn(String path, Out argPaths) {
 			this.returnPath = path;
 			if (argPaths != null && argPaths.size() > 0) {
 				Path[] ps = new Path[argPaths.size()];
@@ -941,7 +942,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 			}
 		}
 
-		public RequestReturn(Path path, Signature.In argPaths) {
+		public RequestReturn(Path path, In argPaths) {
 			this.returnPath = path.getName();
 			if (argPaths != null && argPaths.size() > 0) {
 				this.inPaths = argPaths;
@@ -953,13 +954,13 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 			}
 		}
 
-		public void setInputPaths(Signature.In argPaths) {
+		public void setInputPaths(In argPaths) {
 			if (argPaths != null && argPaths.size() > 0) {
 				this.inPaths = argPaths;
 			}
 		}
 
-		public RequestReturn(String path, Signature.In argPaths) {
+		public RequestReturn(String path, In argPaths) {
 			this.returnPath = path;
 			if (argPaths != null && argPaths.size() > 0) {
 				this.inPaths = argPaths;
@@ -967,19 +968,19 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 			}
 		}
 
-		public RequestReturn(Signature.Out outPaths) {
+		public RequestReturn(Out outPaths) {
 			this(null, null, outPaths);
 		}
 
-		public RequestReturn(Signature.In inPaths) {
+		public RequestReturn(In inPaths) {
 			this(null, inPaths, null);
 		}
 
 		public RequestReturn(Path[] paths) {
-			inPaths = new Signature.In(paths);
+			inPaths = new In(paths);
 		}
 
-		public RequestReturn(String path, Signature.In inPaths, Signature.Out outPaths) {
+		public RequestReturn(String path, In inPaths, Out outPaths) {
 			this.returnPath = path;
 			if (outPaths != null && outPaths.size() > 0) {
 				this.outPaths = outPaths;
@@ -990,7 +991,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 			direction = Signature.Direction.INOUT;
 		}
 
-		public RequestReturn(String path, Signature.In inPaths, Signature.Out outPaths, Signature.SessionPaths sessionPaths) {
+		public RequestReturn(String path, In inPaths, Out outPaths, Signature.SessionPaths sessionPaths) {
 			this(path, inPaths, outPaths);
 			this.sessionPaths = sessionPaths;
 		}
@@ -1003,14 +1004,14 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 		public RequestReturn(String path, Path... argPaths) {
 			this.returnPath = path;
 			if (argPaths != null && argPaths.length > 0) {
-				this.outPaths = new Signature.Out(argPaths);
+				this.outPaths = new Out(argPaths);
 				direction = Signature.Direction.OUT;
 			}
 		}
 
 		public RequestReturn(String path, Signature.Direction direction, Path... argPaths) {
 			this.returnPath = path;
-			this.outPaths = new Signature.Out(argPaths);
+			this.outPaths = new Out(argPaths);
 			this.direction = direction;
 		}
 
@@ -1018,7 +1019,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 							 Class<T> returnType, Path... argPaths) {
 			this.returnPath = path;
 			this.direction = direction;
-			this.outPaths = new Signature.Out(argPaths);
+			this.outPaths = new Out(argPaths);
 			type = returnType;
 		}
 
@@ -1076,7 +1077,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 			return ps;
 		}
 
-		public Signature.Out getOutSigPaths() {
+		public Out getOutSigPaths() {
 			return outPaths;
 		}
 
@@ -1091,7 +1092,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 		}
 
 		@Override
-		public Signature.In getInPaths() {
+		public In getInPaths() {
 			if (inPaths != null)
 				return inPaths;
 			else
@@ -1099,11 +1100,81 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 		}
 
 		@Override
-		public Signature.Out getOutPaths() {
+		public Out getOutPaths() {
 			if (outPaths != null)
 				return outPaths;
 			else
 				return null;
+		}
+
+		public Object execute(Arg... args) {
+			return this;
+		}
+	}
+
+	class In extends Paths {
+		private static final long serialVersionUID = 1L;
+
+		public In() {
+			super();
+		}
+
+		public In(List paths) {
+			addAll(paths);
+		}
+
+		public In(Path[] paths) {
+			for (Path path : paths) {
+				add(path) ;
+			}
+		}
+		public In(String[] names) {
+			for (String name : names) {
+				add(new Path(name)) ;
+			}
+		}
+	}
+
+	class Out extends Paths implements SupportComponent {
+
+		private static final long serialVersionUID = 1L;
+
+		public Out() {
+			super();
+		}
+
+		public Out(int capacity) {
+			super(capacity);
+		}
+
+		public Out(List paths) {
+			addAll(paths);
+		}
+
+		public Out(Name contextName, Path[] paths) {
+			this.name = contextName.getName();
+			for (Path path : paths) {
+				add(path) ;
+			}
+		}
+
+		public Out(Path[] paths) {
+			for (Path path : paths) {
+				add(path) ;
+			}
+		}
+
+		public Out(String[] names) {
+			for (String name : names) {
+				add(new Path(name)) ;
+			}
+		}
+
+		public Out(Name contextName, String[] names) {
+			this.name = contextName.getName();
+			for (String name : names) {
+				add(new Path(name)) ;
+			}
 		}
 
 		public Object execute(Arg... args) {

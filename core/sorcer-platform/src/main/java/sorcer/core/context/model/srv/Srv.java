@@ -248,7 +248,7 @@ public class Srv extends Subroutine<Object> implements Serviceableness,
 
     public Object execSignature(Signature sig, Context scope) throws MogramException {
         RequestReturn rp = (RequestReturn) sig.getRequestReturn();
-        Signature.Out ops = null;
+        Context.Out ops = null;
         if (rp != null) {
             ops = ((RequestReturn) sig.getRequestReturn()).outPaths;
         }

@@ -138,8 +138,8 @@ public class operator extends Operator {
 		return ((ServiceContext)context).getOutPaths();
 	}
 
-	public static ServiceSignature.Out outPaths(Object... elems) {
-        Signature.Out pl = new Signature.Out(elems.length);
+	public static Context.Out outPaths(Object... elems) {
+        Context.Out pl = new Context.Out(elems.length);
         for (Object o : elems) {
             if (o instanceof String) {
                 pl.add(new Path((String)o));
@@ -165,13 +165,13 @@ public class operator extends Operator {
 	    return new Name(name);
     }
 
-	public static ServiceSignature.Out outPaths(Name name, Object... elems) {
-		ServiceSignature.Out out = outPaths(elems);
+	public static Context.Out outPaths(Name name, Object... elems) {
+		Context.Out out = outPaths(elems);
 		out.setName(name.getName());
 		return out;
 	}
 
-	public static ServiceSignature.In inPaths(Object... elems) {
+	public static Context.In inPaths(Object... elems) {
 		List<Path> pl = new ArrayList(elems.length);
 		for (Object o : elems) {
 			if (o instanceof String) {
@@ -181,7 +181,7 @@ public class operator extends Operator {
 			}
 		}
 		Path[]  pa = new Path[pl.size()];
-		return new ServiceSignature.In(pl.toArray(pa));
+		return new Context.In(pl.toArray(pa));
 	}
 
 	public static ServiceSignature.Read read(Object... elems) {

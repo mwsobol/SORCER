@@ -188,7 +188,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		ServiceContext cxt = (ServiceContext)xrt.getDataContext();
 		Context.RequestReturn rp = exertion.getDataContext().getRequestReturn();
 		if (rp != null) {
-			Signature.Out outPaths = rp.getOutPaths();
+			Context.Out outPaths = rp.getOutPaths();
 			if (outPaths != null && outPaths.size() > 0) {
 				for (Path path : outPaths) {
 					Object obj = null;

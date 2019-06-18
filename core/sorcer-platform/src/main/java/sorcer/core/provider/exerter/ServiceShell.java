@@ -730,10 +730,10 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			return dcxt.getValue(rPath.returnPath);
 		}
 		// lookup arguments to consider here
-		Signature.Out outputs = null;
+		Context.Out outputs = null;
 		for (Arg arg : args) {
-			if (arg instanceof Signature.Out) {
-				outputs = (Signature.Out)arg;
+			if (arg instanceof Context.Out) {
+				outputs = (Context.Out)arg;
 			}
 		}
 		// getValue the compound service context

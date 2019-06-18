@@ -633,7 +633,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
             controlContext.setMonitorable(startegy.isMonitorable());
     }
 
-    public Object getOutValue(Signature.Out outPaths ) throws ContextException {
+    public Object getOutValue(Context.Out outPaths ) throws ContextException {
         Object val = null;
         if (outPaths.size() == 1) {
             Path p = outPaths.get(0);

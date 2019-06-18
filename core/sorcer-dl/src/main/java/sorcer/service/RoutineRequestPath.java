@@ -25,7 +25,7 @@ public interface RoutineRequestPath {
 
     void setReturnPath(String path);
 
-    Signature.In getInPaths();
+    Context.In getInPaths();
 
-    Signature.Out getOutPaths();
+    Context.Out getOutPaths();
 }

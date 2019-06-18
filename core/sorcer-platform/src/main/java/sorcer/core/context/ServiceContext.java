@@ -1574,8 +1574,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (rp.getReturnPath() == null) {
 			rp.returnPath = sig.getName();
 		}
-		Signature.In ips = rp.inPaths;
-		Signature.Out ops = rp.outPaths;
+		In ips = rp.inPaths;
+		Out ops = rp.outPaths;
 		Context incxt = null;
 		if (rp.getDataContext() != null) {
 			incxt = rp.getDataContext();
@@ -2906,8 +2906,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (args.length > 0) {
 				if (args[0] instanceof RequestReturn) {
 					return (T) getReturnValue(args);
-				} else if (args[0] instanceof Signature.Out) {
-					return (T) getSubcontext(((Signature.Out) args[0]));
+				} else if (args[0] instanceof Context.Out) {
+					return (T) getSubcontext(((Out) args[0]));
 				}
 			}
             return (T) this;
@@ -2973,8 +2973,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 				}
 				else if (requestReturn != null)
 					return getReturnValue(args);
-				else if (args.length == 1 && args[0] instanceof Signature.Out) {
-					return (T) getSubcontext((Signature.Out)args[0]);
+				else if (args.length == 1 && args[0] instanceof Context.Out) {
+					return (T) getSubcontext((Out)args[0]);
 				} else {
 					return (T) this;
 				}
@@ -3467,7 +3467,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return (T) exert(exertion, null, (Arg[])null);
 	}
 
-	public Context updateInOutPaths(Signature.In inpaths, Signature.Out outpaths) throws ContextException, RemoteException {
+	public Context updateInOutPaths(In inpaths, Out outpaths) throws ContextException, RemoteException {
 		if (containsPath(Condition._closure_)) {
 			remove(Condition._closure_);
 		}
