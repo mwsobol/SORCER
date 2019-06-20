@@ -56,8 +56,8 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
 
     protected Functionality.Type type = Functionality.Type.VAL;
 
-    // default instance new RequestReturn(Context.RETURN);
-    protected Context.RequestReturn requestReturn;
+    // default instance new Return(Context.RETURN);
+    protected Context.Return contextReturn;
 
     public MultiFiSlot() {
 	}
@@ -201,20 +201,20 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
         return ((Identifiable)multiFi.getSelect()).getName();
     }
 
-    public Context.RequestReturn getRequestReturn() {
-        return requestReturn;
+    public Context.Return getContextReturn() {
+        return contextReturn;
     }
 
     public void setRequestReturn() throws ContextException {
-        this.requestReturn = new Context.RequestReturn();
+        this.contextReturn = new Context.Return();
     }
 
-    public void setRequestReturn(String returnPath) throws ContextException {
-        this.requestReturn = new Context.RequestReturn(returnPath);
+    public void setContextReturn(String returnPath) throws ContextException {
+        this.contextReturn = new Context.Return(returnPath);
     }
 
-    public void setRequestReturn(Context.RequestReturn requestReturn) {
-        this.requestReturn = requestReturn;
+    public void setRequestReturn(Context.Return contextReturn) {
+        this.contextReturn = contextReturn;
     }
 
     public boolean equals(Object object) {

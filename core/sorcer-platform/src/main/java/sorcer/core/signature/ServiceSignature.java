@@ -58,7 +58,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 
 	protected String ownerID;
 
-	protected Context.RequestReturn returnPath;
+	protected Context.Return returnPath;
 
 	// the indicated usage of this signature
 	protected Set<Kind> rank = new HashSet<Kind>();
@@ -534,8 +534,8 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	}
 
 	@Override
-	public void setRequestReturn(Context.RequestReturn returnPath) {
-		this.returnPath = (Context.RequestReturn)returnPath;
+	public void setRequestReturn(Context.Return returnPath) {
+		this.returnPath = (Context.Return)returnPath;
 	}
 
 	public boolean isProvisionable() {
@@ -574,15 +574,15 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 
 	@Override
 	public void setReturnRequest(String path) {
-		returnPath = new Context.RequestReturn<Object>(path);
+		returnPath = new Context.Return<Object>(path);
 	}
 
 	@Override
 	public void setReturnRequest(String path, Direction direction) {
-		returnPath = new Context.RequestReturn<Object>(path, direction);
+		returnPath = new Context.Return<Object>(path, direction);
 	}
 
-	public Context.RequestReturn getRequestReturn() {
+	public Context.Return getContextReturn() {
 		return returnPath;
 	}
 

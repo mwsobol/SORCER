@@ -141,7 +141,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	 * @param path
 	 *            to the return execute
 	 */
-	public void setRequestReturn(Context.RequestReturn path);
+	public void setRequestReturn(Context.Return path);
 
 	public void setReturnRequest(String path);
 
@@ -156,11 +156,11 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	public void setReturnRequest(String path, Direction direction);
 
 	/**
-	 * Returns a requestReturn to the return execute by this signature.
+	 * Returns a Context.Return to the return execute by this signature.
 	 *
-	 * @return requestReturn to the return execute
+	 * @return Context.Return to the return execute
 	 */
-	public Context.RequestReturn getRequestReturn();
+	public Context.Return getContextReturn();
 
 	/**
 	 * Returns a signature Type of this signature.
@@ -218,8 +218,7 @@ public interface Signature extends Service, Comparable, Dependency, Identifiable
 	 * Returns an access types to a provider, synchronous (PUSH) or asynchronous (PULL);
 	 */
 	public Strategy.Access getAccessType();
-
-
+	
 	/**
 	 * There are four types of {@link Signature} operations that can be
 	 * associated with signatures: <code>PRE</code> (preprocess),

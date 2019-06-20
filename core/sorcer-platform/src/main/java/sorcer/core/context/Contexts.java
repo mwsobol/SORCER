@@ -111,8 +111,8 @@ public class Contexts implements SorcerConstants {
 	 * the given <code>subpath</code> string.
 	 * <p>
 	 * Caution - a match does not indicate the returned results are subpaths of
-	 * given requestReturn. For instance, consider context that contains paths. It is
-	 * recommended to end a matched substring with the context requestReturn separator
+	 * given contextReturn. For instance, consider context that contains paths. It is
+	 * recommended to end a matched substring with the context contextReturn separator
 	 * (SORCER.CPS).
 	 * 
 	 * <ul>
@@ -120,14 +120,14 @@ public class Contexts implements SorcerConstants {
 	 * <li>a/bb/d
 	 * </ul>
 	 * 
-	 * a prc to this method with requestReturn="a/b" will return both "a/b/c" and
+	 * a prc to this method with contextReturn="a/b" will return both "a/b/c" and
 	 * "a/bb/d" and only the first is a subpath.
 	 * 
 	 * @param context
 	 *            ServiceContext to query
 	 * @param subpath
 	 *            the match string
-	 * @return a Vector of context values maching a requestReturn
+	 * @return a Vector of context values maching a contextReturn
 	 */
 	public static List getValuesStartsWith(Context context, String subpath)
 			throws ContextException {
@@ -214,8 +214,8 @@ public class Contexts implements SorcerConstants {
 	 * Returns list of paths that start with the given subpath string.
 	 * <p>
 	 * Caution - a match does not indicate the returned paths are subpaths of
-	 * given requestReturn. It is recommended to end a matched substring with the context
-	 * requestReturn separator (SORCER.CPS).
+	 * given contextReturn. It is recommended to end a matched substring with the context
+	 * contextReturn separator (SORCER.CPS).
 	 * 
 	 * @param context
 	 *            ServiceContext to query
@@ -322,7 +322,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/*
-	 * Return boolean result indicating if the eval at the designated requestReturn is
+	 * Return boolean result indicating if the eval at the designated contextReturn is
 	 * setValue as an empty leaf node.
 	 */
 	public static boolean isEmptyLeafNode(Context cntxt, String path)
@@ -412,7 +412,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/**
-	 * Sets context fiType as input for a requestReturn
+	 * Sets context fiType as input for a contextReturn
 	 */
 	public static Context markIn(Context cntxt, String path)
 			throws ContextException {
@@ -421,7 +421,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/**
-	 * Sets context fiType as out for a requestReturn
+	 * Sets context fiType as out for a contextReturn
 	 */
 	public static Context markOut(Context cntxt, String path)
 			throws ContextException {
@@ -430,7 +430,7 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/**
-	 * Sets context fiType as inout for a requestReturn
+	 * Sets context fiType as inout for a contextReturn
 	 */
 	public static Context markInout(Context cntxt, String path)
 			throws ContextException {
@@ -933,12 +933,12 @@ public class Contexts implements SorcerConstants {
 	}
 
 	/**
-	 * Returns a map of all requestReturn marked as output with corresponding
+	 * Returns a map of all contextReturn marked as output with corresponding
 	 * associations.
 	 * 
 	 * @param cntxt
 	 *            a service context
-	 * @return map of all requestReturn marked as output with corresponding associations
+	 * @return map of all contextReturn marked as output with corresponding associations
 	 * @throws ContextException
 	 */
 	public static Hashtable getOutPathsMap(Context cntxt)
@@ -1452,7 +1452,7 @@ public class Contexts implements SorcerConstants {
 		Object val;
 		Vector values = new Vector();
 
-		// locate the context and context requestReturn for this key
+		// locate the context and context contextReturn for this key
 		Object[] map = context.getContextMapping(key);
 
 		Context cntxt = (Context) map[0];

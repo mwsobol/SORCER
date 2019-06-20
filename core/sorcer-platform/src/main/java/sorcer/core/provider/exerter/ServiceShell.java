@@ -51,7 +51,6 @@ import sorcer.jini.lookup.ProviderID;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
 import sorcer.service.Exec.State;
-import sorcer.service.Context.RequestReturn;
 import sorcer.service.Strategy.Access;
 import sorcer.service.modeling.Data;
 import sorcer.service.modeling.Model;
@@ -706,10 +705,10 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 	}
 
 	private static Routine initialize(Routine xrt, Arg... args) throws ContextException {
-		RequestReturn rPath = null;
+		Context.Return rPath = null;
 		for (Arg a : args) {
-			if (a instanceof RequestReturn) {
-				rPath = (RequestReturn) a;
+			if (a instanceof Context.Return) {
+				rPath = (Context.Return) a;
 				break;
 			}
 		}
@@ -724,7 +723,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			return xrt.getExceptions();
 		}
 		Context dcxt = xrt.getDataContext();
-		RequestReturn rPath = dcxt.getRequestReturn();
+		Context.Return rPath = dcxt.getContextReturn();
 		// check if it was already finalized
 		if (((ServiceContext) dcxt).isFinalized()) {
 			return dcxt.getValue(rPath.returnPath);
@@ -746,7 +745,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				dcxt.putValue(rPath.returnPath, val);
 				return val;
 			} else {
-				RequestReturn rp = ((ServiceContext) dcxt).getRequestReturn();
+				Context.Return rp = ((ServiceContext) dcxt).getContextReturn();
 				if (rp != null && rPath.returnPath != null) {
 					Object result = acxt.getValue(rp.returnPath);
 					if (result instanceof Context)
@@ -908,13 +907,13 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 			} else if (service instanceof Context) {
 				ServiceContext cxt = (ServiceContext)service;
 				cxt.substitute(args);
-				RequestReturn returnPath = cxt.getRequestReturn();
+				Context.Return returnPath = cxt.getContextReturn();
 				if (cxt instanceof EntModel) {
 					return ((Model)service).getResponse(args);
 				} else if (returnPath != null){
 					return cxt.getValue(returnPath.returnPath, args);
 				} else {
-					throw new RoutineException("No return requestReturn in the context: "
+					throw new RoutineException("No return contextReturn in the context: "
 							+ cxt.getName());
 				}
 			} else if (service instanceof MultiFiMogram) {

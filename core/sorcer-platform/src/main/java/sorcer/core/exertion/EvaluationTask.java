@@ -19,7 +19,6 @@ package sorcer.core.exertion;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Prc;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.Subroutine;
@@ -57,8 +56,8 @@ public class EvaluationTask extends Task {
 				dataContext.setScope(new EntModel(key));
 		}
 		if (evaluator instanceof Srv) {
-			if (dataContext.getRequestReturn() == null)
-				dataContext.setRequestReturn(Signature.SELF_VALUE);
+			if (dataContext.getContextReturn() == null)
+				dataContext.setContextReturn(Signature.SELF_VALUE);
 		}
 	}
 
@@ -143,11 +142,11 @@ public class EvaluationTask extends Task {
 				result = evaluator.evaluate(args);
 			}
 
-			if (getProcessSignature().getRequestReturn() != null)
-				dataContext.setRequestReturn(getProcessSignature().getRequestReturn());
+			if (getProcessSignature().getContextReturn() != null)
+				dataContext.setRequestReturn(getProcessSignature().getContextReturn());
 			dataContext.setReturnValue(result);
 			if (evaluator instanceof Scopable && evaluator.getScope() != null) {
-				((evaluator).getScope()).putValue(dataContext.getRequestReturn().returnPath, result);
+				((evaluator).getScope()).putValue(dataContext.getContextReturn().returnPath, result);
 			}
 			if (evaluator instanceof Srv && dataContext.getScope() != null)
 				dataContext.getScope().putValue(((Identifiable)evaluator).getName(), result);
@@ -170,7 +169,7 @@ public class EvaluationTask extends Task {
 		}
 
 		if (val instanceof ValueCallable && evaluator.getType() == Functionality.Type.LAMBDA) {
-			Context.RequestReturn rp = evaluator.getReturnPath();
+			Context.Return rp = evaluator.getReturnPath();
 			if (rp != null && rp.inPaths != null) {
 				Context cxt = getScope().getDirectionalSubcontext(rp.inPaths);
 				out = ((ValueCallable)val).call(cxt);

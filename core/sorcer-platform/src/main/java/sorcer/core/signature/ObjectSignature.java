@@ -404,9 +404,9 @@ public class ObjectSignature extends ServiceSignature implements sig {
 					out = context(shell.exert(args));
 				} else if (mog instanceof Context) {
 					argTypes = new Class[]{Context.class};
-					Context.RequestReturn rp = returnPath;
+					Context.Return rp = returnPath;
 					if (rp == null) {
-						rp = (Context.RequestReturn) ((Context) mog).getRequestReturn();
+						rp = (Context.Return) ((Context) mog).getContextReturn();
 					}
 					if (rp != null && rp.returnPath != null) {
 						((Context) mog).setRequestReturn(rp);

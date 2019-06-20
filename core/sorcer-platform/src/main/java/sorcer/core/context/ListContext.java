@@ -29,7 +29,7 @@ import sorcer.service.IndexedContext;
 
 /**
  * ServiceContext implementing the java.util.List interface.
- * Default context paths for elements in the list are in the form by requestReturn <code>element[i]</code>
+ * Default context paths for elements in the list are in the form by contextReturn <code>element[i]</code>
  * with the context root <code>List</code>;
  */
 @SuppressWarnings({ "serial", "unchecked" })
@@ -55,11 +55,11 @@ public class ListContext<T extends Object> extends ServiceContext<T> implements 
 	}
 	
 	/**
-	 * Return an index of this ListContext requestReturn.
+	 * Return an index of this ListContext contextReturn.
 	 * 
 	 * @param path
-	 *            ListContext context requestReturn
-	 * @return an index of the ListContext requestReturn
+	 *            ListContext context contextReturn
+	 * @return an index of the ListContext contextReturn
 	 */
 	public int pathIndex(String path) {
 		int i1 = path.indexOf('[');

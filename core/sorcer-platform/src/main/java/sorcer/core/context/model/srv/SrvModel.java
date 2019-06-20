@@ -50,7 +50,7 @@ import static sorcer.so.operator.execMogram;
 /**
  * A Domain is a schematic description or representation of something, especially a system,
  * phenomenon, or service, that accounts for its properties and is used to study its characteristics.
- * Properties of a service model are represented by requestReturn of Context with values that depend
+ * Properties of a service model are represented by contextReturn of Context with values that depend
  * on other properties and can be evaluated as specified by ths model. Evaluations of the service 
  * model args of the Srv multitype results in exerting a dynamic federation of services as specified by
  * these args. A rendezvous service provider orchestrating a choreography of the model
@@ -148,7 +148,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                 execDependencies(path, args);
                 val = get(path);
             } else {
-                RequestReturn rp = Arg.getReturnPath(args);
+                Context.Return rp = Arg.getReturnPath(args);
                 if (rp != null)
                     val = getReturnValue(rp);
                 else
@@ -206,7 +206,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                 } else if (carrier instanceof MogramEntry) {
                     val = evalMogram((MogramEntry)carrier, path, args);
                 } else if (carrier instanceof ValueCallable && ((Srv) val).getType() == Functionality.Type.LAMBDA) {
-                    RequestReturn rp = ((Srv) val).getReturnPath();
+                    Context.Return rp = ((Srv) val).getReturnPath();
                     Object obj = null;
                     if (rp != null && rp.inPaths != null) {
                         Context cxt = getEvaluatedSubcontext(rp.inPaths, args);
@@ -224,7 +224,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     Context cxt = null;
                     if (out instanceof Routine) {
                         cxt = ((Routine) out).getContext();
-                        RequestReturn rt = ((Routine) out).getProcessSignature().getRequestReturn();
+                        Context.Return rt = ((Routine) out).getProcessSignature().getContextReturn();
                         if (rt != null && rt.getReturnPath() != null) {
                             Object obj = cxt.getReturnValue();
                             putInoutValue(rt.getReturnPath(), obj);
@@ -345,7 +345,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
     }
 
     private Object setSigResult(Signature signature, Object value) {
-        RequestReturn rp = (RequestReturn) signature.getRequestReturn();
+        Context.Return rp = signature.getContextReturn();
         if (rp != null && rp.returnPath != null) {
             put(rp.returnPath, value);
         }
@@ -356,11 +356,11 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         Context out = execSignature(sig, args);
         String sigrp = null;
         String  crp = null;
-        if (sig.getRequestReturn() != null) {
-            sigrp = sig.getRequestReturn().getReturnPath();
+        if (sig.getContextReturn() != null) {
+            sigrp = sig.getContextReturn().getReturnPath();
         }
-        if (requestReturn != null) {
-            crp = requestReturn.returnPath;
+        if (contextReturn != null) {
+            crp = contextReturn.returnPath;
         }
         try {
             if (crp != null) {
@@ -372,7 +372,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     ((Srv)get(path)).setOut(obj);
                     return obj;
                 } else {
-                    logger.warn("no eval for return requestReturn: {} in: {}", ((RequestReturn)sig.getRequestReturn()).returnPath, out);
+                    logger.warn("no eval for return contextReturn: {} in: {}", sig.getContextReturn().returnPath, out);
                     return out;
                 }
 
@@ -395,7 +395,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         Mogram out = mogram.exert(entries);
         if (out instanceof Routine){
             Context outCxt = out.getContext();
-            if (outCxt.getRequestReturn() != null) {
+            if (outCxt.getContextReturn() != null) {
                 Object obj = outCxt.getReturnValue();
                 ((Srv)get(path)).setOut(obj);
                 return obj;

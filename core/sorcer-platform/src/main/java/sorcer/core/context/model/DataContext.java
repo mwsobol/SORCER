@@ -73,12 +73,12 @@ public class DataContext<T> extends PositionalContext<T> {
         super(context);
     }
     /**
-     * Returns a execute of the object at the requestReturn
+     * Returns a execute of the object at the contextReturn
      * (evaluation or invocation on this object if needed).
      *
      * @param path
      *            the variable key
-     * @return this model execute at the requestReturn
+     * @return this model execute at the contextReturn
      * @throws ModelException
      */
     @Override

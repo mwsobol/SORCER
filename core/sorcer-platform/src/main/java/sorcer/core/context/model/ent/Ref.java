@@ -26,7 +26,7 @@ import java.rmi.RemoteException;
 
 /**
  * In service-based modeling, a reference (for short a ref) is a special kind of
- * entry, used to refer to a execute of its requestReturn in the context model.
+ * entry, used to refer to a execute of its contextReturn in the context model.
  * 
  * @author Mike Sobolewski
  */
@@ -42,7 +42,7 @@ public class Ref<T> extends Entry<T> implements Reference<T>, SupportComponent {
 
 	public Ref(final String path, Arg... args) {
 		if(path==null)
-			throw new IllegalArgumentException("requestReturn must not be null");
+			throw new IllegalArgumentException("contextReturn must not be null");
 		this.key = path;
 		this.args = args;
 
@@ -50,7 +50,7 @@ public class Ref<T> extends Entry<T> implements Reference<T>, SupportComponent {
 
 	public Ref(final String path, Context scope, Arg... args) {
 		if(path==null)
-			throw new IllegalArgumentException("requestReturn must not be null");
+			throw new IllegalArgumentException("contextReturn must not be null");
 		this.key = path;
 		this.scope = scope;
 		this.args = args;

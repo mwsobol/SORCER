@@ -55,15 +55,15 @@ import java.util.List;
  * of (key, eval) pairs, such that each possible key appears at most once in
  * the collection. Keys are considered as parameters and values as arguments of
  * the service invokers accepting service contexts as their input data. A key is
- * expressed by a requestReturn of attributes like directories in paths of a file system.
+ * expressed by a contextReturn of attributes like directories in paths of a file system.
  * Paths define a namespace of the context parameters. A context argument is any
- * object referenced by its requestReturn or returned by a context invoker referenced by
- * its requestReturn inside the context. An ordered list of parameters is usually
+ * object referenced by its contextReturn or returned by a context invoker referenced by
+ * its contextReturn inside the context. An ordered list of parameters is usually
  * included in the definition of an invoker, so that, each time the invoker is
  * called, the context arguments for that prc can be assigned to the
  * corresponding parameters of the invoker. The context values for all paths
  * inside the context are defined explicitly by corresponding objects or
- * calculated by corresponding invokers. Thus, requesting a eval for a requestReturn in
+ * calculated by corresponding invokers. Thus, requesting a eval for a contextReturn in
  * a context is a computation defined by a invoker composition within the scope
  * of the context.
  */

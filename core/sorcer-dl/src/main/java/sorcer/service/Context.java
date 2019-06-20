@@ -898,13 +898,13 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 
 	Mogram getDomain(String name) throws ContextException;
 
-	public RequestReturn getRequestReturn();
+	public Return getContextReturn();
 
 	public boolean compareTo(Object context);
 
 	public boolean compareTo(Object context, double delta);
 
-	public void setRequestReturn(RequestReturn requestPath);
+	public void setRequestReturn(Return requestPath);
 
 	public enum Type {
 		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY
@@ -915,7 +915,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	final static String TARGET = "context/target";
 	final static String RETURN = "context/result";
 
-	class RequestReturn<T> implements RoutineRequestPath, Serializable, Arg {
+	class Return<T> implements ContextReturn, Serializable, Arg {
 		static final long serialVersionUID = 6158097800741638834L;
 		public String returnPath;
 		public Signature.Direction direction;
@@ -928,12 +928,12 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 		// out paths used for shared evaluators with RoutineEvaluator
 		public Map<String, Out> evalOutPaths;
 
-		public RequestReturn() {
+		public Return() {
 			// return the context
 			returnPath = Signature.SELF;
 		}
 
-		public RequestReturn(String path, Out argPaths) {
+		public Return(String path, Out argPaths) {
 			this.returnPath = path;
 			if (argPaths != null && argPaths.size() > 0) {
 				Path[] ps = new Path[argPaths.size()];
@@ -942,7 +942,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 			}
 		}
 
-		public RequestReturn(Path path, In argPaths) {
+		public Return(Path path, In argPaths) {
 			this.returnPath = path.getName();
 			if (argPaths != null && argPaths.size() > 0) {
 				this.inPaths = argPaths;
@@ -960,7 +960,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 			}
 		}
 
-		public RequestReturn(String path, In argPaths) {
+		public Return(String path, In argPaths) {
 			this.returnPath = path;
 			if (argPaths != null && argPaths.size() > 0) {
 				this.inPaths = argPaths;
@@ -968,19 +968,19 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 			}
 		}
 
-		public RequestReturn(Out outPaths) {
+		public Return(Out outPaths) {
 			this(null, null, outPaths);
 		}
 
-		public RequestReturn(In inPaths) {
+		public Return(In inPaths) {
 			this(null, inPaths, null);
 		}
 
-		public RequestReturn(Path[] paths) {
+		public Return(Path[] paths) {
 			inPaths = new In(paths);
 		}
 
-		public RequestReturn(String path, In inPaths, Out outPaths) {
+		public Return(String path, In inPaths, Out outPaths) {
 			this.returnPath = path;
 			if (outPaths != null && outPaths.size() > 0) {
 				this.outPaths = outPaths;
@@ -991,17 +991,17 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 			direction = Signature.Direction.INOUT;
 		}
 
-		public RequestReturn(String path, In inPaths, Out outPaths, Signature.SessionPaths sessionPaths) {
+		public Return(String path, In inPaths, Out outPaths, Signature.SessionPaths sessionPaths) {
 			this(path, inPaths, outPaths);
 			this.sessionPaths = sessionPaths;
 		}
 
-		public RequestReturn(String path, Signature.SessionPaths sessionPaths, Path... argPaths) {
+		public Return(String path, Signature.SessionPaths sessionPaths, Path... argPaths) {
 			this(path, argPaths);
 			this.sessionPaths = sessionPaths;
 		}
 
-		public RequestReturn(String path, Path... argPaths) {
+		public Return(String path, Path... argPaths) {
 			this.returnPath = path;
 			if (argPaths != null && argPaths.length > 0) {
 				this.outPaths = new Out(argPaths);
@@ -1009,14 +1009,14 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 			}
 		}
 
-		public RequestReturn(String path, Signature.Direction direction, Path... argPaths) {
+		public Return(String path, Signature.Direction direction, Path... argPaths) {
 			this.returnPath = path;
 			this.outPaths = new Out(argPaths);
 			this.direction = direction;
 		}
 
-		public RequestReturn(String path, Signature.Direction direction,
-							 Class<T> returnType, Path... argPaths) {
+		public Return(String path, Signature.Direction direction,
+					  Class<T> returnType, Path... argPaths) {
 			this.returnPath = path;
 			this.direction = direction;
 			this.outPaths = new Out(argPaths);
@@ -1041,7 +1041,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
 
-			RequestReturn that = (RequestReturn) o;
+			Return that = (Return) o;
 
 			if (!outPaths.equals(that.outPaths)) return false;
 			if (direction != that.direction) return false;

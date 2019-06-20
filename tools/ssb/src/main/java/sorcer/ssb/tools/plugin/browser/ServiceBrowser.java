@@ -125,7 +125,7 @@ public class ServiceBrowser {
 
 			} catch (Exception ex) {
 				System.err
-						.println("Unable to determine requestReturn, using working directory");
+						.println("Unable to determine contextReturn, using working directory");
 			}
 			ImageIcon logo = null;
 			// BRANDING

@@ -519,8 +519,8 @@ public class operator {
         return map;
     }
 
-    public static Context.RequestReturn requestPath(String path) {
-        return  new Context.RequestReturn<>(path);
+    public static Context.Return requestPath(String path) {
+        return  new Context.Return<>(path);
     }
 
     public static Paradigmatic modeling(Paradigmatic paradigm) {

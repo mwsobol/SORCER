@@ -95,7 +95,7 @@ public class ObjectTask extends Task {
 		dataContext.getMogramStrategy().setCurrentSelector(os.getSelector());
 		dataContext.setCurrentPrefix(os.getPrefix());
 		try {
-			Context.RequestReturn rt = getProcessSignature().getRequestReturn();
+			Context.Return rt = getProcessSignature().getContextReturn();
 			dataContext.updateContextWith(os.getInConnector());
 			boolean setScope = false;
 			if (scope != null && dataContext.getScope() == null) {
@@ -153,8 +153,8 @@ public class ObjectTask extends Task {
 					evaluator.setParameterTypes(new Class[]{Context.class});
 				}
 			}
-			if (os.getRequestReturn() != null)
-				dataContext.setRequestReturn(os.getRequestReturn());
+			if (os.getContextReturn() != null)
+				dataContext.setRequestReturn(os.getContextReturn());
 
 			if (result == null) {
 				if (getArgs() == null) {
@@ -169,7 +169,7 @@ public class ObjectTask extends Task {
 			}
 
 			if (result instanceof Context) {
-				Context.RequestReturn rp = dataContext.getRequestReturn();
+				Context.Return rp = dataContext.getContextReturn();
 				if (rp != null) {
 					if (rp.returnPath != null && ((Context) result).getValue(rp.returnPath) != null) {
 						dataContext.setReturnValue(((Context) result).getValue(rp.returnPath));

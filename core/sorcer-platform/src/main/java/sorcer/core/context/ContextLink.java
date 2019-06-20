@@ -33,7 +33,7 @@ import sorcer.util.SorcerUtil;
 
 /**
  * Provides for service context linking. Context links are references to an
- * offset (requestReturn) in a context, which allows the reuse of context objects.
+ * offset (contextReturn) in a context, which allows the reuse of context objects.
  * 
  */
 @SuppressWarnings("rawtypes")

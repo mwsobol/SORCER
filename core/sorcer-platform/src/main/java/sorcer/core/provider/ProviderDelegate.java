@@ -923,11 +923,11 @@ public class ProviderDelegate {
 						.getProcessSignature();
 
 					tsig.setProvider(provider);
-					// reset requestReturn prefix and return requestReturn
+					// reset contextReturn prefix and return contextReturn
 					if (tsig.getPrefix() != null)
 						((ServiceContext)task.getContext()).setPrefix(tsig.getPrefix());
-					if (tsig.getRequestReturn() != null)
-						((ServiceContext) task.getContext()).setRequestReturn(tsig.getRequestReturn());
+					if (tsig.getContextReturn() != null)
+						((ServiceContext) task.getContext()).setRequestReturn(tsig.getContextReturn());
 
 					if (isBeanable(task)) {
 						task = useServiceComponents(task, transaction, args);
@@ -1058,9 +1058,9 @@ public class ProviderDelegate {
 		}
 		return exertBeanTask(task, impl, args);
 //        if (impl != null) {
-//			if (task.getProcessSignature().getRequestReturn() != null) {
+//			if (task.getProcessSignature().getContextReturn() != null) {
 //				((ServiceContext) task.getContext()).setReturnRequest(task
-//						.getProcessSignature().getRequestReturn());
+//						.getProcessSignature().getContextReturn());
 //			}
 //			// determine args and parameterTpes from the context
 //			Class[] argTypes = new Class[] { Context.class };
@@ -1123,9 +1123,9 @@ public class ProviderDelegate {
 	Task exertBeanTask(Task task, Object bean, Arg... args) throws ContextException {
 		String selector = task.getProcessSignature().getSelector();
 		if (bean != null) {
-			if (task.getProcessSignature().getRequestReturn() != null) {
+			if (task.getProcessSignature().getContextReturn() != null) {
 				((ServiceContext) task.getContext()).setRequestReturn(task
-					.getProcessSignature().getRequestReturn());
+					.getProcessSignature().getContextReturn());
 			}
 			// determine args and parameterTpes from the context
 			Class[] argTypes = new Class[] { Context.class };
@@ -1389,8 +1389,8 @@ public class ProviderDelegate {
 		try {
 			if (cxt.isValid(task.getProcessSignature())) {
 				Signature sig = task.getProcessSignature();
-				if (sig.getRequestReturn() != null)
-					cxt.setRequestReturn(sig.getRequestReturn());
+				if (sig.getContextReturn() != null)
+					cxt.setRequestReturn(sig.getContextReturn());
 
 				cxt.getMogramStrategy().setCurrentSelector(sig.getSelector());
 				cxt.setCurrentPrefix(sig.getPrefix());
@@ -1408,8 +1408,8 @@ public class ProviderDelegate {
 					+ provider.getProviderName());
 				task.setContext(cxt);
 				task.setStatus(Exec.DONE);
-				if (cxt.getRequestReturn() != null) {
-					cxt.setReturnValue(cxt.getValue(cxt.getRequestReturn().returnPath));
+				if (cxt.getContextReturn() != null) {
+					cxt.setReturnValue(cxt.getValue(cxt.getContextReturn().returnPath));
 				} else if (task.getDataContext().getScope() != null) {
 					task.getDataContext().getScope().append(cxt);
 				}
@@ -1471,8 +1471,8 @@ public class ProviderDelegate {
 				if (isContextual) {
 					result = (ServiceContext) execMethod.invoke(provider, args);
 					// Setting Return Values
-					if (result.getRequestReturn() != null) {
-						Object resultValue = result.getValue(((ServiceContext) result).getRequestReturn().returnPath);
+					if (result.getContextReturn() != null) {
+						Object resultValue = result.getValue(((ServiceContext) result).getContextReturn().returnPath);
 						result.setReturnValue(resultValue);
 					}
 				} else {

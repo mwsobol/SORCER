@@ -19,7 +19,7 @@ package sorcer.service;
 /**
  * Created by Mike Sobolewski on 12/22/15.
  */
-public interface RoutineRequestPath {
+public interface ContextReturn {
 
     String getReturnPath();
 

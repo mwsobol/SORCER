@@ -63,9 +63,9 @@ public class WorkerBean implements Worker {
 		if (workToDo != null && (workToDo instanceof Work)) {
 			// consumer's work to be done
 			Context out = ((Work) workToDo).exec(context);
-			context.putValue(((ServiceContext) out).getRequestReturn().returnPath, out.getReturnValue());
+			context.putValue(((ServiceContext) out).getContextReturn().returnPath, out.getReturnValue());
 		} else {
-			throw new InvalidWork("No Work found to do at requestReturn consumer/work'!");
+			throw new InvalidWork("No Work found to do at contextReturn consumer/work'!");
 		}
 
 		String reply = "Done work by: "

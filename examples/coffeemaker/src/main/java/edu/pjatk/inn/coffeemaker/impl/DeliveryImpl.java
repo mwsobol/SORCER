@@ -20,7 +20,7 @@ public class DeliveryImpl implements Delivery {
             context.putValue("change$", ((Integer) context.getValue("coffee/change")) - flatRate);
         }
 
-        if (context.getRequestReturn() != null) {
+        if (context.getContextReturn() != null) {
             context.setReturnValue(flatRate);
         }
         return context;

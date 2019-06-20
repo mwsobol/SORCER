@@ -112,7 +112,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 			if (path != null) {
 				val = get(path);
 			} else {
-				RequestReturn rp = Arg.getReturnPath(args);
+				Context.Return rp = Arg.getReturnPath(args);
 				if (rp != null)
 					val = getReturnValue(rp);
 				else if (mogramStrategy.getResponsePaths() != null
@@ -361,7 +361,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 		Object result = null;
 		try {
 			if (context != null) {
-				RequestReturn rp = ((ServiceContext)context).getRequestReturn();
+				Context.Return rp = ((ServiceContext)context).getContextReturn();
 				this.append(context);
 				// check for multiple response of this model
 				if (rp != null && rp.outPaths.size() > 0) {
@@ -397,7 +397,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 								throw new InvocationException(
 										"No such invoker at: "
 												+ ((ServiceContext) context)
-												.getRequestReturn().returnPath);
+												.getContextReturn().returnPath);
 						}
 					}
 				} else {
@@ -412,7 +412,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 		}
 	}
 
-	private Object getReturnValue(RequestReturn rp) throws ContextException {
+	private Object getReturnValue(Context.Return rp) throws ContextException {
 		Object val = null;
 		// check for multiple response of this model
 		if (rp != null && rp.outPaths.size() > 0) {
@@ -488,7 +488,7 @@ public class EntModel extends PositionalContext<Object> implements Contextion<Ob
 	}
 
 	/**
-	 * Returns an enumeration of all requestReturn marking variable nodes.
+	 * Returns an enumeration of all contextReturn marking variable nodes.
 	 *
 	 * @return enumeration of marked variable nodes.
 	 * @throws ContextException

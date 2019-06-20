@@ -71,9 +71,9 @@ public class ServiceContext<T> extends ServiceMogram implements
     protected Map<String, Path> paths = new ConcurrentHashMap<String, Path>();
 	protected String subjectPath = "";
 	protected Object subjectValue = "";
-	protected RequestReturn<T> jobRequestReturn;
+	protected Context.Return<T> jobContextReturn;
 
-	// for calls by reflection for 'args' Object[] set the requestReturn
+	// for calls by reflection for 'args' Object[] set the contextReturn
 	// or use the default one: Context.ARGS
 	//protected String argsPath = Context.ARGS;
 	protected String argsPath;
@@ -86,7 +86,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	protected List<EntryList> entryLists;
 	/**
 	 * metacontext: key is a metaattribute and eval is a map of
-	 * requestReturn/metapath args
+	 * contextReturn/metapath args
 	 */
 	protected Map<String, LinkedHashMap<String, String>> metacontext;
 	protected Context initContext;
@@ -115,7 +115,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	/**
 	 * Default constructor for the ServiceContext class. The constructor calls the method init,
 	 * defines the the service context key sets the root key to a blank string creates a new
-	 * hash tables for requestReturn identifications, delPath, and linked paths. The constructor creates the
+	 * hash tables for contextReturn identifications, delPath, and linked paths. The constructor creates the
 	 * context identification number via the UUID factory generate method.
 	 */
 	public ServiceContext() {
@@ -242,16 +242,16 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * 'metacontext' map with a key being an attribute
 	 * mapped to the corresponding attribute descriptor. The attribute
 	 * descriptor for a simple attribute is the attribute key itself, and for a
-	 * composite attribute the descriptor is an APS (association requestReturn separator)
+	 * composite attribute the descriptor is an APS (association contextReturn separator)
 	 * separated list of component attributes. A 'metacontext' map contains all
 	 * simple attributes and component attributes (keys) associations with the
-	 * corresponding map holding associations between between a requestReturn (key) and
+	 * corresponding map holding associations between between a contextReturn (key) and
 	 * the eval of attribute (key in 'metacontext').
 	 * <p>
 	 * The usage of metacontext is illustrated as follows:
 	 * a single attribute - 'tag'; cxt.tag("arg/x1", "tag|stress");
 	 * and getValue tagged eval at arg/x1: cxt.getMarkedValues("tag|stress"));
-	 * relation - 'triplet|requestReturn|info|_3', 'triplet' is a relation key and requestReturn, _3, and _3
+	 * relation - 'triplet|contextReturn|info|_3', 'triplet' is a relation key and contextReturn, _3, and _3
 	 * are component attributes; cxt.tag("arg/x3", "triplet|mike|w|sobol");
 	 * and getValue tagged eval at arg/x3: cxt.getMarkedValues("triplet|mike|w|sobol"));
 	 */
@@ -267,7 +267,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			setAttribute("tag");
 			setAttribute("assoc|key|execute");
 			setAttribute("triplet|1|2|3");
-			// context requestReturn tag
+			// context contextReturn tag
 			setAttribute(PATH_PAR);
 			// annotating input output files associated with source applications
 			setCompositeAttribute(DATA_NODE_TYPE + APS + APPLICATION + APS
@@ -294,8 +294,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public Context clearReturnPath() throws ContextException {
-		if (requestReturn != null && requestReturn.returnPath != null)
-			removePath(requestReturn.returnPath);
+		if (contextReturn != null && contextReturn.returnPath != null)
+			removePath(contextReturn.returnPath);
 		return this;
 	}
 
@@ -360,24 +360,24 @@ public class ServiceContext<T> extends ServiceMogram implements
 			ContextException {
 		T val = null;
 		for (Arg a : entries) {
-			if (a instanceof RequestReturn)
-				requestReturn = (RequestReturn)a;
+			if (a instanceof Context.Return)
+				contextReturn = (Context.Return)a;
 		}
-		if (requestReturn != null) {
+		if (contextReturn != null) {
 			try {
-				if (requestReturn.returnPath != null && requestReturn.returnPath.equals(Signature.SELF)) {
+				if (contextReturn.returnPath != null && contextReturn.returnPath.equals(Signature.SELF)) {
 					return (T) this;
-				} else if (requestReturn.outPaths != null && requestReturn.outPaths.size() > 0) {
-                    String name = requestReturn.outPaths.getName();
-				    if (name != null && name.equals(requestReturn.outPaths.get(0).getName())) {
-				        return getValue(requestReturn.returnPath);
+				} else if (contextReturn.outPaths != null && contextReturn.outPaths.size() > 0) {
+                    String name = contextReturn.outPaths.getName();
+				    if (name != null && name.equals(contextReturn.outPaths.get(0).getName())) {
+				        return getValue(contextReturn.returnPath);
                     }
-					val = (T) getSubcontext(requestReturn.outPaths);
+					val = (T) getSubcontext(contextReturn.outPaths);
 				} else {
-					if (requestReturn.type != null) {
-						val = (T) requestReturn.type.cast(getValue(requestReturn.returnPath));
+					if (contextReturn.type != null) {
+						val = (T) contextReturn.type.cast(getValue(contextReturn.returnPath));
 					}  else
-						val= (T) getValue0(requestReturn.returnPath);
+						val= (T) getValue0(contextReturn.returnPath);
 				}
 			} catch (Exception e) {
 				throw new ContextException(e);
@@ -497,7 +497,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		}
 	}
 
-	// we assume that a requestReturn ending with key refers to its eval
+	// we assume that a contextReturn ending with key refers to its eval
 	public T getValueEndsWith(String name) throws EvaluationException,
 			RemoteException {
 		T val = getValueEndsWith(this, name);
@@ -507,7 +507,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return val;
 	}
 
-	// we assume that a requestReturn ending with key refers to its eval
+	// we assume that a contextReturn ending with key refers to its eval
 	public T getValueEndsWith(ServiceContext context,
 							  String name) throws EvaluationException,
 			RemoteException {
@@ -563,11 +563,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public T putValue(final String path, T value) throws ContextException {
 		if(path==null)
-			throw new IllegalArgumentException("requestReturn must not be null");
-		// first test if requestReturn is in a linked context
+			throw new IllegalArgumentException("contextReturn must not be null");
+		// first test if contextReturn is in a linked context
 		List<String> paths = localLinkPaths();
 		for (String linkPath : paths) {
-			// requestReturn has to start with linkPath+last_piece_of_offset
+			// contextReturn has to start with linkPath+last_piece_of_offset
 			ContextLink link = null;
 			link = (ContextLink) get(linkPath);
 			String offset = link.getOffset();
@@ -593,7 +593,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if (path.startsWith(extendedLinkPath)
 					&& (path.indexOf(CPS, len) == len || path.length() == len)) {
 				String keyInLinkedCntxt;
-				// for this requestReturn, find requestReturn in linked context
+				// for this contextReturn, find contextReturn in linked context
 				if (offset.equals(""))
 					keyInLinkedCntxt = path.substring(len + 1);
 				else
@@ -662,7 +662,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public void removeLink(String path) throws ContextException {
-		// locate the context and context requestReturn for this key
+		// locate the context and context contextReturn for this key
 		Object[] map = getContextMapping(path);// , true); // don't descend
 		ServiceContext cntxt = (ServiceContext) map[0];
 		String mappedKey = (String) map[1];
@@ -670,27 +670,27 @@ public class ServiceContext<T> extends ServiceMogram implements
 			cntxt.remove(mappedKey);
 			cntxt.put(mappedKey, Context.EMPTY_LEAF);
 		} else
-			throw new ContextException("requestReturn = \"" + path
+			throw new ContextException("contextReturn = \"" + path
 					+ "\" does not point to a ContextLink object");
 	}
 
 	public Object putLink(String name, String path, Context cntxt, String offset)
 			throws ContextException {
 		// insert a ContextLink (a.k.a. a symbolic link) to cntxt
-		// this makes this.execute(requestReturn) == cntxt.execute(offset)
+		// this makes this.execute(contextReturn) == cntxt.execute(offset)
 		if (path == null)
-			throw new ContextException("ERROR: requestReturn is null");
+			throw new ContextException("ERROR: contextReturn is null");
 
 		/*
 		 * Allow adding to non context-leaf nodes // Check if this is a
 		 * context-leaf node; throw exception otherwise; // this policy ensures
 		 * namespace uniqueness; otherwise, rules for // aliased or shadowed
-		 * paths must be devised. Enumeration e = toStringArray(); String requestReturn; int
-		 * len; while (e.hasMoreElements()) { requestReturn = (String)e.nextElement(); if
-		 * (requestReturn.startsWith(key)) { len = requestReturn.length(); if
-		 * (requestReturn.indexOf(CPS,len) == len) { throw new ContextException("ERROR:
-		 * requestReturn \""+requestReturn+"\" is not a context-leaf node; remove dependent
-		 * context-leaf nodes or choose another requestReturn in \""+getName()+"\"
+		 * paths must be devised. Enumeration e = toStringArray(); String contextReturn; int
+		 * len; while (e.hasMoreElements()) { contextReturn = (String)e.nextElement(); if
+		 * (contextReturn.startsWith(key)) { len = contextReturn.length(); if
+		 * (contextReturn.indexOf(CPS,len) == len) { throw new ContextException("ERROR:
+		 * contextReturn \""+contextReturn+"\" is not a context-leaf node; remove dependent
+		 * context-leaf nodes or choose another contextReturn in \""+getName()+"\"
 		 * first"); } } }
 		 */
 
@@ -708,18 +708,18 @@ public class ServiceContext<T> extends ServiceMogram implements
 		while (paths.hasNext()) {
 			if (paths.next().startsWith(extendedLinkPath))
 				throw new ContextException(
-						"Failed to create ContextLink:  a requestReturn already exists that starts with \""
+						"Failed to create ContextLink:  a contextReturn already exists that starts with \""
 								+ extendedLinkPath
 								+ "\".  This link cannot be added here.");
 		}
 		Object[] map = cntxt.getContextMapping(offset);
 		if (map[0] == null || map[1] == null)
-			throw new ContextException("ERROR: requestReturn \"" + offset
+			throw new ContextException("ERROR: contextReturn \"" + offset
 					+ "\" in context \"" + cntxt.getName() + "\" is invalid");
 
 		// using map will collapse redundant links
 		ContextLink link = new ContextLink((Context) map[0], (String) map[1]);
-		// Put the link count against the requestReturn in the context
+		// Put the link count against the contextReturn in the context
 		if (name == null || name.length() == 0)
 			link.setName(cntxt.getName());
 		else
@@ -785,8 +785,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/*
-	 * Returns array containing the ServiceContext in which requestReturn is found and
-	 * the absolute requestReturn in that context.
+	 * Returns array containing the ServiceContext in which contextReturn is found and
+	 * the absolute contextReturn in that context.
 	 */
 	public Object[] getContextMapping(String path) throws ContextException {
 		Object[] result = new Object[2];
@@ -825,7 +825,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 		}
 		if (result[0] == null) {
-			// the requestReturn belongs in this context, but is not in the
+			// the contextReturn belongs in this context, but is not in the
 			// hashtable. We'll return the map anyway.
 			// System.out.println("getContextMap: no mapping");
 			result[0] = this;
@@ -983,7 +983,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		String val = null;
 		LinkedHashMap table;
 
-		// locate the context and context requestReturn for this key
+		// locate the context and context contextReturn for this key
 		Object[] map = getContextMapping(path);
 		ServiceContext cntxt = (ServiceContext) map[0];
 		String mappedKey = (String) map[1];
@@ -1001,7 +1001,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			throws ContextException {
 		String attrValue, result = null;
 
-		// locate the context and context requestReturn for this key
+		// locate the context and context contextReturn for this key
 		Object[] map = getContextMapping(path);
 		Context cntxt = (Context) map[0];
 		String mappedKey = (String) map[1];
@@ -1054,7 +1054,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public Context addComponentAssociation(String path, String attribute,
 										   String attributeValue) throws ContextException {
 		LinkedHashMap values;
-		// locate the context and context requestReturn for this key
+		// locate the context and context contextReturn for this key
 		Object[] map = getContextMapping(path);
 		ServiceContext cntxt = (ServiceContext) map[0];
 		String mappedKey = (String) map[1];
@@ -1078,7 +1078,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public Context addCompositeAssociation(String path, String metaattribute,
 										   String metaattributeValue) throws ContextException {
 
-		// locate the context and context requestReturn for this requestReturn
+		// locate the context and context contextReturn for this contextReturn
 		Object[] map = getContextMapping(path);
 		Context cntxt = (Context) map[0];
 		String mappedKey = (String) map[1];
@@ -1215,7 +1215,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		else
 			attr = attributeValue;
 
-		// locate the context and context requestReturn for this key
+		// locate the context and context contextReturn for this key
 		Object[] map = null;
 		map = getContextMapping(path);
 
@@ -1462,9 +1462,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 */
 	public List<Object> getInValues() throws ContextException {
 		List<String> inpaths;
-		if (requestReturn != null && requestReturn.inPaths != null) {
+		if (contextReturn != null && contextReturn.inPaths != null) {
 			// input paths specified by this context signature
-			inpaths = requestReturn.inPaths.toStringList();
+			inpaths = contextReturn.inPaths.toStringList();
 		} else {
 			// input paths of input entries
 			inpaths = Contexts.getInPaths(this);
@@ -1568,9 +1568,9 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public Context execSignature(Signature sig, Arg... items) throws MogramException {
-		if (sig.getRequestReturn() == null)
-			throw new MogramException("No signature return requestReturn defined!");
-		RequestReturn rp = sig.getRequestReturn();
+		if (sig.getContextReturn() == null)
+			throw new MogramException("No signature return contextReturn defined!");
+		Context.Return rp = sig.getContextReturn();
 		if (rp.getReturnPath() == null) {
 			rp.returnPath = sig.getName();
 		}
@@ -1600,7 +1600,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			Task sTask = task(sig, incxt);
 			sTask.setAccess(sig.getAccessType());
 			outcxt = task(sig, incxt).exert().getContext();
-			// restore return requestReturn
+			// restore return contextReturn
 			sig.setRequestReturn(rp);
 
 		resultContext = outcxt;
@@ -1655,8 +1655,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 			if(path.info != null) {
 				subcntxt.putValue(path.path, getValue(path.path), path.info.toString());
 			}
-//			else if (contextInPaths.contains(requestReturn.requestReturn))
-//				subcntxt.putInValue(requestReturn.requestReturn, getValue(requestReturn.requestReturn, items));
+//			else if (contextInPaths.contains(contextReturn.contextReturn))
+//				subcntxt.putInValue(contextReturn.contextReturn, getValue(contextReturn.contextReturn, items));
 			else if (outpaths.contains(path))
 				subcntxt.putInoutValue(path.path, getValue(path.path, items));
 			else
@@ -1798,7 +1798,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public Context<T> appendContext(Context<T> context) throws ContextException,
 			RemoteException {
 		// getValue the whole context, with the context root key as the
-		// requestReturn prefix
+		// contextReturn prefix
 		String key;
 		List<String> paths = new ArrayList<String>();
 		int index;
@@ -1845,13 +1845,13 @@ public class ServiceContext<T> extends ServiceMogram implements
 		// a/b
 		// a/b/c
 
-		// requestReturn should not have a trailing slash
+		// contextReturn should not have a trailing slash
 
 		String newKey, oldKey, cntxtKey;
 		int index;
 		Iterator e1;
 		if (path == null)
-			throw new ContextException("null requestReturn");
+			throw new ContextException("null contextReturn");
 		if (path.equals("")) {
 			// append entire context
 			return appendContext(cntxt);
@@ -1861,7 +1861,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		map = cntxt.getContextMapping(path);
 		ServiceContext mappedCntxt = (ServiceContext) map[0];
 		String mappedKey = (String) map[1];
-		// System.out.println("requestReturn="+requestReturn);
+		// System.out.println("contextReturn="+contextReturn);
 		// System.out.println("mappedKey="+mappedKey);
 		// System.out.println("orig context key="+cntxt.getName());
 		// System.out.println("mapped context key="+mappedCntxt.getName());
@@ -1984,12 +1984,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public void removePath(String path) throws ContextException {
-		// locate the context and context requestReturn for this key
+		// locate the context and context contextReturn for this key
 		Object[] map = getContextMapping(path);
 		ServiceContext cxt = (ServiceContext) map[0];
 		String mappedKey = (String) map[1];
 		cxt.remove(mappedKey);
-		// Remove the requestReturn if it exists in metaAttribute also.
+		// Remove the contextReturn if it exists in metaAttribute also.
 		Iterator<String> e = cxt.metacontext.keySet().iterator();
 		String key;
 		Map attributes;
@@ -2023,7 +2023,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				if (val instanceof Prc)
 					val = "prc: " + ((Prc)val).getName();
 				else
-//					val = execute(requestReturn);
+//					val = execute(contextReturn);
 					val = asis(path);
 			} catch (Exception ex) {
 				sb.append("\nUnable to retrieve eval: " + ex.getMessage());
@@ -2056,11 +2056,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 			}
 			count++;
 		}
-		if (requestReturn != null) {
-			sb.append("\n  return/requestReturn = " + requestReturn);
+		if (contextReturn != null) {
+			sb.append("\n  return/contextReturn = " + contextReturn);
 		}
-		if (jobRequestReturn != null) {
-			sb.append("\n  return/job/requestReturn = " + jobRequestReturn);
+		if (jobContextReturn != null) {
+			sb.append("\n  return/job/contextReturn = " + jobContextReturn);
 		}
 		if (withMetacontext)
 			sb.append("\n metacontext: " + metacontext);
@@ -2091,10 +2091,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Object val;
 		while (e.hasNext()) {
 			path = (String) e.next();
-			// System.out.print(requestReturn);
+			// System.out.print(contextReturn);
 			sb.append(path).append(" = ");
 			try {
-				// System.out.println(" = "+execute(requestReturn));
+				// System.out.println(" = "+execute(contextReturn));
 				val = getValue(path);
 			} catch (Exception ex) {
 				sb.append("\nUnable to retrieve eval: " + ex.getMessage());
@@ -2264,58 +2264,58 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public void setReturnValue(Object value) throws ContextException {
-		if (requestReturn == null)
-			requestReturn = new RequestReturn(Context.RETURN);
+		if (contextReturn == null)
+			contextReturn = new Context.Return(Context.RETURN);
 
-		if (requestReturn.returnPath == null) {
-			requestReturn.returnPath = Context.RETURN;
+		if (contextReturn.returnPath == null) {
+			contextReturn.returnPath = Context.RETURN;
 		}
 		if (value == null)
-			putValue(requestReturn.returnPath, (T)none);
+			putValue(contextReturn.returnPath, (T)none);
 		else
-			putValue(requestReturn.returnPath, (T) value);
+			putValue(contextReturn.returnPath, (T) value);
 
-		if (requestReturn.direction == Direction.IN)
-			Contexts.markIn(this, requestReturn.returnPath);
-		else if (requestReturn.direction == Direction.OUT)
-			Contexts.markOut(this, requestReturn.returnPath);
-		if (requestReturn.direction == Direction.INOUT)
-			Contexts.markInout(this, requestReturn.returnPath);
+		if (contextReturn.direction == Direction.IN)
+			Contexts.markIn(this, contextReturn.returnPath);
+		else if (contextReturn.direction == Direction.OUT)
+			Contexts.markOut(this, contextReturn.returnPath);
+		if (contextReturn.direction == Direction.INOUT)
+			Contexts.markInout(this, contextReturn.returnPath);
 	}
 
-	public RequestReturn getJobRequestReturn() {
-		return jobRequestReturn;
+	public Context.Return getJobContextReturn() {
+		return jobContextReturn;
 	}
 
 	public void setReturnJobPath() throws ContextException {
-		this.jobRequestReturn = new RequestReturn();
+		this.jobContextReturn = new Context.Return();
 	}
 
-	public void setJobRequestReturn(String path) throws ContextException {
-		this.jobRequestReturn = new RequestReturn(path);
+	public void setJobContextReturn(String path) throws ContextException {
+		this.jobContextReturn = new Context.Return(path);
 	}
 
-	public ServiceContext setReturnJobPath(RequestReturn returnPath)
+	public ServiceContext setReturnJobPath(Context.Return returnPath)
 			throws ContextException {
-		this.jobRequestReturn = returnPath;
+		this.jobContextReturn = returnPath;
 		return this;
 	}
 
 	public T setReturnJobValue(T value) throws ContextException {
-		if (jobRequestReturn == null)
-			jobRequestReturn = new RequestReturn(Context.RETURN);
+		if (jobContextReturn == null)
+			jobContextReturn = new Context.Return(Context.RETURN);
 
 		if (value == null)
-			putValue(jobRequestReturn.returnPath, (T)none);
+			putValue(jobContextReturn.returnPath, (T)none);
 		else
-			putValue(jobRequestReturn.returnPath, value);
+			putValue(jobContextReturn.returnPath, value);
 
-		if (jobRequestReturn.direction == Direction.IN)
-			Contexts.markIn(this, jobRequestReturn.returnPath);
-		else if (jobRequestReturn.direction == Direction.OUT)
-			Contexts.markOut(this, jobRequestReturn.returnPath);
-		if (jobRequestReturn.direction == Direction.INOUT)
-			Contexts.markInout(this, jobRequestReturn.returnPath);
+		if (jobContextReturn.direction == Direction.IN)
+			Contexts.markIn(this, jobContextReturn.returnPath);
+		else if (jobContextReturn.direction == Direction.OUT)
+			Contexts.markOut(this, jobContextReturn.returnPath);
+		if (jobContextReturn.direction == Direction.INOUT)
+			Contexts.markInout(this, jobContextReturn.returnPath);
 
 		return value;
 	}
@@ -2384,7 +2384,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public void removePathWithoutDeleted(String path) {
 		this.remove(path);
-		// Remove the requestReturn if it exists in metaAttribute also.
+		// Remove the contextReturn if it exists in metaAttribute also.
 		Iterator<LinkedHashMap<String, String>> i = metacontext.values().iterator();
 		while (i.hasNext()) {
 			Map<String, String> attributeHash = metacontext.get(i.next());
@@ -2410,7 +2410,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public boolean isLinkedContext(Object path) {
 		Object result;
-		// System.out.println("execute: requestReturn = \""+requestReturn+"\"");
+		// System.out.println("execute: contextReturn = \""+contextReturn+"\"");
 		result = data.get(path);
 		if (result instanceof ContextLink) {
 			return true;
@@ -2563,7 +2563,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public List<String> metaassociations(String path) throws ContextException {
 		Object val;
 		List<String> values = new ArrayList<String>();
-		// locate the context and context requestReturn for this key
+		// locate the context and context contextReturn for this key
 		Object[] map = getContextMapping(path);
 		Context cxt = (Context) map[0];
 		String mappedKey = (String) map[1];
@@ -2741,10 +2741,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public void substitute(Arg... entries) throws SetterException {
 		if (entries == null)
 			return;
-		RequestReturn rPath = null;
+		Context.Return rPath = null;
 		for (Arg a : entries) {
-			if (a instanceof Context.RequestReturn) {
-				rPath = (RequestReturn) a;
+			if (a instanceof Context.Return) {
+				rPath = (Context.Return) a;
 				break;
 			}
 		}
@@ -2904,7 +2904,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public T getValue(Arg... args) throws ContextException {
 		try {
 			if (args.length > 0) {
-				if (args[0] instanceof RequestReturn) {
+				if (args[0] instanceof Context.Return) {
 					return (T) getReturnValue(args);
 				} else if (args[0] instanceof Context.Out) {
 					return (T) getSubcontext(((Out) args[0]));
@@ -2971,7 +2971,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 					else
 						return (T) getResponse();
 				}
-				else if (requestReturn != null)
+				else if (contextReturn != null)
 					return getReturnValue(args);
 				else if (args.length == 1 && args[0] instanceof Context.Out) {
 					return (T) getSubcontext((Out)args[0]);
@@ -3102,7 +3102,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		setValues(this, inputs);
 
 		if (this instanceof Model) {
-//            return response(domain, requestReturn, args);
+//            return response(domain, contextReturn, args);
 				return this.getValue(path, args);
 		} else {
 			return value(this, path, args);
@@ -3437,7 +3437,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	private void handleExertOutput(Task task, Object result ) throws ContextException {
 		ServiceContext dataContext = (ServiceContext) task.getDataContext();
 		if (result instanceof Context) {
-			RequestReturn rp = dataContext.getRequestReturn();
+			Context.Return rp = dataContext.getContextReturn();
 			if (rp != null) {
 				try {
 					if (((Context) result).getValue(rp.returnPath) != null) {

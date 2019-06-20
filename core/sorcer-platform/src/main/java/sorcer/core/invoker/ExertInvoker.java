@@ -65,8 +65,8 @@ public class ExertInvoker extends ServiceInvoker implements Invocation {
 		Context cxt = null;
 		try {
 			evaluatedExertion = exertion.exert(txn);
-			Context.RequestReturn returnPath = ((ServiceContext)evaluatedExertion.getDataContext())
-					.getRequestReturn();
+			Context.Return returnPath = ((ServiceContext)evaluatedExertion.getDataContext())
+					.getContextReturn();
 			if (evaluatedExertion instanceof Job) {
 				cxt = ((Job) evaluatedExertion).getJobContext();
 			} else {

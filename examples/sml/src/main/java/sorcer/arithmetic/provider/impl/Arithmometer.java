@@ -178,7 +178,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 
 			String outputMessage = "calculated by " + getHostname();
 			// setValue return eval
-			if (((ServiceContext)context).getRequestReturn() != null) {
+			if (((ServiceContext)context).getContextReturn() != null) {
 				context.setReturnValue(result);
 			}
 			//other ways to indicate the output eval
@@ -234,7 +234,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				for (int i = 1; i < inputs.size(); i++)
 					result += (Double)revalue(inputs.get(i));
 			} else if (selector.equals(SUBTRACT)) {
-				Context.RequestReturn<?> rp = ((ServiceContext<?>) context).getRequestReturn();
+				Context.Return<?> rp = ((ServiceContext<?>) context).getContextReturn();
 				if (rp != null && rp.inPaths != null && rp.inPaths.size() > 0) {
 					result = (Double) revalue(cxt.getValue(rp.inPaths.get(0).path));
 					result -= (Double) revalue(cxt.getValue(rp.inPaths.get(1).path));
@@ -268,12 +268,12 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			logger.info(selector + " result: \n" + result);
 
 			String outputMessage = "calculated by " + getHostname();
-			if (context.getRequestReturn() != null) {
-				String outpath = context.getRequestReturn().returnPath;
+			if (context.getContextReturn() != null) {
+				String outpath = context.getContextReturn().returnPath;
 				if (outpath.indexOf("${key}") >= 0) {
 					String out = outpath.replace("${key}",
 							context.getMogram().getName());
-					context.getRequestReturn().returnPath = out;
+					context.getContextReturn().returnPath = out;
 				}
 				context.setReturnValue(result);
 			}
@@ -315,12 +315,12 @@ public class Arithmometer implements SorcerConstants, Serializable {
 		String outputMessage;
 		try {
 			outputMessage = "calculated by " + getHostname();
-			if (context.getRequestReturn() != null) {
-				String outpath = ((ServiceContext) context).getRequestReturn().returnPath;
+			if (context.getContextReturn() != null) {
+				String outpath = ((ServiceContext) context).getContextReturn().returnPath;
 				if (outpath.indexOf("${key}") >= 0) {
 					String out = outpath.replace("${key}",
 							context.getMogram().getName());
-					context.getRequestReturn().setReturnPath(out);
+					context.getContextReturn().setReturnPath(out);
 				}
 				context.setReturnValue(result);
 			} else if (outpaths.size() == 1) {

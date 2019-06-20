@@ -525,16 +525,16 @@ public class Job extends Transroutine {
 		return value;
 	}
 	
-	public Context.RequestReturn getReturnPath() {
-		return dataContext.getRequestReturn();
+	public Context.Return getReturnPath() {
+		return dataContext.getContextReturn();
 	}
 	
 	@Override
 	public Object getReturnValue(Arg... entries) throws ContextException,
 			RemoteException {
-		//TODO for getJobRequestReturn
-		//RequestReturn rp = ((ServiceContext) dataContext).getJobRequestReturn();
-		Context.RequestReturn rp = ((ServiceContext) dataContext).getRequestReturn();
+		//TODO for getJobContextReturn
+		//Return rp = ((ServiceContext) dataContext).getJobContextReturn();
+		Context.Return rp = ((ServiceContext) dataContext).getContextReturn();
 		Object obj = null;
 		if (rp != null) {
 			if (rp.returnPath == null || rp.returnPath.equals(Signature.SELF)) {

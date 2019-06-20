@@ -73,7 +73,7 @@ public class PropertiesView extends JPanel{
 		if(!pNode.isRoot()){
 		/*
 			StringBuffer buf=new StringBuffer();
-			TreeNode [] tPath=pNode.getRequestReturn();
+			TreeNode [] tPath=pNode.getContextReturn();
 			for(int i=1;i<tPath.length;i++){
 				String str=tPath[i].toString();
 				buf.append(str);

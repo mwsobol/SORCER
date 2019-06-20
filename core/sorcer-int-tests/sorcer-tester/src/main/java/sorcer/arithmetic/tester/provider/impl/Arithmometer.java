@@ -174,16 +174,16 @@ public class Arithmometer implements SorcerConstants, Serializable {
 
 			String outputMessage = "calculated by " + getHostname();
 			// setValue return eval
-			if (((ServiceContext)context).getRequestReturn() != null) {
+			if (((ServiceContext)context).getContextReturn() != null) {
 				context.setReturnValue(result);
 			}
 			//other ways to indicate the output eval
 			else if (outpaths.size() == 1) {
-				// put the result in the existing output requestReturn
+				// put the result in the existing output contextReturn
 				cxt.putValue(outpaths.get(0), result);
 				cxt.putValue(attPath(outpaths.get(0), ArrayContext.DESCRIPTION), outputMessage);
 			} else {
-				// put the result for a new output requestReturn
+				// put the result for a new output contextReturn
 				logger.info("max index; " + cxt.getMaxIndex());
 				int oi = cxt.getMaxIndex() + 1;
 				cxt.ov(oi, result);
@@ -230,7 +230,7 @@ public class Arithmometer implements SorcerConstants, Serializable {
 				for (int i = 1; i < inputs.size(); i++)
 					result += (Double)revalue(inputs.get(i));
 			} else if (selector.equals(SUBTRACT)) {
-				Context.RequestReturn<?> rp = ((ServiceContext<?>) context).getRequestReturn();
+				Context.Return<?> rp = ((ServiceContext<?>) context).getContextReturn();
 				if (rp != null && rp.inPaths != null && rp.inPaths.size() > 0) {
 					result = (Double) revalue(cxt.getValue(rp.inPaths.get(0).path));
 					result -= (Double) revalue(cxt.getValue(rp.inPaths.get(1).path));
@@ -264,17 +264,17 @@ public class Arithmometer implements SorcerConstants, Serializable {
 			logger.info(selector + " result: \n" + result);
 
 			String outputMessage = "calculated by " + getHostname();
-			if (context.getRequestReturn() != null) {
-				String outpath = context.getRequestReturn().returnPath;
+			if (context.getContextReturn() != null) {
+				String outpath = context.getContextReturn().returnPath;
 				if (outpath.indexOf("${key}") >= 0) {
 					String out = outpath.replace("${key}",
 							context.getMogram().getName());
-					context.getRequestReturn().returnPath = out;
+					context.getContextReturn().returnPath = out;
 				}
 				context.setReturnValue(result);
 			}
 			else if (outpaths.size() == 1) {
-				// put the result in the existing output requestReturn
+				// put the result in the existing output contextReturn
 				String outpath = outpaths.get(0);
 				if (outpath.indexOf("${key}") >= 0) {
 					if (outpath.indexOf("${key}") >= 0) {
@@ -311,16 +311,16 @@ public class Arithmometer implements SorcerConstants, Serializable {
 		String outputMessage;
 		try {
 			outputMessage = "calculated by " + getHostname();
-			if (context.getRequestReturn() != null) {
-				String outpath = ((ServiceContext) context).getRequestReturn().returnPath;
+			if (context.getContextReturn() != null) {
+				String outpath = ((ServiceContext) context).getContextReturn().returnPath;
 				if (outpath.indexOf("${key}") >= 0) {
 					String out = outpath.replace("${key}",
 							context.getMogram().getName());
-					context.getRequestReturn().setReturnPath(out);
+					context.getContextReturn().setReturnPath(out);
 				}
 				context.setReturnValue(result);
 			} else if (outpaths.size() == 1) {
-				// put the result in the existing output requestReturn
+				// put the result in the existing output contextReturn
 				String outpath = outpaths.get(0);
 				if (outpath.indexOf("${key}") >= 0) {
 					if (outpath.indexOf("${key}") >= 0) {

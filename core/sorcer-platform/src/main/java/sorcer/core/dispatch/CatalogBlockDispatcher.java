@@ -186,7 +186,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		}
 
 		ServiceContext cxt = (ServiceContext)xrt.getDataContext();
-		Context.RequestReturn rp = exertion.getDataContext().getRequestReturn();
+		Context.Return rp = exertion.getDataContext().getContextReturn();
 		if (rp != null) {
 			Context.Out outPaths = rp.getOutPaths();
 			if (outPaths != null && outPaths.size() > 0) {
@@ -198,7 +198,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 				}
 			} else {
 				try {
-					cxt.putValue(((Context.RequestReturn) exertion.getContext().getRequestReturn()).returnPath,
+					cxt.putValue(((Context.Return) exertion.getContext().getContextReturn()).returnPath,
 						exertion.getDataContext().getReturnValue());
 				} catch (RemoteException e) {
 					throw new ContextException(e);

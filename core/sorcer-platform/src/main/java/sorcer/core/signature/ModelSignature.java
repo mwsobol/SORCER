@@ -41,8 +41,8 @@ public class ModelSignature extends ServiceSignature implements sig {
 		else
 			this.providerName = new ProviderName(providerName);
 		for (Arg p : parameters) {
-			if (p instanceof Context.RequestReturn) {
-				this.returnPath = (Context.RequestReturn)p;
+			if (p instanceof Context.Return) {
+				this.returnPath = (Context.Return)p;
 			}
 		}
 	}
@@ -62,8 +62,8 @@ public class ModelSignature extends ServiceSignature implements sig {
 		if (innerSignature instanceof NetSignature)
 			providerName = innerSignature.getProviderName();
 		for (Arg p : paramters) {
-			if (p instanceof Context.RequestReturn) {
-				this.returnPath = (Context.RequestReturn)p;
+			if (p instanceof Context.Return) {
+				this.returnPath = (Context.Return)p;
 			}
 		}
 	}
@@ -73,8 +73,8 @@ public class ModelSignature extends ServiceSignature implements sig {
 		this(selector, targetSignature);
 		this.fidelity = fidelity;
 		for (Arg p : paramters) {
-			if (p instanceof Context.RequestReturn) {
-				this.returnPath = (Context.RequestReturn)p;
+			if (p instanceof Context.Return) {
+				this.returnPath = (Context.Return)p;
 			}
 		}
 	}

@@ -339,10 +339,10 @@ public abstract class Block extends Transroutine {
 		Object[] paths = ((ServiceContext)getDataContext()).keySet().toArray();
 		for (Object path : paths) {
 			dataContext.removePath((String) path);
-//			dataContext.getScope().removePath((String) requestReturn);
+//			dataContext.getScope().removePath((String) contextReturn);
 		}
 
-		Context.RequestReturn rp = dataContext.getRequestReturn();
+		Context.Return rp = dataContext.getContextReturn();
 		if (rp != null && rp.returnPath != null)
 			dataContext.removePath(rp.returnPath);
 

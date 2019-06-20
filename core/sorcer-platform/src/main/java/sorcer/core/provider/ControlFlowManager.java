@@ -372,10 +372,10 @@ public class ControlFlowManager {
     public static void saveState(Map<String, Object> mapBackUp, Context context) {
         try {
             Enumeration e = context.contextPaths();
-			String requestReturn;
+			String contextReturn;
             while (e.hasMoreElements()) {
-				requestReturn = (String) e.nextElement();
-				mapBackUp.put(requestReturn, context.getValue(requestReturn));
+				contextReturn = (String) e.nextElement();
+				mapBackUp.put(contextReturn, context.getValue(contextReturn));
             }
         } catch (ContextException ce) {
             logger.info("problem saving state of the ServiceContext " + ce);
@@ -396,11 +396,11 @@ public class ControlFlowManager {
         Iterator iter = mapBackUp.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
-            String requestReturn = (String) entry.getKey();
+            String contextReturn = (String) entry.getKey();
 			Object eval = entry.execute();
 
             try {
-                context.putValue(requestReturn, eval);
+                context.putValue(contextReturn, eval);
             } catch (ContextException e) {
                 e.printStackTrace();
             }
@@ -419,11 +419,11 @@ public class ControlFlowManager {
     public static void copyContext(Context fromContext, Context toContext) {
         try {
             Enumeration e = fromContext.contextPaths();
-			String requestReturn;
+			String contextReturn;
 
             while (e.hasMoreElements()) {
-				requestReturn = (String) e.nextElement();
-                toContext.putValue(requestReturn, fromContext.execute(requestReturn));
+				contextReturn = (String) e.nextElement();
+                toContext.putValue(contextReturn, fromContext.execute(contextReturn));
             }
         } catch (ContextException ce) {
             ce.printStackTrace();
@@ -512,8 +512,8 @@ public class ControlFlowManager {
         ts.getSelects().add(tsig);
         task.setSelectedFidelity(ts);
         ts.setSelect(tsig);
-        if (tsig.getRequestReturn() != null)
-            ((ServiceContext)task.getContext()).setRequestReturn(tsig.getRequestReturn());
+        if (tsig.getContextReturn() != null)
+            ((ServiceContext)task.getContext()).setRequestReturn(tsig.getContextReturn());
 
         task = task.doTask();
         if (task.getStatus() <= Exec.FAILED) {
