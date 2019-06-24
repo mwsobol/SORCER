@@ -49,7 +49,7 @@ class StartAll {
         descriptors << new SorcerServiceDescriptor(codebase,
                 policy,
                 "${buildLibPath}/adder-${sorcerVersion}-prv.jar${File.pathSeparator}${buildLibPath}/adder-${sorcerVersion}-ui.jar",
-                "sorcer.core.provider.SessionBeanProvider",
+                "sorcer.core.provider.SessionProvider",
                 configArg as String[])
 
         return descriptors as ServiceDescriptor[]
