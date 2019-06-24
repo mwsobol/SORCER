@@ -29,7 +29,7 @@ import sorcer.core.loki.member.LokiMemberUtil;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.provider.Cataloger;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -69,7 +69,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
     public Dispatcher createDispatcher(Mogram mogram,
                                        Set<Context> sharedContexts,
                                        boolean isSpawned,
-                                       Provider provider) throws DispatcherException {
+                                       Exerter provider) throws DispatcherException {
         Dispatcher dispatcher = null;
         ProvisionManager provisionManager = null;
         if (mogram instanceof Routine) {
@@ -179,12 +179,12 @@ public class MogramDispatcherFactory implements DispatcherFactory {
      *            components mograms
      */
     @Override
-    public Dispatcher createDispatcher(Mogram mogram, Provider provider, String... config) throws DispatcherException {
+    public Dispatcher createDispatcher(Mogram mogram, Exerter provider, String... config) throws DispatcherException {
         return createDispatcher(mogram, Collections.synchronizedSet(new HashSet<Context>()), false, provider);
     }
 
     @Override
-    public SpaceTaskDispatcher createDispatcher(Task task, Provider provider, String... config) throws DispatcherException {
+    public SpaceTaskDispatcher createDispatcher(Task task, Exerter provider, String... config) throws DispatcherException {
         ProvisionManager provisionManager = null;
         List<ServiceDeployment> deployments = task.getDeployments();
         if (deployments.size() > 0)

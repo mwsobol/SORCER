@@ -17,7 +17,7 @@
 
 package sorcer.util;
 
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.service.Accessor;
 
@@ -34,7 +34,7 @@ public class ProviderUtil extends GenericUtil {
 	}
 
     public static void destroy(String providerName, Class serviceType) {
-        Provider prv = (Provider) Accessor.create().getService(providerName, serviceType);
+        Exerter prv = (Exerter) Accessor.create().getService(providerName, serviceType);
         if (prv != null)
             try {
                 prv.destroy();
@@ -45,7 +45,7 @@ public class ProviderUtil extends GenericUtil {
     }
 
     public static void destroyNode(String providerName, Class serviceType) {
-        Provider prv = (Provider) Accessor.create().getService(providerName, serviceType);
+        Exerter prv = (Exerter) Accessor.create().getService(providerName, serviceType);
         if (prv != null)
             try {
                 prv.destroyNode();

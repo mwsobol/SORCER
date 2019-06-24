@@ -6,7 +6,7 @@ import net.jini.lookup.entry.UIDescriptor;
 import net.jini.lookup.ui.MainUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.service.Service;
 import sorcer.serviceui.UIComponentFactory;
@@ -65,8 +65,8 @@ public class CalculatorUI extends JPanel implements ActionListener {
 			logger.info("service class: " + item.service.getClass().getName()
 					+ "\nservice object: " + item.service);
 
-			if (item.service instanceof Provider) {
-				provider = (Provider) item.service;
+			if (item.service instanceof Exerter) {
+				provider = (Exerter) item.service;
 			}
 
 			// Schedule a job for the event-dispatching thread:

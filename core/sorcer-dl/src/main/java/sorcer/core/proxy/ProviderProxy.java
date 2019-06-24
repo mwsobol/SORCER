@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import sorcer.core.provider.AdministratableProvider;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -161,7 +161,7 @@ public class ProviderProxy implements Serializable {
 				if (!list.contains(ServiceActivityProvider.class))
 					list.add(ServiceActivityProvider.class);
 
-				if (list.contains(Provider.class)) {
+				if (list.contains(Exerter.class)) {
 					list.remove(AdministratableProvider.class);
 				}
 			}
@@ -275,7 +275,7 @@ public class ProviderProxy implements Serializable {
 			} else if ("getProxyTrustIterator".equals(selector)) {
 				return new SingletonProxyTrustIterator(server);
 			} else if ("isActive".equals(selector)) {
-				return ((Provider) proxy).isBusy();
+				return ((Exerter) proxy).isBusy();
 			} else {
 				return super.doInvoke(server, selector, m, args);
 			}

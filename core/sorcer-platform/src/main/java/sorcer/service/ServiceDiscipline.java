@@ -576,12 +576,12 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public void reportException(String message, Throwable t, Provider provider) {
+    public void reportException(String message, Throwable t, Exerter provider) {
 
     }
 
     @Override
-    public void reportException(String message, Throwable t, Provider provider, ProviderInfo info) {
+    public void reportException(String message, Throwable t, Exerter provider, ProviderInfo info) {
 
     }
 

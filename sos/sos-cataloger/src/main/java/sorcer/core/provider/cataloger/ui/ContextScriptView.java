@@ -23,7 +23,7 @@ import java.rmi.RMISecurityManager;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.ui.exertlet.EditorView;
 
 /**
@@ -39,7 +39,7 @@ public class ContextScriptView extends JPanel {
 	private EditorView browser;
 	private EditorView inViewer;
 	private EditorView outViewer;
-	private Provider provider; 
+	private Exerter provider;
 	private BrowserModel model;
 	/**
 	 * Tabbed pane to hold the input and output ContextTrees

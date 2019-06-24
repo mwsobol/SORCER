@@ -41,7 +41,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     public CatalogExertDispatcher(Routine job,
                                   Set<Context> sharedContext,
                                   boolean isSpawned,
-                                  Provider provider,
+                                  Exerter provider,
                                   ProvisionManager provisionManager) {
         super(job, sharedContext, isSpawned, provider, provisionManager);
     }
@@ -198,7 +198,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                          * (RemoteServiceTask)provider.service(task); }
                          */
                         logger.debug("getting result from provider...");
-                        result = ((Exerter)service).exert(task, null);
+                        result = ((Exertion)service).exert(task, null);
 
                     } catch (Exception re) {
                         if (tried >= maxTries) {
@@ -209,7 +209,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                             logger.info("Problem exerting task, retrying " + tried + " time: " + xrt.getName() + " " + re.getMessage());
                             service = (Service) Accessor.get().getService(sig);
                             try {
-                                logger.info("+++++++++++++++Got service: " + ((Provider)service).getProviderID());
+                                logger.info("+++++++++++++++Got service: " + ((Exerter)service).getProviderID());
                             } catch (Exception e) {
                                 System.out.println("+++++++++++++++The service we got is not valid");
                             }
@@ -280,7 +280,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 				if (concatenators[i] != null) {
 					if (!provider.getProviderID().equals(concatenators[i].serviceID)) {
 						logger.trace("Concatenator: [{}] ServiceID: {}", i, concatenators[i].serviceID);
-						Provider rconcatenator = (Provider) concatenators[i].service;
+						Exerter rconcatenator = (Exerter) concatenators[i].service;
 						return rconcatenator.exert(block, null);
 					}
 				}

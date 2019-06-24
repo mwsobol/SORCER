@@ -63,7 +63,7 @@ public class NetSignature extends ObjectSignature implements sig {
 	private boolean isUnicast = false;
 
 	// provider bound to this signature
-	transient private Provider provider;
+	transient private Exerter provider;
 
 	protected List<Entry> attributes;
 
@@ -196,7 +196,7 @@ public class NetSignature extends ObjectSignature implements sig {
 		attributes.addAll(attributes);
 	}
 
-    public Provider getService() throws SignatureException {
+    public Exerter getService() throws SignatureException {
         if (provider == null) return provider;
         try {
             // ping provider to see if alive
@@ -205,17 +205,17 @@ public class NetSignature extends ObjectSignature implements sig {
             // provider is dead; getValue new one
             //e.printStackTrace();
             provider = null;
-            provider = (Provider)Accessor.get().getService(this);
+            provider = (Exerter)Accessor.get().getService(this);
         }
         return provider;
     }
 
-    public Provider getProvider() {
+    public Exerter getProvider() {
         return provider;
     }
 
     public void setProvider(Service provider) {
-        this.provider = (Provider)provider;
+        this.provider = (Exerter)provider;
     }
 
 	public String action() {
@@ -326,7 +326,7 @@ public class NetSignature extends ObjectSignature implements sig {
 				RoutineException eme = new RoutineException(
 						"Not supported method: " + multitype + "#" + operation.selector
 								+ " by: "
-								+ ((Provider) provider).getProviderName());
+								+ ((Exerter) provider).getProviderName());
 				((ServiceProvider) provider).notifyException(context.getMogram(),
 						"unsupported method", eme);
 				throw eme;
@@ -347,10 +347,10 @@ public class NetSignature extends ObjectSignature implements sig {
 			MogramException, RemoteException {
 		try {
 			if (this.isShellRemote()) {
-				Provider prv= (Provider) Accessor.get().getService(sig(RemoteServiceShell.class));
+				Exerter prv= (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
 				return prv.exert(mogram, txn).getContext();
 			}
-			Provider prv = (Provider) operator.provider(this);
+			Exerter prv = (Exerter) operator.provider(this);
 			Context cxt = null;
 			NetTask task = null;
 			if (mogram instanceof Context)
@@ -403,14 +403,14 @@ public class NetSignature extends ObjectSignature implements sig {
 		try {
 			if (mog != null && cxt == null) {
 				if (multitype.providerType == RemoteServiceShell.class) {
-					Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
+					Exertion prv = (Exertion) Accessor.get().getService(sig(RemoteServiceShell.class));
 					result = prv.exert(mog, null, new Arg[] {});
 				} else {
 					if (mog.getProcessSignature() != null
 							&& ((ServiceSignature) mog.getProcessSignature()).isShellRemote()) {
 						Exertion prv = null;
 						prv = (Exertion) Accessor.get().getService(sig(RemoteServiceShell.class));
-						result = prv.exert(mog);
+						result = prv.exert(mog, null, new Arg[] {});
 					} else {
 						result = (exert(mog));
 					}

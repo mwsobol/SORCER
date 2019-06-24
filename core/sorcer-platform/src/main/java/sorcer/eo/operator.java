@@ -1228,7 +1228,7 @@ operator extends Operator {
         Multitype srvType = null;
         List<Class> sigTypes = new ArrayList<>();
         Args args = null;
-        Provider provider = null;
+        Exerter provider = null;
         if (items != null) {
             for (Object o : items) {
                 if (o instanceof ProviderName) {
@@ -1241,8 +1241,8 @@ operator extends Operator {
                     connList.add(((MapContext) o));
                 } else if (o instanceof Multitype) {
                     srvType = (Multitype) o;
-                } else if (o instanceof Provider) {
-                    provider = (Provider) o;
+                } else if (o instanceof Exerter) {
+                    provider = (Exerter) o;
                 } else if (o instanceof Args) {
                     args = (Args) o;
                 } else if (o instanceof Class) {
@@ -1261,15 +1261,15 @@ operator extends Operator {
             } else {
                 sig = new ObjectSignature(operation, serviceType);
                 if (provider != null) {
-                    // loclal SessionBeanProvider
-                    if (provider instanceof SessionBeanProvider) {
+                    // loclal SessionProvider
+                    if (provider instanceof SessionProvider) {
                         Object bean = null;
                         try {
                             bean = sig.getServiceType().newInstance();
                         } catch (InstantiationException | IllegalAccessException e) {
                             throw new SignatureException(e);
                         }
-                        ((SessionBeanProvider)provider).setBean(bean);
+                        ((SessionProvider)provider).setBean(bean);
                     }
                     ((ObjectSignature)sig).setTarget(provider);
                 }
@@ -3346,16 +3346,16 @@ operator extends Operator {
         }
     }
 
-    public static List<Provider> providers(Signature signature)
+    public static List<Exerter> providers(Signature signature)
         throws SignatureException {
         ServiceTemplate st = new ServiceTemplate(null, new Class[] { signature.getServiceType() }, null);
         ServiceItem[] sis = Accessor.get().getServiceItems(st, null);
         if (sis == null)
             throw new SignatureException("No available providers of fiType: "
                 + signature.getServiceType().getName());
-        List<Provider> servers = new ArrayList<Provider>(sis.length);
+        List<Exerter> servers = new ArrayList<Exerter>(sis.length);
         for (ServiceItem si : sis) {
-            servers.add((Provider) si.service);
+            servers.add((Exerter) si.service);
         }
         return servers;
     }
@@ -3408,7 +3408,7 @@ operator extends Operator {
                 } else if (targetSignatue != null) {
                     provider = instance(targetSignatue);
                     ((ObjectSignature)signature).setTarget(provider);
-                } else if (Provider.class.isAssignableFrom(providerType)) {
+                } else if (Exerter.class.isAssignableFrom(providerType)) {
                     provider = providerType.newInstance();
                 } else {
                     if (signature.getSelector() == null &&

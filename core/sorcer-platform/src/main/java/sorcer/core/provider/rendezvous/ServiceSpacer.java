@@ -24,7 +24,7 @@ import sorcer.core.DispatchResult;
 import sorcer.core.dispatch.*;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.loki.member.LokiMemberUtil;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.Spacer;
 import sorcer.service.*;
 
@@ -39,7 +39,7 @@ import static sorcer.util.StringUtils.tName;
  * 
  * @author Mike Sobolewski
  */
-public class ServiceSpacer extends SystemServiceBean implements Spacer {
+public class ServiceSpacer extends SorcerExerterBean implements Spacer {
     private Logger logger = LoggerFactory.getLogger(ServiceSpacer.class.getName());
 
     private LokiMemberUtil myMemberUtil;
@@ -93,9 +93,9 @@ public class ServiceSpacer extends SystemServiceBean implements Spacer {
 
         private Task result;
 
-        private Provider provider;
+        private Exerter provider;
 
-        public TaskThread(Task task, Provider provider) {
+        public TaskThread(Task task, Exerter provider) {
             super(tName("Task-" + task.getName()));
             this.task = task;
             this.provider = provider;

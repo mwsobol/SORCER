@@ -20,7 +20,7 @@ package sorcer.util;
 
 import net.jini.config.Configuration;
 import net.jini.config.EmptyConfiguration;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Service;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
@@ -47,8 +47,8 @@ public class ProviderLookup extends ServiceAccessor {
      * @param signature a provider signature
      * @return a SORCER service provider
      */
-    public Provider getProvider(Signature signature) throws SignatureException {
-        return (Provider) getService(signature);
+    public Exerter getProvider(Signature signature) throws SignatureException {
+        return (Exerter) getService(signature);
     }
 
 	/**

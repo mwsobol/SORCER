@@ -110,7 +110,7 @@ public class Accessor {
      * @param provider the provider to check
      * @return true if a provider is alive, otherwise false
      */
-    public static boolean isAlive(Provider provider) {
+    public static boolean isAlive(Exerter provider) {
         if (provider == null)
             return false;
         try {

@@ -21,7 +21,7 @@ package sorcer.ui.exertlet;
 
 import net.jini.core.lookup.ServiceItem;
 import org.slf4j.Logger;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.proxy.Outer;
 import sorcer.ui.util.WindowUtilities;
 import sorcer.util.Log;
@@ -44,7 +44,7 @@ public class NetletEditor extends JPanel {
 	private EditorView browser;
 	private JTabbedPane tabbedPane;
 	private ServiceItem item;
-	private Provider provider;
+	private Exerter provider;
 
     public NetletEditor(Object obj) {
         super();
@@ -61,12 +61,12 @@ public class NetletEditor extends JPanel {
 				// check if smart proxy's inner exported server does contain a
 				// provider
 				if (inner instanceof Outer)
-					provider = (Provider) ((Outer) inner).getInner();
+					provider = (Exerter) ((Outer) inner).getInner();
 				else
 					// in this case provider contains a non exported server
-					provider = (Provider) inner;
-			} else if (item.service instanceof Provider)
-				provider = (Provider) item.service;
+					provider = (Exerter) inner;
+			} else if (item.service instanceof Exerter)
+				provider = (Exerter) item.service;
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

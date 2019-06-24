@@ -36,7 +36,7 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 import sorcer.core.provider.RemoteLogger;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.logger.ui.LoggerFrameUI;
 import sorcer.serviceui.UIDescriptorFactory;
 import sorcer.serviceui.UIFrameFactory;
@@ -71,7 +71,7 @@ public class RemoteLoggerManager implements RemoteLogger {
 
     private Map<Long, EventHandler> remoteLogHandlers = new ConcurrentHashMap<Long, EventHandler>();
 
-    private Provider provider;
+    private Exerter provider;
 
     public RemoteLoggerManager() {
         ILoggerFactory loggerFactory;
@@ -81,7 +81,7 @@ public class RemoteLoggerManager implements RemoteLogger {
         this.loggerFactory = (LoggerContext) loggerFactory;
     }
 
-    public void init(Provider provider) throws RemoteException {
+    public void init(Exerter provider) throws RemoteException {
         this.provider = provider;
     }
 

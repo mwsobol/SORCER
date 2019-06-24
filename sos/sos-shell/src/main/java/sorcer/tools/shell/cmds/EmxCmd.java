@@ -21,7 +21,7 @@ import net.jini.core.lookup.ServiceItem;
 import net.jini.id.Uuid;
 import sorcer.core.monitor.MonitorUIManagement;
 import sorcer.core.monitor.MonitoringManagement;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.jini.lookup.AttributesUtil;
 import sorcer.service.*;
 import sorcer.service.Exec.State;
@@ -225,7 +225,7 @@ public class EmxCmd extends ShellCmd {
             findMonitors();
         }
         try {
-            ((Provider)emxMonitors[selectedMonitor]).getProviderName();
+            ((Exerter)emxMonitors[selectedMonitor]).getProviderName();
         } catch (Exception e) {
             findMonitors();
         }
@@ -256,7 +256,7 @@ public class EmxCmd extends ShellCmd {
 			findMonitors();
 		}
 		try {
-			((Provider)emxMonitors[selectedMonitor]).getProviderName();
+			((Exerter)emxMonitors[selectedMonitor]).getProviderName();
 		} catch (Exception e) {
 			findMonitors();
 		}

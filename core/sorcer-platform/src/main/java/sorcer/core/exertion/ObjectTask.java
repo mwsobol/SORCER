@@ -21,7 +21,7 @@ package sorcer.core.exertion;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.invoker.MethodInvoker;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 
@@ -136,8 +136,8 @@ public class ObjectTask extends Task {
 				if (target != null) {
 					if (target instanceof Method) {
 						result = invokeMethod((Method)target, os);
-					} else if (target instanceof Provider) {
-						result = ((Provider) target).exert(this, null).getDataContext();
+					} else if (target instanceof Exerter) {
+						result = ((Exerter) target).exert(this, null).getDataContext();
 					} else {
 						evaluator = new MethodInvoker(target, os.getSelector());
 					}

@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.Cataloger;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.ServiceName;
 import sorcer.core.signature.NetSignature;
 import sorcer.jini.lookup.entry.SorcerServiceInfo;
@@ -92,12 +92,12 @@ public class ProviderAccessor extends ServiceAccessor {
      *            the signature of service provider
      * @return a SORCER provider service
      */
-    public Provider getProvider(Signature signature) throws SignatureException {
+    public Exerter getProvider(Signature signature) throws SignatureException {
 		if (signature.getProviderName() instanceof ServiceName) {
 			// for handling dynamic groups in signature
 			return ProviderLocator.getProvider(signature);
 		} else {
-			return (Provider) getService(signature);
+			return (Exerter) getService(signature);
 		}
     }
 
@@ -109,7 +109,7 @@ public class ProviderAccessor extends ServiceAccessor {
      *            a provider service multitype (interface)
      * @return a SORCER provider service
      */
-    public Provider getProvider(Class serviceType) throws SignatureException {
+    public Exerter getProvider(Class serviceType) throws SignatureException {
 		return getProvider(new NetSignature(serviceType));
 	}
 
@@ -141,7 +141,7 @@ public class ProviderAccessor extends ServiceAccessor {
 	 */
     @SuppressWarnings("unchecked")
 	public <T> T getProvider(String providerName, Class<T> serviceType) {
-		Provider servicer = null;
+		Exerter servicer = null;
 		if (providerName != null) {
             if (providerName.equals(SorcerConstants.ANY))
                 providerName = null;
@@ -176,7 +176,7 @@ public class ProviderAccessor extends ServiceAccessor {
                 else
                     logger.info("No Cataloger, discover {} {} using Lookup service",
                                 providerName, serviceType==null?"<null>" : serviceType.getName());
-                servicer = (Provider) super.getService(providerName, serviceType);
+                servicer = (Exerter) super.getService(providerName, serviceType);
             }
 		} catch (Throwable ex) {
 			logger.error("selectService {} {}", providerName, serviceType==null?"<null>": serviceType.getName(), ex);
@@ -213,8 +213,8 @@ public class ProviderAccessor extends ServiceAccessor {
 	 *            attribute set to match
 	 * @return a SORCER provider
 	 */
-	public Provider getProvider(Entry[] attributes) {
-		return (Provider) getService(null, null, attributes);
+	public Exerter getProvider(Entry[] attributes) {
+		return (Exerter) getService(null, null, attributes);
 	}
 
 	/**
@@ -225,8 +225,8 @@ public class ProviderAccessor extends ServiceAccessor {
 	 *            a set of service types to match
 	 * @return a SORCER provider
 	 */
-	public Provider getProvider(Class[] serviceTypes) {
-		return (Provider) getService(null, serviceTypes, null);
+	public Exerter getProvider(Class[] serviceTypes) {
+		return (Exerter) getService(null, serviceTypes, null);
 	}
 
 	/**
@@ -249,7 +249,7 @@ public class ProviderAccessor extends ServiceAccessor {
     protected Cataloger getCataloger(String serviceName) {
         boolean catIsOk;
 		try {
-            catIsOk = Accessor.isAlive((Provider) cataloger);
+            catIsOk = Accessor.isAlive((Exerter) cataloger);
             if (catIsOk) {
 				return cataloger;
 			} else {
@@ -258,7 +258,7 @@ public class ProviderAccessor extends ServiceAccessor {
                                                              1,
                                                              Filters.any());
                 cataloger = serviceItems.length == 0 ? null : (Cataloger) serviceItems[0].service;
-                if (Accessor.isAlive((Provider)cataloger))
+                if (Accessor.isAlive((Exerter)cataloger))
                     return cataloger;
                 else
                     return null;
@@ -283,11 +283,11 @@ public class ProviderAccessor extends ServiceAccessor {
 	 *            - service multitype of requested provider
 	 * @return a requested service or null if a Cataloger is not available
 	 */
-	protected Provider lookup(String providerName, Class<Provider> primaryInterface) {
+	protected Exerter lookup(String providerName, Class<Exerter> primaryInterface) {
 		try {
 			// check if the cataloger is alive then return a requested service
 			// provider
-			if (Accessor.isAlive((Provider) cataloger))
+			if (Accessor.isAlive((Exerter) cataloger))
 				return cataloger.lookup(providerName, primaryInterface);
 			else {
 				// try to getValue a new cataloger and lookup again
@@ -354,7 +354,7 @@ public class ProviderAccessor extends ServiceAccessor {
         }
 
         if (serviceTypes == null) {
-            types = new Class[] { Provider.class };
+            types = new Class[] { Exerter.class };
         } else {
             types = serviceTypes;
         }

@@ -533,7 +533,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 	/**
 	 * Destroy the service, if possible, including its persistent storage.
 	 * 
-	 * @see Provider#destroy()
+	 * @see Exerter#destroy()
 	 */
 	public void destroy() {
 		try {

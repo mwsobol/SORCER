@@ -12,7 +12,7 @@ import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.Subtractor;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.service.*;
 import sorcer.service.Strategy.Access;
@@ -128,7 +128,7 @@ public class NetTasks {
 		String group = System.getProperty("user.name");
 
 		Task t5 = task("t5", sig("add", Adder.class,
-				types(Service.class, Provider.class),
+				types(Service.class, Exerter.class),
 				srvName("Adder", group)),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
@@ -152,7 +152,7 @@ public class NetTasks {
 		String group = System.getProperty("user.name");
 
 		Task t5 = task("t5", sig("add", Adder.class,
-				types(Service.class, Provider.class),
+				types(Service.class, Exerter.class),
 				// comma separated list of hosts, when empty localhost is a default locator
 				srvName("Adder", locators(), group)),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));

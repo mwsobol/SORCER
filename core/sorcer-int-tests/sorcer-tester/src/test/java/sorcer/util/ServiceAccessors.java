@@ -12,7 +12,7 @@ import sorcer.core.SorcerConstants;
 import sorcer.core.provider.*;
 import sorcer.service.Accessor;
 import sorcer.service.DynamicAccessor;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Service;
 
 import static org.junit.Assert.assertNotNull;
@@ -50,7 +50,7 @@ public class ServiceAccessors implements SorcerConstants {
 	@Test
 	public void providerAccessorSig() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Provider provider = providerAccessor.getProvider(sig(Jobber.class));
+		Exerter provider = providerAccessor.getProvider(sig(Jobber.class));
 //		logger.info("Accessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertTrue(provider instanceof Jobber);
@@ -59,7 +59,7 @@ public class ServiceAccessors implements SorcerConstants {
 	@Test
 	public void dynamicAccessorSig() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Provider provider = (Provider) dynamicAccessoror.getService(sig(SorcerJobber.class));
+		Exerter provider = (Exerter) dynamicAccessoror.getService(sig(SorcerJobber.class));
 //		logger.info("Accessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertTrue(provider instanceof Jobber);
@@ -68,8 +68,8 @@ public class ServiceAccessors implements SorcerConstants {
 	@Test
 	public void dynamicAccessorMultitypeSig() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Provider provider = (Provider) dynamicAccessoror.getService(
-				sig(sig(SorcerJobber.class), Service.class, Provider.class));
+		Exerter provider = (Exerter) dynamicAccessoror.getService(
+				sig(sig(SorcerJobber.class), Service.class, Exerter.class));
 //		logger.info("Accessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertTrue(provider instanceof Jobber);
@@ -78,7 +78,7 @@ public class ServiceAccessors implements SorcerConstants {
 	@Test
 	public void providerLocatorSig() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Provider provider = providerLookup.getProvider(sig(Spacer.class));
+		Exerter provider = providerLookup.getProvider(sig(Spacer.class));
 		//logger.info("ProviderLocator provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertTrue(provider instanceof Spacer);
@@ -87,7 +87,7 @@ public class ServiceAccessors implements SorcerConstants {
 	@Test
 	public void providerLookupSig() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Provider provider = providerLookup.getProvider(sig(Concatenator.class));
+		Exerter provider = providerLookup.getProvider(sig(Concatenator.class));
 //		logger.info("ProviderAccessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertTrue(provider instanceof Concatenator);
@@ -96,7 +96,7 @@ public class ServiceAccessors implements SorcerConstants {
 	@Test
 	public void providerAccessorType() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Provider provider = providerAccessor.getProvider(Jobber.class);
+		Exerter provider = providerAccessor.getProvider(Jobber.class);
 //		logger.info("Accessor provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertNotNull(provider);
@@ -105,7 +105,7 @@ public class ServiceAccessors implements SorcerConstants {
 	@Test
 	public void providerLocatorType() throws Exception {
 		long startTime = System.currentTimeMillis();
-		Provider provider = providerAccessor.getProvider(Spacer.class);
+		Exerter provider = providerAccessor.getProvider(Spacer.class);
 		//logger.info("ProviderLocator provider: " + provider);
 		logger.info(Stopwatch.getTimeString(System.currentTimeMillis() - startTime));
 		assertNotNull(provider);

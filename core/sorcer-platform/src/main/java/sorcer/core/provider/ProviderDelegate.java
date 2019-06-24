@@ -108,7 +108,7 @@ import static sorcer.util.StringUtils.tName;
  * subclasses of {@link ServiceProvider} - and service beans - classes of
  * implementing one or more SORCER service types. This class does the
  * actual work for both generic SORCER servers and SORCER service beans. Also it
- * provides the basic functionality for {@link Provider}s. Multiple SORCER
+ * provides the basic functionality for {@link Exerter}s. Multiple SORCER
  * beans can be deployed within a single (@link ServiceProvider}.
  *
  * @see sorcer.core.provider.ServiceProvider
@@ -210,7 +210,7 @@ public class ProviderDelegate {
 	/** lease manager also used by provider workers. */
 	protected static LeaseRenewalManager leaseManager = new LeaseRenewalManager();
 
-	protected Provider provider;
+	protected Exerter provider;
 
 	protected boolean mutualExclusion = false;
 
@@ -257,7 +257,7 @@ public class ProviderDelegate {
 	/**
 	 * An outer service proxy, by default the proxy of this provider, is used
 	 * by service requestors if provider's smart proxy is absent. At least
-	 * two generic Remote interface: {@link Service} and {@link Provider} are
+	 * two generic Remote interface: {@link Service} and {@link Exerter} are
 	 * implemented by outer proxies of all SORCER service providers. Each SORCER
 	 * provider uses outer proxy to actually prc directly its provider and make
 	 * redirected calls using its inner proxy (redirected remote invocations).
@@ -364,11 +364,11 @@ public class ProviderDelegate {
 	public ProviderDelegate() {
 	}
 
-	public void init(Provider provider) throws ConfigurationException {
+	public void init(Exerter provider) throws ConfigurationException {
 		init(provider, null);
 	}
 
-	public void init(Provider provider, String configFilename) throws ConfigurationException {
+	public void init(Exerter provider, String configFilename) throws ConfigurationException {
 		this.provider = provider;
 		String providerProperties = configFilename;
 		// Initialize remote logging
@@ -1271,7 +1271,7 @@ public class ProviderDelegate {
 	}
 
 	protected ServiceRoutine forwardTask(ServiceRoutine task,
-                                         Provider requestor) throws MogramException,
+                                         Exerter requestor) throws MogramException,
 		RemoteException, SignatureException, ContextException {
 		// check if we do not look with the same exertion
 		Service recipient = null;
@@ -1323,7 +1323,7 @@ public class ProviderDelegate {
 			notifyException(task, "", re);
 			throw re;
 		} else {
-			Task result = (Task) ((Exerter)recipient).exert(task, null);
+			Task result = (Task) ((Exertion)recipient).exert(task, null);
 			if (result != null) {
 				visited.remove(serviceID);
 				return result;
@@ -1356,7 +1356,7 @@ public class ProviderDelegate {
 		}
 
 		Job outJob;
-		outJob = ((Exerter)jobber).exert(job, null);
+		outJob = ((Exertion)jobber).exert(job, null);
 		return outJob;
 	}
 
@@ -2595,7 +2595,7 @@ public class ProviderDelegate {
 		return config.getProviderName();
 	}
 
-	public Provider getProvider() {
+	public Exerter getProvider() {
 		return provider;
 	}
 
@@ -3060,7 +3060,7 @@ public class ProviderDelegate {
 			configurer.preProcess((ServiceProvider)this.getProvider(), serviceBean);
 			// Initialize its servive provider
 			Method m = serviceBean.getClass().getMethod(
-				"init", new Class[] { Provider.class });
+				"init", new Class[] { Exerter.class });
 			m.invoke(serviceBean, new Object[] { provider });
 		} catch (Exception e) {
 			logger.info("No 'init' method for this service bean: "

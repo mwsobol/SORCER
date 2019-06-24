@@ -17,9 +17,9 @@
 
 package sorcer.service;
 
+import net.jini.core.transaction.Transaction;
 import net.jini.id.Uuid;
 import sorcer.core.context.ThrowableTrace;
-import sorcer.core.provider.Exertion;
 
 import java.rmi.RemoteException;
 import java.security.Principal;
@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Identifiable, Request, Exertion, Exerter, Scopable, Substitutable, Arg {
+public interface Mogram extends Identifiable, Request, Exertion, Scopable, Substitutable, Arg {
 
     /**
      * Returns an ID of this mogram.
@@ -41,6 +41,21 @@ public interface Mogram extends Identifiable, Request, Exertion, Exerter, Scopab
     public Uuid getId();
 
     public void setId(Uuid id);
+
+    /**
+     * Generic federated execution called exertion by federated services.
+     *
+     * @param txn
+     *            The transaction (if any) under which to exert.
+     * @return a resulting exertion
+     * @throws net.jini.core.transaction.TransactionException
+     *             if a transaction error occurs
+     * @throws RoutineException
+     *             if processing this exertion causes an error
+     */
+    public <T extends Mogram> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException;
+
+    public <T extends Mogram> T exert(Arg... args) throws MogramException, RemoteException;
 
     public int getIndex();
 
@@ -89,9 +104,9 @@ public interface Mogram extends Identifiable, Request, Exertion, Exerter, Scopab
 
     public void reportException(String message, Throwable t, ProviderInfo info);
 
-    public void reportException(String message, Throwable t, Provider provider);
+    public void reportException(String message, Throwable t, Exerter provider);
 
-    public void reportException(String message, Throwable t, Provider provider,  ProviderInfo info);
+    public void reportException(String message, Throwable t, Exerter provider, ProviderInfo info);
 
     /**
      * Returns the list of traces left by collborating services.

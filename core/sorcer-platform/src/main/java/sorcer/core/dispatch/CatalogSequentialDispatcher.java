@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.model.EntModel;
 import sorcer.core.exertion.Mograms;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -38,7 +38,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
     public CatalogSequentialDispatcher(Routine job,
                                        Set<Context> sharedContext,
                                        boolean isSpawned,
-                                       Provider provider,
+                                       Exerter provider,
                                        ProvisionManager provisionManager) {
         super(job, sharedContext, isSpawned, provider, provisionManager);
     }

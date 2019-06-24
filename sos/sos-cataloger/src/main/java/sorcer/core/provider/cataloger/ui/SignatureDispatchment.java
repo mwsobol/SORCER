@@ -22,7 +22,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.event.ListSelectionListener;
 
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Context;
 
 /**
@@ -153,6 +153,6 @@ public interface SignatureDispatchment extends ActionListener {
 	Context exertService(Context theContext);
 
 	
-	Provider getProvider();
+	Exerter getProvider();
 	
 }

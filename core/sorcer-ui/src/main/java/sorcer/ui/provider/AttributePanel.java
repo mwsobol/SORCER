@@ -52,10 +52,10 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import net.jini.core.entry.Entry;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 
 public class AttributePanel extends JPanel {
-	private Provider provider;
+	private Exerter provider;
 
 	private Entry[] attributes;
 
@@ -80,11 +80,11 @@ public class AttributePanel extends JPanel {
 
 	private HashMap valueCache = new HashMap();
 
-	public AttributePanel(Provider prv) {
+	public AttributePanel(Exerter prv) {
 		this(prv, 0);
 	}
 
-	public AttributePanel(Provider prv, int visibleRows) {
+	public AttributePanel(Exerter prv, int visibleRows) {
 		provider = prv;
 		try {
 			attributes = provider.getAttributes();

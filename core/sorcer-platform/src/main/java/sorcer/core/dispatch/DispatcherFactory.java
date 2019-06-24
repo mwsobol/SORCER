@@ -19,7 +19,7 @@
 package sorcer.core.dispatch;
 
 import sorcer.core.Dispatcher;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Context;
 import sorcer.service.Mogram;
 import sorcer.service.Task;
@@ -39,9 +39,9 @@ public interface DispatcherFactory {
      * @param mogram The SORCER job that will be used to perform a collection
      *                 of SERVICE tasks.
      */
-	 public Dispatcher createDispatcher(Mogram mogram, Provider provider, String... config) throws DispatcherException;
+	 public Dispatcher createDispatcher(Mogram mogram, Exerter provider, String... config) throws DispatcherException;
 
-    public SpaceTaskDispatcher createDispatcher(Task Task, Provider provider, String... config) throws DispatcherException;
+    public SpaceTaskDispatcher createDispatcher(Task Task, Exerter provider, String... config) throws DispatcherException;
 
-    public Dispatcher createDispatcher(Mogram mogram, Set<Context> sharedContexts, boolean isSpawned, Provider provider) throws DispatcherException;
+    public Dispatcher createDispatcher(Mogram mogram, Set<Context> sharedContexts, boolean isSpawned, Exerter provider) throws DispatcherException;
 }

@@ -343,7 +343,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 						inVal("arg/x2", 80.0), outVal("result/y")),
 				strategy(Monitor.NO, Wait.YES));
 
-		Exerter shell = (Exerter) provider(sig(RemoteServiceShell.class));
+		Exertion shell = (Exertion) provider(sig(RemoteServiceShell.class));
 		//local shell
 //		Exertion shell = new ServiceShell();
 		Mogram out = exert(shell, f5);
@@ -353,7 +353,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void arithmeticSmlExerter() throws Exception {
 		// getValue the current eval of the exertlet
-		Exerter exerter = task("exert", sig("exert", Exerter.class, prvName("Arithmetic Exerter")));
+		Exertion exerter = task("exert", sig("exert", Exertion.class, prvName("Arithmetic Exerter")));
 		Context out = exert(exerter, context());
 		logger.info("out: " + out);
 		assertEquals(value(out, "j1/t3/result/y"), 400.0);
@@ -392,7 +392,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 	@Test
 	public void arithmeticApiExerter() throws Exception {
 		// getValue the current eval of the exertlet
-		NetSignature signature = new NetSignature("exert", Exerter.class,
+		NetSignature signature = new NetSignature("exert", Exertion.class,
 				Sorcer.getActualName("Arithmetic Exerter"));
 		Task task = new NetTask("eval", signature);
 		Task result = task.exert();

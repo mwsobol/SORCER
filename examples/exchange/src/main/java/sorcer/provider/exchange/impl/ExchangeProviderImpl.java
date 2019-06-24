@@ -22,7 +22,7 @@ package sorcer.provider.exchange.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.provider.exchange.ExchangeRemote;
 import sorcer.service.Context;
@@ -51,7 +51,7 @@ public class ExchangeProviderImpl implements ExchangeRemote, Serializable {
         // empty
     }
 
-    public void init(Provider provider) {
+    public void init(Exerter provider) {
         this.provider = (ServiceProvider) provider;
 
 

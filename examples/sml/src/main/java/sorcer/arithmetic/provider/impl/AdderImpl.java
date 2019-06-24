@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.DoubleSrv;
 import sorcer.arithmetic.provider.ui.CalculatorUI;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.service.MonitorException;
@@ -25,10 +25,10 @@ import static sorcer.mo.operator.value;
 public class AdderImpl implements Adder, DoubleSrv {
     private static final long serialVersionUID = -8098772962245123252L;
 	private Arithmometer arithmometer = new Arithmometer();
-	private Provider provider;
+	private Exerter provider;
 	private Logger logger = LoggerFactory.getLogger(Arithmometer.class.getName());
 	
-	public void init(Provider provider) {
+	public void init(Exerter provider) {
 		this.provider = provider;
 	}
 	

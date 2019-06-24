@@ -1,7 +1,7 @@
 package sorcer.worker.provider.impl;
 
 import sorcer.core.context.ServiceContext;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import sorcer.worker.provider.InvalidWork;
@@ -23,11 +23,11 @@ public class WorkerBean implements Worker {
 
 	private Logger logger = LoggerFactory.getLogger(WorkerBean.class.getName());
 
-	private Provider provider;
+	private Exerter provider;
 
 	private String hostName;
 	
-	public void init(Provider provider) {
+	public void init(Exerter provider) {
 		try {
 			hostName = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {

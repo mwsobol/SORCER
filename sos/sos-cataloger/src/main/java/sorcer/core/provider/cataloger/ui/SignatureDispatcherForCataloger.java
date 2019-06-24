@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.Cataloger;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Context;
 import sorcer.service.ContextManagement;
 
@@ -525,8 +525,8 @@ public class SignatureDispatcherForCataloger implements SignatureDispatchment {
 	 * @see sorcer.core.provider.cataloger.ui.SignatureDispatchment#getout()
 	 */
 	@Override
-	public Provider getProvider() {
-		return (Provider)catalog;
+	public Exerter getProvider() {
+		return (Exerter)catalog;
 	}
 
 }

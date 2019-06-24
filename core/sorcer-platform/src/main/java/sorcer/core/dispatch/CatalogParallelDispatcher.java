@@ -21,7 +21,7 @@ package sorcer.core.dispatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.Mograms;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.*;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
     public CatalogParallelDispatcher(Job job,
             Set<Context> sharedContexts,
             boolean isSpawned, 
-            Provider provider,
+            Exerter provider,
             ProvisionManager provisionManager) {
 		super(job, sharedContexts, isSpawned, provider, provisionManager);
 	}

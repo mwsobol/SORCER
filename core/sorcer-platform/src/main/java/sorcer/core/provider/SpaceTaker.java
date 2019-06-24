@@ -97,7 +97,7 @@ public class SpaceTaker implements Runnable {
 	public static class SpaceTakerData {
 		public ExertionEnvelop entry;
 		public LokiMemberUtil myMemberUtil;
-		public Provider provider;
+		public Exerter provider;
 		public String spaceName;
 		public String spaceGroup;
 		public boolean workerTransactional;
@@ -110,8 +110,8 @@ public class SpaceTaker implements Runnable {
 		}
 
 		public SpaceTakerData(ExertionEnvelop entry, LokiMemberUtil member,
-							  Provider provider, String spaceName, String spaceGroup,
-							  boolean workerIsTransactional, boolean noQueue, String osName, List<String> appNames) {
+                              Exerter provider, String spaceName, String spaceGroup,
+                              boolean workerIsTransactional, boolean noQueue, String osName, List<String> appNames) {
 			this.provider = provider;
 			this.entry = entry;
 			this.myMemberUtil = member;
@@ -367,13 +367,13 @@ public class SpaceTaker implements Runnable {
 
     class SpaceWorker implements Runnable {
         private ExertionEnvelop ee;
-        private Provider provider;
+        private Exerter provider;
 		private Transaction.Created txnCreated;
 		private boolean remoteLogging;
 
 		SpaceWorker(ExertionEnvelop envelope,
                     Transaction.Created workerTxnCreated,
-                    Provider provider,
+                    Exerter provider,
                     boolean remoteLogging)
 				throws UnknownLeaseException {
             this.provider = provider;

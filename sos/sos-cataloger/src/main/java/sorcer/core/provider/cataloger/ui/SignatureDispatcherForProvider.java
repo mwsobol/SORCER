@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetTask;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.Context;
 import sorcer.service.ContextManagement;
@@ -55,7 +55,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 	 * class
 	 */
 	
-	Provider provider;
+	Exerter provider;
 	/**
 	 * BrowserModel to update
 	 */
@@ -86,7 +86,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 	 */
 	public SignatureDispatcherForProvider(BrowserModel model, Object provider) {
 		this.model = model;
-		this.provider = (Provider)provider;
+		this.provider = (Exerter)provider;
 
 		interfaceIgnoreList = new String[6];
 		interfaceIgnoreList[0] = "sorcer.core.Provider";
@@ -509,7 +509,7 @@ public class SignatureDispatcherForProvider implements SignatureDispatchment {
 	 * @see sorcer.core.provider.cataloger.ui.SignatureDispatchment#getout()
 	 */
 	@Override
-	public Provider getProvider() {
+	public Exerter getProvider() {
 		return provider;
 	}
 

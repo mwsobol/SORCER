@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.monitor.MonitorSessionManagement;
 import sorcer.core.monitor.MonitoringManagement;
 import sorcer.core.monitor.MonitoringSession;
-import sorcer.core.provider.rendezvous.SystemServiceBean;
+import sorcer.core.provider.rendezvous.SorcerExerterBean;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -53,7 +53,7 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
 
     public MonitoringControlFlowManager(Routine exertion,
                                         ProviderDelegate delegate,
-                                        SystemServiceBean serviceBean) throws RemoteException, ConfigurationException {
+                                        SorcerExerterBean serviceBean) throws RemoteException, ConfigurationException {
         super(exertion, delegate, serviceBean);
         sessionMonitor = Accessor.get().getService(null, MonitoringManagement.class);
         lrm = new LeaseRenewalManager(delegate.getProviderConfiguration());

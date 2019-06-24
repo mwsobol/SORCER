@@ -56,7 +56,7 @@ import sorcer.core.proxy.Partnership;
 import sorcer.scratch.ScratchManager;
 import sorcer.scratch.ScratchManagerSupport;
 import sorcer.service.*;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Signature;
 import sorcer.service.SignatureException;
 import sorcer.serviceui.UIComponentFactory;
@@ -85,7 +85,7 @@ import java.util.jar.JarFile;
 import static sorcer.util.StringUtils.tName;
 
 /**
- * The ServiceProvider class is a multitype of {@link Provider} with dependency
+ * The ServiceProvider class is a multitype of {@link Exerter} with dependency
  * injection defined by a Jini 2 configuration, proxy management, and own
  * service discovery management for registering its proxies. This class can
  * be inherited by custom service providers or used as a container for service
@@ -148,7 +148,7 @@ import static sorcer.util.StringUtils.tName;
  * lookup services. Multiple SORCER servers can be deployed within a single
  * {@link sorcer.core.provider.ServiceProvider} as its own service beans.
  *
- * @see Provider
+ * @see Exerter
  * @see net.jini.lookup.ServiceIDListener
  * @see ReferentUuid
  * @see sorcer.core.provider.AdministratableProvider
@@ -162,7 +162,7 @@ import static sorcer.util.StringUtils.tName;
  *
  * @author Mike Sobolewski
  */
-public class ServiceProvider implements Identifiable, Provider, ServiceIDListener,
+public class ServiceProvider implements Identifiable, Exerter, ServiceIDListener,
 		ReferentUuid, ProxyAccessor, ServerProxyTrust, RemoteMethodControl, ServiceActivityProvider,
 		LifeCycle, Partner, Partnership, SorcerConstants, AdministratableProvider {
 	// RemoteMethodControl is needed to enable Proxy Constraints
@@ -1790,7 +1790,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	/**
 	 * Destroy the service, if possible, including its persistent storage.
 	 *
-	 * @see Provider#destroy()
+	 * @see Exerter#destroy()
 	 */
 	public void destroy() {
 		// stop KeepAwake thread
@@ -1873,7 +1873,7 @@ public class ServiceProvider implements Identifiable, Provider, ServiceIDListene
 	 * Destroy all services in this node (virtual machine) by calling each
 	 * destroy().
 	 *
-	 * @see Provider#destroy()
+	 * @see Exerter#destroy()
 	 */
 	public void destroyNode() throws RemoteException {
 		logger.info("providers.size() = " + providers.size());

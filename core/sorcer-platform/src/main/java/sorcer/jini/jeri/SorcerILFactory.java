@@ -32,7 +32,7 @@ import org.slf4j.MDC;
 import sorcer.core.analytics.AnalyticsRecorder;
 import sorcer.core.provider.Modeler;
 import sorcer.core.provider.RemoteServiceShell;
-import sorcer.core.provider.SessionBeanProvider;
+import sorcer.core.provider.SessionProvider;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 
@@ -318,7 +318,7 @@ public class SorcerILFactory extends BasicILFactory {
                         logger.trace("Process Sorcer service type for {}", args[0].getClass().getName());
                     }
                     service = serviceBeanMap.get(((Routine) args[0]).getProcessSignature().getServiceType());
-                    if (service != null && !(impl instanceof SessionBeanProvider)) {
+                    if (service != null && !(impl instanceof SessionProvider)) {
                         if (logger.isTraceEnabled())
                             logger.trace("Service determined to be {}", service.getClass().getName());
                         obj = method.invoke(service, args);

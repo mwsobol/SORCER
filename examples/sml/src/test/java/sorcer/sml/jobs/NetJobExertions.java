@@ -186,7 +186,7 @@ public class NetJobExertions implements SorcerConstants {
 			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
 			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")));
 
-		Provider shell = (Provider) provider(sig(RemoteServiceShell.class));
+		Exerter shell = (Exerter) provider(sig(RemoteServiceShell.class));
 		Context out = upcontext(exert(shell, job));
 		logger.info("job context: " + out);
 		assertEquals(value(out, "j1/t3/result/y"), 400.0);
@@ -273,7 +273,7 @@ public class NetJobExertions implements SorcerConstants {
 	public void arithmeticJobNetExerter() throws Exception {
 
 		// getValue the current eval of the exertlet
-		Exerter exertion = task("exert", sig("exert", Exerter.class, prvName("Arithmetic Exerter")));
+		Exertion exertion = task("exert", sig("exert", Exertion.class, prvName("Arithmetic Exerter")));
 		Context out = exert(exertion, context());
 		logger.info("out: " + out);
 		assertEquals(value(out, "j1/t3/result/y"), 400.0);

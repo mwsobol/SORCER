@@ -30,7 +30,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.Mograms;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 
@@ -64,7 +64,7 @@ abstract public class ExertDispatcher implements Dispatcher {
     // in explorer.
     protected Subject subject;
 
-    protected Provider provider;
+    protected Exerter provider;
 
     protected static Map<Uuid, Dispatcher> dispatchers = new HashMap<Uuid, Dispatcher>();
 
@@ -75,11 +75,11 @@ abstract public class ExertDispatcher implements Dispatcher {
 		return dispatchers;
 	}
 
-    public Provider getProvider() {
+    public Exerter getProvider() {
         return provider;
     }
 
-    public void setProvider(Provider provider) {
+    public void setProvider(Exerter provider) {
         this.provider = provider;
     }
 
@@ -89,7 +89,7 @@ abstract public class ExertDispatcher implements Dispatcher {
 	public ExertDispatcher(Routine exertion,
                            Set<Context> sharedContexts,
                            boolean isSpawned,
-                           Provider provider,
+                           Exerter provider,
                            ProvisionManager provisionManager) {
         ServiceRoutine sxrt = (ServiceRoutine)exertion;
 		this.xrt = sxrt;

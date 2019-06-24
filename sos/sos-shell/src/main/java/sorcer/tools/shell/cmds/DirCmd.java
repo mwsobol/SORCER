@@ -18,7 +18,7 @@
 package sorcer.tools.shell.cmds;
 
 import sorcer.core.provider.Cataloger;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Accessor;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
@@ -170,7 +170,7 @@ public class DirCmd extends ShellCmd {
             String[] providers;
             try {
                 providers = cataloger.getProviderList();
-                out.println("Providers in the " + ((Provider)cataloger).getProviderName() + ": ");
+                out.println("Providers in the " + ((Exerter)cataloger).getProviderName() + ": ");
                 for (String provider : providers) {
                     out.println("  " + provider);
                 }
@@ -184,7 +184,7 @@ public class DirCmd extends ShellCmd {
 		Cataloger cataloger = Accessor.get().getService(null, Cataloger.class);
 		if (cataloger != null) {
 			try {
-			out.println(((Provider)cataloger).getProviderName() + " Contents");
+			out.println(((Exerter)cataloger).getProviderName() + " Contents");
 			out.println(cataloger.getServiceInfo());
 			} catch (RemoteException e) {
 				e.printStackTrace();

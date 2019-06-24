@@ -73,7 +73,7 @@ import static sorcer.so.operator.eval;
 /**
  * @author Mike Sobolewski
  */
-public class ServiceShell implements Service, Activity, Exerter, Client, Callable, RemoteServiceShell {
+public class ServiceShell implements Service, Activity, Exertion, Client, Callable, RemoteServiceShell {
 	protected final static Logger logger = LoggerFactory.getLogger(ServiceShell.class);
 	private Service service;
 	private Mogram mogram;
@@ -81,7 +81,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 	private Transaction transaction;
 	private static MutualExclusion locker;
 	// a reference to a provider running this mogram
-	private Exerter provider;
+	private Exertion provider;
 	private static LoadingCache<Signature, Object> proxies;
 
 	public ServiceShell() {
@@ -99,7 +99,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 		transaction = txn;
 	}
 
-	public void init(Provider provider) {
+	public void init(Exerter provider) {
 		this.provider = provider;
 	}
 
@@ -146,7 +146,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 						&& ((ServiceSignature) mogram.getProcessSignature()).isShellRemote())
 						|| (exertion.getControlContext() != null
 						&& ((ControlContext) exertion.getControlContext()).isShellRemote())) {
-					Exerter prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
+					Exertion prv = (Exertion) Accessor.get().getService(sig(RemoteServiceShell.class));
 					result = prv.exert(mogram, transaction, entries);
 				} else {
 					mogram.substitute(entries);
@@ -427,7 +427,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				try {
 					provider = proxies.get(signature);
 					// check if cached proxy is still alive
-					((Provider)provider).getProviderName();
+					((Exerter)provider).getProviderName();
 				} catch(Exception e) {
 					proxies.refresh(signature);
 					provider = proxies.get(signature);
@@ -454,9 +454,9 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 		}
 
 		if (provider != null) {
-			if (provider instanceof Provider) {
+			if (provider instanceof Exerter) {
 				// cache the provider for the signature
-				((NetSignature) signature).setProvider((Provider) provider);
+				((NetSignature) signature).setProvider((Exerter) provider);
 //				if (proxies != null)
 //					proxies.put(signature, provider);
 			} else if (exertion instanceof Task){
@@ -473,7 +473,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 				}
 			}
 		}
-		this.provider = (Provider)provider;
+		this.provider = (Exerter)provider;
 		// continue exerting
 		return null;
 	}
@@ -527,7 +527,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 //		}
 	}
 
-	private Routine serviceMutualExclusion(Provider provider,
+	private Routine serviceMutualExclusion(Exerter provider,
                                            Routine exertion, Transaction transaction) throws RemoteException,
 			TransactionException, MogramException, SignatureException {
 		ServiceID mutexId = provider.getProviderID();
@@ -846,9 +846,9 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 		this.service = srv;
 		this.mogram = mog;
 		if (service instanceof Signature) {
-			Provider prv = null;
+			Exerter prv = null;
 			try {
-				prv = (Provider) Accessor.get().getService((Signature) service);
+				prv = (Exerter) Accessor.get().getService((Signature) service);
 			} catch (SignatureException e) {
 				throw new MogramException(e);
 			}
@@ -874,7 +874,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 		} else try {
 			if (service instanceof NetSignature
                     && ((Signature) service).getServiceType() == RemoteServiceShell.class) {
-                Provider prv = (Provider) Accessor.get().getService((Signature) service);
+                Exerter prv = (Exerter) Accessor.get().getService((Signature) service);
                 return (T) prv.exert(mogram, txn).getContext();
             } else if (service instanceof Prc) {
                 ((Prc)service).setScope(mogram);
@@ -885,7 +885,7 @@ public class ServiceShell implements Service, Activity, Exerter, Client, Callabl
 		} catch (SignatureException e) {
 			throw new MogramException(e);
 		}
-		return (T) ((Exerter)service).exert(mogram, txn);
+		return (T) ((Exertion)service).exert(mogram, txn);
 	}
 
 	public Object exec(Service service, Arg... args)

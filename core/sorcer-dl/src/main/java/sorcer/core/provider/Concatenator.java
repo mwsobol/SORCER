@@ -17,7 +17,7 @@
 
 package sorcer.core.provider;
 
-import sorcer.service.Exerter;
+import sorcer.service.Exertion;
 
 import java.rmi.Remote;
 
@@ -28,5 +28,5 @@ import java.rmi.Remote;
  * 
  * @author Mike Sobolewski
  */
-public interface Concatenator extends Exerter, Remote {
+public interface Concatenator extends Exertion, Remote {
 }

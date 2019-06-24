@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public interface  Evaluator <T> extends Evaluation<T>, Getter<T>, Activity, Identifiable {
+public interface  Evaluator <T> extends Provider, Evaluation<T>, Getter<T>, Activity, Identifiable {
 
 	public void addArgs(ArgSet set) throws EvaluationException, RemoteException;
 	

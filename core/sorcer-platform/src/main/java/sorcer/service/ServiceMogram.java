@@ -148,7 +148,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     protected String configFilename;
 
-    protected transient Provider provider;
+    protected transient Exerter provider;
 
     protected boolean isEvaluated = false;
 
@@ -723,7 +723,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
      * Initialization by a service provider (container)
      * when this mogram is used as as a service bean.
      */
-    public void init(Provider provider) {
+    public void init(Exerter provider) {
         this.provider = provider;
         logger.info("*** provider init properties:\n"
                 + GenericUtil.getPropertiesString(((ServiceProvider)provider).getProviderProperties()));
@@ -1007,13 +1007,13 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
-    public void reportException(String message, Throwable t, Provider provider) {
+    public void reportException(String message, Throwable t, Exerter provider) {
         // reimplement in sublasses
         mogramStrategy.addException(t);
     }
 
     @Override
-    public void reportException(String message, Throwable t, Provider provider, ProviderInfo info) {
+    public void reportException(String message, Throwable t, Exerter provider, ProviderInfo info) {
         // reimplement in sublasses
         mogramStrategy.addException(t);
     }

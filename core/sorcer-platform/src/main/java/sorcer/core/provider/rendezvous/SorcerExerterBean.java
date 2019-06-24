@@ -41,8 +41,8 @@ import java.util.Vector;
  * 
  * @author Mike Sobolewski
  */
-abstract public class SystemServiceBean implements Exerter, ServiceBean {
-	private Logger logger = LoggerFactory.getLogger(SystemServiceBean.class.getName());
+abstract public class SorcerExerterBean implements Exertion, ServiceBean {
+	private Logger logger = LoggerFactory.getLogger(SorcerExerterBean.class.getName());
 
 	protected ServiceProvider provider;
 
@@ -50,11 +50,11 @@ abstract public class SystemServiceBean implements Exerter, ServiceBean {
 	
 	//protected TaskManager threadManager;
 	
-	public SystemServiceBean() throws RemoteException {
+	public SorcerExerterBean() throws RemoteException {
 		// do nothing
 	}
 	
-	public void init(Provider provider) {
+	public void init(Exerter provider) {
 		this.provider = (ServiceProvider)provider;
 		this.delegate = ((ServiceProvider)provider).getDelegate();
 		//this.threadManager = ((ServiceProvider)provider).getThreadManager();

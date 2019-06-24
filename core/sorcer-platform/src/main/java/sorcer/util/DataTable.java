@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.Index;
 import sorcer.core.provider.DatabaseStorer;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.StorageManagement;
 import sorcer.service.*;
 import sorcer.service.modeling.rsp;
@@ -113,7 +113,7 @@ public class DataTable implements ModelTable, Response, rsp {
 	 */
 	protected Signature outputStorageSignature;
 	/* A service provider of the parametric model bean*/
-	transient protected Provider provider;
+	transient protected Exerter provider;
 	
 	/** 
 	 * Flag indicating whether to include the header in a write operation

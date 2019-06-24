@@ -20,7 +20,7 @@ package sorcer.core.dispatch;
 import net.jini.config.ConfigurationException;
 import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.service.Arg;
 import sorcer.service.Block;
@@ -38,9 +38,9 @@ public class BlockThread extends Thread {
 	private Block block;
 	private Arg[] args;
 	private Block result;
-	Provider provider;
+	Exerter provider;
 
-	public BlockThread(Block block, Provider provider, Arg... args) {
+	public BlockThread(Block block, Exerter provider, Arg... args) {
 		this.args = args;
 		this.block = block;
 		this.provider = provider;

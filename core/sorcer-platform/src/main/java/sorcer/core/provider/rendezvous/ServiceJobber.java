@@ -34,7 +34,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public class ServiceJobber extends SystemServiceBean implements Jobber {
+public class ServiceJobber extends SorcerExerterBean implements Jobber {
 	private Logger logger = LoggerFactory.getLogger(ServiceJobber.class.getName());
 
 	public ServiceJobber() throws RemoteException {

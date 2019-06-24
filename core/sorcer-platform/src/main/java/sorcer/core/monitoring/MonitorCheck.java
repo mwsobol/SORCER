@@ -15,7 +15,7 @@
  */
 package sorcer.core.monitoring;
 
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -39,6 +39,6 @@ public class MonitorCheck {
     }
 
     public static boolean check(Method m) {
-        return !(m.getName().equals("destroy") && m.getDeclaringClass().getName().equals(Provider.class.getName()));
+        return !(m.getName().equals("destroy") && m.getDeclaringClass().getName().equals(Exerter.class.getName()));
     }
 }

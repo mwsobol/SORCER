@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.Map;
 
 import sorcer.core.context.StrategyContext;
 import sorcer.core.provider.Jobber;
@@ -31,7 +30,7 @@ import sorcer.service.modeling.mog;
 
 /**
  * An routine is a procedural service specified by a service requestor -
- * {@link Service#execute}, to a service provider {@link Provider}. It is a
+ * {@link Service#execute}, to a service provider {@link Exerter}. It is a
  * form of service-oriented request with a service context
  * {@link sorcer.service.Context} and a collection of service
  * {@link sorcer.service.Signature}s. The service context specifies service data
@@ -49,7 +48,7 @@ import sorcer.service.modeling.mog;
  * exertions, thus keeping the knowledge of what to do inside of the exertions,
  * instead of having another parts of SO program to make these decisions. When
  * an exertion is invoked then the exertion redirects control to a dynamically
- * bound {@link Provider} matching the exertion's signature of
+ * bound {@link Exerter} matching the exertion's signature of
  * type <code>PROCESS</code>. <br>
  * The <code>Routine</code> interface also provides for the Composite design
  * pattern and defines a common elementary behavior for all exertions of
@@ -61,7 +60,7 @@ import sorcer.service.modeling.mog;
  * programming statements and {@link sorcer.service.Job}s analogous to
  * procedures in conventional procedural programming. <br>
  * Control flow exertions allow for branching and looping operations by
- * {@link Provider}s executing exertions. A job combined from
+ * {@link Exerter}s executing exertions. A job combined from
  * tasks and other jobs along with relevant control flow exertions is a
  * service-oriented procedure that can federate its execution with multiple
  * service providers bound dynamically in runtime as determined by

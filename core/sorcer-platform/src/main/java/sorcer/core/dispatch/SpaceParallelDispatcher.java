@@ -32,7 +32,7 @@ import sorcer.core.exertion.NetJob;
 import sorcer.core.loki.member.LokiMemberUtil;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.SpaceTaker;
 import sorcer.service.*;
 import sorcer.service.space.SpaceAccessor;
@@ -56,7 +56,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                                    Set<Context> sharedContexts,
                                    boolean isSpawned,
                                    LokiMemberUtil loki,
-                                   Provider provider,
+                                   Exerter provider,
                                    ProvisionManager provisionManager) throws RoutineException, ContextException {
         super(exertion, sharedContexts, isSpawned, provider, provisionManager);
 

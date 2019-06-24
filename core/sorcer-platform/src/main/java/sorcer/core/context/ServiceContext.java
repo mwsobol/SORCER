@@ -18,7 +18,6 @@
 package sorcer.core.context;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
@@ -35,7 +34,7 @@ import sorcer.core.context.node.ContextNodeException;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.monitor.MonitorUtil;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -1275,7 +1274,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public boolean isValid(Signature signature) throws ContextException {
-		Provider provider = null;
+		Exerter provider = null;
 		try {
 			provider = getProvider();
 		} catch (SignatureException e) {
@@ -2687,7 +2686,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			((ModelStrategy)mogramStrategy).exceptions.add(new ThrowableTrace(se));
 	}
 
-	public void reportException(String message, Throwable t, Provider provider) {
+	public void reportException(String message, Throwable t, Exerter provider) {
 		ServiceException se = new ServiceException(message, t,
 				new ProviderInfo(((ServiceProvider)provider).getDelegate().getServiceInfo()));
 
@@ -2697,7 +2696,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			((ModelStrategy)mogramStrategy).exceptions.add(new ThrowableTrace(se));
 	}
 
-	public void reportException(String message, Throwable t, Provider provider,  ProviderInfo info) {
+	public void reportException(String message, Throwable t, Exerter provider, ProviderInfo info) {
 		ServiceException se = new ServiceException(message, t,
 				new ProviderInfo(((ServiceProvider)provider).getDelegate().getServiceInfo()).append(info));
 
@@ -2731,7 +2730,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * @see sorcer.service.Context#getGovernance()
 	 */
 	@Override
-	public Provider getProvider() throws SignatureException {
+	public Exerter getProvider() throws SignatureException {
 		if (exertion != null)
 			return ((NetSignature) exertion.getProcessSignature()).getService();
 		else
@@ -3462,10 +3461,6 @@ public class ServiceContext<T> extends ServiceMogram implements
 		task.setStatus(DONE);
 	}
 
-	public <T extends Mogram> T exert(T mogram) throws TransactionException,
-			MogramException, RemoteException {
-		return (T) exert(exertion, null, (Arg[])null);
-	}
 
 	public Context updateInOutPaths(In inpaths, Out outpaths) throws ContextException, RemoteException {
 		if (containsPath(Condition._closure_)) {

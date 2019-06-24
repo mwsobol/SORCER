@@ -21,7 +21,7 @@ package sorcer.service.cataloger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.provider.Cataloger;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Accessor;
 import sorcer.util.AccessorException;
 import sorcer.util.ProviderNameUtil;
@@ -68,9 +68,9 @@ public class CatalogerAccessor  {
         String catalogerName = (name == null) ? providerNameUtil.getName(Cataloger.class) : name;
         Cataloger cataloger = cache.get(Cataloger.class.getName());
         try {
-            if (Accessor.isAlive((Provider) cataloger)) {
+            if (Accessor.isAlive((Exerter) cataloger)) {
                 log.info(">>>returned cached cataloger ({}) by {}",
-                         ((Provider) cataloger).getProviderID(), Accessor.get().getClass().getName());
+                         ((Exerter) cataloger).getProviderID(), Accessor.get().getClass().getName());
             } else {
                 cataloger = Accessor.get().getService(catalogerName, Cataloger.class);
                 if (cataloger!=null)

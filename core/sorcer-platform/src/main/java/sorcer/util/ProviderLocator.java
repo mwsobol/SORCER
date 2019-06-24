@@ -31,7 +31,7 @@ import net.jini.lookup.ServiceItemFilter;
 import net.jini.lookup.entry.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.ProviderName;
 import sorcer.core.provider.ServiceName;
 import sorcer.core.signature.NetSignature;
@@ -150,10 +150,10 @@ public class ProviderLocator {
      * @throws InterruptedException
      * @return
      */
-    public static Provider getProvider(Class serviceClass)
+    public static Exerter getProvider(Class serviceClass)
             throws java.io.IOException, InterruptedException {
 
-        return (Provider)getService(serviceClass, null, null, null, Long.MAX_VALUE);
+        return (Exerter)getService(serviceClass, null, null, null, Long.MAX_VALUE);
     }
 
 	/**
@@ -359,8 +359,8 @@ public class ProviderLocator {
 			return (Service) proxy;
 	}
 
-    public static Provider getProvider(Signature signature) throws SignatureException {
-        return (Provider)getService(signature);
+    public static Exerter getProvider(Signature signature) throws SignatureException {
+        return (Exerter)getService(signature);
     }
 
     /*

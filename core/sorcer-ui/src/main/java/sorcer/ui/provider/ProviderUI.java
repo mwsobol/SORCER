@@ -24,7 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import net.jini.core.lookup.ServiceItem;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.proxy.Outer;
 import sorcer.util.Log;
 
@@ -40,7 +40,7 @@ public class ProviderUI extends JPanel {
 
 	private ServiceItem item;
 
-	private Provider provider;
+	private Exerter provider;
 
 	/** Creates new About ProviderUI */
 	public ProviderUI(Object obj) {
@@ -55,12 +55,12 @@ public class ProviderUI extends JPanel {
 				// check if smart proxy's inner exported server does contain a
 				// provider
 				if (inner instanceof Outer)
-					provider = (Provider) ((Outer) inner).getInner();
+					provider = (Exerter) ((Outer) inner).getInner();
 				else
 					// in this case provider contains a non exported server
-					provider = (Provider) inner;
-			} else if (item.service instanceof Provider)
-				provider = (Provider) item.service;
+					provider = (Exerter) inner;
+			} else if (item.service instanceof Exerter)
+				provider = (Exerter) item.service;
 
 			logger.info("ProviderUI>>provider:" + provider);
 

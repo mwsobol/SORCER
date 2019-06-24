@@ -18,7 +18,7 @@ package sorcer.util.url.sos;
 
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.DatabaseStorer.Store;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.StorageManagement;
 import sorcer.service.Accessor;
 import sorcer.service.Context;
@@ -66,7 +66,7 @@ public class SdbConnection extends URLConnection {
 	public void connect() throws IOException {
 		//Provider provider = (Provider)ProviderLookup.getout(providerName, serviceInfo);
         try {
-            Provider provider = (Provider) Accessor.get().getService(providerName, Class.forName(serviceType));
+            Exerter provider = (Exerter) Accessor.get().getService(providerName, Class.forName(serviceType));
             store = (StorageManagement)provider;
             connected = true;
         } catch (ClassNotFoundException e) {

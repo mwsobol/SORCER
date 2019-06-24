@@ -258,7 +258,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	 *
 	 * @return Provider
 	 */
-	public Provider getProvider() throws SignatureException;
+	public Exerter getProvider() throws SignatureException;
 
 	/**
 	 * Returns the result execute associated with this context.

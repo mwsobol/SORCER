@@ -17,7 +17,7 @@
 
 package sorcer.core.provider;
 
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Service;
 
 public interface ServiceBean extends Service {
@@ -28,5 +28,5 @@ public interface ServiceBean extends Service {
      * A service bean can use service provider functionality
      * via the injected provider during creation of the bean.
      */
-    public void init(Provider provider);
+    public void init(Exerter provider);
 }

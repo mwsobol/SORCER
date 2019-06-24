@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.service.*;
 
@@ -35,9 +35,9 @@ public class ModelThread extends Thread {
 	private Task task;
 	private Arg[] args;
 	private Task result;
-	Provider provider;
+	Exerter provider;
 
-	public ModelThread(Task task, Provider provider, Arg... args) {
+	public ModelThread(Task task, Exerter provider, Arg... args) {
 		this.args = args;
 		this.task = task;
 		this.provider = provider;

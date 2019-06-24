@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.exertion.*;
-import sorcer.core.provider.rendezvous.SystemServiceBean;
+import sorcer.core.provider.rendezvous.SorcerExerterBean;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.core.provider.rendezvous.ServiceSpacer;
@@ -117,7 +117,7 @@ public class ControlFlowManager {
      * @throws RemoteException
      */
     public ControlFlowManager(Routine exertion, ProviderDelegate delegate,
-                              SystemServiceBean serviceBean) throws RemoteException, ConfigurationException {
+                              SorcerExerterBean serviceBean) throws RemoteException, ConfigurationException {
         this.delegate = delegate;
         this.exertion = exertion;
         if (serviceBean instanceof Concatenator) {

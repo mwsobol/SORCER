@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -36,11 +36,11 @@ public class MogramThread implements Runnable {
 
 	private Mogram result;
 
-	Provider provider;
+	Exerter provider;
 
     private DispatcherFactory dispatcherFactory;
 
-	public MogramThread(Mogram job, Provider provider, DispatcherFactory dispatcherFactory) {
+	public MogramThread(Mogram job, Exerter provider, DispatcherFactory dispatcherFactory) {
 		this.job = job;
 		this.provider = provider;
         this.dispatcherFactory = dispatcherFactory;

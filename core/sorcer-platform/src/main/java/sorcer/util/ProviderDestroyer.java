@@ -19,7 +19,7 @@ package sorcer.util;
 
 import net.jini.config.ConfigurationException;
 import net.jini.config.EmptyConfiguration;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Accessor;
 
 import java.rmi.RemoteException;
@@ -34,7 +34,7 @@ public class ProviderDestroyer {
 		// args: providerName, serviceInfo
 		if (args.length == 3) {
 			Class serviceType = Class.forName(args[1]);
-			Provider prv = (Provider) Accessor.create(EmptyConfiguration.INSTANCE).getService(Sorcer.getActualName(args[0]),
+			Exerter prv = (Exerter) Accessor.create(EmptyConfiguration.INSTANCE).getService(Sorcer.getActualName(args[0]),
                                                                                               serviceType);
 			try {
 				if (args[2].equals("true")) {

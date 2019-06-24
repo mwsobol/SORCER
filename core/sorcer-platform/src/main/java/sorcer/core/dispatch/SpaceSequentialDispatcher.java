@@ -21,7 +21,7 @@ package sorcer.core.dispatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.loki.member.LokiMemberUtil;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.*;
 
 import java.util.Set;
@@ -33,7 +33,7 @@ public class SpaceSequentialDispatcher extends SpaceParallelDispatcher {
                                      Set<Context> sharedContexts,
                                      boolean isSpawned,
                                      LokiMemberUtil myMemberUtil,
-                                     Provider provider,
+                                     Exerter provider,
                                      ProvisionManager provisionManager) throws RoutineException, ContextException  {
 		super(job, sharedContexts, isSpawned, myMemberUtil, provider, provisionManager);
 	}

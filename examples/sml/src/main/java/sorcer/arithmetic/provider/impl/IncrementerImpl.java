@@ -3,7 +3,7 @@ package sorcer.arithmetic.provider.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.arithmetic.provider.Incrementer;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 
@@ -12,10 +12,10 @@ import java.rmi.RemoteException;
 @SuppressWarnings("rawtypes")
 public class IncrementerImpl implements Incrementer {
     private static final long serialVersionUID = 1;
-	private Provider provider;
+	private Exerter provider;
 	private Logger logger = LoggerFactory.getLogger(IncrementerImpl.class.getName());
 	
-	public void init(Provider provider) {
+	public void init(Exerter provider) {
 		this.provider = provider;
 	}
 

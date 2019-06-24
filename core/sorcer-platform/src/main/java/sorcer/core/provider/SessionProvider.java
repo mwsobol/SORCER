@@ -15,9 +15,9 @@ import java.util.*;
 /**
  * Created by Mike Sobolewski on 8/29/17.
  */
-public class SessionBeanProvider extends ServiceProvider implements SessionManagement {
+public class SessionProvider extends ServiceProvider implements SessionManagement {
 
-    public SessionBeanProvider() throws RemoteException {
+    public SessionProvider() throws RemoteException {
         super();
     }
 
@@ -28,7 +28,7 @@ public class SessionBeanProvider extends ServiceProvider implements SessionManag
      * @param lifeCycle
      * @throws Exception
      */
-    public SessionBeanProvider(String[] args, LifeCycle lifeCycle) throws Exception {
+    public SessionProvider(String[] args, LifeCycle lifeCycle) throws Exception {
         super(args, lifeCycle);
     }
 

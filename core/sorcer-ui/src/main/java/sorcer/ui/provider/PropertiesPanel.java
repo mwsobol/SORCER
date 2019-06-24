@@ -31,19 +31,19 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
 
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.util.SorcerUtil;
 
 public class PropertiesPanel extends JPanel {
 
-	private Provider provider;
+	private Exerter provider;
 	PropertiesModel _model;
 	ArrayList _uiDescriptors;
 	// Entry atts[];
 	List data = new ArrayList();
 	List fields = new ArrayList();
 
-	PropertiesPanel(Provider prv, String borderTitle) {
+	PropertiesPanel(Exerter prv, String borderTitle) {
 		provider = prv;
 		List attributes = null;
 		try {

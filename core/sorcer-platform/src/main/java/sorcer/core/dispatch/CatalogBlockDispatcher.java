@@ -31,7 +31,7 @@ import sorcer.core.exertion.OptTask;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.core.monitor.MonitoringSession;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.signature.EvaluationSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -51,7 +51,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
     private final Logger logger = LoggerFactory.getLogger(CatalogBlockDispatcher.class);
 
 	public CatalogBlockDispatcher(Routine block, Set<Context> sharedContext,
-                                  boolean isSpawned, Provider provider,
+                                  boolean isSpawned, Exerter provider,
                                   ProvisionManager provisionManager) throws ContextException, RemoteException {
 		super(block, sharedContext, isSpawned, provider, provisionManager);
 //        block.getDataContext().append(block.getScope());

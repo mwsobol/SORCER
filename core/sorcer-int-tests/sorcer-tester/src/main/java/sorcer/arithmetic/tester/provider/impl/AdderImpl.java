@@ -3,7 +3,7 @@ package sorcer.arithmetic.tester.provider.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.arithmetic.tester.provider.Adder;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 
@@ -15,9 +15,9 @@ public class AdderImpl implements Adder {
 	private Logger logger = LoggerFactory.getLogger(AdderImpl.class.getName());
 
 	// a refrence to a provider running this service bean
-	private Provider provider;
+	private Exerter provider;
 	
-	public void init(Provider provider) {
+	public void init(Exerter provider) {
 		this.provider = provider;
 	}
 

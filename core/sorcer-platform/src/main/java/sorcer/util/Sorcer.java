@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.provider.DatabaseStorer;
 import sorcer.core.provider.DataspaceStorer;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.service.Accessor;
 import sorcer.service.Context;
 
@@ -155,7 +155,7 @@ public class Sorcer extends SorcerEnv implements SorcerConstants {
 	}
 
 	public static void destroy(String providerName, Class serviceType) {
-		Provider prv = (Provider) Accessor.get().getService(providerName, serviceType);
+		Exerter prv = (Exerter) Accessor.get().getService(providerName, serviceType);
 		if (prv != null)
 			try {
 				prv.destroy();
@@ -166,7 +166,7 @@ public class Sorcer extends SorcerEnv implements SorcerConstants {
 	}
 
 	public static void destroyNode(String providerName, Class serviceType) {
-		Provider prv = (Provider) Accessor.get().getService(providerName, serviceType);
+		Exerter prv = (Exerter) Accessor.get().getService(providerName, serviceType);
 		if (prv != null)
 			try {
 				prv.destroyNode();

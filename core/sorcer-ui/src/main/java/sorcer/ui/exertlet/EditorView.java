@@ -22,7 +22,7 @@ package sorcer.ui.exertlet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.RemoteLogger;
 import sorcer.core.provider.logger.LoggerRemoteException;
 import sorcer.core.provider.logger.RemoteLoggerListener;
@@ -83,7 +83,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 	private static String GET_CONTEXT_LABEL = "Get Context Template...";
 	private JMenuItem openMenuItem, editMenuItem, saveMenuItem, saveAsMenuItem,
 			getContextMenuItem, exertMenuItem, closeMenuItem;
-	private Provider provider;
+	private Exerter provider;
 	private EditorViewSignature model;
     private ServiceScripter scriptExerter;
 	private JTextArea feedbackPane;
@@ -735,7 +735,7 @@ public class EditorView extends JPanel implements HyperlinkListener {
 		});
 	}
 	
-	public void setProvider(Provider provider) {
+	public void setProvider(Exerter provider) {
 		this.provider = provider;
 	}
 	

@@ -9,12 +9,11 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.MikeAdder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
 import sorcer.service.Strategy.Shell;
-import sorcer.service.modeling.Model;
 
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
@@ -351,7 +350,7 @@ public class Signatures {
 		String group = property("user.name");
 
 		Task t5 = task("t5", sig("add", Adder.class,
-				types(Service.class, Provider.class),
+				types(Service.class, Exerter.class),
 				// comma separated list of hosts, when empty localhost is a default locator
 				srvName("Adder", locators(), group)),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
@@ -363,7 +362,7 @@ public class Signatures {
     public void signatureWithMultipletypes() throws Exception  {
         String group = property("user.name");
 
-        Task t5 = task("t5", sig("add", Adder.class, Service.class, Provider.class,
+        Task t5 = task("t5", sig("add", Adder.class, Service.class, Exerter.class,
                 // comma separated list of hosts, when empty localhost is a default locator
                 srvName("Adder", locators(), group)),
                 cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));

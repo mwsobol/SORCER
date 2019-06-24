@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.provider.ServiceProvider;
-import sorcer.core.provider.SessionBeanProvider;
+import sorcer.core.provider.SessionProvider;
 import sorcer.provider.adder.impl.AdderImpl;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -83,8 +83,8 @@ public class LocalMograms {
 	@Test
 	public void exertSessionBeanTask() throws Exception  {
 
-		// a service bean AdderImpl exerted by the SessionBeanProvider container
-		Task t5 = task("t5", trgSig("add", AdderImpl.class, SessionBeanProvider.class),
+		// a service bean AdderImpl exerted by the SessionProvider container
+		Task t5 = task("t5", trgSig("add", AdderImpl.class, SessionProvider.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
 		Uuid cid = id(context(t5));
@@ -102,7 +102,7 @@ public class LocalMograms {
     @Test
     public void sessionUpdateTasks() throws Exception  {
 
-        Object provider = SessionBeanProvider.class.newInstance();
+        Object provider = SessionProvider.class.newInstance();
         Task t5 = task("t5", sig("add", AdderImpl.class, provider),
                 cxt("t5-add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
                         result("result/y", session(append("arg/x1", "arg/x2"),

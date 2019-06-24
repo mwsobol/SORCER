@@ -29,7 +29,7 @@ import sorcer.core.monitor.MonitorEvent;
 import sorcer.core.monitor.MonitorableSession;
 import sorcer.core.monitor.MonitoringManagement;
 import sorcer.core.provider.MonitorManagementSession;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.exertmonitor.lease.MonitorLandlord;
 import sorcer.core.provider.exertmonitor.lease.MonitorLeasedResource;
 import sorcer.service.*;
@@ -337,7 +337,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 			logger.error("Problem persisting monitorSession: " + e.getMessage());
 			try {
 				logger.error( "Could not persist the session resource:\n"
-						+ initialExertion + " at: " + ((Provider)sessionManager).getProviderName());
+						+ initialExertion + " at: " + ((Exerter)sessionManager).getProviderName());
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
 			}

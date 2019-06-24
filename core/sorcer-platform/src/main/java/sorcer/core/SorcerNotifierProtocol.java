@@ -20,12 +20,12 @@ package sorcer.core;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 
 import net.jini.core.event.RemoteEvent;
 import net.jini.core.event.RemoteEventListener;
 
-public interface SorcerNotifierProtocol extends Provider {
+public interface SorcerNotifierProtocol extends Exerter {
 
 	public Integer register(RemoteEventListener listener, Object handback,
 			Integer regFor, String userId, Vector sessionJobs, String sessionID)

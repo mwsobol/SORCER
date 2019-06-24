@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.Cataloger;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.core.provider.ServiceProvider;
 import sorcer.core.provider.cataloger.ServiceCataloger.CatalogerInfo.InterfaceList;
 import sorcer.core.provider.cataloger.ui.CatalogerUI;
@@ -172,7 +172,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 
 	public ServiceTemplate getTemplate() throws RemoteException {
 		String templateMatch = Sorcer.getProperty(P_TEMPLATE_MATCH, ""
-				+ Provider.class);
+				+ Exerter.class);
 		logger.info(P_TEMPLATE_MATCH + ": " + templateMatch);
 		ServiceTemplate template;
 		try {
@@ -216,7 +216,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 					groups, specificLocators, null), null);
 
 			String templateMatch = Sorcer.getProperty(P_TEMPLATE_MATCH,
-					Provider.class.getName());
+					Exerter.class.getName());
 			ServiceTemplate template = new ServiceTemplate(null,
 					new Class[] { Class.forName(templateMatch) }, null);
 
@@ -261,7 +261,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	 * @throws RemoteException
 	 */
 	@Override
-	public Provider lookup(Class... serviceTypes) throws RemoteException {
+	public Exerter lookup(Class... serviceTypes) throws RemoteException {
 		return lookup(null, serviceTypes);
 
 	}
@@ -278,7 +278,7 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	 * @throws RemoteException
 	 */
 	@Override
-	public Provider lookup(String providerName, Class... serviceTypes)
+	public Exerter lookup(String providerName, Class... serviceTypes)
 			throws RemoteException {
         // TODO RemoteLoggerAppender may prc Cataloger to look for RemoteLogger which introduces recursion; make RLA not use Cataloger
         String mdcRemoteCall = MDC.get(MDC_SORCER_REMOTE_CALL);
@@ -292,8 +292,8 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 			ServiceItem sItem = cinfo.getServiceItem(serviceTypes, pn);
 			logger.info("lookup: sItem = " + sItem);
 
-			if (sItem != null && (sItem.service instanceof Provider))
-				return (Provider) sItem.service;
+			if (sItem != null && (sItem.service instanceof Exerter))
+				return (Exerter) sItem.service;
 		} catch (Exception t) {
             logger.warn("Error while getting service impl: " + t.getMessage());
         } finally {
@@ -314,11 +314,11 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 	 * @throws RemoteException
 	 */
 	@Override
-	public Provider lookup(ServiceID sid) throws RemoteException {
+	public Exerter lookup(ServiceID sid) throws RemoteException {
 		if (sid == null)
 			return null;
 		ServiceItem sItem = cinfo.getServiceItem(sid);
-		return (sItem != null && sItem.service instanceof Provider) ? (Provider) sItem.service
+		return (sItem != null && sItem.service instanceof Exerter) ? (Exerter) sItem.service
 				: null;
 	}
 
@@ -1032,10 +1032,10 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
 							serviceName = service.getClass().getName();
 					}
 					if (serviceName.equals(providerName)) {
-						if (service instanceof Provider) {
+						if (service instanceof Exerter) {
 							logger.info("service is a provider!");
 							try {
-								Provider temp = (Provider) service;
+								Exerter temp = (Exerter) service;
 								NetSignature method = new NetSignature(
 										methodName, serviceType);
 								Task task = new NetTask(serviceType
@@ -1236,8 +1236,8 @@ public class ServiceCataloger extends ServiceProvider implements Cataloger {
         try {
             if (si.service instanceof ServiceActivityProvider) {
                 boolean result = ((ServiceActivityProvider)si.service).isActive();
-            } else if (si.service instanceof Provider) {
-                String name = ((Provider) si.service).getProviderName();
+            } else if (si.service instanceof Exerter) {
+                String name = ((Exerter) si.service).getProviderName();
             }
             return true;
         } catch (Exception e) {

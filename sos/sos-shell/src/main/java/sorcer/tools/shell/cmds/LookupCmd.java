@@ -32,7 +32,7 @@ import net.jini.core.lookup.ServiceMatches;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.entry.Name;
-import sorcer.service.Provider;
+import sorcer.service.Exerter;
 import sorcer.jini.lookup.AttributesUtil;
 import sorcer.tools.shell.NetworkShell;
 import sorcer.tools.shell.ShellCmd;
@@ -54,7 +54,7 @@ public class LookupCmd extends ShellCmd {
 
 		COMMAND_HELP = "Performs lookup on a default lookup service (disco <registrar index>);"
 			+ "\n  -s   show all services registered with the default lookup service" 
-			+ "\n  -p   show services based on the " + Provider.class.getName() + " interface" 
+			+ "\n  -p   show services based on the " + Exerter.class.getName() + " interface"
 			+ "\n  <service index>   show and select the fetched <service index> provider"
 			+ "\n  -v   show the selected provider"
 			+ "\n  -x   clearSessions the selected provider"
@@ -218,12 +218,12 @@ public class LookupCmd extends ShellCmd {
 			if (isProvider) {
 				if (serviceType != null) {
 					serviceTypes = new Class[2];
-					serviceTypes[0] = Provider.class;
+					serviceTypes[0] = Exerter.class;
 					serviceTypes[1] = Class.forName(serviceType);
 				}
 				else {
 					serviceTypes = new Class[1];
-					serviceTypes[0] = Provider.class;
+					serviceTypes[0] = Exerter.class;
 				}
 				myTmpl = new ServiceTemplate(null, serviceTypes, myAttrib);
 			} else {
@@ -274,14 +274,14 @@ public class LookupCmd extends ShellCmd {
 	private boolean isProvider(ServiceItem serviceItem) {
 		Class[] allInt = serviceItem.service.getClass().getInterfaces();
 		for (int k = 0; k < allInt.length; k++) {
-			if (allInt[k] == Provider.class)
+			if (allInt[k] == Exerter.class)
 				return true;
 		}
 		return false;
 	}
 
 	static private void printService(int index, String msg) {
-		if (serviceItems.get(index).service instanceof Provider) {
+		if (serviceItems.get(index).service instanceof Exerter) {
 			printProvider(index, msg);
 			return;
 		}
