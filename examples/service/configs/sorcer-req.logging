@@ -61,7 +61,7 @@ sorcer.core.security.level=OFF
 sorcer.core.provider.level=FINE
 #sorcer.core.provider.jobber.ServiceJobberlevel=FINER
 # Used by SORCER core service providers
-sorcer.core.provider.ServiceProvider.level=INFO
+sorcer.core.provider.ServiceExerter.level=INFO
 # Logger to facilitate testing
 #sorcer.test.level=ALL
 # All other logging purposes

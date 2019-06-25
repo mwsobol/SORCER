@@ -18,7 +18,7 @@
 package sorcer.util;
 
 import sorcer.service.Exerter;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.service.Accessor;
 
 import java.io.File;
@@ -55,7 +55,7 @@ public class ProviderUtil extends GenericUtil {
             }
     }
 
-    public static void checkFileExistsAndIsReadable(File file, ServiceProvider sp) {
+    public static void checkFileExistsAndIsReadable(File file, ServiceExerter sp) {
         GenericUtil.checkFileExistsAndIsReadable(file, sp);
     }
 }

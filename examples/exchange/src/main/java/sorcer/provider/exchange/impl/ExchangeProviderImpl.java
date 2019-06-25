@@ -22,8 +22,8 @@ package sorcer.provider.exchange.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.service.Exerter;
-import sorcer.core.provider.ServiceProvider;
 import sorcer.provider.exchange.ExchangeRemote;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
@@ -41,7 +41,7 @@ public class ExchangeProviderImpl implements ExchangeRemote, Serializable {
 
     private static Logger logger = LoggerFactory.getLogger(ExchangeProviderImpl.class.getName());
 
-    private ServiceProvider provider;
+    private ServiceExerter provider;
 
     private int BB_SIZE = 1024;
 
@@ -52,7 +52,7 @@ public class ExchangeProviderImpl implements ExchangeRemote, Serializable {
     }
 
     public void init(Exerter provider) {
-        this.provider = (ServiceProvider) provider;
+        this.provider = (ServiceExerter) provider;
 
 
         try {

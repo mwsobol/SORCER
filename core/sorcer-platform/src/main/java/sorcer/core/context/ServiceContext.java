@@ -35,7 +35,7 @@ import sorcer.core.exertion.NetTask;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.monitor.MonitorUtil;
 import sorcer.service.Exerter;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.eo.operator;
@@ -1281,7 +1281,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 			throw new ContextException(e);
 		}
 		if (provider != null)
-			return ((ServiceProvider) provider).isContextValid(this, signature);
+			return ((ServiceExerter) provider).isContextValid(this, signature);
 		else {
 			return true;
 		}
@@ -2688,7 +2688,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public void reportException(String message, Throwable t, Exerter provider) {
 		ServiceException se = new ServiceException(message, t,
-				new ProviderInfo(((ServiceProvider)provider).getDelegate().getServiceInfo()));
+				new ProviderInfo(((ServiceExerter)provider).getDelegate().getServiceInfo()));
 
 		if (exertion != null)
 			exertion.getControlContext().addException(se);
@@ -2698,7 +2698,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public void reportException(String message, Throwable t, Exerter provider, ProviderInfo info) {
 		ServiceException se = new ServiceException(message, t,
-				new ProviderInfo(((ServiceProvider)provider).getDelegate().getServiceInfo()).append(info));
+				new ProviderInfo(((ServiceExerter)provider).getDelegate().getServiceInfo()).append(info));
 
 		if (exertion != null)
 			exertion.getControlContext().addException(se);
@@ -3405,7 +3405,7 @@ public class ServiceContext<T> extends ServiceMogram implements
                 Task task = (NetTask)mogram;
                 Class serviceType = task.getServiceType();
                 if (provider != null) {
-					Task out = ((ServiceProvider)provider).getDelegate().doTask(task, txn, args);
+					Task out = ((ServiceExerter)provider).getDelegate().doTask(task, txn, args);
 					// clearSessions provider execution scope
 					out.getContext().setScope(null);
 					return (T) out;

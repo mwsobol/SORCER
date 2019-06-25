@@ -55,7 +55,7 @@ public class SpaceIsReadyTaker extends SpaceTaker {
 				ExertionEnvelop ee = (ExertionEnvelop) space.read(data.entry,
 						null, SPACE_TIMEOUT);
 				if (ee != null) {
-					isReady = ((ServiceProvider) data.provider)
+					isReady = ((ServiceExerter) data.provider)
 							.isReady(data.entry.exertion);
 					if (!isReady) {
 						logger.debug("########### Provider is NOT ready ...");
@@ -98,7 +98,7 @@ public class SpaceIsReadyTaker extends SpaceTaker {
 						txnCreated.transaction.commit();
 					}
 				}
-				if (((ServiceProvider) data.provider).isSpaceSecurityEnabled()) {
+				if (((ServiceExerter) data.provider).isSpaceSecurityEnabled()) {
 					// if (ee.exertionID.equals(LOKI_ONLY)) {
 					initDataMember(ee, txnCreated.transaction);
 				}

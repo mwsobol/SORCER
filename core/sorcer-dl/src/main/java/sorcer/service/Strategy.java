@@ -114,7 +114,7 @@ public interface Strategy extends Arg {
 	}
 
 	/**
-	 * Indicates whether to use ServiceShell locally or remotely (as ServiceProvider).
+	 * Indicates whether to use ServiceShell locally or remotely (as ServiceExerter).
 	 */
 	public enum Shell implements Arg {
 		REMOTE, LOCAL;

@@ -85,7 +85,7 @@ import java.util.jar.JarFile;
 import static sorcer.util.StringUtils.tName;
 
 /**
- * The ServiceProvider class is a multitype of {@link Exerter} with dependency
+ * The ServiceExerter class is a multitype of {@link Exerter} with dependency
  * injection defined by a Jini 2 configuration, proxy management, and own
  * service discovery management for registering its proxies. This class can
  * be inherited by custom service providers or used as a container for service
@@ -146,7 +146,7 @@ import static sorcer.util.StringUtils.tName;
  * <code>beans</code> entry. In this case a proxy implementing all interfaces
  * implemented by service beans are dynamically created and registered with
  * lookup services. Multiple SORCER servers can be deployed within a single
- * {@link sorcer.core.provider.ServiceProvider} as its own service beans.
+ * {@link ServiceExerter} as its own service beans.
  *
  * @see Exerter
  * @see net.jini.lookup.ServiceIDListener
@@ -162,13 +162,13 @@ import static sorcer.util.StringUtils.tName;
  *
  * @author Mike Sobolewski
  */
-public class ServiceProvider implements Identifiable, Exerter, ServiceIDListener,
+public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 		ReferentUuid, ProxyAccessor, ServerProxyTrust, RemoteMethodControl, ServiceActivityProvider,
 		LifeCycle, Partner, Partnership, SorcerConstants, AdministratableProvider {
 	// RemoteMethodControl is needed to enable Proxy Constraints
 
 	/** Logger and configuration component key for service provider. */
-	public static final String COMPONENT = ServiceProvider.class.getName();
+	public static final String COMPONENT = ServiceExerter.class.getName();
 
 	/** Logger for logging information about this instance */
 	protected static final Logger logger = LoggerFactory.getLogger(COMPONENT);
@@ -205,7 +205,7 @@ public class ServiceProvider implements Identifiable, Exerter, ServiceIDListener
 	private LifeCycle lifeCycle;
 
 	// all providers in the same shared JVM
-	private static Collection<ServiceProvider> providers = new CopyOnWriteArraySet<>();
+	private static Collection<ServiceExerter> providers = new CopyOnWriteArraySet<>();
 
 	private ClassLoader serviceClassLoader;
 
@@ -223,7 +223,7 @@ public class ServiceProvider implements Identifiable, Exerter, ServiceIDListener
 	/** MBean for JMX access*/
 	private ProviderAdmin providerAdmin;
 
-	public ServiceProvider() {
+	public ServiceExerter() {
 		providers.add(this);
 		delegate = new ProviderDelegate();
 		delegate.provider = this;
@@ -243,7 +243,7 @@ public class ServiceProvider implements Identifiable, Exerter, ServiceIDListener
      * @param lifeCycle lifecycle management
      * @throws Exception
      */
-    public ServiceProvider(String[] args, LifeCycle lifeCycle) throws Exception {
+    public ServiceExerter(String[] args, LifeCycle lifeCycle) throws Exception {
         this();
         // count initialized shared providers
         tally = tally + 1;
@@ -277,7 +277,7 @@ public class ServiceProvider implements Identifiable, Exerter, ServiceIDListener
 
     // this is only used to instantiate provider impl objects and use their
     // methods
-    public ServiceProvider(String providerPropertiesFile) {
+    public ServiceExerter(String providerPropertiesFile) {
         this();
         delegate.getProviderConfig().loadConfiguration(providerPropertiesFile);
         ((ScratchManagerSupport)scratchManager).setProperties(getProviderProperties());
@@ -977,7 +977,7 @@ public class ServiceProvider implements Identifiable, Exerter, ServiceIDListener
 	/**
 	 * Returns an array of additional service UI descriptors to be included in a
 	 * Jini service impl that is registerd with lookup services. By default a
-	 * generic ServiceProvider service UI is provided with: attribute viewer,
+	 * generic ServiceExerter service UI is provided with: attribute viewer,
 	 * context and task editor for this service provider.
 	 *
 	 * @return an array of service UI descriptors
@@ -1851,11 +1851,11 @@ public class ServiceProvider implements Identifiable, Exerter, ServiceIDListener
 	}
 
 	/**
-	 * ShutdownHook for the ServiceProvider
+	 * ShutdownHook for the ServiceExerter
 	 */
 	static class ShutdownHook extends Thread {
-		final ServiceProvider provider;
-		ShutdownHook(ServiceProvider provider) {
+		final ServiceExerter provider;
+		ShutdownHook(ServiceExerter provider) {
 			super("ShutdownHook");
 			this.provider = provider;
 		}
@@ -1864,7 +1864,7 @@ public class ServiceProvider implements Identifiable, Exerter, ServiceIDListener
 			try {
 				provider.destroy();
 			} catch(Throwable t) {
-				logger.error("Terminating ServiceProvider", t);
+				logger.error("Terminating ServiceExerter", t);
 			}
 		}
 	}
@@ -1877,7 +1877,7 @@ public class ServiceProvider implements Identifiable, Exerter, ServiceIDListener
 	 */
 	public void destroyNode() throws RemoteException {
 		logger.info("providers.size() = " + providers.size());
-		for (ServiceProvider provider : providers) {
+		for (ServiceExerter provider : providers) {
 			logger.info("calling destroy on provider key = " + provider.getName());
 			provider.destroy();
 		}
@@ -1928,7 +1928,7 @@ public class ServiceProvider implements Identifiable, Exerter, ServiceIDListener
 		boolean threadManagement = false;
 		try {
 			threadManagement = (Boolean) config.getEntry(
-					ServiceProvider.COMPONENT, THREAD_MANAGEMNT, boolean.class,
+					ServiceExerter.COMPONENT, THREAD_MANAGEMNT, boolean.class,
 					false);
 		} catch (Exception e) {
 			// do nothing, default eval is used
@@ -1945,35 +1945,35 @@ public class ServiceProvider implements Identifiable, Exerter, ServiceIDListener
 		}
 		logger.debug("Initialized scheduler: " + scheduler.toString());
 		try {
-			maxThreads = (Integer) config.getEntry(ServiceProvider.COMPONENT,
+			maxThreads = (Integer) config.getEntry(ServiceExerter.COMPONENT,
 					MAX_THREADS, int.class);
 		} catch (Exception e) {
-//			logger.throwing(ServiceProvider.class.getName(),
+//			logger.throwing(ServiceExerter.class.getName(),
 //					"setupThreadManger#maxThreads", e);
 		}
 		logger.info("maxThreads: " + maxThreads);
 		try {
-			timeout = (Long) config.getEntry(ServiceProvider.COMPONENT,
+			timeout = (Long) config.getEntry(ServiceExerter.COMPONENT,
 					MANAGER_TIMEOUT, long.class);
 		} catch (Exception e) {
-//			logger.throwing(ServiceProvider.class.getName(),
+//			logger.throwing(ServiceExerter.class.getName(),
 //					"setupThreadManger#timeout", e);
 		}
 		logger.info("timeout: " + timeout);
 		try {
-			loadFactor = (Float) config.getEntry(ServiceProvider.COMPONENT,
+			loadFactor = (Float) config.getEntry(ServiceExerter.COMPONENT,
 					LOAD_FACTOR, float.class);
 		} catch (Exception e) {
-//			logger.throwing(ServiceProvider.class.getName(),
+//			logger.throwing(ServiceExerter.class.getName(),
 //					"setupThreadManger#loadFactor", e);
 		}
 		logger.info("loadFactor: " + loadFactor);
 		try {
 			waitIncrement = (Integer) config.getEntry(
-					ServiceProvider.COMPONENT, WAIT_INCREMENT, int.class,
+					ServiceExerter.COMPONENT, WAIT_INCREMENT, int.class,
 					waitIncrement);
 		} catch (Exception e) {
-//			logger.throwing(ServiceProvider.class.getName(),
+//			logger.throwing(ServiceExerter.class.getName(),
 //					"setupThreadManger#waitIncrement", e);
 		}
 		logger.info("waitIncrement: " + waitIncrement);

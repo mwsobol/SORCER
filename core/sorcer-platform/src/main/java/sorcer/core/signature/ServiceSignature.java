@@ -97,7 +97,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	/** indicates whether this method is being processed by the exert method */
 	protected boolean isActive = true;
 
-	// shell can be used to exert mograms locally or remotely (as ServiceProvider)
+	// shell can be used to exert mograms locally or remotely (as ServiceExerter)
 	protected boolean isShellRemote = false;
 
 	// context input connector

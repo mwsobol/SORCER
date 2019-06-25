@@ -52,7 +52,7 @@ import java.util.Hashtable;
  * The priorities for loading properties are as follows:
  * <ol>
  * <li>First, SORCER environment properties (sorcer.env) are read by the
- * {@code ServiceProvider}
+ * {@code ServiceExerter}
  * <li>Second, provider configuration defined in Jini configuration file is
  * loaded and it can override any relevant settings in the existing Sorcer
  * object. Provider specific configuration is collected in ProviderConfig
@@ -62,7 +62,7 @@ import java.util.Hashtable;
  * can override relevant sorcer.env properties. While a collection of Jini
  * configuration properties is predefined, in the provider properties file,
  * custom properties can be defined and accessed via
- * {@code ServiceProvider.getProperty(String key)}.
+ * {@code ServiceExerter.getProperty(String key)}.
  * <li>Finally, JVM system properties (<code>sorcer.env.file</code>), if
  * specified, can override settings in the existing Env object.
  * </ol>

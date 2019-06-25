@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.provider.ServiceExerter;
 
 /**
  * Holds static attributes used during the startup of services and provides
@@ -269,7 +270,7 @@ public class SorcerDescriptorUtil {
 		// service provider codebase
         String providerCodebase = Booter.getCodebase(getDefaultSorcerExports(),
                                                    hostAddress, Integer.toString(port));
-        String implClass = "sorcer.core.provider.ServiceProvider";
+        String implClass = "sorcer.core.provider.ServiceExerter";
         return (new SorcerServiceDescriptor(providerCodebase, policy,
                                             providerClasspath, implClass, jobberConfig));
 	}
@@ -552,7 +553,7 @@ public class SorcerDescriptorUtil {
 	
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
-	 * {@link sorcer.core.provider.ServiceProvider} with beaned
+	 * {@link ServiceExerter} with beaned
 	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exertion.
 	 * 
 	 * @param policy
@@ -575,7 +576,7 @@ public class SorcerDescriptorUtil {
 
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
-	 * {@link sorcer.core.provider.ServiceProvider} with beaned
+	 * {@link ServiceExerter} with beaned
 	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exertion.
 	 * 
 	 * @param policy
@@ -601,7 +602,7 @@ public class SorcerDescriptorUtil {
 	
 	/**
 	 * Get the {@link com.sun.jini.start.ServiceDescriptor} instance for
-	 * {@link sorcer.core.provider.ServiceProvider} with beaned
+	 * {@link ServiceExerter} with beaned
 	 * {@link sorcer.core.provider.exerter.ServiceShell}, called Exertion.
 	 * 
 	 * @param policy
@@ -638,7 +639,7 @@ public class SorcerDescriptorUtil {
         String exerterCodebase = Booter.getCodebase(getDefaultSorcerExports(),
                                                     hostAddress,
                                                     Integer.toString(port));
-		String implClass = "sorcer.core.provider.ServiceProvider";
+		String implClass = "sorcer.core.provider.ServiceExerter";
 		return (new SorcerServiceDescriptor(exerterCodebase, policy,
 				exerterClasspath, implClass, exerterConfig));
 
@@ -1198,8 +1199,8 @@ public class SorcerDescriptorUtil {
         String loggerCodebase = Booter.getCodebase(getDefaultSorcerExports(),
                                                    hostAddress,
                                                    Integer.toString(port));
-		// Logger is a partner to ServiceProvider
-		String implClass = "sorcer.core.provider.ServiceProvider";
+		// Logger is a partner to ServiceExerter
+		String implClass = "sorcer.core.provider.ServiceExerter";
 
 		return (new SorcerServiceDescriptor(loggerCodebase, policy,
 				loggerClasspath, implClass, loggerConfig));

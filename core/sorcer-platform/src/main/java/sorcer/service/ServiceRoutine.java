@@ -128,7 +128,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
                 ServiceRoutine exertion = (ServiceRoutine) mogram;
                 Class serviceType = exertion.getServiceType();
                 if (provider != null) {
-                    Task out = ((ServiceProvider)provider).getDelegate().doTask((Task) exertion, txn, args);
+                    Task out = ((ServiceExerter)provider).getDelegate().doTask((Task) exertion, txn, args);
                     // clearSessions provider execution scope
                     out.getContext().setScope(null);
                     return (T) out;
@@ -1136,7 +1136,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
                     .append("\tAccess Class:         " + accessClass + "\n")
                     .append("\tIs Export Controlled: " + isExportControlled + "\n")
                     .append("\tPriority:             " + priority + "\n")
-                    .append("\tProvider Tag:        "
+                    .append("\tServiceExerter Tag:        "
                             + getProcessSignature().getProviderName() + "\n")
                     .append("\tService Type:         "
                             + getProcessSignature().getServiceType() + "\n")

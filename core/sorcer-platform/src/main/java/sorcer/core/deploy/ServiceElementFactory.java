@@ -102,7 +102,7 @@ public final class ServiceElementFactory  {
                                          String configurationFilePath) throws ConfigurationException, IOException {
         logger.debug("Loading {}", configurationFilePath);
         Configuration configuration = Configuration.getInstance(configurationFilePath);
-        String component = "sorcer.core.provider.ServiceProvider";
+        String component = "sorcer.core.provider.ServiceExerter";
 
         String name = deployment.getName();
         if(name==null) {

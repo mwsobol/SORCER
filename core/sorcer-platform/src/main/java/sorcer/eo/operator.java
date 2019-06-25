@@ -950,9 +950,9 @@ operator extends Operator {
         Signature ts = sig(operation, serviceType, new Object[]{});
         try {
             Object provider = target.newInstance();
-            if (provider instanceof ServiceProvider) {
+            if (provider instanceof ServiceExerter) {
                 Object bean = serviceType.newInstance();
-                ((ServiceProvider)provider).setBean(bean);
+                ((ServiceExerter)provider).setBean(bean);
             }
             ((ObjectSignature)ts).setTarget(provider);
         } catch (InstantiationException | IllegalAccessException e) {

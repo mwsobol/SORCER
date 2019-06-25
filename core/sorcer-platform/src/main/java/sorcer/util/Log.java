@@ -97,7 +97,7 @@ public class Log {
 	private static Logger dispatch = LoggerFactory.getLogger("sorcer.core.dispatch");
 
 	/** Used by SORCER core service providers */
-	private static Logger coreProvider = LoggerFactory.getLogger("sorcer.core.provider.ServiceProvider");
+	private static Logger coreProvider = LoggerFactory.getLogger("sorcer.core.provider.ServiceExerter");
 
 	/** Logger solely for testing purposes */
 	private static Logger test = LoggerFactory.getLogger("sorcer.test");

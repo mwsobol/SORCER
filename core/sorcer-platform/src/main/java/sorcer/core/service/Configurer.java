@@ -25,7 +25,7 @@ import sorcer.config.Component;
 import sorcer.config.ConfigEntry;
 import sorcer.config.Configurable;
 import sorcer.config.convert.TypeConverter;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.util.reflect.Fields;
 import sorcer.util.reflect.Methods;
 
@@ -41,7 +41,7 @@ import java.lang.reflect.Method;
 public class Configurer {
     final private static Logger log = LoggerFactory.getLogger(Configurer.class);
 
-    public void preProcess(ServiceProvider provider, Object serviceBean) {
+    public void preProcess(ServiceExerter provider, Object serviceBean) {
         try {
             process(serviceBean, provider.getProviderConfiguration());
         } catch (IllegalArgumentException x) {

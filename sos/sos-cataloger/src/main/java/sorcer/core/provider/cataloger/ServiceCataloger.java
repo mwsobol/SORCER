@@ -40,7 +40,7 @@ import org.slf4j.MDC;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.Cataloger;
 import sorcer.service.Exerter;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.core.provider.cataloger.ServiceCataloger.CatalogerInfo.InterfaceList;
 import sorcer.core.provider.cataloger.ui.CatalogerUI;
 import sorcer.core.signature.NetSignature;
@@ -112,7 +112,7 @@ import java.util.concurrent.ConcurrentMap;
  * </ol>
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ServiceCataloger extends ServiceProvider implements Cataloger {
+public class ServiceCataloger extends ServiceExerter implements Cataloger {
 
 	/** Logger for logging information about this instance */
 	private static Logger logger = LoggerFactory.getLogger(ServiceCataloger.class);

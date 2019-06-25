@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
  * A functionality of executing a mogram (exerting collaboration of service providers)
  * with given parameters by service providers.
  *
- * In particular a SORCER service containers ServiceProvider, ServiceTasker, ServiceShell,
+ * In particular a SORCER service containers ServiceExerter, ServiceTasker, ServiceShell,
  * and system service beans of type SystemServiceBeans are exerters.
  *
  * @author Mike Sobolewski

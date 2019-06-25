@@ -3,8 +3,8 @@ package sorcer.provider.adder.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.PositionalContext;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.service.Exerter;
-import sorcer.core.provider.ServiceProvider;
 import sorcer.provider.adder.Adder;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
@@ -15,11 +15,11 @@ import java.util.List;
 
 @SuppressWarnings("rawtypes")
 public class AdderImpl implements Adder {
-	private ServiceProvider provider;
+	private ServiceExerter provider;
 	private static Logger logger = LoggerFactory.getLogger(AdderImpl.class.getName());
 	
 	public void init(Exerter provider) {
-		this.provider = (ServiceProvider)provider;
+		this.provider = (ServiceExerter)provider;
 	}
 
     @Override

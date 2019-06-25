@@ -37,14 +37,14 @@ import java.rmi.RemoteException;
 import java.util.Vector;
 
 /**
- * ServiceBean - The SORCER superclass of service components of ServiceProvider.
+ * ServiceBean - The SORCER superclass of service components of ServiceExerter.
  * 
  * @author Mike Sobolewski
  */
 abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 	private Logger logger = LoggerFactory.getLogger(SorcerExerterBean.class.getName());
 
-	protected ServiceProvider provider;
+	protected ServiceExerter provider;
 
 	protected ProviderDelegate delegate;
 	
@@ -55,9 +55,9 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 	}
 	
 	public void init(Exerter provider) {
-		this.provider = (ServiceProvider)provider;
-		this.delegate = ((ServiceProvider)provider).getDelegate();
-		//this.threadManager = ((ServiceProvider)provider).getThreadManager();
+		this.provider = (ServiceExerter)provider;
+		this.delegate = ((ServiceExerter)provider).getDelegate();
+		//this.threadManager = ((ServiceExerter)provider).getThreadManager();
 
 	}
 
@@ -123,7 +123,7 @@ abstract public class SorcerExerterBean implements Exertion, ServiceBean {
 	
     public void setServiceID(Mogram ex) {
         if (provider == null) {
-            provider = new ServiceProvider();
+            provider = new ServiceExerter();
             init (provider);
         }
         ServiceID id = provider.getProviderID();

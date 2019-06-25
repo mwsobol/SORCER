@@ -15,7 +15,7 @@ Also you might need to adjust the classpath (provider.classpath) for your provid
 
 	<!-- set property values here -->
 	<property name="provider.bean" value="multiplier" />
-	<property name="provider.class" value="sorcer.core.provider.ServiceProvider" />
+	<property name="provider.class" value="sorcer.core.provider.ServiceExerter" />
 	<property name="webster" value="${provider.webster.url}" />
 
 	<!-- provider classpath -->

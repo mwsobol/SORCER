@@ -27,7 +27,7 @@ class ExertionDeploymentConfig {
 		export.setCodebase("http://${host}:" + websterPort);
 		
 		/* Create service implementation ClassBundle */
-		ClassBundle main = new ClassBundle("sorcer.core.provider.ServiceProvider");
+		ClassBundle main = new ClassBundle("sorcer.core.provider.ServiceExerter");
 		main.setJARs("arithmetic-beans.jar", "sorcer-prv.jar", "sorcer-modeling-lib.jar")
 		//main.setCodebase("http://${host}:9010")
 		export.setCodebase("http://${host}:" + websterPort);

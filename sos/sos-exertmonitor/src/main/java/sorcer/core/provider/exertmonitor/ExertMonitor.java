@@ -33,7 +33,7 @@ import sorcer.core.context.StrategyContext;
 import sorcer.core.monitor.MonitorEvent;
 import sorcer.core.monitor.MonitoringManagement;
 import sorcer.core.provider.MonitorManagementSession;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.core.provider.exertmonitor.db.SessionDatabase;
 import sorcer.core.provider.exertmonitor.db.SessionDatabaseViews;
 import sorcer.core.provider.exertmonitor.lease.MonitorLandlord;
@@ -50,7 +50,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
-public class ExertMonitor extends ServiceProvider implements MonitoringManagement {
+public class ExertMonitor extends ServiceExerter implements MonitoringManagement {
 	static transient final Logger logger = LoggerFactory.getLogger(ExertMonitor.class.getName());
 	private MonitorLandlord landlord;
 	private SessionDatabase db;

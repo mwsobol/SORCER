@@ -117,7 +117,7 @@ public class Accessor {
             provider.getProviderName();
             return true;
         } catch (Exception e) {
-            logger.debug("Provider is dead " + e.getMessage());
+            logger.debug("ServiceExerter is dead " + e.getMessage());
             return false;
         }
     }

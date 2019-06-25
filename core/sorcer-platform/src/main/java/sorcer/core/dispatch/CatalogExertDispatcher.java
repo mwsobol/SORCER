@@ -119,7 +119,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                     if (((NetSignature) task.getProcessSignature()).getService().equals(provider)) {
                         logger.info("\n*** getting result from delegate of "
                                 + provider.getProviderName() + "... ***\n");
-                        result = ((ServiceProvider) provider).getDelegate().doTask(
+                        result = ((ServiceExerter) provider).getDelegate().doTask(
                                 task, null);
                         result.getControlContext().appendTrace(
                                 (provider.getProviderName() != null ? provider.getProviderName() + " " : "")

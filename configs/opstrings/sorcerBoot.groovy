@@ -109,7 +109,7 @@ deployment(name: "Sorcer OS") {
                     "sorcer.core.provider.Concatenator"
             resources appendJars(["sorcer-ui-${Sorcer.sorcerVersion}.jar"])
         }
-        implementation(class: "sorcer.core.provider.ServiceProvider") {
+        implementation(class: "sorcer.core.provider.ServiceExerter") {
             resources "sorcer-lib-${Sorcer.sorcerVersion}.jar",
                       "rio-api-${RioVersion.VERSION}.jar"
         }
@@ -159,7 +159,7 @@ deployment(name: "Sorcer OS") {
             classes 'sorcer.core.provider.RemoteLogger'
             resources appendJars(["sos-logger-${Sorcer.sorcerVersion}-ui.jar"])
         }
-        implementation(class: 'sorcer.core.provider.ServiceProvider') {
+        implementation(class: 'sorcer.core.provider.ServiceExerter') {
             resources "sorcer-lib-${Sorcer.sorcerVersion}.jar",
                       "sos-logger-${Sorcer.sorcerVersion}.jar",
                       "commons-io-${Sorcer.commonsIoVersion}.jar"

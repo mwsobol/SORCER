@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * Created by Mike Sobolewski on 8/29/17.
  */
-public class SessionProvider extends ServiceProvider implements SessionManagement {
+public class SessionProvider extends ServiceExerter implements SessionManagement {
 
     public SessionProvider() throws RemoteException {
         super();

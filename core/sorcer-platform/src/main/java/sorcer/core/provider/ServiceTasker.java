@@ -38,7 +38,7 @@ import com.sun.jini.start.LifeCycle;
  * @see {@link sorcer.service.Signature}
  * @see {@link sorcer.service.Signature.Type}
  */
-public class ServiceTasker extends ServiceProvider {
+public class ServiceTasker extends ServiceExerter {
 
 	public ServiceTasker() throws RemoteException {
 		super();

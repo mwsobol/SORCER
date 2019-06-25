@@ -23,7 +23,7 @@ import org.rioproject.deploy.SystemRequirements;
 import org.rioproject.opstring.ServiceElement;
 import org.rioproject.resolver.ResolverException;
 import org.rioproject.system.capability.connectivity.TCPConnectivity;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.core.signature.NetSignature;
 import sorcer.tools.webster.Webster;
 import sorcer.util.SorcerEnv;
@@ -71,7 +71,7 @@ public class ServiceElementFactoryTest {
     @Test
     public void setDeploymentWebsterOperator() throws IOException, ConfigurationException, URISyntaxException, ResolverException {
         NetSignature methodEN = new NetSignature("executeFoo",
-            ServiceProvider.class,
+            ServiceExerter.class,
             "Yogi");
         methodEN.setDeployment(deploy(configuration(getConfigDir() + "/TestIP.groovy"),
             webster("http://spongebob:8080")));

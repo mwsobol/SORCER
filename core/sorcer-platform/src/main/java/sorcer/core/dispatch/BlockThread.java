@@ -21,7 +21,7 @@ import net.jini.config.ConfigurationException;
 import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
 import sorcer.service.Exerter;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.service.Arg;
 import sorcer.service.Block;
 import sorcer.service.ContextException;
@@ -55,7 +55,7 @@ public class BlockThread extends Thread {
 			if (block.isProvisionable()) {
 				try {
 					exertionDeploymentConfig =
-							(String)((ServiceProvider)provider).getProviderConfiguration().getEntry("sorcer.core.provider.ServiceProvider",
+							(String)((ServiceExerter)provider).getProviderConfiguration().getEntry("sorcer.core.provider.ServiceExerter",
 									"exertionDeploymentConfig",
 									String.class,
 									null);

@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Methods delegated toservice beans by service providers
  *
- * @see ServiceProvider
+ * @see ServiceExerter
  *
  * @author Mike Sobolewski
  */

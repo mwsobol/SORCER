@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.PositionalContext;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.provider.adder.Adder;
 import sorcer.service.ContextException;
 import sorcer.service.Service;
@@ -170,7 +171,7 @@ public class AdderUI extends JPanel implements SorcerConstants {
 	/**
 	 * Returns a service UI descriptor for this service. Usually this method is
 	 * used as an entry in provider configuration files when smart proxies are
-	 * deployed with a standard off the shelf {@link sorcer.core.provider.ServiceProvider}.
+	 * deployed with a standard off the shelf {@link ServiceExerter}.
 	 *
 	 * @return service UI descriptor
 	 */

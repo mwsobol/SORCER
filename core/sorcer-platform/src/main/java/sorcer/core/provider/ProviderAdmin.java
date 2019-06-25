@@ -32,10 +32,10 @@ import java.rmi.RemoteException;
  * @author Dennis Reedy
  */
 public class ProviderAdmin implements ProviderAdminMBean {
-    final ServiceProvider provider;
+    final ServiceExerter provider;
     final static Logger logger = LoggerFactory.getLogger(ProviderAdmin.class);
 
-    public ProviderAdmin(ServiceProvider provider) {
+    public ProviderAdmin(ServiceExerter provider) {
         if(provider==null)
             throw new IllegalArgumentException("provider must not be null");
         this.provider = provider;

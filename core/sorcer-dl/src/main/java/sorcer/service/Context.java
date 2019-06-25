@@ -254,9 +254,9 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	public Routine getMogram();
 
 	/**
-	 * Returns the service provider associated with this context
+	 * Returns the service exerter associated with this context
 	 *
-	 * @return Provider
+	 * @return Exerter
 	 */
 	public Exerter getProvider() throws SignatureException;
 

@@ -15,7 +15,7 @@ import sorcer.core.monitor.MonitoringSession;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.provider.ServiceBean;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.core.service.Projection;
 import sorcer.core.signature.NetSignature;
 import sorcer.core.signature.ServiceSignature;
@@ -726,8 +726,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     public void init(Exerter provider) {
         this.provider = provider;
         logger.info("*** provider init properties:\n"
-                + GenericUtil.getPropertiesString(((ServiceProvider)provider).getProviderProperties()));
-        System.getProperties().putAll(((ServiceProvider)provider).getProviderProperties());
+                + GenericUtil.getPropertiesString(((ServiceExerter)provider).getProviderProperties()));
+        System.getProperties().putAll(((ServiceExerter)provider).getProviderProperties());
     }
 
     public void setBuilder(Signature builder) {

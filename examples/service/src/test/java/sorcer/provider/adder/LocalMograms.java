@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.core.provider.SessionProvider;
 import sorcer.provider.adder.impl.AdderImpl;
 import sorcer.service.*;
@@ -58,8 +58,8 @@ public class LocalMograms {
 	@Test
 	public void exertBeanTask() throws Exception {
 
-		// a service bean AdderImpl exerted by the ServiceProvider container
-		Task t5 = task("t5", sig("add", AdderImpl.class, ServiceProvider.class),
+		// a service bean AdderImpl exerted by the ServiceExerter container
+		Task t5 = task("t5", sig("add", AdderImpl.class, ServiceExerter.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
 		Task out = exert(t5);

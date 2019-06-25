@@ -22,7 +22,7 @@ import org.rioproject.resolver.ResolverHelper;
 import org.rioproject.url.artifact.ArtifactURLConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.ServiceExerter;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
@@ -1895,7 +1895,7 @@ public class GenericUtil {
 	// this method exits the jvm if the file or directory is not readable; the exit is
 	// necessary for boot strapping providers since exceptions in provider constructors
 	// are simply caught and ignored...exit brings the provider down, which is good.
-	public static void checkFileExistsAndIsReadable(File file, ServiceProvider sp) {
+	public static void checkFileExistsAndIsReadable(File file, ServiceExerter sp) {
 		
 		try {
 			

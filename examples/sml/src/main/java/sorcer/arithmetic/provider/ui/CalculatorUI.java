@@ -6,8 +6,8 @@ import net.jini.lookup.entry.UIDescriptor;
 import net.jini.lookup.ui.MainUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.service.Exerter;
-import sorcer.core.provider.ServiceProvider;
 import sorcer.service.Service;
 import sorcer.serviceui.UIComponentFactory;
 import sorcer.serviceui.UIDescriptorFactory;
@@ -375,7 +375,7 @@ public class CalculatorUI extends JPanel implements ActionListener {
 	/**
 	 * Returns a service UI descriptorfor this service. Usally this method is
 	 * used as an entry in provider configuration files when smart proxies are
-	 * deployed with a standard off the shelf {@link ServiceProvider}.
+	 * deployed with a standard off the shelf {@link ServiceExerter}.
 	 * 
 	 * @return service UI descriptor
 	 */

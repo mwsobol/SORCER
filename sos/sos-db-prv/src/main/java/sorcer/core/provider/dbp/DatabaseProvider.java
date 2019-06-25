@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.provider.DatabaseStorer;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.core.provider.StorageManagement;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
@@ -52,7 +52,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class DatabaseProvider extends ServiceProvider implements DatabaseStorer {
+public class DatabaseProvider extends ServiceExerter implements DatabaseStorer {
     static final Logger logger = LoggerFactory.getLogger(DatabaseProvider.class);
 	static {
 		Handler.register();
@@ -502,7 +502,7 @@ public class DatabaseProvider extends ServiceProvider implements DatabaseStorer 
 		Configuration config = delegate.getDeploymentConfig();
 		String dbHome = null;
 		try {
-			dbHome = (String) config.getEntry(ServiceProvider.COMPONENT,
+			dbHome = (String) config.getEntry(ServiceExerter.COMPONENT,
 					DB_HOME, String.class);
 		} catch (Exception e) {
 			// do nothing, default eval is used

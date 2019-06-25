@@ -239,7 +239,7 @@ public class RemoteLoggerManager implements RemoteLogger {
 	/*
 	 * (non-Java doc)
 	 *
-	 * @see sorcer.core.provider.ServiceProvider#getMainUIDescriptor()
+	 * @see sorcer.core.provider.ServiceExerter#getMainUIDescriptor()
 	 */
     public static UIDescriptor getMainUIDescriptor() {
         UIDescriptor uiDesc = null;

@@ -22,13 +22,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.context.model.ent.SysCall;
 import sorcer.core.provider.SysCaller;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
 import java.rmi.RemoteException;
 
 @SuppressWarnings("unchecked")
-public class SysCallerProvider extends ServiceProvider implements SysCaller {
+public class SysCallerProvider extends ServiceExerter implements SysCaller {
 
 	private static Logger logger = LoggerFactory.getLogger(SysCallerProvider.class);
 

@@ -110,8 +110,8 @@ public class SpaceTaker implements Runnable {
 		}
 
 		public SpaceTakerData(ExertionEnvelop entry, LokiMemberUtil member,
-                              Exerter provider, String spaceName, String spaceGroup,
-                              boolean workerIsTransactional, boolean noQueue, String osName, List<String> appNames) {
+							  Exerter provider, String spaceName, String spaceGroup,
+							  boolean workerIsTransactional, boolean noQueue, String osName, List<String> appNames) {
 			this.provider = provider;
 			this.entry = entry;
 			this.myMemberUtil = member;
@@ -166,8 +166,8 @@ public class SpaceTaker implements Runnable {
 		long lt = TRANSACTION_LEASE_TIME;
 		Configuration config = null;
 		try {
-			config = ((ServiceProvider)data.provider).getProviderConfiguration();
-			lt = (Long) config.getEntry(ServiceProvider.COMPONENT,
+			config = ((ServiceExerter)data.provider).getProviderConfiguration();
+			lt = (Long) config.getEntry(ServiceExerter.COMPONENT,
 					ProviderDelegate.WORKER_TRANSACTION_LEASE_TIME, long.class);
 		} catch (Exception e) {
 			lt = TRANSACTION_LEASE_TIME;
@@ -179,8 +179,8 @@ public class SpaceTaker implements Runnable {
 		long st = SPACE_TIMEOUT;
 		Configuration config = null;
 		try {
-			config = ((ServiceProvider)data.provider).getProviderConfiguration();
-			st = (Long) config.getEntry(ServiceProvider.COMPONENT,
+			config = ((ServiceExerter)data.provider).getProviderConfiguration();
+			st = (Long) config.getEntry(ServiceExerter.COMPONENT,
 					ProviderDelegate.SPACE_TIMEOUT, long.class);
 		} catch (Exception e) {
 			st = SPACE_TIMEOUT;
@@ -464,7 +464,7 @@ public class SpaceTaker implements Runnable {
 
 				if (se instanceof Task) {
 					// task for the worker's provider
-					out = (((ServiceProvider)data.provider).getDelegate()).doTask((Task) se, transaction);
+					out = (((ServiceExerter)data.provider).getDelegate()).doTask((Task) se, transaction);
 				} else {
 					// delegate it to another collaborating service
 					out = data.provider.exert(se, transaction);

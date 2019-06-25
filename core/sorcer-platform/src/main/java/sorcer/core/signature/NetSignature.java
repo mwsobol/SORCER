@@ -293,15 +293,15 @@ public class NetSignature extends ObjectSignature implements sig {
 			if (m != null)
 				return (Routine) m.invoke(this, new Object[] { ex });
 
-			if (((ServiceProvider) provider).isValidMethod(operation.selector)) {
-				return ((ServiceProvider) provider).getDelegate()
+			if (((ServiceExerter) provider).isValidMethod(operation.selector)) {
+				return ((ServiceExerter) provider).getDelegate()
 						.invokeMethod(operation.selector, ex);
 			} else {
 				RoutineException eme = new RoutineException(
 						"Not supported method: " + multitype + "#" + operation.selector
 								+ " by: "
 								+  provider.getProviderName());
-				((ServiceProvider) provider).notifyException(ex, "unsupported method",
+				((ServiceExerter) provider).notifyException(ex, "unsupported method",
 						eme);
 				throw eme;
 			}
@@ -318,8 +318,8 @@ public class NetSignature extends ObjectSignature implements sig {
 			if (m != null)
 				return ((Context) m.invoke(this, new Object[] { context }));
 
-			if (((ServiceProvider) provider).isValidMethod(operation.selector)) {
-				Context resultContext = ((ServiceProvider) provider)
+			if (((ServiceExerter) provider).isValidMethod(operation.selector)) {
+				Context resultContext = ((ServiceExerter) provider)
 						.getDelegate().invokeMethod(operation.selector, context);
 				return resultContext;
 			} else {
@@ -327,7 +327,7 @@ public class NetSignature extends ObjectSignature implements sig {
 						"Not supported method: " + multitype + "#" + operation.selector
 								+ " by: "
 								+ ((Exerter) provider).getProviderName());
-				((ServiceProvider) provider).notifyException(context.getMogram(),
+				((ServiceExerter) provider).notifyException(context.getMogram(),
 						"unsupported method", eme);
 				throw eme;
 			}

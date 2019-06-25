@@ -49,7 +49,7 @@ import static sorcer.core.SorcerConstants.*;
 /**
  * A SorcerILFactory can be used with object interfaces as its services. Those
  * services exposed as interfaces do need implement Remote. A
- * {@link sorcer.core.provider.ServiceProvider} or
+ * {@link sorcer.core.provider.ServiceExerter} or
  * service beans using this factory should tell
  * the factory what objects should be exposed as services and the invocation
  * dispatcher created by this factory will manage the delegation of the method
@@ -57,7 +57,7 @@ import static sorcer.core.SorcerConstants.*;
  * taking a parameter {@link sorcer.service.Context} and returning
  * {@link sorcer.service.Context} can be used transparently as
  * {@link Service}s with either
- * {@link sorcer.core.provider.ServiceProvider}
+ * {@link sorcer.core.provider.ServiceExerter}
  */
 
 /**

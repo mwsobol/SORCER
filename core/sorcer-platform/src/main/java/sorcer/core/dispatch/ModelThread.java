@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.DispatchResult;
 import sorcer.core.Dispatcher;
 import sorcer.service.Exerter;
-import sorcer.core.provider.ServiceProvider;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.service.*;
 
 public class ModelThread extends Thread {
@@ -52,7 +52,7 @@ public class ModelThread extends Thread {
 			if (task.isProvisionable()) {
 				try {
 					exertionDeploymentConfig =
-							(String)((ServiceProvider)provider).getProviderConfiguration().getEntry("sorcer.core.provider.ServiceProvider",
+							(String)((ServiceExerter)provider).getProviderConfiguration().getEntry("sorcer.core.provider.ServiceExerter",
 									"exertionDeploymentConfig",
 									String.class,
 									null);

@@ -37,7 +37,7 @@ import java.util.Properties;
  * @see Monitorable
  * @see Remote
  */
-public interface Exerter extends Provider, Exertion, Monitorable, AnalyticsProducer, Administrable, Remote {
+public interface Exerter extends ServiceProvider, Exertion, Monitorable, AnalyticsProducer, Administrable, Remote {
 
 	public ServiceID getProviderID() throws RemoteException;
 

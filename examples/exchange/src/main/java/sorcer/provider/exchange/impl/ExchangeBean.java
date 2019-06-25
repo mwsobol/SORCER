@@ -2,8 +2,8 @@ package sorcer.provider.exchange.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.provider.ServiceExerter;
 import sorcer.service.Exerter;
-import sorcer.core.provider.ServiceProvider;
 import sorcer.provider.exchange.Exchange;
 import sorcer.service.Context;
 import sorcer.service.ContextException;
@@ -18,10 +18,10 @@ public class ExchangeBean implements Exchange, Serializable {
 
     private static Logger logger = LoggerFactory.getLogger(ExchangeBean.class.getName());
 
-    private ServiceProvider provider;
+    private ServiceExerter provider;
 
     public void init(Exerter provider) {
-        this.provider = (ServiceProvider)provider;
+        this.provider = (ServiceExerter)provider;
     }
 
     @Override

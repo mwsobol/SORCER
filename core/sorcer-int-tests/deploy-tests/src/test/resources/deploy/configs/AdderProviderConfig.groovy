@@ -23,7 +23,7 @@ import java.util.logging.Level
  *
  * @author Dennis Reedy
  */
-@Component('sorcer.core.provider.ServiceProvider')
+@Component('sorcer.core.provider.ServiceExerter')
 class AdderProviderConfig {
     /* service provider generic properties */
     String name = "Adder"
