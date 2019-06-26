@@ -167,7 +167,9 @@ public class ScratchManagerSupport implements ScratchManager, Serializable {
         long time = c.getTime().getTime();
 
         String uid = UUID.randomUUID().toString();
-        return sdf.format(time) + "-" + uid;
+        //return sdf.format(time) + "-" + uid;
+        // dropping time in dirname for windows path length restriction
+        return uid;
     }
 
     String getNext(String dataDir) {

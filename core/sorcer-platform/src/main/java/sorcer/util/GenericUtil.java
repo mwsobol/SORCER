@@ -299,7 +299,10 @@ public class GenericUtil {
 		// in a tmp dir; hard to debug failure in slurm...script gets
 		// on queue then dies because drive is full
 		//
-		File mcrCacheRoot = new File(scratchDir, "mcrCacheRoot");
+		//File mcrCacheRoot = new File(scratchDir, "mcrCacheRoot");
+		//
+		// less directories in windows is better
+		File mcrCacheRoot = scratchDir;
 		mcrCacheRoot.mkdir();
 		
 		// the .replace("\\", "/") is for windows-cygwin safety
