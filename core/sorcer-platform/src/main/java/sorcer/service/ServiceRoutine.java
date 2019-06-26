@@ -169,7 +169,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
         if (rp == null)
             rp = exertion.getProcessSignature().getContextReturn();
         else
-            exertion.getProcessSignature().setRequestReturn(rp);
+            exertion.getProcessSignature().setContextReturn(rp);
 
         if (rp != null) {
             try {

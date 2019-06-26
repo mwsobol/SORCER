@@ -9,7 +9,7 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.MikeAdder;
 import sorcer.arithmetic.provider.impl.AdderImpl;
-import sorcer.service.Exerter;
+import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.core.provider.RemoteServiceShell;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
@@ -21,13 +21,13 @@ import java.util.Date;
 
 import static org.junit.Assert.*;
 import static sorcer.co.operator.*;
-import static sorcer.ent.operator.ent;
 import static sorcer.ent.operator.invoker;
-import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.get;
+import static sorcer.eo.operator.mog;
 import static sorcer.eo.operator.result;
-import static sorcer.mo.operator.*;
+import static sorcer.eo.operator.*;
 import static sorcer.mo.operator.value;
+import static sorcer.mo.operator.*;
 import static sorcer.so.operator.exec;
 import static sorcer.so.operator.exert;
 
@@ -194,6 +194,24 @@ public class Signatures {
 
 //		logger.info("ss: " + execEnt(ss));
 		assertEquals(100.0, exec(ss));
+
+	}
+
+	@Test
+	public void multiFiLocalSigService() throws Exception {
+
+		// request the local service
+		Signature mfs = mfSig(sig("add", AdderImpl.class),
+				sig("multiply", MultiplierImpl.class));
+		setContext(mfs, context("mfs",
+				inVal("arg/x1", 20.0),
+				inVal("arg/x2", 80.0),
+				result("result/y")));
+
+//		logger.info("ss: " + execEnt(mfs));
+		assertEquals(100.0, exec(mfs));
+		// change signature fidelity
+		assertEquals(1600.0, exec(mfs, fi("multiply")));
 
 	}
 

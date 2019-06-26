@@ -181,6 +181,14 @@ operator extends Operator {
         return exertion;
     }
 
+    public static Signature setContext(Signature signature, Context context) {
+        if (signature.getContextReturn() == null) {
+            signature.setContextReturn(new Context.Return());
+        }
+        signature.getContextReturn().setDataContext(context);
+        return signature;
+    }
+
     public static ControlContext control(Routine exertion)
         throws ContextException {
         return ((ServiceRoutine) exertion).getControlContext();
@@ -940,6 +948,16 @@ operator extends Operator {
         return new SignatureDeployer(builders);
     }
 
+    public static ServiceSignature mfSig(Signature... signatures)
+            throws SignatureException {
+
+        ServiceFidelity mfi = new ServiceFidelity(signatures);
+        mfi.fiType = Fi.Type.SIG;
+        ServiceSignature signature = new ServiceSignature(signatures[0]);
+        signature.setMultiFi(mfi);
+        return signature;
+    }
+
     public static ServiceSignature sig(String operation, Class serviceType)
         throws SignatureException {
         return sig(operation, serviceType, new Object[]{});
@@ -1000,7 +1018,7 @@ operator extends Operator {
                 } else if (o instanceof Strategy.Shell) {
                     sig.setShellRemote((Strategy.Shell) o);
                 } else if (o instanceof Context.Return) {
-                    sig.setRequestReturn((Context.Return) o);
+                    sig.setContextReturn((Context.Return) o);
                 } else if (o instanceof ServiceDeployment) {
                     sig.setProvisionable(true);
                     sig.setDeployment((ServiceDeployment) o);
@@ -1102,27 +1120,27 @@ operator extends Operator {
             // not applied to connectors in Signatures
             && context.getClass() != MapContext.class) {
             if (signature.getContextReturn() == null) {
-                signature.setRequestReturn(new Context.Return());
+                signature.setContextReturn(new Context.Return());
             }
             signature.getContextReturn().setDataContext(context);
         }
 
         // handle return contextReturn
         if (returnPath != null) {
-            signature.setRequestReturn(returnPath);
+            signature.setContextReturn(returnPath);
         }
 
         // handle input output paths
         if (inPaths != null) {
             if (signature.getContextReturn() == null) {
-                signature.setRequestReturn(new Context.Return(inPaths));
+                signature.setContextReturn(new Context.Return(inPaths));
             } else {
                 signature.getContextReturn().inPaths = inPaths;
             }
         }
         if (outPaths != null) {
             if (signature.getContextReturn() == null) {
-                signature.setRequestReturn(new Context.Return(outPaths));
+                signature.setContextReturn(new Context.Return(outPaths));
             } else {
                 signature.getContextReturn().outPaths = outPaths;
             }
@@ -1179,7 +1197,7 @@ operator extends Operator {
             // not applied to connectors in Signatures
             && context.getClass() != MapContext.class) {
             if (newSig.getContextReturn() == null) {
-                newSig.setRequestReturn(new Context.Return());
+                newSig.setContextReturn(new Context.Return());
             }
             newSig.getContextReturn().setDataContext(context);
         }
@@ -1187,14 +1205,14 @@ operator extends Operator {
         // handle input output paths
         if (inPaths != null) {
             if (newSig.getContextReturn() == null) {
-                newSig.setRequestReturn(new Context.Return(inPaths));
+                newSig.setContextReturn(new Context.Return(inPaths));
             } else {
                 newSig.getContextReturn().inPaths = inPaths;
             }
         }
         if (outPaths != null) {
             if (newSig.getContextReturn() == null) {
-                newSig.setRequestReturn(new Context.Return(outPaths));
+                newSig.setContextReturn(new Context.Return(outPaths));
             } else {
                 newSig.getContextReturn().outPaths = outPaths;
             }
@@ -1304,18 +1322,18 @@ operator extends Operator {
                 } else if (o instanceof Strategy.Shell) {
                     ((ServiceSignature) sig).setShellRemote((Strategy.Shell) o);
                 } else if (o instanceof Context.Return) {
-                    sig.setRequestReturn((Context.Return) o);
+                    sig.setContextReturn((Context.Return) o);
                 } else if (o instanceof ParameterTypes) {
                     ((ServiceSignature)sig).setMatchTypes(((ParameterTypes) o).parameterTypes);
                 } else if (o instanceof Context.In) {
                     if (sig.getContextReturn() == null) {
-                        sig.setRequestReturn(new Context.Return((Context.In) o));
+                        sig.setContextReturn(new Context.Return((Context.In) o));
                     } else {
                         sig.getContextReturn().inPaths = (Context.In) o;
                     }
                 } else if (o instanceof Context.Out) {
                     if (sig.getContextReturn() == null) {
-                        sig.setRequestReturn(new Context.Return((Context.Out) o));
+                        sig.setContextReturn(new Context.Return((Context.Out) o));
                     } else {
                         sig.getContextReturn().outPaths = (Context.Out) o;
                     }
@@ -1329,7 +1347,7 @@ operator extends Operator {
                     // not applied to connectors in Signatures
                     && o.getClass() != MapContext.class) {
                     if (sig.getContextReturn() == null) {
-                        sig.setRequestReturn(new Context.Return());
+                        sig.setContextReturn(new Context.Return());
                     }
                     ((Context.Return) sig.getContextReturn()).setDataContext((Context) o);
                 }
@@ -1503,7 +1521,7 @@ operator extends Operator {
             sig = new ObjectSignature(serviceType);
         }
         if (returnPath != null)
-            sig.setRequestReturn(returnPath);
+            sig.setContextReturn(returnPath);
         return sig;
     }
 
@@ -1515,7 +1533,7 @@ operator extends Operator {
         } else {
             sig = new EvaluationSignature(evaluator);
         }
-        sig.setRequestReturn(requestPath);
+        sig.setContextReturn(requestPath);
         if (name != null) {
             sig.setName(name);
         }
@@ -1758,7 +1776,7 @@ operator extends Operator {
         return mfr;
     }
 
-    public static MorphFidelity multiFi(Signature... signatures) {
+    public static MorphFidelity mrphFi(Signature... signatures) {
         MorphFidelity multiFi = new MorphFidelity(new ServiceFidelity(signatures));
         return multiFi;
     }
@@ -2168,7 +2186,7 @@ operator extends Operator {
             srvSig = sigs.get(0);
         } else if (sigs.size() > 1) {
             for (Object s : sigs) {
-                if (s instanceof Signature && ((Signature)s).getType() == Signature.SRV) {
+                if (s instanceof Signature && ((Signature)s).getExecType() == Signature.SRV) {
                     srvSig = (Signature)s;
                     break;
                 }
@@ -2496,7 +2514,7 @@ operator extends Operator {
             }
         }
         if ((inPaths != null || outPaths != null) && signature.getContextReturn() == null) {
-            signature.setRequestReturn(new Context.Return(name));
+            signature.setContextReturn(new Context.Return(name));
         }
         if (inPaths != null) {
             ((Context.Return)signature.getContextReturn()).setInputPaths(inPaths);

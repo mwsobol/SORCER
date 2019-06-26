@@ -439,7 +439,7 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 			if (alls.size() > 1 && this.isBatch() && !(lastSig instanceof NetSignature)) {
 				boolean allSrvType = true;
 				for (Service sig : alls) {
-					if (!((Signature)sig).getType().equals(Signature.SRV)) {
+					if (!((Signature)sig).getExecType().equals(Signature.SRV)) {
 						allSrvType = false;
 						break;
 					}

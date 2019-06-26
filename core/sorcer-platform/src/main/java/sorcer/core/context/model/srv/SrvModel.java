@@ -115,7 +115,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
 
     public boolean isBatch() {
         for (Object s : ((ServiceFidelity)multiFi.getSelect()).getSelects()) {
-            if (s instanceof Signature && ((Signature)s).getType() != Signature.Type.PROC)
+            if (s instanceof Signature && ((Signature)s).getExecType() != Signature.Type.PROC)
                 return false;
         }
         return true;

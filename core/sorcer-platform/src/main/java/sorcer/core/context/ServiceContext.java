@@ -1595,12 +1595,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 		Context outcxt, resultContext = null;
 		try {
 			// define output context here
-			sig.setRequestReturn(null);
+			sig.setContextReturn(null);
 			Task sTask = task(sig, incxt);
 			sTask.setAccess(sig.getAccessType());
 			outcxt = task(sig, incxt).exert().getContext();
 			// restore return contextReturn
-			sig.setRequestReturn(rp);
+			sig.setContextReturn(rp);
 
 		resultContext = outcxt;
 		if (ops != null && ops.size() > 0) {

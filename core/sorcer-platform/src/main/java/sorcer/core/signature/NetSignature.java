@@ -393,7 +393,7 @@ public class NetSignature extends ObjectSignature implements sig {
 	}
 
 	@Override
-	public Object execute(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws MogramException {
 		Routine mog = Arg.selectRoutine(args);
 		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt == null && returnPath != null) {
@@ -429,7 +429,7 @@ public class NetSignature extends ObjectSignature implements sig {
 				out = exert(task(this, cxt));
 				return out;
 			}
-		} catch (Exception ex) {
+		} catch (SignatureException | TransactionException | RemoteException ex) {
 			throw new MogramException(ex);
 		}
 		return context(result);

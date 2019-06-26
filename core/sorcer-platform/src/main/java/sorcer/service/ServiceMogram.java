@@ -404,7 +404,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
         Signature sig = null;
         for (Object s : selectedFi.selects) {
-            if (s instanceof Signature && ((Signature)s).getType() == Signature.Type.PROC) {
+            if (s instanceof Signature && ((Signature)s).getExecType() == Signature.Type.PROC) {
                 sig = (Signature)s;
                 break;
             }
@@ -450,7 +450,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     public List<Signature> getApdProcessSignatures() {
         List<Signature> sl = new ArrayList<Signature>();
         for (Object s : ((ServiceFidelity)multiFi.getSelect()).getSelects()) {
-            if (s instanceof Signature && ((Signature)s).getType() == Signature.Type.APD_DATA)
+            if (s instanceof Signature && ((Signature)s).getExecType() == Signature.Type.APD_DATA)
                 sl.add((Signature)s);
         }
         return sl;
@@ -459,7 +459,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     public List<Signature> getPreprocessSignatures() {
         List<Signature> sl = new ArrayList<Signature>();
         for (Object s : ((ServiceFidelity)multiFi.getSelect()).getSelects()) {
-            if (s instanceof Signature && ((Signature)s).getType() == Signature.Type.PRE)
+            if (s instanceof Signature && ((Signature)s).getExecType() == Signature.Type.PRE)
                 sl.add((Signature)s);
         }
         return sl;
@@ -468,7 +468,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     public List<Signature> getPostprocessSignatures() {
         List<Signature> sl = new ArrayList<Signature>();
         for (Object s : ((ServiceFidelity)multiFi.getSelect()).getSelects()) {
-            if (s instanceof Signature && ((Signature)s).getType() == Signature.Type.POST)
+            if (s instanceof Signature && ((Signature)s).getExecType() == Signature.Type.POST)
                 sl.add((Signature)s);
         }
         return sl;

@@ -187,7 +187,7 @@ public class ServiceFidelity extends Fidelity<Service> implements SupportCompone
 		if (selects.size() > 0) {
 			for (Service item : selects) {
 				if (item instanceof Signature
-						&& ((Signature) item).getType().equals(Signature.Type.PROC)) {
+						&& ((Signature) item).getExecType().equals(Signature.Type.PROC)) {
 					return (Signature) item;
 				}
 			}

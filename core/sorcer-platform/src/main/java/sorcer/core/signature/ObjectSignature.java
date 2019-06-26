@@ -391,7 +391,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 	}
 
 	@Override
-	public Object execute(Arg... args) throws MogramException, RemoteException {
+	public Object execute(Arg... args) throws MogramException {
 		Mogram mog = Arg.selectMogram(args);
 		if (mog == null && returnPath != null) {
 			mog = returnPath.getDataContext();
@@ -406,7 +406,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 					argTypes = new Class[]{Context.class};
 					Context.Return rp = returnPath;
 					if (rp == null) {
-						rp = (Context.Return) ((Context) mog).getContextReturn();
+						rp = ((Context) mog).getContextReturn();
 					}
 					if (rp != null && rp.returnPath != null) {
 						((Context) mog).setRequestReturn(rp);
@@ -418,7 +418,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 			} else {
 				out = exert(task(this));
 			}
-		} catch (TransactionException e) {
+		} catch (TransactionException | RemoteException e) {
 			e.printStackTrace();
 		}
 		return out;

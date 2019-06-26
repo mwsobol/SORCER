@@ -141,7 +141,7 @@ public interface Signature extends Opservice, Comparable, Dependency, Identifiab
 	 * @param path
 	 *            to the return execute
 	 */
-	public void setRequestReturn(Context.Return path);
+	public void setContextReturn(Context.Return path);
 
 	public void setReturnRequest(String path);
 
@@ -167,7 +167,7 @@ public interface Signature extends Opservice, Comparable, Dependency, Identifiab
 	 *
 	 * @return a Type of this signature
 	 */
-	public Type getType();
+	public Type getExecType();
 
 	/**
 	 * Returns a inConnector specifying output paths for existing
@@ -376,61 +376,6 @@ public interface Signature extends Opservice, Comparable, Dependency, Identifiab
 		}
 	}
 
-//    public static class Paths extends ArrayList<Path> implements Arg {
-//        private static final long serialVersionUID = 1L;
-//
-//        public String name;
-//
-//        public Paths() {
-//            super();
-//        }
-//
-//        public Paths(int capacity) {
-//            super(capacity);
-//        }
-//
-//        public Paths(Path[] paths) {
-//            for (Path returnPath : paths) {
-//                add(returnPath) ;
-//            }
-//        }
-//        public Paths(String[] names) {
-//            for (String name : names) {
-//                add(new Path(name)) ;
-//            }
-//        }
-//
-//        public String[] toStringArray() {
-//            String[] paths = new String[size()];
-//            for (int i = 0; i < size(); i++)
-//                paths[i] = getValue(i).returnPath;
-//
-//            return paths;
-//        }
-//
-//        public Path[] toPathArray() {
-//            Path[] paths = new Path[size()];
-//            return this.toArray(paths);
-//        }
-//
-//		public boolean containsPath(String returnPath) {
-//			for (Path p : this) {
-//				if (p.getName().equals(returnPath)) {
-//					return true;
-//				}
-//			}
-//			return false;
-//		}
-//
-//        public void setName(String name) {
-//            this.name = name;
-//        }
-//
-//        @Override
-//        public String getName() {
-//            return name;
-//        }
-//    }
 
 	public static class Append extends Paths {
 		private static final long serialVersionUID = 1L;

@@ -561,7 +561,7 @@ public class ControlFlowManager {
 
     public Context processContinousely(Task task, List<Signature> signatures)
             throws RoutineException, ContextException {
-        Signature.Type type = signatures.get(0).getType();
+        Signature.Type type = signatures.get(0).getExecType();
         Task t;
         Context shared = task.getContext();
         for (int i = 0; i < signatures.size(); i++) {

@@ -45,7 +45,7 @@ import java.util.*;
 
 import static sorcer.eo.operator.*;
 
-public class ServiceSignature implements Signature, SorcerConstants, sig {
+public class ServiceSignature extends MultiFiSlot implements Signature, SorcerConstants, sig {
 
 	static final long serialVersionUID = -8527094638557595398L;
 
@@ -138,6 +138,19 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 		name = selector;
 	}
 
+	public ServiceSignature(Signature signature) {
+		signatureId = UuidFactory.generate();
+		this.name = signature.getName();
+		this.operation.selector = signature.getSelector();
+		this.impl = signature;
+		try {
+			this.multitype.providerType = signature.getMultitype().providerType;
+			this.multitype.matchTypes = signature.getMultitype().matchTypes;
+		} catch (SignatureException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public ServiceSignature(String name, String selector) {
 		signatureId = UuidFactory.generate();
 		this.name = name;
@@ -152,6 +165,16 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
         this.providerName =  providerName;
         execType = Type.PROC;
     }
+
+	public Signature selectFi(String name) throws ConfigurationException {
+		ServiceSignature signature = (ServiceSignature) this.multiFi.selectSelect(name);
+		this.name = signature.getName();
+		this.operation.selector = signature.getSelector();
+		this.impl = signature;
+		this.multitype.providerType = signature.getMultitype().providerType;
+		this.multitype.matchTypes = signature.getMultitype().matchTypes;
+		return signature;
+	}
 
 	public void setExertion(Routine exertion) throws RoutineException {
 		this.exertion = exertion;
@@ -298,7 +321,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 		return this;
 	}
 
-	public Type getType() {
+	public Type getExecType() {
 		return execType;
 	}
 
@@ -534,7 +557,7 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	}
 
 	@Override
-	public void setRequestReturn(Context.Return returnPath) {
+	public void setContextReturn(Context.Return returnPath) {
 		this.returnPath = (Context.Return)returnPath;
 	}
 
@@ -694,8 +717,29 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	}
 
 	@Override
-	public Object execute(Arg... args) throws MogramException, RemoteException {
-	    throw new MogramException("Signature service execEnt should be implementd in subclasses");
+	public Object execute(Arg... args) throws MogramException {
+		if (multiFi != null) {
+			try {
+				List<Fidelity> fis = Arg.selectFidelities(args);
+				if (fis.size() > 0) {
+					multiFi.selectSelect(fis.get(0).getName());
+				}
+				Signature signature = (Signature) multiFi.getSelect();
+
+				if (this.getContextReturn().getDataContext() != null) {
+					if (signature.getContextReturn() == null) {
+						signature.setContextReturn(new Context.Return());
+					}
+					signature.getContextReturn().setDataContext(this.getContextReturn().getDataContext());
+				}
+				return signature.execute(args);
+			} catch (ServiceException | ConfigurationException | RemoteException e) {
+				throw new MogramException(e);
+			}
+
+		} else {
+			throw new MogramException("Signature service exec should be implemented in subclasses");
+		}
 	}
 	
 	public Entry act(Arg... args) throws ServiceException, RemoteException {
