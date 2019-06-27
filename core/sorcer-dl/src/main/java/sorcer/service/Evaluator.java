@@ -40,4 +40,9 @@ public interface  Evaluator <T> extends Opservice, ServiceProvider, Evaluation<T
 	public void update(Setup... entries) throws ContextException;
 
 	public void setNegative(boolean negative);
+
+	public Fi getMultiFi();
+
+	public Morpher getMorpher();
+
 }
