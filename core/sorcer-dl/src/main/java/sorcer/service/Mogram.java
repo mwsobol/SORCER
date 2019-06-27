@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Identifiable, Request, Exertion, Scopable, Substitutable, Arg {
+public interface Mogram extends Identifiable, FederatedRequest, Exertion, Scopable, Substitutable, Arg {
 
     /**
      * Returns an ID of this mogram.
@@ -152,7 +152,7 @@ public interface Mogram extends Identifiable, Request, Exertion, Scopable, Subst
     public Fidelity getSelectedFidelity();
 
     /**
-     * Returns service fidelities of this exertion.
+     * Returns service multi-fidelities of this exertion.
      */
     public Fi getMultiFi();
 

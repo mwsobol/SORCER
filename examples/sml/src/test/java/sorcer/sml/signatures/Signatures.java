@@ -208,7 +208,7 @@ public class Signatures {
 				inVal("arg/x2", 80.0),
 				result("result/y")));
 
-//		logger.info("ss: " + execEnt(mfs));
+		logger.info("ss: " + exec(mfs));
 		assertEquals(100.0, exec(mfs));
 		// change signature fidelity
 		assertEquals(1600.0, exec(mfs, fi("multiply")));

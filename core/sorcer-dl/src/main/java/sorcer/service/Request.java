@@ -23,9 +23,9 @@ import java.rmi.RemoteException;
 
 /**
  * An top-level common interface for all request service in SORCER.
- * Request services are frontend service created by users. Standalone
- * request services are called subroutine services and request federated
- * services are called mograms.
+ * Request services are frontend services created by users. Standalone
+ * request services associated with executables are elementary request
+ * services and aggregated request services are called mograms.
  *
  * @author Mike Sobolewski
  */
@@ -33,8 +33,14 @@ public interface Request extends Service, Identifiable {
 
     public void setName(String name);
 
+    /**
+     * Returns service multi-fidelities of this request.
+     */
     public Fi getMultiFi();
 
+    /**
+     * Returns a morpher updating at runtime multi-fidelities of this request.
+     */
     public Morpher getMorpher();
 
 }
