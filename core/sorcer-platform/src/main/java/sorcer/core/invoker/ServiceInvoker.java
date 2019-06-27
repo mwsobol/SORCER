@@ -105,6 +105,10 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	// set of dependent variables for this evaluator
 	protected ArgSet args = new ArgSet();
 
+	protected Fi multiFi;
+
+	protected Morpher morpher;
+
 	/** Logger for logging information about instances of this multitype */
 	static final Logger logger = LoggerFactory.getLogger(ServiceInvoker.class
 			.getName());
@@ -635,11 +639,20 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 
 	@Override
 	public Fi getMultiFi() {
-		return null;
+		return multiFi;
+	}
+
+	public void setMultiFi(ServiceFidelity multiFi) {
+		this.multiFi = multiFi;
 	}
 
 	@Override
 	public Morpher getMorpher() {
-		return null;
+		return morpher;
 	}
+
+	public void setMorpher(Morpher morpher) {
+		this.morpher = morpher;
+	}
+
 }
