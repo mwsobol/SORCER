@@ -135,11 +135,11 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Setter, Comparab
                 if (arg instanceof Fidelity && multiFi != null) {
                     if (((Fidelity) arg).getPath() == null || ((Fidelity) arg).getPath().equals(key)) {
                         try {
-                            impl = multiFi.selectSelect(arg.getName());
+                            impl = (T) multiFi.selectSelect(arg.getName());
                         } catch (ConfigurationException e) {
                             throw new ContextException(e);
                         }
-                        out = (T) ((Entry) impl).getData(args);
+                        out = (T) ((Slot) impl).getData(args);
                         multiFi.setChanged(false);
                         isValid = true;
                         isChanged = true;
@@ -164,7 +164,7 @@ public class Value<T> extends Entry<T> implements Valuation<T>, Setter, Comparab
                         uo.setName(key);
                         url = SdbUtil.store(uo);
                     }
-                    impl = url;
+                    impl = (T) url;
                     out = null;
                 }
                 return (T) val;

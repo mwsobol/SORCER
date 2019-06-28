@@ -18,8 +18,6 @@
 package sorcer.core.signature;
 
 import sorcer.service.Evaluation;
-import sorcer.service.Evaluator;
-import sorcer.service.Identifiable;
 import sorcer.service.modeling.sig;
 
 public class EvaluationSignature extends ServiceSignature implements sig {

@@ -637,22 +637,4 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 		return null;
 	}
 
-	@Override
-	public Fi getMultiFi() {
-		return multiFi;
-	}
-
-	public void setMultiFi(ServiceFidelity multiFi) {
-		this.multiFi = multiFi;
-	}
-
-	@Override
-	public Morpher getMorpher() {
-		return morpher;
-	}
-
-	public void setMorpher(Morpher morpher) {
-		this.morpher = morpher;
-	}
-
 }

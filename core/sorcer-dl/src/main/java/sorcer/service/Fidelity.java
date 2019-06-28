@@ -1,6 +1,5 @@
 package sorcer.service;
 
-import net.jini.core.entry.Entry;
 import sorcer.core.Tag;
 import sorcer.service.modeling.Data;
 import sorcer.service.modeling.fi;
@@ -307,11 +306,13 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 
 	@Override
 	public Data act(Arg... args) throws ServiceException, RemoteException {
-		return new MultiFiSlot(((Identifiable)select).getName(), ((Service)select).execute(args));
+		Service srv = (Service)select;
+		return new Slot(((Identifiable)select).getName(), srv.execute(args));
 	}
 
 	@Override
 	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
-		return new MultiFiSlot(entryName, ((Service)select).execute(args));
+		Service srv = (Service)select;
+		return new Slot(entryName, srv.execute(args));
 	}
 }

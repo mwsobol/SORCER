@@ -45,7 +45,7 @@ import java.util.*;
 
 import static sorcer.eo.operator.*;
 
-public class ServiceSignature extends MultiFiSlot implements Signature, SorcerConstants, sig {
+public class ServiceSignature implements Signature, SorcerConstants, sig {
 
 	static final long serialVersionUID = -8527094638557595398L;
 
@@ -58,7 +58,7 @@ public class ServiceSignature extends MultiFiSlot implements Signature, SorcerCo
 
 	protected String ownerID;
 
-	protected Context.Return returnPath;
+	protected Context.Return contextReturn;
 
 	// the indicated usage of this signature
 	protected Set<Kind> rank = new HashSet<Kind>();
@@ -138,19 +138,6 @@ public class ServiceSignature extends MultiFiSlot implements Signature, SorcerCo
 		name = selector;
 	}
 
-	public ServiceSignature(Signature signature) {
-		signatureId = UuidFactory.generate();
-		this.name = signature.getName();
-		this.operation.selector = signature.getSelector();
-		this.impl = signature;
-		try {
-			this.multitype.providerType = signature.getMultitype().providerType;
-			this.multitype.matchTypes = signature.getMultitype().matchTypes;
-		} catch (SignatureException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public ServiceSignature(String name, String selector) {
 		signatureId = UuidFactory.generate();
 		this.name = name;
@@ -165,16 +152,6 @@ public class ServiceSignature extends MultiFiSlot implements Signature, SorcerCo
         this.providerName =  providerName;
         execType = Type.PROC;
     }
-
-	public Signature selectFi(String name) throws ConfigurationException {
-		ServiceSignature signature = (ServiceSignature) this.multiFi.selectSelect(name);
-		this.name = signature.getName();
-		this.operation.selector = signature.getSelector();
-		this.impl = signature;
-		this.multitype.providerType = signature.getMultitype().providerType;
-		this.multitype.matchTypes = signature.getMultitype().matchTypes;
-		return signature;
-	}
 
 	public void setExertion(Routine exertion) throws RoutineException {
 		this.exertion = exertion;
@@ -449,7 +426,7 @@ public class ServiceSignature extends MultiFiSlot implements Signature, SorcerCo
 		return this.getClass() + ":" + providerName + ";" + execType + ";"
 				+ ";" + multitype + ";"
 				+ (prefix != null ? "#" + operation.selector : "")
-				+ ";" + returnPath;
+				+ ";" + contextReturn;
 	}
 
 	public ServiceID getServiceID() {
@@ -556,11 +533,6 @@ public class ServiceSignature extends MultiFiSlot implements Signature, SorcerCo
 			((ServiceName)providerName).setGroups(groups);
 	}
 
-	@Override
-	public void setContextReturn(Context.Return returnPath) {
-		this.returnPath = (Context.Return)returnPath;
-	}
-
 	public boolean isProvisionable() {
 		return operation.isProvisionable;
 	}
@@ -596,17 +568,27 @@ public class ServiceSignature extends MultiFiSlot implements Signature, SorcerCo
 	}
 
 	@Override
-	public void setReturnRequest(String path) {
-		returnPath = new Context.Return<Object>(path);
+	public void setContextReturn(Context.Return returnPath) {
+		this.contextReturn = returnPath;
 	}
 
 	@Override
-	public void setReturnRequest(String path, Direction direction) {
-		returnPath = new Context.Return<Object>(path, direction);
+	public void setContextReturn(String path, Direction direction) {
+		contextReturn = new Context.Return(path, direction);
+	}
+
+	@Override
+	public void setContextReturn(String path) {
+		contextReturn = new Context.Return(path);
+	}
+
+	@Override
+	public void setContextReturn() {
+		contextReturn = new Context.Return();
 	}
 
 	public Context.Return getContextReturn() {
-		return returnPath;
+		return contextReturn;
 	}
 
 	public ServiceDeployment getDeployment() {
@@ -718,28 +700,7 @@ public class ServiceSignature extends MultiFiSlot implements Signature, SorcerCo
 
 	@Override
 	public Object execute(Arg... args) throws MogramException {
-		if (multiFi != null) {
-			try {
-				List<Fidelity> fis = Arg.selectFidelities(args);
-				if (fis.size() > 0) {
-					multiFi.selectSelect(fis.get(0).getName());
-				}
-				Signature signature = (Signature) multiFi.getSelect();
-
-				if (this.getContextReturn().getDataContext() != null) {
-					if (signature.getContextReturn() == null) {
-						signature.setContextReturn(new Context.Return());
-					}
-					signature.getContextReturn().setDataContext(this.getContextReturn().getDataContext());
-				}
-				return signature.execute(args);
-			} catch (ServiceException | ConfigurationException | RemoteException e) {
-				throw new MogramException(e);
-			}
-
-		} else {
-			throw new MogramException("Signature service exec should be implemented in subclasses");
-		}
+		throw new MogramException("Signature service exec should be implemented in subclasses");
 	}
 	
 	public Entry act(Arg... args) throws ServiceException, RemoteException {

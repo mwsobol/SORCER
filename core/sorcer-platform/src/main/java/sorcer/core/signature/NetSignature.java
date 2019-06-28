@@ -80,7 +80,7 @@ public class NetSignature extends ObjectSignature implements sig {
 		this.providerName =  signature.providerName;
 		this.multitype = signature.multitype;
 		this.deployment = signature.deployment;
-		this.returnPath = signature.returnPath;
+		this.contextReturn = signature.contextReturn;
 	}
 
 	public NetSignature(Class serviceType) {
@@ -386,7 +386,7 @@ public class NetSignature extends ObjectSignature implements sig {
 		return this.getClass().getSimpleName() + ":" + providerName + ":"
 				+ multitype + "." + operation.selector
 				+ (prefix != null ? "#" + prefix : "")
-				+ (returnPath != null ? "; result: " + returnPath : "")
+				+ (contextReturn != null ? "; result: " + contextReturn : "")
 				+ ("; provisionable: " + operation.isProvisionable)
 				+ ((deployment != null && deployment.getConfig() != null)
 					? "; config: " + deployment.getConfig() : "");
@@ -396,8 +396,8 @@ public class NetSignature extends ObjectSignature implements sig {
 	public Object execute(Arg... args) throws MogramException {
 		Routine mog = Arg.selectRoutine(args);
 		Context cxt = (Context) Arg.selectDomain(args);
-		if (cxt == null && returnPath != null) {
-			cxt = returnPath.getDataContext();
+		if (cxt == null && contextReturn != null) {
+			cxt = contextReturn.getDataContext();
 		}
 		Mogram result = null;
 		try {
@@ -417,7 +417,7 @@ public class NetSignature extends ObjectSignature implements sig {
 				}
 			} else if (cxt != null) {
 				Context out = null;
-				Context.Return rp = returnPath;
+				Context.Return rp = contextReturn;
 				if (rp == null) {
 					rp = (Context.Return)cxt.getContextReturn();;
 				}

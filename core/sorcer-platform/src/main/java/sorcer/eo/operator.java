@@ -948,14 +948,10 @@ operator extends Operator {
         return new SignatureDeployer(builders);
     }
 
-    public static ServiceSignature mfSig(Signature... signatures)
+    public static MultiFiSignature mfSig(Signature... signatures)
             throws SignatureException {
-
-        ServiceFidelity mfi = new ServiceFidelity(signatures);
-        mfi.fiType = Fi.Type.SIG;
-        ServiceSignature signature = new ServiceSignature(signatures[0]);
-        signature.setMultiFi(mfi);
-        return signature;
+        MultiFiSignature mfi = new MultiFiSignature(signatures);
+        return mfi;
     }
 
     public static ServiceSignature sig(String operation, Class serviceType)

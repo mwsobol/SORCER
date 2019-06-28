@@ -65,7 +65,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
         this.providerName =  signature.providerName;
         this.multitype = signature.multitype;
         this.multitype.providerType = signature.multitype.providerType;
-        this.returnPath = signature.returnPath;
+        this.contextReturn = signature.contextReturn;
 	}
 
 	public ObjectSignature(String selector, Object object, Class<?>[] argTypes,
@@ -393,8 +393,8 @@ public class ObjectSignature extends ServiceSignature implements sig {
 	@Override
 	public Object execute(Arg... args) throws MogramException {
 		Mogram mog = Arg.selectMogram(args);
-		if (mog == null && returnPath != null) {
-			mog = returnPath.getDataContext();
+		if (mog == null && contextReturn != null) {
+			mog = contextReturn.getDataContext();
 		}
 		Context out = null;
 		try {
@@ -404,7 +404,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 					out = context(shell.exert(args));
 				} else if (mog instanceof Context) {
 					argTypes = new Class[]{Context.class};
-					Context.Return rp = returnPath;
+					Context.Return rp = contextReturn;
 					if (rp == null) {
 						rp = ((Context) mog).getContextReturn();
 					}
@@ -428,6 +428,6 @@ public class ObjectSignature extends ServiceSignature implements sig {
 		return this.getClass() + ";" + execType + ";"
 				+ (multitype.providerType == null ? "" : multitype.providerType + ";") + operation.selector
 				+ (prefix !=null ? "#" + prefix : "")
-				+ (returnPath != null ? ";"  + "result " + returnPath : "");
+				+ (contextReturn != null ? ";"  + "result " + contextReturn : "");
 	}
 }

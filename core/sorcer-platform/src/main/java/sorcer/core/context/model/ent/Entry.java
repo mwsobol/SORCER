@@ -69,10 +69,10 @@ public class Entry<V> extends MultiFiSlot<String, V>
             if (select instanceof Entry) {
                 Object selectImpl = ((Entry) multiFi.getSelect()).getImpl();
                 if (selectImpl != null) {
-                    impl = ((Entry) multiFi.getSelect()).getImpl();
+                    impl = (V) ((Entry) multiFi.getSelect()).getImpl();
                 }
             } else {
-                impl = (multiFi.getSelect());
+                impl = (V) multiFi.getSelect();
             }
         }
         isValid = true;
@@ -81,7 +81,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
 
     public Object applyFidelity() {
         if (multiFi != null && multiFi.isChanged()) {
-            impl = multiFi.getSelect();;
+            impl = (V) multiFi.getSelect();;
         }
         return impl;
     }
@@ -134,7 +134,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
     @Override
     public V getValue(Arg... args) throws ContextException {
         if (multiFi != null && multiFi.isChanged()) {
-            impl = multiFi.getSelect();
+            impl = (V) multiFi.getSelect();
             multiFi.setChanged(false);
         }
         if (impl instanceof Entry && ((Entry) impl).getKey().equals(key)) {
@@ -159,7 +159,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
                         uo.setName(key);
                         url = SdbUtil.store(uo);
                     }
-                    impl = url;
+                    impl = (V) url;
                     out = null;
                 }
                 return (V) val;

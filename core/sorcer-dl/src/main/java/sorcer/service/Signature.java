@@ -49,7 +49,7 @@ import java.util.List;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Signature extends Opservice, Comparable, Dependency, Identifiable,
+public interface Signature extends Comparable, Dependency, Identifiable,
 		Arg, EvaluationComponent, SupportComponent, Serializable {
 
 	/**
@@ -138,12 +138,14 @@ public interface Signature extends Opservice, Comparable, Dependency, Identifiab
 	/**
 	 * Assigns a request return of this signature with a given return path.
 	 *
-	 * @param path
-	 *            to the return execute
+	 * @param contextReturn
+	 * 			a context return
 	 */
-	public void setContextReturn(Context.Return path);
+	public void setContextReturn(Context.Return contextReturn);
 
-	public void setReturnRequest(String path);
+	public void setContextReturn(String path);
+
+	public void setContextReturn();
 
 	/**
 	 * Assigns a request return to the return execute with a return path and directional attribute.
@@ -153,7 +155,7 @@ public interface Signature extends Opservice, Comparable, Dependency, Identifiab
 	 * @param direction
 	 *            the request return directional attribute
 	 */
-	public void setReturnRequest(String path, Direction direction);
+	public void setContextReturn(String path, Direction direction);
 
 	/**
 	 * Returns a Context.Return to the return execute by this signature.

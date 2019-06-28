@@ -42,7 +42,7 @@ public class InputValue<T> extends Value<T> {
         super(path, item);
         this.isPersistent = isPersistent;
         if (SdbUtil.isSosURL(item)) {
-            impl = item;
+            impl = (T) item;
             out = null;
         }
         this.index = index;

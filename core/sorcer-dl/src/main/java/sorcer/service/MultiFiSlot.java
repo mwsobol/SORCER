@@ -26,7 +26,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public class MultiFiSlot<K, O> extends Slot<K, O> implements Opslot<O> {
+public class MultiFiSlot<K, O> extends Slot<K, O> {
 	private  static final long serialVersionUID =  1L;
 
     // selectable carrier (fidelity) of out

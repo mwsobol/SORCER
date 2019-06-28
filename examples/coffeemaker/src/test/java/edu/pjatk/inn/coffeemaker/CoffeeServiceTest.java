@@ -5,6 +5,7 @@ import edu.pjatk.inn.coffeemaker.impl.DeliveryImpl;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -51,27 +52,27 @@ public class CoffeeServiceTest {
 		recipe.setAmtChocolate(0);
 
 		espresso = context(ent("key", "espresso"), ent("price", 50),
-				ent("amtCoffee", 6), ent("amtMilk", 0),
-				ent("amtSugar", 1), ent("amtChocolate", 0));
+			ent("amtCoffee", 6), ent("amtMilk", 0),
+			ent("amtSugar", 1), ent("amtChocolate", 0));
 
 		mocha  = context(ent("key", "mocha"), ent("price", 100),
-				ent("amtCoffee", 8), ent("amtMilk", 1),
-				ent("amtSugar", 1), ent("amtChocolate", 2));
+			ent("amtCoffee", 8), ent("amtMilk", 1),
+			ent("amtSugar", 1), ent("amtChocolate", 2));
 
 		macchiato  = context(ent("key", "macchiato"), ent("price", 40),
-				ent("amtCoffee", 7), ent("amtMilk", 1),
-				ent("amtSugar", 2), ent("amtChocolate", 0));
+			ent("amtCoffee", 7), ent("amtMilk", 1),
+			ent("amtSugar", 2), ent("amtChocolate", 0));
 
 		americano  = context(ent("key", "americano"), ent("price", 40),
-				ent("amtCoffee", 4), ent("amtMilk", 0),
-				ent("amtSugar", 1), ent("amtChocolate", 0));
+			ent("amtCoffee", 4), ent("amtMilk", 0),
+			ent("amtSugar", 1), ent("amtChocolate", 0));
 	}
 
 	@After
 	public void cleanUp() throws Exception {
 		Routine cmt =
-				task(sig("deleteRecipes", CoffeeMaking.class),
-						context(types(), args()));
+			task(sig("deleteRecipes", CoffeeMaking.class),
+				context(types(), args()));
 
 		cmt = exert(cmt);
 		logger.info("deleted recipes context: " + context(cmt));
@@ -96,9 +97,9 @@ public class CoffeeServiceTest {
 		assertEquals(value(out, "recipe/added"), true);
 
 		Routine cmj = job("recipes",
-				task("mocha", sig("addRecipe", CoffeeService.class), mocha),
-				task("macchiato", sig("addRecipe", CoffeeService.class), macchiato),
-				task("americano", sig("addRecipe", CoffeeService.class), americano));
+			task("mocha", sig("addRecipe", CoffeeService.class), mocha),
+			task("macchiato", sig("addRecipe", CoffeeService.class), macchiato),
+			task("americano", sig("addRecipe", CoffeeService.class), americano));
 
 		out = upcontext(exert(cmj));
 		logger.info("job context: " + out);
@@ -130,15 +131,15 @@ public class CoffeeServiceTest {
 
 		// order espresso with delivery
 		Domain mod = model(
-				val("recipe/key", "espresso"),
-				val("paid$", 120),
-				val("location", "PJATK"),
-				val("room", "101"),
+			val("recipe/key", "espresso"),
+			val("paid$", 120),
+			val("location", "PJATK"),
+			val("room", "101"),
 
-				ent(sig("makeCoffee", CoffeeService.class,
-						result("coffee$", inPaths("recipe/key")))),
-				ent(sig("deliver", Delivery.class,
-						result("delivery$", inPaths("location", "room")))));
+			ent(sig("makeCoffee", CoffeeService.class,
+				result("coffee$", inPaths("recipe/key")))),
+			ent(sig("deliver", Delivery.class,
+				result("delivery$", inPaths("location", "room")))));
 //				ent("change$", invoker("paid$ - (coffee$ + delivery$)", args("paid$", "coffee$", "delivery$"))));
 
 		add(mod, ent("change$", invoker("paid$ - (coffee$ + delivery$)", args("paid$", "coffee$", "delivery$"))));
@@ -158,112 +159,112 @@ public class CoffeeServiceTest {
 	public void getJobLocalCoffee() throws Exception {
 
 		Task coffee = task("tc", sig("makeCoffee", CoffeeMaker.class), context(
-				inVal("recipe/key", "espresso"),
-				inVal("coffee/paid", 120),
-				val("x", 100),
-				inVal("recipe", espresso)));
+			inVal("recipe/key", "espresso"),
+			inVal("coffee/paid", 120),
+			val("x", 100),
+			inVal("recipe", espresso)));
 
 		Task delivery = task("td", sig("deliver", DeliveryImpl.class), context(
-				inVal("location", "PJATK"),
-				inVal("room", "101")));
+			inVal("location", "PJATK"),
+			inVal("room", "101")));
 
 		Job jcd = job("jcd", sig("exert", ServiceJobber.class), coffee, delivery,
-				pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "coffee/change")));
+			pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "coffee/change")));
 
 		jcd = exert(jcd);
 
-        //TODO where selfContext is created?
-        // should be only when outPaths in thr job are declared
+		//TODO where selfContext is created?
+		// should be only when outPaths in thr job are declared
 //        Context selfOut = selfContext(jcd);
 //        Context out = upcontext(jcd);
 
 		Context out = upcontext(exert(jcd));
 
 		logger.info("out: " + out);
-        assertEquals(value(out, "jcd/tc/coffee/paid"), 120);
-        assertEquals(value(out, "jcd/tc/coffee/price"), 50);
-        assertEquals(value(out, "jcd/td/delivery/cost"), 60);
-        assertEquals(value(out, "jcd/td/change$"), 10);
+		assertEquals(value(out, "jcd/tc/coffee/paid"), 120);
+		assertEquals(value(out, "jcd/tc/coffee/price"), 50);
+		assertEquals(value(out, "jcd/td/delivery/cost"), 60);
+		assertEquals(value(out, "jcd/td/change$"), 10);
 
-        //shortcut with the job context (no context links)
-        assertEquals(value(out, "coffee/paid"), 120);
-        assertEquals(value(out, "coffee/price"), 50);
-        assertEquals(value(out, "delivery/cost"), 60);
-        assertEquals(value(out, "change$"), 10);
+		//shortcut with the job context (no context links)
+		assertEquals(value(out, "coffee/paid"), 120);
+		assertEquals(value(out, "coffee/price"), 50);
+		assertEquals(value(out, "delivery/cost"), 60);
+		assertEquals(value(out, "change$"), 10);
 	}
 
-    @Test
-    public void getJobRemoteCoffee() throws Exception {
+	@Test
+	public void getJobRemoteCoffee() throws Exception {
 
-        Task coffee = task("tc", sig("makeCoffee", CoffeeService.class), context(
-                inVal("recipe/key", "espresso"),
-                inVal("coffee/paid", 120),
-                inVal("recipe", espresso)));
+		Task coffee = task("tc", sig("makeCoffee", CoffeeService.class), context(
+			inVal("recipe/key", "espresso"),
+			inVal("coffee/paid", 120),
+			inVal("recipe", espresso)));
 
-        Task delivery = task("td", sig("deliver", Delivery.class), context(
-                inVal("location", "PJATK"),
-                inVal("room", "101")));
+		Task delivery = task("td", sig("deliver", Delivery.class), context(
+			inVal("location", "PJATK"),
+			inVal("room", "101")));
 
-        Job jcd = job("jcd", coffee, delivery,
-                pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "coffee/change")));
+		Job jcd = job("jcd", coffee, delivery,
+			pipe(outPoint(coffee, "coffee/change"), inPoint(delivery, "coffee/change")));
 
-        Context out = upcontext(exert(jcd));
+		Context out = upcontext(exert(jcd));
 
-        logger.info("out: " + out);
-        assertEquals(value(out, "jcd/tc/coffee/paid"), 120);
-        assertEquals(value(out, "jcd/tc/coffee/price"), 50);
-        assertEquals(value(out, "jcd/td/delivery/cost"), 60);
-        assertEquals(value(out, "jcd/td/change$"), 10);
-    }
+		logger.info("out: " + out);
+		assertEquals(value(out, "jcd/tc/coffee/paid"), 120);
+		assertEquals(value(out, "jcd/tc/coffee/price"), 50);
+		assertEquals(value(out, "jcd/td/delivery/cost"), 60);
+		assertEquals(value(out, "jcd/td/change$"), 10);
+	}
 
-    @Test
-    public void getBlockLocalCoffee() throws Exception {
+	@Test
+	public void getBlockLocalCoffee() throws Exception {
 
-        Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
-                inVal("recipe/key", "espresso"),
-                inVal("coffee/paid", 120),
-                inVal("recipe", espresso),
-                outPaths("coffee/change")));
+		Task coffee = task("coffee", sig("makeCoffee", CoffeeMaker.class), context(
+			inVal("recipe/key", "espresso"),
+			inVal("coffee/paid", 120),
+			inVal("recipe", espresso),
+			outPaths("coffee/change")));
 
-        Task delivery = task("delivery", sig("deliver", DeliveryImpl.class), context(
-                inVal("location", "PJATK"),
-                inVal("room", "101"),
-                outPaths("coffee/change", "delivery/cost", "change$")));
+		Task delivery = task("delivery", sig("deliver", DeliveryImpl.class), context(
+			inVal("location", "PJATK"),
+			inVal("room", "101"),
+			outPaths("coffee/change", "delivery/cost", "change$")));
 
-        Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
+		Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
 
-        Context out = context(exert(drinkCoffee));
+		Context out = context(exert(drinkCoffee));
 
-        logger.info("out: " + out);
-        assertEquals(value(out, "coffee/paid"), 120);
-        assertEquals(value(out, "coffee/change"), 70);
-        assertEquals(value(out, "delivery/cost"), 60);
-        assertEquals(value(out, "change$"), 10);
-    }
+		logger.info("out: " + out);
+		assertEquals(value(out, "coffee/paid"), 120);
+		assertEquals(value(out, "coffee/change"), 70);
+		assertEquals(value(out, "delivery/cost"), 60);
+		assertEquals(value(out, "change$"), 10);
+	}
 
-    @Test
-    public void getBlockRemoteCoffee() throws Exception {
+	@Test
+	public void getBlockRemoteCoffee() throws Exception {
 
-        Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
-                inVal("recipe/key", "espresso"),
-                inVal("coffee/paid", 120),
-                inVal("recipe", espresso),
-                outPaths("coffee/change")));
+		Task coffee = task("coffee", sig("makeCoffee", CoffeeService.class), context(
+			inVal("recipe/key", "espresso"),
+			inVal("coffee/paid", 120),
+			inVal("recipe", espresso),
+			outPaths("coffee/change")));
 
-        Task delivery = task("delivery", sig("deliver", Delivery.class), context(
-                inVal("location", "PJATK"),
-                inVal("room", "101"),
-                outPaths("coffee/change", "delivery/cost", "change$")));
+		Task delivery = task("delivery", sig("deliver", Delivery.class), context(
+			inVal("location", "PJATK"),
+			inVal("room", "101"),
+			outPaths("coffee/change", "delivery/cost", "change$")));
 
-        Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
+		Block drinkCoffee = block(context(inVal("coffee/paid", 120), val("coffee/change")), coffee, delivery);
 
-        Context out = context(exert(drinkCoffee));
+		Context out = context(exert(drinkCoffee));
 
-        logger.info("out: " + out);
-        assertEquals(value(out, "coffee/paid"), 120);
-        assertEquals(value(out, "coffee/change"), 70);
-        assertEquals(value(out, "delivery/cost"), 60);
-        assertEquals(value(out, "change$"), 10);
-    }
+		logger.info("out: " + out);
+		assertEquals(value(out, "coffee/paid"), 120);
+		assertEquals(value(out, "coffee/change"), 70);
+		assertEquals(value(out, "delivery/cost"), 60);
+		assertEquals(value(out, "change$"), 10);
+	}
 }
 
