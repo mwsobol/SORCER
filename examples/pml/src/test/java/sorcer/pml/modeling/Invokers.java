@@ -208,7 +208,7 @@ public class Invokers {
 	@Test
 	public void multiFiEvaluator() throws Exception {
 
-		Prc mfprc = mFiPrc(
+		Prc mfprc = mfPrc(
 			invoker("lambda",
 				(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
 				args("x", "y")),
