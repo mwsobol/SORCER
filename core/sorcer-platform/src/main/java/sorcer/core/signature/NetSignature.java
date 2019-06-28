@@ -422,7 +422,7 @@ public class NetSignature extends ObjectSignature implements sig {
 					rp = (Context.Return)cxt.getContextReturn();;
 				}
 				if (rp != null && rp.returnPath != null) {
-					cxt.setRequestReturn(rp);
+					cxt.setContextReturn(rp);
 					out = exert(task(this, cxt));
 					return out.getValue(rp.returnPath);
 				}

@@ -513,7 +513,7 @@ public class ControlFlowManager {
         task.setSelectedFidelity(ts);
         ts.setSelect(tsig);
         if (tsig.getContextReturn() != null)
-            ((ServiceContext)task.getContext()).setRequestReturn(tsig.getContextReturn());
+            ((ServiceContext)task.getContext()).setContextReturn(tsig.getContextReturn());
 
         task = task.doTask();
         if (task.getStatus() <= Exec.FAILED) {

@@ -177,8 +177,13 @@ operator extends Operator {
     }
 
     public static Routine setContext(Routine exertion, Context context) {
-        ((ServiceRoutine) exertion).setContext(context);
+        exertion.setContext(context);
         return exertion;
+    }
+
+    public static Prc setContext(Prc procedure, Context context) {
+        procedure.setScope(context);
+        return procedure;
     }
 
     public static Signature setContext(Signature signature, Context context) {
@@ -468,7 +473,7 @@ operator extends Operator {
             }
         }
         if (contextReturn != null)
-            cxt.setRequestReturn(contextReturn);
+            cxt.setContextReturn(contextReturn);
         if (execPath != null)
             cxt.setExecPath(execPath);
         if (cxtArgs != null) {
@@ -523,14 +528,14 @@ operator extends Operator {
         }
         if (outPaths instanceof Context.Out) {
             if (cxt.getContextReturn() == null) {
-                cxt.setRequestReturn(new Context.Return(outPaths));
+                cxt.setContextReturn(new Context.Return(outPaths));
             } else {
                 cxt.getContextReturn().outPaths = outPaths;
             }
         }
         if (inPaths instanceof Context.In) {
             if (cxt.getContextReturn() == null) {
-                cxt.setRequestReturn(new Context.Return(inPaths));
+                cxt.setContextReturn(new Context.Return(inPaths));
             } else {
                 cxt.getContextReturn().inPaths = new Context.In(paths);
             }
@@ -538,7 +543,7 @@ operator extends Operator {
 
         if (paths != null) {
             if (cxt.getContextReturn() == null) {
-                cxt.setRequestReturn(new Context.Return(paths.toPathArray()));
+                cxt.setContextReturn(new Context.Return(paths.toPathArray()));
             } else {
                 cxt.getContextReturn().inPaths = new Context.In(paths);
             }
@@ -2537,7 +2542,7 @@ operator extends Operator {
             job.setContext(data);
 
         if (rp != null) {
-            ((ServiceContext) job.getDataContext()).setRequestReturn(rp);
+            ((ServiceContext) job.getDataContext()).setContextReturn(rp);
         }
 
         if (controlStrategy != null) {

@@ -1590,7 +1590,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				incxt = this.getEvaluatedSubcontext(ips, items);
 			}
 		}
-		incxt.setRequestReturn(rp);
+		incxt.setContextReturn(rp);
 		String returnPath = rp.getReturnPath();
 		Context outcxt, resultContext = null;
 		try {
@@ -2746,7 +2746,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 				break;
 			}
 		}
-		if (rPath != null) setRequestReturn(rPath);
+		if (rPath != null) setContextReturn(rPath);
 
 		try {
 			for (Arg e : entries) {

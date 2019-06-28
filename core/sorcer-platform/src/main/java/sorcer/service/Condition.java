@@ -34,7 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * A Condition specifies a conditional eval in a given service context for its free variables
  * in the form of path/eval pairs with paths being guard parameters of a closure expression.
@@ -76,6 +75,9 @@ import java.util.Map;
 
 	// overwrites status
 	private boolean value = false;
+
+	// default instance new Return(Context.RETURN);
+	protected Context.Return contextReturn;
 
 	public Condition() {
 		// do nothing
@@ -214,6 +216,16 @@ import java.util.Map;
 	@Override
 	public Object asis() throws EvaluationException, RemoteException {
 		return evaluate();
+	}
+
+	@Override
+	public Context.Return getContextReturn() {
+		return contextReturn;
+	}
+
+	@Override
+	public void setContextReturn(Context.Return contextReturn) {
+		this.contextReturn = contextReturn;
 	}
 
 	/* (non-Javadoc)

@@ -79,6 +79,13 @@ public class Fidelity<T> implements Fi<T>, Activity, Dependency, net.jini.core.e
 		}
     }
 
+	public Fidelity(T[] choices) {
+		fiType = Type.NAME;
+		for (T fi : choices) {
+			this.selects.add((T) fi);
+		}
+	}
+
     @Override
     public Object getId() {
         return fiName;

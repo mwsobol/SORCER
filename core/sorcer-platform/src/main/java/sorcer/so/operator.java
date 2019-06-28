@@ -384,7 +384,7 @@ public class operator extends Operator {
     public static Object eval(Routine exertion, String selector,
                               Arg... args) throws EvaluationException {
         try {
-            exertion.getDataContext().setRequestReturn(new Context.Return(selector));
+            exertion.getDataContext().setContextReturn(new Context.Return(selector));
             return exec(exertion, args);
         } catch (Exception e) {
             e.printStackTrace();

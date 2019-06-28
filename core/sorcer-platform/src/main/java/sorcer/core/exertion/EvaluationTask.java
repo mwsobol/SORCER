@@ -143,7 +143,7 @@ public class EvaluationTask extends Task {
 			}
 
 			if (getProcessSignature().getContextReturn() != null)
-				dataContext.setRequestReturn(getProcessSignature().getContextReturn());
+				dataContext.setContextReturn(getProcessSignature().getContextReturn());
 			dataContext.setReturnValue(result);
 			if (evaluator instanceof Scopable && evaluator.getScope() != null) {
 				((evaluator).getScope()).putValue(dataContext.getContextReturn().returnPath, result);

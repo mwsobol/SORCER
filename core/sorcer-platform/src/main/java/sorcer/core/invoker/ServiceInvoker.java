@@ -109,6 +109,9 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 
 	protected Morpher morpher;
 
+	// default instance new Return(Context.RETURN);
+	protected Context.Return contextReturn;
+
 	/** Logger for logging information about instances of this multitype */
 	static final Logger logger = LoggerFactory.getLogger(ServiceInvoker.class
 			.getName());
@@ -604,6 +607,17 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 		}
 		return null;
 	}
+
+	@Override
+	public Context.Return getContextReturn() {
+		return contextReturn;
+	}
+
+	@Override
+	public void setContextReturn(Context.Return contextReturn) {
+		this.contextReturn = contextReturn;
+	}
+
 
 	public boolean isFunctional() {
 		return isFunctional;

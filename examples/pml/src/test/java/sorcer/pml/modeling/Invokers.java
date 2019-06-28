@@ -1,6 +1,7 @@
 package sorcer.pml.modeling;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.Prc;
 import sorcer.core.invoker.AltInvoker;
 import sorcer.core.invoker.Updater;
 import sorcer.core.invoker.OptInvoker;
@@ -200,6 +202,28 @@ public class Invokers {
 
 		// logger.info("invoke eval:" + invoke(x1));
 		assertEquals(exec(x1), 1.0);
+	}
+
+	@Ignore
+	@Test
+	public void multiFiEvaluator() throws Exception {
+
+		Prc mfprc = mFiPrc(
+			invoker("lambda",
+				(Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
+				args("x", "y")),
+			invoker("expr", "x - y", args("x", "y")));
+
+		setContext(mfprc, context("mfprc",
+			inVal("x", 20.0),
+			inVal("y", 80.0),
+			result("result/z")));
+
+		logger.info("ss: " + exec(mfprc));
+		assertEquals(100.0, exec(mfprc));
+		// change signature fidelity
+		assertEquals(1600.0, exec(mfprc, fi("expr")));
+
 	}
 
 	@Test

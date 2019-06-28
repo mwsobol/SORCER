@@ -47,7 +47,22 @@ public interface  Evaluation <T> extends Substitutable, Scopable, EvaluationComp
 	 * @throws EvaluationException
 	 * @throws RemoteException
 	 */
-	public T asis() throws EvaluationException, RemoteException;
+	public Object asis() throws EvaluationException, RemoteException;
+
+	/**
+	 * Returns a Context.Return to the return execute by this signature.
+	 *
+	 * @return Context.Return to the return execute
+	 */
+	public Context.Return getContextReturn();
+
+	/**
+	 * Assigns a request return of this signature with a given return path.
+	 *
+	 * @param contextReturn
+	 * 			a context return
+	 */
+	public void setContextReturn(Context.Return contextReturn);
 
 	public void setNegative(boolean negative);
 

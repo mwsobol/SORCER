@@ -154,7 +154,7 @@ public class ObjectTask extends Task {
 				}
 			}
 			if (os.getContextReturn() != null)
-				dataContext.setRequestReturn(os.getContextReturn());
+				dataContext.setContextReturn(os.getContextReturn());
 
 			if (result == null) {
 				if (getArgs() == null) {

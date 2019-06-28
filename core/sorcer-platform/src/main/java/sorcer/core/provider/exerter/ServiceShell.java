@@ -713,7 +713,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			}
 		}
 		if (rPath != null)
-			((ServiceContext)xrt.getDataContext()).setRequestReturn(rPath);
+			((ServiceContext)xrt.getDataContext()).setContextReturn(rPath);
 		return xrt;
 	}
 

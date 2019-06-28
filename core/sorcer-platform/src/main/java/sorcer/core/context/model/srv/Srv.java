@@ -253,7 +253,7 @@ public class Srv extends Subroutine<Object> implements Serviceableness,
         }
         Context incxt = scope;
         if (sig.getContextReturn() != null) {
-            incxt.setRequestReturn(sig.getContextReturn());
+            incxt.setContextReturn(sig.getContextReturn());
         }
         Context outcxt = null;
         try {

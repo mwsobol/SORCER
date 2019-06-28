@@ -205,16 +205,20 @@ public class MultiFiSlot<K, O> extends Slot<K, O> {
         return contextReturn;
     }
 
-    public void setRequestReturn() throws ContextException {
+    public void setContextReturn() {
         this.contextReturn = new Context.Return();
     }
 
-    public void setContextReturn(String returnPath) throws ContextException {
+    public void setContextReturn(String returnPath) {
         this.contextReturn = new Context.Return(returnPath);
     }
 
-    public void setRequestReturn(Context.Return contextReturn) {
+    public void setContextReturn(Context.Return contextReturn) {
         this.contextReturn = contextReturn;
+    }
+
+    public void setContextReturn(String path, Signature.Direction direction) {
+        contextReturn = new Context.Return(path, direction);
     }
 
     public boolean equals(Object object) {

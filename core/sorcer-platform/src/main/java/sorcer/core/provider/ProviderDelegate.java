@@ -927,7 +927,7 @@ public class ProviderDelegate {
 					if (tsig.getPrefix() != null)
 						((ServiceContext)task.getContext()).setPrefix(tsig.getPrefix());
 					if (tsig.getContextReturn() != null)
-						((ServiceContext) task.getContext()).setRequestReturn(tsig.getContextReturn());
+						((ServiceContext) task.getContext()).setContextReturn(tsig.getContextReturn());
 
 					if (isBeanable(task)) {
 						task = useServiceComponents(task, transaction, args);
@@ -1124,7 +1124,7 @@ public class ProviderDelegate {
 		String selector = task.getProcessSignature().getSelector();
 		if (bean != null) {
 			if (task.getProcessSignature().getContextReturn() != null) {
-				((ServiceContext) task.getContext()).setRequestReturn(task
+				((ServiceContext) task.getContext()).setContextReturn(task
 					.getProcessSignature().getContextReturn());
 			}
 			// determine args and parameterTpes from the context
@@ -1390,7 +1390,7 @@ public class ProviderDelegate {
 			if (cxt.isValid(task.getProcessSignature())) {
 				Signature sig = task.getProcessSignature();
 				if (sig.getContextReturn() != null)
-					cxt.setRequestReturn(sig.getContextReturn());
+					cxt.setContextReturn(sig.getContextReturn());
 
 				cxt.getMogramStrategy().setCurrentSelector(sig.getSelector());
 				cxt.setCurrentPrefix(sig.getPrefix());

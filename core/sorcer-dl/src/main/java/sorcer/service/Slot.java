@@ -58,7 +58,7 @@ public class Slot<K, O> implements Identifiable, Getter<O>, Data<O>, Arg, slot<O
         return out;
     }
 
-    public O asis() throws EvaluationException, RemoteException {
+    public Object asis() throws EvaluationException, RemoteException {
         return out;
     }
 

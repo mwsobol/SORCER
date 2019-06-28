@@ -95,30 +95,9 @@ public class MultiFiSignature extends MultiFiSlot<String, Signature> implements 
         return ((Signature)impl).getMatchTypes();
     }
 
-    @Override
-    public void setContextReturn(Context.Return contextReturn) {
-        this.contextReturn = contextReturn;
-    }
-
-    @Override
-    public void setContextReturn(String path) {
-        contextReturn = new Context.Return(path);
-    }
-
-    @Override
-    public void setContextReturn() {
-        contextReturn = new Context.Return(SELF);
-    }
-
-    @Override
-    public void setContextReturn(String path, Direction direction) {
-        contextReturn = new Context.Return(path, direction);
-    }
-
     public Context.Return getContextReturn() {
         return contextReturn;
     }
-
 
     @Override
     public Type getExecType() {

@@ -301,6 +301,12 @@ public class operator extends Operator {
 		return new Prc(gi.getName(), gi);
 	}
 
+	public static Prc mFiPrc(Evaluation... evaluators) {
+		MultiFiEvaluator mfEval =  new MultiFiEvaluator(evaluators);
+		// set default fidelity to the first evaluation
+		return new Prc(((Identifiable)evaluators[0]).getName(), mfEval);
+	}
+
     public static Prc prc(String expression, Arg... parameters) {
         return prc(null, expression, null, parameters);
     }

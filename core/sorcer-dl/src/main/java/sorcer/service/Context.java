@@ -904,7 +904,7 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 
 	public boolean compareTo(Object context, double delta);
 
-	public void setRequestReturn(Return requestPath);
+	public void setContextReturn(Return requestPath);
 
 	public enum Type {
 		ASSOCIATIVE, SHARED, POSITIONAL, LIST, SCOPE, INDEXED, ARRAY

@@ -409,7 +409,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 						rp = ((Context) mog).getContextReturn();
 					}
 					if (rp != null && rp.returnPath != null) {
-						((Context) mog).setRequestReturn(rp);
+						((Context) mog).setContextReturn(rp);
 						out = exert(task(this, mog));
 						return out.getValue(rp.returnPath);
 					}

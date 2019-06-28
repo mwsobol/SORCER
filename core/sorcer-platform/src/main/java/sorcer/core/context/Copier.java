@@ -32,6 +32,8 @@ public class  Copier implements Evaluation<Context>, Activity, Identifiable {
 	private Arg[] fromEntries;
 	private Context toContext;
 	private Arg[] toEntries;
+	// default instance new Return(Context.RETURN);
+	protected Context.Return contextReturn;
 
 	public Copier(Domain fromContext, Arg[] fromEntries, Domain toContext, Arg[] toEntries) throws EvaluationException {
 		this.fromContext = (Context)fromContext;
@@ -45,6 +47,16 @@ public class  Copier implements Evaluation<Context>, Activity, Identifiable {
 	@Override
 	public Context asis() throws EvaluationException, RemoteException {
 		return toContext;
+	}
+
+	@Override
+	public Context.Return getContextReturn() {
+		return contextReturn;
+	}
+
+	@Override
+	public void setContextReturn(Context.Return contextReturn) {
+		this.contextReturn = contextReturn;
 	}
 
 	@Override
