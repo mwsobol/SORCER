@@ -74,7 +74,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	
 	protected String name;
 
-	protected String defaultName = "invoke   r-";
+	protected String defaultName = "invoker-";
 	
 	// counter for unnamed instances
 	protected static int count;
@@ -367,7 +367,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 						invokeContext = new EntModel("model/prc");
 					}
 				} else if (cxt != null) {
-					invokeContext.appendContext(cxt);
+					invokeContext.append(cxt);
 				}
 				((ServiceContext)invokeContext).substitute(args);
 			}
@@ -651,4 +651,13 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 		return null;
 	}
 
+	@Override
+	public Fi getMultiFi() {
+		return null;
+	}
+
+	@Override
+	public Morpher getMorpher() {
+		return null;
+	}
 }

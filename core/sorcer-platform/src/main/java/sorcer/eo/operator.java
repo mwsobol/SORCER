@@ -186,6 +186,14 @@ operator extends Operator {
         return procedure;
     }
 
+    public static <T> Evaluator<T> setContext(Evaluator<T> evaluator, Context context) {
+        if (evaluator.getContextReturn() == null) {
+            evaluator.setContextReturn(new Context.Return());
+        }
+        evaluator.getContextReturn().setDataContext(context);
+        return evaluator;
+    }
+
     public static Signature setContext(Signature signature, Context context) {
         if (signature.getContextReturn() == null) {
             signature.setContextReturn(new Context.Return());

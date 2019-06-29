@@ -106,6 +106,10 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	// context output connector
 	protected Context outConnector;
 
+	protected Fi multiFi;
+
+	protected Morpher morpher;
+
 	/**
 	 * a context template to define the context appended from a provider
 	 * identified by this method
@@ -719,5 +723,15 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 		} else {
 			return new Entry(entryName, result);
 		}
+	}
+
+	@Override
+	public Fi getMultiFi() {
+		return multiFi;
+	}
+
+	@Override
+	public Morpher getMorpher() {
+		return morpher;
 	}
 }

@@ -301,6 +301,14 @@ public class operator extends Operator {
 		return new Prc(gi.getName(), gi);
 	}
 
+    public static Evaluator pl(Evaluator... evaluators) {
+        return new Pipeline(evaluators);
+    }
+
+	public static <T> Evaluator<T>  mfEval(Evaluator<T>... evaluators) {
+		return (Evaluator<T>) new MultiFiEvaluator(evaluators);
+	}
+
 	public static Prc mfPrc(Evaluation... evaluators) {
 		MultiFiEvaluator mfEval =  new MultiFiEvaluator(evaluators);
 		// set default fidelity to the first evaluation
@@ -331,18 +339,28 @@ public class operator extends Operator {
 		return new Prc(((ServiceInvoker)invoker).getName(), invoker);
 	}
 
-	public static Prc prc(String path, Invocation invoker) {
+	public static Prc prc(String path, Evaluator invoker) {
 		return new Prc(path, invoker);
 	}
 
-	public static Object invoke(Invocation invoker, Arg... parameters)
+	public static Object invoke(Evaluator invoker, Arg... parameters)
 			throws ContextException, RemoteException {
-		return invoker.invoke(null, parameters);
+		return ((Invocation)invoker).invoke(null, parameters);
 	}
 
 	public static Object invoke(Invocation invoker, Context context, Arg... parameters)
 			throws ContextException, RemoteException {
 		return invoker.invoke(context, parameters);
+	}
+
+	public static Evaluator invalid(Evaluator evaluator) {
+		evaluator.setValid(false);
+		return evaluator;
+	}
+
+	public static MultiFiSlot invalid(MultiFiSlot slot) {
+		slot.setValid(false);
+		return slot;
 	}
 
     public static Object activate(Model model, String path, Arg... args) throws InvocationException {
@@ -414,15 +432,15 @@ public class operator extends Operator {
 		return ps.toArray();
 	}
 
-	public static ServiceInvoker invoker(Evaluator evaluator, ArgSet pars) {
+	public static <T> Evaluator<T> invoker(Evaluator evaluator, ArgSet pars) {
 		return new ServiceInvoker(evaluator,pars);
 	}
 
-	public static <T> ServiceInvoker invoker(ValueCallable<T> lambda, Args args) throws InvocationException {
+	public static <T> Evaluator<T> invoker(ValueCallable<T> lambda, Args args) throws InvocationException {
 		return new ServiceInvoker(null, lambda, null, args.argSet());
 	}
 
-	public static <T> ServiceInvoker invoker(ValueCallable<T> lambda, Context scope, Args args) throws InvocationException {
+	public static <T> Evaluator<T> invoker(ValueCallable<T> lambda, Context scope, Args args) throws InvocationException {
 		try {
 			return new ServiceInvoker(null, lambda, scope, args.argSet());
 		} catch (Exception e) {
@@ -430,15 +448,15 @@ public class operator extends Operator {
 		}
 	}
 
-	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda) throws InvocationException {
+	public static <T> Evaluator<T> invoker(String name, ValueCallable<T> lambda) throws InvocationException {
 		return new ServiceInvoker(name, lambda, null, null);
 	}
 
-	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda, Args args) throws InvocationException {
+	public static <T> Evaluator<T> invoker(String name, ValueCallable<T> lambda, Args args) throws InvocationException {
 		return new ServiceInvoker(name, lambda, args.argSet());
 	}
 
-	public static <T> ServiceInvoker invoker(String name, ValueCallable<T> lambda, Context scope, Args args) throws InvocationException {
+	public static <T> Evaluator invoker(String name, ValueCallable<T> lambda, Context scope, Args args) throws InvocationException {
 		return new ServiceInvoker(name, lambda, scope, args.argSet());
 	}
 
@@ -446,13 +464,13 @@ public class operator extends Operator {
 		return new GroovyInvoker(name, expression, args.argSet());
 	}
 
-	public static ServiceInvoker invoker(String name, String expression, Context scope, Args args) throws ContextException {
-		GroovyInvoker invoker = new GroovyInvoker(name, expression, args.argSet());
+	public static <T> Evaluator<T> invoker(String name, String expression, Context scope, Args args) throws ContextException {
+		GroovyInvoker<T> invoker = new GroovyInvoker(name, expression, args.argSet());
 		invoker.setScope(scope);
 		return invoker;
 	}
 
-	public static ServiceInvoker expr(String expression, Context scope,  Args args) throws ContextException {
+	public static Evaluator expr(String expression, Context scope,  Args args) throws ContextException {
 		return invoker(expression, scope, args);
 	}
 
@@ -628,8 +646,8 @@ public class operator extends Operator {
 		return new AltInvoker(name, invokers);
 	}
 
-	public static LoopInvoker loop(Condition condition, Invocation target) {
-		return new LoopInvoker(null, condition, target);
+	public static LoopInvoker loop(Condition condition, Evaluator target) {
+		return new LoopInvoker(null, condition, (Invocation) target);
 	}
 
 	public static LoopInvoker loop(Condition condition, Invocation target, Context context) throws ContextException {

@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
  * 
  * @author Mike Sobolewski
  */
-public interface  Evaluator <T> extends ServiceProvider, Evaluation<T>, Getter<T>, Activity, Identifiable {
+public interface  Evaluator <T> extends Opservice, ServiceProvider, Evaluation<T>, Getter<T>, Activity, Identifiable {
 
 	public void addArgs(ArgSet set) throws EvaluationException, RemoteException;
 	
@@ -40,5 +40,10 @@ public interface  Evaluator <T> extends ServiceProvider, Evaluation<T>, Getter<T
 	public void update(Setup... entries) throws ContextException;
 
 	public void setNegative(boolean negative);
+
+	public void setValid(boolean state);
+
+	public boolean isValid();
+
 
 }

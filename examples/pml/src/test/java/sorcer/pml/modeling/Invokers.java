@@ -27,15 +27,13 @@ import java.rmi.RemoteException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.co.operator.*;
+import static sorcer.ent.operator.*;
+import static sorcer.ent.operator.mfEval;
 import static sorcer.eo.operator.args;
 import static sorcer.eo.operator.*;
 import static sorcer.eo.operator.pipe;
-import static sorcer.ent.operator.alt;
-import static sorcer.ent.operator.*;
-import static sorcer.ent.operator.get;
-import static sorcer.ent.operator.loop;
-import static sorcer.ent.operator.opt;
 import static sorcer.mo.operator.*;
+import static sorcer.mo.operator.add;
 import static sorcer.so.operator.*;
 
 /**
@@ -158,55 +156,72 @@ public class Invokers {
         assertEquals(activate(nm, "x4", th("n2", 0.0), fi("n2", "x4")), 260.0);
 	}
 
+    public void evalPipeline() throws Exception {
+
+        Evaluator eval1 = invoker("lambda",
+                (Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
+                args("x", "y"));
+
+        Evaluator eval2 = invoker("expr", "x - y", args("x", "y"));
+
+        Evaluator pp = pl(eval1, eval2);
+
+        setContext(pp, context("mfprc",
+                inVal("x", 20.0),
+                inVal("y", 80.0),
+                result("result/z")));
+
+        logger.info("ss: " + exec(pp));
+        assertEquals(100.0, exec(pp));
+        // change signature fidelity
+        assertEquals(-60.0, exec(pp, fi("expr")));
+
+    }
+
+    @Test
+    public void multiEvaluator() throws Exception {
+
+        Evaluator mfeval = mfEval(
+                invoker("lambda",
+                        (Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
+                        args("x", "y")),
+                invoker("expr", "x - y", args("x", "y")));
+
+        setContext(mfeval, context("mfprc",
+                inVal("x", 20.0),
+                inVal("y", 80.0),
+                result("result/z")));
+
+//        logger.info("lambda: " + exec(mfeval));
+        assertEquals(130.0, exec(mfeval));
+        // change signature fidelity
+//        logger.info("expr: " + exec(mfeval, fi("expr")));
+        assertEquals(-60.0, exec(mfeval, fi("expr")));
+
+    }
+
+    @Test
+    public void execProc() throws Exception {
+
+	    // constant entry
+        ent x1 = ent("x1", 1.0);
+        assertEquals(exec(x1), 1.0);
+
+        // procedural entry
+        Context cxt = context(val("x", 10.0), val("y", 20.0));
+
+        Prc p1 = prc(invoker("expr", "x + y + 30", args("x", "y")));
+//        logger.info("expr: " + exec(p1, cxt));
+        assertEquals(exec(p1, cxt), 60.0);
+
+        // invoke for a given state
+        p1 = prc(invoker("expr", "x + y + 30", args("x", "y")));
+        setContext(p1, cxt);
+        assertEquals(exec(p1), 60.0);
+    }
+
 	@Test
-	public void invokeTask() throws Exception {
-		Task t4 = task(
-				"t4",
-				sig("multiply", MultiplierImpl.class),
-				context("multiply", inVal("arg/x1", 50.0), inVal("arg/x2", 10.0),
-						result("result/y")));
-
-		// logger.info("invoke eval:" + invoke(t4));
-		assertEquals(invoke(t4), 500.0);
-	}
-
-	@Test
-	public void invokeJob() throws Exception {
-		Context c4 = context("multiply", inVal("arg/x1", 50.0),
-				inVal("arg/x2", 10.0), result("result/y"));
-		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-				result("result/y"));
-
-		// mograms
-		Task t3 = task(
-				"t3",
-				sig("subtract", SubtractorImpl.class),
-				context("subtract", inVal("arg/x1"), inVal("arg/x2"), outVal("result/y")));
-		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
-		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
-
-		Job j1 = job("j1", sig("exert", ServiceJobber.class),
-					job("j2", t4, t5, sig("exert", ServiceJobber.class)), t3,
-					pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-					pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-					result("j1/t3/result/y"));
-
-		// logger.info("invoke eval:" + invoke(j1));
-		assertEquals(invoke(j1), 400.0);
-	}
-
-	@Test
-	public void invokerProc() throws Exception {
-
-		ent x1 = ent("x1", 1.0);
-
-		// logger.info("invoke eval:" + invoke(x1));
-		assertEquals(exec(x1), 1.0);
-	}
-
-	@Ignore
-	@Test
-	public void multiFiEvaluator() throws Exception {
+	public void multiFiProcedure() throws Exception {
 
 		Prc mfprc = mfPrc(
 			invoker("lambda",
@@ -214,16 +229,17 @@ public class Invokers {
 				args("x", "y")),
 			invoker("expr", "x - y", args("x", "y")));
 
-		setContext(mfprc, context("mfprc",
-			inVal("x", 20.0),
-			inVal("y", 80.0),
-			result("result/z")));
+        Context data = context("mfprc",
+                inVal("x", 20.0),
+                inVal("y", 80.0),
+                result("result/z"));
 
-		logger.info("ss: " + exec(mfprc));
-		assertEquals(100.0, exec(mfprc));
-		// change signature fidelity
-		assertEquals(1600.0, exec(mfprc, fi("expr")));
+//		setContext(mfprc, data);
 
+		assertEquals(130.0, exec(mfprc, data));
+		// invalidate output and change signature fidelity
+		invalid(mfprc);
+        assertEquals(-60.0, exec(mfprc, fi("expr")));
 	}
 
 	@Test

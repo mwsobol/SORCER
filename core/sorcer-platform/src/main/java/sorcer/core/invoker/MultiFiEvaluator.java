@@ -18,6 +18,7 @@
 package sorcer.core.invoker;
 
 import sorcer.service.*;
+import sorcer.service.modeling.Data;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.List;
  *
  * Created by Mike Sobolewski
  */
-public class MultiFiEvaluator<T> extends MultiFiSlot<String, Evaluation<T> > implements Evaluation<T> {
+public class MultiFiEvaluator<T> extends MultiFiSlot<String, T> implements Evaluator<T> {
 
 	public MultiFiEvaluator(Evaluation... evaluators) {
 		multiFi = new Fidelity(evaluators);
@@ -42,19 +43,57 @@ public class MultiFiEvaluator<T> extends MultiFiSlot<String, Evaluation<T> > imp
 				List<Fidelity> fis = Arg.selectFidelities(args);
 				if (fis.size() > 0) {
 					multiFi.selectSelect(fis.get(0).getName());
+					isValid = false;
+					((Evaluator)impl).setValid(false);
 				}
 				impl = multiFi.getSelect();
 				key = ((Identifiable)impl).getName();
 				if (((Evaluation)impl).getContextReturn() == null && contextReturn != null) {
-					((Signature)impl).setContextReturn(contextReturn);
+					((Evaluation)impl).setContextReturn(contextReturn);
 				}
-				return (T) ((Evaluation)impl).evaluate(args);
+				if (impl instanceof Invocation) {
+					Context cxt = Arg.selectContext(args);
+					if (cxt == null && contextReturn != null && contextReturn.getDataContext() != null){
+						cxt = contextReturn.getDataContext();
+					}
+					if (cxt == null && scope != null) {
+                        ((ServiceInvoker)impl).setScope(scope);
+                    }
+					return (T) ((Invocation) impl).invoke(cxt, args);
+				} else {
+					return (T) ((Evaluation) impl).evaluate(args);
+				}
 			} catch (ServiceException | ConfigurationException | RemoteException e) {
 				throw new EvaluationException(e);
 			}
 		} else {
 			throw new EvaluationException("misconfigured MultiEvaluation with multiFi: " + multiFi);
 		}
+	}
+
+	@Override
+	public void addArgs(ArgSet set) throws EvaluationException, RemoteException {
+
+	}
+
+	@Override
+	public ArgSet getArgs() {
+		return null;
+	}
+
+	@Override
+	public void setParameterTypes(Class<?>[] types) {
+
+	}
+
+	@Override
+	public void setParameters(Object... args) {
+
+	}
+
+	@Override
+	public void update(Setup... entries) throws ContextException {
+
 	}
 
 	@Override
@@ -70,5 +109,15 @@ public class MultiFiEvaluator<T> extends MultiFiSlot<String, Evaluation<T> > imp
 	@Override
 	public void substitute(Arg... args) throws SetterException, RemoteException {
 		scope.substitute(args);
+	}
+
+	@Override
+	public Data act(Arg... args) throws ServiceException, RemoteException {
+		return null;
+	}
+
+	@Override
+	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
+		return null;
 	}
 }
