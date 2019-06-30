@@ -45,7 +45,7 @@ import java.util.*;
 
 import static sorcer.eo.operator.*;
 
-public class ServiceSignature implements Signature, SorcerConstants, sig {
+public class ServiceSignature implements Signature, Scopable, SorcerConstants, sig {
 
 	static final long serialVersionUID = -8527094638557595398L;
 
@@ -57,6 +57,8 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	protected String prefix;
 
 	protected String ownerID;
+
+	protected Context scope;
 
 	protected Context.Return contextReturn;
 
@@ -734,4 +736,14 @@ public class ServiceSignature implements Signature, SorcerConstants, sig {
 	public Morpher getMorpher() {
 		return morpher;
 	}
+
+    @Override
+    public Context getScope() {
+        return scope;
+    }
+
+    @Override
+    public void setScope(Context scope) {
+        this.scope = scope;
+    }
 }

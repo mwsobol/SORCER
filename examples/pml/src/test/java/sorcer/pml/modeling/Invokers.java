@@ -156,30 +156,8 @@ public class Invokers {
         assertEquals(activate(nm, "x4", th("n2", 0.0), fi("n2", "x4")), 260.0);
 	}
 
-    public void evalPipeline() throws Exception {
-
-        Evaluator eval1 = invoker("lambda",
-                (Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
-                args("x", "y"));
-
-        Evaluator eval2 = invoker("expr", "x - y", args("x", "y"));
-
-        Evaluator pp = pl(eval1, eval2);
-
-        setContext(pp, context("mfprc",
-                inVal("x", 20.0),
-                inVal("y", 80.0),
-                result("result/z")));
-
-        logger.info("ss: " + exec(pp));
-        assertEquals(100.0, exec(pp));
-        // change signature fidelity
-        assertEquals(-60.0, exec(pp, fi("expr")));
-
-    }
-
     @Test
-    public void multiEvaluator() throws Exception {
+    public void multiFiEvaluator() throws Exception {
 
         Evaluator mfeval = mfEval(
                 invoker("lambda",
@@ -258,7 +236,36 @@ public class Invokers {
 		assertTrue(val.equals(30.0));
 	}
 
-	@Test
+    @Test
+    public void evalOpservicePipeline() throws Exception {
+
+        Opservice lambdaOut = invoker("lambdaOut",
+                (Context<Double> cxt) -> value(cxt, "x") + value(cxt, "y") + 30,
+                args("x", "y"));
+
+        Opservice exprOut = invoker("exprOut", "lambdaOut - y", args("lambdaOut", "y"));
+
+        Opservice sigOut = sig("multiply", MultiplierImpl.class,
+                result("z", inPaths("lambdaOut", "exprOut")));
+
+        Evaluator pp = pl(
+                lambdaOut,
+                exprOut,
+                sigOut);
+
+        setContext(pp, context("mfprc",
+                inVal("x", 20.0),
+                inVal("y", 80.0)));
+
+        Context out = (Context) exec(pp);
+
+        logger.info("pipeline: " + out);
+        assertEquals(130.0, value(out, "lambdaOut"));
+        assertEquals(50.0, value(out, "exprOut"));
+        assertEquals(6500.0, value(out, "z"));
+    }
+
+    @Test
 	public void modelConditions() throws Exception {
 		final EntModel pm = new EntModel("ent-model");
 		pm.putValue("x", 10.0);

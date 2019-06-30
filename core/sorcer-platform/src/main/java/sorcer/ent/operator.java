@@ -301,8 +301,27 @@ public class operator extends Operator {
 		return new Prc(gi.getName(), gi);
 	}
 
-    public static Evaluator pl(Evaluator... evaluators) {
-        return new Pipeline(evaluators);
+    public static Evaluator pl(String name, Context context, Opservice... pservices) {
+        Pipeline pl =  new Pipeline(pservices);
+        pl.setScope(context);
+        pl.setName(name);
+        return pl;
+    }
+
+    public static Evaluator pl(Context context, Opservice... pservices) {
+        Pipeline pl =  new Pipeline(pservices);
+        pl.setScope(context);
+        return pl;
+    }
+
+    public static Evaluator pl(String name, Opservice... pservices) {
+        Pipeline pl =  new Pipeline(pservices);
+        return pl;
+    }
+
+
+    public static Evaluator pl(Opservice... pservices) {
+        return new Pipeline(pservices);
     }
 
 	public static <T> Evaluator<T>  mfEval(Evaluator<T>... evaluators) {

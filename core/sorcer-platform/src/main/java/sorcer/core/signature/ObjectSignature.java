@@ -21,6 +21,7 @@ import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.ObjectTask;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.core.provider.exerter.ServiceShell;
@@ -410,6 +411,8 @@ public class ObjectSignature extends ServiceSignature implements sig {
 					}
 					if (rp != null && rp.returnPath != null) {
 						((Context) mog).setContextReturn(rp);
+                        Task sigTask = task(this, mog);
+                        ((ServiceContext)mog).bindContext(sigTask);
 						out = exert(task(this, mog));
 						return out.getValue(rp.returnPath);
 					}

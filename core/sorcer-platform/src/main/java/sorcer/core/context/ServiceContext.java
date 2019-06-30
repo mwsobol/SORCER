@@ -3672,4 +3672,76 @@ public class ServiceContext<T> extends ServiceMogram implements
 			scope.setRoutine(null);
 		}
 	}
+
+	public void bindContext(Task task) throws ContextException, RemoteException {
+		ServiceContext cxt = (ServiceContext) task.getDataContext();
+		ServiceSignature sig = (ServiceSignature) task.getSelectedFidelity().getSelect();
+		List<Path> inPaths = null;
+		ServiceContext scopeContext = new ServiceContext();
+		if (cxt.getContextReturn() != null && cxt.getContextReturn().inPaths != null) {
+			bindRequestContext(cxt.getContextReturn().inPaths, cxt, scopeContext);
+		}
+		if (sig.getContextReturn() != null) {
+			inPaths = sig.getContextReturn().inPaths;
+		}
+
+		if (scope != null) {
+			bindRequestContext(inPaths, cxt, scopeContext);
+		}
+		cxt.setScope(scopeContext);
+	}
+
+	private Context bindRequestContext(List<Path> inPaths, ServiceContext context, ServiceContext scopeContext)
+			throws ContextException, RemoteException {
+		if (inPaths != null) {
+			for (Path path : inPaths) {
+				Object val = context.getScopedValue(path.path);
+				boolean overwrite = val == null || (val != null && val.equals(Context.none)
+						|| !context.isSuper());
+				if (path.getType().equals(Path.Type.PATH) || path.getType().equals(Path.Type.PROC)) {
+					Object sval = null;
+					if (path.getType().equals(Path.Type.PROC)) {
+						if (scope.getName().equals(path.domain)) {
+							sval = scope.getValue(path);
+						}
+					} else if (scope != null) {
+						sval = scope.getValue(path);
+					}
+					if (overwrite) {
+						if (path.info != null) {
+							context.putValue(path.path, sval, path.info.toString());
+						} else if (sval != null) {
+							context.putValue(path.path, sval);
+						}
+						Contexts.markIn(this, path.path);
+					} else {
+						// if values in the routine context are defined
+						if (path.info != null) {
+							scopeContext.putValue(path.path, sval, path.info.toString());
+						} else {
+							scopeContext.putValue(path.path, sval);
+						}
+					}
+				} else if (path.getType().equals(Path.Type.MAP)) {
+					if (path.dirPath != null) {
+						if (path.dirPath.direction.equals(Signature.Direction.FROM)) {
+							context.putValue(path.path,
+									((ServiceContext) scope).getScopedValue((path.dirPath).path), path.info);
+						} else if (path.dirPath.direction.equals(Signature.Direction.TO)) {
+							context.putValue(path.dirPath.path,
+									((ServiceContext) scope).getScopedValue(path.path), path.info.toString());
+						}
+					} else {
+						Object info = path.info;
+						context.putValue(path.path,
+								((ServiceContext) scope).getScopedValue(
+										(info instanceof Path ? ((Path)info).path : info.toString())));
+					}
+				}  else if (path.getType().equals(Path.Type.PROC)) {
+
+				}
+			}
+		}
+		return context;
+	}
 }
