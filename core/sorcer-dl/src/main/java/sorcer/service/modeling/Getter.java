@@ -19,6 +19,7 @@ package sorcer.service.modeling;
 
 import sorcer.service.Arg;
 import sorcer.service.ContextException;
+import sorcer.service.Opservice;
 
 import java.rmi.RemoteException;
 
@@ -33,7 +34,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Getter<T>  {
+public interface Getter<T>  extends Opservice {
 
     public T getValue(Arg... args) throws ContextException;
 }

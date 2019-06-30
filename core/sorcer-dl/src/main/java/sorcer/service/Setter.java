@@ -19,11 +19,12 @@ package sorcer.service;
 
 import sorcer.service.modeling.EvaluationComponent;
 import sorcer.service.modeling.SupportComponent;
+import sorcer.service.Opservice;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-public interface Setter extends EvaluationComponent, SupportComponent, Serializable {
+public interface Setter extends Opservice, EvaluationComponent, SupportComponent, Serializable {
 
 	public String getName();
 
