@@ -653,11 +653,11 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 
 	@Override
 	public Fi getMultiFi() {
-		return null;
+		return multiFi;
 	}
 
 	@Override
 	public Morpher getMorpher() {
-		return null;
+		return morpher;
 	}
 }
