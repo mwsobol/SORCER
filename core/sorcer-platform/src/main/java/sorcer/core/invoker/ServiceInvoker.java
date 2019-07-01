@@ -68,7 +68,7 @@ import java.util.List;
  * of the context.
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invocation<T>, Identifiable, Scopable, Reactive<T>, Observer, evr<T>, Serializable {
+public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invocation<T>, Identifiable, Reactive<T>, Observer, evr<T>, Serializable {
 
 	private static final long serialVersionUID = -2007501128660915681L;
 	
@@ -97,6 +97,8 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 
 	// indication that eval has been calculated with recent arguments
 	protected boolean isValid = false;
+
+	protected Context scope;
 
 	protected Context invokeContext;
 
@@ -151,19 +153,6 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	public ServiceInvoker(String name, ValueCallable lambda, Context context, ArgSet args) throws InvocationException {
 		this.name = name;
 		invokeContext = context;
-//		if (context == null)
-//			invokeContext = new EntModel("model/prc");
-//		else {
-//			if (context instanceof ServiceContext) {
-//				invokeContext = context;
-//			} else {
-//				try {
-//					invokeContext = new EntModel(context);
-//				} catch (Exception e) {
-//					throw new InvocationException("Failed to create invoker!", e);
-//				}
-//			}
-//		}
 		this.args = args;
 		this.lambda = lambda;
 	}
@@ -347,7 +336,13 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 				} else {
 					invokeContext.append(context);
 				}
+				isValid = false;
 			}
+			if (scope != null && invokeContext == null) {
+                invokeContext = scope;
+			} else if (scope != null && invokeContext != null) {
+                invokeContext.setScope(scope);
+            }
 		} catch (ContextException e) {
 			throw new InvocationException(e);
 		}
@@ -371,7 +366,7 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 				}
 				((ServiceContext)invokeContext).substitute(args);
 			}
-			if (invokeContext.isChanged()) {
+			if (invokeContext != null && invokeContext.isChanged()) {
 				isValid = false;
 				if (this.args != null)
 					this.args.clearArgs();
@@ -391,6 +386,11 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	private Object invoke(Arg... args)
 			throws InvocationException {
 		try {
+		    if (invokeContext == null) {
+                invokeContext = scope;
+            } else {
+                invokeContext.setScope(invokeContext);
+            }
 			init(this.args);
 			if (lambda != null) {
 				if (isFunctional) {
@@ -451,15 +451,11 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 		}
 	}
 
-	public Context getScope() {
+	public Context getInvokeContext() {
 		return invokeContext;
 	}
 
-	/* (non-Javadoc)
-	 * @see sorcer.service.Scopable#setScope(java.lang.Object)
-	 */
-	@Override
-	public void setScope(Context scope) {
+	public void setInvokeContext(Context scope) {
 		invokeContext = scope;
 	}
 	
@@ -660,4 +656,14 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
 	public Morpher getMorpher() {
 		return morpher;
 	}
+
+    @Override
+    public Context getScope() {
+        return scope;
+    }
+
+    @Override
+    public void setScope(Context scope) {
+        this.scope =scope;
+    }
 }

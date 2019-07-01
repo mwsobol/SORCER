@@ -21,6 +21,7 @@ import net.jini.id.UuidFactory;
 import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
@@ -106,7 +107,9 @@ public class DataContext<T> extends PositionalContext<T> {
                     return (T) val;
                 }
                 return (T) val;
-            } else if ((obj == Context.none || obj == null) && scope != null) {
+            } else if (obj instanceof Incrementor) {
+                return (T) ((ServiceInvoker)obj).evaluate();
+            } if ((obj == Context.none || obj == null) && scope != null) {
                 // if not here check in the scope of it
                 obj = scope.getValue(path, args);
             }

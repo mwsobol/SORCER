@@ -266,10 +266,10 @@ public class Models {
 
 
 	@Test
-	public void lambdaTaskInLoop() throws Exception {
+	public void lambdaTaskLoop() throws Exception {
 		Task ti = task(
 				sig("add", AdderImpl.class),
-				model("add", inVal("arg/x1", inc("arg/x2", 2.0)),
+				context("add", inVal("arg/x1", inc("arg/x2", 2.0)),
 						inVal("arg/x2", 80.0), result("task/result")));
 
 		Block lb = block(sig(ServiceConcatenator.class),

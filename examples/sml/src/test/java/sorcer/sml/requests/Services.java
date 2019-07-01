@@ -294,7 +294,7 @@ public class Services {
     }
 
 	@Test
-	public void getConditionalFunctionalModel() throws Exception {
+	public void conditionalFunctionalModel() throws Exception {
 
 		Model mdl = model(
 			val("x1", 10.0), val("x2", 20.0),

@@ -158,7 +158,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 		} else if (exertion instanceof EvaluationTask
             && ((EvaluationSignature)exertion.getProcessSignature()).getEvaluator() instanceof ConditionalInvocation) {
                 ConditionalInvocation invoker = (ConditionalInvocation) ((EvaluationSignature)exertion.getProcessSignature()).getEvaluator();
-                 ((ServiceInvoker)invoker).getScope().append(xrt.getContext());
+                 ((ServiceInvoker)invoker).getInvokeContext().append(xrt.getContext());
 			if (invoker.getCondition() != null) {
 				if (invoker.getCondition().getConditionalContext() != null) {
 				invoker.getCondition().getConditionalContext().append(xrt.getContext());

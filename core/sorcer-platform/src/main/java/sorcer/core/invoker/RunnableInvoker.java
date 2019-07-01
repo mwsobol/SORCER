@@ -68,10 +68,5 @@ public class RunnableInvoker<T> extends ServiceInvoker<T> {
 		new Thread(runnable).start();
 		return null;
 	}
-	
-//	@Override
-//	public T compute(Arg... entries) throws RemoteException,
-//			InvocationException {
-//		return invoke((Context)Arg.selectDomain(entries), entries);
-//	}
+
 }

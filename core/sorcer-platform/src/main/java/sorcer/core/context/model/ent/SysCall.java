@@ -61,7 +61,7 @@ public class SysCall extends Prc<Context> implements Serializable {
                 invoker = new CmdInvoker(name);
 
             if (scope != null) {
-                invoker.setScope(scope);
+                invoker.setInvokeContext(scope);
             }
 
             if (cmd != null)
@@ -77,7 +77,7 @@ public class SysCall extends Prc<Context> implements Serializable {
 
     public Context evaluate(Arg... args) throws RemoteException,
             InvocationException {
-        Context out = invoker.getScope();
+        Context out = invoker.getInvokeContext();
         if (out == null)
             out = new ServiceContext(name);
 
@@ -87,7 +87,7 @@ public class SysCall extends Prc<Context> implements Serializable {
                 StringBuilder cmd = new StringBuilder(invoker.getCmd());
                 Object val = null;
                 for (String path : inPaths) {
-                    val = invoker.getScope().getValue(path);
+                    val = invoker.getInvokeContext().getValue(path);
                     if (val == null || val == Context.none) {
                         cmd.append(" " + path);
                     } else {

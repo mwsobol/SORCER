@@ -57,7 +57,7 @@ public class MultiFiEvaluator<T> extends MultiFiSlot<String, T> implements Evalu
 						cxt = contextReturn.getDataContext();
 					}
 					if (cxt == null && scope != null) {
-                        ((ServiceInvoker)impl).setScope(scope);
+                        ((ServiceInvoker)impl).setInvokeContext(scope);
                     }
 					return (T) ((Invocation) impl).invoke(cxt, args);
 				} else {

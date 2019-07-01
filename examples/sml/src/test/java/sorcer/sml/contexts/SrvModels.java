@@ -58,7 +58,7 @@ public class SrvModels {
         Context scope = context(val("x1", 20.0), val("y1", 40.0));
 
         Model mdl = model(ent("x", 10.0), ent("y", 20.0),
-            operator.prc(invoker("lambda", (cxt) -> {
+            prc(invoker("lambda", (cxt) -> {
                     return (double) value(cxt, "x")
                         + (double) value(cxt, "y")
                         + (double) value(cxt, "y1")

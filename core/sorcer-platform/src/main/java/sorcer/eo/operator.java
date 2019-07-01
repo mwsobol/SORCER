@@ -473,7 +473,15 @@ operator extends Operator {
                         && ((Evaluator) p.getImpl()).getScope().size() > 0) {
                         ((Evaluator) p.getImpl()).getScope().setScope(cxt);
                     } else {
-                        ((Evaluator) p.getImpl()).setScope(cxt);
+                        if (p.getImpl() instanceof ServiceInvoker) {
+                            if (((ServiceInvoker) p.getImpl()).getInvokeContext() == null) {
+                                ((ServiceInvoker) p.getImpl()).setInvokeContext(cxt);
+                            } else {
+                                ((ServiceInvoker) p.getImpl()).setScope(cxt);
+                            }
+                        } else {
+                            ((Evaluator) p.getImpl()).setScope(cxt);
+                        }
                     }
                 } else if (p.getImpl()  instanceof Entry) {
                     ((Entry) p.getImpl()).initScope(context(entryList));
@@ -669,7 +677,11 @@ operator extends Operator {
             } else if (ent instanceof InputValue || ent.getType() == Functionality.Type.INPUT) {
                 Object par = ent.getImpl();
                 if (par instanceof Scopable) {
-                    ((Scopable) par).setScope(pcxt);
+                    if (ent.getImpl() instanceof ServiceInvoker) {
+                        ((ServiceInvoker)ent.getImpl()).setInvokeContext(pcxt);
+                    } else {
+                        ((Scopable) par).setScope(pcxt);
+                    }
                 }
                 if (ent.isPersistent()) {
                     setProc(pcxt, ent, i);
@@ -689,9 +701,10 @@ operator extends Operator {
                     } else if (ent.getMultiFi() != null) {
                         pcxt.putOutValueAt(ent.getName(), ent, i + 1);
                     } else {
-
                         pcxt.putOutValueAt(ent.getName(), ent.getImpl(), i + 1);
-
+                        if (ent.getImpl() instanceof ServiceInvoker) {
+                            ((ServiceInvoker)ent.getImpl()).setInvokeContext(pcxt);
+                        }
                     }
                 }
             } else if (ent instanceof InoutValue || ent.getType() == Functionality.Type.INOUT) {
@@ -707,7 +720,7 @@ operator extends Operator {
                 }
             } else if (ent instanceof Entry) {
                 if (ent instanceof Prc && ((Prc)ent).getImpl() instanceof Invocation) {
-                    ((ServiceInvoker)((Prc)ent).getImpl()).setScope(pcxt);
+                    ((ServiceInvoker)((Prc)ent).getImpl()).setInvokeContext(pcxt);
                 }
                 if (ent.isPersistent()) {
                     setProc(pcxt, entryList.get(i), i);
@@ -737,7 +750,7 @@ operator extends Operator {
                 val = entryList.get(i).asis();
                 if (val instanceof Incrementor &&
                     ((IncrementInvoker)val).getTarget() == null) {
-                    ((IncrementInvoker)val).setScope(cxt);
+                    ((IncrementInvoker)val).setInvokeContext(cxt);
                 }
                 if (ent.isPersistent()) {
                     setProc(cxt, ent);
@@ -3669,27 +3682,33 @@ operator extends Operator {
                 } else if (e instanceof OptTask) {
                     ((OptTask)e).getCondition().setConditionalContext(pm);
                 } else if (e instanceof LoopTask) {
-                    if (((LoopTask)e).getCondition() != null)
-                        ((LoopTask)e).getCondition().setConditionalContext(pm);
-                    Mogram target = ((LoopTask)e).getTarget();
-                    if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Prc) {
-                        Prc p = (Prc)((EvaluationTask)target).getEvaluation();
-                        p.setScope(pm);
-                        if (target instanceof Routine && ((Routine)target).getContext().getContextReturn() == null)
-                            ((ServiceContext)((Routine)target).getContext()).setContextReturn(p.getName());
+                    if (((LoopTask)e).getCondition() != null) {
+                        ((LoopTask) e).getCondition().setConditionalContext(pm);
                     }
-//				} else if (e instanceof VarTask) {
-//					pm.append(((VarSignature)e.getProcessSignature()).getVariability());
+
+                    Mogram target = ((LoopTask)e).getTarget();
+                    if (target instanceof EvaluationTask && ((EvaluationTask)target).getEvaluation() instanceof Entry) {
+                        ServiceContext ltcxt = (ServiceContext) ((EvaluationTask)target).getDataContext();
+                        if (ltcxt == null || ltcxt.size() == 0) {
+                            ((EvaluationTask)target).setContext(pm);
+                        }
+                        Entry p = (Entry) ((EvaluationTask)target).getEvaluation();
+                        if (p.getImpl() instanceof ServiceInvoker) {
+                            ((ServiceInvoker)p.getImpl()).setInvokeContext(pm);
+                        } else {
+                            p.setScope(pm);
+                        }
+                        if (target instanceof Routine && target.getContext().getContextReturn() == null)
+                            ((ServiceContext)target.getContext()).setContextReturn(p.getName());
+                    }
                 } else if (e instanceof EvaluationTask) {
                     e.setScope(pm.getScope());
                     if (((EvaluationTask)e).getEvaluation() instanceof Prc) {
                         Prc p = (Prc)((EvaluationTask)e).getEvaluation();
-                        ((EntModel)pm.getScope()).addCall(p);
-//						pm.addCall(p);
-
+                        pm.getScope().addCall(p);
                     }
                 } else if (e instanceof Routine) {
-                    ((ServiceContext)e.getDataContext()).setScope(pm.getScope());
+                    e.getDataContext().setScope(pm.getScope());
                     e.getDataContext().updateEntries(pm.getScope());
                 }
             }

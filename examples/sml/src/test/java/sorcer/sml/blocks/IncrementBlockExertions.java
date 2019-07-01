@@ -42,7 +42,7 @@ public class IncrementBlockExertions implements SorcerConstants {
 	@Test
 	public void taskIncrement() throws Exception {
 		Task t = task(sig("add", AdderImpl.class),
-				model("add", inVal("arg/x1", inc("arg/x2", 2.0)),
+				context("add", inVal("arg/x1", inc("arg/x2", 2.0)),
 						inVal("arg/x2", 80.0), result("task/result")));
 
 //		logger.info("result: " + eval(t));

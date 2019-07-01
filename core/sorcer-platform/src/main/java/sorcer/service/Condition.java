@@ -45,7 +45,7 @@ import java.util.Map;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
- public class Condition implements Evaluation<Object>, Conditional,  Service, Serializable {
+ public class Condition implements Evaluation<Object>, Scopable, Conditional,  Service, Serializable {
 
 	final static public String _closure_ = "_closure_";
 
@@ -159,7 +159,7 @@ import java.util.Map;
 					ps.add(new Prc(name));
 				}
 				ServiceInvoker invoker = new GroovyInvoker(closureExpression, ps.toArray());
-				invoker.setScope(conditionalContext);
+				invoker.setInvokeContext(conditionalContext);
 				conditionalContext.putValue(_closure_, invoker);
 				closure = (Closure) conditionalContext.getValue(_closure_);
 				args = new Object[pars.length];
@@ -318,7 +318,7 @@ import java.util.Map;
 			// now check args
 			if (entry.getValue() instanceof ServiceInvoker) {
 				clenupContextScripts(((ServiceInvoker) entry.getValue())
-						.getScope());
+						.getInvokeContext());
 			} else if (entry.getValue() instanceof Prc) {
 				Context cxt =  ((Prc) entry.getValue()).getScope();
 				if (cxt != null) cxt.remove(Condition._closure_);

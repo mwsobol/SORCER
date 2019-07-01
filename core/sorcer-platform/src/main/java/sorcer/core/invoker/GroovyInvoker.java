@@ -132,19 +132,20 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 	}
 
 	private void initBindings() throws RemoteException, ContextException {
-		if (invokeContext != null) {
-			if (args != null && args.size() > 0) {
-				for (Arg p : args) {
-					Object obj = invokeContext.getValue(p.getName());
-					if (obj == null || obj == Context.none) {
-						// try extended path
-						obj = ((ServiceContext)invokeContext).getValueEndsWith(p.getName());
-					}
-					if (obj != null && obj != Context.none) {
-						((Setter)p).setValue(obj);
-					} else if (((Evaluation)p).asis() != null) {
-						invokeContext.putValue(p.getName(), ((Evaluation) p).asis());
-					}
+		if ((invokeContext == null || invokeContext.size() == 0) && scope !=null){
+			invokeContext = scope;
+		}
+		if (args != null && args.size() > 0) {
+			for (Arg p : args) {
+				Object obj = invokeContext.getValue(p.getName());
+				if (obj == null || obj == Context.none) {
+					// try extended path
+					obj = ((ServiceContext)invokeContext).getValueEndsWith(p.getName());
+				}
+				if (obj != null && obj != Context.none) {
+					((Setter)p).setValue(obj);
+				} else if (((Evaluation)p).asis() != null) {
+					invokeContext.putValue(p.getName(), ((Evaluation) p).asis());
 				}
 			}
 		}

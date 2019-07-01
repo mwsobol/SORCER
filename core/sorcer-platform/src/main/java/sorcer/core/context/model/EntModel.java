@@ -20,6 +20,7 @@ import sorcer.core.context.Contexts;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.*;
+import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
 import sorcer.service.Domain;
@@ -239,13 +240,18 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 			return value;
 		} else {
 			if (value instanceof Scopable) {
-				Object scope = ((Scopable) value).getScope();
-				if (scope != null && ((Context) scope).size() > 0) {
-					((Context) scope).append(this);
-				} else {
-					((Scopable) value).setScope(this);
-				}
-			}
+                Object scope = ((Scopable) value).getScope();
+                if (scope != null && ((Context) scope).size() > 0) {
+                    ((Context) scope).append(this);
+                }
+                if (value instanceof Srv && ((Srv) value).getImpl() instanceof ServiceInvoker) {
+                    ((ServiceInvoker) ((Entry) value).getImpl()).setInvokeContext(this);
+                } else if (value instanceof ServiceInvoker) {
+                    ((ServiceInvoker) value).setInvokeContext(this);
+                } else {
+                    ((Scopable) value).setScope(this);
+                }
+            }
 		}
 		return super.put(path, value);
 	}

@@ -9,17 +9,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Pipeline extends ServiceInvoker<Context> {
+
+    private Context newInvokeContext;
+
+    private boolean isNewInput = false;
+
     private List<Opservice> opservices = new ArrayList<>();
 
     public Pipeline(Opservice... opservices) {
         this(null, opservices);
     }
 
-    public Pipeline(String name, Opservice... opservices) {
+    public Pipeline(String name, Context data, Opservice... opservices) {
         super(name);
+        if (data != null) {
+            invokeContext = data;
+        }
         for (Opservice eval : opservices) {
             this.opservices.add(eval);
         }
+    }
+
+    public Pipeline(String name, Opservice... opservices) {
+        this(name, null, opservices);
     }
 
     public Pipeline(List<Opservice> opservices) {
@@ -51,22 +63,28 @@ public class Pipeline extends ServiceInvoker<Context> {
             } catch (ContextException e) {
                 throw new InvocationException(e);
             }
+        } else {
+            try {
+                out.append(invokeContext);
+            } catch (ContextException e) {
+                throw new InvocationException(e);
+
+            }
         }
 
         Context cxt = null;
         Object opout =  null;
         for (Opservice opsrv : opservices) {
             try {
-                if (invokeContext != null && invokeContext.size() > 0) {
-                    if (opsrv instanceof Scopable) {
-                        if (((Scopable) opsrv).getScope() == null) {
-                            ((Scopable) opsrv).setScope(invokeContext);
-                        } else {
-                            ((Scopable) opsrv).getScope().append(invokeContext);
+                if (opsrv instanceof Scopable) {
+                    if (((Scopable) opsrv).getScope() == null) {
+                        ((Scopable) opsrv).setScope(out);
+                    } else {
+                        ((Scopable) opsrv).getScope().append(out);
 
-                        }
                     }
                 }
+
                 if (returnContext != null) {
                     if (((Scopable) opsrv).getScope() == null) {
                         ((Scopable) opsrv).setScope(returnContext);
@@ -75,13 +93,40 @@ public class Pipeline extends ServiceInvoker<Context> {
                     }
                 }
 
+                if (opsrv instanceof Appender) {
+                    Context appendContext = (Context) opsrv.execute();
+                    if (((Appender) opsrv).isNew()) {
+                        if (((Appender) opsrv).getType().equals(Appender.ContextType.INPUT)) {
+                            newInvokeContext = appendContext;
+                            isNewInput = true;
+                        } else {
+                            scope = appendContext;
+                        }
+                    } else {
+                        if (((Appender) opsrv).getType().equals(Appender.ContextType.INPUT)) {
+                            out.append(appendContext);
+                        } else {
+                            scope.append(appendContext);
+                        }
+                    }
+                    continue;
+                }
+
                 if (opsrv instanceof Invocation) {
-                    opout = ((Invocation) opsrv).invoke(out, args);
+                    if (isNewInput) {
+                        opout = ((Invocation) opsrv).invoke(newInvokeContext, args);
+                    } else {
+                        opout = ((Invocation) opsrv).invoke(out, args);
+                    }
                 } else if (opsrv instanceof Evaluation) {
                     opout = ((Evaluation) opsrv).evaluate(args);
                 } else {
                     if (opsrv instanceof Signature) {
-                        opout = opsrv.execute(out);
+                        if (isNewInput) {
+                            opout = opsrv.execute(newInvokeContext);
+                        } else {
+                            opout = opsrv.execute(out);
+                        }
                     } else {
                         opout = opsrv.execute(args);
                     }

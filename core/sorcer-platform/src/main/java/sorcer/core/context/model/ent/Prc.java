@@ -83,7 +83,7 @@ public class Prc<T> extends Subroutine<T> implements Invocation<T>,
 
 		if (entity instanceof Evaluation || entity instanceof Invocation) {
 			if (entity instanceof ConditionalInvocation) {
-				Context cxt = ((ServiceInvoker) entity).getScope();
+				Context cxt = ((ServiceInvoker) entity).getInvokeContext();
 				if (cxt != null) {
 					scope = cxt;
 					Condition condition = ((ConditionalInvocation) entity).getCondition();
@@ -171,7 +171,9 @@ public class Prc<T> extends Subroutine<T> implements Invocation<T>,
 	@Override
 	public T evaluate(Arg... args) throws EvaluationException, RemoteException {
 		// check for a constant or cached eval
-		if (out instanceof Number &&  isValid && impl == null && !isPersistent) {
+		if (impl == null && out != null && !isPersistent) {
+			return out;
+		} else if (out instanceof Number &&  isValid && impl == null && !isPersistent) {
 			return (T) out;
 		} else if (impl instanceof Incrementor || ((impl instanceof ServiceInvoker) &&
 			scope != null && scope.isChanged())) {
@@ -224,7 +226,9 @@ public class Prc<T> extends Subroutine<T> implements Invocation<T>,
 			}
 			if (val instanceof Invocation) {
 				Context cxt = (Context) Arg.selectDomain(args);
-				if (cxt != null) {
+				if (cxt == null) {
+					cxt = this.scope;
+				} else {
                     cxt.setScope(this.scope);
                 }
 				val = (T) ((Invocation) val).invoke(cxt, args);

@@ -303,14 +303,14 @@ public class operator extends Operator {
 
     public static Evaluator pl(String name, Context context, Opservice... pservices) {
         Pipeline pl =  new Pipeline(pservices);
-        pl.setScope(context);
+        pl.setInvokeContext(context);
         pl.setName(name);
         return pl;
     }
 
     public static Evaluator pl(Context context, Opservice... pservices) {
         Pipeline pl =  new Pipeline(pservices);
-        pl.setScope(context);
+        pl.setInvokeContext(context);
         return pl;
     }
 
@@ -319,16 +319,51 @@ public class operator extends Operator {
         return pl;
     }
 
-
     public static Evaluator pl(Opservice... pservices) {
         return new Pipeline(pservices);
     }
+
+	public static Evaluator n2(String name, Context data, Opservice... pservices) {
+		return new Pipeline(name, data, pservices);
+	}
 
 	public static <T> Evaluator<T>  mfEval(Evaluator<T>... evaluators) {
 		return (Evaluator<T>) new MultiFiEvaluator(evaluators);
 	}
 
-	public static Prc mfPrc(Evaluation... evaluators) {
+    public static Invoker appendScope(Context context) {
+		Appender inv = new Appender();
+		inv.setScope(context);
+		inv.setType(Appender.ContextType.SCOPE);
+		inv.setNew(false);
+        return inv;
+    }
+
+	public static Invoker newScope(Context context) {
+		Appender inv = new Appender();
+		inv.setScope(context);
+		inv.setType(Appender.ContextType.SCOPE);
+		inv.setNew(true);
+		return inv;
+	}
+
+	public static Invoker appendInput(Context context) {
+		Appender inv = new Appender();
+		inv.setDataContext(context);
+		inv.setType(Appender.ContextType.INPUT);
+		inv.setNew(false);
+		return inv;
+	}
+
+	public static Invoker newInput(Context context) {
+		Appender inv = new Appender();
+		inv.setDataContext(context);
+		inv.setType(Appender.ContextType.INPUT);
+		inv.setNew(true);
+		return inv;
+	}
+
+    public static Prc mfPrc(Evaluation... evaluators) {
 		MultiFiEvaluator mfEval =  new MultiFiEvaluator(evaluators);
 		// set default fidelity to the first evaluation
 		return new Prc(((Identifiable)evaluators[0]).getName(), mfEval);
@@ -345,7 +380,7 @@ public class operator extends Operator {
 	public static Prc prc(String path, String expression, Context context, Arg... parameters) {
 		GroovyInvoker gi = new GroovyInvoker(expression, parameters);
 		if (context != null) {
-            gi.setScope(context);
+            gi.setInvokeContext(context);
         }
 		String name = path;
 		if (path == null) {
@@ -485,7 +520,7 @@ public class operator extends Operator {
 
 	public static <T> Evaluator<T> invoker(String name, String expression, Context scope, Args args) throws ContextException {
 		GroovyInvoker<T> invoker = new GroovyInvoker(name, expression, args.argSet());
-		invoker.setScope(scope);
+		invoker.setInvokeContext(scope);
 		return invoker;
 	}
 
@@ -495,7 +530,7 @@ public class operator extends Operator {
 
 	public static ServiceInvoker invoker(String expression, Context scope, Args args) throws ContextException {
 		GroovyInvoker invoker = new GroovyInvoker(expression, args.argSet());
-		invoker.setScope(scope);
+		invoker.setInvokeContext(scope);
 		return invoker;
 	}
 
@@ -671,7 +706,7 @@ public class operator extends Operator {
 
 	public static LoopInvoker loop(Condition condition, Invocation target, Context context) throws ContextException {
 		LoopInvoker invoker = new LoopInvoker(null, condition, target);
-		invoker.setScope(context);
+		invoker.setInvokeContext(context);
 		return invoker;
 	}
 
@@ -705,7 +740,7 @@ public class operator extends Operator {
 			RemoteException {
 		Object obj = callEntry.asis();
 		if (obj instanceof ServiceInvoker)
-			return ((ServiceInvoker) obj).getScope();
+			return ((ServiceInvoker) obj).getInvokeContext();
 		else
 			return null;
 	}
@@ -834,10 +869,14 @@ public class operator extends Operator {
 			cxt = (Context) Arg.selectDomain(args);
 		}
 		try {
-			// special cases of procedural attachmnet
+			// special cases of procedural attachment
 			if (entry instanceof Prc) {
 				if (cxt != null) {
-					entry.setScope(cxt);
+					if (value instanceof ServiceInvoker) {
+						((ServiceInvoker)value).setInvokeContext(cxt);
+					} else {
+						entry.setScope(cxt);
+					}
 				} else if (args.length == 1 && args[0] instanceof Subroutine) {
 					entry.setScope(context((Subroutine) args[0]));
 				} else if (args.length == 1 && args[0] instanceof Service) {

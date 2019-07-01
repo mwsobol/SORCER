@@ -63,10 +63,10 @@ public class AltInvoker<V> extends ServiceInvoker<V> implements ConditionalInvoc
 						opt.getCondition().getConditionalContext().append(invokeContext);
 					}
 
-					if (opt.target.getScope() == null) {
-						opt.target.setScope(invokeContext);
+					if (opt.target.getInvokeContext() == null) {
+						opt.target.setInvokeContext(invokeContext);
 					} else {
-						opt.target.getScope().append(invokeContext);
+						opt.target.getInvokeContext().append(invokeContext);
 					}
 				}
 				if (opt.isTrue()) {

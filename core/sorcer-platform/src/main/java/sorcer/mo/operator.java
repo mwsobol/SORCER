@@ -741,13 +741,12 @@ public class operator {
                     context.mark(e.getName(), e.annotation().toString());
                 }
                 if (e.asis() instanceof Scopable) {
-                    ((Scopable) e.asis()).setScope(context);
+                    if (e.asis() instanceof ServiceInvoker) {
+                        ((ServiceInvoker)e.asis()).setInvokeContext(context);
+                    } else {
+                        ((Scopable) e.asis()).setScope(context);
+                    }
                 }
-            }
-
-            if (i instanceof Prc && ((Prc)i).getImpl() instanceof Invocation) {
-                ((Prc)i).setScope(context);
-                ((ServiceInvoker)((Prc)i).getImpl()).setScope(context);
             }
         }
         context.isChanged();

@@ -3127,11 +3127,11 @@ public class ServiceContext<T> extends ServiceMogram implements
 
 	public Context getOutputs() throws ContextException, RemoteException {
 		List<String> paths = Contexts.getOutPaths(this);
-		Context<T> inputs = new ServiceContext();
+		Context<T> outputs = new ServiceContext();
 		for (String path : paths)
-			inputs.putValue(path, getValue(path));
+			outputs.putValue(path, getValue(path));
 
-		return inputs;
+		return outputs;
 	}
 
 	public Context getResponses(String path, Path... paths) throws ContextException, RemoteException {
@@ -3312,7 +3312,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (p.getScope() == null)
 			p.setScope(new EntModel(p.getName()).append(this));
 		if (p.asis() instanceof ServiceInvoker) {
-			((ServiceInvoker) p.asis()).setScope(this);
+			((ServiceInvoker) p.asis()).setInvokeContext(this);
 		}
 		isChanged = true;
 		return p;

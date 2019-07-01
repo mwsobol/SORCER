@@ -104,7 +104,7 @@ public class Agent<T> extends Prc<T> implements Serializable {
 						.newInstance(new Object[] { scope });
 				invoker = new MethodInvoker(name, obj, name, entries);
 				if (scope instanceof EntModel)
-					invoker.setScope((EntModel)scope);
+					invoker.setInvokeContext(scope);
 				invoker.setContext(scope);
 			} finally {
 				AccessController.doPrivileged(new PrivilegedAction() {

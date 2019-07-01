@@ -126,8 +126,11 @@ public class OptInvoker<T> extends ServiceInvoker<T> implements ConditionalInvoc
 	}
 
 	private void checkInvokeContext() throws RemoteException, ContextException {
-		if (target.getScope().size() == 0 && invokeContext.size() > 0) {
-			target.setScope(invokeContext);
+		if (target.getInvokeContext().size() == 0 && invokeContext.size() > 0) {
+			target.setInvokeContext(invokeContext);
+		}
+		if (scope != null && target.getScope() == null) {
+			target.setScope(scope);
 		}
 	}
 

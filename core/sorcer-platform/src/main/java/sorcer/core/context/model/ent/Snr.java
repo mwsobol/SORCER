@@ -69,25 +69,25 @@ public class Snr extends Subroutine<Double> implements Invocation<Double>,
     public Snr(String name, double value, Context<Subroutine> signals) {
         this(name);
         impl = value;
-		((Activator)impl).setScope(signals);
+		((Activator)impl).setInvokeContext(signals);
     }
 
 	public Snr(String name, Context<Value> signals, Context<Float> weights, operator.Args args) {
 		this(name, args);
-		((Activator)impl).setScope(signals);
+		((Activator)impl).setInvokeContext(signals);
 
 	}
 
 	public Snr(String name, Context<Value> signals, Context<Float> weights) {
 		this(name);
-		((Activator)impl).setScope(signals);
+		((Activator)impl).setInvokeContext(signals);
 
 	}
 
 	public Snr(String name, double value, Context<Value> signals, Context<Float> weights) {
         this(name);
 		impl = value;
-		((Activator)impl).setScope(signals);
+		((Activator)impl).setInvokeContext(signals);
 
     }
 
@@ -154,7 +154,7 @@ public class Snr extends Subroutine<Double> implements Invocation<Double>,
 		if (scope != null) {
             this.scope = scope;
             if (impl != null) {
-				((Activator)impl).setScope(scope);
+				((Activator)impl).setInvokeContext(scope);
             }
         }
 	}
@@ -252,10 +252,10 @@ public class Snr extends Subroutine<Double> implements Invocation<Double>,
             InvocationException {
         try {
             if (context != null) {
-                if (((Activator)impl).getScope() == null)
-					((Activator)impl).setScope(context);
+                if (((Activator)impl).getInvokeContext() == null)
+					((Activator)impl).setInvokeContext(context);
                 else {
-					((Activator)impl).getScope().append(context);
+					((Activator)impl).getInvokeContext().append(context);
                 }
             }
             if (multiFi != null) {
@@ -263,7 +263,7 @@ public class Snr extends Subroutine<Double> implements Invocation<Double>,
             } else if (((Activator)impl).getArgs().size() == 0) {
                 return out;
             }
-            ((Activator)impl).setScope(scope);
+            ((Activator)impl).setInvokeContext(scope);
             out = ((Activator)impl).activate(args);
             return out;
         } catch (Exception e) {
@@ -280,7 +280,7 @@ public class Snr extends Subroutine<Double> implements Invocation<Double>,
 		while (i.hasNext()) {
 			Snr procEntry = (Snr)i.next();
 			try {
-				((Activator)impl).getScope().putValue(procEntry.getName(), procEntry.asis());
+				((Activator)impl).getInvokeContext().putValue(procEntry.getName(), procEntry.asis());
 			} catch (Exception e) {
 				throw new EvaluationException(e);
 			} 
@@ -324,7 +324,7 @@ public class Snr extends Subroutine<Double> implements Invocation<Double>,
 
     @Override
 	public Double getPerturbedValue(String varName) throws ConfigurationException {
-        return (Double)(((Activator)impl).getScope().get(varName)) + bias;
+        return (Double)(((Activator)impl).getInvokeContext().get(varName)) + bias;
     }
 
     @Override
