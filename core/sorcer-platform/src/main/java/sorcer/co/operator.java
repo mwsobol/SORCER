@@ -1469,11 +1469,6 @@ public class operator extends Operator {
 		return  model.asis(path);
 	}
 
-    public static Object asis(Contextion mappable, String path)
-            throws ContextException {
-        return  mappable.asis(path);
-    }
-
     public static Copier copier(Domain fromContext, Arg[] fromEntries,
                                 Domain toContext, Arg[] toEntries) throws EvaluationException {
         return new Copier(fromContext, fromEntries, toContext, toEntries);

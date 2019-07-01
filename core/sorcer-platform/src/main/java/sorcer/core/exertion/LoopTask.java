@@ -18,6 +18,7 @@
 package sorcer.core.exertion;
 
 import net.jini.core.transaction.Transaction;
+import sorcer.core.context.ServiceContext;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.srv.SrvModel;
 import sorcer.service.*;
@@ -189,9 +190,9 @@ public class LoopTask extends ConditionalTask {
 	}
 
 	@Override
-	public Context getDataContext() {
+	public ServiceContext getDataContext() {
 		if (target instanceof Context) {
-			return (Context) target;
+			return (ServiceContext)target;
 		} else {
 			return dataContext;
 		}

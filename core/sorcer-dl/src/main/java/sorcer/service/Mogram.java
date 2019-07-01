@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Identifiable, FederatedRequest, Exertion, Scopable, Substitutable, Arg {
+public interface Mogram extends Identifiable, Contextion, FederatedRequest, Exertion, Scopable, Substitutable, Arg {
 
     /**
      * Returns an ID of this mogram.
@@ -364,5 +364,4 @@ public interface Mogram extends Identifiable, FederatedRequest, Exertion, Scopab
 
     public void setBuilder(Signature builder) throws MogramException;
 
-    public String describe();
 }

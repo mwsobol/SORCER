@@ -228,7 +228,7 @@ public class operator extends Operator {
 		return parameter;
 	}
 
-	public static Invocation invoker(Contextion mappable, String path)
+	public static Invocation invoker(Context mappable, String path)
 			throws ContextException {
 		Object obj = mappable.asis(path);
 		while (obj instanceof Contextion || obj instanceof Prc) {

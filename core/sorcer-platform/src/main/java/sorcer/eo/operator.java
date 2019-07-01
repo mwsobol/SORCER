@@ -2787,7 +2787,7 @@ operator extends Operator {
         return map.get(path);
     }
 
-    public static <V> V pathValue(Contextion<V> map, String path, Arg... args) throws ContextException {
+    public static <V> V pathValue(Context<V> map, String path, Arg... args) throws ContextException {
         try {
             return map.getValue(path, args);
         } catch (RemoteException e) {

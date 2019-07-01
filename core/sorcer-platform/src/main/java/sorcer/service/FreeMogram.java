@@ -38,30 +38,6 @@ public class FreeMogram extends ServiceMogram {
         this.key = name;
     }
 
-
-    public Mogram getMogram() {
-        return mogram;
-    }
-
-    public void setMogram(Mogram mogram) {
-        this.mogram = mogram;
-    }
-
-    @Override
-    public <T extends Mogram> T exert(Transaction txn, Arg... entries) throws MogramException, RemoteException {
-        return null;
-    }
-
-    @Override
-    public <T extends Mogram> T exert(Arg... entries) throws MogramException, RemoteException {
-        return null;
-    }
-
-    @Override
-    public Context getContext() throws ContextException {
-        return null;
-    }
-
     @Override
     public Object get(String key) {
         return null;
@@ -82,43 +58,22 @@ public class FreeMogram extends ServiceMogram {
         return null;
     }
 
-    @Override
-    public List<String> getTrace() throws RemoteException {
-        return null;
+    public Mogram getMogram() {
+        return mogram;
     }
 
-    @Override
-    public void appendTrace(String info) throws RemoteException {
-
+    public void setMogram(Mogram mogram) {
+        this.mogram = mogram;
     }
 
-    @Override
-    public List<ThrowableTrace> getAllExceptions() throws RemoteException {
-        return null;
-    }
 
     @Override
-    public boolean isMonitorable() throws RemoteException {
-        return false;
-    }
-
-    @Override
-    public Context getDataContext() throws ContextException {
-        return null;
-    }
-
-    @Override
-    public String describe() {
+    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
         return null;
     }
 
     @Override
     public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... entries) throws MogramException, RemoteException {
         return null;
-    }
-
-    @Override
-    public void substitute(Arg... entries) throws SetterException, RemoteException {
-
     }
 }

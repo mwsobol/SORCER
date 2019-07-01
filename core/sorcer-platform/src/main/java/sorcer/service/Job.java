@@ -323,7 +323,7 @@ public class Job extends Transroutine {
 		desc.append("\n=== START PRINTING JOB ===\n");	
 		desc.append("\n=============================\nListing Component Exertions\n=============================\n");
 		for (int i = 0; i < size(); i++) {
-			desc.append("\n===========\n Routine ").append(i).append("\n===========\n").append((get(i)).describe());
+			desc.append("\n===========\n Routine ").append(i).append("\n===========\n").append((get(i)));
 		}
 		desc.append("\n=== DONE PRINTING JOB ===\n");
 		return desc.toString();

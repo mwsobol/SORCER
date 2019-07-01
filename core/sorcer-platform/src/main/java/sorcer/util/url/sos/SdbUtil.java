@@ -253,11 +253,8 @@ public class SdbUtil {
 						result(StorageManagement.object_url)));
 
 		Task out = exert(objectStoreTask);
-		try {
-			return (URL) out.getDataContext().getValue(StorageManagement.object_url);
-		} catch (RemoteException e) {
-			throw new ContextException(e);
-		}
+		return (URL) out.getDataContext().getValue(StorageManagement.object_url);
+
 	}
 
 	public static URL write(Object object) throws ServiceException,

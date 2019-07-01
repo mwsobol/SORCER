@@ -56,8 +56,6 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
 
     protected final static Logger logger = LoggerFactory.getLogger(ServiceRoutine.class.getName());
 
-    protected ServiceContext dataContext;
-
     /**
      * A form of service context that describes the control strategy of this
      * exertion.
@@ -474,10 +472,6 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
     /** {@inheritDoc} */
     public boolean isTree() {
         return isTree(new HashSet());
-    }
-
-    public Context getDataContext() throws ContextException {
-        return dataContext;
     }
 
     public void setContextScope(Context scope) {
@@ -1080,7 +1074,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
     }
 
     public Context updateContext() throws ContextException {
-        return ((ServiceContext)getDataContext()).updateContext();
+        return getDataContext().updateContext();
     }
 
     protected Context getCurrentContext() throws ContextException {
@@ -1163,26 +1157,5 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
             throw new EvaluationException(e);
         }
     }
-
-    @Override
-    public Object getValue(Path path, Arg... args) throws ContextException, RemoteException {
-        return getContext().getValue(path.path, args);
-    }
-
-    @Override
-    public Context appendContext(Context context) throws ContextException, RemoteException {
-        return null;
-    }
-
-    @Override
-    public Context getContext(Context contextTemplate) throws RemoteException, ContextException {
-        return null;
-    }
-
-    @Override
-    public Context appendContext(Context context, String path) throws ContextException, RemoteException {
-        return null;
-    }
-
 
 }

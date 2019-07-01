@@ -1,6 +1,7 @@
 package sorcer.service;
 
 import net.jini.config.*;
+import net.jini.core.transaction.Transaction;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
@@ -8,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import sorcer.co.tuple.ExecPath;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.ContextSelector;
+import sorcer.core.context.ServiceContext;
+import sorcer.core.context.ThrowableTrace;
 import sorcer.core.context.model.ent.Coupling;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.ent.MdaEntry;
@@ -148,6 +151,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     protected String configFilename;
 
+    protected ServiceContext dataContext;
+
     protected transient Exerter provider;
 
     protected boolean isEvaluated = false;
@@ -198,6 +203,15 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public Uuid getParentId() {
         return parentId;
+    }
+
+    @Override
+    public ServiceContext getDataContext() throws ContextException {
+        return dataContext;
+    }
+
+    public void setDataContext(ServiceContext dataContext) {
+        this.dataContext = dataContext;
     }
 
     public List<Mogram> getAllMograms() {
@@ -256,12 +270,53 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     }
 
     @Override
+    public Context getContext() throws ContextException {
+        return dataContext;
+    }
+
+    @Override
+    public void setContext(Context context) throws ContextException {
+        dataContext = (ServiceContext) context;
+    }
+
+    @Override
+    public Context appendContext(Context context) throws ContextException, RemoteException {
+        return dataContext.appendContext(context);
+    }
+
+    @Override
+    public Context getContext(Context contextTemplate) throws RemoteException, ContextException {
+        return null;
+    }
+
+    @Override
+    public Context appendContext(Context context, String path) throws ContextException, RemoteException {
+        return dataContext.appendContext(context, path, false);
+    }
+
+    @Override
+    public Context getContext(String path) throws ContextException, RemoteException {
+        ServiceContext subcntxt = dataContext.getSubcontext();
+        return subcntxt.appendContext(dataContext, path);
+    }
+
+    @Override
     public Uuid getId() {
         return mogramId;
     }
 
     public void setId(Uuid id) {
         mogramId = id;
+    }
+
+    @Override
+    public <T extends Mogram> T exert(Transaction txn, Arg... args) throws MogramException, RemoteException {
+        return null;
+    }
+
+    @Override
+    public <T extends Mogram> T exert(Arg... args) throws MogramException, RemoteException {
+        return null;
     }
 
     public String getDescription() {
@@ -754,6 +809,11 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return getFidelityManager();
     }
 
+    @Override
+    public boolean isMonitorable() throws RemoteException {
+        return false;
+    }
+
     public void setFidelityManager(FidelityManagement fiManager) {
         this.fiManager = fiManager;
     }
@@ -1018,6 +1078,21 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         mogramStrategy.addException(t);
     }
 
+    @Override
+    public List<String> getTrace() throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public void appendTrace(String info) throws RemoteException {
+
+    }
+
+    @Override
+    public List<ThrowableTrace> getAllExceptions() throws RemoteException {
+        return null;
+    }
+
     public String getServiceFidelitySelector() {
         return serviceFidelitySelector;
     }
@@ -1069,5 +1144,10 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         isChanged = true;
         clearScope();
         return this;
+    }
+
+    @Override
+    public void substitute(Arg... args) throws SetterException, RemoteException {
+            dataContext.substitute(args);
     }
 }

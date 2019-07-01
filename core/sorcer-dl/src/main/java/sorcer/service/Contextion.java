@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Contextion<T> extends Mogram, FederatedRequest, Identifiable {
+public interface Contextion extends FederatedRequest, Identifiable {
 
     /**
      * Returns the current context of this evaluation. The current context can be
@@ -55,49 +55,10 @@ public interface Contextion<T> extends Mogram, FederatedRequest, Identifiable {
 	 */
 	public void setContext(Context input) throws ContextException;
 
-	/**
-	 * Returns the value at a given path.
-	 * 
-	 * @param path
-	 *            an attribute-based path
-	 * @return the value at the path
-	 * @throws ContextException
-	 */
-	public T getValue(String path, Arg... args)
-			throws ContextException, RemoteException;
-
-	public T getValue(Path path, Arg... args)
-		throws ContextException, RemoteException;
-	/**
-	 * Returns a value at the path as-is with no execution of the service at the path.
-	 * 
-	 * @param path
-	 *            the attribute-based path
-	 * @return the value as-is at the path
-	 * @throws ContextException
-	 */
-	public T asis(String path) throws ContextException;
-
-	public T asis(Path path) throws ContextException;
-
-	/**
-	 * Associated a given value with a given path
-	 *
-	 * @param path the attribute-based path
-	 * @param value the value to be associated with a given path
-	 * 
-	 * @return the previous value at the path
-	 * 
-	 * @throws ContextException
-	 */
-	public T putValue(String path, T value) throws ContextException;
-
-	public T putValue(Path path, T value) throws ContextException;
-
-	public Context<T> appendContext(Context<T> context)
+	public Context appendContext(Context context)
 		throws ContextException, RemoteException;
 
-	public Context<T> getContext(Context<T> contextTemplate)
+	public Context getContext(Context contextTemplate)
 		throws RemoteException, ContextException;
 
 	/**
@@ -108,7 +69,7 @@ public interface Contextion<T> extends Mogram, FederatedRequest, Identifiable {
 	 * @throws ContextException
 	 * @throws RemoteException
 	 */
-	public Context<T> appendContext(Context<T> context, String path)
+	public Context appendContext(Context context, String path)
 		throws ContextException, RemoteException;
 
 	/**
@@ -118,7 +79,7 @@ public interface Contextion<T> extends Mogram, FederatedRequest, Identifiable {
 	 * @throws ContextException
 	 * @throws RemoteException
 	 */
-	public Context<T> getContext(String path) throws ContextException,
+	public Context getContext(String path) throws ContextException,
 		RemoteException;
 
 }

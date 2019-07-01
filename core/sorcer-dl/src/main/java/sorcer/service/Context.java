@@ -75,7 +75,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, Serializable, Paradigmatic, mog, rsp {
+public interface Context<T> extends Contextion, Domain, Selfable, Response, Serializable, Paradigmatic, mog, rsp {
 
 	/** parameter (proc) */
 	final static String PATH_PAR = "proc";
@@ -726,6 +726,45 @@ public interface Context<T> extends Contextion<T>, Domain, Selfable, Response, S
 	 * @throws ContextException
 	 */
 	public Link getLink(String path) throws ContextException;
+
+	/**
+	 * Returns the value at a given path.
+	 *
+	 * @param path
+	 *            an attribute-based path
+	 * @return the value at the path
+	 * @throws ContextException
+	 */
+	public T getValue(String path, Arg... args)
+			throws ContextException, RemoteException;
+
+	public T getValue(Path path, Arg... args)
+		throws ContextException, RemoteException;
+	/**
+	 * Returns a value at the path as-is with no execution of the service at the path.
+	 *
+	 * @param path
+	 *            the attribute-based path
+	 * @return the value as-is at the path
+	 * @throws ContextException
+	 */
+	public T asis(String path);
+
+	public T asis(Path path) throws ContextException;
+
+	/**
+	 * Associated a given value with a given path
+	 *
+	 * @param path the attribute-based path
+	 * @param value the value to be associated with a given path
+	 *
+	 * @return the previous value at the path
+	 *
+	 * @throws ContextException
+	 */
+	public T putValue(String path, T value) throws ContextException;
+
+	public T putValue(Path path, T value) throws ContextException;
 
 	/**
 	 * Allocates a execute in the context with the directional attribute set to

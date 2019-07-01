@@ -115,6 +115,19 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
     }
 
     @Override
+    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
+        Mogram mog = null;
+        try {
+            dataContext.substitute(context);
+            dataContext.substitute(args);
+            mog = exert(args);
+            return mog.getContext();
+        } catch (MogramException e) {
+            throw new EvaluationException(e);
+        }
+    }
+
+    @Override
     public Context getContext() throws ContextException {
 //        if (morphFidelity != null) {
 //            return ((Mogram)morphFidelity.getSelect()).getContext();
@@ -165,16 +178,6 @@ public class MultiFiMogram extends ServiceMogram implements Fi<Mogram> {
 
     @Override
     public void substitute(Arg... entries) throws SetterException {
-    }
-
-    @Override
-    public Context getDataContext() throws ContextException {
-        return null;
-    }
-
-    @Override
-    public String describe() {
-        return toString();
     }
 
     public Fidelity getServiceFidelity() {

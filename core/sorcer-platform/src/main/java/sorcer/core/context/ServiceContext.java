@@ -1793,7 +1793,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * @see sorcer.service.Contexter#appendContext(sorcer.service.Context)
 	 */
 	@Override
-	public Context<T> appendContext(Context<T> context) throws ContextException,
+	public Context appendContext(Context context) throws ContextException,
 			RemoteException {
 		// getValue the whole context, with the context root key as the
 		// contextReturn prefix
@@ -2766,13 +2766,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	@Override
-	public Context getDataContext() throws ContextException {
+	public ServiceContext getDataContext() {
 		return this;
-	}
-
-	@Override
-	public String describe() {
-		return toString();
 	}
 
 	/*
@@ -3275,10 +3270,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	 * @see sorcer.service.Contexter#getContext(sorcer.service.Context)
 	 */
 	@Override
-	public Context<T> getContext(Context<T> contextTemplate)
+	public Context getContext(Context contextTemplate)
 			throws RemoteException, ContextException {
 		Object val = null;
-		for (String path : contextTemplate.getPaths()) {
+		for (String path : (List<String>)contextTemplate.getPaths()) {
 			val = asis(path);
 			if (val != null && val != Context.none)
 				contextTemplate.putValue(path, asis(path));
@@ -3292,7 +3287,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	@Override
 	public Arg addCall(Arg arg) throws ContextException {
 		Prc p = (Prc)arg;
-		put(p.getName(), (T)p);
+		put(p.getName(), (T) p);
 		if (p.getScope() == null || p.getScope().size() == 0)
 			p.setScope(this);
 		if (p.asis() instanceof Scopable) {

@@ -34,7 +34,6 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
 
-
 /**
  * @author Mike Sobolewski
  */
@@ -105,10 +104,10 @@ public abstract class Block extends Transroutine {
 	}
 
 	@Override
-	public Context getDataContext() throws ContextException {
+	public ServiceContext getDataContext() throws ContextException  {
 		if (contextURL != null) {
 			try {
-				return (Context)contextURL.getContent();
+				return (ServiceContext)contextURL.getContent();
 			} catch (IOException e) {
 				throw new ContextException(e);
 			}

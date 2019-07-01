@@ -238,11 +238,6 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public String describe() {
-        return null;
-    }
-
-    @Override
     public Object execute(Arg... args) throws ServiceException {
         try {
             clear();
@@ -697,36 +692,6 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
 
     @Override
     public MogramStrategy getMogramStrategy() {
-        return null;
-    }
-
-    @Override
-    public Object getValue(String path, Arg... args) throws ContextException, RemoteException {
-        return getContext().getValue(path, args);
-    }
-
-    @Override
-    public Object getValue(Path path, Arg... args) throws ContextException, RemoteException {
-        return getValue(path.path, args);
-    }
-
-    @Override
-    public Object asis(String path) throws ContextException {
-        return null;
-    }
-
-    @Override
-    public Object asis(Path path) throws ContextException {
-        return null;
-    }
-
-    @Override
-    public Object putValue(String path, Object value) throws ContextException {
-        return null;
-    }
-
-    @Override
-    public Object putValue(Path path, Object value) throws ContextException {
         return null;
     }
 
