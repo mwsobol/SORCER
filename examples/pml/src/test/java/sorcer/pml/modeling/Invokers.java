@@ -248,44 +248,21 @@ public class Invokers {
         Opservice sigOut = sig("multiply", MultiplierImpl.class,
                 result("z", inPaths("lambdaOut", "exprOut")));
 
-        Evaluator pp = pl(
+        Evaluator opspl = pl(
                 lambdaOut,
                 exprOut,
                 sigOut);
 
-        setContext(pp, context("mfprc",
+        setContext(opspl, context("mfprc",
                 inVal("x", 20.0),
                 inVal("y", 80.0)));
 
-        Context out = (Context) exec(pp);
+        Context out = (Context) exec(opspl);
 
         logger.info("pipeline: " + out);
         assertEquals(130.0, value(out, "lambdaOut"));
         assertEquals(50.0, value(out, "exprOut"));
         assertEquals(6500.0, value(out, "z"));
-    }
-
-    static public Mogram getMogram() throws Exception {
-        Context c4 = context("multiply", inVal("arg/x1", 50.0),
-                inVal("arg/x2", 10.0), result("result/y"));
-        Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
-                result("result/y"));
-
-        // mograms
-        Task t3 = task(
-                "t3",
-                sig("subtract", SubtractorImpl.class),
-                context("subtract", inVal("arg/x1"), inVal("arg/x2"), outVal("result/y")));
-        Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
-        Task t5 = task("t5", sig("add", AdderImpl.class), c5);
-
-        Job j1 = job("j1", sig("exert", ServiceJobber.class),
-                job("j2", t4, t5, sig("exert", ServiceJobber.class)), t3,
-                pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
-                pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
-                result("j1/t3/result/y"));
-
-        return j1;
     }
 
 	@Test
@@ -319,6 +296,29 @@ public class Invokers {
         assertEquals(230.0, value(out, "lambdaOut"));
 		assertEquals(50.0, value(out, "exprOut"));
 		assertEquals(6500.0, value(out, "z"));
+	}
+
+	static public Mogram getMogram() throws Exception {
+		Context c4 = context("multiply", inVal("arg/x1", 50.0),
+			inVal("arg/x2", 10.0), result("result/y"));
+		Context c5 = context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0),
+			result("result/y"));
+
+		// mograms
+		Task t3 = task(
+			"t3",
+			sig("subtract", SubtractorImpl.class),
+			context("subtract", inVal("arg/x1"), inVal("arg/x2"), outVal("result/y")));
+		Task t4 = task("t4", sig("multiply", MultiplierImpl.class), c4);
+		Task t5 = task("t5", sig("add", AdderImpl.class), c5);
+
+		Job j1 = job("j1", sig("exert", ServiceJobber.class),
+			job("j2", t4, t5, sig("exert", ServiceJobber.class)), t3,
+			pipe(outPoint(t4, "result/y"), inPoint(t3, "arg/x1")),
+			pipe(outPoint(t5, "result/y"), inPoint(t3, "arg/x2")),
+			result("j1/t3/result/y"));
+
+		return j1;
 	}
 
     @Test

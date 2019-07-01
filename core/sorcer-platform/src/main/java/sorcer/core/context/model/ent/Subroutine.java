@@ -47,8 +47,6 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
 
 	protected String name;
 
-	protected Object annotation;
-
 	protected boolean isValueCurrent;
 
 	protected ArgSet args;
@@ -198,19 +196,6 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
 	public int index() {
 		return index;
 	}
-
-	public Object annotation() {
-		return annotation;
-	}
-
-	public void annotation(Object annotation) {
-		this.annotation = annotation;
-	}
-
-	public boolean isAnnotated() {
-		return annotation != null;
-	}
-
 
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)

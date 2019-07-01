@@ -808,7 +808,6 @@ operator extends Operator {
         return context;
     }
 
-
     public static Context set(Context context, Identifiable... objects)
         throws RemoteException, ContextException {
         for (Identifiable obj : objects) {
@@ -817,7 +816,6 @@ operator extends Operator {
         }
         return context;
     }
-
 
     public static Context put(Context context, Identifiable... objects)
         throws RemoteException, ContextException {
@@ -852,14 +850,32 @@ operator extends Operator {
             } else {
                 context.putValue(i.getName(), i);
             }
-            if (i instanceof Subroutine) {
-                Subroutine e = (Subroutine) i;
-                if (e.isAnnotated()) context.mark(e.getName(), e.annotation().toString());
-                if (e.asis() instanceof Scopable) {
-                    ((Scopable) e.asis()).setScope(context);
+            if (i instanceof Entry) {
+                Entry e = (Entry) i;
+                if (e.isAnnotated()) {
+                    context.mark(e.getName(), e.annotation().toString());
+                }
+            }
+
+            if (i instanceof Evaluator) {
+                // preserve invokeContext of the invoker
+                if (((Evaluator)i).getScope() != null
+                    && ((Evaluator) i).getScope().size() > 0) {
+                    ((Evaluator) i).getScope().setScope(context);
+                } else {
+                    if (i instanceof ServiceInvoker) {
+                        if (((ServiceInvoker)i).getInvokeContext() == null) {
+                            ((ServiceInvoker)i).setInvokeContext(context);
+                        } else {
+                            ((ServiceInvoker) i).setScope(context);
+                        }
+                    } else {
+                        ((Evaluator)i).setScope(context);
+                    }
                 }
             }
         }
+
         return context;
     }
 

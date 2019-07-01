@@ -222,6 +222,10 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
         contextReturn = new Context.Return(path, direction);
     }
 
+    public boolean isAnnotated() {
+        return annotation != null;
+    }
+
     public boolean equals(Object object) {
         if (object instanceof MultiFiSlot) {
             if (impl != null && ((MultiFiSlot) object).impl == null) {
