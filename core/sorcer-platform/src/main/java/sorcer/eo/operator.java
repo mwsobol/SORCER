@@ -3721,7 +3721,7 @@ operator extends Operator {
                     e.setScope(pm.getScope());
                     if (((EvaluationTask)e).getEvaluation() instanceof Prc) {
                         Prc p = (Prc)((EvaluationTask)e).getEvaluation();
-                        pm.getScope().addCall(p);
+                        pm.getScope().addPrc(p);
                     }
                 } else if (e instanceof Routine) {
                     e.getDataContext().setScope(pm.getScope());

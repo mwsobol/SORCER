@@ -301,7 +301,7 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 //			}
 
 			if (p != null) {
-				appendCall(p);
+				appendPrc(p);
 				changed = true;
 			}
 		}
@@ -333,7 +333,7 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 			}
 
 			if (p != null) {
-				addCall(p);
+				addPrc(p);
 				changed = true;
 			}
 		}

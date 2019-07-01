@@ -336,10 +336,12 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         } catch (Exception e) {
             throw new EvaluationException(e);
         }
-
-        ((Entry)get(path)).setOut(val);
-        ((Entry)get(path)).setValid(true);
-        ((Entry)get(path)).setChanged(true);
+        Object obj = get(path);
+        if (get(path) instanceof Entry) {
+            ((Entry) get(path)).setOut(val);
+            ((Entry) get(path)).setValid(true);
+            ((Entry) get(path)).setChanged(true);
+        }
         this.setChanged(true);
         return val;
     }

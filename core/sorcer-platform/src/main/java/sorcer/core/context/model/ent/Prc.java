@@ -210,7 +210,9 @@ public class Prc<T> extends Subroutine<T> implements Invocation<T>,
 				if (((Scopable)val).getScope() == null || ((Scopable)val).getScope().size() == 0) {
 					((Scopable)val).setScope(scope);
 				} else {
-					((Scopable) val).getScope().append(scope);
+					if (((Scopable) val).getScope() != null) {
+						((Scopable) val).getScope().setScope(scope);
+					}
 				}
 			}
 			if (val instanceof Entry) {
@@ -226,12 +228,13 @@ public class Prc<T> extends Subroutine<T> implements Invocation<T>,
 			}
 			if (val instanceof Invocation) {
 				Context cxt = (Context) Arg.selectDomain(args);
-				if (cxt == null) {
-					cxt = this.scope;
+				if (cxt != null) {
+					val = (T) ((Invocation) val).invoke(cxt, args);
+				} else if (val instanceof ServiceInvoker && ((ServiceInvoker)val).getInvokeContext().size() == 0) {
+					val = (T) ((Invocation) val).invoke(scope, args);
 				} else {
-                    cxt.setScope(this.scope);
-                }
-				val = (T) ((Invocation) val).invoke(cxt, args);
+					val = (T) ((Evaluation) val).evaluate(args);
+				}
 			} else if (val instanceof Evaluation) {
 				val = ((Evaluation<T>) val).evaluate(args);
 			}  else if (val instanceof Mogram) {

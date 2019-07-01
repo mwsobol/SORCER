@@ -3282,10 +3282,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Context#addCall(sorcer.core.context.model.prc.Prc)
+	 * @see sorcer.service.Context#addPrc(sorcer.core.context.model.prc.Prc)
 	 */
 	@Override
-	public Arg addCall(Arg arg) throws ContextException {
+	public Arg addPrc(Arg arg) throws ContextException {
 		Prc p = (Prc)arg;
 		put(p.getName(), (T) p);
 		if (p.getScope() == null || p.getScope().size() == 0)
@@ -3302,7 +3302,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return p;
 	}
 
-	public Prc appendCall(Prc p) throws ContextException {
+	public Prc appendPrc(Prc p) throws ContextException {
 		put(p.getName(), (T)p);
 		if (p.getScope() == null)
 			p.setScope(new EntModel(p.getName()).append(this));
@@ -3314,10 +3314,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Context#addCall(java.lang.String, java.lang.Object)
+	 * @see sorcer.service.Context#addPrc(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Prc addCall(String path, Object value) throws ContextException {
+	public Prc addPrc(String path, Object value) throws ContextException {
 		return new Prc(path, value, this);
 	}
 
