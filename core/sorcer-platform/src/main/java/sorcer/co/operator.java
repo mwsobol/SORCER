@@ -1019,7 +1019,7 @@ public class operator extends Operator {
 				if (SdbUtil.isSosURL(nv)) {
 					return (URL) nv;
 				}
-				((Setter) v).setPersistent(true);
+				((Entry) v).setPersistent(true);
 				((Evaluation)v).evaluate();
 				dburl = (URL) ((Evaluation)v).asis();
 			} else if (context.asis(path) instanceof Entry) {

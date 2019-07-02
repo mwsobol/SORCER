@@ -82,4 +82,11 @@ public interface Contextion extends FederatedRequest, Identifiable {
 	public Context getContext(String path) throws ContextException,
 		RemoteException;
 
+	/**
+	 * Returns a Context.Return to the return execute by this signature.
+	 *
+	 * @return Context.Return to the return execute
+	 */
+	public Context.Return getContextReturn();
+
 }

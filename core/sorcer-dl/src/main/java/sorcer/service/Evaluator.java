@@ -45,5 +45,10 @@ public interface Evaluator <T> extends Opservice, ServiceProvider, Evaluation<T>
 
 	public boolean isValid();
 
-
+	/**
+	 * Returns a Context.Return to the return execute by this signature.
+	 *
+	 * @return Context.Return to the return execute
+	 */
+	public Context.Return getContextReturn();
 }

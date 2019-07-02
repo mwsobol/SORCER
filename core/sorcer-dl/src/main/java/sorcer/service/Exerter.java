@@ -78,27 +78,6 @@ public interface Exerter extends ServiceProvider, Exertion, Monitorable, Analyti
 	
 	public void fireEvent() throws RemoteException;
 
-//	public void notifyInformation(Routine task, String message)
-//			throws RemoteException;
-//
-//	public void notifyException(Routine task, String message, Exception e)
-//			throws RemoteException;
-//
-//	public void notifyExceptionWithStackTrace(Routine task, Exception e)
-//			throws RemoteException;
-//
-//	public void notifyException(Routine task, Exception e)
-//			throws RemoteException;
-//
-//	public void notifyWarning(Routine task, String message)
-//			throws RemoteException;
-//
-//	public void notifyFailure(Routine task, Exception e)
-//			throws RemoteException;
-//
-//	public void notifyFailure(Routine task, String message)
-//			throws RemoteException;
-
 	public Object getProxy() throws RemoteException;
 
 	public void updatePolicy(Policy policy) throws RemoteException;

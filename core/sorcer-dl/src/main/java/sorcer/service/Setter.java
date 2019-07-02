@@ -24,7 +24,7 @@ import sorcer.service.Opservice;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-public interface Setter extends Opservice, EvaluationComponent, SupportComponent, Serializable {
+public interface Setter extends Opservice, EvaluationComponent, SupportComponent {
 
 	public String getName();
 
@@ -32,5 +32,4 @@ public interface Setter extends Opservice, EvaluationComponent, SupportComponent
 	
 	public boolean isPersistent();
 	
-	public void setPersistent(boolean isPersistent);
 }

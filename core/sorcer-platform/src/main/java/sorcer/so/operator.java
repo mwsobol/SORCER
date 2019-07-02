@@ -168,7 +168,7 @@ public class operator extends Operator {
     }
 
     public static void clear(Discipline discipline) throws MogramException {
-        discipline.clear();
+        ((ServiceDiscipline)discipline).clear();
     }
 
     public static Context eval(Signature signature, Arg... args)

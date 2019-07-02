@@ -77,8 +77,6 @@ public interface Mogram extends Identifiable, Contextion, FederatedRequest, Exer
 
     public void setStatus(int value);
 
-    public Context getContext() throws ContextException;
-
     /**
      * Returns a execute of the component at the key
      *
