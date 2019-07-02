@@ -243,7 +243,9 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     @Override
     public Object execute(Arg... args) throws ServiceException {
         try {
-            clear();
+            if (out != null) {
+                clear();
+            }
             List<Fidelity> fis = Arg.selectFidelities(args);
             if (fis != null && fis.size() > 0) {
                 try {
@@ -421,6 +423,6 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     public void clear() throws MogramException {
-        ((ServiceMogram)getGovernance()).clear();
+        outDispatcher.clear();
     }
 }
