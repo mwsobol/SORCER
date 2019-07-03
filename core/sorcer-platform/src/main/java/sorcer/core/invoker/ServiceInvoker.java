@@ -17,6 +17,7 @@
 
 package sorcer.core.invoker;
 
+import net.jini.core.transaction.Transaction;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
@@ -666,4 +667,21 @@ public class ServiceInvoker<T> extends Observable implements Evaluator<T>, Invoc
     public void setScope(Context scope) {
         this.scope =scope;
     }
+
+	@Override
+	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
+		if (mogram instanceof Mogram) {
+			invokeContext = mogram.exert(txn, args).getContext();
+		}
+		Object out = null;
+		if (invokeContext != null) {
+			out = evaluate(args);
+			if (out instanceof Context) {
+				invokeContext.append((Context)out);
+			}
+		} else {
+			invokeContext.putOutValue(name, out);
+		}
+		return (T) invokeContext;
+	}
 }

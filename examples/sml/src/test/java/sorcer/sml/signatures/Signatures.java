@@ -424,7 +424,7 @@ public class Signatures {
 	}
 
 	@Test
-	public void execSignatureOfLocalService() throws Exception {
+	public void execSignatureLocalService() throws Exception {
 
 		Context<Double> cxt = context(
 				inVal("y1", 20.0),
@@ -449,7 +449,7 @@ public class Signatures {
 	}
 
 	@Test
-	public void execSignatureOfRemoteService() throws Exception {
+	public void execSignatureRemoteService() throws Exception {
 
 		Context<Double> cxt = context(
 				inVal("y1", 20.0),

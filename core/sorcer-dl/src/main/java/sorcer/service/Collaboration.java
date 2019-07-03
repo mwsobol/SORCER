@@ -1,6 +1,6 @@
 /*
- * Copyright 2018 the original author or authors.
- * Copyright 2018 SorcerSoft.org.
+ * Copyright 2019 the original author or authors.
+ * Copyright 2019 SorcerSoft.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,12 @@
 
 package sorcer.service;
 
-public interface Governance extends FederatedRequest {
 
-    public Context govern(Context context, Arg... args) throws ServiceException;
+/**
+ * An top-level interface for all collaborations in SORCER.
+ *
+ * @author Mike Sobolewski
+ */
+public interface Collaboration extends Service, Identifiable {
+
 }

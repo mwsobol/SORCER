@@ -17,6 +17,8 @@
 
 package sorcer.core.invoker;
 
+import net.jini.core.transaction.Transaction;
+import sorcer.core.context.ServiceContext;
 import sorcer.service.*;
 import sorcer.service.modeling.Data;
 
@@ -119,5 +121,20 @@ public class MultiFiEvaluator<T> extends MultiFiSlot<String, T> implements Evalu
 	@Override
 	public Data act(String entryName, Arg... args) throws ServiceException, RemoteException {
 		return null;
+	}
+
+	@Override
+	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
+		Context cxt = Arg.selectContext(args);
+		if (cxt == null) {
+			cxt = new ServiceContext();
+		}
+		Object out = ((Evaluation)multiFi.getSelect()).evaluate(args);
+		if (out instanceof Context) {
+			cxt.append((Context) out);
+		} else {
+			cxt.putValue(getName(), out);
+		}
+		return (T)out;
 	}
 }

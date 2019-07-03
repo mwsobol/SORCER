@@ -70,7 +70,7 @@ import sorcer.service.modeling.mog;
  */
 @SuppressWarnings("rawtypes")
 public interface Routine extends Dependency, Invocation<Object>,
-		Paradigmatic, Contextion, Serializable, mog {
+		Collaboration, Paradigmatic, Contextion, Serializable, mog {
 
 
 	/**

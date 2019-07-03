@@ -344,20 +344,31 @@ public class NetSignature extends ObjectSignature implements sig {
 	@Override
 	public Context exert(Mogram mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
 		try {
+			Exerter prv = null;
 			if (this.isShellRemote()) {
-				Exerter prv= (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
+				prv = (Exerter) Accessor.get().getService(sig(RemoteServiceShell.class));
 				return prv.exert(mogram, txn).getContext();
 			}
-			Exerter prv = (Exerter) operator.provider(this);
-			Context cxt = null;
+			Context cxt = null, out = null;
 			NetTask task = null;
-			if (mogram instanceof Context)
+			if (mogram instanceof NetTask) {
+				task = (NetTask)mogram;
+			}
+			if (mogram instanceof Context) {
 				cxt = (Context) mogram;
-			else
-				cxt = mogram.exert(txn);
+			} else {
+				cxt = Arg.selectContext(args);
+			}
+			if (task != null) {
+				if (cxt != null) {
+					task.setDataContext(cxt);
+				}
+				out = task.exert(txn).getContext();
+			} else {
+				out = new NetTask(this, cxt).exert(txn).getContext();
+			}
 
-			task = new NetTask(this, cxt);
-			return task.exert(txn).getContext();
+			return out;
 		} catch (Exception e) {
 			throw new MogramException(e);
 		}
@@ -417,7 +428,7 @@ public class NetSignature extends ObjectSignature implements sig {
 				Context out = null;
 				Context.Return rp = contextReturn;
 				if (rp == null) {
-					rp = (Context.Return)cxt.getContextReturn();;
+					rp = cxt.getContextReturn();;
 				}
 				if (rp != null && rp.returnPath != null) {
 					cxt.setContextReturn(rp);

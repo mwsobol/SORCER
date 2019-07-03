@@ -3,7 +3,7 @@ package sorcer.service;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 
-abstract public class Invoker<T> implements Invocation<T>, Scopable, Opservice, Identifiable {
+abstract public class Invoker<T> implements Invocation<T>, Exertion, Scopable, Opservice, Identifiable {
 
     private static final long serialVersionUID = 1L;
 

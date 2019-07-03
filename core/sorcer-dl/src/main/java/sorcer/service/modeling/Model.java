@@ -26,7 +26,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Model extends Domain, Contextion, mog {
+public interface Model extends Domain, Contextion, Collaboration, mog {
 
     /**
      * Returns a model current response context.

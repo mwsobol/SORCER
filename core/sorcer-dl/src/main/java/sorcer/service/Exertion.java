@@ -43,7 +43,7 @@ public interface Exertion {
 	 * @throws MogramException    if an exertion invocation failed for any reason
 	 * @throws RemoteException
 	 */
-	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... entries)
+	public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args)
 			throws MogramException, RemoteException;
 
 }

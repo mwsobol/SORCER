@@ -1,10 +1,7 @@
 package sorcer.core.invoker;
 
-import sorcer.service.Arg;
-import sorcer.service.Context;
-import sorcer.service.ContextException;
-import sorcer.service.ServiceException;
-import sorcer.service.Invoker;
+import net.jini.core.transaction.Transaction;
+import sorcer.service.*;
 
 import java.rmi.RemoteException;
 
@@ -48,23 +45,32 @@ public class Appender extends Invoker {
     }
 
     @Override
-    public Object invoke(Context context, Arg... entries) throws ContextException, RemoteException {
+    public Object invoke(Context context, Arg... args) throws ContextException, RemoteException {
         if (type.equals(ContextType.INPUT)) {
-            return dataContext;
+            return context.append(dataContext);
         } else if (type.equals(ContextType.SCOPE)) {
-            return scope;
+            return context.append(scope);
         }
-        return null;
+        return context;
     }
 
     @Override
     public Context execute(Arg... args) throws ServiceException, RemoteException {
-        if (type.equals(ContextType.INPUT)) {
-            return dataContext;
-        } else if (type.equals(ContextType.SCOPE)) {
-            return scope;
+        Mogram mog = Arg.selectMogram(args);
+        Object out = null;
+        if (mog != null) {
+            if (mog instanceof Context) {
+                return (Context) invoke(((Context) out));
+            } else if (mog instanceof  Mogram) {
+                out = exert(mog, null);
+                return (Context) out;
+            } else if (type.equals(ContextType.INPUT)) {
+                return dataContext;
+            } else if (type.equals(ContextType.SCOPE)) {
+                return scope;
+            }
         }
-        return null;
+        return dataContext;
     }
 
     public Context getDataContext() {
@@ -102,4 +108,18 @@ public class Appender extends Invoker {
         this.type = type;
     }
 
+
+    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
+        Context inContext = null;
+
+        if (mogram !=  null) {
+            inContext = mogram.exert(txn, args).getContext();
+        }
+        if (inContext != null) {
+            inContext.append(dataContext);
+        } else {
+            inContext = dataContext;
+        }
+        return (T) inContext;
+    }
 }

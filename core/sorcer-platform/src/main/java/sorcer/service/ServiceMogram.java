@@ -210,8 +210,8 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
         return dataContext;
     }
 
-    public void setDataContext(ServiceContext dataContext) {
-        this.dataContext = dataContext;
+    public void setDataContext(Context dataContext) {
+        this.dataContext = (ServiceContext) dataContext;
     }
 
     public List<Mogram> getAllMograms() {

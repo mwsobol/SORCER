@@ -77,4 +77,9 @@ public class Multidiscipline extends ServiceDiscipline implements Transdisciplin
             ((ServiceDiscipline)d).setParent(this);
         }
     }
+
+    @Override
+    public Context govern(Context context, Arg... args) throws ServiceException {
+        return null;
+    }
 }
