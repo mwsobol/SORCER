@@ -49,7 +49,7 @@ import java.util.List;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Signature extends Opservice, Comparable, Dependency, Identifiable,
+public interface Signature extends Opservice, Exertion, Comparable, Dependency, Identifiable,
 		Arg, EvaluationComponent, SupportComponent, Serializable {
 
 	/**

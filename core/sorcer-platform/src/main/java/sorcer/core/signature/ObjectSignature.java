@@ -369,13 +369,12 @@ public class ObjectSignature extends ServiceSignature implements sig {
 	}
 
 	@Override
-	public Context exert(Mogram mogram) throws TransactionException,
-			MogramException, RemoteException {
+	public Context exert(Mogram mogram) throws MogramException, RemoteException {
 		return exert(mogram, null);
 	}
 
-	public Context exert(Mogram mogram, Transaction txn) throws TransactionException,
-			MogramException, RemoteException {
+	@Override
+	public Context exert(Mogram mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
 		Context cxt = null;
 		ObjectTask task = null;
 		if (mogram instanceof Context)
@@ -421,7 +420,7 @@ public class ObjectSignature extends ServiceSignature implements sig {
 			} else {
 				out = exert(task(this));
 			}
-		} catch (TransactionException | RemoteException e) {
+		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 		return out;

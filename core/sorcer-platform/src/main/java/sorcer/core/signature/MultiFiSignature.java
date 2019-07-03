@@ -17,6 +17,7 @@
 
 package sorcer.core.signature;
 
+import net.jini.core.transaction.Transaction;
 import sorcer.core.provider.ProviderName;
 import sorcer.service.*;
 import sorcer.service.modeling.Functionality;
@@ -174,5 +175,10 @@ public class MultiFiSignature extends MultiFiSlot<String, Signature> implements 
         } else {
             throw new MogramException("misconfigured MultiFiSignature with multiFi: " + multiFi);
         }
+    }
+
+    @Override
+    public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
+        return ((Signature)multiFi.getSelect()).exert(mogram, txn, args);
     }
 }

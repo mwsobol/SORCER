@@ -622,25 +622,27 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 				.compareTo(""+((ServiceSignature) signature).providerName));
 	}
 
+	@Override
 	public Context exert(Mogram mogram, Transaction txn, Arg... args)
-			throws TransactionException, MogramException, RemoteException {
+		throws MogramException, RemoteException {
 		Context cxt = null;
 		if (mogram instanceof Context) {
 			cxt = (Context)mogram;
 		} else {
-			 cxt = context(exert(mogram, txn, args));
+			cxt = context(exert(mogram, txn, args));
 		}
 		Task out = null;
-        out = task(this, cxt);
-        Object result = exert(out);
-		if (result instanceof Context)
-			return (Context)result;
-		else
+		out = task(this, cxt);
+		Object result = null;
+		result = exert(out);
+		if (result instanceof Context) {
+			return (Context) result;
+		} else {
 			return exert(out).getContext();
+		}
 	}
 
-	public Context exert(Mogram mogram) throws TransactionException,
-			MogramException, RemoteException {
+	public Context exert(Mogram mogram) throws MogramException, RemoteException {
 		return exert(mogram, null);
 	}
 
