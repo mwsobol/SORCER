@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
  *
  * @author Mike Sobolewski
  */
-public interface Contextion extends FederatedRequest, Identifiable {
+public interface Contextion extends Request, Identifiable {
 
     /**
      * Returns the current context of this evaluation. The current context can be

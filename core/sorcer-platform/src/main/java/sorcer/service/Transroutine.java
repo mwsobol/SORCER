@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * @author Mike Sobolewski
  */
-abstract public class Transroutine extends ServiceRoutine implements Governance {
+abstract public class Transroutine extends ServiceRoutine implements Collaboration {
 	/**
 	 * Component mograms of this job (the Composite Design pattern)
 	 */
@@ -167,13 +167,13 @@ abstract public class Transroutine extends ServiceRoutine implements Governance 
 	abstract public Context getComponentContext(String path) throws ContextException;
 
 	@Override
-	public Context govern(Context context, Arg... args) throws ServiceException {
+	public Context evaluate(Context context, Arg... args) throws EvaluationException {
 		try {
 		    getContext().substitute(context);
 			Routine out = exert(args);
 			return out.getContext();
-		} catch (RemoteException e) {
-			throw new ServiceException(e);
+		} catch (MogramException | RemoteException e) {
+			throw new EvaluationException(e);
 		}
 	}
 }

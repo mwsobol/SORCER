@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pipeline extends ServiceInvoker<Context> {
+public class Pipeline extends ServiceInvoker<Context> implements Contextion {
 
     private Context newInvokeContext;
 
@@ -153,4 +153,39 @@ public class Pipeline extends ServiceInvoker<Context> {
     }
 
 
+    @Override
+    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
+        newInvokeContext = context;
+        return evaluate(args);
+    }
+
+    @Override
+    public Context getContext() throws ContextException {
+        return null;
+    }
+
+    @Override
+    public void setContext(Context input) throws ContextException {
+
+    }
+
+    @Override
+    public Context appendContext(Context context) throws ContextException, RemoteException {
+        return null;
+    }
+
+    @Override
+    public Context getContext(Context contextTemplate) throws RemoteException, ContextException {
+        return null;
+    }
+
+    @Override
+    public Context appendContext(Context context, String path) throws ContextException, RemoteException {
+        return null;
+    }
+
+    @Override
+    public Context getContext(String path) throws ContextException, RemoteException {
+        return null;
+    }
 }

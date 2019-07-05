@@ -22,6 +22,7 @@ import sorcer.service.modeling.Discipline;
 import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.Transdiscipline;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,7 @@ public class Multidiscipline extends ServiceDiscipline implements Transdisciplin
     }
 
     @Override
-    public Context govern(Context context, Arg... args) throws ServiceException {
+    public Context evaluate(Context context, Arg... args) throws EvaluationException, RemoteException {
         return null;
     }
 }

@@ -17,6 +17,12 @@
 
 package sorcer.service;
 
-public interface Collaboration extends Contextion {
+
+/**
+ * An top-level interface for all collaborations in SORCER.
+ *
+ * @author Mike Sobolewski
+ */
+public interface Assembly extends Service, Identifiable {
 
 }
