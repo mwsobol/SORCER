@@ -17,18 +17,14 @@
 
 package sorcer.service;
 
-import net.jini.core.transaction.Transaction;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import sorcer.core.context.ServiceContext;
-import sorcer.core.context.ThrowableTrace;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.service.modeling.Discipline;
 import sorcer.service.modeling.Getter;
 
 import java.rmi.RemoteException;
-import java.security.Principal;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +60,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     protected Service out;
 
     // the executed dispatcher
-    protected Routine outDispatcher;
+    protected Subroutine outDispatcher;
 
     protected Task precondition;
 
@@ -83,32 +79,32 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         disciplineId = UuidFactory.generate();
     }
 
-    public ServiceDiscipline(Routine... dispatchs) {
+    public ServiceDiscipline(Subroutine... dispatchs) {
         governanceMultiFi = new ServiceFidelity(dispatchs);
     }
 
-    public ServiceDiscipline(Service service, Routine dispatch) {
+    public ServiceDiscipline(Service service, Subroutine dispatch) {
         governanceMultiFi = new ServiceFidelity(new Service[] { service });
         dispatchMultiFi = new ServiceFidelity(new Service[] { dispatch });
     }
 
-    public ServiceDiscipline(Service[] services, Routine[] dispatchs) {
+    public ServiceDiscipline(Service[] services, Subroutine[] dispatchs) {
         governanceMultiFi = new ServiceFidelity(services);
         dispatchMultiFi = new ServiceFidelity(dispatchs);
     }
 
-    public ServiceDiscipline(List<Service> services, List<Routine> dispatchs) {
-        Routine[] cArray = new Routine[dispatchs.size()];
-        Service[] pArray = new Routine[services.size()];
+    public ServiceDiscipline(List<Service> services, List<Subroutine> dispatchs) {
+        Subroutine[] cArray = new Subroutine[dispatchs.size()];
+        Service[] pArray = new Subroutine[services.size()];
         governanceMultiFi = new ServiceFidelity(services.toArray(cArray));
         dispatchMultiFi = new ServiceFidelity(dispatchs.toArray(pArray));
     }
 
-    public void add(Service service, Routine dispatch) {
+    public void add(Service service, Subroutine dispatch) {
         add(service, dispatch, null);
     }
 
-    public void add(Service service, Routine dispatch, Context context) {
+    public void add(Service service, Subroutine dispatch, Context context) {
         governanceMultiFi.getSelects().add(service);
         dispatchMultiFi.getSelects().add(dispatch);
         if (context != null) {
@@ -121,7 +117,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
     @Override
     public void add(Fidelity serviceFi, Fidelity dispatchFi, Fidelity contextFi) {
-        Routine dispatch = (Routine) dispatchFi.getSelect();
+        Subroutine dispatch = (Subroutine) dispatchFi.getSelect();
         dispatch.setName(dispatchFi.getName());
         Service service = null;
         if (serviceFi != null) {
@@ -177,8 +173,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
     }
 
     @Override
-    public Routine getDispatcher() {
-        return (Routine) dispatchMultiFi.getSelect();
+    public Subroutine getDispatcher() {
+        return (Subroutine) dispatchMultiFi.getSelect();
     }
 
     @Override
@@ -227,7 +223,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         return output;
     }
 
-    public Routine getOutDispatcher() {
+    public Subroutine getOutDispatcher() {
         return outDispatcher;
     }
 
@@ -254,7 +250,7 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
                     throw new ServiceException(e);
                 }
             }
-            Routine xrt = (Routine) getDispatcher();
+            Subroutine xrt = (Subroutine) getDispatcher();
             Context cxt = null;
             if (contextMultiFi != null) {
                 cxt = (Context) contextMultiFi.getSelect();

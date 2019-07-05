@@ -9,7 +9,6 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.Adder;
 import sorcer.arithmetic.provider.Multiplier;
 import sorcer.arithmetic.provider.impl.*;
-import sorcer.ent.operator;
 import sorcer.service.*;
 
 import static org.junit.Assert.assertEquals;
@@ -36,7 +35,7 @@ public class LocalTasks {
 		Task t5 = task("t5", sig("add", AdderImpl.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
-		Routine out = exert(t5);
+		Subroutine out = exert(t5);
 		Context cxt = context(out);
 
 		// getValue a single context argument
@@ -54,7 +53,7 @@ public class LocalTasks {
 		Task t5 = task(sig(AdderImpl.class), op("add"),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
-		Routine out = exert(t5);
+		Subroutine out = exert(t5);
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + get(cxt, "arg/x1"));
@@ -76,7 +75,7 @@ public class LocalTasks {
 		Task t5 = task("t5", sig(AdderImpl.class), op("add"),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0)));
 
-		Routine out = exert(t5, op("t5", "add2"));
+		Subroutine out = exert(t5, op("t5", "add2"));
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 

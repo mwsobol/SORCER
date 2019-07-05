@@ -42,7 +42,7 @@ public class ServiceConcatenator extends SorcerExerterBean implements Concatenat
 
 	public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
 			throws TransactionException, RoutineException, RemoteException {
-		Routine exertion = (Routine) mogram;
+		Subroutine exertion = (Subroutine) mogram;
 		setServiceID(exertion);
 		Block result;
 		try {

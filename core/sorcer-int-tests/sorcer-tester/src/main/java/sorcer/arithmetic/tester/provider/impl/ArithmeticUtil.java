@@ -3,10 +3,9 @@ package sorcer.arithmetic.tester.provider.impl;
 import sorcer.arithmetic.tester.provider.Adder;
 import sorcer.arithmetic.tester.provider.Multiplier;
 import sorcer.arithmetic.tester.provider.Subtractor;
-import sorcer.co.operator;
 import sorcer.core.SorcerConstants;
 import sorcer.service.Context;
-import sorcer.service.Routine;
+import sorcer.service.Subroutine;
 import sorcer.service.Job;
 import sorcer.service.Strategy.Access;
 import sorcer.service.Strategy.Flow;
@@ -50,7 +49,7 @@ public class ArithmeticUtil implements SorcerConstants {
 		return job;
 	}
 	
-	public static Routine createJob() throws Exception {
+	public static Subroutine createJob() throws Exception {
 		return createJob(Flow.SEQ, Access.PUSH);
 	}
 

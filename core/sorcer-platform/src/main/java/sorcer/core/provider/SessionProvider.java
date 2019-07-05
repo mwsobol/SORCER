@@ -33,7 +33,7 @@ public class SessionProvider extends ServiceExerter implements SessionManagement
     }
 
     /** {@inheritDoc} */
-    public ServiceRoutine execute(Routine task) throws TransactionException,
+    public ServiceRoutine execute(Subroutine task) throws TransactionException,
             RoutineException {
         return execute(task, null);
     }
@@ -41,10 +41,10 @@ public class SessionProvider extends ServiceExerter implements SessionManagement
     /** {@inheritDoc}
      * @throws ConfigurationException
      * @throws RemoteException */
-    public ServiceRoutine execute(Routine task, Transaction transaction)
+    public ServiceRoutine execute(Subroutine task, Transaction transaction)
             throws RoutineException  {
         try {
-            return (Task) new ControlFlowManager((Routine) task, delegate)
+            return (Task) new ControlFlowManager((Subroutine) task, delegate)
                     .process();
         } catch (Exception e) {
             throw new RoutineException(e);

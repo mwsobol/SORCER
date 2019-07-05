@@ -19,7 +19,7 @@ package sorcer.core.invoker;
 import net.jini.core.transaction.Transaction;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.Prc;
-import sorcer.core.context.model.ent.Subroutine;
+import sorcer.core.context.model.ent.Function;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -31,9 +31,9 @@ import java.rmi.RemoteException;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class ExertInvoker extends ServiceInvoker implements Invocation {
 	private static final long serialVersionUID = -8257643691945276788L;
-	private Routine exertion;
+	private Subroutine exertion;
 	private String path;
-	private Routine evaluatedExertion;
+	private Subroutine evaluatedExertion;
 	private Transaction txn;
 	private Object updatedValue;
 
@@ -41,18 +41,18 @@ public class ExertInvoker extends ServiceInvoker implements Invocation {
 		defaultName = "xrtInvoker-";
 	}
 	
-	public ExertInvoker(String name, Routine exertion, String path, Prc... callEntries) {
+	public ExertInvoker(String name, Subroutine exertion, String path, Prc... callEntries) {
 		super(name);
 		this.path = path;
 		this.exertion = exertion;
 		this.args = new ArgSet(callEntries);
 	}
 
-	public ExertInvoker(Routine exertion, String path, Prc... callEntries) {
+	public ExertInvoker(Subroutine exertion, String path, Prc... callEntries) {
 		this(exertion.getName(), exertion, path, callEntries);
 	}
 	
-	public ExertInvoker(Routine exertion, Prc... callEntries) {
+	public ExertInvoker(Subroutine exertion, Prc... callEntries) {
 		this(null, exertion, null, callEntries);
 	}
 
@@ -90,15 +90,15 @@ public class ExertInvoker extends ServiceInvoker implements Invocation {
 		return cxt;
 	}
 	
-	public Routine getExertion() {
+	public Subroutine getExertion() {
 		return exertion;
 	}
 
-	public Routine getEvaluatedExertion() {
+	public Subroutine getEvaluatedExertion() {
 		return evaluatedExertion;
 	}
 
-	public void substitute(Subroutine... entries) throws SetterException,
+	public void substitute(Function... entries) throws SetterException,
 			RemoteException {
 		((ServiceRoutine)exertion).substitute(entries);
 	}

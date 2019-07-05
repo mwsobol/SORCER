@@ -484,8 +484,8 @@ public class EditorView extends JPanel implements HyperlinkListener {
 				createRemoteLoggerListener((Mogram) target);
 				result = scriptExerter.execute();
 			}
-			if (result instanceof Routine)
-				processMogram((Routine) result);
+			if (result instanceof Subroutine)
+				processMogram((Subroutine) result);
 			else if (result != null) {
 				logger.debug("<< executing scrip: " + script);
 				logger.debug(">> scrip result: " + script);
@@ -555,8 +555,8 @@ public class EditorView extends JPanel implements HyperlinkListener {
 			openOutPanel("Failed to compute the sorcer.netlet!");
 			return;
 		}
-		if (mogram instanceof Routine) {
-			Routine exertion = (Routine)mogram;
+		if (mogram instanceof Subroutine) {
+			Subroutine exertion = (Subroutine)mogram;
 			try {
 				if (exertion.getExceptions().size() > 0) {
                     openOutPanel(exertion.getExceptions().toString());

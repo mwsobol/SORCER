@@ -139,8 +139,8 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 					return ((Prc) val).getOut();
 				} else if (((Prc) val).isPersistent()) {
 					return ((Prc) val).evaluate();
-				} else if ((((Prc) val).asis() instanceof Subroutine)) {
-					bindEntry((Subroutine) ((Prc) val).asis());
+				} else if ((((Prc) val).asis() instanceof Function)) {
+					bindEntry((Function) ((Prc) val).asis());
 				}
 			}
 
@@ -182,7 +182,7 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 			}  else if (val instanceof Mogram) {
 				return exec((Service)val, args);
 			}  else  if (val instanceof ServiceFidelity) {
-				return new Subroutine(path, val).evaluate(args);
+				return new Function(path, val).evaluate(args);
 			} else if (path == null && val == null
 				&& mogramStrategy.getResponsePaths() != null) {
 				if (mogramStrategy.getResponsePaths().size() == 1) {
@@ -264,12 +264,12 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 			return new Prc(name, asis(name), this);
 	}
 
-	public Subroutine bindEntry(Subroutine ent) throws ContextException, RemoteException {
+	public Function bindEntry(Function ent) throws ContextException, RemoteException {
 		ArgSet args = ent.getArgs();
 		if (args != null) {
 			for (Arg v : args)
 				if (get(v.getName()) != null) {
-					((Subroutine) v).setValue(getValue(v.getName()));
+					((Function) v).setValue(getValue(v.getName()));
 				}
 		}
 		return ent;
@@ -447,8 +447,8 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 		if (path != null) {
 			entry = data.get(path);
 		}
-		if (entry instanceof Subroutine) {
-			return (Subroutine)entry;
+		if (entry instanceof Function) {
+			return (Function)entry;
 		} else {
 			return null;
 		}

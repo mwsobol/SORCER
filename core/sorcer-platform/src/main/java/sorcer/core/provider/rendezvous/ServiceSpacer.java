@@ -56,7 +56,7 @@ public class ServiceSpacer extends SorcerExerterBean implements Spacer {
     @Override
     public Mogram localExert(Mogram mogram, Transaction txn, Arg... args)
             throws TransactionException, RoutineException, RemoteException {
-         if (mogram instanceof Routine && ((Routine)mogram).isCompound())
+         if (mogram instanceof Subroutine && ((Subroutine)mogram).isCompound())
             return doCompound(mogram, txn);
         else
             return doTask((Task)mogram);
@@ -66,11 +66,11 @@ public class ServiceSpacer extends SorcerExerterBean implements Spacer {
             throws TransactionException, RoutineException, RemoteException {
         setServiceID(mogram);
         try {
-            MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Routine)mogram));
-            if (((Routine)mogram).getControlContext().isMonitorable()
-                    && !((Routine)mogram).getControlContext().isWaitable()) {
-                replaceNullExertionIDs((Routine)mogram);
-                notifyViaEmail((Routine)mogram);
+            MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Subroutine)mogram));
+            if (((Subroutine)mogram).getControlContext().isMonitorable()
+                    && !((Subroutine)mogram).getControlContext().isWaitable()) {
+                replaceNullExertionIDs((Subroutine)mogram);
+                notifyViaEmail((Subroutine)mogram);
                 new Thread(mogramThread, ((Job)mogram).getContextName()).start();
                 return mogram;
             } else {
@@ -127,7 +127,7 @@ public class ServiceSpacer extends SorcerExerterBean implements Spacer {
         }
     }
 
-    public Routine doTask(Routine task) throws RemoteException {
+    public Subroutine doTask(Subroutine task) throws RemoteException {
         setServiceID(task);
         try {
             if (task.isMonitorable()
@@ -150,7 +150,7 @@ public class ServiceSpacer extends SorcerExerterBean implements Spacer {
         }
     }
 
-    protected DispatcherFactory getDispatcherFactory(Routine exertion) {
+    protected DispatcherFactory getDispatcherFactory(Subroutine exertion) {
         if (exertion.isSpacable())
             return MogramDispatcherFactory.getFactory(myMemberUtil);
         else

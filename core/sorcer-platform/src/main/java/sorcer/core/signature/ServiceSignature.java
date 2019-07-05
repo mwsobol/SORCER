@@ -19,7 +19,6 @@ package sorcer.core.signature;
 
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 import org.slf4j.Logger;
@@ -88,7 +87,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	protected Multitype multitype = new Multitype();
 
 	// associated exertion only if needed
-	protected Routine exertion;
+	protected Subroutine exertion;
 
 	/** preprocess, compute, postprocess, append context */
 	protected Type execType = Type.PROC;
@@ -159,11 +158,11 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
         execType = Type.PROC;
     }
 
-	public void setExertion(Routine exertion) throws RoutineException {
+	public void setExertion(Subroutine exertion) throws RoutineException {
 		this.exertion = exertion;
 	}
 
-	public Routine getExertion() {
+	public Subroutine getExertion() {
 		return exertion;
 	}
 

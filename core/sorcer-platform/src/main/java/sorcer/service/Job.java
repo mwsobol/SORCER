@@ -45,13 +45,13 @@ import java.security.Principal;
 import java.util.*;
 
 /**
- * A job is a composite service-oriented message comprised of {@link Routine}
+ * A job is a composite service-oriented message comprised of {@link Subroutine}
  * instances with its own service {@link sorcer.service.Context} and a collection of service
  * {@link sorcer.service.Signature}s. The job's signature is usually referring to a
  * {@link Jobber} and the job's context describes the composition
  * of component mograms as defined by the Interpreter programming pattern.
  * 
- * @see Routine
+ * @see Subroutine
  * @see Task
  * 
  * @author Mike Sobolewski
@@ -73,7 +73,7 @@ public class Job extends Transroutine {
 	 */
 	public Job() {
 		this("job-" + count++);
-		// mograms = Collections.synchronizedList(new ArrayList<Routine>());
+		// mograms = Collections.synchronizedList(new ArrayList<Subroutine>());
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class Job extends Transroutine {
 	 * Constructs a job and sets all default values to it.
 	 * 
 	 * @param mogram
-	 *            The first Routine of the job.
+	 *            The first Subroutine of the job.
 	 * @throws ContextException 
 	 */
 	public Job(Mogram mogram) throws RoutineException {
@@ -137,7 +137,7 @@ public class Job extends Transroutine {
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Routine#isCompound()
+	 * @see sorcer.service.Subroutine#isCompound()
 	 */
 	@Override
 	public boolean isCompound() {
@@ -157,7 +157,7 @@ public class Job extends Transroutine {
 		return mograms.size();
 	}
 
-	public int indexOf(Routine ex) {
+	public int indexOf(Subroutine ex) {
 		return mograms.indexOf(ex);
 	}
 
@@ -166,7 +166,7 @@ public class Job extends Transroutine {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
+	 * @see sorcer.service.Subroutine#addMogram(sorcer.service.Subroutine)
 	 */
 	@Override
 	public Mogram addMogram(Mogram ex) throws RoutineException {
@@ -302,7 +302,7 @@ public class Job extends Transroutine {
 		return sb.toString();
 	}
 
-	public void setMasterExertion(Routine exertion) {
+	public void setMasterExertion(Subroutine exertion) {
 		controlContext.setMasterExertion(exertion);
 	}
 
@@ -323,7 +323,7 @@ public class Job extends Transroutine {
 		desc.append("\n=== START PRINTING JOB ===\n");	
 		desc.append("\n=============================\nListing Component Exertions\n=============================\n");
 		for (int i = 0; i < size(); i++) {
-			desc.append("\n===========\n Routine ").append(i).append("\n===========\n").append((get(i)));
+			desc.append("\n===========\n Subroutine ").append(i).append("\n===========\n").append((get(i)));
 		}
 		desc.append("\n=== DONE PRINTING JOB ===\n");
 		return desc.toString();
@@ -348,7 +348,7 @@ public class Job extends Transroutine {
 	 * @param visited
 	 *            a set of visited mograms
 	 * @return true if this <code>Job</code> composite is a tree
-	 * @see Routine#isTree()
+	 * @see Subroutine#isTree()
 	 */
 	public boolean isTree(Set visited) {
 		visited.add(this);
@@ -507,10 +507,10 @@ public class Job extends Transroutine {
 			attributes = attributes1;
 		}
 		String last = attributes[0];
-		Routine exti = this;
+		Subroutine exti = this;
 		for (String attribute : attributes) {
 			if (((ServiceRoutine) exti).hasChild(attribute)) {
-				exti = (Routine)((Job) exti).getChild(attribute);
+				exti = (Subroutine)((Job) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					last = attribute;
 					break;
@@ -551,12 +551,12 @@ public class Job extends Transroutine {
 	}
 	
 	public Context getComponentContext(String path) throws ContextException {
-		Routine xrt = (Routine)getComponentMogram(path);
+		Subroutine xrt = (Subroutine)getComponentMogram(path);
 		return xrt.getContext();
 	}
 	
 	public Context getComponentControlContext(String path) {
-		Routine xrt = (Routine)getComponentMogram(path);
+		Subroutine xrt = (Subroutine)getComponentMogram(path);
 		return xrt.getControlContext();
 	}
 	
@@ -569,10 +569,10 @@ public class Job extends Transroutine {
 					attributes.length - 1);
 			attributes = attributes1;
 		}
-		Routine exti = this;
+		Subroutine exti = this;
 		for (String attribute : attributes) {
 			if (((ServiceRoutine) exti).hasChild(attribute)) {
-				exti = (Routine)((Transroutine) exti).getChild(attribute);
+				exti = (Subroutine)((Transroutine) exti).getChild(attribute);
 				if (exti instanceof Task) {
 					break;
 				}

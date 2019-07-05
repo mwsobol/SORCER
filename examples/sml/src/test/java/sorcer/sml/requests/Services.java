@@ -8,7 +8,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.model.ent.Entry;
-import sorcer.core.context.model.ent.Subroutine;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.Value;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -46,7 +46,7 @@ public class Services {
         assertEquals(10.0, exec(x0));
         assertTrue(direction(x0) == null);
 
-        Subroutine x1 = prc("arg/x1", 100.0);
+        Function x1 = prc("arg/x1", 100.0);
         assertEquals(100.0, exec(x1));
         assertTrue(direction(x1) == null);
 
@@ -77,7 +77,7 @@ public class Services {
 	@Test
 	public void expressionEntry() throws Exception {
 
-		Subroutine z1 = prc("z1", expr("x1 + 4 * x2 + 30",
+		Function z1 = prc("z1", expr("x1 + 4 * x2 + 30",
 					context(prc("x1", 10.0), prc("x2", 20.0)),
                     args("x1", "x2")));
 
@@ -87,7 +87,7 @@ public class Services {
 	@Test
 	public void bindingEntryArgs() throws Exception {
 
-		Subroutine y = prc("y", expr("x1 + x2", args("x1", "x2")));
+		Function y = prc("y", expr("x1 + x2", args("x1", "x2")));
 
 		assertTrue(exec(y, val("x1", 10.0), val("x2", 20.0)).equals(30.0));
 	}
@@ -154,7 +154,7 @@ public class Services {
             args = args("cmd",  "/C", "echo %USERNAME%");
         }
 
-        Subroutine cmd = prc("cmd", invoker(args));
+        Function cmd = prc("cmd", invoker(args));
 
         CmdResult result = (CmdResult) exec(cmd);
         logger.info("result: " + result);
@@ -173,7 +173,7 @@ public class Services {
     @Test
     public void signatureEntry() throws Exception {
 
-        Subroutine y1 = srv("y1", sig("add", AdderImpl.class, result("add/out",
+        Function y1 = srv("y1", sig("add", AdderImpl.class, result("add/out",
                         inPaths("x1", "x2"))),
                     context(inVal("x1", 10.0), inVal("x2", 20.0)));
 
@@ -183,7 +183,7 @@ public class Services {
     @Test
     public void getEntryValueWithArgSelector() throws Exception {
 
-        Subroutine y1 = srv("y1", sig("add", AdderImpl.class),
+        Function y1 = srv("y1", sig("add", AdderImpl.class),
                 context(inVal("x1", 10.0), inVal("x2", 20.0)));
 
 //        logger.info("out eval: {}", eval(y1, selector("result/eval")));
@@ -193,7 +193,7 @@ public class Services {
     @Test
     public void getEntryValueWithSelector() throws Exception {
 
-        Subroutine y1 = srv("y1", sig("add", AdderImpl.class),
+        Function y1 = srv("y1", sig("add", AdderImpl.class),
                 context(inVal("x1", 10.0), inVal("x2", 20.0)),
                 selector("result/eval"));
 
@@ -269,7 +269,7 @@ public class Services {
     @Test
     public void getConditionalBlockSrvValue() throws Exception {
 
-        Subroutine y1 = srv("y1", block(context(prc("x1", 10.0), prc("x2", 20.0)),
+        Function y1 = srv("y1", block(context(prc("x1", 10.0), prc("x2", 20.0)),
             alt(opt(condition((Context<Double> cxt)
                             -> v(cxt, "x1") > v(cxt, "x2")), expr("x1 + x2", args("x1", "x2"))),
                 opt(condition((Context<Double> cxt)

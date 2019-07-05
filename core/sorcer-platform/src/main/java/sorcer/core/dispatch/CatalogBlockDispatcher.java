@@ -50,9 +50,9 @@ import java.util.Set;
 public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
     private final Logger logger = LoggerFactory.getLogger(CatalogBlockDispatcher.class);
 
-	public CatalogBlockDispatcher(Routine block, Set<Context> sharedContext,
-                                  boolean isSpawned, Exerter provider,
-                                  ProvisionManager provisionManager) throws ContextException, RemoteException {
+	public CatalogBlockDispatcher(Subroutine block, Set<Context> sharedContext,
+								  boolean isSpawned, Exerter provider,
+								  ProvisionManager provisionManager) throws ContextException, RemoteException {
 		super(block, sharedContext, isSpawned, provider, provisionManager);
 //        block.getDataContext().append(block.getScope());
     }
@@ -69,7 +69,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
 	}
 
     @Override
-    protected void beforeExec(Routine exertion) throws RoutineException, SignatureException {
+    protected void beforeExec(Subroutine exertion) throws RoutineException, SignatureException {
         super.beforeExec(exertion);
         try {
             preUpdate(exertion);
@@ -88,7 +88,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
     }
 
     @Override
-    protected void afterExec(Routine result) throws ContextException, RoutineException {
+    protected void afterExec(Subroutine result) throws ContextException, RoutineException {
         super.afterExec(result);
         try {
             postUpdate(result);
@@ -103,7 +103,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
             /*MonitoringSession monSession = MonitorUtil.getMonitoringSession(result);
             if (result.isBlock() && result.isMonitorable() && monSession!=null) {
                 boolean isFailed = false;
-                for (Routine xrt : result.getAllMograms()) {
+                for (Subroutine xrt : result.getAllMograms()) {
                     if (xrt.getStatus()==Exec.FAILED || xrt.getStatus()==Exec.ERROR) {
                         isFailed = true;
                         break;
@@ -118,7 +118,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         }
     }
 
-    private void preUpdate(Routine exertion) throws ContextException, RemoteException {
+    private void preUpdate(Subroutine exertion) throws ContextException, RemoteException {
 		if (exertion instanceof AltTask) {
 			for (OptTask oe : ((AltTask)exertion).getOptExertions()) {
                 oe.getCondition().getConditionalContext().append(xrt.getContext());
@@ -172,7 +172,7 @@ public class CatalogBlockDispatcher extends CatalogSequentialDispatcher {
         }
 	}
 	
-	private void postUpdate(Routine exertion) throws ContextException {
+	private void postUpdate(Subroutine exertion) throws ContextException {
         if (exertion instanceof Job) {
             xrt.getDataContext().append(exertion.getDataContext());
         } else if (exertion instanceof AltTask) {

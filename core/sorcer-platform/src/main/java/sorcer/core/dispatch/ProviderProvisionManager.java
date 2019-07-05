@@ -38,7 +38,7 @@ public class ProviderProvisionManager {
     private static final int MAX_ATTEMPTS = 3;
 
 
-    public static void provision(Routine exertion, SpaceParallelDispatcher spaceExertDispatcher) throws SignatureException {
+    public static void provision(Subroutine exertion, SpaceParallelDispatcher spaceExertDispatcher) throws SignatureException {
         getInstance().doProvision(exertion, spaceExertDispatcher);
     }
 
@@ -48,7 +48,7 @@ public class ProviderProvisionManager {
         return instance;
     }
 
-    private void doProvision(Routine exertion, SpaceParallelDispatcher spaceExertDispatcher) throws SignatureException {
+    private void doProvision(Subroutine exertion, SpaceParallelDispatcher spaceExertDispatcher) throws SignatureException {
         NetSignature sig = (NetSignature) exertion.getProcessSignature();
         // A hack to disable provisioning spacer itself
         if (!sig.getServiceType().getName().equals(Spacer.class.getName())) {
@@ -147,7 +147,7 @@ public class ProviderProvisionManager {
         String version;
         Signature signature;
         int provisionAttempts = 0;
-        Routine exertion;
+        Subroutine exertion;
         SpaceParallelDispatcher spaceExertDispatcher;
 
         private String getServiceType() {
@@ -191,7 +191,7 @@ public class ProviderProvisionManager {
             this.provisionAttempts++;
         }
 
-        public Routine getExertion() {
+        public Subroutine getExertion() {
             return exertion;
         }
 
@@ -200,7 +200,7 @@ public class ProviderProvisionManager {
         }
 
         private SignatureElement(String serviceType, String providerName, String version, Signature signature,
-                                 Routine exertion, SpaceParallelDispatcher spaceExertDispatcher) {
+								 Subroutine exertion, SpaceParallelDispatcher spaceExertDispatcher) {
             this.serviceType = serviceType;
             this.providerName = providerName;
             this.version = version;

@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * The alternative Routine that executes sequentially a collection of optional
+ * The alternative Subroutine that executes sequentially a collection of optional
  * mograms. It executes the first optExertion in the collection such that its
  * condition is true.
  * 
@@ -72,12 +72,12 @@ public class AltTask extends ConditionalTask {
 //					opt.setContextScope(cxt);
 					opt.setContextScope(dataContext);
 					Mogram mog = opt.getTarget();
-					if (mog instanceof Routine) {
+					if (mog instanceof Subroutine) {
                         ((ServiceRoutine)mog).setContextScope(cxt);
                     } else {
                         mog.setScope(cxt);
                     }
-					Routine out = mog.exert(txn, args);
+					Subroutine out = mog.exert(txn, args);
 					opt.setTarget(out);
 					dataContext = (ServiceContext) out.getContext();
 					controlContext.append(out.getControlContext());
@@ -141,7 +141,7 @@ public class AltTask extends ConditionalTask {
 
 	@Override
 	public List<ThrowableTrace> getExceptions(List<ThrowableTrace> exceptions) {
-		for (Routine ext : optExertions) {
+		for (Subroutine ext : optExertions) {
 			exceptions.addAll(((ServiceRoutine)ext).getExceptions(exceptions));
 		}
 		exceptions.addAll(this.getExceptions());
@@ -151,7 +151,7 @@ public class AltTask extends ConditionalTask {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Routine#getMograms()
+	 * @see sorcer.service.Subroutine#getMograms()
 	 */
 	@Override
 	public List<Mogram> getMograms() {
@@ -161,7 +161,7 @@ public class AltTask extends ConditionalTask {
 	}
 	
 	public List<Mogram> getMograms(List<Mogram> exs) {
-		for (Routine e : optExertions)
+		for (Subroutine e : optExertions)
 			((ServiceRoutine) e).getMograms(exs);
 		exs.add(this);
 		return exs;
@@ -179,7 +179,7 @@ public class AltTask extends ConditionalTask {
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Routine#isCompound()
+	 * @see sorcer.service.Subroutine#isCompound()
 	 */
 	@Override
 	public boolean isCompound() {

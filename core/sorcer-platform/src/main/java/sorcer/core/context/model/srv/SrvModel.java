@@ -222,14 +222,14 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     ((MultiFiMogram) carrier).setScope(this);
                     Object out = ((MultiFiMogram)carrier).exert(args);
                     Context cxt = null;
-                    if (out instanceof Routine) {
-                        cxt = ((Routine) out).getContext();
-                        Context.Return rt = ((Routine) out).getProcessSignature().getContextReturn();
+                    if (out instanceof Subroutine) {
+                        cxt = ((Subroutine) out).getContext();
+                        Context.Return rt = ((Subroutine) out).getProcessSignature().getContextReturn();
                         if (rt != null && rt.getReturnPath() != null) {
                             Object obj = cxt.getReturnValue();
                             putInoutValue(rt.getReturnPath(), obj);
                             ((Srv) get(path)).setOut(obj);
-                            ((Routine) out).getContext().putValue(path, obj);
+                            ((Subroutine) out).getContext().putValue(path, obj);
                             out = obj;
                         } else {
                             ((Srv) get(path)).setOut(cxt);
@@ -253,7 +253,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                     }
                     val = entry;
                 } else if (carrier instanceof Closure) {
-                    Subroutine entry = (Subroutine) ((Closure)carrier).call(this);
+                    Function entry = (Function) ((Closure)carrier).call(this);
                     ((Srv) get(path)).setOut(this.getValue());
                     putValue(path, this.getValue());
                     if (path != entry.getName())
@@ -319,8 +319,8 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                         // assume default dereference of Entry is inner Entry
                         val = ((Entry) deref).getValue(args);
                     }
-                } else if (val instanceof Subroutine){
-                    val = ((Subroutine)val).getValue(args);
+                } else if (val instanceof Function){
+                    val = ((Function)val).getValue(args);
                 } else {
                     val = ((Entry)val).getValue(args);
                 }
@@ -395,7 +395,7 @@ public class SrvModel extends EntModel implements Invocation<Object> {
         Mogram mogram = (Mogram) mogramEntry.getImpl();
 		mogram.setScope(this);
         Mogram out = mogram.exert(entries);
-        if (out instanceof Routine){
+        if (out instanceof Subroutine){
             Context outCxt = out.getContext();
             if (outCxt.getContextReturn() != null) {
                 Object obj = outCxt.getReturnValue();
@@ -542,8 +542,8 @@ public class SrvModel extends EntModel implements Invocation<Object> {
                 signature = (Signature)subjectValue;
             }
             if (signature != null) {
-                Routine out = operator.xrt(key, subjectValue, this).exert(txn, entries);
-                Routine xrt = out.exert();
+                Subroutine out = operator.xrt(key, subjectValue, this).exert(txn, entries);
+                Subroutine xrt = out.exert();
                 return xrt.getDataContext();
             } else {
                 // compute model response

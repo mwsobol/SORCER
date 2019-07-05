@@ -7,7 +7,7 @@ import sorcer.core.exertion.NetJob;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.Context;
-import sorcer.service.Routine;
+import sorcer.service.Subroutine;
 import sorcer.service.Job;
 import sorcer.service.Task;
 import sorcer.util.Sorcer;
@@ -38,7 +38,7 @@ public class WorkerJobApplication {
 		logger.info("Provider name2: " + pn2);
 		logger.info("Provider name3: " + pn3);
 
-		Routine result = new WorkerJobApplication()
+		Subroutine result = new WorkerJobApplication()
 			.getExertion(pn1, pn2, pn3).exert();
 		// getValue contexts of component mograms - in this case tasks
 		logger.info("Output context1: \n" + result.getContext("work1"));
@@ -46,7 +46,7 @@ public class WorkerJobApplication {
 		logger.info("Output context3: \n" + result.getContext("work3"));
 	}
 
-	private Routine getExertion(String pn1, String pn2, String pn3) throws Exception {
+	private Subroutine getExertion(String pn1, String pn2, String pn3) throws Exception {
         String hostname = InetAddress.getLocalHost().getHostName();
 
         if (pn1!=null) pn1 = Sorcer.getActualName(pn1);

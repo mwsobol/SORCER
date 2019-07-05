@@ -39,7 +39,7 @@ public class Binder {
         try {
             mogram.substitute(args);
 
-            if (mogram instanceof Routine) {
+            if (mogram instanceof Subroutine) {
                 ((ServiceRoutine)mogram).selectFidelity(args);
                 initExecState(args);
             } else if (mogram instanceof Context) {
@@ -72,19 +72,19 @@ public class Binder {
         Exec.State state = exertion.getControlContext().getExecState();
         if (state == Exec.State.INITIAL) {
             for (Mogram e : exertion.getAllMograms()) {
-                if (e instanceof Routine) {
-                    if (((ControlContext) ((Routine)e).getControlContext()).getExecState() == Exec.State.INITIAL) {
+                if (e instanceof Subroutine) {
+                    if (((ControlContext) ((Subroutine)e).getControlContext()).getExecState() == Exec.State.INITIAL) {
                         e.setStatus(Exec.INITIAL);
                     }
                 }
                 if (e instanceof Block) {
-                    resetContext((Routine)e, argCxt);
+                    resetContext((Subroutine)e, argCxt);
                 }
             }
         }
     }
 
-    private void resetContext(Routine exertion, Context context, Arg... entries) throws ContextException, RemoteException {
+    private void resetContext(Subroutine exertion, Context context, Arg... entries) throws ContextException, RemoteException {
         Context initContext = ((ServiceContext)exertion.getDataContext()).getInitContext();
         // overwrite initContext
         if (initContext != null) {
@@ -112,7 +112,7 @@ public class Binder {
         }
     }
 
-    private void resetScope(Routine exertion) throws ContextException, RemoteException {
+    private void resetScope(Subroutine exertion) throws ContextException, RemoteException {
         ((ServiceContext)exertion.getDataContext()).clearScope();
         exertion.getDataContext().append(((ServiceContext)exertion.getDataContext()).getInitContext());
     }

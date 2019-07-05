@@ -23,7 +23,7 @@ import net.jini.lookup.entry.Name;
 import sorcer.core.context.ThrowableTrace;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.Exec;
-import sorcer.service.Routine;
+import sorcer.service.Subroutine;
 import sorcer.service.ServiceRoutine;
 import sorcer.service.SignatureException;
 
@@ -48,7 +48,7 @@ public class ExertionEnvelop implements Entry {
 
 	public Integer state;
 
-	public Routine exertion;
+	public Subroutine exertion;
 
 	// used by the loki framework
 	public Entry entry;
@@ -102,7 +102,7 @@ public class ExertionEnvelop implements Entry {
 		return ee;
 	}
 
-	public static ExertionEnvelop getTemplate(Routine ex) throws SignatureException {
+	public static ExertionEnvelop getTemplate(Subroutine ex) throws SignatureException {
 		if (ex == null || ex.getProcessSignature() == null)
 			return null;
 
@@ -154,7 +154,7 @@ public class ExertionEnvelop implements Entry {
 //	public Boolean isEncrypted;
 //	public Boolean isJob;
 //	public Integer state;
-//	public Routine exertion;
+//	public Subroutine exertion;
 //	public Entry entry;
 //	public byte[] encryptedExertion;
 //	public Subject providerSubject;

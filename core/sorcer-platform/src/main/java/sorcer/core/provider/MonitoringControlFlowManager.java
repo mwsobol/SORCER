@@ -44,14 +44,14 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
     private MonitorSessionManagement sessionMonitor;
     private LeaseRenewalManager lrm;
 
-    public MonitoringControlFlowManager(Routine exertion,
+    public MonitoringControlFlowManager(Subroutine exertion,
                                         ProviderDelegate delegate) throws RemoteException, ConfigurationException {
         super(exertion, delegate);
         sessionMonitor = Accessor.get().getService(null, MonitoringManagement.class);
         lrm = new LeaseRenewalManager(delegate.getProviderConfiguration());
     }
 
-    public MonitoringControlFlowManager(Routine exertion,
+    public MonitoringControlFlowManager(Subroutine exertion,
                                         ProviderDelegate delegate,
                                         SorcerExerterBean serviceBean) throws RemoteException, ConfigurationException {
         super(exertion, delegate, serviceBean);
@@ -60,11 +60,11 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
     }
 
     @Override
-    public Routine process() throws RoutineException {
+    public Subroutine process() throws RoutineException {
         MonitoringSession monSession = getMonitoringSession(exertion);
         if (sessionMonitor==null) {
             logger.error("Monitoring enabled but ExertMonitor service could not be found!");
-            return (Routine) super.process();
+            return (Subroutine) super.process();
         }
         try {
             if (monSession==null) {
@@ -112,7 +112,7 @@ public class MonitoringControlFlowManager extends ControlFlowManager {
         return result;
     }
 
-    private Routine register(Routine exertion) throws RemoteException, MonitorException {
+    private Subroutine register(Subroutine exertion) throws RemoteException, MonitorException {
 
         ServiceRoutine registeredExertion = (ServiceRoutine) (sessionMonitor.register(null,
                                                                                         exertion,

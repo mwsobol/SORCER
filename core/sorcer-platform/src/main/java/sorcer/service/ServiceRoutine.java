@@ -50,7 +50,7 @@ import static sorcer.so.operator.exec;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public abstract class ServiceRoutine extends ServiceMogram implements Routine {
+public abstract class ServiceRoutine extends ServiceMogram implements Subroutine {
 
     static final long serialVersionUID = -3907402419486719293L;
 
@@ -83,8 +83,8 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
         super(name);
     }
 
-    public Routine newInstance() throws SignatureException {
-        return (Routine) sorcer.co.operator.instance(builder);
+    public Subroutine newInstance() throws SignatureException {
+        return (Subroutine) sorcer.co.operator.instance(builder);
     }
 
     /*
@@ -116,13 +116,13 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Service#service(sorcer.service.Routine,
+     * @see sorcer.service.Service#service(sorcer.service.Subroutine,
      * net.jini.core.transaction.Transaction)
      */
     public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args)
             throws MogramException, RemoteException {
         try {
-            if (mogram instanceof Routine) {
+            if (mogram instanceof Subroutine) {
                 ServiceRoutine exertion = (ServiceRoutine) mogram;
                 Class serviceType = exertion.getServiceType();
                 if (provider != null) {
@@ -209,7 +209,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
         }
         try {
             Object obj = null;
-            Routine xrt = exert(entries);
+            Subroutine xrt = exert(entries);
             if (rp == null) {
                 obj =  xrt.getReturnValue();
             } else {
@@ -268,10 +268,10 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Routine#exert(net.jini.core.transaction.Transaction,
+     * @see sorcer.service.Subroutine#exert(net.jini.core.transaction.Transaction,
      * sorcer.servie.Arg[])
      */
-    public Routine exert(Transaction txn, Arg... entries)
+    public Subroutine exert(Transaction txn, Arg... entries)
             throws MogramException, RemoteException {
         try {
             substitute(entries);
@@ -293,7 +293,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Routine#exert(sorcer.core.context.Path.Entry[])
+     * @see sorcer.service.Subroutine#exert(sorcer.core.context.Path.Entry[])
      */
     public <T extends Mogram> T  exert(Arg... entries) throws MogramException, RemoteException {
         try {
@@ -492,7 +492,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
 
     public Context getContext(String componentExertionName)
             throws ContextException {
-        Routine component = (Routine)getMogram(componentExertionName);
+        Subroutine component = (Subroutine)getMogram(componentExertionName);
         if (component != null)
             return getMogram(componentExertionName).getContext();
         else
@@ -500,9 +500,9 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
     }
 
     public Context getControlContext(String componentExertionName) {
-        Routine component = (Routine)getMogram(componentExertionName);
+        Subroutine component = (Subroutine)getMogram(componentExertionName);
         if (component != null)
-            return ((Routine)getMogram(componentExertionName)).getControlContext();
+            return ((Subroutine)getMogram(componentExertionName)).getControlContext();
         else
             return null;
     }
@@ -655,7 +655,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Routine#getReturnValue(sorcer.service.Arg[])
+     * @see sorcer.service.Subroutine#getReturnValue(sorcer.service.Arg[])
      */
     public Object getReturnValue(Arg... entries) throws ContextException,
             RemoteException {
@@ -779,7 +779,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Routine#getExceptions()
+     * @see sorcer.service.Subroutine#getExceptions()
      */
     @Override
     public List<ThrowableTrace> getExceptions() {
@@ -792,7 +792,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
     /*
      * (non-Javadoc)
      *
-     * @see sorcer.service.Routine#getExceptions()
+     * @see sorcer.service.Subroutine#getExceptions()
      */
     @Override
     public List<ThrowableTrace> getAllExceptions() {
@@ -820,7 +820,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
         List<Mogram> allExertions = getAllMograms();
         for (Mogram e : allExertions) {
             if (e instanceof Task)
-                allSigs.add(((Routine)e).getProcessSignature());
+                allSigs.add(((Subroutine)e).getProcessSignature());
         }
         return allSigs;
     }
@@ -840,9 +840,9 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
         // logger.info(" this exertion = " + this);
         // logger.info(" mograms = " + mograms);
         for (Mogram e : exertions) {
-            if (e instanceof Routine && !((Routine)e).isJob()) {
+            if (e instanceof Subroutine && !((Subroutine)e).isJob()) {
                 // logger.info(" exertion i = "+ e.getName());
-                Context cxt = ((Routine)e).getContext();
+                Context cxt = ((Subroutine)e).getContext();
                 ((ServiceContext) cxt).updateValue(value);
             }
         }
@@ -903,7 +903,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
         Context cxt = null;
         try {
             substitute(entries);
-            Routine evaluatedExertion = exert(entries);
+            Subroutine evaluatedExertion = exert(entries);
             Context.Return rp = (Context.Return)evaluatedExertion.getDataContext()
                     .getContextReturn();
             if (evaluatedExertion instanceof Job) {
@@ -1008,7 +1008,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
     }
 
     /* (non-Javadoc)
-     * @see sorcer.service.Routine#isCompound()
+     * @see sorcer.service.Subroutine#isCompound()
      */
     @Override
     public boolean isCompound() {
@@ -1059,7 +1059,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
         this.isProxy = isProxy;
     }
 
-    public Routine addDepender(Evaluation depender) {
+    public Subroutine addDepender(Evaluation depender) {
         if (this.dependers == null)
             this.dependers = new ArrayList<Evaluation>();
         dependers.add(depender);
@@ -1108,12 +1108,12 @@ public abstract class ServiceRoutine extends ServiceMogram implements Routine {
         StringBuffer info = new StringBuffer();
         try {
             info.append("\n" + stdoutSep)
-                    .append("[SORCER Service Routine]\n")
-                    .append("\tRoutine Type:        " + getClass().getName()
+                    .append("[SORCER Service Subroutine]\n")
+                    .append("\tSubroutine Type:        " + getClass().getName()
                             + "\n")
-                    .append("\tRoutine Tag:        " + key + "\n")
-                    .append("\tRoutine Status:      " + status + "\n")
-                    .append("\tRoutine ID:          " + mogramId + "\n")
+                    .append("\tSubroutine Tag:        " + key + "\n")
+                    .append("\tSubroutine Status:      " + status + "\n")
+                    .append("\tSubroutine ID:          " + mogramId + "\n")
                     .append("\tCreation Date:        " + sdf.format(creationDate) + "\n")
                     .append("\tRuntime ID:           " + runtimeId + "\n")
                     .append("\tParent ID:            " + parentId + "\n")

@@ -34,7 +34,7 @@ import static sorcer.so.operator.exert;
 public class ServiceExertionTest {
 	private final static Logger logger = LoggerFactory.getLogger(ServiceExertionTest.class);
 
-	private Routine eTask, eJob;
+	private Subroutine eTask, eJob;
 	// to avoid spelling errors in test cases define instance variables
 	private String arg = "arg", result = "result";
 	private String x1 = "x1", x2 = "x2", y = "y";
@@ -112,7 +112,7 @@ public class ServiceExertionTest {
 	}
 
 	// a simple task
-	private Routine createTask() throws Exception {
+	private Subroutine createTask() throws Exception {
 		
 //		Task task = task("t1", sig("add", Adder.class), 
 //		   context("add", in(path(arg, x1), 20.0), in(path(arg, x2), 80.0),
@@ -126,7 +126,7 @@ public class ServiceExertionTest {
 	}
 	
 	// two level job composition
-	private Routine createJob() throws Exception {
+	private Subroutine createJob() throws Exception {
 	
 //		Task t3 = task("t3", sig("subtract", Subtractor.class), 
 //		   context("subtract", in(path(arg, x1), null), in(path(arg, x2), null),

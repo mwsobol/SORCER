@@ -171,7 +171,7 @@ public class EvalCmd extends ShellCmd {
 		if (target == null) {
 			return;
 		} else if (!(target instanceof Model ||
-				target instanceof Routine ||
+				target instanceof Subroutine ||
 				target instanceof Prc)) {
 			out.println("\n---> EVALUATION RESULT --->");
 			out.println(target);
@@ -204,7 +204,7 @@ public class EvalCmd extends ShellCmd {
 		if (result != null) {
 			if (ifEvaluation) {
 				out.println("\n---> EVALUATION RESULT --->");
-				if (result instanceof Routine) {
+				if (result instanceof Subroutine) {
 					out.println(((Mogram) result).getContext());
 				} else if (result instanceof Model) {
 					out.println(((Model) result).getResult());
@@ -231,8 +231,8 @@ public class EvalCmd extends ShellCmd {
 				out.println("\n---> OUTPUT MOGRAM --->");
 //				out.println(mog.describe());
 				out.println(mog.getName() + "@" + mog.getClass().getSimpleName());
-				if (mog instanceof Routine) {
-					Routine xrt = (Routine) mog;
+				if (mog instanceof Subroutine) {
+					Subroutine xrt = (Subroutine) mog;
 					out.println("\n---> OUTPUT DATA CONTEXT --->");
 					out.println(xrt.getContext());
 					saveFilesFromContext(xrt, out);
@@ -317,7 +317,7 @@ public class EvalCmd extends ShellCmd {
 		return sb;
 	}
 
-	private void saveFilesFromContext(Routine xrt, PrintStream out) {
+	private void saveFilesFromContext(Subroutine xrt, PrintStream out) {
 		try {
 			ContextNode[] cns = (xrt.isJob() ? Contexts.getTaskContextNodes((ServiceRoutine)xrt)
 					: Contexts.getTaskContextNodes((ServiceRoutine)xrt));

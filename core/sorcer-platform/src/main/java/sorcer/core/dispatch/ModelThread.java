@@ -44,7 +44,7 @@ public class ModelThread extends Thread {
 	}
 
 	public void run() {
-		logger.debug("*** Routine explorer started with control context ***\n"
+		logger.debug("*** Subroutine explorer started with control context ***\n"
 				+ task.getControlContext());
 		Dispatcher dispatcher = null;
 		try {
@@ -75,7 +75,7 @@ public class ModelThread extends Thread {
 					&& explorer.getState() != Exec.SUSPENDED) {
 				count--;
 				if (count < 0) {
-					logger.debug("*** Concatenator's Routine Dispatcher waiting in state: "
+					logger.debug("*** Concatenator's Subroutine Dispatcher waiting in state: "
 							+ explorer.getState());
 					count = COUNT;
 				}

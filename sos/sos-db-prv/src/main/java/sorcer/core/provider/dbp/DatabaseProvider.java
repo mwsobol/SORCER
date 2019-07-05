@@ -180,10 +180,10 @@ public class DatabaseProvider extends ServiceExerter implements DatabaseStorer {
         }
 	}
 
-	public Routine getExertion(Uuid uuid) {
+	public Subroutine getExertion(Uuid uuid) {
         try {
             append(uuid, "exertion");
-            StoredMap<UuidKey, Routine> xrtMap = views.getRoutineMap();
+            StoredMap<UuidKey, Subroutine> xrtMap = views.getRoutineMap();
 		    return xrtMap.get(new UuidKey(uuid));
         } finally {
             objectsQueue.remove(uuid);
@@ -223,7 +223,7 @@ public class DatabaseProvider extends ServiceExerter implements DatabaseStorer {
 //				if (inner instanceof Context) {
 //					storedSet = views.getContextSet();
 //					storedSet.add(object);
-//				} else if (inner instanceof Routine) {
+//				} else if (inner instanceof Subroutine) {
 //					storedSet = views.getRoutineSet();
 //					storedSet.add(object);
 //				} else if (inner instanceof ModelTable) {
@@ -268,7 +268,7 @@ public class DatabaseProvider extends ServiceExerter implements DatabaseStorer {
                 if (object instanceof Context) {
                     storedMap = views.getContextMap();
                     storedMap.replace(key, object);
-                } else if (object instanceof Routine) {
+                } else if (object instanceof Subroutine) {
                     storedMap = views.getRoutineMap();
                     storedMap.replace(key, object);
                 } else if (object instanceof ModelTable) {
@@ -618,7 +618,7 @@ public class DatabaseProvider extends ServiceExerter implements DatabaseStorer {
 		DeleteThread dt = null;
 		if (object instanceof Context) {
 			dt = new DeleteThread(id, Store.context);
-		} else if (object instanceof Routine) {
+		} else if (object instanceof Subroutine) {
 			dt = new DeleteThread(id, Store.exertion);
 		} else if (object instanceof Functionality) {
 			dt = new DeleteThread(id, Store.var);
@@ -651,7 +651,7 @@ public class DatabaseProvider extends ServiceExerter implements DatabaseStorer {
 		Store type = Store.object;
 		if (object instanceof Context) {
 			type = Store.context;
-		} else if (object instanceof Routine) {
+		} else if (object instanceof Subroutine) {
 			type = Store.exertion;
 		} else if (object instanceof Functionality) {
 			type = Store.var;

@@ -36,7 +36,7 @@ import static sorcer.mo.operator.add;
 /**
  * @author Mike Sobolewski
  */
-public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluation<T>, Perturbation<T>, Dependency, Comparable<T>,
+public class Function<T> extends Entry<T> implements Functionality<T>, Evaluation<T>, Perturbation<T>, Dependency, Comparable<T>,
 		EvaluationComponent, SupportComponent, Scopable {
 
 	private static final long serialVersionUID = 1L;
@@ -54,17 +54,17 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
 	// dependency management for this Entry
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
-	public Subroutine() {
+	public Function() {
 	}
 
-	public Subroutine(final String path) {
+	public Function(final String path) {
 		if(path==null)
 			throw new IllegalArgumentException("path must not be null");
 		this.key = path;
         this.name = path;
 	}
 
-	public Subroutine(final String path, final T value) {
+	public Function(final String path, final T value) {
         if(path==null)
             throw new IllegalArgumentException("path must not be null");
         this.key = path;
@@ -78,12 +78,12 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
         }
 	}
 
-	public Subroutine(final String path, final T value, final int index) {
+	public Function(final String path, final T value, final int index) {
 		this(path, value);
 		this.index = index;
 	}
 
-	public Subroutine(final String path, final T value, final String annotation) {
+	public Function(final String path, final T value, final String annotation) {
 		this(path, value);
 		this.annotation = annotation;
 	}
@@ -204,8 +204,8 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
 	public int compareTo(T o) {
 		if (o == null)
 			throw new NullPointerException();
-		if (o instanceof Subroutine<?>)
-			return key.compareTo(((Subroutine<?>) o).getName());
+		if (o instanceof Function<?>)
+			return key.compareTo(((Function<?>) o).getName());
 		else
 			return -1;
 	}
@@ -218,16 +218,16 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
 
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof Subroutine) {
-			if (impl != null && ((Subroutine) object).impl == null) {
+		if (object instanceof Function) {
+			if (impl != null && ((Function) object).impl == null) {
 				return false;
-			} else if (impl == null && ((Subroutine) object).impl != null) {
+			} else if (impl == null && ((Function) object).impl != null) {
 				return false;
-			} else if (((Subroutine) object).key.equals(key)
-					&& ((Subroutine) object).impl == impl) {
+			} else if (((Function) object).key.equals(key)
+					&& ((Function) object).impl == impl) {
 				return true;
-			} else if (((Subroutine) object).key.equals(key)
-					&& ((Subroutine) object).impl.equals(impl)) {
+			} else if (((Function) object).key.equals(key)
+					&& ((Function) object).impl.equals(impl)) {
 				return true;
 			}
 		}
@@ -275,7 +275,7 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
 		return "[" + key + "=" + en + "]";
 	}
 
-	public Subroutine(String path, T value, boolean isPersistant, int index) {
+	public Function(String path, T value, boolean isPersistant, int index) {
 		this(path, value, index);
 		this.isPersistent = isPersistant;
 	}
@@ -301,7 +301,7 @@ public class Subroutine<T> extends Entry<T> implements Functionality<T>, Evaluat
 				}
 				out.putValue(key, ((ServiceContext) mogram).getValue(key));
 			}
-		} else if (mogram instanceof Routine) {
+		} else if (mogram instanceof Subroutine) {
 			if (impl != null && impl != Context.none)
 				mogram.getContext().putValue(key, impl);
 			cxt =  mogram.exert(txn).getContext();

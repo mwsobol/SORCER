@@ -66,7 +66,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 		mograms.set(i, ex);
 	}
 
-	public Routine getMasterExertion() {
+	public Subroutine getMasterExertion() {
 		Uuid uuid = null;
 		try {
 			uuid = (Uuid) controlContext.getValue(ControlContext.MASTER_EXERTION);
@@ -77,7 +77,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 				&& controlContext.getFlowType().equals(ControlContext.SEQUENTIAL)) {
 			return (size() > 0) ? get(size() - 1) : null;
 		} else {
-			Routine master = null;
+			Subroutine master = null;
 			for (int i = 0; i < size(); i++) {
 				if (((ServiceRoutine) get(i)).getId().equals(
 						uuid)) {
@@ -103,8 +103,8 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 	/**
 	 * Returns the exertion at the specified index.
 	 */
-	public Routine get(int index) {
-		return (Routine) mograms.get(index);
+	public Subroutine get(int index) {
+		return (Subroutine) mograms.get(index);
 	}
 
 	public void setMograms(List<Mogram> mograms) {
@@ -112,7 +112,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 
 	}
 
-	public Mogram addExertion(Routine exertion, int priority) throws RoutineException {
+	public Mogram addExertion(Subroutine exertion, int priority) throws RoutineException {
 		addMogram(exertion);
 		controlContext.setPriority(exertion, priority);
 		return this;
@@ -143,7 +143,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 		return null;
 	}
 
-	public int compareByIndex(Routine e) {
+	public int compareByIndex(Subroutine e) {
 		if (this.getIndex() > ((Transroutine) e).getIndex())
 			return 1;
 		else if (this.getIndex() < ((Transroutine) e).getIndex())
@@ -170,7 +170,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 	public Context evaluate(Context context, Arg... args) throws EvaluationException {
 		try {
 		    getContext().substitute(context);
-			Routine out = exert(args);
+			Subroutine out = exert(args);
 			return out.getContext();
 		} catch (MogramException | RemoteException e) {
 			throw new EvaluationException(e);

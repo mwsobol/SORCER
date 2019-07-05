@@ -49,7 +49,7 @@ import static sorcer.so.operator.exec;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Prc<T> extends Subroutine<T> implements Invocation<T>,
+public class Prc<T> extends Function<T> implements Invocation<T>,
 	Setter, Scopable, Comparable<T>, Reactive<T>, func<T> {
 
 	private static final long serialVersionUID = 7495489980319169695L;

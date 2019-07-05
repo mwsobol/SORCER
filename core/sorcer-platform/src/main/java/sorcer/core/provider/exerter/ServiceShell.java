@@ -140,8 +140,8 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 	public  <T extends Mogram> T exert(T mogram, Transaction transaction, Arg... entries) throws RoutineException {
 		Mogram result = null;
 		try {
-			if (mogram instanceof Routine) {
-				Routine exertion = (Routine)mogram;
+			if (mogram instanceof Subroutine) {
+				Subroutine exertion = (Subroutine)mogram;
 				if ((mogram.getProcessSignature() != null
 						&& ((ServiceSignature) mogram.getProcessSignature()).isShellRemote())
 						|| (exertion.getControlContext() != null
@@ -182,18 +182,18 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 	public <T extends Mogram> T  exert(Transaction txn, String providerName, Arg... entries)
 			throws MogramException, RemoteException {
 		try {
-			if (mogram instanceof Routine) {
+			if (mogram instanceof Subroutine) {
 				ServiceRoutine exertion = (ServiceRoutine)mogram;
 				exertion.selectFidelity(entries);
 				Mogram out = exerting(txn, providerName, entries);
-				if (out instanceof Routine) {
+				if (out instanceof Subroutine) {
 					if(out.getStatus()==Exec.ERROR || out.getStatus()==Exec.FAILED) {
 						return (T) out;
 					}
 					postProcessExertion(out);
 				}
 				if (exertion.isProxy()) {
-					Routine xrt = (Routine) out;
+					Subroutine xrt = (Subroutine) out;
 					exertion.setContext(xrt.getDataContext());
 					exertion.setControlContext((ControlContext) xrt.getControlContext());
 					if (exertion.isCompound()) {
@@ -223,20 +223,20 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		}
 		Exec.State state = ((ServiceRoutine)mogram).getControlContext().getExecState();
 		if (state == State.INITIAL) {
-			if(mogram instanceof Routine) {
+			if(mogram instanceof Subroutine) {
 				mogram.getExceptions().clear();
 				mogram.getTrace().clear();
 			}
-			for (Mogram e : ((Routine)mogram).getAllMograms()) {
-				if (e instanceof Routine) {
-					if (((ControlContext) ((Routine)e).getControlContext()).getExecState() == State.INITIAL) {
+			for (Mogram e : ((Subroutine)mogram).getAllMograms()) {
+				if (e instanceof Subroutine) {
+					if (((ControlContext) ((Subroutine)e).getControlContext()).getExecState() == State.INITIAL) {
 						e.setStatus(Exec.INITIAL);
 						e.getExceptions().clear();
 						e.getTrace().clear();
 					}
 				}
 				if (e instanceof Block) {
-					resetScope((Routine)e, argCxt);
+					resetScope((Subroutine)e, argCxt);
 				} else {
 					e.clearScope();
 				}
@@ -244,7 +244,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		}
 	}
 
-	private void resetScope(Routine exertion, Context context, Arg... entries) throws MogramException, RemoteException {
+	private void resetScope(Subroutine exertion, Context context, Arg... entries) throws MogramException, RemoteException {
 		((ServiceContext)exertion.getDataContext()).clearScope();
 		exertion.getDataContext().append(((ServiceContext)exertion.getDataContext()).getInitContext());
 		if (entries != null) {
@@ -277,7 +277,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		}
 	}
 
-	private Routine initExertion(ServiceRoutine exertion, Transaction txn, Arg... entries) throws RoutineException {
+	private Subroutine initExertion(ServiceRoutine exertion, Transaction txn, Arg... entries) throws RoutineException {
 		try {
 			if (entries != null && entries.length > 0) {
 				exertion.substitute(entries);
@@ -317,9 +317,9 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		return exertion;
 	}
 
-	private Routine processAsTask() throws RemoteException,
+	private Subroutine processAsTask() throws RemoteException,
 			TransactionException, MogramException, SignatureException {
-		Routine exertion = (Routine)mogram;
+		Subroutine exertion = (Subroutine)mogram;
 		Task task = (Task) exertion.getMograms().get(0);
 		task = task.doTask();
 		exertion.getMograms().set(0, task);
@@ -331,7 +331,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			throws MogramException, RemoteException {
 		ServiceRoutine exertion = (ServiceRoutine) mogram;
 		initExertion(exertion, txn, entries);
-		Routine xrt;
+		Subroutine xrt;
 		try {
 			xrt = dispatchExertion(exertion, providerName, entries);
 		} catch (Exception e) {
@@ -344,7 +344,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		}
 	}
 
-	private Routine dispatchExertion(ServiceRoutine exertion, String providerName, Arg... args)
+	private Subroutine dispatchExertion(ServiceRoutine exertion, String providerName, Arg... args)
 			throws RoutineException, ExecutionException {
 		Signature signature = exertion.getProcessSignature();
 		Object provider = null;
@@ -478,7 +478,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		return null;
 	}
 
-	private Routine callProvider(ServiceRoutine exertion, Signature signature, Arg... entries)
+	private Subroutine callProvider(ServiceRoutine exertion, Signature signature, Arg... entries)
 			throws MogramException, RemoteException {
 		if (provider == null) {
 			logger.warn("* Provider not available for: {}", signature);
@@ -508,7 +508,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 //				e.printStackTrace();
 //			}
 
-			Routine result = provider.exert(exertion, transaction, entries);
+			Subroutine result = provider.exert(exertion, transaction, entries);
 			if (result != null && result.getExceptions().size() > 0) {
 				for (ThrowableTrace et : result.getExceptions()) {
 					Throwable t = et.getThrowable();
@@ -527,8 +527,8 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 //		}
 	}
 
-	private Routine serviceMutualExclusion(Exerter provider,
-                                           Routine exertion, Transaction transaction) throws RemoteException,
+	private Subroutine serviceMutualExclusion(Exerter provider,
+											  Subroutine exertion, Transaction transaction) throws RemoteException,
 			TransactionException, MogramException, SignatureException {
 		ServiceID mutexId = provider.getProviderID();
 		if (locker == null) {
@@ -543,7 +543,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 				exertion.getId());
 		if (lr.didSucceed()) {
 			((ControlContext)exertion.getControlContext()).setMutexId(provider.getProviderID());
-			Routine xrt = provider.exert(exertion, transaction);
+			Subroutine xrt = provider.exert(exertion, transaction);
 			txn.commit();
 			return xrt;
 		} else {
@@ -605,10 +605,10 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 
 	public static Mogram postProcessExertion(Mogram mog)
 			throws ContextException, RemoteException {
-		if (mog instanceof Routine) {
-			List<Mogram> mograms = ((Routine)mog).getAllMograms();
+		if (mog instanceof Subroutine) {
+			List<Mogram> mograms = ((Subroutine)mog).getAllMograms();
 			for (Mogram mogram : mograms) {
-				if (mogram instanceof Routine) {
+				if (mogram instanceof Subroutine) {
 					List<Setter> ps = ((ServiceRoutine) mogram).getPersisters();
 					if (ps != null) {
 						for (Setter p : ps) {
@@ -677,8 +677,8 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 
 	public Object evaluate(Mogram mogram, Arg... args)
 			throws RoutineException, ContextException, RemoteException {
-		if (mogram instanceof Routine) {
-			Routine exertion = (Routine)mogram;
+		if (mogram instanceof Subroutine) {
+			Subroutine exertion = (Subroutine)mogram;
 			Object out;
 			initialize(exertion, args);
 			try {
@@ -694,7 +694,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 						out = exert(exertion, null, args);
 					}
 				}
-				return finalize((Routine) out, args);
+				return finalize((Subroutine) out, args);
 			} catch (Exception e) {
 				logger.error("Failed in compute", e);
 				throw new RoutineException(e);
@@ -704,7 +704,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		}
 	}
 
-	private static Routine initialize(Routine xrt, Arg... args) throws ContextException {
+	private static Subroutine initialize(Subroutine xrt, Arg... args) throws ContextException {
 		Context.Return rPath = null;
 		for (Arg a : args) {
 			if (a instanceof Context.Return) {
@@ -717,7 +717,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		return xrt;
 	}
 
-	private static Object finalize(Routine xrt, Arg... args) throws ContextException, RemoteException {
+	private static Object finalize(Subroutine xrt, Arg... args) throws ContextException, RemoteException {
 		// if the exertion failed return exceptions instead of requested eval
 		if (xrt.getExceptions().size() > 0) {
 			return xrt.getExceptions();
@@ -808,9 +808,9 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 		return obj;
 	}
 
-	public static Routine exertOpenTask(Routine exertion, Arg... args)
+	public static Subroutine exertOpenTask(Subroutine exertion, Arg... args)
 			throws EvaluationException {
-		Routine closedTask = null;
+		Subroutine closedTask = null;
 		List<Arg> params = Arrays.asList(args);
 		List<Object> items = new ArrayList<Object>();
 		for (Arg param : params) {
@@ -864,7 +864,7 @@ public class ServiceShell implements Service, Activity, Exertion, Client, Callab
 			return (T) out.getContext();
 		} else if (service instanceof Mogram) {
 			Context cxt;
-			if (mogram instanceof Routine) {
+			if (mogram instanceof Subroutine) {
 				cxt = exert(mogram).getContext();
 			} else {
 				cxt = (Context) mogram;

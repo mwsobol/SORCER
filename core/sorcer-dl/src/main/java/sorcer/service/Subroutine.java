@@ -43,14 +43,14 @@ import sorcer.service.modeling.mog;
  * also completely separate from each other and do not know what other exertions
  * do. However, they can pass parameters via contexts by mapping
  * expected input context values in terms of expected output values calculated
- * by other routines. The operation {@link Routine#exert} of
+ * by other routines. The operation {@link Subroutine#exert} of
  * this interface provides for execution of desired actions enclosed in
  * exertions, thus keeping the knowledge of what to do inside of the exertions,
  * instead of having another parts of SO program to make these decisions. When
  * an exertion is invoked then the exertion redirects control to a dynamically
  * bound {@link Exerter} matching the exertion's signature of
  * type <code>PROCESS</code>. <br>
- * The <code>Routine</code> interface also provides for the Composite design
+ * The <code>Subroutine</code> interface also provides for the Composite design
  * pattern and defines a common elementary behavior for all exertions of
  * {@link sorcer.service.Task} type and control flow exertions (for branching
  * and looping). A composite exertion called {@link sorcer.service.Job} contains
@@ -69,7 +69,7 @@ import sorcer.service.modeling.mog;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Routine extends Dependency, Invocation<Object>,
+public interface Subroutine extends Dependency, Invocation<Object>,
 	Assembly, Paradigmatic, Contextion, Serializable, mog {
 
 
@@ -209,19 +209,19 @@ public interface Routine extends Dependency, Invocation<Object>,
 
 	/**
 	 * Returns a component exertion with a given name.
-	 * @return Routine list
+	 * @return Subroutine list
 	 */ 
 	public Mogram getMogram(String name);
 
 	/**
 	 * Returns the list of direct component exertions.
-	 * @return Routine list
+	 * @return Subroutine list
 	 */ 
 	public List<Mogram> getMograms();
 	
 	/**
 	 * Returns the list of all nested component exertions/
-	 * @return Routine list
+	 * @return Subroutine list
 	 */ 
 	public List<Mogram> getAllMograms();
 	

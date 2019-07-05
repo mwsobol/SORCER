@@ -29,7 +29,7 @@ import java.util.Set;
 public class SpaceSequentialDispatcher extends SpaceParallelDispatcher {
     private final Logger logger = LoggerFactory.getLogger(SpaceSequentialDispatcher.class);
 
-	public SpaceSequentialDispatcher(Routine job,
+	public SpaceSequentialDispatcher(Subroutine job,
                                      Set<Context> sharedContexts,
                                      boolean isSpawned,
                                      LokiMemberUtil myMemberUtil,
@@ -38,12 +38,12 @@ public class SpaceSequentialDispatcher extends SpaceParallelDispatcher {
 		super(job, sharedContexts, isSpawned, myMemberUtil, provider, provisionManager);
 	}
 
-    protected void dispatchExertion(Routine exertion) throws RoutineException, SignatureException {
+    protected void dispatchExertion(Subroutine exertion) throws RoutineException, SignatureException {
         super.dispatchExertion(exertion);
 		waitForExertion(exertion);
 	}
 
-    protected synchronized void waitForExertion(Routine exertion) {
+    protected synchronized void waitForExertion(Subroutine exertion) {
         while (exertion.getIndex() - getDoneExertionIndex() > -1) {
             try {
                 logger.debug("Waiting for exertion: " + exertion.getName() + " to finish index/done: " + exertion.getIndex() + "/" + getDoneExertionIndex());

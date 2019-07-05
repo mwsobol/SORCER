@@ -176,7 +176,7 @@ public class EmxCmd extends ShellCmd {
 					}
 					if (selectedExertion < 0
 							|| selectedExertion >= exertionInfos.length)
-						out.println("No such Routine for: " + next);
+						out.println("No such Subroutine for: " + next);
 					else
 						out.println(exertionInfos[selectedExertion]);
 				}
@@ -203,7 +203,7 @@ public class EmxCmd extends ShellCmd {
 				} catch (NumberFormatException e) {
 					selectedExertion = selectExertionByName(next);
 					if (selectedExertion < 0)
-						out.println("No such Routine for: " + next);
+						out.println("No such Subroutine for: " + next);
 				}
 				if (selectedExertion >= 0
 						&& selectedExertion < exertionInfos.length) {
@@ -211,7 +211,7 @@ public class EmxCmd extends ShellCmd {
 					printExertion(xrtInfo.getStoreId(), isContext,
 							isControlContext);
 				} else
-					out.println("No such Routine for: " + selectedExertion);
+					out.println("No such Subroutine for: " + selectedExertion);
 			}
 		} else {
 			out.println(COMMAND_USAGE);
@@ -220,7 +220,7 @@ public class EmxCmd extends ShellCmd {
 
 	private void printExertion(Uuid id, boolean isContext,
 			boolean isControlContext) throws RemoteException, MonitorException, ContextException {
-        Routine xrt = null;
+        Subroutine xrt = null;
         if (emxMonitors == null || emxMonitors.length == 0) {
             findMonitors();
         }

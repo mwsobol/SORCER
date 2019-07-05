@@ -91,8 +91,8 @@ public class operator extends Operator {
                     return (T) ((ServiceContext) ((Entry) entry).getOut()).getValue(entry.getName(), args);
                 } else if (entry instanceof Incrementor) {
                     return ((Incrementor<T>) entry).next();
-                } else if (entry instanceof Routine) {
-                    return (T) ((Routine) entry).exert(args).getContext();
+                } else if (entry instanceof Subroutine) {
+                    return (T) ((Subroutine) entry).exert(args).getContext();
                 } else if (entry instanceof Functionality) {
                     if (entry instanceof Srv && entry.getImpl() instanceof SignatureEntry) {
                         return  (T) entry.execute(args);
@@ -217,7 +217,7 @@ public class operator extends Operator {
     public static Response query(Mogram mogram, Arg... args) throws ContextException {
         try {
             synchronized (mogram) {
-                if (mogram instanceof Routine) {
+                if (mogram instanceof Subroutine) {
                     return mogram.exert(args).getContext();
                 } else {
                     return (Response) ((EntModel) mogram).getValue(args);
@@ -243,7 +243,7 @@ public class operator extends Operator {
         return response(model);
     }
 
-    public static Object response(Routine exertion, String path) throws ContextException {
+    public static Object response(Subroutine exertion, String path) throws ContextException {
         try {
             return ((ServiceContext)exertion.exert().getContext()).getResponseAt(path);
         } catch (RemoteException | MogramException e) {
@@ -297,8 +297,8 @@ public class operator extends Operator {
     }
 
     public static ServiceContext response(Mogram mogram, Object... items) throws ContextException {
-        if (mogram instanceof Routine) {
-            return exertionResponse((Routine) mogram, items);
+        if (mogram instanceof Subroutine) {
+            return exertionResponse((Subroutine) mogram, items);
         } else if (mogram instanceof Domain &&  ((ServiceMogram)mogram).getType().equals(Functionality.Type.MADO)) {
             if (mogram.isEvaluated()) {
                 return (ServiceContext) ((ServiceContext) mogram).getDomain((String) items[0]).getEvaluatedValue((String) items[1]);
@@ -348,7 +348,7 @@ public class operator extends Operator {
         }
     }
 
-    public static ServiceContext exertionResponse(Routine exertion, Object... items) throws ContextException {
+    public static ServiceContext exertionResponse(Subroutine exertion, Object... items) throws ContextException {
         try {
             List<Arg> argl = new ArrayList();
             List<Path> paths = new ArrayList();;
@@ -381,7 +381,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Object eval(Routine exertion, String selector,
+    public static Object eval(Subroutine exertion, String selector,
                               Arg... args) throws EvaluationException {
         try {
             exertion.getDataContext().setContextReturn(new Context.Return(selector));
@@ -418,7 +418,7 @@ public class operator extends Operator {
         try {
             Object out = null;
             synchronized (mogram) {
-                if (mogram instanceof Routine) {
+                if (mogram instanceof Subroutine) {
                     out = new ServiceShell().evaluate(mogram, args);
                 } else {
                     out = ((ServiceContext) mogram).getValue(args);
@@ -462,7 +462,7 @@ public class operator extends Operator {
         }
     }
 
-    public static List<ThrowableTrace> exceptions(Routine exertion) throws RemoteException {
+    public static List<ThrowableTrace> exceptions(Subroutine exertion) throws RemoteException {
         return exertion.getExceptions();
     }
 

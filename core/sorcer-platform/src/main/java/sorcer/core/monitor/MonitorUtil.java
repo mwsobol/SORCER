@@ -32,7 +32,7 @@ public class MonitorUtil {
      * Record this context as updated if the related exertion is monitored.
      */
     public static void checkpoint(Context context) throws ContextException {
-        Routine mxrt = context.getMogram();
+        Subroutine mxrt = context.getMogram();
         if (mxrt == null)
             return;
         StrategyContext controlContext = mxrt.getControlContext();
@@ -56,7 +56,7 @@ public class MonitorUtil {
      */
     public void changed(Context context, Exec.State aspect) throws RemoteException,
             MonitorException {
-        Routine mxrt = context.getMogram();
+        Subroutine mxrt = context.getMogram();
         if (mxrt == null)
             return;
         StrategyContext controlContext = mxrt.getControlContext();
@@ -66,7 +66,7 @@ public class MonitorUtil {
         }
     }
 
-    public static void setMonitorSession(Routine exertion, MonitoringSession monitorSession) {
+    public static void setMonitorSession(Subroutine exertion, MonitoringSession monitorSession) {
         setMonitoringSession(exertion.getControlContext(), monitorSession);
     }
 
@@ -79,7 +79,7 @@ public class MonitorUtil {
     }
 
     public static MonitoringSession getMonitoringSession(Mogram mogram) {
-        return getMonitoringSession(((Routine)mogram).getControlContext());
+        return getMonitoringSession(((Subroutine)mogram).getControlContext());
     }
 
     public static MonitoringSession getMonitoringSession(StrategyContext controlContext) {

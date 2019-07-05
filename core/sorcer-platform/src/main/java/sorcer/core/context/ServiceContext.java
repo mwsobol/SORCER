@@ -346,12 +346,12 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.initContext = initContext;
 	}
 
-	public Routine getMogram() {
+	public Subroutine getMogram() {
 		return exertion;
 	}
 
-	public void setRoutine(Routine exertion) {
-		if (exertion == null || exertion instanceof Routine)
+	public void setRoutine(Subroutine exertion) {
+		if (exertion == null || exertion instanceof Subroutine)
 			this.exertion = (ServiceRoutine) exertion;
 	}
 
@@ -2848,8 +2848,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 	public Domain add(Identifiable... objects) throws ContextException, RemoteException {
 		boolean changed = false;
 		for (Identifiable obj : objects) {
-			if (obj instanceof Subroutine) {
-				putValue(obj.getName(), (T) ((Subroutine) obj).asis());
+			if (obj instanceof Function) {
+				putValue(obj.getName(), (T) ((Function) obj).asis());
 			} else {
 				putValue(obj.getName(), (T) obj);
 			}
@@ -2865,8 +2865,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		if (path != null) {
 			obj = data.get(path);
 		}
-		if (obj instanceof Subroutine) {
-			return (Subroutine)obj;
+		if (obj instanceof Function) {
+			return (Function)obj;
 		} else
 			return null;
 	}
@@ -3391,7 +3391,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	/* (non-Javadoc)
-     * @see sorcer.service.Service#exert(sorcer.service.Routine, net.jini.core.transaction.Transaction)
+     * @see sorcer.service.Service#exert(sorcer.service.Subroutine, net.jini.core.transaction.Transaction)
      */
     public <T extends Mogram> T exert(T mogram, Transaction txn, Arg... args) throws MogramException, RemoteException {
         try {
@@ -3565,8 +3565,8 @@ public class ServiceContext<T> extends ServiceMogram implements
 		this.direction = direction;
 	}
 
-	public Subroutine<T> getEntry(String path) {
-		return new Subroutine(path, data.get(path));
+	public Function<T> getEntry(String path) {
+		return new Function(path, data.get(path));
 	}
 
 	public String getSingletonPath() throws ContextException {

@@ -192,8 +192,8 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 
 			if (in != null) {
 				requestor.setMogram(in);
-				if (mogram != null && mogram instanceof Routine)
-					logger.info(">>>>>>>>>> Input context: \n" + ((Routine) mogram).getContext());
+				if (mogram != null && mogram instanceof Subroutine)
+					logger.info(">>>>>>>>>> Input context: \n" + ((Subroutine) mogram).getContext());
 				else {
 					logger.info(">>>>>>>>>> Inputs: \n" + ((Model) mogram).getInputs());
 				}
@@ -241,8 +241,8 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 				if (mogram.getTrace() != null && mogram.getTrace().size() > 0)
 					logger.info("<<<<<<<<<< Traces: \n" + mogram.getTrace());
 
-				if (mogram instanceof Routine) {
-					logger.info("<<<<<<<<<< Ouput context: \n" + ((Routine) mogram).getContext());
+				if (mogram instanceof Subroutine) {
+					logger.info("<<<<<<<<<< Ouput context: \n" + ((Subroutine) mogram).getContext());
 				} else {
 					logger.info("<<<<<<<<<< Response: \n" + ((Model) mogram).getResponse());
 				}
@@ -366,8 +366,8 @@ public class ServiceConsumer implements Consumer, Requestor, SorcerConstants {
 		Object obj = execute(args);
 		if (obj instanceof Context) {
 			return context.append((Context)obj);
-		} if (obj instanceof Routine) {
-			return context.append(((Routine)obj).getContext());
+		} if (obj instanceof Subroutine) {
+			return context.append(((Subroutine)obj).getContext());
 		} else {
 			context.putValue("consumer/result", obj);
 			return context;

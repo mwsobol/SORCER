@@ -202,12 +202,12 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		put(EXERTION_TRACABLE, false);
 	}
 
-	public ControlContext(Routine exertion) {
+	public ControlContext(Subroutine exertion) {
 		this();
 		subjectValue = exertion.getName();
 		// make it visible via the contextReturn EXERTION
 		try {
-			Routine erxt = (Routine) getValue(EXERTION);
+			Subroutine erxt = (Subroutine) getValue(EXERTION);
 			if (exertion != null) {
 				putValue(EXERTION, exertion);
                 //
@@ -220,7 +220,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		}
 	}
 
-	public void setMasterExertion(Routine e) {
+	public void setMasterExertion(Subroutine e) {
 		put(MASTER_EXERTION, ((ServiceRoutine) e).getId());
 	}
 
@@ -232,7 +232,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		return PARALLEL.equals(get(EXERTION_FLOW));
 	}
 
-	public boolean isExertionMaster(Routine exertion) throws ContextException {
+	public boolean isExertionMaster(Subroutine exertion) throws ContextException {
 		return (exertion != null && exertion.getContext().getName()
 				.equals(get(MASTER_EXERTION)));
 	}
@@ -419,21 +419,21 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		return (String) get(EXERTION_COMMENTS);
 	}
 
-	public void setExecTimeRequested(Routine exertion, boolean b) {
+	public void setExecTimeRequested(Subroutine exertion, boolean b) {
 		if (b)
 			addAttributeValue(exertion, GET_EXEC_TIME, TRUE);
 		else
 			addAttributeValue(exertion, GET_EXEC_TIME, FALSE);
 	}
 
-	public void setSkipped(Routine exertion, boolean b) {
+	public void setSkipped(Subroutine exertion, boolean b) {
 		if (b)
 			addAttributeValue(exertion, SKIPPED_, TRUE);
 		else
 			addAttributeValue(exertion, SKIPPED_, FALSE);
 	}
 
-	public boolean isSkipped(Routine exertion) throws ContextException {
+	public boolean isSkipped(Subroutine exertion) throws ContextException {
 		boolean result;
 		try {
 			String b = getAttributeValue(exertion, SKIPPED_);
@@ -465,20 +465,20 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 			return stopwatch.getTime();
 	}
 
-	public void setReview(Routine ex, boolean b) {
+	public void setReview(Subroutine ex, boolean b) {
         addAttributeValue(ex, EXERTION_REVIEW, Boolean.toString(b));
 	}
 
-	public boolean isReview(Routine exertion) {
+	public boolean isReview(Subroutine exertion) {
 		String b = getAttributeValue(exertion, EXERTION_REVIEW);
 		return TRUE.equals(b);
 	}
 
-	public void setPriority(Routine exertion, int priorityValue) {
+	public void setPriority(Subroutine exertion, int priorityValue) {
 		addAttributeValue(exertion, PRIORITY, Integer.toString(priorityValue));
 	}
 
-	public int getPriority(Routine exertion) {
+	public int getPriority(Subroutine exertion) {
 		int result;
 		try {
 			String i = getAttributeValue(exertion, PRIORITY);
@@ -490,34 +490,34 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		return result;
 	}
 
-	public void setNotifyList(Routine exertion, String list) {
+	public void setNotifyList(Subroutine exertion, String list) {
 		if (list == null || list.trim().length() == 0)
 			addAttributeValue(exertion, NOTIFY_EXEC, SorcerConstants.NULL);
 		addAttributeValue(exertion, NOTIFY_EXEC, list);
 	}
 
-	public String getNotifyList(Routine ex) {
+	public String getNotifyList(Subroutine ex) {
 		return getAttributeValue(ex, NOTIFY_EXEC);
 	}
 
 	public void registerExertion(Mogram mogram) throws ContextException {
 		if (mogram instanceof Job)
 			put(((Job)mogram).getControlContext().getName(), mogram.getId());
-		else if (mogram instanceof Routine) {
+		else if (mogram instanceof Subroutine) {
 			put(mogram.getContext().getName(), mogram.getId());
 		} else {
 			// TODO explain if registration is still needed
 			put(mogram.getName(), mogram.getId());
 			return;
 		}
-		setPriority((Routine) mogram, MAX_PRIORITY - mogram.getIndex());
-		setExecTimeRequested(((Routine)mogram), true);
+		setPriority((Subroutine) mogram, MAX_PRIORITY - mogram.getIndex());
+		setExecTimeRequested(((Subroutine)mogram), true);
 	}
 
 	public void deregisterExertion(Mogram mogram, Mogram componentMogram)
 			throws ContextException {
 		Transroutine parent = (Transroutine)mogram;
-		Routine component = (Routine)componentMogram;
+		Subroutine component = (Subroutine)componentMogram;
 		String path = component.getContext().getName();
 		remove(path);
 		for (int i = component.getIndex(); i < parent.size(); i++) {
@@ -543,8 +543,8 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		return addComponentAssociation(EXERTION, attributeName, attributeValue);
 	}
 
-	private Context addAttributeValue(Routine exertion, String attributeName,
-                                      String attributeValue) {
+	private Context addAttributeValue(Subroutine exertion, String attributeName,
+									  String attributeValue) {
 		Context result = null;
 		try {
 			result = addComponentAssociation(exertion.getContext().getName(),
@@ -565,7 +565,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 				attributeValue);
 	}
 
-	public String getAttributeValue(Routine exertion, String attributeName) {
+	public String getAttributeValue(Subroutine exertion, String attributeName) {
 		try {
 			return getAttributeValue(exertion.getContext().getName(),
 					attributeName);
@@ -584,7 +584,7 @@ public class ControlContext extends ServiceContext<Object> implements StrategyCo
 		}
 	}
 
-	public void updateExertionName(Routine exertion) throws ContextException {
+	public void updateExertionName(Subroutine exertion) throws ContextException {
 		String key, oldPath = null;
 		Iterator e = keyIterator();
 		while (e.hasNext()) {

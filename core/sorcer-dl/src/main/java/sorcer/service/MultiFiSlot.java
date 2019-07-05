@@ -143,8 +143,8 @@ public class MultiFiSlot<K, O> extends Slot<K, O> implements Getter<O> {
 
     public void initScope(Context scope) {
         this.scope = scope;
-        if (impl instanceof Routine) {
-            ((Routine) impl).setContext(scope);
+        if (impl instanceof Subroutine) {
+            ((Subroutine) impl).setContext(scope);
         }
     }
     public boolean isValid() {

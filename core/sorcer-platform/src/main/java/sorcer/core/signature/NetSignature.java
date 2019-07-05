@@ -19,13 +19,11 @@ package sorcer.core.signature;
 
 import net.jini.core.entry.Entry;
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.TransactionException;
 import net.jini.lookup.entry.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.*;
-import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.sig;
 import sorcer.util.MavenUtil;
@@ -168,11 +166,11 @@ public class NetSignature extends ObjectSignature implements sig {
     }
 
 
-    public void setExertion(Routine exertion) throws RoutineException {
+    public void setExertion(Subroutine exertion) throws RoutineException {
         this.exertion = exertion;
 	}
 
-	public Routine getExertion() {
+	public Subroutine getExertion() {
 		return exertion;
 	}
 
@@ -285,13 +283,13 @@ public class NetSignature extends ObjectSignature implements sig {
 			((Closing)provider).close();
 	}
 
-	public Routine invokeMethod(Routine ex) throws RemoteException,
+	public Subroutine invokeMethod(Subroutine ex) throws RemoteException,
 			RoutineException {
 		// If customized method provided by Mobile Agent
 		Method m = getSubstituteMethod(new Class[] { Mogram.class });
 		try {
 			if (m != null)
-				return (Routine) m.invoke(this, new Object[] { ex });
+				return (Subroutine) m.invoke(this, new Object[] { ex });
 
 			if (((ServiceExerter) provider).isValidMethod(operation.selector)) {
 				return ((ServiceExerter) provider).getDelegate()
@@ -403,7 +401,7 @@ public class NetSignature extends ObjectSignature implements sig {
 
 	@Override
 	public Object execute(Arg... args) throws MogramException {
-		Routine mog = Arg.selectRoutine(args);
+		Subroutine mog = Arg.selectRoutine(args);
 		Context cxt = (Context) Arg.selectDomain(args);
 		if (cxt == null && contextReturn != null) {
 			cxt = contextReturn.getDataContext();

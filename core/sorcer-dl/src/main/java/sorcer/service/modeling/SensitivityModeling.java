@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author Mike Sobolewski
  */
-public interface SensitivitiesModeling extends Functionality {
+public interface SensitivityModeling extends Functionality {
 
 	public List<ModelTable> getSensitivities() throws EvaluationException, RemoteException;	
 	

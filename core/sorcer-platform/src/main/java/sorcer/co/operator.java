@@ -826,12 +826,12 @@ public class operator extends Operator {
 		return new InputValue(path, null, 0);
 	}
 
-	public static Subroutine at(String path, Object value) {
-		return new Subroutine(path, value, 0);
+	public static Function at(String path, Object value) {
+		return new Function(path, value, 0);
 	}
 
-	public static Subroutine at(String path, Object value, int index) {
-		return new Subroutine(path, value, index);
+	public static Function at(String path, Object value, int index) {
+		return new Function(path, value, index);
 	}
 
 	public static <T> InputValue<T> inVal(String path, T value) {
@@ -1388,13 +1388,13 @@ public class operator extends Operator {
 			throws ContextException {
 		String path = entry.getName();
 		Object o = asis(entry);
-		while (o instanceof Subroutine && ((Entry)o).getKey().equals(path)) {
-			o = asis((Subroutine)o);;
+		while (o instanceof Function && ((Entry)o).getKey().equals(path)) {
+			o = asis((Function)o);;
 		}
 		return o;
 	}
 
-	public static Object get(Subroutine entry) throws ContextException {
+	public static Object get(Function entry) throws ContextException {
 		return rasis(entry);
 	}
 
@@ -1445,7 +1445,7 @@ public class operator extends Operator {
 		return entry.asis();
 	}
 
-	public static Object asis(Subroutine entry)
+	public static Object asis(Function entry)
 			throws ContextException {
 		return entry.asis();
 	}
@@ -1453,8 +1453,8 @@ public class operator extends Operator {
 	public static Object rasis(Context context, String path)
 			throws ContextException {
 		Object o = context.asis(path);
-		if (o instanceof Subroutine)
-			return rasis((Subroutine)o);
+		if (o instanceof Function)
+			return rasis((Function)o);
 		else
 			return o;
 	}

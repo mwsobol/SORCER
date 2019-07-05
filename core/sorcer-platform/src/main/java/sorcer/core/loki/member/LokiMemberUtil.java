@@ -18,7 +18,7 @@ import sorcer.core.loki.key.KeyGenerationManagement;
 import sorcer.core.loki.key.KeyGenerator;
 import sorcer.service.Accessor;
 import sorcer.service.ContextException;
-import sorcer.service.Routine;
+import sorcer.service.Subroutine;
 import sorcer.service.space.SpaceAccessor;
 
 import javax.crypto.Cipher;
@@ -515,7 +515,7 @@ public class LokiMemberUtil {
 			
 			ee.isEncrypted = false;
 			ee.encryptedExertion = null;
-			ee.exertion = (Routine) mo.get();
+			ee.exertion = (Subroutine) mo.get();
 			
 			if(debug)
 			{ logger.info("FINISHED DECRYPTING"); }
@@ -588,7 +588,7 @@ public class LokiMemberUtil {
 			
 			ee.isEncrypted = false;
 			ee.encryptedExertion = null;
-			ee.exertion = (Routine) mo.get();
+			ee.exertion = (Subroutine) mo.get();
 			
 			if(debug)
 			{ logger.info("FINISHED DECRYPTING"); }
@@ -661,7 +661,7 @@ public class LokiMemberUtil {
 					context1.iv(6,myName);
 					
 					context1r = (ArrayContext)groupMan.addExertionEntry(context1);
-					logger.info("Routine Insertion Complete...");
+					logger.info("Subroutine Insertion Complete...");
 				}
 				catch(ContextException e) { e.printStackTrace(); }
 				catch(RemoteException e) { e.printStackTrace(); }
@@ -725,8 +725,8 @@ public class LokiMemberUtil {
 	private String printEE(String header,ExertionEnvelop ee)
 	{
 		return header + " =======> "
-		+ "\n\tEncrypted Routine = " + ee.encryptedExertion
-		+ "\n\tRoutine = " + ee.exertion
+		+ "\n\tEncrypted Subroutine = " + ee.encryptedExertion
+		+ "\n\tSubroutine = " + ee.exertion
 		+ "\n\tExertionID = " + ee.exertionID
 		+ "\n\tIs Encrypted = " + ee.isEncrypted
 		+ "\n\tIs Job = " + ee.isJob

@@ -32,7 +32,7 @@ public class RoutineException extends MogramException {
 	public RoutineException() {
 	}
 
-	public RoutineException(Routine exertion) {
+	public RoutineException(Subroutine exertion) {
 		this.mogram = exertion;
 	}
 
@@ -53,7 +53,7 @@ public class RoutineException extends MogramException {
 	 * @param exertion
 	 *            the embedded exertion
 	 */
-	public RoutineException(String message, Routine exertion) {
+	public RoutineException(String message, Subroutine exertion) {
 		super(message);
 		this.mogram = exertion;
 	}
@@ -71,7 +71,7 @@ public class RoutineException extends MogramException {
 	 * @param cause
 	 *            the nested throwable cause
 	 */
-	public RoutineException(String message, Routine routine, Throwable cause) {
+	public RoutineException(String message, Subroutine routine, Throwable cause) {
 		super(message, cause);
 		this.mogram = routine;
 	}
@@ -81,8 +81,8 @@ public class RoutineException extends MogramException {
 	 * 
 	 * @return embedded exertion
 	 */
-	public Routine getRoutne() {
-		return (Routine)mogram;
+	public Subroutine getRoutne() {
+		return (Subroutine)mogram;
 	}
 	
 }

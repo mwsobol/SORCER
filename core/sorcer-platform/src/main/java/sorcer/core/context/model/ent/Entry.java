@@ -403,9 +403,9 @@ public class Entry<V> extends MultiFiSlot<String, V>
                 result = this.getValue(args);
             }
 
-            if (result instanceof Routine) {
+            if (result instanceof Subroutine) {
                 // we assume that exrtion is asked to be evaluated
-                return (V) ((Routine) result).getContext();
+                return (V) ((Subroutine) result).getContext();
             } else {
                 return (V) result;
             }

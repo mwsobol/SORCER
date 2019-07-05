@@ -46,11 +46,11 @@ public class ServiceJobber extends SorcerExerterBean implements Jobber {
 
             setServiceID(mogram);
             try {
-                MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Routine)mogram));
-                if (((Routine)mogram).getControlContext().isMonitorable()
-                        && !((Routine)mogram).getControlContext().isWaitable()) {
-                    replaceNullExertionIDs((Routine)mogram);
-                    notifyViaEmail((Routine)mogram);
+                MogramThread mogramThread = new MogramThread(mogram, provider, getDispatcherFactory((Subroutine)mogram));
+                if (((Subroutine)mogram).getControlContext().isMonitorable()
+                        && !((Subroutine)mogram).getControlContext().isWaitable()) {
+                    replaceNullExertionIDs((Subroutine)mogram);
+                    notifyViaEmail((Subroutine)mogram);
                     new Thread(mogramThread, ((Job)mogram).getContextName()).start();
                     return mogram;
                 } else {
@@ -67,7 +67,7 @@ public class ServiceJobber extends SorcerExerterBean implements Jobber {
             }
 	}
 
-    protected DispatcherFactory getDispatcherFactory(Routine exertion) {
+    protected DispatcherFactory getDispatcherFactory(Subroutine exertion) {
         return MogramDispatcherFactory.getFactory();
     }
 

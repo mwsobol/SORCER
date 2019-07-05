@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.sorcer.test.ProjectContext;
 import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.arithmetic.provider.impl.MultiplierImpl;
-import sorcer.core.context.model.ent.Subroutine;
+import sorcer.core.context.model.ent.Function;
 import sorcer.ent.operator;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
@@ -49,7 +49,7 @@ public class Entries {
     public void lambdaEntries() throws Exception {
 
         // no free variables
-        Subroutine y1 = lambda("y1", () -> 20.0 * pow(0.5, 6) + 10.0);
+        Function y1 = lambda("y1", () -> 20.0 * pow(0.5, 6) + 10.0);
 
         assertEquals(10.3125, exec(y1));
 

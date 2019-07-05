@@ -276,7 +276,7 @@ public class operator extends Operator {
 
 	public static Prc add(Prc callEntry, Object to)
 			throws ContextException {
-		if (to instanceof Routine) {
+		if (to instanceof Subroutine) {
 			((ServiceRoutine)to).addPersister(callEntry);
 			return callEntry;
 		}
@@ -572,7 +572,7 @@ public class operator extends Operator {
 		return new GroovyInvoker(expression);
 	}
 
-	public static ServiceInvoker invoker(Routine exertion) {
+	public static ServiceInvoker invoker(Subroutine exertion) {
         return new ExertInvoker(exertion);
     }
 
@@ -652,15 +652,15 @@ public class operator extends Operator {
 		return mi;
 	}
 
-	public static ExertInvoker exertInvoker(String name, Routine exertion, String path, Prc... callEntries) {
+	public static ExertInvoker exertInvoker(String name, Subroutine exertion, String path, Prc... callEntries) {
 		return new ExertInvoker(name, exertion, path, callEntries);
 	}
 
-	public static ExertInvoker exertInvoker(Routine exertion, String path, Prc... callEntries) {
+	public static ExertInvoker exertInvoker(Subroutine exertion, String path, Prc... callEntries) {
 		return new ExertInvoker(exertion, path, callEntries);
 	}
 
-	public static ExertInvoker exertInvoker(Routine exertion, Prc... callEntries) {
+	public static ExertInvoker exertInvoker(Subroutine exertion, Prc... callEntries) {
 		return new ExertInvoker(exertion, callEntries);
 	}
 
@@ -745,8 +745,8 @@ public class operator extends Operator {
 			return null;
 	}
 
-	public static Subroutine prc(Model model, String path) throws ContextException {
-        return new Subroutine(path, model.asis(path));
+	public static Function prc(Model model, String path) throws ContextException {
+        return new Function(path, model.asis(path));
     }
 
 	public static <T extends Service> Srv ent(String name, MorphFidelity fidelity) {
@@ -877,8 +877,8 @@ public class operator extends Operator {
 					} else {
 						entry.setScope(cxt);
 					}
-				} else if (args.length == 1 && args[0] instanceof Subroutine) {
-					entry.setScope(context((Subroutine) args[0]));
+				} else if (args.length == 1 && args[0] instanceof Function) {
+					entry.setScope(context((Function) args[0]));
 				} else if (args.length == 1 && args[0] instanceof Service) {
 					entry = new Prc(path, value, args[0]);
 				}
@@ -927,8 +927,8 @@ public class operator extends Operator {
 		return assoc;
 	}
 
-	public static Subroutine prc(String path) {
-		return new Subroutine(path, null);
+	public static Function prc(String path) {
+		return new Function(path, null);
 	}
 
 	public static <T> TagEntry<T> ent(String path, T value, String association) {
@@ -939,21 +939,21 @@ public class operator extends Operator {
 			throws ContextException {
 		ArgSet as = new ArgSet();
 		for (String name : entries) {
-			as.add(new Subroutine(name, Context.none));
+			as.add(new Function(name, Context.none));
 		}
 		return as.toArray();
 	}
 
-	public static Arg[] ents(Subroutine... entries)
+	public static Arg[] ents(Function... entries)
 			throws ContextException {
 		ArgSet as = new ArgSet();
-		for (Subroutine e : entries) {
+		for (Function e : entries) {
 			as.add(e);
 		}
 		return as.toArray();
 	}
 
-	public static Subroutine inout(Subroutine entry) {
+	public static Function inout(Function entry) {
 		entry.setType(Functionality.Type.INOUT);
 		return entry;
 	}

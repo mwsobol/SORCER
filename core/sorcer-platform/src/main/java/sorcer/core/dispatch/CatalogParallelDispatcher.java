@@ -56,15 +56,15 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 
     public void doExec(Arg... args) throws RoutineException,
 			SignatureException {
-        List<Future<Routine>> results = new ArrayList<Future<Routine>>(inputXrts.size());
+        List<Future<Subroutine>> results = new ArrayList<Future<Subroutine>>(inputXrts.size());
         for (Mogram mogram : inputXrts) {
-            if (mogram instanceof Routine)
-                results.add(executor.submit(new ExecExertion((Routine)mogram)));
+            if (mogram instanceof Subroutine)
+                results.add(executor.submit(new ExecExertion((Subroutine)mogram)));
 		}
 
         boolean isFailed = false;
         boolean isSuspended = false;
-        for (Future<Routine> result : results) {
+        for (Future<Subroutine> result : results) {
             try {
                 ServiceRoutine se = (ServiceRoutine) result.get();
                 se.stopExecTime();
@@ -105,7 +105,7 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
 				dispatchers.remove(xrt.getId());
 				return;
 			}*/
-			// finally exert Master Routine
+			// finally exert Master Subroutine
 			masterXrt = (ServiceRoutine) execExertion(masterXrt);
 			masterXrt.stopExecTime();
 			if (masterXrt.getStatus() <= FAILED)
@@ -124,15 +124,15 @@ public class CatalogParallelDispatcher extends CatalogExertDispatcher {
         return Mograms.getInputExertions(((Job) xrt));
     }
 
-    protected class ExecExertion implements Callable<Routine> {
-        private final Routine exertion;
+    protected class ExecExertion implements Callable<Subroutine> {
+        private final Subroutine exertion;
 
-        public ExecExertion(Routine exertion) {
+        public ExecExertion(Subroutine exertion) {
             this.exertion = exertion;
         }
 
         @Override
-        public Routine call() throws Exception {
+        public Subroutine call() throws Exception {
             return execExertion(exertion);
         }
 	}

@@ -6,7 +6,7 @@ import sorcer.core.context.ServiceContext;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.signature.NetSignature;
 import sorcer.service.Context;
-import sorcer.service.Routine;
+import sorcer.service.Subroutine;
 import sorcer.service.Task;
 import sorcer.util.Sorcer;
 import sorcer.util.SorcerEnv;
@@ -33,12 +33,12 @@ public class WorkerTaskApplication {
 
 		logger.info("Provider key: " + pn);
 
-		Routine exertion = new WorkerTaskApplication().getExertion(pn);
-		Routine result = exertion.exert();
+		Subroutine exertion = new WorkerTaskApplication().getExertion(pn);
+		Subroutine result = exertion.exert();
 		logger.info("Output context: \n" + result.getContext());
 	}
 
-	private Routine getExertion(String pn) throws Exception {
+	private Subroutine getExertion(String pn) throws Exception {
 		String hostname = SorcerEnv.getHostName();
 
         if (pn!=null) pn = Sorcer.getActualName(pn);

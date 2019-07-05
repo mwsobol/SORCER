@@ -33,7 +33,7 @@ public class TaskTest {
 	@Test
 	public void freeArithmeticTaskTest() throws Exception {
 		//to test tracing of execution enable ServiceRoutine.debug
-		Routine task = task("add",
+		Subroutine task = task("add",
 				sig("add"),
 				context(inVal("arg/x1"), inVal("arg/x2"),
 						result("result/y")));

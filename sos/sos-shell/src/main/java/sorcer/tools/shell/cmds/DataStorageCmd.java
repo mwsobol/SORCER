@@ -157,7 +157,7 @@ public class DataStorageCmd extends ShellCmd {
 	}
 
 	private void printRecord(Uuid id, Store type) throws RemoteException, MonitorException {
-		Routine xrt = null;
+		Subroutine xrt = null;
 		if (selectedDataStorer >= 0) {
 			xrt = ((MonitorUIManagement) dataStorers[selectedDataStorer].service)
 					.getMonitorableExertion(id, NetworkShell.getPrincipal());

@@ -36,7 +36,7 @@ public class NetMograms {
 		Task t5 = task("t5", sig("add", Adder.class),
 				cxt("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0), result("result/y")));
 
-		Routine out = exert(t5);
+		Subroutine out = exert(t5);
 		Context cxt = context(out);
 		logger.info("out context: " + cxt);
 		logger.info("context @ arg/x1: " + value(cxt, "arg/x1"));

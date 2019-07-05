@@ -35,7 +35,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
     private final Logger logger = LoggerFactory.getLogger(CatalogSequentialDispatcher.class);
 
 	@SuppressWarnings("rawtypes")
-    public CatalogSequentialDispatcher(Routine job,
+    public CatalogSequentialDispatcher(Subroutine job,
                                        Set<Context> sharedContext,
                                        boolean isSpawned,
                                        Exerter provider,
@@ -79,7 +79,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
             }
 
             try {
-                if (mogram instanceof Routine) {
+                if (mogram instanceof Subroutine) {
                     ServiceRoutine se = (ServiceRoutine) mogram;
                     // support for continuous pre and post execution of task
                     // signatures

@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import sorcer.core.deploy.OperationalStringFactory;
 import sorcer.core.deploy.ProvisionMonitorCache;
 import sorcer.core.deploy.ServiceDeployment;
-import sorcer.service.Routine;
+import sorcer.service.Subroutine;
 import sorcer.service.ServiceRoutine;
 import sorcer.service.Signature;
 
@@ -41,21 +41,21 @@ import java.util.concurrent.*;
 
 /**
  * The {@code ProvisionManager} handles the dynamic creation of {@link OperationalString}s created
- * from {@link Routine}s.
+ * from {@link Subroutine}s.
  *
  * @author Dennis Reedy
  * @author Mike Sobolewski
  */
 public class ProvisionManager {
 	private static final Logger logger = LoggerFactory.getLogger(ProvisionManager.class.getName());
-	private final Routine exertion;
+	private final Subroutine exertion;
     final List<Signature> signatures;
     private final List<String> deploymentNames = new ArrayList<>();
     private final ProvisionMonitorCache provisionMonitorCache;
 	private volatile DeployAdmin deployAdmin;
     private Map<ServiceDeployment.Unique, List<OperationalString>> deployments;
 
-	public ProvisionManager(final Routine exertion) throws DispatcherException {
+	public ProvisionManager(final Subroutine exertion) throws DispatcherException {
 		this.exertion = exertion;
 		this.signatures = null;
         provisionMonitorCache = ProvisionMonitorCache.getInstance();

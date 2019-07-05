@@ -41,7 +41,7 @@ public class DisciplineExplorer implements Service, Exploration {
             if (fis != null && fis.size() > 0) {
                 transdiscipline.selectFi(fis.get(0));
             }
-            Routine xrt = (Routine) transdiscipline.getDispatcher();
+            Subroutine xrt = (Subroutine) transdiscipline.getDispatcher();
             if (transdiscipline.input != null) {
                 if (transdiscipline.inConnector != null) {
                     xrt.setContext(((ServiceContext) transdiscipline.input).updateContextWith(transdiscipline.inConnector));

@@ -52,7 +52,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     protected LokiMemberUtil loki;
     private final Logger logger = LoggerFactory.getLogger(SpaceParallelDispatcher.class);
 
-    public SpaceParallelDispatcher(Routine exertion,
+    public SpaceParallelDispatcher(Subroutine exertion,
                                    Set<Context> sharedContexts,
                                    boolean isSpawned,
                                    LokiMemberUtil loki,
@@ -92,7 +92,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
 
         for (Mogram mogram : inputXrts) {
             logger.info("Calling monSession.init from SpaceParallelDispatcher for: {}", mogram.getName());
-            MonitoringSession monSession = MonitorUtil.getMonitoringSession((Routine)mogram);
+            MonitoringSession monSession = MonitorUtil.getMonitoringSession((Subroutine)mogram);
             if (xrt.isMonitorable() && monSession!=null) {
                 try {
                     if (monSession.getState()==State.INITIAL.ordinal()) {
@@ -103,16 +103,16 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
                     logger.error("Problem starting monitoring for {}", xrt.getName(), e);
                 }
             }
-            dispatchExertion((Routine)mogram);
+            dispatchExertion((Subroutine)mogram);
             try {
-                afterExec((Routine)mogram);
+                afterExec((Subroutine)mogram);
             } catch (ContextException ce) {
                 logger.warn("Problem sending state to monitor");
             }
         }
 	}
 
-    protected void dispatchExertion(Routine exertion) throws RoutineException, SignatureException {
+    protected void dispatchExertion(Subroutine exertion) throws RoutineException, SignatureException {
         logger.debug("exertion #{}: exertion: {}", exertion.getIndex(), exertion);
         try {
             writeEnvelop(exertion);
@@ -226,7 +226,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         }
     }
 
-    protected void addPoison(Routine exertion) {
+    protected void addPoison(Subroutine exertion) {
         space = SpaceAccessor.getSpace();
         if (space == null) {
             return;
@@ -253,7 +253,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
     }
 
     // abstract in ExertionDispatcher
-    protected void preExecExertion(Routine exertion) throws RoutineException,
+    protected void preExecExertion(Subroutine exertion) throws RoutineException,
             SignatureException {
 //		try {
 //			exertion.getControlContext().appendTrace(provider.getProviderName()
@@ -270,11 +270,11 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         ((ServiceRoutine) exertion).setStatus(RUNNING);
     }
 
-/*    private void provisionProviderForExertion(Routine exertion) {
+/*    private void provisionProviderForExertion(Subroutine exertion) {
         ProviderProvisionManager.provision(exertion, this);
     }*/
 
-    protected void writeEnvelop(Routine exertion) throws
+    protected void writeEnvelop(Subroutine exertion) throws
             RoutineException, SignatureException, RemoteException {
         // setSubject before exertion is dropped
         space = SpaceAccessor.getSpace();
@@ -322,7 +322,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         }
     }
 
-    protected void postExecExertion(Routine ex, Routine result)
+    protected void postExecExertion(Subroutine ex, Subroutine result)
             throws RoutineException, SignatureException {
         ((ServiceRoutine) result).stopExecTime();
         try {
@@ -342,7 +342,7 @@ public class SpaceParallelDispatcher extends ExertDispatcher {
         changeDoneExertionIndex(result.getIndex());
     }
 
-    protected void handleError(Routine exertion) throws RemoteException {
+    protected void handleError(Subroutine exertion) throws RemoteException {
         if (exertion != xrt)
             ((NetJob) xrt).setMogramAt(exertion,
                     exertion.getIndex());

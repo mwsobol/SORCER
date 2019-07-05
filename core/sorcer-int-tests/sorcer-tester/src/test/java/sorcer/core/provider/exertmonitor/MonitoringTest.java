@@ -160,11 +160,11 @@ public class MonitoringTest {
 
 	}
 
-	private static void verifyExertionMonitorStatus(Routine exertion, String state) throws Exception {
+	private static void verifyExertionMonitorStatus(Subroutine exertion, String state) throws Exception {
 		ExecUtils.CmdResult result = CommonsExecUtil.execCommand(nshCmd, cmds);
 
 		for (Mogram xrt : exertion.getAllMograms())
-			verifyMonitorStatus(result.getOut(), ((Routine)xrt).getId(), "DONE");
+			verifyMonitorStatus(result.getOut(), ((Subroutine)xrt).getId(), "DONE");
 	}
 
 	private static void verifyMonitorStatus(String output, Uuid exertionId, String state) {

@@ -70,7 +70,7 @@ public abstract class Block extends Transroutine {
 		SignatureException, RemoteException, TransactionException, MogramException;
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
+	 * @see sorcer.service.Subroutine#addMogram(sorcer.service.Subroutine)
 	 */
 	@Override
 	public Mogram addMogram(Mogram mogram) throws RoutineException {
@@ -95,7 +95,7 @@ public abstract class Block extends Transroutine {
 	}
 	
 	/* (non-Javadoc)
-	 * @see sorcer.service.Routine#execute(java.lang.String, sorcer.service.Arg[])
+	 * @see sorcer.service.Subroutine#execute(java.lang.String, sorcer.service.Arg[])
 	 */
 	@Override
 	public Object getValue(String path, Arg... args) throws ContextException {
@@ -117,7 +117,7 @@ public abstract class Block extends Transroutine {
 	}
 
 	/* (non-Javadoc)
-	 * @see sorcer.service.Routine#getMograms()
+	 * @see sorcer.service.Subroutine#getMograms()
 	 */
 	@Override
 	public List<Mogram> getMograms() {
@@ -214,8 +214,8 @@ public abstract class Block extends Transroutine {
 	/**
 	 * Returns the exertion at the specified index.
 	 */
-	public Routine get(int index) {
-		return (Routine) mograms.get(index);
+	public Subroutine get(int index) {
+		return (Subroutine) mograms.get(index);
 	}
 	
 	/* (non-Javadoc)
@@ -320,7 +320,7 @@ public abstract class Block extends Transroutine {
 	
 	private void updateConditions() throws ContextException {
 		for (Mogram e : mograms) {
-			if (e instanceof Routine && ((Routine)e).isConditional()) {
+			if (e instanceof Subroutine && ((Subroutine)e).isConditional()) {
 				if (e instanceof OptTask) {
 					((OptTask)e).getCondition().getConditionalContext().append(dataContext);
 				} else if (e instanceof LoopTask && ((LoopTask) e).getCondition() != null) {
@@ -348,11 +348,11 @@ public abstract class Block extends Transroutine {
 		List<Mogram> mograms = getAllMograms();
 		Context cxt = null;
 		for (Mogram mo : mograms) {
-			if (mo instanceof Routine)
-				((ServiceContext)((Routine)mo).getDataContext()).clearScope();
+			if (mo instanceof Subroutine)
+				((ServiceContext)((Subroutine)mo).getDataContext()).clearScope();
 
-//			if (mo instanceof Routine)
-//				cxt = ((Routine)mo).getContext();
+//			if (mo instanceof Subroutine)
+//				cxt = ((Subroutine)mo).getContext();
 //			else
 //				cxt = (Context) mo;
 
@@ -364,8 +364,8 @@ public abstract class Block extends Transroutine {
 //				}
 //			}
 //			try {
-//				if (mo instanceof Routine) {
-//					((Routine) mo).clearScope();
+//				if (mo instanceof Subroutine) {
+//					((Subroutine) mo).clearScope();
 //					// set the initial scope from the block
 //					mo.setScope((Context) dataContext.getScope());
 //				}

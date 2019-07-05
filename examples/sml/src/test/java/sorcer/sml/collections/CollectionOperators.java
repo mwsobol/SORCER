@@ -9,8 +9,8 @@ import org.sorcer.test.SorcerTestRunner;
 import sorcer.co.tuple.*;
 import sorcer.core.Tag;
 import sorcer.core.context.model.ent.Entry;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.Prc;
-import sorcer.core.context.model.ent.Subroutine;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ent;
@@ -246,7 +246,7 @@ public class CollectionOperators {
 	public void persistentOperator() throws Exception {
 
 		// persist values of args
-        Subroutine dbp2 = prc("url/sobol", "http://sorcersoft.org/sobol");
+        Function dbp2 = prc("url/sobol", "http://sorcersoft.org/sobol");
 		persistent(dbp2);
 
 		assertFalse(asis(dbp2) instanceof URL);

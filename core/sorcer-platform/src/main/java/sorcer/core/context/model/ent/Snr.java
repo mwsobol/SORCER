@@ -36,7 +36,7 @@ import java.util.Iterator;
  * @author Mike Sobolewski
  */
 @SuppressWarnings({"unchecked", "rawtypes" })
-public class Snr extends Subroutine<Double> implements Invocation<Double>,
+public class Snr extends Function<Double> implements Invocation<Double>,
 		Setter, Scopable, Comparable<Double>, func<Double> {
 
 	private static final long serialVersionUID = 1L;
@@ -66,7 +66,7 @@ public class Snr extends Subroutine<Double> implements Invocation<Double>,
 		((Activator)impl).setWeights(weights);
     }
 
-    public Snr(String name, double value, Context<Subroutine> signals) {
+    public Snr(String name, double value, Context<Function> signals) {
         this(name);
         impl = value;
 		((Activator)impl).setInvokeContext(signals);
@@ -138,9 +138,9 @@ public class Snr extends Subroutine<Double> implements Invocation<Double>,
 	private boolean isFidelityValid(Object fidelity) throws EvaluationException {
 		if (fidelity == null || fidelity == Context.none)
 			return false;
-		if (fidelity instanceof Subroutine) {
+		if (fidelity instanceof Function) {
 			Object obj = null;
-			obj = ((Subroutine)fidelity).asis();
+			obj = ((Function)fidelity).asis();
 			if (obj == null || obj == Context.none) return false;
 		}
 		 return true;

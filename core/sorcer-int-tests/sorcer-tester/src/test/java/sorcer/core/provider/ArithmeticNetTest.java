@@ -628,7 +628,7 @@ public class ArithmeticNetTest implements SorcerConstants {
 		return context("add", inVal("arg/x1", 20.0), inVal("arg/x2", 80.0));
 	}
 
-	public static Routine createJob() throws Exception {
+	public static Subroutine createJob() throws Exception {
 		return createJob(Flow.SEQ, Access.PUSH);
 	}
 

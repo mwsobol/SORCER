@@ -245,12 +245,12 @@ public class operator {
         return model;
     }
 
-    public static Model setValue(Model model, String entName, Subroutine... entries)
+    public static Model setValue(Model model, String entName, Function... entries)
             throws ContextException {
         Object entry = model.asis(entName);
         if (entry != null) {
             if (entry instanceof Setup) {
-                for (Subroutine e : entries) {
+                for (Function e : entries) {
                     ((Setup) entry).getContext().putValue(e.getName(), e.getValue());
                 }
             }
@@ -377,7 +377,7 @@ public class operator {
     public static ServiceContext result(Mogram mogram) throws ContextException {
         if (mogram instanceof Domain) {
             return (ServiceContext)((ServiceContext) mogram).getMogramStrategy().getOutcome();
-        } else if (mogram instanceof Routine) {
+        } else if (mogram instanceof Subroutine) {
             return (ServiceContext)mogram.getContext();
         }
         return null;
@@ -390,7 +390,7 @@ public class operator {
     public static Object result(Mogram mogram, String path) throws ContextException {
         if (mogram instanceof Domain) {
             return ((ServiceContext) mogram).getMogramStrategy().getOutcome().asis(path);
-        } else if (mogram instanceof Routine) {
+        } else if (mogram instanceof Subroutine) {
             try {
                 return mogram.getContext().getValue(path);
             } catch (RemoteException e) {
@@ -404,7 +404,7 @@ public class operator {
         return model.get(path);
     }
 
-    public static  ServiceContext substitute(ServiceContext model, Subroutine... entries) throws ContextException {
+    public static  ServiceContext substitute(ServiceContext model, Function... entries) throws ContextException {
         model.substitute(entries);
         return model;
     }
@@ -601,7 +601,7 @@ public class operator {
         for (Object i : items) {
             if (i instanceof String) {
                 name = (String) i;
-            } else if (i instanceof Routine) {
+            } else if (i instanceof Subroutine) {
                 hasExertion = true;
             } else if (i instanceof Signature) {
                 hasSignature = true;
@@ -712,19 +712,19 @@ public class operator {
                     if (i instanceof Reactive) {
                         context.putInValue(i.getName(), i);
                     } else {
-                        context.putInValue(i.getName(), ((Subroutine) i).getImpl());
+                        context.putInValue(i.getName(), ((Function) i).getImpl());
                     }
                 } else if (i instanceof OutputValue) {
                     if (isReactive) {
                         context.putOutValue(i.getName(), i);
                     } else {
-                        context.putOutValue(i.getName(), ((Subroutine) i).getImpl());
+                        context.putOutValue(i.getName(), ((Function) i).getImpl());
                     }
                 } else if (i instanceof InoutValue) {
                     if (isReactive) {
                         context.putInoutValue(i.getName(), i);
                     } else {
-                        context.putInoutValue(i.getName(), ((Subroutine) i).getImpl());
+                        context.putInoutValue(i.getName(), ((Function) i).getImpl());
                     }
                 } else {
                     if (context instanceof EntModel || isReactive) {
@@ -871,7 +871,7 @@ public class operator {
         return provisionManager.deployServices();
     }
 
-    public static Routine[] clients(Routine... consumers) {
+    public static Subroutine[] clients(Subroutine... consumers) {
         return consumers;
     }
 
@@ -879,14 +879,14 @@ public class operator {
         return servers;
     }
 
-    public static Discipline disc(Service server, Routine consumer) {
+    public static Discipline disc(Service server, Subroutine consumer) {
         return new ServiceDiscipline(server, consumer);
     }
-    public static Discipline disc(Service[] servers, Routine[] clients) {
+    public static Discipline disc(Service[] servers, Subroutine[] clients) {
         return new ServiceDiscipline(servers, clients);
     }
 
-    public static Discipline disc(List<Service> servers, List<Routine> clients) {
+    public static Discipline disc(List<Service> servers, List<Subroutine> clients) {
         return new ServiceDiscipline(servers, clients);
     }
 
@@ -894,7 +894,7 @@ public class operator {
         return multidisc.getDisciplines().get(name);
     }
 
-    public static Discipline add(Discipline disciplne, Service server, Routine client) {
+    public static Discipline add(Discipline disciplne, Service server, Subroutine client) {
         disciplne.add(server, client, null);
         return disciplne;
     }
@@ -904,7 +904,7 @@ public class operator {
         return disciplne;
     }
 
-    public static Discipline add(Discipline disciplne, Service server, Routine client, Context context) {
+    public static Discipline add(Discipline disciplne, Service server, Subroutine client, Context context) {
         disciplne.add(server, client, context);
         return disciplne;
     }

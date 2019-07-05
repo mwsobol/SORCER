@@ -35,7 +35,7 @@ import java.util.Set;
 
 /**
  * A <code>Task</code> is an elementary service-oriented message
- * {@link Routine} (with its own service {@link Context} and a collection of
+ * {@link Subroutine} (with its own service {@link Context} and a collection of
  * service {@link sorcer.service.Signature}s. Signatures of four
  * {@link Signature.Type}s can be associated with each task:
  * <code>SERVICE</code>, <code>PREPROCESS</code>, <code>POSTROCESS</code>, and
@@ -43,7 +43,7 @@ import java.util.Set;
  * can be associated with a task but multiple preprocessing, postprocessing, and
  * context appending methods can be added.
  * 
- * @see Routine
+ * @see Subroutine
  * @see sorcer.service.Job
  * 
  * @author Mike Sobolewski
@@ -172,7 +172,7 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 		return sig;
 	}
 
-	public Task doTask(Routine xrt, Transaction txn) throws EvaluationException {
+	public Task doTask(Subroutine xrt, Transaction txn) throws EvaluationException {
 		// implemented for example by VarTask
 		return null;
 	}
@@ -236,7 +236,7 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 			return delegate.toString();
 		}
 		StringBuilder sb = new StringBuilder(
-				"\n=== START PRINTING TASK ===\nRoutine Description: "
+				"\n=== START PRINTING TASK ===\nSubroutine Description: "
 						+ getClass().getName() + ":" + key);
 		sb.append("\n\tstatus: ").append(getStatus());
 		sb.append(", task ID=");
@@ -305,7 +305,7 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 	 * @param visited
 	 *            ignored
 	 * @return true; elementary mograms are always "trees"
-	 * @see Routine#isTree()
+	 * @see Subroutine#isTree()
 	 */
 	public boolean isTree(Set visited) {
 		visited.add(this);
@@ -320,7 +320,7 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 	 *            the fiType of needed task format
 	 * @return
 	 */
-	public Routine getUpdatedExertion(int type) {
+	public Subroutine getUpdatedExertion(int type) {
 		// the previous implementation of ServiceTask (thin) and
 		// RemoteServiceTask (thick) abandoned for a while.
 		return this;
@@ -349,7 +349,7 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see sorcer.service.Routine#addMogram(sorcer.service.Routine)
+	 * @see sorcer.service.Subroutine#addMogram(sorcer.service.Subroutine)
 	 */
 	@Override
 	public Mogram addMogram(Mogram component) {

@@ -329,7 +329,7 @@ public class SpaceTaker implements Runnable {
 		return TX.createTransaction(transactionLeaseTimeout);
 	}
 
-	protected boolean isAbandoned(Routine exertion) {
+	protected boolean isAbandoned(Subroutine exertion) {
 		if (space != null) {
 			ExertionEnvelop ee = new ExertionEnvelop();
 			ee.parentID = exertion.getParentId();

@@ -89,7 +89,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 
 	private Lease lease;
 
-    public MonitorSession(Routine ex,
+    public MonitorSession(Subroutine ex,
                           RemoteEventListener listener,
                           long duration) throws MonitorException {
         super();
@@ -113,7 +113,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
         setMonitorSession(runtimeExertion, new MonitorableSession(sessionManager, cookie, lease));
 	}
 
-	private MonitorSession(Routine xrt, Routine runtimeXrt, MonitorSession parentSession) throws MonitorException {
+	private MonitorSession(Subroutine xrt, Subroutine runtimeXrt, MonitorSession parentSession) throws MonitorException {
 		super();
 		if (xrt == null || runtimeXrt == null)
 			throw new NullPointerException("Assertion Failed: initialExertion cannot be NULL");
@@ -141,7 +141,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
                 if (!runtime.get(i).isMonitorable())
                     ((ServiceRoutine)runtime.get(i)).setMonitored(true);
             } catch (RemoteException e) {
-                throw new MonitorException("Could not determine whether Routine is monitorable", e);
+                throw new MonitorException("Could not determine whether Subroutine is monitorable", e);
             }
             add(new MonitorSession(initial.get(i), runtime.get(i), parent));
         }
@@ -154,9 +154,9 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
                 if (!runtime.getTargets().get(i).isMonitorable())
                     ((ServiceRoutine)runtime.getTargets().get(i)).setMonitored(true);
             } catch (RemoteException e) {
-                throw new MonitorException("Could not determine whether Routine is monitorable", e);
+                throw new MonitorException("Could not determine whether Subroutine is monitorable", e);
             }
-            add(new MonitorSession((Routine)initial.getTargets().get(i), (Routine)runtime.getTargets().get(i), parent));
+            add(new MonitorSession((Subroutine)initial.getTargets().get(i), (Subroutine)runtime.getTargets().get(i), parent));
         }
     }
 
@@ -259,7 +259,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		if (!isRunning() && !isUpdated()) {
 		//if (!isRunning()) {
 			logger.error("Trying to prc done on a non running resource" + this + " state: " + Exec.State.name(getState()));
-			throw new MonitorException("Routine " + runtimeExertion.getName() + " not running, state = "
+			throw new MonitorException("Subroutine " + runtimeExertion.getName() + " not running, state = "
 					+ Exec.State.name(getState()));
 		}
 
@@ -284,7 +284,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		if (!isRunning() && !isInSpace()  && !isProvision()) {
 			logger.error(
 					"Trying to prc failed on a non running resource" + this);
-			throw new MonitorException("Routine " + runtimeExertion.getName() + " not running. state = "
+			throw new MonitorException("Subroutine " + runtimeExertion.getName() + " not running. state = "
 					+ Exec.State.name(getState()));
 		}
 
@@ -526,7 +526,7 @@ public class MonitorSession extends ArrayList<MonitorSession> implements Monitor
 		return initialExertion;
 	}
 
-	public Routine getRuntimeExertion() {
+	public Subroutine getRuntimeExertion() {
 		return runtimeExertion;
 	}
 

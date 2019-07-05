@@ -19,14 +19,14 @@ package sorcer.core.context.model.proc;
 
 import java.util.ArrayList;
 
-import sorcer.core.context.model.ent.Subroutine;
+import sorcer.core.context.model.ent.Function;
 
 /**
  * @author Mike Sobolewski
  *
  */
 @SuppressWarnings("rawtypes")
-public class ContextFidelity extends ArrayList<Subroutine> {
+public class ContextFidelity extends ArrayList<Function> {
 	
 	private static final long serialVersionUID = -1L;
 	
@@ -53,15 +53,15 @@ public class ContextFidelity extends ArrayList<Subroutine> {
 		name = "unknown" + count++;
 	}
 	
-	public ContextFidelity(Subroutine... entries) {
+	public ContextFidelity(Function... entries) {
 		name = "unknown" + count++;
-		for (Subroutine e : entries)
+		for (Function e : entries)
 			add(e);
 	}
 	
-	public ContextFidelity(String name, Subroutine... entries) {
+	public ContextFidelity(String name, Function... entries) {
 		this.name = name;
-		for (Subroutine e : entries)
+		for (Function e : entries)
 			add(e);
 	}
 	

@@ -24,7 +24,7 @@ import net.jini.config.ConfigurationException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
 import sorcer.service.*;
-import sorcer.service.Routine;
+import sorcer.service.Subroutine;
 
 import com.sun.jini.start.LifeCycle;
 
@@ -56,7 +56,7 @@ public class ServiceTasker extends ServiceExerter {
 	}
 
 	/** {@inheritDoc} */
-	public ServiceRoutine execute(Routine task) throws TransactionException,
+	public ServiceRoutine execute(Subroutine task) throws TransactionException,
 			RoutineException {
 		return execute(task, null);
 	}
@@ -64,10 +64,10 @@ public class ServiceTasker extends ServiceExerter {
 	/** {@inheritDoc} 
 	 * @throws ConfigurationException 
 	 * @throws RemoteException */
-	public ServiceRoutine execute(Routine task, Transaction transaction)
+	public ServiceRoutine execute(Subroutine task, Transaction transaction)
 			throws RoutineException  {
 		try {
-			return (Task) new ControlFlowManager((Routine) task, delegate)
+			return (Task) new ControlFlowManager((Subroutine) task, delegate)
 					.process();
 		} catch (Exception e) {
 			throw new RoutineException(e);

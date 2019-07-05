@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The option Routine. There is a single target exertion that executes if the
+ * The option Subroutine. There is a single target exertion that executes if the
  * condition is true (like if... then).
  * 
  * @author Mike Sobolewski
@@ -75,9 +75,9 @@ public class OptTask extends ConditionalTask {
 //					target.setScope(dataContext);
 //				}
 				dataContext = (ServiceContext) target.getDataContext();
-				if (target instanceof Routine) {
+				if (target instanceof Subroutine) {
 					target.getContext().setRoutine(null);
-					controlContext.append(((Routine)target).getControlContext());
+					controlContext.append(((Subroutine)target).getControlContext());
 				}
 				dataContext.putValue(Condition.CONDITION_VALUE, true);
 				dataContext.putValue(Condition.CONDITION_TARGET, target.getName());

@@ -38,7 +38,7 @@ import static sorcer.service.Exec.*;
 abstract public class CatalogExertDispatcher extends ExertDispatcher {
     private final Logger logger = LoggerFactory.getLogger(CatalogExertDispatcher.class);
 
-    public CatalogExertDispatcher(Routine job,
+    public CatalogExertDispatcher(Subroutine job,
                                   Set<Context> sharedContext,
                                   boolean isSpawned,
                                   Exerter provider,
@@ -46,7 +46,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         super(job, sharedContext, isSpawned, provider, provisionManager);
     }
 
-    protected Routine execExertion(Routine ex, Arg... args) throws SignatureException,
+    protected Subroutine execExertion(Subroutine ex, Arg... args) throws SignatureException,
             RoutineException {
         beforeExec(ex);
         // setValue subject before task goes out.
@@ -78,7 +78,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
         return result;
     }
 
-    protected void afterExec(Routine ex, Routine result)
+    protected void afterExec(Subroutine ex, Subroutine result)
             throws SignatureException, RoutineException, ContextException {
         ServiceRoutine ser = (ServiceRoutine) result;
 		((Transroutine)xrt).setMogramAt(result, ex.getIndex());

@@ -55,7 +55,7 @@ public interface Discipline extends Service, Contextion {
      * @return a dispatcher of this discipline
      * @throws RoutineException
      */
-    public Routine getDispatcher() throws RoutineException;
+    public Subroutine getDispatcher() throws RoutineException;
 
     /**
      * Returns an executed dispatcherof this discipline
@@ -63,7 +63,7 @@ public interface Discipline extends Service, Contextion {
      * @return an executed dispatcher of this discipline
      * @throws RoutineException
      */
-    public Routine getOutDispatcher();
+    public Subroutine getOutDispatcher();
 
     /**
      * Returns a service governance multifidelity
@@ -90,7 +90,7 @@ public interface Discipline extends Service, Contextion {
      * Adds a dispatcher-governance fidelity of this discipline.
      * Fidelity names are names of dispatcher and service correspondingly.
      */
-    public void add(Service governance, Routine dispatcher, Context context);
+    public void add(Service governance, Subroutine dispatcher, Context context);
 
     /**
      * Adds a dispatcher and governance fidelities to this discipline

@@ -11,8 +11,8 @@ import sorcer.arithmetic.provider.impl.AdderImpl;
 import sorcer.core.context.Copier;
 import sorcer.core.context.model.ent.Entry;
 import sorcer.core.context.model.EntModel;
+import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.Prc;
-import sorcer.core.context.model.ent.Subroutine;
 import sorcer.service.Arg;
 import sorcer.service.Context;
 import sorcer.service.Domain;
@@ -57,7 +57,7 @@ public class ContextModels {
 		put(mdl, prc("arg/x7", invoker("x1 + x3", args("x1", "x3"))));
 
 		assertTrue(exec(mdl, "arg/x7").equals(4.0));
-		assertTrue(get(mdl, "arg/x7") instanceof Subroutine);
+		assertTrue(get(mdl, "arg/x7") instanceof Function);
 		assertTrue(get(mdl, "arg/x7") instanceof Prc);
 		assertTrue(get(mdl, "arg/x7") instanceof Invocation);
 	}
@@ -179,7 +179,7 @@ public class ContextModels {
 				inVal("y1", 20.0),
 				inVal("y2", 80.0));
 
-		Subroutine se = ent(sig("add", AdderImpl.class, result("add", inPaths("y1", "y2"))));
+		Function se = ent(sig("add", AdderImpl.class, result("add", inPaths("y1", "y2"))));
 		Context result = (Context) exec(se, sm);
         assertEquals(100.0, value(result, "add"));
 	}
@@ -191,7 +191,7 @@ public class ContextModels {
 				inVal("y1", 20.0),
 				inVal("y2", 80.0));
 
-		Subroutine se = ent(sig("add", Adder.class, result("add", inPaths("y1", "y2"))));
+		Function se = ent(sig("add", Adder.class, result("add", inPaths("y1", "y2"))));
 		Context result = (Context) exec(se, sm);
 		assertEquals(100.0, value(result, "add"));
 	}

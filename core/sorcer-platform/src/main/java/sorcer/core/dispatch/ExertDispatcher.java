@@ -86,7 +86,7 @@ abstract public class ExertDispatcher implements Dispatcher {
 
     private LeaseRenewalManager lrm = null;
 
-	public ExertDispatcher(Routine exertion,
+	public ExertDispatcher(Subroutine exertion,
                            Set<Context> sharedContexts,
                            boolean isSpawned,
                            Exerter provider,
@@ -113,7 +113,7 @@ abstract public class ExertDispatcher implements Dispatcher {
             afterExec(xrt);
             xrt.finalizeOutDataContext();
         } catch (Exception e) {
-            logger.warn("Routine explorer thread killed by exception: ", e);
+            logger.warn("Subroutine explorer thread killed by exception: ", e);
             xrt.setStatus(Exec.FAILED);
             state = Exec.FAILED;
             xrt.reportException(e);
@@ -131,7 +131,7 @@ abstract public class ExertDispatcher implements Dispatcher {
     abstract protected void doExec(Arg... args) throws SignatureException, RoutineException, RemoteException, MogramException;
     abstract protected List<Mogram> getInputExertions() throws ContextException;
 
-    protected void beforeParent(Routine exertion) throws ContextException, RoutineException {
+    protected void beforeParent(Subroutine exertion) throws ContextException, RoutineException {
         logger.debug("before parent {}", exertion);
         reconcileInputExertions(exertion);
         updateInputs(exertion);
@@ -139,7 +139,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         inputXrts = getInputExertions();
     }
 
-    protected void beforeExec(Routine exertion) throws RoutineException, SignatureException {
+    protected void beforeExec(Subroutine exertion) throws RoutineException, SignatureException {
         logger.debug("before exert {}", exertion);
         try {
             // Provider is expecting exertion to be in context
@@ -148,7 +148,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         } catch (ContextException e) {
             throw new RoutineException(e);
         }
-        // If Job, new explorer will update inputs for it's Routine
+        // If Job, new explorer will update inputs for it's Subroutine
         // in catalog dispatchers, if it is a job, then new explorer is
         // spawned and the shared contexts are passed. So the new explorer
         // will update inputs of tasks inside the jobExertion. But in space,
@@ -165,7 +165,7 @@ abstract public class ExertDispatcher implements Dispatcher {
 
     }
 
-    protected void afterExec(Routine result) throws ContextException, RoutineException {
+    protected void afterExec(Subroutine result) throws ContextException, RoutineException {
         logger.debug("After exert {}", result);
     }
 
@@ -189,9 +189,9 @@ abstract public class ExertDispatcher implements Dispatcher {
     }
 
     /**
-     * If the {@code Routine} is provisionable, deploy services.
+     * If the {@code Subroutine} is provisionable, deploy services.
      *
-     * @throws RoutineException if there are issues dispatching the {@code Routine}
+     * @throws RoutineException if there are issues dispatching the {@code Subroutine}
      */
     protected void checkProvision() throws RoutineException {
         if(xrt.isProvisionable() && xrt.getDeployments().size()>0) {
@@ -204,7 +204,7 @@ abstract public class ExertDispatcher implements Dispatcher {
         }
     }
 
-    public Routine getExertion() {
+    public Subroutine getExertion() {
         return xrt;
     }
 
@@ -241,8 +241,8 @@ abstract public class ExertDispatcher implements Dispatcher {
             logger.warn("Trying to update sharedContexts but it is null for exertion: " + mo);
             return;
         }
-        if (mo instanceof Routine) {
-            List<Context> contexts = Mograms.getTaskContexts((Routine) mo);
+        if (mo instanceof Subroutine) {
+            List<Context> contexts = Mograms.getTaskContexts((Subroutine) mo);
             logger.debug("Contexts to check if shared: " + contexts.toString());
             for (Context ctx : contexts) {
                 if (((ServiceContext) ctx).isShared()) {
@@ -267,7 +267,7 @@ abstract public class ExertDispatcher implements Dispatcher {
 //        }
     }
 
-    protected void updateInputs(Routine ex) throws RoutineException, ContextException {
+    protected void updateInputs(Subroutine ex) throws RoutineException, ContextException {
         logger.debug("updating inputs for {}", ex.getName());
         List<Context> inputContexts = Mograms.getTaskContexts(ex);
         for (Context inputContext : inputContexts)
