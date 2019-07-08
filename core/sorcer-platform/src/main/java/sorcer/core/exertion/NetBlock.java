@@ -29,6 +29,7 @@ import sorcer.service.*;
 import sorcer.service.Signature.Type;
 
 import java.rmi.RemoteException;
+import java.util.Map;
 
 public class NetBlock extends Block implements Invocation<Object> {
 
@@ -77,4 +78,8 @@ public class NetBlock extends Block implements Invocation<Object> {
 		return (Block)se.exert(txn, null, args);
 	}
 
+	@Override
+	public Map<String, Mogram> getChildren() {
+		return null;
+	}
 }

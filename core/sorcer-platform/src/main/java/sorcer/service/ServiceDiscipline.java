@@ -186,8 +186,8 @@ public class ServiceDiscipline implements Discipline, Getter<Service> {
         return this.input = input;
     }
 
-    public void setParent(Discipline parent) {
-        this.parent = parent;
+    public void setParent(Contextion parent) {
+        this.parent = (Discipline) parent;
     }
 
     @Override

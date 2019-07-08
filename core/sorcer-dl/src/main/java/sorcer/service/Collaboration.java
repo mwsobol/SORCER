@@ -17,6 +17,11 @@
 
 package sorcer.service;
 
+import java.util.Map;
+
 public interface Collaboration extends Contextion {
 
+    public Map<String, Mogram> getChildren();
+
+    public Mogram getChild(String name);
 }

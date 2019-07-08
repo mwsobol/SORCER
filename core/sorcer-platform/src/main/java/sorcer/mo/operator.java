@@ -36,6 +36,7 @@ import sorcer.core.dispatch.SrvModelAutoDeps;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
+import sorcer.core.service.Governance;
 import sorcer.service.Morpher;
 import sorcer.service.*;
 import sorcer.service.Domain;
@@ -890,8 +891,8 @@ public class operator {
         return new ServiceDiscipline(servers, clients);
     }
 
-    public static Discipline disc(Multidiscipline multidisc, String name) {
-        return multidisc.getDisciplines().get(name);
+    public static Discipline disc(Governance multidisc, String name) {
+        return multidisc.getDiscipline(name);
     }
 
     public static Discipline add(Discipline disciplne, Service server, Subroutine client) {
@@ -914,16 +915,16 @@ public class operator {
         return disciplne;
     }
 
-    public static Multidiscipline multidisc(Discipline... disciplines) {
-        return multidisc(null, disciplines);
+    public static Governance gov(Contextion... contextions) {
+        return gov(null, contextions);
     }
 
-    public static Multidiscipline multidisc(String name, Discipline... disciplines) {
-        Multidiscipline md = new Multidiscipline(disciplines);
+    public static Governance gov(String name, Contextion... contextions) {
+        Governance md = new Governance(null, contextions);
         if (name != null) {
             md.setName(name);
         }
-        md.setExplorer(new DisciplineExplorer(md));
+        md.setExplorer(new GovernanceExplorer(md));
         return md;
     }
 }

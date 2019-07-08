@@ -22,7 +22,9 @@ import sorcer.core.context.ControlContext;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -35,7 +37,7 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 	protected List<Mogram> mograms = new ArrayList<Mogram>();
 
 	public Transroutine() {
-		this("compound xrt=" + count++);
+		this("transroutine-" + count++);
 	}
 
 	public Transroutine(String name) {
@@ -175,5 +177,14 @@ abstract public class Transroutine extends ServiceRoutine implements Collaborati
 		} catch (MogramException | RemoteException e) {
 			throw new EvaluationException(e);
 		}
+	}
+
+	@Override
+	public Map<String, Mogram> getChildren() {
+		Map<String, Mogram> children = new HashMap<>();
+		for (Mogram child : mograms) {
+			children.put(child.getName(), child);
+		}
+		return children;
 	}
 }

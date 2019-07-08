@@ -1,7 +1,7 @@
 package sorcer.service;
 
 import sorcer.co.tuple.ExecDependency;
-import sorcer.core.context.ServiceContext;
+import sorcer.core.service.Governance;
 import sorcer.service.modeling.Discipline;
 import sorcer.service.modeling.Exploration;
 import sorcer.service.modeling.ExploreException;
@@ -12,18 +12,18 @@ import java.util.Map;
 
 import static sorcer.co.operator.path;
 
-public class DisciplineExplorer implements Service, Exploration {
+public class GovernanceExplorer implements Service, Exploration {
 
-    protected Multidiscipline transdiscipline;
+    protected Governance governance;
     // exec discipline dependencies
     protected Map<String, List<ExecDependency>> dependentDisciplines;
 
-    public DisciplineExplorer() {
+    public GovernanceExplorer() {
         // do nothing
     }
 
-    public DisciplineExplorer(Multidiscipline transdiscipline) {
-        this.transdiscipline = transdiscipline;
+    public GovernanceExplorer(Governance governance) {
+        this.governance = governance;
     }
 
     public Map<String, List<ExecDependency>> getDependentDisciplines() {
@@ -36,40 +36,40 @@ public class DisciplineExplorer implements Service, Exploration {
 
     @Override
     public Object execute(Arg... args) throws ServiceException {
-        try {
-            List<Fidelity> fis = Arg.selectFidelities(args);
-            if (fis != null && fis.size() > 0) {
-                transdiscipline.selectFi(fis.get(0));
-            }
-            Subroutine xrt = (Subroutine) transdiscipline.getDispatcher();
-            if (transdiscipline.input != null) {
-                if (transdiscipline.inConnector != null) {
-                    xrt.setContext(((ServiceContext) transdiscipline.input).updateContextWith(transdiscipline.inConnector));
-                } else {
-                    xrt.setContext(transdiscipline.input);
-                }
-            }
-            xrt.dispatch(transdiscipline.getout());
-            transdiscipline.outDispatcher = xrt.exert();
-            execDependencies(transdiscipline.getName(), args);
-            return transdiscipline.getOutput();
-        } catch (ConfigurationException | RemoteException e) {
-            throw new ServiceException(e);
-        }
+//        try {
+//            List<Fidelity> fis = Arg.selectFidelities(args);
+//            if (fis != null && fis.size() > 0) {
+//                ((ServiceFidelity)governance.getMultiFi()).selectFi(fis.get(0));
+//            }
+//            Subroutine xrt = (Subroutine) governance.getDispatcher();
+//            if (governance.input != null) {
+//                if (governance.inConnector != null) {
+//                    xrt.setContext(((ServiceContext) governance.input).updateContextWith(governance.inConnector));
+//                } else {
+//                    xrt.setContext(governance.input);
+//                }
+//            }
+//            xrt.dispatch(governance.getOut());
+//            governance.setOutput(); = xrt.evaluate(input);
+            execDependencies(governance.getName(), args);
+            return governance.getOutput();
+//        } catch (ConfigurationException | RemoteException e) {
+//            throw new ServiceException(e);
+//        }
     }
 
     public void execDependencies(String path, Arg... args) throws ContextException {
         Map<String, List<ExecDependency>> dpm = dependentDisciplines;
         if (dpm != null && dpm.get(path) != null) {
             List<ExecDependency> del = dpm.get(path);
-            Discipline dis = transdiscipline.getDiscipline(path);
+            Discipline dis = governance.getDiscipline(path);
             if (del != null && del.size() > 0) {
                 for (ExecDependency de : del) {
                     List<Path> dpl = (List<Path>) de.getImpl();
                     if (dpl != null && dpl.size() > 0) {
                         for (Path p : dpl) {
                             try {
-                                transdiscipline.getDiscipline(p.path).execute(args);
+                                governance.getDiscipline(p.path).execute(args);
                             } catch (ServiceException e) {
                                 e.printStackTrace();
                             } catch (RemoteException e) {
@@ -86,7 +86,7 @@ public class DisciplineExplorer implements Service, Exploration {
     @Override
     public Context explore(Context searchContext, Arg... args) throws ExploreException, RemoteException {
         try {
-            transdiscipline.setInput(searchContext);
+            governance.setInput(searchContext);
             return (Context) execute(args);
         } catch (ServiceException e) {
             throw new ExploreException(e);
