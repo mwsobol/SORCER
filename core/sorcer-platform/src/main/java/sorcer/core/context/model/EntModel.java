@@ -484,7 +484,7 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 					if (depender instanceof Invocation) {
 						((Invocation) depender).invoke(this, entries);
 					} else {
-						((Evaluation) depender).evaluate(entries);
+						depender.evaluate(entries);
 					}
 				} catch (Exception e) {
 					throw new RoutineException(e);
