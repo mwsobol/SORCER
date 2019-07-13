@@ -729,6 +729,12 @@ public class operator extends Operator {
         return de;
     }
 
+    public static ExecDependency fiDep(String fiName, List<Path> paths) {
+        ExecDependency de =  new ExecDependency(fiName, paths);
+        de.setType(Type.FIDELITY);
+        return de;
+    }
+
 	public static ExecDependency dep(String path, List<Path> paths) {
         ExecDependency de =  new ExecDependency(path, paths);
         de.setType(Type.FUNCTION);
@@ -743,8 +749,15 @@ public class operator extends Operator {
 		return de;
 	}
 
-	public static ExecDependency dep(String path, Fidelity fi, List<Path> paths) {
-		ExecDependency de = new ExecDependency(path, paths);
+    public static ExecDependency dep(String path, Fidelity fi, List<Path> paths) {
+        ExecDependency de = new ExecDependency(path, paths);
+        de.annotation(fi);
+        de.setType(Type.FIDELITY);
+        return de;
+    }
+
+	public static ExecDependency dep(Paths svrPaths, Fidelity fi, List<Path> paths) {
+		ExecDependency de = new ExecDependency(svrPaths, paths);
 		de.annotation(fi);
 		de.setType(Type.FIDELITY);
 		return de;
@@ -1474,7 +1487,19 @@ public class operator extends Operator {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
-	public static Paths paths(Object... paths) {
+    public static Paths eachSrv(Object... paths) {
+        Paths list = createPaths(paths);
+        list.type = Type.SRV;
+        return list;
+    }
+
+    public static Paths paths(Object... paths) {
+        Paths list = createPaths(paths);
+        list.type = Type.PATH;
+        return list;
+    }
+
+	public static Paths createPaths(Object... paths) {
         Paths list = new Paths();
 		for (Object o : paths) {
 			if (o instanceof String) {

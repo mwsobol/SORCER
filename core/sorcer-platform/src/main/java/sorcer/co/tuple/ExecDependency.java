@@ -32,12 +32,19 @@ public class ExecDependency extends Function<List<Path>> {
 
     private Conditional condition;
 
+    private Paths forEach;
+
     private Paths dependees;
 
     @SuppressWarnings("unchecked")
     public ExecDependency(String path, List<Path> paths) {
         key = path;
         name = path;
+        impl = paths;
+    }
+
+    public ExecDependency(Paths svrPaths, List<Path> paths) {
+        forEach = svrPaths;
         impl = paths;
     }
 
@@ -70,5 +77,14 @@ public class ExecDependency extends Function<List<Path>> {
     public void setCondition(Conditional condition) {
         this.condition = condition;
     }
+
+    public Paths getForEach() {
+        return forEach;
+    }
+
+    public void setForEach(Paths forEach) {
+        this.forEach = forEach;
+    }
+
 
 }
