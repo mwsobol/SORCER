@@ -220,13 +220,9 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 	@Override
 	public Object getValue(Arg... entries) throws EvaluationException {
 		try {
-			try {
-				realizeDependencies(entries);
-			} catch (RemoteException | RoutineException e) {
-				throw new EvaluationException(e);
-			}
+			realizeDependencies(entries);
 			return getValue((String)null, entries);
-		} catch (ContextException e) {
+		} catch (ContextException | RoutineException |RemoteException e) {
 			throw new EvaluationException(e);
 		}
 	}
@@ -475,16 +471,16 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 		return new Prc(path, value, this);
 	}
 
-	private void realizeDependencies(Arg... entries) throws RemoteException,
+	protected void realizeDependencies(Arg... args) throws RemoteException,
 			RoutineException {
 		List<Evaluation> dependers = getDependers();
 		if (dependers != null && dependers.size() > 0) {
 			for (Evaluation<Object> depender : dependers) {
 				try {
 					if (depender instanceof Invocation) {
-						((Invocation) depender).invoke(this, entries);
+						((Invocation) depender).invoke(this, args);
 					} else {
-						depender.evaluate(entries);
+						depender.evaluate(args);
 					}
 				} catch (Exception e) {
 					throw new RoutineException(e);

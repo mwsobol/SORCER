@@ -19,6 +19,7 @@ package sorcer.service;
 
 import sorcer.core.Index;
 import sorcer.core.Tag;
+import sorcer.service.modeling.Functionality;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -73,6 +74,16 @@ public interface Arg extends Serializable, Service {
 		}
 		return fiList;
 	}
+
+	public static List<Functionality> selectFunctions(Arg[] args) {
+		List<Functionality> funcList = new ArrayList<>();
+		for (Arg arg : args) {
+			if (arg instanceof Functionality)
+				funcList.add((Functionality) arg);
+		}
+		return funcList;
+	}
+
 
 	public static Service selectService(Arg[] args) {
 		for (Arg arg : args) {

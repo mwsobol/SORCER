@@ -41,6 +41,8 @@ public class ModelStrategy implements MogramStrategy, Serializable {
     // dependency management for this Context
     protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
+    protected boolean modelDependeciesExecuted = false;
+
     protected String currentSelector;
 
     // mapping from paths of this inConnector to input paths of this context
@@ -239,6 +241,14 @@ public class ModelStrategy implements MogramStrategy, Serializable {
 
     public <T extends Mogram> Mogram exert(Arg... entries) throws TransactionException, MogramException, RemoteException {
         return target.exert(entries);
+    }
+
+    public boolean isModelDependeciesExecuted() {
+        return modelDependeciesExecuted;
+    }
+
+    public void setModelDependeciesExecuted(boolean modelDependeciesExecuted) {
+        this.modelDependeciesExecuted = modelDependeciesExecuted;
     }
 
     public void setAccessType(Access access) {
