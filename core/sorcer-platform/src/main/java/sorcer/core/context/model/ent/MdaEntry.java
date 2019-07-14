@@ -17,12 +17,11 @@
 
 package sorcer.core.context.model.ent;
 
-import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.Mda;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.Model;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 import sorcer.service.modeling.Functionality;
 
 /**
@@ -32,7 +31,7 @@ public class MdaEntry extends Entry<Mda> implements Mda {
 
     private static final long serialVersionUID = 1L;
 
-    private Domain model;
+    private ContextDomain model;
 
     private Signature signature;
 

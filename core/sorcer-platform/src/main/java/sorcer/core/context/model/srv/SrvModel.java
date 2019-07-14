@@ -48,7 +48,7 @@ import static sorcer.so.operator.exec;
 import static sorcer.so.operator.execMogram;
 
 /**
- * A Domain is a schematic description or representation of something, especially a system,
+ * A ContextDomain is a schematic description or representation of something, especially a system,
  * phenomenon, or service, that accounts for its properties and is used to study its characteristics.
  * Properties of a service model are represented by contextReturn of Context with values that depend
  * on other properties and can be evaluated as specified by ths model. Evaluations of the service 

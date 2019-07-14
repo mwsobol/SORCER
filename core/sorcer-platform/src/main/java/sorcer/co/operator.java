@@ -35,7 +35,7 @@ import sorcer.core.signature.ObjectSignature;
 import sorcer.core.signature.ServiceSignature;
 import sorcer.netlet.ServiceScripter;
 import sorcer.service.*;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Functionality.Type;
@@ -730,9 +730,30 @@ public class operator extends Operator {
 		return de;
 	}
 
-	public static ExecDependency mdlDep(String path, List<Path> paths) {
+	public static ExecDependency domDep(String path, List<Path> paths) {
         ExecDependency de =  new ExecDependency(path, paths);
         de.setType(Type.DOMAIN);
+        return de;
+    }
+
+    public static ExecDependency domDep(String path, Fidelity fi, List<Path> paths) {
+        ExecDependency de = new ExecDependency(path, paths);
+        de.annotation(fi);
+        de.setType(Type.DOMAIN);
+        return de;
+    }
+
+    public static ExecDependency mdlDep(Evaluation... evaluations) {
+        ExecDependency de = new ExecDependency();
+        de.setImpl(evaluations);
+        de.setType(Type.MODEL);
+        return de;
+    }
+
+    public static ExecDependency mdlDep(String path, Evaluation... evaluations) {
+        ExecDependency de = new ExecDependency(path);
+        de.setImpl(evaluations);
+        de.setType(Type.MODEL);
         return de;
     }
 
@@ -740,27 +761,6 @@ public class operator extends Operator {
         ExecDependency de =  new ExecDependency(path, paths);
         de.setType(Type.FUNCTION);
         return de;
-	}
-
-	public static ExecDependency mdlDep(Evaluation... evaluations) {
-		ExecDependency de = new ExecDependency();
-		de.setImpl(evaluations);
-		de.setType(Type.MODEL);
-		return de;
-	}
-
-	public static ExecDependency mdlDep(String path, Evaluation... evaluations) {
-		ExecDependency de = new ExecDependency(path);
-		de.setImpl(evaluations);
-		de.setType(Type.MODEL);
-		return de;
-	}
-
-	public static ExecDependency mdlDep(String path, Fidelity fi, List<Path> paths) {
-		ExecDependency de = new ExecDependency(path, paths);
-		de.annotation(fi);
-		de.setType(Type.MODEL);
-		return de;
 	}
 
     public static ExecDependency dep(String path, Fidelity fi, List<Path> paths) {
@@ -1035,7 +1035,7 @@ public class operator extends Operator {
 		return e;
 	}
 
-    public static URL storeVal(Domain context, String path) throws EvaluationException {
+    public static URL storeVal(ContextDomain context, String path) throws EvaluationException {
 		URL dburl = null;
 		try {
 			Object v = context.asis(path);
@@ -1496,8 +1496,8 @@ public class operator extends Operator {
 		return  model.asis(path);
 	}
 
-    public static Copier copier(Domain fromContext, Arg[] fromEntries,
-                                Domain toContext, Arg[] toEntries) throws EvaluationException {
+    public static Copier copier(ContextDomain fromContext, Arg[] fromEntries,
+                                ContextDomain toContext, Arg[] toEntries) throws EvaluationException {
         return new Copier(fromContext, fromEntries, toContext, toEntries);
     }
 
@@ -1537,11 +1537,15 @@ public class operator extends Operator {
 			entModel.getData().remove(path);
 	}
 
-    public static Map<String, List<ExecDependency>> disDeps(Domain model) {
+    public static List<Evaluation>  mdlDeps(ContextDomain model) {
+        return ((ServiceContext)model).getMogramStrategy().getModelDependers();
+    }
+
+    public static Map<String, List<ExecDependency>> domDeps(ContextDomain model) {
         return ((ServiceContext)model).getMogramStrategy().getDependentDomains();
     }
 
-    public static Map<String, List<ExecDependency>> deps(Domain model) {
+    public static Map<String, List<ExecDependency>> deps(ContextDomain model) {
          return ((ServiceContext)model).getMogramStrategy().getDependentPaths();
     }
 
@@ -1607,7 +1611,7 @@ public class operator extends Operator {
             if (d != null) {
                 path = ((Identifiable)d).getName();
                 if (path != null && path.equals("self")) {
-                    ((Entry) d).setName(((Domain) dependee).getName());
+                    ((Entry) d).setName(((ContextDomain) dependee).getName());
                 }
 
                 if (d instanceof ExecDependency && ((ExecDependency) d).getType().equals(Type.CONDITION)) {
@@ -1620,10 +1624,10 @@ public class operator extends Operator {
         }
 
         if (dependers.length > 0 && dependers[0] instanceof ExecDependency) {
-            Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentDomains();
+            Map<String, List<ExecDependency>> dm = ((ModelStrategy)((ContextDomain) dependee).getMogramStrategy()).getDependentDomains();
             for (Evaluation e : dependers) {
                 if (e != null) {
-                    path = ((Identifiable)e).getName();
+                    path = ((Identifiable) e).getName();
                     if (dm.get(path) != null) {
                         if (!dm.get(path).contains(e)) {
                             ((List) dm.get(path)).add(e);
@@ -1671,7 +1675,7 @@ public class operator extends Operator {
 			if (d != null) {
 				path = ((Identifiable)d).getName();
 				if (path != null && path.equals("self")) {
-					d.setName(((Domain) dependee).getName());
+					d.setName(((ContextDomain) dependee).getName());
 				}
 
 				if (d instanceof ExecDependency && ((ExecDependency) d).getType().equals(Type.CONDITION)) {
@@ -1688,8 +1692,8 @@ public class operator extends Operator {
 			}
 		}
 
-		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
-			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
+		if (dependee instanceof ContextDomain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
+			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((ContextDomain) dependee).getMogramStrategy()).getDependentPaths();
 			for (Evaluation e : dependers) {
 				if (e != null && ((Functionality)e).getType() != Type.MODEL) {
 					path = ((Identifiable)e).getName();
@@ -1719,7 +1723,7 @@ public class operator extends Operator {
 //		for (Evaluation d : dependers) {
 //            contextReturn = ((Identifiable)d).getName();
 //            if (contextReturn != null && contextReturn.equals("self")) {
-//                ((Entry)d).setKey(((Domain) dependee).getName());
+//                ((Entry)d).setKey(((ContextDomain) dependee).getName());
 //            }
 //            if (d instanceof ExecDependency && ((ExecDependency)d).getFiType().equals(Type.CONDITION)) {
 //                ((ExecDependency)d).getCondition().setConditionalContext((Context)dependee);
@@ -1728,8 +1732,8 @@ public class operator extends Operator {
 //                dependee.getDependers().add(d);
 //            }
 //		}
-//		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
-//			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
+//		if (dependee instanceof ContextDomain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
+//			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((ContextDomain) dependee).getMogramStrategy()).getDependentPaths();
 //			for (Evaluation e : dependers) {
 //				contextReturn = ((Identifiable)e).getName();
 //				if (dm.getValue(contextReturn) != null) {
@@ -1908,15 +1912,15 @@ public class operator extends Operator {
 		return instance(signature);
 	}
 
-	public static Domain model(Signature signature) throws SignatureException {
+	public static ContextDomain model(Signature signature) throws SignatureException {
 		Object model = instance(signature);
-		if (!(model instanceof Domain)) {
-			throw new SignatureException("Signature does not specify te Domain: " + signature);
+		if (!(model instanceof ContextDomain)) {
+			throw new SignatureException("Signature does not specify te ContextDomain: " + signature);
 		}
 		if (model instanceof Model) {
 			((Model)model).setBuilder(signature);
 		}
-		return (Domain) model;
+		return (ContextDomain) model;
 	}
 
 	public static Mogram instance(Mogram mogram, Arg... args) throws SignatureException, MogramException {

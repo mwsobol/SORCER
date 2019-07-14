@@ -16,7 +16,7 @@ import sorcer.service.Context;
 import sorcer.service.Job;
 import sorcer.service.Strategy.Flow;
 import sorcer.service.Task;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 import sorcer.service.modeling.Model;
 
 import static org.junit.Assert.assertTrue;
@@ -262,12 +262,12 @@ public class ServiceMograms {
     public void remoteModeler() throws Exception {
         // getValue response from a service model with inner model
 
-        Domain innerMdl = model("inner/multiply",
+        ContextDomain innerMdl = model("inner/multiply",
                 ent(sig("inner/multiply/out", "multiply", Multiplier.class,
                         result("multiply/out", inPaths("arg/x1", "arg/x2")))),
                 response("inner/multiply/out"));
 
-        Domain outerMdl = model(
+        ContextDomain outerMdl = model(
                 inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
                 inVal("add/x1", 20.0), inVal("add/x2", 80.0),
                 ent(sig("multiply", Multiplier.class, result("multiply/out",

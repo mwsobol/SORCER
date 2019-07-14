@@ -18,7 +18,7 @@
 package sorcer.core.context;
 
 import sorcer.service.*;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 import sorcer.service.modeling.Data;
 
 import java.rmi.RemoteException;
@@ -35,7 +35,7 @@ public class  Copier implements Evaluation<Context>, Scopable, Activity, Identif
 	// default instance new Return(Context.RETURN);
 	protected Context.Return contextReturn;
 
-	public Copier(Domain fromContext, Arg[] fromEntries, Domain toContext, Arg[] toEntries) throws EvaluationException {
+	public Copier(ContextDomain fromContext, Arg[] fromEntries, ContextDomain toContext, Arg[] toEntries) throws EvaluationException {
 		this.fromContext = (Context)fromContext;
 		this.fromEntries = fromEntries;
 		this.toContext = (Context)toContext;
@@ -94,7 +94,7 @@ public class  Copier implements Evaluation<Context>, Scopable, Activity, Identif
 
 	@Override
 	public Object execute(Arg... args) throws MogramException, RemoteException {
-		Domain cxt = Arg.selectDomain(args);
+		ContextDomain cxt = Arg.selectDomain(args);
 		if (cxt != null) {
 			fromContext = (Context) cxt;
 			return evaluate(args);

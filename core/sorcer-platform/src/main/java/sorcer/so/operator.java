@@ -136,7 +136,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Object exec(Domain domain, String path, Arg... args) throws ContextException {
+    public static Object exec(ContextDomain domain, String path, Arg... args) throws ContextException {
         if (path.indexOf("$") > 0) {
             String pn = null;
             String dn = null;
@@ -251,7 +251,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Object exec(Domain model, String path$domain) throws ContextException {
+    public static Object exec(ContextDomain model, String path$domain) throws ContextException {
         if (model instanceof DataContext) {
             return value((Context)model, path$domain);
         } else {
@@ -259,7 +259,7 @@ public class operator extends Operator {
         }
     }
 
-    public static Object response(Domain model, String path$domain) throws ContextException {
+    public static Object response(ContextDomain model, String path$domain) throws ContextException {
         try {
             String path = null;
             String domain = null;
@@ -276,11 +276,11 @@ public class operator extends Operator {
         }
     }
 
-    public static Object exec(Domain model, String path, String domain) throws ContextException {
+    public static Object exec(ContextDomain model, String path, String domain) throws ContextException {
         return response(model, path, domain);
     }
 
-    public static Object response(Domain model, String path, String domain) throws ContextException {
+    public static Object response(ContextDomain model, String path, String domain) throws ContextException {
         if (model.isEvaluated() && ((ServiceMogram)model).getMdaFi() == null) {
             return ((ServiceContext)model).getDomain(domain).getEvaluatedValue(path);
         } else {
@@ -299,18 +299,18 @@ public class operator extends Operator {
     public static ServiceContext response(Mogram mogram, Object... items) throws ContextException {
         if (mogram instanceof Subroutine) {
             return exertionResponse((Subroutine) mogram, items);
-        } else if (mogram instanceof Domain &&  ((ServiceMogram)mogram).getType().equals(Functionality.Type.MADO)) {
+        } else if (mogram instanceof ContextDomain &&  ((ServiceMogram)mogram).getType().equals(Functionality.Type.MADO)) {
             if (mogram.isEvaluated()) {
                 return (ServiceContext) ((ServiceContext) mogram).getDomain((String) items[0]).getEvaluatedValue((String) items[1]);
             } else {
                 return (ServiceContext) ((ServiceContext) ((ServiceContext) mogram).getDomain((String) items[0])).getValue((String) items[1]);
             }
         } else {
-            return modelResponse((Domain) mogram, items);
+            return modelResponse((ContextDomain) mogram, items);
         }
     }
 
-    public static ServiceContext modelResponse(Domain model, Object... items) throws ContextException {
+    public static ServiceContext modelResponse(ContextDomain model, Object... items) throws ContextException {
         try {
             List<Arg> argl = new ArrayList();
             List<Path> paths = new ArrayList();;
@@ -446,7 +446,7 @@ public class operator extends Operator {
             } else if (service instanceof Evaluation) {
                 return ((Evaluation) service).evaluate(args);
             } else if (service instanceof Modeling) {
-                Domain cxt = Arg.selectDomain(args);
+                ContextDomain cxt = Arg.selectDomain(args);
                 if (cxt != null) {
                     return ((Modeling) service).evaluate((ServiceContext)cxt);
                 } else {

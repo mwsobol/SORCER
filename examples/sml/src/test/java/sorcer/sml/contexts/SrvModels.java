@@ -13,13 +13,10 @@ import sorcer.arithmetic.provider.impl.MultiplierImpl;
 import sorcer.arithmetic.provider.impl.SubtractorImpl;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.ent.operator;
-import sorcer.service.Block;
-import sorcer.service.Context;
-import sorcer.service.Job;
+import sorcer.service.*;
 import sorcer.service.Strategy.Flow;
-import sorcer.service.Task;
 import sorcer.service.modeling.Model;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -168,7 +165,7 @@ public class SrvModels {
         // two response paths declared
         responseUp(m, "add", "multiply");
         // exert the model
-        Domain model = exert(m);
+        ContextDomain model = exert(m);
         logger.info("model: " + model);
 
         assertTrue(response(model, "add").equals(4.0));

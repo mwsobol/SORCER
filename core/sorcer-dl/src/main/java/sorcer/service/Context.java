@@ -75,7 +75,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends Contextion, Domain, Selfable, Response, Serializable, Paradigmatic, mog, rsp {
+public interface Context<T> extends Contextion, ContextDomain, Selfable, Response, Serializable, Paradigmatic, mog, rsp {
 
 	/** parameter (proc) */
 	final static String PATH_PAR = "proc";
@@ -150,13 +150,13 @@ public interface Context<T> extends Contextion, Domain, Selfable, Response, Seri
 
 	final static String SERVICE_CONTEXT = "cxt";
 
-	final static String SRV_MODEL = "Service Domain";
+	final static String SRV_MODEL = "Service ContextDomain";
 
-	final static String PROC_MODEL = "Procedural Domain";
+	final static String PROC_MODEL = "Procedural ContextDomain";
 
-	final static String PAR_MODEL = "Parametric Domain";
+	final static String PAR_MODEL = "Parametric ContextDomain";
 
-	final static String DATA_MODEL = "Data Domain";
+	final static String DATA_MODEL = "Data ContextDomain";
 
 	/** EMPTY LEAF NODE i.e. node with no data and not empty string */
 	final static String EMPTY_LEAF = ":Empty";
@@ -175,13 +175,13 @@ public interface Context<T> extends Contextion, Domain, Selfable, Response, Seri
 
 	final static String JOB_FEEDBACK = "job" + SorcerConstants.CPS + "feedback";
 
-	// Domain Predictio Data Path
+	// ContextDomain Predictio Data Path
 	final static String PRED_PATH = "model" + SorcerConstants.CPS + "prediction"
 			+ SorcerConstants.CPS + "data";
 	final static String MDA_PATH = "model" + SorcerConstants.CPS + "mda"
 			+ SorcerConstants.CPS + "component";
 
-	// Domain Specific Data Path
+	// ContextDomain Specific Data Path
 	final static String DSD_PATH = "domain" + SorcerConstants.CPS + "specific"
 			+ SorcerConstants.CPS + "data";
 
@@ -312,7 +312,7 @@ public interface Context<T> extends Contextion, Domain, Selfable, Response, Seri
 
 	public Context append(Context context) throws ContextException;
 
-	public Context<T> updateEntries(Domain context) throws ContextException;
+	public Context<T> updateEntries(ContextDomain context) throws ContextException;
 	/**
 	 * Returns this context within its cuureent scope.
 	 *

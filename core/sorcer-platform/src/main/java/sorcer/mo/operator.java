@@ -39,7 +39,7 @@ import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.service.Governance;
 import sorcer.service.Morpher;
 import sorcer.service.*;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 import sorcer.service.modeling.*;
 import sorcer.util.DataTable;
 import sorcer.util.url.sos.SdbUtil;
@@ -187,7 +187,7 @@ public class operator {
         }
     }
 
-    public static Domain setValues(Domain model, Entry... entries) throws ContextException {
+    public static ContextDomain setValues(ContextDomain model, Entry... entries) throws ContextException {
         for (Entry e : entries) {
             Object v = model.asis(e.getName());
             Object nv = e.asis();
@@ -208,7 +208,7 @@ public class operator {
         return model;
     }
 
-    public static Domain setValue(Domain model, String entName, Object value)
+    public static ContextDomain setValue(ContextDomain model, String entName, Object value)
         throws ContextException {
         try {
             Object entry = model.get(entName);
@@ -347,7 +347,7 @@ public class operator {
         return mogram;
     }
 
-    public static Domain clearResponse(Domain model) throws ContextException {
+    public static ContextDomain clearResponse(ContextDomain model) throws ContextException {
         ((ServiceContext) model).getMogramStrategy().getResponsePaths().clear();
         return model;
     }
@@ -376,7 +376,7 @@ public class operator {
     }
 
     public static ServiceContext result(Mogram mogram) throws ContextException {
-        if (mogram instanceof Domain) {
+        if (mogram instanceof ContextDomain) {
             return (ServiceContext)((ServiceContext) mogram).getMogramStrategy().getOutcome();
         } else if (mogram instanceof Subroutine) {
             return (ServiceContext)mogram.getContext();
@@ -389,7 +389,7 @@ public class operator {
     }
 
     public static Object result(Mogram mogram, String path) throws ContextException {
-        if (mogram instanceof Domain) {
+        if (mogram instanceof ContextDomain) {
             return ((ServiceContext) mogram).getMogramStrategy().getOutcome().asis(path);
         } else if (mogram instanceof Subroutine) {
             try {
@@ -401,7 +401,7 @@ public class operator {
         return null;
     }
 
-    public static Object get(Domain model, String path) throws ConfigurationException {
+    public static Object get(ContextDomain model, String path) throws ConfigurationException {
         return model.get(path);
     }
 
@@ -410,11 +410,11 @@ public class operator {
         return model;
     }
 
-    public static Context ins(Domain model) throws ContextException {
+    public static Context ins(ContextDomain model) throws ContextException {
         return inputs(model);
     }
 
-    public static Context allInputs(Domain model) throws ContextException {
+    public static Context allInputs(ContextDomain model) throws ContextException {
         try {
             return model.getAllInputs();
         } catch (RemoteException e) {
@@ -422,7 +422,7 @@ public class operator {
         }
     }
 
-    public static Context inputs(Domain model) throws ContextException {
+    public static Context inputs(ContextDomain model) throws ContextException {
         try {
             return model.getInputs();
         } catch (RemoteException e) {
@@ -430,11 +430,11 @@ public class operator {
         }
     }
 
-    public static Context outs(Domain model) throws ContextException {
+    public static Context outs(ContextDomain model) throws ContextException {
         return outputs(model);
     }
 
-    public static Context outputs(Domain model) throws ContextException {
+    public static Context outputs(ContextDomain model) throws ContextException {
         try {
             return model.getOutputs();
         } catch (RemoteException e) {
@@ -457,7 +457,7 @@ public class operator {
         return mogram;
     }
 
-    public static void init(Domain model, Arg... args) throws ContextException {
+    public static void init(ContextDomain model, Arg... args) throws ContextException {
         // initialize a model
         Map<String, List<ExecDependency>> depMap = ((ModelStrategy)model.getMogramStrategy()).getDependentPaths();
         Paths paths = Arg.selectPaths(args);
@@ -658,7 +658,7 @@ public class operator {
         throw new ModelException("do not know what model to create");
     }
 
-    public static Context add(Domain model, Identifiable... objects)
+    public static Context add(ContextDomain model, Identifiable... objects)
             throws ContextException, RemoteException {
         return add((Context)model, objects);
     }

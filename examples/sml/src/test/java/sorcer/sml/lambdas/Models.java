@@ -10,7 +10,7 @@ import sorcer.arithmetic.provider.impl.*;
 import sorcer.service.Morpher;
 import sorcer.core.provider.rendezvous.ServiceConcatenator;
 import sorcer.service.*;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.ent;
 
@@ -157,7 +157,7 @@ public class Models {
 	@Test
 	public void lambdaModelWithReturnPath() throws Exception {
 
-		Domain mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
+		ContextDomain mo = model(ent("multiply/x1", 10.0), ent("multiply/x2", 50.0),
 			    ent("add/x1", 20.0), ent("add/x2", 80.0),
 			    ent("arg/x1", 30.0), ent("arg/x2", 90.0),
 				lambda("add", (Context <Double> model) ->
@@ -238,7 +238,7 @@ public class Models {
 				context("multiply", inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 						result("multiply/result")));
 
-		Domain mdl = model(
+		ContextDomain mdl = model(
 				inVal("multiply/x1", 10.0), inVal("multiply/x2", 50.0),
 				inVal("add/x1", 20.0), inVal("add/x2", 80.0),
 				ent(sig("multiply", MultiplierImpl.class, result("multiply/out",

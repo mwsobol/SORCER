@@ -514,7 +514,7 @@ public interface SorcerConstants {
 
 	static final int TABLE_NAME = 1;
 
-	// Domain aspects
+	// ContextDomain aspects
 	static final int MODIFY_LEAFNODE = 0;
 
 	static final int ADD_LEAFNODE = 1;
@@ -571,7 +571,7 @@ public interface SorcerConstants {
 
 	static public String OBJECT_OWNER = "Owner";
 
-	static public String OBJECT_DOMAIN = "Domain";
+	static public String OBJECT_DOMAIN = "ContextDomain";
 
 	static public String OBJECT_SUBDOMAIN = "SubDomain";
 

@@ -11,7 +11,7 @@ import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.Function;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.service.*;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Serviceableness;
@@ -278,7 +278,7 @@ public class Srv extends Function<Object> implements Serviceableness,
 
     @Override
     public Object execute(Arg... args) throws ServiceException, RemoteException {
-        Domain mod = Arg.selectDomain(args);
+        ContextDomain mod = Arg.selectDomain(args);
         if (mod != null) {
             if (mod instanceof EntModel && impl instanceof ValueCallable) {
                 return ((ValueCallable) impl).call((Context) mod);

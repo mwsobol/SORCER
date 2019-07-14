@@ -89,7 +89,7 @@ public class ScripterThread extends Thread {
                 evalScript();
             }
 
-            if (target instanceof Domain &&  !isExerted) {
+            if (target instanceof ContextDomain &&  !isExerted) {
                 result = ((ServiceContext)target).getResponse();
                 logger.info(">>>>>>>>>>> model eval result: " + result);
             } else if (target instanceof Mogram) {

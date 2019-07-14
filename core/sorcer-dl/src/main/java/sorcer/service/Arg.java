@@ -34,10 +34,10 @@ public interface Arg extends Serializable, Service {
 
 	public String getName();
 
-	public static Domain selectDomain(Arg[] args) {
+	public static ContextDomain selectDomain(Arg[] args) {
 		for (Arg arg : args) {
-			if (arg instanceof Domain)
-				return (Domain) arg;
+			if (arg instanceof ContextDomain)
+				return (ContextDomain) arg;
 		}
 		return null;
 	}

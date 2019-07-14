@@ -83,7 +83,7 @@ public class EntModels {
 	public void createEntModel() throws Exception {
 
 		EntModel model = entModel(
-				"Hello Arithmetic Domain #1",
+				"Hello Arithmetic ContextDomain #1",
 				// inputs
 				val("x1"), val("x2"), val("x3", 20.0),
 				val("x4", 80.0),

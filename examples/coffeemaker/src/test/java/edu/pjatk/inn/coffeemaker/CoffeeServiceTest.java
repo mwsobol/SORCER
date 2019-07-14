@@ -5,7 +5,6 @@ import edu.pjatk.inn.coffeemaker.impl.DeliveryImpl;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -14,7 +13,7 @@ import org.sorcer.test.ProjectContext;
 import org.sorcer.test.SorcerTestRunner;
 import sorcer.core.provider.rendezvous.ServiceJobber;
 import sorcer.service.*;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 
 import static edu.pjatk.inn.coffeemaker.impl.Recipe.getRecipe;
 import static org.junit.Assert.assertEquals;
@@ -130,7 +129,7 @@ public class CoffeeServiceTest {
 		exert(cmt);
 
 		// order espresso with delivery
-		Domain mod = model(
+		ContextDomain mod = model(
 			val("recipe/key", "espresso"),
 			val("paid$", 120),
 			val("location", "PJATK"),

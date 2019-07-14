@@ -19,10 +19,7 @@ import net.jini.core.transaction.Transaction;
 import sorcer.core.signature.ObjectSignature;
 import sorcer.service.*;
 import sorcer.service.modeling.FilterException;
-import sorcer.service.Domain;
 import sorcer.service.modeling.Model;
-
-import java.rmi.RemoteException;
 
 /**
  *  * The SORCER model task extending the basic task implementation {@link Task}.

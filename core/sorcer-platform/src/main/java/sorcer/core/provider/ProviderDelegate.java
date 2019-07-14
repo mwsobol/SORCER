@@ -70,7 +70,7 @@ import sorcer.security.sign.TaskAuditor;
 import sorcer.security.util.SorcerPrincipal;
 import sorcer.service.*;
 import sorcer.service.jobber.JobberAccessor;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 import sorcer.service.modeling.Exploration;
 import sorcer.service.space.SpaceAccessor;
 import sorcer.service.txmgr.TransactionManagerAccessor;
@@ -1076,7 +1076,7 @@ public class ProviderDelegate {
 //				if (selector.equals("invoke") && (impl instanceof Subroutine || impl instanceof EntModel)) {
 //					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
 //					isContextual = true;
-//				} else if (selector.equals("compute") && impl instanceof Domain) {
+//				} else if (selector.equals("compute") && impl instanceof ContextDomain) {
 //					m = impl.getClass().getMethod(selector, Context.class, Arg[].class);
 //					isContextual = true;
 //				} else if (selector.equals("exert") && impl instanceof ServiceShell) {
@@ -1138,11 +1138,11 @@ public class ProviderDelegate {
 			Method m = null;
 			try {
 				// select the proper method for the bean type
-				if (selector.equals("exert") && (bean instanceof Domain
+				if (selector.equals("exert") && (bean instanceof ContextDomain
 					||  bean instanceof Subroutine)) {
 					m = bean.getClass().getMethod(selector, Mogram.class, Transaction.class, Arg[].class);
 					isContextual = true;
-				} else if (selector.equals("evaluate") && bean instanceof Domain) {
+				} else if (selector.equals("evaluate") && bean instanceof ContextDomain) {
 					m = bean.getClass().getMethod(selector, Context.class, Arg[].class);
 					isContextual = true;
 				} else if (selector.equals("invoke") && (bean instanceof Subroutine || bean instanceof Context)) {
@@ -1218,8 +1218,8 @@ public class ProviderDelegate {
 			}
 		} else if (impl instanceof Mogram && selector.equals("exert")) {
 			result = ((Mogram)m.invoke(impl, new Object[] { pars[0], null, args })).getContext();
-		} else if (impl instanceof Domain && selector.equals("evaluate")) {
-			result = ((Domain)m.invoke(impl, new Object[] { pars[0], args })).getContext();
+		} else if (impl instanceof ContextDomain && selector.equals("evaluate")) {
+			result = ((ContextDomain)m.invoke(impl, new Object[] { pars[0], args })).getContext();
 		} else if (impl instanceof Exploration && selector.equals("explore")) {
 			result = (Context) m.invoke(impl, new Object[] { pars[0], args });
 		} else {

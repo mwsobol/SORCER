@@ -153,7 +153,7 @@ public class Prc<T> extends Function<T> implements Invocation<T>,
 
 //	public T get(Arg... args) {
 //		try {
-//			Domain context = Arg.selectDomain(args);
+//			ContextDomain context = Arg.selectDomain(args);
 //			if (context != null) {
 //				return invoke((ServiceContext) context, args);
 //			} else {

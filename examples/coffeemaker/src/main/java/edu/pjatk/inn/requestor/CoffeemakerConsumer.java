@@ -6,7 +6,7 @@ import edu.pjatk.inn.coffeemaker.impl.CoffeeMaker;
 import edu.pjatk.inn.coffeemaker.impl.DeliveryImpl;
 import sorcer.core.requestor.ServiceConsumer;
 import sorcer.service.*;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 
 import java.io.File;
 
@@ -110,11 +110,11 @@ public class CoffeemakerConsumer extends ServiceConsumer {
         return drinkCoffee;
     }
 
-    private Domain createModel() throws Exception {
+    private ContextDomain createModel() throws Exception {
         exert(getRecipeTask());
 
         // order espresso with delivery
-        Domain mdl = srvModel(
+        ContextDomain mdl = srvModel(
             val("recipe/key", "espresso"),
             val("paid$", 120),
             val("location", "PJATK"),

@@ -42,7 +42,7 @@ import sorcer.eo.operator;
 import sorcer.service.*;
 import sorcer.service.Signature.Direction;
 import sorcer.service.modeling.*;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 import sorcer.util.ObjectCloner;
 import sorcer.util.Row;
 import sorcer.util.SorcerUtil;
@@ -1732,7 +1732,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return this;
 	}
 
-	public Context updateEntries(Domain context) throws ContextException {
+	public Context updateEntries(ContextDomain context) throws ContextException {
 		if (context != null) {
 			List<String> inpaths = ((ServiceContext) context).getInPaths();
 			List<String> outpaths = ((ServiceContext) context).getOutPaths();
@@ -2073,7 +2073,7 @@ public class ServiceContext<T> extends ServiceMogram implements
 	}
 
 	public String toStringComplete(String cr, StringBuffer sb) {
-		sb.append("Domain:").append(domainId);
+		sb.append("ContextDomain:").append(domainId);
 		sb.append(" SubDomain:" + subdomainId);
 		sb.append(" ID:" + mogramId);
 		sb.append("\nPaths: \n");
@@ -2845,7 +2845,7 @@ public class ServiceContext<T> extends ServiceMogram implements
     }
 
     @Override
-	public Domain add(Identifiable... objects) throws ContextException, RemoteException {
+	public ContextDomain add(Identifiable... objects) throws ContextException, RemoteException {
 		boolean changed = false;
 		for (Identifiable obj : objects) {
 			if (obj instanceof Function) {

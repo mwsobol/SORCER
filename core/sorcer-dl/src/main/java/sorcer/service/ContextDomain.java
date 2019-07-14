@@ -26,7 +26,7 @@ import java.rmi.RemoteException;
  *
  * Created by Mike Sobolewski on 7/26/16.
  */
-public interface Domain extends Mogram, Dependency, mog {
+public interface ContextDomain extends Mogram, Dependency, mog {
 
     /**
      * Returns a execute of the object at the returnPath as is
@@ -123,7 +123,7 @@ public interface Domain extends Mogram, Dependency, mog {
 	 * @return this domain updated
 	 * @throws ContextException
 	 */
-	public Domain add(Identifiable... objects) throws ContextException,
+	public ContextDomain add(Identifiable... objects) throws ContextException,
 			RemoteException;
 
     public void execDependencies(String path, Arg... args) throws ContextException;

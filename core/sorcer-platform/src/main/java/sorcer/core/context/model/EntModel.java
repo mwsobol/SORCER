@@ -25,7 +25,7 @@ import sorcer.core.context.model.ent.*;
 import sorcer.core.context.model.srv.Srv;
 import sorcer.core.invoker.ServiceInvoker;
 import sorcer.service.*;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 import sorcer.service.modeling.Model;
 import sorcer.service.modeling.Functionality;
 import sorcer.util.Row;
@@ -312,7 +312,7 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 }
 
 	@Override
-	public Domain add(Identifiable... objects) throws ContextException, RemoteException {
+	public ContextDomain add(Identifiable... objects) throws ContextException, RemoteException {
 		Prc p = null;
 		boolean changed = false;
 		for (Identifiable obj : objects) {

@@ -30,7 +30,7 @@ import sorcer.core.plexus.FidelityManager;
 import sorcer.core.plexus.MorphFidelity;
 import sorcer.core.plexus.MultiFiMogram;
 import sorcer.service.*;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 import sorcer.service.modeling.Model;
 import sorcer.eo.operator.Args;
 import sorcer.service.modeling.SupportComponent;
@@ -641,9 +641,9 @@ public class operator extends Operator {
 	}
 
 	public static MethodInvoker methodInvoker(String selector, Object methodObject,
-											  Domain context, Args... args) {
+                                              ContextDomain context, Args... args) {
 		MethodInvoker mi = new MethodInvoker(selector, methodObject, selector, args);
-		Domain cxt = context;
+		ContextDomain cxt = context;
 		if (context == null) {
 			cxt = new ServiceContext();
 		}
@@ -732,7 +732,7 @@ public class operator extends Operator {
 		return new ExecPath(name, invoker);
 	}
 
-	public static Domain scope(Prc callEntry) {
+	public static ContextDomain scope(Prc callEntry) {
 		return callEntry.getScope();
 	}
 

@@ -101,7 +101,7 @@ public class GroovyInvoker<T> extends ServiceInvoker<T> {
 		shell = new GroovyShell(Thread.currentThread().getContextClassLoader());
 		try {
 			if (args != null) {
-				Domain inCxt = Arg.selectDomain(args);
+				ContextDomain inCxt = Arg.selectDomain(args);
 				if (inCxt != null) {
 					if (invokeContext == null) {
 						invokeContext = (Context) inCxt;

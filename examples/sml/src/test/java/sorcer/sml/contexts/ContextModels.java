@@ -15,7 +15,7 @@ import sorcer.core.context.model.ent.Function;
 import sorcer.core.context.model.ent.Prc;
 import sorcer.service.Arg;
 import sorcer.service.Context;
-import sorcer.service.Domain;
+import sorcer.service.ContextDomain;
 import sorcer.service.Invocation;
 import sorcer.service.modeling.Model;
 
@@ -162,7 +162,7 @@ public class ContextModels {
 	@Test
 	public void invokerEntryService() throws Exception {
 
-		Domain em = model(
+		ContextDomain em = model(
 				inVal("x1", 20.0),
 				inVal("x2", 80.0),
 				result("result/y"));
@@ -175,7 +175,7 @@ public class ContextModels {
 	@Test
 	public void srvEntryLocalService() throws Exception {
 
-		Domain sm = model(
+		ContextDomain sm = model(
 				inVal("y1", 20.0),
 				inVal("y2", 80.0));
 
@@ -187,7 +187,7 @@ public class ContextModels {
 	@Test
 	public void srvEntryRemoteService() throws Exception {
 
-		Domain sm = model(
+		ContextDomain sm = model(
 				inVal("y1", 20.0),
 				inVal("y2", 80.0));
 

@@ -55,7 +55,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 
 	private Arg[] pars = new Arg[0];
 
-	private Domain context;
+	private ContextDomain context;
 
 	transient private Method m;
 
@@ -422,7 +422,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 		return sb.toString();
 	}
 
-	public void setContext(Domain context) {
+	public void setContext(ContextDomain context) {
 		this.context = context;
 	}
 

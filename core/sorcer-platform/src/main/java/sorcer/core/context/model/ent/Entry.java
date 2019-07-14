@@ -272,7 +272,7 @@ public class Entry<V> extends MultiFiSlot<String, V>
     }
 
     public Object execute(Arg... args) throws ServiceException, RemoteException {
-        Domain cxt = Arg.selectDomain(args);
+        ContextDomain cxt = Arg.selectDomain(args);
         if (cxt != null) {
             // entry substitution
             ((ServiceContext)cxt).putValue(key, impl);
