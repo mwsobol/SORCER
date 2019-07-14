@@ -5,6 +5,7 @@ import edu.pjatk.inn.coffeemaker.impl.DeliveryImpl;
 import edu.pjatk.inn.coffeemaker.impl.Recipe;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;

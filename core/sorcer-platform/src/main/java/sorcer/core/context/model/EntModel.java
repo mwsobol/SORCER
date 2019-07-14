@@ -16,7 +16,9 @@
  */
 package sorcer.core.context.model;
 
+import sorcer.co.tuple.ExecDependency;
 import sorcer.core.context.Contexts;
+import sorcer.core.context.ModelStrategy;
 import sorcer.core.context.PositionalContext;
 import sorcer.core.context.ServiceContext;
 import sorcer.core.context.model.ent.*;
@@ -473,7 +475,7 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 
 	protected void realizeDependencies(Arg... args) throws RemoteException,
 			RoutineException {
-		List<Evaluation> dependers = getDependers();
+		List<Evaluation> dependers = getModelDependers();
 		if (dependers != null && dependers.size() > 0) {
 			for (Evaluation<Object> depender : dependers) {
 				try {
@@ -489,6 +491,60 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 		}
 	}
 
+	public void execDependencies(String path, Arg... args) throws ContextException {
+		Map<String, List<ExecDependency>> dpm = ((ModelStrategy)mogramStrategy).getDependentPaths();
+		if (dpm != null && dpm.get(path) != null) {
+			List<ExecDependency> del = dpm.get(path);
+			Entry entry = entry(path);
+			if (del != null && del.size() > 0) {
+				for (ExecDependency de : del) {
+					List<Path> dpl = (List<Path>) de.getImpl();
+					if (de.getType().equals(Functionality.Type.FIDELITY)) {
+						Fidelity deFi = (Fidelity) de.annotation();
+						if (deFi.getOption() == Fi.Type.IF) {
+							if (((Fidelity) entry.getMultiFi().getSelect()).getName().equals(deFi.getName())) {
+								// apply only to matched fidelity
+								if (dpl != null && dpl.size() > 0) {
+									for (Path p : dpl) {
+										getValue(p.path, args);
+									}
+								}
+							}
+							continue;
+						} else {
+							// first select the requested fidelity
+							try {
+								entry.getMultiFi().selectSelect(((Fidelity) de.annotation()).getName());
+							} catch (ConfigurationException e) {
+								throw new ContextException(e);
+							}
+						}
+					} else if (de.getType().equals(Functionality.Type.CONDITION)) {
+						Conditional condition = de.getCondition();
+						if (condition.isTrue()) {
+							// apply only if condition is true
+							if (dpl != null && dpl.size() > 0) {
+								for (Path p : dpl) {
+									getValue(p.path, args);
+								}
+							}
+						}
+						continue;
+					}
+					if (dpl != null && dpl.size() > 0) {
+						for (Path p : dpl) {
+							getValue(p.path, args);
+						}
+					}
+
+				}
+			}
+		}
+	}
+
+	protected void execDependencies(Signature sig, Arg... args) throws ContextException {
+		execDependencies(sig.getName(), args);
+	}
 	/**
 	 * Returns an enumeration of all contextReturn marking variable nodes.
 	 *

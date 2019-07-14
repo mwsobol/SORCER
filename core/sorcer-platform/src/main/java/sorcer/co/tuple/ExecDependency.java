@@ -19,6 +19,7 @@ package sorcer.co.tuple;
 
 import sorcer.core.context.model.ent.Function;
 import sorcer.service.Conditional;
+import sorcer.service.Evaluation;
 import sorcer.service.Path;
 import sorcer.service.Paths;
 
@@ -36,7 +37,17 @@ public class ExecDependency extends Function<List<Path>> {
 
     private Paths dependees;
 
-    @SuppressWarnings("unchecked")
+    private List<Evaluation> evaluations;
+
+    public ExecDependency() {
+        key = "self";
+        name = "self";
+    }
+
+    public ExecDependency(String path) {
+        key = path;
+        name = path;
+    }
     public ExecDependency(String path, List<Path> paths) {
         key = path;
         name = path;
@@ -86,5 +97,12 @@ public class ExecDependency extends Function<List<Path>> {
         this.forEach = forEach;
     }
 
+    public List<Evaluation> getEvaluations() {
+        return evaluations;
+    }
+
+    public void setEvaluations(List<Evaluation> evaluations) {
+        this.evaluations = evaluations;
+    }
 
 }

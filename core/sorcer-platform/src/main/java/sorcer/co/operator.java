@@ -26,6 +26,7 @@ import sorcer.core.Index;
 import sorcer.core.Tag;
 import sorcer.core.SorcerConstants;
 import sorcer.core.context.*;
+import sorcer.core.context.model.EntModel;
 import sorcer.core.context.model.ent.*;
 import sorcer.core.plexus.FiEntry;
 import sorcer.core.provider.DatabaseStorer;
@@ -723,15 +724,15 @@ public class operator extends Operator {
         return de;
 	}
 
-    public static ExecDependency mdlDep(String path, List<Path> paths) {
+	public static ExecDependency fiDep(String fiName, List<Path> paths) {
+		ExecDependency de =  new ExecDependency(fiName, paths);
+		de.setType(Type.FIDELITY);
+		return de;
+	}
+
+	public static ExecDependency mdlDep(String path, List<Path> paths) {
         ExecDependency de =  new ExecDependency(path, paths);
         de.setType(Type.DOMAIN);
-        return de;
-    }
-
-    public static ExecDependency fiDep(String fiName, List<Path> paths) {
-        ExecDependency de =  new ExecDependency(fiName, paths);
-        de.setType(Type.FIDELITY);
         return de;
     }
 
@@ -741,6 +742,19 @@ public class operator extends Operator {
         return de;
 	}
 
+	public static ExecDependency mdlDep(Evaluation... evaluations) {
+		ExecDependency de = new ExecDependency();
+		de.setImpl(evaluations);
+		de.setType(Type.MODEL);
+		return de;
+	}
+
+	public static ExecDependency mdlDep(String path, Evaluation... evaluations) {
+		ExecDependency de = new ExecDependency(path);
+		de.setImpl(evaluations);
+		de.setType(Type.MODEL);
+		return de;
+	}
 
 	public static ExecDependency mdlDep(String path, Fidelity fi, List<Path> paths) {
 		ExecDependency de = new ExecDependency(path, paths);
@@ -1535,6 +1549,7 @@ public class operator extends Operator {
 		List<ExecDependency> functional = new ArrayList<>();
 		List<ExecDependency> domain = new ArrayList<>();
         List<ExecDependency> vals = new ArrayList<>();
+		List<ExecDependency> modelDeps = new ArrayList<>();
 
 		for (Evaluation ed : dependers) {
 			if (ed instanceof ExecDependency && ((ExecDependency) ed).getType() == Type.FUNCTION) {
@@ -1543,7 +1558,9 @@ public class operator extends Operator {
 				domain.add((ExecDependency)ed);
 			} else if (ed instanceof ExecDependency && ((ExecDependency) ed).getType() == Type.VAL) {
                 vals.add((ExecDependency)ed);
-            }
+            } else if (ed instanceof ExecDependency && ((ExecDependency) ed).getType() == Type.MODEL) {
+				modelDeps.add((ExecDependency)ed);
+			}
 		}
 
 		ExecDependency[] edArray;
@@ -1556,7 +1573,10 @@ public class operator extends Operator {
         } else if (functional.size() > 0) {
 			edArray = new ExecDependency[functional.size()];
 			return funcDependency(dependee, functional.toArray(edArray));
-        } else {
+        } else if (modelDeps.size() > 0) {
+            edArray = new ExecDependency[modelDeps.size()];
+            return funcDependency(dependee, modelDeps.toArray(edArray));
+		} else {
 			return funcDependency(dependee, dependers);
 		}
     }
@@ -1651,14 +1671,19 @@ public class operator extends Operator {
 			if (d != null) {
 				path = ((Identifiable)d).getName();
 				if (path != null && path.equals("self")) {
-					((Entry) d).setName(((Domain) dependee).getName());
+					d.setName(((Domain) dependee).getName());
 				}
 
 				if (d instanceof ExecDependency && ((ExecDependency) d).getType().equals(Type.CONDITION)) {
 					((ExecDependency) d).getCondition().setConditionalContext((Context) dependee);
 				}
+
 				if (!dependee.getDependers().contains(d)) {
-					dependee.getDependers().add(d);
+				    if (((Functionality)d).getType()== Type.MODEL) {
+                        ((EntModel)dependee).getModelDependers().add(d);
+                    } else {
+                        dependee.getDependers().add(d);
+                    }
 				}
 			}
 		}
@@ -1666,7 +1691,7 @@ public class operator extends Operator {
 		if (dependee instanceof Domain && dependers.length > 0 && dependers[0] instanceof ExecDependency) {
 			Map<String, List<ExecDependency>> dm = ((ModelStrategy)((Domain) dependee).getMogramStrategy()).getDependentPaths();
 			for (Evaluation e : dependers) {
-				if (e != null) {
+				if (e != null && ((Functionality)e).getType() != Type.MODEL) {
 					path = ((Identifiable)e).getName();
 					if (dm.get(path) != null) {
 						if (!dm.get(path).contains(e)) {

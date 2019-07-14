@@ -26,9 +26,11 @@ import sorcer.service.modeling.*;
 import sorcer.util.bdb.objects.UuidObject;
 import sorcer.util.url.sos.SdbUtil;
 
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static sorcer.mo.operator.add;
@@ -142,6 +144,12 @@ public class Function<T> extends Entry<T> implements Functionality<T>, Evaluatio
 				out = (T) ((Callable)val).call(args);
 			} else if (val instanceof Service) {
 				out = (T) ((Service)val).execute(args);
+			} else if (val != null && val.getClass().isArray()) {
+				// evaluation of dependences of the model
+				for (Object dep : (Evaluation[])val) {
+					out = (T) ((Evaluation) dep).evaluate(args);
+				}
+				return out;
 			}
 		} catch (Exception e) {
 			throw new EvaluationException(e);

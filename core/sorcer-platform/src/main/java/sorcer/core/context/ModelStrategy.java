@@ -38,8 +38,12 @@ public class ModelStrategy implements MogramStrategy, Serializable {
 
     protected transient FileURLHandler dataService;
 
-    // dependency management for this Context
+    // dependency management for this Model
+    protected List<Evaluation> modelDependers = new ArrayList<Evaluation>();
+
+    // dependency management for this Model entries
     protected List<Evaluation> dependers = new ArrayList<Evaluation>();
+
 
     protected boolean modelDependeciesExecuted = false;
 
@@ -187,6 +191,21 @@ public class ModelStrategy implements MogramStrategy, Serializable {
 
     public void setCurrentSelector(String currentSelector) {
         this.currentSelector = currentSelector;
+    }
+
+    public void addMdelDependers(Evaluation... dependers) {
+        if (this.modelDependers == null)
+            this.modelDependers = new ArrayList<Evaluation>();
+        for (Evaluation depender : dependers)
+            this.modelDependers.add(depender);
+    }
+
+    public List<Evaluation> getModelDependers() {
+        return modelDependers;
+    }
+
+    public void setModelDependers(List<Evaluation> modelDependers) {
+        this.modelDependers = modelDependers;
     }
 
     public void addDependers(Evaluation... dependers) {

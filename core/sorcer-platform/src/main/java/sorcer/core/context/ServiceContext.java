@@ -3557,6 +3557,10 @@ public class ServiceContext<T> extends ServiceMogram implements
 		return ((ModelStrategy)mogramStrategy).getDependers();
 	}
 
+	public List<Evaluation> getModelDependers() {
+		return ((ModelStrategy)mogramStrategy).getModelDependers();
+	}
+
 	public Direction getDirection() {
 		return direction;
 	}

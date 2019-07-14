@@ -101,7 +101,7 @@ public class ContextModels {
 
 		// created dependency of mdl2 on mdl1 via a context copier
 		Copier cp = copier(mdl1, ents("arg/x1", "arg/x2"), mdl2, ents("y1", "y2"));
-		dependsOn(mdl2, cp);
+		dependsOn(mdl2, mdlDep(cp));
 
 		Double result = (Double) exec(mdl2);
 //		logger.info("result: " + result);
