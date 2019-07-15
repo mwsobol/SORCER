@@ -319,8 +319,14 @@ public class EntModel extends PositionalContext<Object> implements Model, Invoca
 			String pn = obj.getName();
 			if (obj instanceof Prc) {
 				p = (Prc) obj;
+				if (p.getScope() == null) {
+					p.setScope(this);
+				}
 			} else if (obj instanceof Functionality || obj instanceof Setup) {
 				putValue(pn, obj);
+				if (obj instanceof Functionality  && ((Functionality)obj).getScope() == null) {
+					((Functionality)obj).setScope(this);
+				}
 			} else if (obj instanceof Entry) {
 				putValue(pn, ((Entry)obj).asis());
 				if (((Entry)obj).annotation() != null) {
