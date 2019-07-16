@@ -409,7 +409,7 @@ public class SpaceTaker implements Runnable {
 			// sab 7/15/2019; added try catch around doEnveope
 			Entry result = null;
 			try {
-				doEnvelope(ee, (txnCreated == null) ? null
+				result = doEnvelope(ee, (txnCreated == null) ? null
 						: txnCreated.transaction, threadId, txnCreated);
 			} catch (Exception e) {
 				logger.warn("error executing doEnvelope()", e);
