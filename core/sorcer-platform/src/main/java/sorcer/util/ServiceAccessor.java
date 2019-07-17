@@ -78,8 +78,8 @@ public class ServiceAccessor implements DynamicAccessor {
 	// since then falls back on LUSs managed by ServiceAccessor
 	// wait for service accessor 5 sec  = LUS_REPEAT x 500
 	final static int LUS_REPEAT = 10;
-
-    private static ServiceDiscoveryManager sdManager = null;
+	private static LeaseRenewalManager lrm = null;
+	private static ServiceDiscoveryManager sdManager = null;
 	private static LookupCache lookupCache = null;
 	protected static String[] lookupGroups = Sorcer.getLookupGroups();
 	private static int MIN_MATCHES = Sorcer.getLookupMinMatches();
@@ -90,7 +90,7 @@ public class ServiceAccessor implements DynamicAccessor {
         openDiscoveryManagement(config);
     }
 
-	public ServiceDiscoveryManager getServiceDiscoveryManager() {
+	static public ServiceDiscoveryManager getServiceDiscoveryManager() {
 		return sdManager;
 	}
 
@@ -175,8 +175,9 @@ public class ServiceAccessor implements DynamicAccessor {
                 logger.info("[openDiscoveryManagement] SORCER Group(s): {}, Locators: {}",
                              SorcerUtil.arrayToString(groups), SorcerUtil.arrayToString(locators));
 
+				lrm = new LeaseRenewalManager(config);
                 DiscoveryManagement ldManager = new LookupDiscoveryManager(groups, locators, null, config);
-				sdManager = new ServiceDiscoveryManager(ldManager, new LeaseRenewalManager(config), config);
+				sdManager = new ServiceDiscoveryManager(ldManager, lrm, config);
 			} catch (Exception e) {
 				logger.error("openDiscoveryManagement", e);
 			}
@@ -185,6 +186,13 @@ public class ServiceAccessor implements DynamicAccessor {
 		openCache();
 	}
 
+	public static LeaseRenewalManager getLeaseRenewalManager() {
+		return lrm;
+	}
+
+	public static void clearLeaseRenewalManager() {
+		lrm.clear();
+	}
 
 	/**
 	 * Creates a lookup cache for the existing service discovery manager
@@ -202,7 +210,7 @@ public class ServiceAccessor implements DynamicAccessor {
 	/**
 	 * Terminates a lookup cache used by this ServiceAccessor.
 	 */
-	private void closeLookupCache() {
+	static private void closeLookupCache() {
 		if (lookupCache != null) {
 			lookupCache.terminate();
 			lookupCache = null;
@@ -296,7 +304,8 @@ public class ServiceAccessor implements DynamicAccessor {
         return locators.toArray(new LookupLocator[locators.size()]);
 	}
 
-    public void terminateDiscovery() {
+    static public void terminateDiscovery() {
+		closeLookupCache();
 		sdManager.terminate();
 		sdManager = null;
 	}
