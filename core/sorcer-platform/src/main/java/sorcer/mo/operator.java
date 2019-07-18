@@ -915,11 +915,11 @@ public class operator {
         return disciplne;
     }
 
-    public static Governance gov(Contextion... contextions) {
-        return gov(null, contextions);
+    public static Governance gov(Discipline... disciplines) {
+        return gov(null, disciplines);
     }
 
-    public static Governance gov(String name, Contextion... contextions) {
+    public static Governance gov(String name, Discipline... contextions) {
         Governance md = new Governance(null, contextions);
         if (name != null) {
             md.setName(name);

@@ -47,7 +47,7 @@ public class ServiceExertionTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		// create an mograms
+		// create an disciplines
 		eTask = createTask();	
 		eJob = createJob();
 	}
@@ -98,7 +98,7 @@ public class ServiceExertionTest {
 	@Test
 	public void accessingComponentExertionsTest() throws EvaluationException,
 			RemoteException, RoutineException {
-		//logger.info("eJob mograms: " + names(mograms(eJob)));
+		//logger.info("eJob disciplines: " + names(disciplines(eJob)));
 		assertTrue(names(mograms(eJob)).equals(list("t4", "t5", "j2", "t3", "j1")));
 
 		//logger.info("t4 exertion: " + exertion(eJob, "t4"));
@@ -107,7 +107,7 @@ public class ServiceExertionTest {
 		//logger.info("j2 exertion: " + exertion(eJob, "j2"));
 		assertTrue(name(xrt(eJob, "j1/j2")).equals("j2"));
 		
-		//logger.info("j2 exertion names: " + names(mograms(exertion(eJob, "j2"))));
+		//logger.info("j2 exertion names: " + names(disciplines(exertion(eJob, "j2"))));
 		assertTrue(names(mograms(xrt(eJob, "j1/j2"))).equals(list("t4", "t5", "j2")));
 	}
 

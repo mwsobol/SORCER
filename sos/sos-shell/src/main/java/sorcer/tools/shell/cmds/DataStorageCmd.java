@@ -229,7 +229,7 @@ public class DataStorageCmd extends ShellCmd {
 			throw new MogramException(e);
 		}
 //		if (all.size() == 0) {
-//			out.println("No monitored mograms at this time.");
+//			out.println("No monitored disciplines at this time.");
 //			return;
 //		}
 //		recordInfos = new RecordInfo[all.size()];

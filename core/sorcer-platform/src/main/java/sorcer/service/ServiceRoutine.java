@@ -838,7 +838,7 @@ public abstract class ServiceRoutine extends ServiceMogram implements Subroutine
         List<Mogram> exertions = getAllMograms();
         // logger.info(" eval = " + eval);
         // logger.info(" this exertion = " + this);
-        // logger.info(" mograms = " + mograms);
+        // logger.info(" disciplines = " + disciplines);
         for (Mogram e : exertions) {
             if (e instanceof Subroutine && !((Subroutine)e).isJob()) {
                 // logger.info(" exertion i = "+ e.getName());

@@ -35,22 +35,22 @@ public class Pools {
 
 	public static final String FI_PROJECTIONS = "projections";
 
-	// a pool of fidelities to configure mograms of this environment
+	// a pool of fidelities to configure disciplines of this environment
 	final public static Pool<Uuid, Pool<Fidelity, Service>> fiPool = new Pool<>();
 
-	// a pool of signatures to configure mograms of this environment
+	// a pool of signatures to configure disciplines of this environment
 	final public static Pool<Uuid, Pool<String, Signature>> sigPool = new Pool<>();
 
-	// a pool of entries to configure mograms of this environment
+	// a pool of entries to configure disciplines of this environment
 	final public static Pool<Uuid, Pool<String, Entry<Object>>> entPool = new Pool<>();
 
-	// a pool of mograms to configure top-level mograms of this environment
+	// a pool of disciplines to configure top-level disciplines of this environment
 	final public static Pool<Uuid, Pool<String, Mogram>> mogPool = new Pool<>();
 
-	// a pool of entries to configure mograms of this environment
+	// a pool of entries to configure disciplines of this environment
 	final public static Pool<Uuid, Pool<String, Entry<Object>>> derivativePool = new Pool<>();
 
-	// a pool of setup configurations  for mograms of this environment
+	// a pool of setup configurations  for disciplines of this environment
 	final public static Pool<Uuid, Pool<String, Config>> configPool = new Pool<>();
 
 	public static Pool<Fidelity, Service> getFiPool(Uuid mogramId) {

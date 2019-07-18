@@ -176,7 +176,7 @@ public class MogramDispatcherFactory implements DispatcherFactory {
      *
      * @param mogram
      *            The SORCER job that will be used to perform a collection of
-     *            components mograms
+     *            components disciplines
      */
     @Override
     public Dispatcher createDispatcher(Mogram mogram, Exerter provider, String... config) throws DispatcherException {

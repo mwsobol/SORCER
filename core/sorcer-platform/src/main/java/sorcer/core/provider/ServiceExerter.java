@@ -1539,7 +1539,7 @@ public class ServiceExerter implements Identifiable, Exerter, ServiceIDListener,
 		}
 
 		// TODO transaction handling to be implemented when needed
-		// TO DO HANDLING SUSSPENDED mograms
+		// TO DO HANDLING SUSSPENDED disciplines
 		// if (((ServiceRoutine) exertion).monitorSession != null) {
 		// new Thread(new ServiceThread(exertion, this)).start();
 		// return exertion;

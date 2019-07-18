@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * User: Pawel Rubach
  * Date: 23.10.13
  *
- * Sort a list of mograms taking into account the dependencies in pipes and
+ * Sort a list of disciplines taking into account the dependencies in pipes and
  * the tasks and jobs hierarchy. The sorter also determines the Flow for jobs
  * that have the Flow setValue to AUTO.
  *
@@ -87,7 +87,7 @@ public class ExertionSorter {
 
 
     /**
-     * Determine the Flow (PAR or SEQ) for mograms that have the Flow setValue to AUTO
+     * Determine the Flow (PAR or SEQ) for disciplines that have the Flow setValue to AUTO
      *
      * @param topXrt
      * @param sortedSubXrt
@@ -118,7 +118,7 @@ public class ExertionSorter {
     }
 
     /**
-     * Actually rearrange the mograms in the job according to the sorting
+     * Actually rearrange the disciplines in the job according to the sorting
      *
      * @param topXrt
      * @param sortedExertions
@@ -141,7 +141,7 @@ public class ExertionSorter {
         for (Mogram xrt : sortedExertions)
             exertionsAfter.add(xrt.getName());
         if (!topXrt.getMograms().equals(sortedSubset)) {
-            logger.info("Order of mograms for " + topXrt.getName() + " will be changed: ");
+            logger.info("Order of disciplines for " + topXrt.getName() + " will be changed: ");
             logger.info("From: " + exertionsBefore);
             logger.info("To: " + exertionsAfter);
             topXrt.getMograms().removeAll(sortedSubset);
@@ -158,7 +158,7 @@ public class ExertionSorter {
     }
 
     /**
-     * Add the job and all inner mograms as vertexes
+     * Add the job and all inner disciplines as vertexes
      *
      * @param topXrt
      * @throws SortingException

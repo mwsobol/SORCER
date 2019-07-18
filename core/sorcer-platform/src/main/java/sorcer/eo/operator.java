@@ -2661,7 +2661,7 @@ operator extends Operator {
 //				logger.debug("to context: "
 //						+ ((Subroutine) p.out).getDataContext().getName()
 //						+ " contextReturn: " + p.outPath);
-                // find component mograms for thir paths
+                // find component disciplines for thir paths
                 if (!p.isExertional()) {
                     p.out = (Subroutine)job.getComponentMogram(p.outComponentPath);
                     p.in = (Subroutine)job.getComponentMogram(p.inComponentPath);

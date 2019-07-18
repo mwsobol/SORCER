@@ -51,17 +51,17 @@ public class EmxCmd extends ShellCmd {
 			+ "\n\t\t\t  | [ -a | -d | -f | -r | -y | <exertion index>] "
 			+ "\n\t\t\t  | (-e | -c | -cc | -ccc) [<exertion index>] [-s <filename>]";
 
-		COMMAND_HELP = "Support for monitoring runtime mograms;"
+		COMMAND_HELP = "Support for monitoring runtime disciplines;"
 				+ "\n  -mode   show current mode"
 				+ "\n  ('emx' mode) show EMX services or ('xrt' mode) print the selected exertion"
 				+ "\n  <EMX index>   select the EMX given <EMX index>"
 				+ "\n  -v   print the selected EMX service/exertion"
 				+ "\n  -x   clearSessions the selection of MX service/exertion"
-				+ "\n  -a   show all monitored mograms"
-				+ "\n  -d   show done monitored mograms"
-				+ "\n  -f   show failed monitored mograms"
-				+ "\n  -r   show running monitored mograms"
-				+ "\n  -y   show asynchronous monitored mograms"
+				+ "\n  -a   show all monitored disciplines"
+				+ "\n  -d   show done monitored disciplines"
+				+ "\n  -f   show failed monitored disciplines"
+				+ "\n  -r   show running monitored disciplines"
+				+ "\n  -y   show asynchronous monitored disciplines"
 				+ "\n  -e   print the selected exertion"
 				+ "\n  <exertion index>   select the exertion given <exertion index>"
 				+ "\n  -c   print the data context of selected exertion"
@@ -296,7 +296,7 @@ public class EmxCmd extends ShellCmd {
 			}
 		}
 		if (all.size() == 0) {
-			out.println("No monitored mograms at this time.");
+			out.println("No monitored disciplines at this time.");
 			return;
 		}
 

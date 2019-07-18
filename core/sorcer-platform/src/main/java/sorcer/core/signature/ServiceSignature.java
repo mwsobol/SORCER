@@ -68,9 +68,9 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	protected List<Evaluation> dependers = new ArrayList<Evaluation>();
 
 	// Must initialize to ANY to have correct JavaSpace workers behavior
-	// to have mograms with providerName/serviceInfo specified going to
+	// to have disciplines with providerName/serviceInfo specified going to
 	// providers
-	// named "providerName". Otherwise, mograms with providerName/serviceInfo
+	// named "providerName". Otherwise, disciplines with providerName/serviceInfo
 	// can
 	// be picked up by workers with template null/serviceInfo that are not named
 	// "providerName"
@@ -98,7 +98,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	/** indicates whether this method is being processed by the exert method */
 	protected boolean isActive = true;
 
-	// shell can be used to exert mograms locally or remotely (as ServiceExerter)
+	// shell can be used to exert disciplines locally or remotely (as ServiceExerter)
 	protected boolean isShellRemote = false;
 
 	// context input connector

@@ -73,7 +73,7 @@ public class ExertionEnvelop implements Entry {
 	}
 	
 	/**
-	 * Create a template with an exertionID as the mograms's parentID.
+	 * Create a template with an exertionID as the disciplines's parentID.
 	 * 
 	 * @param exertionID
 	 * @param providerName
@@ -88,7 +88,7 @@ public class ExertionEnvelop implements Entry {
 	}
 	
 	/**
-	 * Create a template for mograms.
+	 * Create a template for disciplines.
 	 * 
 	 * @param exertionID
 	 * @param providerName

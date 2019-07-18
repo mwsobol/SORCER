@@ -49,7 +49,7 @@ import java.util.*;
  * instances with its own service {@link sorcer.service.Context} and a collection of service
  * {@link sorcer.service.Signature}s. The job's signature is usually referring to a
  * {@link Jobber} and the job's context describes the composition
- * of component mograms as defined by the Interpreter programming pattern.
+ * of component disciplines as defined by the Interpreter programming pattern.
  * 
  * @see Subroutine
  * @see Task
@@ -73,7 +73,7 @@ public class Job extends Transroutine {
 	 */
 	public Job() {
 		this("job-" + count++);
-		// mograms = Collections.synchronizedList(new ArrayList<Subroutine>());
+		// disciplines = Collections.synchronizedList(new ArrayList<Subroutine>());
 	}
 
 	/**
@@ -149,9 +149,9 @@ public class Job extends Transroutine {
 	}
 
 	/**
-	 * Returns the number of mograms in this Job.
+	 * Returns the number of disciplines in this Job.
 	 * 
-	 * @return the number of mograms in this Job.
+	 * @return the number of disciplines in this Job.
 	 */
 	public int size() {
 		return mograms.size();
@@ -346,7 +346,7 @@ public class Job extends Transroutine {
 	 * Return true if this composite <code>Job</code> is a tree.
 	 * 
 	 * @param visited
-	 *            a set of visited mograms
+	 *            a set of visited disciplines
 	 * @return true if this <code>Job</code> composite is a tree
 	 * @see Subroutine#isTree()
 	 */

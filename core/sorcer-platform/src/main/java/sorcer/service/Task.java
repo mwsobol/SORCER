@@ -300,11 +300,11 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 	}
 
 	/**
-	 * Returns true; elementary mograms are always "trees."
+	 * Returns true; elementary disciplines are always "trees."
 	 * 
 	 * @param visited
 	 *            ignored
-	 * @return true; elementary mograms are always "trees"
+	 * @return true; elementary disciplines are always "trees"
 	 * @see Subroutine#isTree()
 	 */
 	public boolean isTree(Set visited) {
@@ -353,7 +353,7 @@ public class Task extends ServiceRoutine implements ElementaryRequest {
 	 */
 	@Override
 	public Mogram addMogram(Mogram component) {
-		throw new RuntimeException("Tasks do not contain component mograms!");
+		throw new RuntimeException("Tasks do not contain component disciplines!");
 	}
 
 	public Task getDelegate() {

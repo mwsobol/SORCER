@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * The alternative Subroutine that executes sequentially a collection of optional
- * mograms. It executes the first optExertion in the collection such that its
+ * disciplines. It executes the first optExertion in the collection such that its
  * condition is true.
  * 
  * @author Mike Sobolewski

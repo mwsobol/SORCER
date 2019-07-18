@@ -242,7 +242,7 @@ public class MethodInvoker<T> extends ServiceInvoker<T> implements MethodInvokin
 						parameters2[0] = parameters[0];
 						parameters2[1] = new Arg[0];
 						parameters = parameters2;
-					// ignore default setup for exerting mograms
+					// ignore default setup for exerting disciplines
 					} else if (Mogram.class.isAssignableFrom(paramTypes[0])
 							&& selector.equals("exert"))	{
 						paramTypes = new Class[3];

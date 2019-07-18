@@ -752,7 +752,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     /**
      * <p>
-     * Assigns a monitor session for this mograms.
+     * Assigns a monitor session for this disciplines.
      * </p>
      *
      * @param monitorSession the monitorSession to set

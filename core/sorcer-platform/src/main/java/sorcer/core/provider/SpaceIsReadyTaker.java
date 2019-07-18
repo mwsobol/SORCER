@@ -83,7 +83,7 @@ public class SpaceIsReadyTaker extends SpaceTaker {
 				// + ee.describe());
 				// }
 				// after 'take' timeout first cleanup and sleep for a while
-				// before 'taking' mograms again
+				// before 'taking' disciplines again
 				if (ee == null) {
 					if (txnCreated != null) {
 						txnCreated.transaction.abort();

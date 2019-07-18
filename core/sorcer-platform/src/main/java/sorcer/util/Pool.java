@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class defines pools of multifidelities to be injected in deployment
- * of mograms based on a pool types.
+ * of disciplines based on a pool types.
  */
 public class Pool<K,V> extends ConcurrentHashMap<K,V> {
 

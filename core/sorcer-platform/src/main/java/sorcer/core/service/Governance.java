@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Governance implements Contextion, Collaboration, FederatedRequest {
+public class Governance implements Contextion, FederatedRequest {
 
 	private static final long serialVersionUID = 1L;
 
@@ -55,9 +55,7 @@ public class Governance implements Contextion, Collaboration, FederatedRequest {
 
     protected GovernanceExplorer explorer;
 
-    protected Map<String, Mogram> mograms = new HashMap<>();
-
-    protected Map<String, Contextion> contextions = new HashMap<>();
+    protected Map<String, Discipline> disciplines = new HashMap<>();
 
     public Governance() {
         this(null);
@@ -70,14 +68,10 @@ public class Governance implements Contextion, Collaboration, FederatedRequest {
             this.name = name;
         }
     }
-    public Governance(String name, Contextion[] contextions) {
+    public Governance(String name, Discipline[] Discipline) {
         this(name);
-        for (Contextion cxt : contextions) {
-            if (cxt instanceof Collaboration) {
-                this.mograms.put(cxt.getName(), (Mogram) cxt);
-            } else {
-                this.contextions.put(cxt.getName(), cxt);
-            }
+        for (Discipline disc : Discipline) {
+                this.disciplines.put(disc.getName(), disc);
         }
     }
 
@@ -105,12 +99,12 @@ public class Governance implements Contextion, Collaboration, FederatedRequest {
         this.contextionPaths = contextionPaths;
     }
 
-    public Map<String, Contextion> getContextions() {
-		return contextions;
+    public Map<String, Discipline> getDisciplines() {
+		return disciplines;
 	}
 
-	public Contextion getContextion(String name) {
-		return contextions.get(name);
+	public Discipline getDisciplines(String name) {
+		return disciplines.get(name);
 	}
 
     public GovernanceExplorer getExplorer() {
@@ -122,13 +116,7 @@ public class Governance implements Contextion, Collaboration, FederatedRequest {
     }
 
 	public Discipline getDiscipline(String name) {
-        Contextion cxt = contextions.get(name);
-        if (cxt instanceof Discipline) {
-            return (Discipline) cxt;
-        } else {
-            new ConfigurationException("no such discipline: " + name);
-        }
-        return null;
+        return disciplines.get(name);
     }
 
 	// default instance new Return(Context.RETURN);
@@ -203,14 +191,4 @@ public class Governance implements Contextion, Collaboration, FederatedRequest {
 	public Object execute(Arg... args) throws ServiceException, RemoteException {
 		return null;
 	}
-
-    @Override
-    public Map<String, Mogram> getChildren() {
-        return mograms;
-    }
-
-    @Override
-    public Mogram getChild(String name) {
-        return mograms.get(name);
-    }
 }
