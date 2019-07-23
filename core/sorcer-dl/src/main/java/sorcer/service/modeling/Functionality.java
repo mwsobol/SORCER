@@ -53,7 +53,7 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 		VDD,    // derivative difference
 		VFD,    // var finite difference
 		VPFD,   // var parallel finite difference
-		SPFD    // model shared parallel finite difference
+		PMFD    // parallel model finite difference
 	}
 
 	public enum MathType {
