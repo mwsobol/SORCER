@@ -38,7 +38,7 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 	 * meaning to the client
 	 */
 	public enum Type {
-		INPUT, CONSTANT, DOMAIN_CONSTANT, INVARIANT, OUTPUT, SHARED, INOUT, RESPONSE, DESIGN, INITIAL_DESIGN, PARAMETER,
+		INPUT, CONSTAPNT, DOMAIN_CONSTANT, INVARIANT, OUTPUT, SHARED, INOUT, RESPONSE, DESIGN, INITIAL_DESIGN, PARAMETER,
 		LINKED, CONSTRAINT, OBJECTIVE, DERIVATIVE, GRADIENT, RANDOM, BOUNDED, FUNDAMENTAL, RAW, DELEGATION, COMPOSITION,
 		MULTIVAL, PRED, DOMAIN_PRED, FILTER, PERSISTER, EVALUATOR, EVALUATION, PRODUCT, WATCHABLE, ENT, PROC,
 		NEURON, VAR, SRV, LAMBDA, VAL, THRESHOLD, BIAS, FUNCTION, DATA, CONTEXT, ARRAY, LIST, MODEL, DOMAIN, EXERTION, MOGRAM,
@@ -50,10 +50,11 @@ public interface Functionality<T> extends Identifiable, ent<T> {
 		// Multidiscipline Feasible (MDF)
 		 AAO, SAND, IDF, MDF, MDA, NONE,
 
-		VDD,    // derivative difference
-		VFD,    // var finite difference
-		VPFD,   // var parallel finite difference
-		PMFD    // parallel model finite difference
+		// Finite Difference Functionality
+		DFD,   	// derivative finite difference - finite difference evaluators
+		PDFD,  	// parallel derivative finite difference
+		MFD,	// model finite difference (GradientDifferentiator)
+		PMFD   	// parallel model finite difference
 	}
 
 	public enum MathType {

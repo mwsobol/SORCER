@@ -313,7 +313,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 	}
 
 	public boolean isActive() {
-		logger.info("Returning "+name+".isActive()="+isActive);
+		logger.info("Returning "+name+".isLazy()="+isActive);
 		return isActive;
 	}
 

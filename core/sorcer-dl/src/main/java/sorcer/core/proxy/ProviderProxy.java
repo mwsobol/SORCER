@@ -274,7 +274,7 @@ public class ProviderProxy implements Serializable {
 				return server;
 			} else if ("getProxyTrustIterator".equals(selector)) {
 				return new SingletonProxyTrustIterator(server);
-			} else if ("isActive".equals(selector)) {
+			} else if ("isLazy".equals(selector)) {
 				return ((Exerter) proxy).isBusy();
 			} else {
 				return super.doInvoke(server, selector, m, args);
