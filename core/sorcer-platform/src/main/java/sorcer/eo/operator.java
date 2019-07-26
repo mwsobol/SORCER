@@ -1938,7 +1938,7 @@ operator extends Operator {
     public static Fidelity fis(String fidelity, List<Path> paths, String gradient) {
         FidelityList  fl = new FidelityList(paths.size());
         for (Path path : paths) {
-            fl.add(fi(fidelity, path.getName(), gradient));
+            fl.add(gFi(fidelity, path.getName(), gradient));
         }
         return new Projection(fl);
     }
