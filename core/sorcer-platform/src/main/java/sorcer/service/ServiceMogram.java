@@ -81,6 +81,9 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     protected Projection projection;
 
+    // the last morphed projection
+    protected String[] metaFiNames;
+
     // list of fidelities of this mogram
     protected String[] profile;
 
@@ -906,6 +909,7 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
     @Override
     public void morph(String... metaFiNames) throws ConfigurationException {
         if (fiManager != null) {
+            this.metaFiNames = metaFiNames;
             try {
                 fiManager.morph(metaFiNames);
             } catch (EvaluationException | RemoteException e) {
@@ -1136,6 +1140,15 @@ public abstract class ServiceMogram extends MultiFiSlot<String, Object> implemen
 
     public void setEvaluated(boolean evaluated) {
         isEvaluated = evaluated;
+    }
+
+
+    public String[] getMetaFiNames() {
+        return metaFiNames;
+    }
+
+    public void setMetaFiNames(String[] metaFiNames) {
+        this.metaFiNames = metaFiNames;
     }
 
     public Mogram clear() throws MogramException {

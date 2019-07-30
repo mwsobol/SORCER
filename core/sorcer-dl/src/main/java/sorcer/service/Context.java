@@ -158,6 +158,8 @@ public interface Context<T> extends Contextion, ContextDomain, Selfable, Respons
 
 	final static String DATA_MODEL = "Data ContextDomain";
 
+	final static String SRV_PROJECTION = "service/projection";
+
 	/** EMPTY LEAF NODE i.e. node with no data and not empty string */
 	final static String EMPTY_LEAF = ":Empty";
 

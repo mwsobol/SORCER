@@ -26,6 +26,7 @@ import sorcer.core.exertion.ObjectTask;
 import sorcer.core.invoker.MethodInvoker;
 import sorcer.core.provider.exerter.ServiceShell;
 import sorcer.service.*;
+import sorcer.service.modeling.Functionality;
 import sorcer.service.modeling.Modeling;
 import sorcer.service.modeling.sig;
 
@@ -361,8 +362,16 @@ public class ObjectSignature extends ServiceSignature implements sig {
 				((Modeling)obj).setContext(inContext);
 				((Modeling)obj).initializeBuilder();
 			} catch (ContextException e) {
-				logger.error("Build isolation failed", e);
+				logger.error("instance creation failed", e);
 				throw new SignatureException("Build isolation failed", this, e);
+			}
+		}
+		if (inContext != null && obj instanceof ServiceMogram && inContext.get(Context.SRV_PROJECTION) != null) {
+			try {
+				// morph new service mogram with a given projection
+				((ServiceMogram)obj).morph((String[])inContext.get(Context.SRV_PROJECTION));
+			} catch (ConfigurationException e) {
+				throw new SignatureException(e);
 			}
 		}
 		return obj;
