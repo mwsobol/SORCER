@@ -75,7 +75,7 @@ import java.util.*;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Context<T> extends Contextion, ContextDomain, Selfable, Response, Serializable, Paradigmatic, mog, rsp {
+public interface Context<T> extends ContextDomain, Selfable, Response, Serializable, Paradigmatic, mog, rsp {
 
 	/** parameter (proc) */
 	final static String PATH_PAR = "proc";

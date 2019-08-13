@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Governance implements Contextion, FederatedRequest {
+public class Governance implements Contextion, CombinedRequest {
 
 	private static final long serialVersionUID = 1L;
 

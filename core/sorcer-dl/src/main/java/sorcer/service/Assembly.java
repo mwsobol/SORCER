@@ -23,6 +23,6 @@ package sorcer.service;
  *
  * @author Mike Sobolewski
  */
-public interface Assembly extends Service, Identifiable {
+public interface Assembly extends Request, Contextion, CombinedRequest {
 
 }

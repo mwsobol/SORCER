@@ -69,8 +69,7 @@ import sorcer.service.modeling.mog;
  * @author Mike Sobolewski
  */
 @SuppressWarnings("rawtypes")
-public interface Subroutine extends Dependency, Invocation<Object>,
-	Assembly, Paradigmatic, Contextion, Serializable, mog {
+public interface Subroutine extends Dependency, Assembly, Invocation<Object>, Paradigmatic, Serializable, mog {
 
 
 	/**

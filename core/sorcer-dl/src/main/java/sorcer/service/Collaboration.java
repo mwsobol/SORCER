@@ -19,7 +19,7 @@ package sorcer.service;
 
 import java.util.Map;
 
-public interface Collaboration extends Contextion {
+public interface Collaboration extends Contextion, CombinedRequest {
 
     public Map<String, Mogram> getChildren();
 

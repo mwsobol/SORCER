@@ -16,5 +16,5 @@
  */
 package sorcer.service;
 
-public interface FederatedRequest extends Request {
+public interface CombinedRequest extends Request {
 }

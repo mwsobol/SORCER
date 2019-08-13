@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @author Mike Sobolewski
  */
-public interface Mogram extends Identifiable, Contextion, FederatedRequest, Exertion, Scopable, Substitutable, Arg {
+public interface Mogram extends Identifiable, Contextion, Exertion, Scopable, Substitutable, Arg {
 
     /**
      * Returns an ID of this mogram.
