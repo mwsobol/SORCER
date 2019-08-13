@@ -40,18 +40,18 @@ public class Governance implements Contextion, FederatedRequest {
 
 	protected  String name;
 
-    // the input of this discipline
+    // the input of this governance
     protected Context input;
 
-    // the output of this discipline
+    // the output of this governance
     protected Context output;
 
     protected Fi multiFi;
 
 	protected Morpher morpher;
 
-    // active Conntextions
-    protected Paths contextionPaths;
+    // active disciplnes
+    protected Paths disciplnePaths;
 
     protected GovernanceExplorer explorer;
 
@@ -91,12 +91,12 @@ public class Governance implements Contextion, FederatedRequest {
         this.output = output;
     }
 
-    public Paths getContextionPaths() {
-        return contextionPaths;
+    public Paths getDisciplnePaths() {
+        return disciplnePaths;
     }
 
-    public void setContextionPaths(Paths contextionPaths) {
-        this.contextionPaths = contextionPaths;
+    public void setDisciplnePaths(Paths disciplnePaths) {
+        this.disciplnePaths = disciplnePaths;
     }
 
     public Map<String, Discipline> getDisciplines() {
