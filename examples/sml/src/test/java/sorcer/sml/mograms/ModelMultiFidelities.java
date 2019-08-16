@@ -559,23 +559,23 @@ public class ModelMultiFidelities {
     public mog getMorphingModel() throws Exception {
 
         sig add = sig("add", Adder.class,
-                result("y1", inPaths("arg/x1", "arg/x2")));
+            result("y1", inPaths("arg/x1", "arg/x2")));
         sig subtract = sig("subtract", Subtractor.class,
-                result("y2", inPaths("arg/x1", "arg/x2")));
+            result("y2", inPaths("arg/x1", "arg/x2")));
         sig average = sig("average", Averager.class,
-                result("y3", inPaths("arg/x1", "arg/x2")));
+            result("y3", inPaths("arg/x1", "arg/x2")));
         sig multiply = sig("multiply", Multiplier.class,
-                result("y4", inPaths("arg/x1", "arg/x2")));
+            result("y4", inPaths("arg/x1", "arg/x2")));
         sig divide = sig("divide", Divider.class,
-                result("y5", inPaths("arg/x1", "arg/x2")));
+            result("y5", inPaths("arg/x1", "arg/x2")));
 
         mog t4 = task("t4",
-                sig("multiply", MultiplierImpl.class,
-                        result("result/y", inPaths("arg/x1", "arg/x2"))));
+            sig("multiply", MultiplierImpl.class,
+                result("result/y", inPaths("arg/x1", "arg/x2"))));
 
         mog t5 = task("t5",
-                sig("add", AdderImpl.class,
-                        result("result/y", inPaths("arg/x1", "arg/x2"))));
+            sig("add", AdderImpl.class,
+                result("result/y", inPaths("arg/x1", "arg/x2"))));
 
         Morpher morpher1 = (mgr, mFi, value) -> {
             Fidelity<Signature> fi = mFi.getFidelity();
@@ -633,13 +633,13 @@ public class ModelMultiFidelities {
 
         // four entry multifidelity model with four morphers
         mog mdl = model(inVal("arg/x1", 90.0), inVal("arg/x2", 10.0), inVal("morpher3", 100.0),
-                ent("mFi1", mphFi(morpher1, add, multiply)),
-                ent("mFi2", mphFi(entFi(ent("ph2", morpher2), ent("ph4", morpher4)), average, divide, subtract)),
-                ent("mFi3", mphFi(average, divide, multiply)),
-                ent("mFi4", mphFi(morpher3, t5, t4)),
-                fi2, fi3, fi4, fi5,
-                FidelityManagement.YES,
-                response("mFi1", "mFi2", "mFi3", "mFi4", "arg/x1", "arg/x2", "morpher3"));
+            ent("mFi1", mphFi(morpher1, add, multiply)),
+            ent("mFi2", mphFi(entFi(ent("ph2", morpher2), ent("ph4", morpher4)), average, divide, subtract)),
+            ent("mFi3", mphFi(average, divide, multiply)),
+            ent("mFi4", mphFi(morpher3, t5, t4)),
+            fi2, fi3, fi4, fi5,
+            FidelityManagement.YES,
+            response("mFi1", "mFi2", "mFi3", "mFi4", "arg/x1", "arg/x2", "morpher3"));
 
         return mdl;
     }
