@@ -514,7 +514,7 @@ public class ServiceSignature implements Signature, Scopable, SorcerConstants, s
 		return this;
 	}
 
-	public boolean isService() {
+	public boolean isRemote() {
 		return multitype.providerType.isInterface();
 	}
 

@@ -26,6 +26,7 @@ import sorcer.core.Dispatcher;
 import sorcer.core.exertion.NetTask;
 import sorcer.core.provider.*;
 import sorcer.core.signature.NetSignature;
+import sorcer.core.signature.ServiceSignature;
 import sorcer.service.*;
 
 import java.rmi.RemoteException;
@@ -47,7 +48,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     }
 
     protected Subroutine execExertion(Subroutine ex, Arg... args) throws SignatureException,
-            RoutineException {
+        RoutineException {
         beforeExec(ex);
         // setValue subject before task goes out.
         // ex.setSubject(subject);
@@ -79,29 +80,29 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
     }
 
     protected void afterExec(Subroutine ex, Subroutine result)
-            throws SignatureException, RoutineException, ContextException {
+        throws SignatureException, RoutineException, ContextException {
         ServiceRoutine ser = (ServiceRoutine) result;
-		((Transroutine)xrt).setMogramAt(result, ex.getIndex());
+        ((Transroutine)xrt).setMogramAt(result, ex.getIndex());
         if (ser.getStatus() > FAILED && ser.getStatus() != SUSPENDED) {
             ser.setStatus(DONE);
             // update all outputs from sharedcontext only for tasks. For jobs,
             // spawned explorer does it.
-			try {
-				if (result.isTask()) {
-					collectOutputs(result);
-				}
-				//notifyExertionExecution(ex, result);
-			} catch (ContextException e) {
-				throw new RoutineException(e);
-			}
+            try {
+                if (result.isTask()) {
+                    collectOutputs(result);
+                }
+                //notifyExertionExecution(ex, result);
+            } catch (ContextException e) {
+                throw new RoutineException(e);
+            }
         }
         afterExec(result);
     }
 
     protected Task execTask(Task task, Arg... args) throws MogramException,
-            SignatureException, RemoteException {
-		if (task instanceof NetTask) {
-			return execServiceTask(task, args);
+        SignatureException, RemoteException {
+        if (task instanceof NetTask) {
+            return execServiceTask(task, args);
         } else {
             return task.doTask(args);
         }
@@ -109,7 +110,7 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
 
     protected Task execServiceTask(Task task, Arg... args) throws RoutineException {
         logger.info("Starting execServiceTask for: " + task.getName());
-		Task result = null;
+        Task result = null;
         int maxTries = 6;
         int tried=0;
         try {
@@ -118,12 +119,12 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                 try {
                     if (((NetSignature) task.getProcessSignature()).getService().equals(provider)) {
                         logger.info("\n*** getting result from delegate of "
-                                + provider.getProviderName() + "... ***\n");
+                            + provider.getProviderName() + "... ***\n");
                         result = ((ServiceExerter) provider).getDelegate().doTask(
-                                task, null);
+                            task, null);
                         result.getControlContext().appendTrace(
-                                (provider.getProviderName() != null ? provider.getProviderName() + " " : "")
-                                        + "executed task: " + task.getName() + " explorer: " + getClass().getName());
+                            (provider.getProviderName() != null ? provider.getProviderName() + " " : "")
+                                + "executed task: " + task.getName() + " explorer: " + getClass().getName());
                         return result;
                     }
                 } catch (RemoteException re) {
@@ -163,8 +164,8 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                 String msg;
                 // getValue the PROCESS Method and grab provider key + interface
                 msg = "No Provider Available\n" + "Provider Tag:      "
-                        + sig.getProviderName() + "\n"
-                        + "Provider Interface: " + sig.getServiceType();
+                    + sig.getProviderName() + "\n"
+                    + "Provider Interface: " + sig.getServiceType();
 
                 logger.info(msg);
                 throw new RoutineException(msg, task);
@@ -218,13 +219,13 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
                 }
                 if (result!=null)
                     result.getControlContext().appendTrace(
-                            (provider != null ? provider.getProviderName() + " " : "") + "explorer: "
-                                        + getClass().getName());
+                        (provider != null ? provider.getProviderName() + " " : "") + "explorer: "
+                            + getClass().getName());
             }
             logger.debug("got result: {}", result);
         } catch (Exception re) {
             logger.error("+++++++++++++++Dispatcher failed for task, tried: " + tried + " : "
-                    + xrt.getName());
+                + xrt.getName());
             task.setStatus(State.FAILED.ordinal());
 
             /*if (task.isMonitorable()) {
@@ -239,73 +240,82 @@ abstract public class CatalogExertDispatcher extends ExertDispatcher {
             } */
             task.reportException(re);
             throw new RoutineException("Dispatcher failed for task, tried: " + tried + " : "
-                    + xrt.getName(), re);
+                + xrt.getName(), re);
         }
         return result;
     }
 
     protected Job execJob(Job job, Arg ... args)
-            throws DispatcherException, InterruptedException,
-            RemoteException {
+        throws DispatcherException, InterruptedException,
+        RemoteException {
 
         runningExertionIDs.add(job.getId());
 
         // create a new instance of a explorer
         Dispatcher dispatcher = MogramDispatcherFactory.getFactory()
-                .createDispatcher(job, sharedContexts, true, provider);
+            .createDispatcher(job, sharedContexts, true, provider);
         dispatcher.exec(args);
         // wait until serviceJob is done by explorer
         Job out = (Job) dispatcher.getResult().exertion;
         // Not sure if good place
         out.stopExecTime();
         out.getControlContext().appendTrace((provider.getProviderName() != null ?
-                provider.getProviderName() + " " : "")  + "executed job: " + job.getName()
-                + " explorer: " + getClass().getName());
+            provider.getProviderName() + " " : "")  + "executed job: " + job.getName()
+            + " explorer: " + getClass().getName());
         return out;
     }
 
-	private Block execBlock(Block block, Arg... args)
-			throws MogramException {
+    private Block execBlock(Block block, Arg... args)
+        throws MogramException {
 
-		try {
-			ServiceTemplate st = new ServiceTemplate(null, new Class[]{Concatenator.class}, null);
-			ServiceItem[] concatenators = Accessor.get().getServiceItems(st, null);
+        try {
+            if (((ServiceSignature)block.getProcessSignature()).isRemote()) {
+                ServiceTemplate st = new ServiceTemplate(null, new Class[]{Concatenator.class}, null);
+                ServiceItem[] concatenators = Accessor.get().getServiceItems(st, null);
 			/*
 			 * check if there is any available concatenator in the network and
 			 * delegate the inner block to the available Concatenator. In the future, a
 			 * efficient load balancing algorithm should be implemented for
 			 * dispatching inner jobs. Currently, it only does round robin.
 			 */
-			for (int i = 0; i < concatenators.length; i++) {
-				if (concatenators[i] != null) {
-					if (!provider.getProviderID().equals(concatenators[i].serviceID)) {
-						logger.trace("Concatenator: [{}] ServiceID: {}", i, concatenators[i].serviceID);
-						Exerter rconcatenator = (Exerter) concatenators[i].service;
-						return rconcatenator.exert(block, null);
-					}
-				}
-			}
+                for (int i = 0; i < concatenators.length; i++) {
+                    if (concatenators[i] != null) {
+                        if (!provider.getProviderID().equals(concatenators[i].serviceID)) {
+                            logger.trace("Concatenator: [{}] ServiceID: {}", i, concatenators[i].serviceID);
+                            Exerter rconcatenator = (Exerter) concatenators[i].service;
+                            return rconcatenator.exert(block, null);
+                        }
+                    }
+                }
+            }
 
 			/*
 			 * Create a new explorer thread for the inner job, if no available
 			 * Jobber is found in the network
 			 */
-			Dispatcher dispatcher;
-			runningExertionIDs.add(block.getId());
+            Dispatcher dispatcher;
+            runningExertionIDs.add(block.getId());
 
-			// create a new instance of a explorer
-			dispatcher = MogramDispatcherFactory.getFactory()
-					.createDispatcher(block, sharedContexts, true, provider);
+            // create a new instance of a explorer
+            dispatcher = MogramDispatcherFactory.getFactory()
+                .createDispatcher(block, sharedContexts, true, provider);
 
+            for (Mogram mog : block.getMograms()) {
+                if (mog.getDataContext() != null && mog.getDataContext().getScope() == null) {
+                    if (block.getContext() != null) {
+                        mog.getDataContext().setScope(block.getContext());
+                    }
+                }
+            }
             dispatcher.exec(args);
-			// wait until a block is done by explorer
-			Block out = (Block) dispatcher.getResult().exertion;
+            // wait until a block is done by explorer
+            Block out = (Block) dispatcher.getResult().exertion;
             out.getControlContext().appendTrace((provider.getProviderName() != null
-                    ? provider.getProviderName() + " " : "")
-                    + "executed block: " +  block.getName() + " explorer: " + getClass().getName());
-			return out;
-		} catch (RemoteException | RoutineException | DispatcherException ex) {
-			throw new MogramException(ex);
-		}
-	}
+                ? provider.getProviderName() + " " : "")
+                + "executed block: " +  block.getName() + " explorer: " + getClass().getName());
+            return out;
+        } catch (RemoteException | RoutineException | DispatcherException ex) {
+            throw new MogramException(ex);
+        }
+    }
 }

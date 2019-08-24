@@ -1,7 +1,7 @@
 /*
  * Copyright 2010 the original author or authors.
  * Copyright 2010 SorcerSoft.org.
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +34,7 @@ import static sorcer.service.Exec.*;
 public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
     private final Logger logger = LoggerFactory.getLogger(CatalogSequentialDispatcher.class);
 
-	@SuppressWarnings("rawtypes")
+    @SuppressWarnings("rawtypes")
     public CatalogSequentialDispatcher(Subroutine job,
                                        Set<Context> sharedContext,
                                        boolean isSpawned,
@@ -53,7 +53,7 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                 if (pn == null)
                     pn = provider.getClass().getName();
                 RoutineException fe = new RoutineException(pn + " received invalid job: "
-                        + xrt.getName(), xrt);
+                    + xrt.getName(), xrt);
 
                 xrt.reportException(fe);
                 dispatchers.remove(xrt.getId());
@@ -87,6 +87,9 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                         se.setContext(previous);
                     dispatchExertion(se, args);
                     previous = se.getContext();
+                    if (mogram instanceof Block) {
+                        xrt.getDataContext().append(previous);
+                    }
                 } else if (mogram instanceof EntModel) {
                     ((EntModel)mogram).updateEntries(xrt.getContext());
                     xrt.getDataContext().append((Context) ((Model) mogram).getResponse());
@@ -121,10 +124,11 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
             state = FAILED;
             try {
                 String pn = provider.getProviderName();
-                if (pn == null)
+                if (pn == null) {
                     pn = provider.getClass().getName();
+                }
                 RoutineException fe = new RoutineException(pn
-                        + " received failed task: " + se.getName(), se);
+                    + " received failed task: " + se.getName(), se);
                 xrt.reportException(fe);
                 dispatchers.remove(xrt.getId());
                 throw fe;
@@ -132,10 +136,10 @@ public class CatalogSequentialDispatcher extends CatalogExertDispatcher {
                 logger.warn("Exception during local prc");
             }
         } else if (se.getStatus() == SUSPENDED
-                || xrt.getControlContext().isReview(se)) {
+            || xrt.getControlContext().isReview(se)) {
             xrt.setStatus(SUSPENDED);
             RoutineException ex = new RoutineException(
-                    "exertion suspended", se);
+                "exertion suspended", se);
             se.reportException(ex);
             dispatchers.remove(xrt.getId());
             throw ex;

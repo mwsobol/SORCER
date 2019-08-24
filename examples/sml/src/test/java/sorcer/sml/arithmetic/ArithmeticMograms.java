@@ -55,7 +55,6 @@ public class ArithmeticMograms {
 		assertTrue(get(out, "y2").equals(100.0));
 	}
 
-	@Ignore
 	@Test
 	public void arithmeticStructuredBlock() throws Exception {
 
@@ -75,11 +74,8 @@ public class ArithmeticMograms {
 			context(inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
 				inVal("arg/x3", 20.0), inVal("arg/x4", 80.0)));
 
-//        Block result = exert(block, context(
-//                inVal("arg/x1", 10.0), inVal("arg/x2", 50.0),
-//                inVal("arg/x3", 20.0), inVal("arg/x4", 80.0)));
-
 		Block result = exert(block);
+//		logger.info("result: " + result);
 		assertEquals(value(context(result), "block/result"), 400.00);
 	}
 
