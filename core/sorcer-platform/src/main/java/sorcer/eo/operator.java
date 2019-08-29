@@ -1697,13 +1697,13 @@ operator extends Operator {
         return fi;
     }
 
-    public static Fidelity govFi(String name) {
+    public static Fidelity procFi(String name) {
         Fidelity fi = new Fidelity(name);
         fi.fiType = Fi.Type.GOVERNANCE;
         return fi;
     }
 
-    public static Fidelity govFi(String name, Object select) {
+    public static Fidelity procFi(String name, Object select) {
         Fidelity fi = new Fidelity(name);
         fi.setSelect(select);
         fi.fiType = Fi.Type.GOVERNANCE;
