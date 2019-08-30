@@ -23,6 +23,8 @@ import net.jini.config.EmptyConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sorcer.core.SorcerConstants;
+import sorcer.util.ProviderLocator;
+import sorcer.util.ProviderLookup;
 import sorcer.util.Sorcer;
 
 import java.lang.reflect.Constructor;
@@ -51,10 +53,10 @@ public class Accessor {
      * @throws IllegalArgumentException if the configuration arg is null.
      */
     public static synchronized DynamicAccessor create(Configuration config) {
-        if(accessor.get()==null) {
-            if(config==null)
+        if(accessor.get() == null) {
+            if(config == null)
                 throw new IllegalArgumentException("A Configuration must be provided");
-            if(System.getSecurityManager()==null)
+            if(System.getSecurityManager() == null)
                 System.setSecurityManager(new SecurityManager());
             String providerType =
                 Sorcer.getProperties().getProperty(SorcerConstants.S_SERVICE_ACCESSOR_PROVIDER_NAME);
@@ -69,6 +71,15 @@ public class Accessor {
             } catch (Exception e) {
                 throw new RuntimeException("No service accessor available for: " + providerType,e);
             }
+        }
+        return accessor.get();
+    }
+
+    public static synchronized DynamicAccessor createLookup() {
+        if(System.getSecurityManager() == null)
+            System.setSecurityManager(new SecurityManager());
+        if(accessor.get() == null) {
+            accessor.set(new ProviderLookup());
         }
         return accessor.get();
     }
