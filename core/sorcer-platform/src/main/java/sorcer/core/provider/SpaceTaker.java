@@ -20,7 +20,9 @@ import net.jini.config.Configuration;
 import net.jini.core.entry.Entry;
 import net.jini.core.lease.Lease;
 import net.jini.core.lease.UnknownLeaseException;
+import net.jini.core.transaction.CannotAbortException;
 import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.UnknownTransactionException;
 import net.jini.lease.LeaseListener;
 import net.jini.lease.LeaseRenewalManager;
 import net.jini.space.JavaSpace;
@@ -313,9 +315,20 @@ public class SpaceTaker implements Runnable {
                 pool.execute(new SpaceWorker(ee, txnCreated, data.provider, remoteLogging));
 			} catch (Exception ex) {
                 logger.warn("Problem with SpaceTaker", ex);
+
+				// sab 7/15/2019; add lines below to hopefully stop transactions from staying
+				if (txnCreated != null) {
+					try {
+						TX.abortTransaction(txnCreated);
+						txnCreated = null;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
 			}
 		}
-		
+
 		// remove thread monitor
 		doThreadMonitorTaker(threadId);
 	}
@@ -393,22 +406,35 @@ public class SpaceTaker implements Runnable {
             }
 			String threadId = doThreadMonitorWorker(null);
 
-			Entry result = doEnvelope(ee, (txnCreated == null) ? null
-					: txnCreated.transaction, threadId, txnCreated);
+			// sab 7/15/2019; added try catch around doEnveope
+			Entry result = null;
+			try {
+				result = doEnvelope(ee, (txnCreated == null) ? null
+						: txnCreated.transaction, threadId, txnCreated);
+			} catch (Exception e) {
+				logger.warn("error executing doEnvelope()", e);
+			}
 
 			if (result != null) {
 				try {
 					space.write(result, null, Lease.FOREVER);
 				} catch (Exception e) {
                     logger.warn("Error while writing the result", e);
-                    try {
-						TX.abortTransaction(txnCreated);
-					} catch (Exception e1) {
-                        logger.warn("Error while aborting transaction", e1);
+
+					// sab 7/15/2019; only added the if block to check txnCreated != null {}; following try was there
+					if (txnCreated != null) {
+						try {
+							TX.abortTransaction(txnCreated);
+						} catch (Exception e1) {
+							logger.warn("Error while aborting transaction", e1);
 						doThreadMonitorWorker(threadId);
 						return;
+						}
 					}
 					doThreadMonitorWorker(threadId);
+					MDC.remove(SorcerConstants.MDC_SORCER_REMOTE_CALL);
+					MDC.remove(SorcerConstants.MDC_MOGRAM_ID);
+					MDC.remove(SorcerConstants.MDC_PROVIDER_ID);
 					return;
 				}
 				if (txnCreated != null) {
@@ -416,7 +442,15 @@ public class SpaceTaker implements Runnable {
 						TX.commitTransaction(txnCreated);
 					} catch (Exception e) {
                         logger.warn("Error while committing transaction", e);
+						try {
+							TX.abortTransaction(txnCreated);
+						} catch (Exception e1) {
+							logger.warn("Error while aborting transaction 2", e1);
+						}
 						doThreadMonitorWorker(threadId);
+						MDC.remove(SorcerConstants.MDC_SORCER_REMOTE_CALL);
+						MDC.remove(SorcerConstants.MDC_MOGRAM_ID);
+						MDC.remove(SorcerConstants.MDC_PROVIDER_ID);
 						return;
 					}
 				}
@@ -427,8 +461,11 @@ public class SpaceTaker implements Runnable {
 					try {
 						TX.abortTransaction(txnCreated);
 					} catch (Exception e) {
-                        logger.warn("Error while aborting transaction", e);
+                        logger.warn("Error while aborting transaction 3", e);
 						doThreadMonitorWorker(threadId);
+						MDC.remove(SorcerConstants.MDC_SORCER_REMOTE_CALL);
+						MDC.remove(SorcerConstants.MDC_MOGRAM_ID);
+						MDC.remove(SorcerConstants.MDC_PROVIDER_ID);
 						return;
 					}
 				}
